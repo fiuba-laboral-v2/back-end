@@ -10,6 +10,7 @@
     "max-line-length": {
       "options": [100]
     },
+    "comment-format": [true, "check-space"],
     "eol-last": ["error", "always"],
     "comma-spacing": ["error", { "before": false, "after": true }],
     "no-trailing-whitespace": true,
