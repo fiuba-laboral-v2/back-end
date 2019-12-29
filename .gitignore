@@ -1,4 +1,19 @@
-.vscode
-.idea
+# dependencies
 node_modules
+
+# testing
+coverage
+
+# production
 build
+dist
+
+# misc
+.DS_Store
+.idea
+.vscode
+.env.local
+.env.staging.local
+.env.development.local
+.env.test.local
+.env.production.local
