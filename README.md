@@ -28,3 +28,9 @@ Trabajo Práctico Profesional, FIUBA, 2020
     npm run build
 ```
 Browse to http://localhost:5000
+
+## Test
+```
+    npm test
+```
+
