@@ -1,6 +1,10 @@
-const router = require('express').Router();
-const root = require('../controllers/root');
+var router = require('express').Router();
+import { Express } from 'express'
+var root = require('../controllers/root');
 
-router.get('/', root.rootController.index);
-
-module.exports = router;
+module.exports = class IndexRoute {
+  constructor(app: Express) {
+    router.get('/', root.rootController.index);
+    app.use('/', router)
+  }
+}
