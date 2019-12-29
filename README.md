@@ -11,9 +11,20 @@ Trabajo Práctico Profesional, FIUBA, 2020
     npm i
 ```
 
-# Run server on your local
+## For development:
+
+```
+    npm run dev
+```
+
+## To start
 
 ```
     npm start
 ```
-You can request to the server on `http://localhost:5000`
+
+## Build to `./dist`
+```
+    npm run build
+```
+Browse to http://localhost:5000
