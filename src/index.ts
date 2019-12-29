@@ -1,13 +1,15 @@
-const express = require('express');
-const bodyParser = require('body-parser');
+import * as express from "express";
+import { json, urlencoded } from "body-parser";
+import RootRoute from "./routes/root";
+import { Logger } from "./config/logger";
 
-const app = express();
+const app: express.Express = express();
 const port = process.env.PORT || 5000;
 
-app.listen(port, () => console.log(`Listening on port ${port}`));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.listen(port, () => Logger.info(`Listening on port ${port}`));
+app.use(json());
+app.use(urlencoded({extended: true}));
 
-require('./routes/root')(app);
+RootRoute.set(app);
 
 module.exports = app;

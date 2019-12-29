@@ -1,11 +1,8 @@
 import { Request, Response } from "express";
+import { OK } from "http-status-codes";
 
-const httpStatus = require('http-status-codes');
+const rootController = {
+    index: (req: Request, res: Response) => res.status(OK).json({})
+};
 
-class RootController {
-    public index (req: Request, res: Response) {
-        return res.status(httpStatus.OK).json({})
-    }
-}
-
-module.exports.rootController = new RootController();
+export default rootController;

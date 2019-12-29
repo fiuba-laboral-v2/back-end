@@ -1,10 +1,12 @@
-var router = require('express').Router();
-import { Express } from 'express'
-var root = require('../controllers/root');
+import { Express, Router } from "express";
+import rootController from "../controllers/root";
 
-module.exports = class IndexRoute {
-  constructor(app: Express) {
-    router.get('/', root.rootController.index);
-    app.use('/', router)
+const RootRoute =  {
+  set: (app: Express) => {
+    const router = Router();
+    router.get("/", rootController.index);
+    app.use("/", router);
   }
 };
+
+export default RootRoute;
