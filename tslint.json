@@ -10,6 +10,7 @@
     "max-line-length": {
       "options": [100]
     },
+    "semicolon": [true, "always"],
     "indent": [true, "spaces", 2],
     "forin": true,
     "curly": [true, "ignore-same-line"],
