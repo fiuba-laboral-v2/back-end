@@ -7,4 +7,4 @@ module.exports = class IndexRoute {
     router.get('/', root.rootController.index);
     app.use('/', router)
   }
-}
+};
