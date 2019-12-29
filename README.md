@@ -1,6 +1,10 @@
 # Backend
 Trabajo Práctico Profesional, FIUBA, 2020
 
+# Set up
+
+- See [wiki](https://github.com/fiuba-laboral-v2/back-end/wiki/Set-up)
+
 # Get started
 
 ```
