@@ -8,21 +8,21 @@
   },
   "main": "index.ts",
   "dependencies": {
-    "@types/express": "^4.17.2",
-    "body-parser": "^1.19.0",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "glob": "^5.0.14",
-    "http-status-codes": "^1.4.0",
-    "lodash": "^4.17.15",
-    "node": "^12.14.0",
-    "nodemon": "^2.0.2",
-    "npm-run-all": "^4.1.5",
-    "rimraf": "^3.0.0"
+    "@types/express": "4.17.2",
+    "body-parser": "1.19.0",
+    "dotenv": "8.2.0",
+    "express": "4.17.1",
+    "glob": "7.1.6",
+    "http-status-codes": "1.4.0",
+    "lodash": "4.17.15",
+    "node": "12.14.0",
+    "nodemon": "2.0.2",
+    "npm-run-all": "4.1.5",
+    "rimraf": "3.0.0"
   },
   "devDependencies": {
-    "typescript": "^3.7.4",
-    "concurrently": "^3.5.0"
+    "typescript": "3.7.4",
+    "concurrently": "3.5.0"
   },
   "scripts": {
     "dev": "npm run build && concurrently --kill-others \"tsc -w -p src\" \"nodemon dist/index.js -e ts\"",
