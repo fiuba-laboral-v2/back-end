@@ -11,8 +11,9 @@ Trabajo Práctico Profesional, FIUBA, 2020
     npm i
 ```
 
-# Run server
+# Run server on your local
 
 ```
     npm start
 ```
+You can request to the server on `http://localhost:5000`
