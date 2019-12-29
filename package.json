@@ -21,13 +21,17 @@
     "rimraf": "^3.0.0"
   },
   "devDependencies": {
-    "typescript": "^3.7.4"
+    "typescript": "^3.7.4",
+    "concurrently": "^3.5.0"
   },
   "scripts": {
-    "clean": "rimraf build",
+    "dev": "npm run build && concurrently --kill-others \"tsc -w -p src\" \"nodemon dist/index.js -e ts\"",
+    "debug": "npm run build && concurrently --kill-others \"tsc -w -p src\" \"nodemon --inspect dist/index.js -e ts\"",
+    "test:watch": "mocha -r ts-node/register -w ./spec/**/*.spec.ts --watch-extensions ts",
+    "build": "tsc -p src",
+    "start": "node dist/index.js",
+    "clean": "rimraf dist",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "compile-typescript": "tsc",
-    "start": "tsc && nodemon --inspect dist"
   },
   "repository": {
     "type": "git",
