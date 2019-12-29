@@ -10,12 +10,15 @@
     "max-line-length": {
       "options": [100]
     },
+    "curly": [true, "ignore-same-line"],
     "comment-format": [true, "check-space"],
     "eol-last": ["error", "always"],
     "comma-spacing": ["error", { "before": false, "after": true }],
     "no-trailing-whitespace": true,
     "no-unused-expression": true,
     "no-var-keyword": true,
+    "no-var-requires": false,
+    "no-require-imports": true,
     "quotemark": [true, "double"],
     "jsx-wrap-multiline": false,
     "no-debugger": false,
