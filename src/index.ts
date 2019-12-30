@@ -1,4 +1,4 @@
-import * as express from "express";
+import express from "express";
 import { json, urlencoded } from "body-parser";
 import RootRoute from "./routes/root";
 import { Logger } from "./config/logger";

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "esModuleInterop": true,
     "module": "esnext",
     "target": "es5",
     "lib": ["es6"],
