@@ -12,4 +12,4 @@ app.use(urlencoded({extended: true}));
 
 RootRoute.set(app);
 
-module.exports = app;
+export default app;

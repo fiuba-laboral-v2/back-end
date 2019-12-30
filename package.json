@@ -22,20 +22,27 @@
     "typescript-logging": "0.6.4"
   },
   "devDependencies": {
-    "typescript": "3.7.4",
+    "@types/chai": "4.2.7",
+    "@types/chai-http": "^4.2.0",
+    "@types/mocha": "5.2.7",
+    "chai": "4.2.0",
+    "chai-http": "^4.3.0",
     "concurrently": "3.5.0",
-    "tslint": "5.18.0"
+    "mocha": "6.2.2",
+    "ts-node": "^8.5.4",
+    "tslint": "5.18.0",
+    "typescript": "3.7.4"
   },
   "scripts": {
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
     "lint:test": "tslint -c tslint.json 'spec/**/*.ts'",
-    "dev": "npm run build && concurrently --kill-others \"tsc -w -p src\" \"nodemon dist/index.js -e ts\"",
+    "dev": "npm run build && concurrently --kill-others \"tsc -w -p src\" \"nodemon dist/index.js -e ts\" || true",
     "debug": "npm run build && concurrently --kill-others \"tsc -w -p src\" \"nodemon --inspect dist/index.js -e ts\"",
     "test:watch": "mocha -r ts-node/register -w ./spec/**/*.spec.ts --watch-extensions ts",
+    "test": "npm run lint && npm run lint:test && mocha -r ts-node/register -w ./spec/**/*.spec.ts",
     "build": "tsc -p src",
     "start": "node dist/index.js",
-    "clean": "rimraf dist",
-    "test": "npm run lint && npm run lint:test"
+    "clean": "rimraf dist"
   },
   "repository": {
     "type": "git",
