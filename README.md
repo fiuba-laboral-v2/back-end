@@ -8,29 +8,23 @@ Trabajo Práctico Profesional, FIUBA, 2020
 # Get started
 
 ```
-    npm i
+    yarn install
 ```
 
 ## For development:
 
 ```
-    npm run dev
-```
-
-## To start
-
-```
-    npm start
+    yarn dev
 ```
 
 ## Build to `./dist`
 ```
-    npm run build
+    yarn build
 ```
 Browse to http://localhost:5000
 
 ## Test
 ```
-    npm test
+    yarn test
 ```
 

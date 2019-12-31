@@ -1,13 +1,10 @@
 language: node_js
-node_js:
-  - '12.14.0'
 env:
   - NODE_ENV=test
     PORT=5000
 script:
-  - npm test
-after_success: npm run coverage
-
+  - yarn lint && yarn test
+after_success: yarn coverage
 notifications:
   email:
     recipients:
