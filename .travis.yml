@@ -7,3 +7,10 @@ env:
 script:
   - npm test
 after_success: npm run coverage
+
+notifications:
+  email:
+    recipients:
+      llauromanuel@gmail.com
+      dylanalvarez1995@gmail.com
+      sebastian.e.blanco@gmail.com
