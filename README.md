@@ -1,4 +1,4 @@
-# Backend
+# Backend [![Build Status](https://travis-ci.com/fiuba-laboral-v2/back-end.svg?branch=master)](https://travis-ci.com/fiuba-laboral-v2/back-end)
 Trabajo Práctico Profesional, FIUBA, 2020
 
 # Set up
