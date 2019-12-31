@@ -38,7 +38,8 @@
     "supertest": "4.0.2",
     "ts-node": "8.5.4",
     "tslint": "5.18.0",
-    "typescript": "3.7.4"
+    "typescript": "3.7.4",
+    "tslint-config-fiuba-laboral-v2": "1.0.1"
   },
   "scripts": {
     "dev": "yarn build && concurrently --kill-others \"tsc -w -p src\" \"nodemon dist/index.js -e js\" || true",
