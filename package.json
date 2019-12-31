@@ -15,6 +15,7 @@
     "express": "4.17.1",
     "glob": "7.1.6",
     "http-status-codes": "1.4.0",
+    "husky": "^3.1.0",
     "lodash": "4.17.15",
     "node": "12.14.0",
     "nodemon": "2.0.2",
@@ -60,5 +61,10 @@
   "bugs": {
     "url": "https://fiuba-laboral-v2.atlassian.net"
   },
-  "homepage": "https://github.com/fiuba-laboral-v2/back-end#readme"
+  "homepage": "https://github.com/fiuba-laboral-v2/back-end#readme",
+  "husky": {
+    "hooks": {
+      "pre-commit": "git stash -u --keep-index && yarn lint && yarn test && git stash pop"
+    }
+  }
 }
