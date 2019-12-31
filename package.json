@@ -29,8 +29,8 @@
   "scripts": {
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
     "lint:test": "tslint -c tslint.json 'spec/**/*.ts'",
-    "dev": "npm run build && concurrently --kill-others \"tsc -w -p src\" \"nodemon dist/index.js -e ts\"",
-    "debug": "npm run build && concurrently --kill-others \"tsc -w -p src\" \"nodemon --inspect dist/index.js -e ts\"",
+    "dev": "npm run build && concurrently --kill-others \"tsc -w -p src\" \"nodemon dist/index.js -e js\"",
+    "debug": "npm run build && concurrently --kill-others \"tsc -w -p src\" \"nodemon --inspect dist/index.js -e js\"",
     "test:watch": "mocha -r ts-node/register -w ./spec/**/*.spec.ts --watch-extensions ts",
     "build": "tsc -p src",
     "start": "node dist/index.js",
