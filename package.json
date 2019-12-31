@@ -9,11 +9,13 @@
   "main": "index.ts",
   "dependencies": {
     "@types/express": "4.17.2",
+    "@types/supertest": "2.0.8",
     "body-parser": "1.19.0",
     "dotenv": "8.2.0",
     "express": "4.17.1",
     "glob": "7.1.6",
     "http-status-codes": "1.4.0",
+    "husky": "3.1.0",
     "lodash": "4.17.15",
     "node": "12.14.0",
     "nodemon": "2.0.2",
@@ -22,20 +24,33 @@
     "typescript-logging": "0.6.4"
   },
   "devDependencies": {
-    "typescript": "3.7.4",
+    "@babel/core": "7.7.7",
+    "@babel/preset-env": "7.7.7",
+    "@babel/preset-typescript": "7.7.7",
+    "@types/jest": "24.0.0",
+    "babel-cli": "6.26.0",
+    "babel-jest": "24.9.0",
+    "babel-preset-env": "1.7.0",
     "concurrently": "3.5.0",
-    "tslint": "5.18.0"
+    "coveralls": "3.0.9",
+    "jest": "24.9.0",
+    "superagent": "5.1.3",
+    "supertest": "4.0.2",
+    "ts-node": "8.5.4",
+    "tslint": "5.18.0",
+    "typescript": "3.7.4"
   },
   "scripts": {
-    "lint": "tslint -c tslint.json 'src/**/*.ts'",
-    "lint:test": "tslint -c tslint.json 'spec/**/*.ts'",
-    "dev": "npm run build && concurrently --kill-others \"tsc -w -p src\" \"nodemon dist/index.js -e js\"",
-    "debug": "npm run build && concurrently --kill-others \"tsc -w -p src\" \"nodemon --inspect dist/index.js -e js\"",
-    "test:watch": "mocha -r ts-node/register -w ./spec/**/*.spec.ts --watch-extensions ts",
+    "dev": "yarn build && concurrently --kill-others \"tsc -w -p src\" \"nodemon dist/index.js -e js\" || true",
+    "debug": "yarn build && concurrently --kill-others \"tsc -w -p src\" \"nodemon --inspect dist/index.js -e js\" || true",
     "build": "tsc -p src",
     "start": "node dist/index.js",
+    "test": "jest --coverage",
+    "lint:src": "tslint -c tslint.json 'src/**/*.ts'",
+    "lint:test": "tslint -c tslint.json 'test/**/*.ts'",
+    "lint": "yarn lint:src && yarn lint:test",
     "clean": "rimraf dist",
-    "test": "npm run lint && npm run lint:test"
+    "coveralls": "jest --coverage && cat ./tests/coverage/lcov.info | coveralls"
   },
   "repository": {
     "type": "git",
@@ -46,5 +61,10 @@
   "bugs": {
     "url": "https://fiuba-laboral-v2.atlassian.net"
   },
-  "homepage": "https://github.com/fiuba-laboral-v2/back-end#readme"
+  "homepage": "https://github.com/fiuba-laboral-v2/back-end#readme",
+  "husky": {
+    "hooks": {
+      "pre-commit": "git stash -u --keep-index && yarn lint && yarn test && git stash pop"
+    }
+  }
 }
