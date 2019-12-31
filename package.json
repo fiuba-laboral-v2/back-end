@@ -4,7 +4,7 @@
   "description": "Trabajo Práctico Profesional, FIUBA, 2020",
   "engines": {
     "node": "12.14.0",
-    "npm": "6.11.3"
+    "yarn": "1.21.1"
   },
   "main": "index.ts",
   "dependencies": {
