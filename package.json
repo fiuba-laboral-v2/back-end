@@ -31,19 +31,24 @@
     "mocha": "6.2.2",
     "ts-node": "^8.5.4",
     "tslint": "5.18.0",
-    "typescript": "3.7.4"
+    "typescript": "3.7.4",
+    "nyc": "15.0.0",
+    "coveralls": "3.0.2"
   },
   "scripts": {
-    "lint": "tslint -c tslint.json 'src/**/*.ts'",
+    "lint": "npm run lint:src && npm run lint:test",
+    "lint:src": "tslint -c tslint.json 'src/**/*.ts'",
     "lint:test": "tslint -c tslint.json 'spec/**/*.ts'",
     "dev": "npm run build && concurrently --kill-others \"tsc -w -p src\" \"nodemon dist/index.js -e ts\" || true",
     "debug": "npm run build && concurrently --kill-others \"tsc -w -p src\" \"nodemon --inspect dist/index.js -e ts\"",
     "test:watch": "mocha -r ts-node/register -w ./dist/spec/**/*.spec.js --watch-extensions js",
-    "test": "npm run lint && npm run lint:test && npm run build:test && mocha -r ts-node/register -w ./dist/spec/**/*.spec.js",
+    "test": "npm run lint && npm run build:test && npm run spec-with-coverage",
+    "spec-with-coverage": "NODE_ENV=test nyc mocha -r ts-node/register -w ./dist/spec/**/*.spec.js --exit ",
     "build": "tsc -p src",
     "build:test": "tsc -p spec",
     "start": "node dist/index.js",
-    "clean": "rimraf dist"
+    "clean": "rimraf dist",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
@@ -54,5 +59,10 @@
   "bugs": {
     "url": "https://fiuba-laboral-v2.atlassian.net"
   },
-  "homepage": "https://github.com/fiuba-laboral-v2/back-end#readme"
+  "homepage": "https://github.com/fiuba-laboral-v2/back-end#readme",
+  "nyc": {
+    "exclude": [
+      "coverage/**"
+    ]
+  }
 }
