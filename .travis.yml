@@ -6,7 +6,7 @@ env:
     DATABASE_URL="postgres://postgres:postgres@127.0.0.1:5432/test_travis"
 before_script:
   - psql -c "CREATE DATABASE test_travis;" -U postgres
-  - mkdir config && cp database.travis.yml config/database.yml
+  - cp database.travis.yml config/database.yml
   - NODE_ENV=test_travis yarn db:create && yarn db:migrate
 script:
   - yarn lint && yarn test
