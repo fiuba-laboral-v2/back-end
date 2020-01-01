@@ -9,7 +9,12 @@ import databaseJSON from "../../config/database.json";
 
 
 class Model {
-  public model = {} as any;
+  public db = {} as any;
+
+  public close() {
+    this.db.sequelize.close();
+  }
+
   public set() {
     const config = databaseJSON[env];
 
@@ -28,16 +33,16 @@ class Model {
       })
       .forEach(file => {
         const model = sequelize.import(path.join(__dirname, file));
-        this.model[model.name] = model;
+        this.db[model.name] = model;
       });
 
-    Object.keys(this.model).forEach(modelName => {
-      if (this.model[modelName].associate) {
-        this.model[modelName].associate(this.model);
+    Object.keys(this.db).forEach(modelName => {
+      if (this.db[modelName].associate) {
+        this.db[modelName].associate(this.db);
       }
     });
-    this.model.sequelize = sequelize;
-    this.model.Sequelize = Sequelize;
+    this.db.sequelize = sequelize;
+    this.db.Sequelize = Sequelize;
   }
 }
 
