@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "Trabajo Práctico Profesional, FIUBA, 2020",
   "engines": {
-    "node": "12.14.0",
-    "yarn": "1.21.1"
+    "node": "12.14.0"
   },
   "main": "index.ts",
   "dependencies": {
@@ -50,7 +49,7 @@
     "debug": "yarn build && concurrently --kill-others \"tsc -w -p src\" \"nodemon --inspect dist/index.js -e js\" || true",
     "build": "tsc -p src",
     "start": "node dist/src/index.js",
-    "test": "jest --coverage",
+    "test": "NODE_ENV=test jest --coverage",
     "lint:src": "tslint -c tslint.json 'src/**/*.ts'",
     "lint:test": "tslint -c tslint.json 'test/**/*.ts'",
     "lint": "yarn lint:src && yarn lint:test",
@@ -72,7 +71,7 @@
   "homepage": "https://github.com/fiuba-laboral-v2/back-end#readme",
   "husky": {
     "hooks": {
-      "pre-commit": "git stash -u --keep-index && yarn lint && yarn test && git stash pop"
+      "pre-commit": "git stash -u --keep-index && yarn lint && git stash pop"
     }
   }
 }
