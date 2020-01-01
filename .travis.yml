@@ -3,6 +3,11 @@ services:
   - postgresql
 env:
   - NODE_ENV=test_travis
+    DB_NAME="test_travis"
+    DB_USER="postgres"
+    DB_PASS="postgres"
+    DB_PORT="5432"
+    DB_HOST="localhost"
     DATABASE_URL="postgres://postgres:postgres@localhost:5432/test_travis"
 before_script:
   - cp database.travis.yml config/database.yml
