@@ -2,16 +2,12 @@ language: node_js
 services:
   - postgresql
 env:
-  - NODE_ENV=test_travis
-    DB_NAME="test_travis"
-    DB_USER="postgres"
-    DB_PASS="postgres"
-    DB_PORT="5432"
-    DB_HOST="localhost"
+  - NODE_ENV="test_travis"
     DATABASE_URL="postgres://postgres:postgres@localhost:5432/test_travis"
 before_script:
   - cp database.travis.yml config/database.yml
-  - yarn db:drop && yarn db:create && yarn db:migrate
+  - psql -c "CREATE DATABASE test_travis;" -U postgres
+  - yarn db:create && yarn db:migrate
 script:
   - yarn lint && yarn test
 after_success: yarn coverage
