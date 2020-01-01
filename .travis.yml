@@ -1,7 +1,7 @@
 language: node_js
 env:
   - NODE_ENV=test_travis
-  - DATABASE_URL="postgres://postgres:postgres@127.0.0.1:5432/test_travis"
+    DATABASE_URL="postgres://postgres:postgres@127.0.0.1:5432/test_travis"
 before_script:
   - psql -c "CREATE DATABASE test_travis;" -U postgres
   - mkdir config && cp database.travis.yml config/database.yml
