@@ -3,9 +3,8 @@ services:
   - postgresql
 env:
   - NODE_ENV=test_travis
-    DATABASE_URL="postgres://postgres:postgres@127.0.0.1:5432/test_travis"
+    DATABASE_URL="postgres://postgres:postgres@localhost:5432/test_travis"
 before_script:
-  - psql -c "CREATE DATABASE test_travis;" -U postgres
   - cp database.travis.yml config/database.yml
   - yarn db:drop && yarn db:create && yarn db:migrate
 script:
