@@ -15,19 +15,19 @@ Trabajo Práctico Profesional, FIUBA, 2020
 
 ## Migrations
 
-### Test
-
 ```
-    NODE_ENV=test yarn db:migrate
+    NODE_ENV=<environment-name> yarn db:migrate
 ```
 
-### Development
-
+If the database does not exist, the execute:
 
 ```
-    NODE_ENV=development yarn db:migrate
+    NODE_ENV=<environment-name> yarn db:create
 ```
 
+The environment names are:
+- test
+- development
 
 In the project directory, you can run:
 
