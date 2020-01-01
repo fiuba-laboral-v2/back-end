@@ -13,6 +13,22 @@ Trabajo Práctico Profesional, FIUBA, 2020
     yarn install
 ```
 
+## Migrations
+
+### Test
+
+```
+    NODE_ENV=test yarn db:migrate
+```
+
+### Development
+
+
+```
+    NODE_ENV=development yarn db:migrate
+```
+
+
 In the project directory, you can run:
 
 ### `yarn dev`
