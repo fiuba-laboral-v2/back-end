@@ -7,7 +7,7 @@ env:
 before_script:
   - psql -c "CREATE DATABASE test_travis;" -U postgres
   - cp database.travis.yml config/database.yml
-  - yarn db:migrate
+  - yarn db:drop && yarn db:create && yarn db:migrate
 script:
   - yarn lint && yarn test
 after_success: yarn coverage
