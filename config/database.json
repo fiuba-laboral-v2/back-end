@@ -1,16 +1,16 @@
 {
   "staging": {
-    "USE_ENV_VARIABLE": "DATABASE_URL",
+    "use_env_variable": "DATABASE_URL",
     "dialect": "postgres",
     "operatorsAliases": false
   },
   "production": {
-    "USE_ENV_VARIABLE": "DATABASE_URL",
+    "use_env_variable": "DATABASE_URL",
     "dialect": "postgres",
     "operatorsAliases": false
   },
   "test_travis": {
-    "USE_ENV_VARIABLE": "DATABASE_URL",
+    "use_env_variable": "DATABASE_URL",
     "dialect": "postgres",
     "operatorsAliases": false
   },

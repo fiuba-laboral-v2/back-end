@@ -20,7 +20,7 @@ class Model {
 
     let sequelize: Sequelize;
 
-    if (config.USE_ENV_VARIABLE) {
+    if (config.use_env_variable) {
       sequelize = new Sequelize(process.env.DATABASE_URL, config);
     } else {
       sequelize = new Sequelize(config.database, config.username, config.password, config);
