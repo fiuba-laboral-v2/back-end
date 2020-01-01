@@ -21,6 +21,10 @@
     "nodemon": "2.0.2",
     "npm-run-all": "4.1.5",
     "rimraf": "3.0.0",
+    "@types/sequelize": "4.28.8",
+    "sequelize": "4.41.0",
+    "sequelize-cli": "4.1.1",
+    "pg": "7.4.3",
     "typescript-logging": "0.6.4"
   },
   "devDependencies": {
@@ -42,16 +46,19 @@
     "tslint-config-fiuba-laboral-v2": "1.0.1"
   },
   "scripts": {
-    "dev": "yarn build && concurrently --kill-others \"tsc -w -p src\" \"nodemon dist/index.js -e js\" || true",
+    "dev": "yarn build && concurrently --kill-others \"tsc -w -p src\" \"nodemon dist/src/index.js -e js\" || true",
     "debug": "yarn build && concurrently --kill-others \"tsc -w -p src\" \"nodemon --inspect dist/index.js -e js\" || true",
     "build": "tsc -p src",
-    "start": "node dist/index.js",
+    "start": "node dist/src/index.js",
     "test": "jest --coverage",
     "lint:src": "tslint -c tslint.json 'src/**/*.ts'",
     "lint:test": "tslint -c tslint.json 'test/**/*.ts'",
     "lint": "yarn lint:src && yarn lint:test",
     "clean": "rimraf dist",
-    "coveralls": "jest --coverage && cat ./tests/coverage/lcov.info | coveralls"
+    "coveralls": "jest --coverage && cat ./tests/coverage/lcov.info | coveralls",
+    "db:migrate": "sequelize db:migrate",
+    "db:create": "sequelize db:create",
+    "db:drop": "sequelize db:drop"
   },
   "repository": {
     "type": "git",
