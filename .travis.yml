@@ -1,7 +1,6 @@
 language: node_js
 env:
-  - NODE_ENV=test
-    PORT=5000
+  - NODE_ENV=test_travis
 script:
   - yarn lint && yarn test
 after_success: yarn coverage
