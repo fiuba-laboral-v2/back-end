@@ -1,10 +1,10 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const Root = sequelize.define('Root', {
+  const Roots = sequelize.define('Roots', {
     title: DataTypes.STRING
   }, {});
-  Root.associate = function(models) {
+  Roots.associate = function(models) {
     // associations can be defined here
   };
-  return Root;
+  return Roots;
 };

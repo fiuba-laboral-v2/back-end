@@ -7,9 +7,9 @@ describe("Root path", () => {
   const dummyTest = { title: "test" } as any;
 
   beforeEach(() => {
-    return model.db.Root.destroy({ truncate: true })
+    return model.db.Roots.destroy({ truncate: true })
       .then(() => {
-        model.db.Root.create(dummyTest)
+        model.db.Roots.create(dummyTest)
           .then((record: any) => {
             dummyTest.id = record.id;
         });

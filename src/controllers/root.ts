@@ -4,8 +4,8 @@ import model from "../models";
 
 const rootController = {
   findById: (req: Request, res: Response) => {
-        model.db.Root
-            .find({ where: { id: req.params.id } })
+        model.db.Roots
+            .findOne({ where: { id: req.params.id } })
             .then((root: object) => {
               res
                 .status(OK)
@@ -18,7 +18,7 @@ const rootController = {
           });
     },
     index: (req: Request, res: Response) => {
-      model.db.Root
+      model.db.Roots
         .findAll({})
         .then((root: object) => {
           res
@@ -33,7 +33,7 @@ const rootController = {
     },
     create: (req: Request, res: Response) => {
         const { title } = req.body;
-        model.db.Root
+        model.db.Roots
           .create({
               title: title
           })
