@@ -3,7 +3,6 @@
 import fs from "fs";
 import path from "path";
 import { Sequelize } from "sequelize";
-const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || process.env.DEVELOPMENT;
 import databaseJSON from "../../config/database.json";
 
@@ -25,6 +24,8 @@ class Model {
     } else {
       sequelize = new Sequelize(config.database, config.username, config.password, config);
     }
+
+    const basename = path.basename(__filename);
 
     fs
       .readdirSync(__dirname)
