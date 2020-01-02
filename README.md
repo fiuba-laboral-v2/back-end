@@ -19,10 +19,15 @@ Trabajo Práctico Profesional, FIUBA, 2020
     NODE_ENV=<environment-name> yarn db:migrate
 ```
 
-If the database does not exist, the execute:
+If the database does not exist, then execute:
 
 ```
     NODE_ENV=<environment-name> yarn db:create
+```
+
+To drop the database, you can execute:
+```
+    NODE_ENV=<environment-name> yarn db:drop
 ```
 
 The environment names are:
