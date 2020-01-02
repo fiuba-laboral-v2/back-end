@@ -22,7 +22,7 @@
     "rimraf": "3.0.0",
     "@types/sequelize": "4.28.8",
     "sequelize": "4.41.0",
-    "sequelize-cli": "4.1.1",
+    "sequelize-cli": "5.5.1",
     "pg": "7.4.3",
     "typescript-logging": "0.6.4"
   },
@@ -55,9 +55,9 @@
     "lint": "yarn lint:src && yarn lint:test",
     "clean": "rimraf dist",
     "coveralls": "jest --coverage && cat ./tests/coverage/lcov.info | coveralls",
-    "db:migrate": "sequelize db:migrate",
-    "db:create": "sequelize db:create",
-    "db:drop": "sequelize db:drop"
+    "db:migrate": "node_modules/.bin/sequelize db:migrate",
+    "db:create": "node_modules/.bin/sequelize db:create",
+    "db:drop": "node_modules/.bin/sequelize db:drop"
   },
   "repository": {
     "type": "git",
