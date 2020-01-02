@@ -3,7 +3,7 @@
 import fs from "fs";
 import path from "path";
 import { Sequelize } from "sequelize";
-const env = process.env.NODE_ENV || process.env.DEVELOPMENT;
+const env = process.env.NODE_ENV || Environment.DEVELOPMENT;
 import databaseJSON from "../../config/database.json";
 
 
