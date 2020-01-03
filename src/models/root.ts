@@ -11,7 +11,7 @@ export interface RootsInstance {
   title: string;
 }
 
-module.exports = (sequelize: Sequelize, dataTypes: DataTypes) => {
+export default (sequelize: Sequelize, dataTypes: DataTypes) => {
   const Roots = sequelize.define("Roots", {
     title: dataTypes.STRING
   });
