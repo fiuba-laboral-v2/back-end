@@ -1,6 +1,6 @@
 import { Express, Router } from "express";
 import { json } from "body-parser";
-import rootController from "../controllers/root";
+import rootController from "../roots/roots_controller";
 
 const RootRoute =  {
   set: (app: Express) => {
