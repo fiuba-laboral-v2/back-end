@@ -2,14 +2,14 @@ import request from "supertest";
 import app from "../../src/app";
 import {OK, CREATED} from "http-status-codes";
 import Database from "../../src/config/database";
-import rootsRepository from "../../src/roots/roots_repository";
+import {RootsRepository} from "../../src/roots/roots_repository";
 
 describe("Root path", () => {
   const dummyTest = { title: "test" } as any;
 
   beforeEach(async () => {
-    await rootsRepository.truncate();
-    const record: any = await rootsRepository.create(dummyTest);
+    await RootsRepository.truncate();
+    const record: any = await RootsRepository.create(dummyTest);
     dummyTest.id = record.id;
   });
 

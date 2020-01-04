@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { OK, CREATED, INTERNAL_SERVER_ERROR } from "http-status-codes";
-import RootsRepository from "./roots_repository";
+import {RootsRepository} from "./roots_repository";
 
 const rootController = {
   findById: async (req: Request, res: Response) => {
