@@ -1,18 +1,15 @@
 {
   "staging": {
     "use_env_variable": "DATABASE_URL",
-    "dialect": "postgres",
-    "operatorsAliases": false
+    "dialect": "postgres"
   },
   "production": {
     "use_env_variable": "DATABASE_URL",
-    "dialect": "postgres",
-    "operatorsAliases": false
+    "dialect": "postgres"
   },
   "test_travis": {
     "use_env_variable": "DATABASE_URL",
-    "dialect": "postgres",
-    "operatorsAliases": false
+    "dialect": "postgres"
   },
   "test": {
     "username": "postgres",
@@ -20,8 +17,7 @@
     "database": "fiuba-laboral-v2-backend-database-postgres-test",
     "host": "localhost",
     "port": "5434",
-    "dialect": "postgres",
-    "operatorsAliases": false
+    "dialect": "postgres"
   },
   "development": {
     "username": "postgres",
@@ -29,7 +25,6 @@
     "database": "fiuba-laboral-v2-backend-database-postgres-development",
     "host": "localhost",
     "port": "5434",
-    "dialect": "postgres",
-    "operatorsAliases": false
+    "dialect": "postgres"
   }
 }
