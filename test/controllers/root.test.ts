@@ -2,17 +2,18 @@ import request from "supertest";
 import app from "../../src/app";
 import {OK, CREATED} from "http-status-codes";
 import model from "../../src/models";
+import rootsRepository from "../../src/roots/roots_repository";
 
 describe("Root path", () => {
   const dummyTest = { title: "test" } as any;
 
   beforeEach(() => {
-    return model.db.Roots.destroy({ truncate: true })
+    return rootsRepository.truncate()
       .then(() => {
-        model.db.Roots.create(dummyTest)
+        return rootsRepository.create(dummyTest)
           .then((record: any) => {
             dummyTest.id = record.id;
-        });
+          });
       });
   });
 
