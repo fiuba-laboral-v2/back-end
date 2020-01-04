@@ -1,7 +1,7 @@
 import request from "supertest";
 import app from "../../src/app";
 import {OK, CREATED} from "http-status-codes";
-import model from "../../src/models";
+import Database from "../../src/config/database";
 import rootsRepository from "../../src/roots/roots_repository";
 
 describe("Root path", () => {
@@ -18,7 +18,7 @@ describe("Root path", () => {
   });
 
   afterAll(() => {
-    return model.close();
+    return Database.close();
   });
 
   describe("GET", () => {
