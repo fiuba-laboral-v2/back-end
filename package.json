@@ -61,6 +61,7 @@
     "lint:src": "tslint -c tslint.json 'src/**/*.ts'",
     "lint:test": "tslint -c tslint.json 'test/**/*.ts'",
     "lint": "yarn lint:src && yarn lint:test",
+    "check-unstaged": "if [[ $(git ls-files --others --modified --exclude-standard) ]]; then echo '\\nERROR: There are unstaged changes\\n' && exit 1; fi",
     "clean": "rimraf dist",
     "coveralls": "jest --coverage && cat ./tests/coverage/lcov.info | coveralls",
     "db:migrate": "node_modules/.bin/sequelize db:migrate",
@@ -79,7 +80,7 @@
   "homepage": "https://github.com/fiuba-laboral-v2/back-end#readme",
   "husky": {
     "hooks": {
-      "pre-commit": "git stash -u --keep-index && yarn lint && git stash pop"
+      "pre-commit": "yarn check-unstaged && yarn lint && yarn test"
     }
   }
 }
