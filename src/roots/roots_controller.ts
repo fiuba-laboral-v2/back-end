@@ -1,5 +1,5 @@
 import {Request, Response} from "express";
-import {OK, CREATED, INTERNAL_SERVER_ERROR} from "http-status-codes";
+import {OK, CREATED, INTERNAL_SERVER_ERROR, BAD_REQUEST} from "http-status-codes";
 import {RootsRepository} from "./roots_repository";
 import Roots from "./roots";
 
@@ -23,7 +23,11 @@ const rootController = {
       const root = new Roots(req.body);
       return res.status(CREATED).json({data: await RootsRepository.save(root)});
     } catch (exception) {
-      return res.status(INTERNAL_SERVER_ERROR).json({error: "An internal error has occurred"});
+      if (exception.constructor.name === "ValidationError") {
+        return res.status(BAD_REQUEST).json({error: exception});
+      } else {
+        return res.status(INTERNAL_SERVER_ERROR).json({error: exception});
+      }
     }
   }
 };
