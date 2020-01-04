@@ -3,13 +3,15 @@ import app from "../../src/app";
 import {OK, CREATED} from "http-status-codes";
 import Database from "../../src/config/database";
 import {RootsRepository} from "../../src/roots/roots_repository";
+import Roots from "../../src/roots/roots";
 
 describe("Root path", () => {
   const dummyTest = { title: "test" } as any;
 
   beforeEach(async () => {
     await RootsRepository.truncate();
-    const record: any = await RootsRepository.create(dummyTest);
+    const root = new Roots(dummyTest);
+    const record: any = await RootsRepository.create(root);
     dummyTest.id = record.id;
   });
 

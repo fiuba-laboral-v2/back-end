@@ -7,8 +7,8 @@ export const RootsRepository = {
   findAll: async () => {
     return Roots.findAll({});
   },
-  create: async (record: object) => {
-    return Roots.create(record);
+  create: async (root: Roots) => {
+    return root.save();
   },
   truncate: async () => {
     return Roots.destroy({truncate: true});
