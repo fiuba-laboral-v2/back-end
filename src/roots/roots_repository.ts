@@ -2,11 +2,11 @@ import Roots from "./roots";
 
 export const RootsRepository = {
   findById: async (id: string) => {
-      try {
-        return await Roots.findOne({ where: { id: id } });
-      } catch (e) {
-        throw e;
-      }
+    try {
+      return await Roots.findOne({where: {id: id}});
+    } catch (e) {
+      throw e;
+    }
   },
   findAll: async () => {
     try {
@@ -24,7 +24,7 @@ export const RootsRepository = {
   },
   truncate: async () => {
     try {
-      return await Roots.destroy({ truncate: true });
+      return await Roots.destroy({truncate: true});
     } catch (e) {
       throw e;
     }
