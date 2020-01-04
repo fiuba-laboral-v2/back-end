@@ -18,6 +18,10 @@ describe("Root path", () => {
     return Database.close();
   });
 
+  beforeAll(() => {
+    Database.setConnection();
+  });
+
   describe("GET", () => {
     test("It should give an OK status", async () => {
       await RootsRepository.save(root);
