@@ -3,35 +3,26 @@ import { OK, CREATED, INTERNAL_SERVER_ERROR } from "http-status-codes";
 import RootsRepository from "./roots_repository";
 
 const rootController = {
-  findById: (req: Request, res: Response) => {
-    RootsRepository
-      .findById(req.params.id)
-      .then(record => {
-        res.status(OK).json({ data: record });
-      })
-      .catch(error => {
-        res.status(INTERNAL_SERVER_ERROR).json({ data: error });
-      });
+  findById: async (req: Request, res: Response) => {
+    try {
+      return res.status(OK).json({ data: await RootsRepository.findById(req.params.id) });
+    } catch (e) {
+      return res.status(INTERNAL_SERVER_ERROR).json({ data: e });
+    }
   },
-  index: (req: Request, res: Response) => {
-    RootsRepository
-      .findAll()
-      .then(records => {
-        res.status(OK).json({ data: records });
-      })
-      .catch(error => {
-        res.status(INTERNAL_SERVER_ERROR).json({ data: error });
-      });
+  index: async (req: Request, res: Response) => {
+    try {
+      return res.status(OK).json({ data: await RootsRepository.findAll() });
+    } catch (e) {
+     return res.status(INTERNAL_SERVER_ERROR).json({ data: e });
+    }
   },
-  create: (req: Request, res: Response) => {
-    RootsRepository
-      .create(req.body)
-      .then(record => {
-        res.status(CREATED).json({ data: record });
-      })
-      .catch(error => {
-        res.status(INTERNAL_SERVER_ERROR).json({ data: error });
-      });
+  create: async (req: Request, res: Response) => {
+    try {
+      return res.status(CREATED).json({ data: await RootsRepository.create(req.body) });
+    } catch (e) {
+     return res.status(INTERNAL_SERVER_ERROR).json({ data: e });
+    }
   }
 };
 

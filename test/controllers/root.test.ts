@@ -7,14 +7,10 @@ import rootsRepository from "../../src/roots/roots_repository";
 describe("Root path", () => {
   const dummyTest = { title: "test" } as any;
 
-  beforeEach(() => {
-    return rootsRepository.truncate()
-      .then(() => {
-        return rootsRepository.create(dummyTest)
-          .then((record: any) => {
-            dummyTest.id = record.id;
-          });
-      });
+  beforeEach(async () => {
+    await rootsRepository.truncate();
+    const record: any = await rootsRepository.create(dummyTest);
+    dummyTest.id = record.id;
   });
 
   afterAll(() => {
