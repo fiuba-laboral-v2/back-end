@@ -4,4 +4,5 @@ WORKDIR /usr/src/app
 COPY . ./
 RUN rm -rf node_modules
 RUN  yarn install
+EXPOSE 5434
 CMD ["yarn", "start"]
