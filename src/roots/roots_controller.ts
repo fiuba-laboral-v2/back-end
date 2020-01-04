@@ -21,7 +21,7 @@ const rootController = {
   create: async (req: Request, res: Response) => {
     try {
       const root = new Roots(req.body);
-      return res.status(CREATED).json({data: await RootsRepository.create(root)});
+      return res.status(CREATED).json({data: await RootsRepository.save(root)});
     } catch (exception) {
       return res.status(INTERNAL_SERVER_ERROR).json({error: "An internal error has occurred"});
     }

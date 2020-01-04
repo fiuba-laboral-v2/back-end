@@ -7,7 +7,7 @@ export const RootsRepository = {
   findAll: async () => {
     return Roots.findAll({});
   },
-  create: async (root: Roots) => {
+  save: async (root: Roots) => {
     return root.save();
   },
   truncate: async () => {

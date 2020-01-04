@@ -11,7 +11,7 @@ describe("Root path", () => {
   beforeEach(async () => {
     await RootsRepository.truncate();
     const root = new Roots(dummyTest);
-    const record: any = await RootsRepository.create(root);
+    const record: any = await RootsRepository.save(root);
     dummyTest.id = record.id;
   });
 
