@@ -1,32 +1,32 @@
-import { QueryInterface, SequelizeStatic } from "sequelize";
+import { QueryInterface, INTEGER, STRING, DATE } from "sequelize";
 
 export = {
-  up: (queryInterface: QueryInterface, Sequelize: SequelizeStatic) => {
+  up: (queryInterface: QueryInterface) => {
     return queryInterface.createTable("Roots", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: INTEGER
       },
 
       title: {
-        type: Sequelize.STRING
+        type: STRING
       },
 
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: DATE
       },
 
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: DATE
       }
     });
   },
 
-  down: (queryInterface: QueryInterface, Sequelize: SequelizeStatic) => {
+  down: (queryInterface: QueryInterface) => {
     return queryInterface.dropTable("Roots");
   }
 };
