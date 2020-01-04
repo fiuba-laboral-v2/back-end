@@ -7,12 +7,11 @@ import Roots from "../../src/roots/roots";
 
 describe("Root path", () => {
   const dummyTest = { title: "test" } as any;
+  let root: Roots;
 
   beforeEach(async () => {
     await RootsRepository.truncate();
-    const root = new Roots(dummyTest);
-    const record: any = await RootsRepository.save(root);
-    dummyTest.id = record.id;
+    root = new Roots(dummyTest);
   });
 
   afterAll(() => {
@@ -21,13 +20,15 @@ describe("Root path", () => {
 
   describe("GET", () => {
     test("It should give an OK status", async () => {
+      await RootsRepository.save(root);
       const response = await request(app).get("/");
       expect(response.status).toEqual(OK);
       expect(response.body.data.length).toEqual(1);
     });
 
     test("It should give an OK status and return by id", async () => {
-      const response = await request(app).get(`/${dummyTest.id}`);
+      const record: Roots = await RootsRepository.save(root);
+      const response = await request(app).get(`/${record.id}`);
       expect(response.status).toEqual(OK);
       expect(response.body.data.title).toEqual(dummyTest.title);
     });
