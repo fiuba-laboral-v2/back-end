@@ -2,16 +2,16 @@ import Database from "../../src/config/database";
 import Roots from "../../src/roots/roots";
 
 describe("Roots Model", () => {
-  afterEach(async () => {
+  beforeEach(async () => {
     await Roots.destroy({truncate: true});
     return;
   });
 
-  afterAll(async () => {
+  afterAll(() => {
     return Database.close();
   });
 
-  beforeAll(async () => {
+  beforeAll( () => {
     return Database.setConnection();
   });
 

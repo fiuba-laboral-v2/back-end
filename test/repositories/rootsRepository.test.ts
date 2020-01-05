@@ -3,16 +3,16 @@ import {RootsRepository} from "../../src/roots/roots_repository";
 import Roots from "../../src/roots/roots";
 
 describe("Root Repository", () => {
-  afterEach(async () => {
+  beforeEach(async () => {
     await RootsRepository.truncate();
     return;
   });
 
-  afterAll(async () => {
+  afterAll(() => {
     return Database.close();
   });
 
-  beforeAll(async () => {
+  beforeAll(() => {
     return Database.setConnection();
   });
 
@@ -38,14 +38,13 @@ describe("Root Repository", () => {
       return;
     });
     test("It should retrieve one root", async () => {
-      await RootsRepository.save(new Roots({title: "first root"}) );
+      await RootsRepository.save(new Roots({title: "first root"}));
       const roots = await RootsRepository.findAll();
       expect(roots.length).toEqual(1);
       return;
     });
     test("It should retrieve one root by id", async () => {
-      const expected: Roots = new Roots({title: "first root"});
-      await RootsRepository.save(expected);
+      const expected: Roots = await RootsRepository.save(new Roots({title: "root by id"}));
       const actual = await RootsRepository.findById(expected.id);
       expect(actual).not.toBeNull();
       expect(actual!.id).toEqual(expected.id);

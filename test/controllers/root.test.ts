@@ -6,23 +6,22 @@ import {RootsRepository} from "../../src/roots/roots_repository";
 import Roots from "../../src/roots/roots";
 
 describe("Root path", () => {
-  afterEach(async () => {
+  beforeEach(async () => {
     await RootsRepository.truncate();
     return;
   });
 
-  afterAll(async () => {
+  afterAll(() => {
     return Database.close();
   });
 
-  beforeAll(async () => {
+  beforeAll(() => {
     return Database.setConnection();
   });
 
   describe("GET", () => {
     test("It should give an OK status", async () => {
-      const root: Roots = new Roots({title: "test"});
-      await RootsRepository.save(root);
+      await RootsRepository.save(new Roots({title: "test"}));
       const response = await request(app).get("/");
       expect(response.status).toEqual(OK);
       expect(response.body.data.length).toEqual(1);
