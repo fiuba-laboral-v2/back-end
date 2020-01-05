@@ -1,8 +1,8 @@
 import request from "supertest";
 import app from "../../src/app";
-import {OK, CREATED, BAD_REQUEST} from "http-status-codes";
+import { OK, CREATED, BAD_REQUEST } from "http-status-codes";
 import Database from "../../src/config/database";
-import {RootsRepository} from "../../src/roots/roots_repository";
+import { RootsRepository } from "../../src/roots/roots_repository";
 import Roots from "../../src/roots/roots";
 
 describe("Root path", () => {

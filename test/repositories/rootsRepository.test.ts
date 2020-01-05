@@ -1,5 +1,5 @@
 import Database from "../../src/config/database";
-import {RootsRepository} from "../../src/roots/roots_repository";
+import { RootsRepository } from "../../src/roots/roots_repository";
 import Roots from "../../src/roots/roots";
 
 describe("Root Repository", () => {

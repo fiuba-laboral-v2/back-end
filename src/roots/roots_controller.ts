@@ -1,6 +1,6 @@
-import {Request, Response} from "express";
-import {OK, CREATED, INTERNAL_SERVER_ERROR, BAD_REQUEST} from "http-status-codes";
-import {RootsRepository} from "./roots_repository";
+import { Request, Response } from "express";
+import { OK, CREATED, INTERNAL_SERVER_ERROR, BAD_REQUEST } from "http-status-codes";
+import { RootsRepository } from "./roots_repository";
 import Roots from "./roots";
 
 const rootController = {

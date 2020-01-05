@@ -1,4 +1,4 @@
-import {Table, Column, Model, DataType, AllowNull} from "sequelize-typescript";
+import { Table, Column, Model, DataType, AllowNull } from "sequelize-typescript";
 
 @Table
 export default class Roots extends Model<Roots> {
