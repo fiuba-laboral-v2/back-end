@@ -1,16 +1,16 @@
-import Roots from "./roots";
+import Root from "./root";
 
 export const RootsRepository = {
   findById: async (id: string) => {
-    return Roots.findOne({where: {id: id}});
+    return Root.findOne({where: {id: id}});
   },
   findAll: async () => {
-    return Roots.findAll({});
+    return Root.findAll({});
   },
-  save: async (root: Roots) => {
+  save: async (root: Root) => {
     return root.save();
   },
   truncate: async () => {
-    return Roots.destroy({truncate: true});
+    return Root.destroy({truncate: true});
   }
 };

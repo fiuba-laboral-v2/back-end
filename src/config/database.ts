@@ -1,7 +1,7 @@
 import { Sequelize } from "sequelize-typescript";
 import Environment from "../config/environment/environment";
 import databaseJSON from "../../config/database.json";
-import Roots from "../roots/roots";
+import Root from "../roots/root";
 
 
 export default class Database {
@@ -18,6 +18,6 @@ export default class Database {
     } else {
       this.sequelize = new Sequelize(config.database, config.username, config.password, config);
     }
-    this.sequelize.addModels([Roots]);
+    this.sequelize.addModels([Root]);
   }
 }

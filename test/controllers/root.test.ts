@@ -3,7 +3,7 @@ import app from "../../src/app";
 import { OK, CREATED, BAD_REQUEST } from "http-status-codes";
 import Database from "../../src/config/database";
 import { RootsRepository } from "../../src/roots/roots_repository";
-import Roots from "../../src/roots/roots";
+import Root from "../../src/roots/root";
 
 describe("Root path", () => {
   beforeEach(async () => {
@@ -21,7 +21,7 @@ describe("Root path", () => {
 
   describe("GET", () => {
     test("It should give an OK status", async () => {
-      await RootsRepository.save(new Roots({title: "test"}));
+      await RootsRepository.save(new Root({title: "test"}));
       const response = await request(app).get("/");
       expect(response.status).toEqual(OK);
       expect(response.body.data.length).toEqual(1);
@@ -30,7 +30,7 @@ describe("Root path", () => {
     });
 
     test("It should give an OK status and return by id", async () => {
-      const root: Roots = await RootsRepository.save(new Roots({title: "return by id"}));
+      const root: Root = await RootsRepository.save(new Root({title: "return by id"}));
       const response = await request(app).get(`/${root.id}`);
       expect(response.status).toEqual(OK);
       expect(response.body.data.title).toEqual(root.title);

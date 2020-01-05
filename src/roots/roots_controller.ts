@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { OK, CREATED, INTERNAL_SERVER_ERROR, BAD_REQUEST } from "http-status-codes";
 import { RootsRepository } from "./roots_repository";
-import Roots from "./roots";
+import Root from "./root";
 
 const rootController = {
   findById: async (req: Request, res: Response) => {
@@ -20,7 +20,7 @@ const rootController = {
   },
   create: async (req: Request, res: Response) => {
     try {
-      const root = new Roots(req.body);
+      const root = new Root(req.body);
       return res.status(CREATED).json({data: await RootsRepository.save(root)});
     } catch (exception) {
       if (exception.constructor.name === "ValidationError") {

@@ -1,9 +1,9 @@
 import Database from "../../src/config/database";
-import Roots from "../../src/roots/roots";
+import Root from "../../src/roots/root";
 
 describe("Roots Model", () => {
   beforeEach(async () => {
-    await Roots.destroy({truncate: true});
+    await Root.destroy({truncate: true});
     return;
   });
 
@@ -17,14 +17,14 @@ describe("Roots Model", () => {
 
   describe("create", () => {
     test("It should create a valid new root", async () => {
-      const root: Roots = new Roots({title: "some title"});
+      const root: Root = new Root({title: "some title"});
       expect(root).not.toBeNull();
       expect(root).not.toBeUndefined();
       expect(root.title).toEqual("some title");
       return;
     });
     test("It should raise an error if title is null", async () => {
-      const root: Roots = new Roots({title: null});
+      const root: Root = new Root({title: null});
       await expect(root.save()).rejects.toThrow();
       return;
     });

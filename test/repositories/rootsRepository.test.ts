@@ -1,6 +1,6 @@
 import Database from "../../src/config/database";
 import { RootsRepository } from "../../src/roots/roots_repository";
-import Roots from "../../src/roots/roots";
+import Root from "../../src/roots/root";
 
 describe("Root Repository", () => {
   beforeEach(async () => {
@@ -18,14 +18,14 @@ describe("Root Repository", () => {
 
   describe("create", () => {
     test("It should create a new root", async () => {
-      const root: Roots = new Roots({title: "some title"});
+      const root: Root = new Root({title: "some title"});
       const roots = await RootsRepository.save(root);
       expect(roots.title).toEqual(root.title);
       expect(roots.id).toEqual(root.id);
       return;
     });
     test("It should raise an error", async () => {
-      const root: Roots = new Roots({title: null});
+      const root: Root = new Root({title: null});
       await expect(RootsRepository.save(root)).rejects.toThrow();
       return;
     });
@@ -38,13 +38,13 @@ describe("Root Repository", () => {
       return;
     });
     test("It should retrieve one root", async () => {
-      await RootsRepository.save(new Roots({title: "first root"}));
+      await RootsRepository.save(new Root({title: "first root"}));
       const roots = await RootsRepository.findAll();
       expect(roots.length).toEqual(1);
       return;
     });
     test("It should retrieve one root by id", async () => {
-      const expected: Roots = await RootsRepository.save(new Roots({title: "root by id"}));
+      const expected: Root = await RootsRepository.save(new Root({title: "root by id"}));
       const actual = await RootsRepository.findById(expected.id);
       expect(actual).not.toBeNull();
       expect(actual!.id).toEqual(expected.id);
