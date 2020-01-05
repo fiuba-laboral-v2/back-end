@@ -62,7 +62,10 @@
     "coveralls": "jest --coverage && cat ./tests/coverage/lcov.info | coveralls",
     "db:migrate": "node_modules/.bin/sequelize db:migrate",
     "db:create": "node_modules/.bin/sequelize db:create",
-    "db:drop": "node_modules/.bin/sequelize db:drop"
+    "db:drop": "node_modules/.bin/sequelize db:drop",
+    "db:test:migrate": "NODE_ENV=test node_modules/.bin/sequelize db:migrate",
+    "db:test:create": "NODE_ENV=test node_modules/.bin/sequelize db:create",
+    "db:test:drop": "NODE_ENV=test node_modules/.bin/sequelize db:drop"
   },
   "repository": {
     "type": "git",
