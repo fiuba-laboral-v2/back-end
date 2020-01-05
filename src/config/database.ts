@@ -1,6 +1,5 @@
 import { Sequelize } from "sequelize-typescript";
 import Environment from "../config/environment/environment";
-const env = Environment.NODE_ENV;
 import databaseJSON from "../../config/database.json";
 import Roots from "../roots/roots";
 
@@ -13,7 +12,7 @@ export default class Database {
   }
 
   public static setConnection() {
-    const config = databaseJSON[env];
+    const config = databaseJSON[Environment.NODE_ENV];
     if (config.use_env_variable) {
       this.sequelize = new Sequelize(Environment.DATABASE_URL, config);
     } else {
