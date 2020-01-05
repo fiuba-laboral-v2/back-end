@@ -15,24 +15,20 @@ Trabajo Práctico Profesional, FIUBA, 2020
 
 ## Migrations
 
-```
-    NODE_ENV=<environment-name> yarn db:migrate
-```
+### Development
 
-If the database does not exist, then execute:
+ - `yarn db:test:migrate`: Runs the migrations
+ - `yarn db:test:create`: Creates the database
+ - `yarn db:test:drop`: Drop the database
 
-```
-    NODE_ENV=<environment-name> yarn db:create
-```
 
-To drop the database, you can execute:
-```
-    NODE_ENV=<environment-name> yarn db:drop
-```
+### Test
 
-The environment names are:
-- test
-- development
+To run test db migrations, you can use the following commands:
+ 
+ - `yarn db:test:migrate`
+ - `yarn db:test:migrate`
+ - `yarn db:test:migrate`
 
 In the project directory, you can run:
 
