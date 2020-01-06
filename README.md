@@ -9,7 +9,7 @@ Trabajo Práctico Profesional, FIUBA, 2020
 
 # Get started
 
-```bash
+```
     yarn install
 ```
 
@@ -17,10 +17,9 @@ Trabajo Práctico Profesional, FIUBA, 2020
 
 ### Development
 
- - `yarn db:test:migrate`: Runs the migrations
- - `yarn db:test:create`: Creates the database
- - `yarn db:test:drop`: Drop the database
-
+ - `yarn db:migrate`: Runs the migrations
+ - `yarn db:create`: Creates the database
+ - `yarn db:drop`: Drops the database
 
 ### Test
 
