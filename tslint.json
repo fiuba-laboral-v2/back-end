@@ -1,7 +1,3 @@
 {
-  "extends": "tslint-config-fiuba-laboral-v2",
-  "rules": {
-    "object-literal-shorthand": false,
-    "interface-name": false
-  }
+  "extends": "tslint-config-fiuba-laboral-v2"
 }
