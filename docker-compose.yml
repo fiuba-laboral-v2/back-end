@@ -1,0 +1,13 @@
+version: '3.2'
+services:
+  fiuba-laboral-v2-backend:
+    build: .
+    command: yarn dev
+    image: fiuba-laboral-v2-backend-img
+    container_name: "fiuba-laboral-v2-backend"
+    ports:
+      - 5000:5000
+    volumes:
+      - '.:/usr/src/app'
+    environment:
+      "NODE_ENV": "development"

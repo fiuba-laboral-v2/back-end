@@ -13,6 +13,23 @@ Trabajo Práctico Profesional, FIUBA, 2020
     yarn install
 ```
 
+## Migrations
+
+### Development
+
+ - `yarn db:test:migrate`: Runs the migrations
+ - `yarn db:test:create`: Creates the database
+ - `yarn db:test:drop`: Drop the database
+
+
+### Test
+
+To run test db migrations, you can use the following commands:
+ 
+ - `yarn db:test:migrate`
+ - `yarn db:test:migrate`
+ - `yarn db:test:migrate`
+
 In the project directory, you can run:
 
 ### `yarn dev`
@@ -23,15 +40,21 @@ Open [http://localhost:5000](http://localhost:5000) to view it in the browser.
 The page will reload if you make edits.<br />
 You will also see any lint errors in the console.
 
-### `yarn lint`
+### Linter
 
-Runs the linter
+```
+    yarn lint
+```
 
-### `yarn test`
+### Test
+```
+    yarn test
+```
 
-Runs the test suite
+### Build
+```
+    yarn build
+```
 
-### `yarn build`
-
-Builds the app for production to the `build` folder.<br />
+Builds the app for production to the `dist` folder.<br />
 Then run it with `yarn start`
