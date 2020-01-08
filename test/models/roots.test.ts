@@ -1,5 +1,5 @@
 import Database from "../../src/config/database";
-import Root from "../../src/roots/root";
+import { Root } from "../../src/models/roots";
 
 describe("Roots Model", () => {
   beforeEach(async () => {
