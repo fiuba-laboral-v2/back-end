@@ -7,7 +7,7 @@ const Root =`
   }
 
   extend type Query {
-    getRootById(id: ID): Root
+    getRootById(id: ID!): Root
   }
 
   extend type Mutation {
