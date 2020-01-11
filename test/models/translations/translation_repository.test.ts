@@ -14,5 +14,11 @@ describe("TranslationRepository", () => {
         TranslationRepository.translate(path);
       }).toThrow(`Missing translation: ${path}`);
     });
+
+    test("it gets a nested element in default transitions yml", () => {
+      expect(
+        TranslationRepository.translate("applicant.apply")
+      ).toEqual("Postularme");
+    });
   });
 });
