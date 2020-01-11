@@ -7,6 +7,8 @@ export const TranslationRepository = {
    * given a dot-separated path (eg: "home.welcome").
    */
   translate: (path: string) => {
-    return get(defaultTranslations, path);
+    const translation = get(defaultTranslations, path);
+    if (translation === undefined) throw new Error(`Missing translation: ${path}`);
+    return translation;
   }
 };
