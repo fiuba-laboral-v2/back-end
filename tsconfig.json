@@ -1,9 +1,11 @@
 {
   "compilerOptions": {
+    "baseUrl": "",
+    "outDir": "./dist",
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "module": "esnext",
+    "module": "commonjs",
     "target": "es6",
     "lib": ["es6", "dom"],
     "sourceMap": true,
@@ -22,6 +24,9 @@
   "exclude": [
     "node_modules",
     "dist",
-    "build"
+    "build",
+    "coverage",
+    "test",
+    "jest.config.js"
   ]
 }
