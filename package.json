@@ -59,7 +59,7 @@
     "lint": "yarn lint:src && yarn lint:test",
     "stash": "git stash -u --keep-index",
     "unstash": "git stash pop",
-    "check-unstaged": "if [[ $(git ls-files --others --modified --exclude-standard) ]]; then echo '\\nERROR: There are unstaged changes.\\nRun \"yarn stash\", commit, and then run \"yarn unstash\".\\n' && exit 1; fi",
+    "check-unstaged": "bash check_unstaged.sh",
     "clean": "rimraf dist",
     "coveralls": "jest --coverage && cat ./tests/coverage/lcov.info | coveralls",
     "db:migrate": "yarn build && node_modules/.bin/sequelize db:migrate",
