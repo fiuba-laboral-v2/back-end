@@ -17,7 +17,7 @@ apps:
       production:
         user: ubuntu
         host:
-          - 192.168.0.13
+          - http://laboral.fi.uba.ar
         ref: origin/master
         repo: git@github.com:fiuba-laboral-v2/back-end.git
         path: $HOME/fiuba-laboral-v2/back-end
@@ -30,7 +30,7 @@ apps:
       staging:
         user: ubuntu
         host:
-          - 192.168.0.13
+          - http://antiguos.fi.uba.ar
         ref: origin/staging
         repo: git@github.com:fiuba-laboral-v2/back-end.git
         path: $HOME/fiuba-laboral-v2/back-end
@@ -43,7 +43,7 @@ apps:
       development:
         user: ubuntu
         host:
-          - 192.168.0.13
+          - localhost
         ref: origin/feature/16-deploy
         repo: git@github.com:fiuba-laboral-v2/back-end.git
         path: $HOME/fiuba-laboral-v2/back-end
