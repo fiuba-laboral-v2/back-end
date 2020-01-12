@@ -13,43 +13,43 @@ apps:
         NODE_ENV: development
     env_test:
         NODE_ENV: test
-    deploy:
-      production:
-        user: ubuntu
-        host:
-          - http://laboral.fi.uba.ar
-        ref: origin/master
-        repo: git@github.com:fiuba-laboral-v2/back-end.git
-        path: $HOME/fiuba-laboral-v2/back-end
-        ssh_options:
-          - StrictHostKeyChecking=no
-          - PasswordAuthentication=no
-        post-deploy: "yarn install; yarn db:migrate; pm2 startOrRestart process.yml --env production; pm2 save"
-        env:
-          NODE_ENV: production
-      staging:
-        user: ubuntu
-        host:
-          - http://antiguos.fi.uba.ar
-        ref: origin/staging
-        repo: git@github.com:fiuba-laboral-v2/back-end.git
-        path: $HOME/fiuba-laboral-v2/back-end
-        ssh_options:
-          - StrictHostKeyChecking=no
-          - PasswordAuthentication=no
-        post-deploy: "yarn install; yarn db:migrate; pm2 startOrRestart process.yml --env staging; pm2 save"
-        env:
-          NODE_ENV: staging
-      development:
-        user: ubuntu
-        host:
-          - localhost
-        ref: origin/feature/16-deploy
-        repo: git@github.com:fiuba-laboral-v2/back-end.git
-        path: $HOME/fiuba-laboral-v2/back-end
-        ssh_options:
-          - StrictHostKeyChecking=no
-          - PasswordAuthentication=no
-        post-deploy: "yarn install; yarn db:migrate; pm2 startOrRestart process.yml --env development; pm2 save"
-        env:
-          NODE_ENV: development
+deploy:
+  production:
+    user: ubuntu
+    host:
+      - http://laboral.fi.uba.ar
+    ref: origin/master
+    repo: git@github.com:fiuba-laboral-v2/back-end.git
+    path: $HOME/fiuba-laboral-v2/back-end
+    ssh_options:
+      - StrictHostKeyChecking=no
+      - PasswordAuthentication=no
+    post-deploy: "yarn install; yarn db:migrate; pm2 startOrRestart config/process.yml --env production; pm2 save"
+    env:
+      NODE_ENV: production
+  staging:
+    user: ubuntu
+    host:
+      - http://antiguos.fi.uba.ar
+    ref: origin/staging
+    repo: git@github.com:fiuba-laboral-v2/back-end.git
+    path: $HOME/fiuba-laboral-v2/back-end
+    ssh_options:
+      - StrictHostKeyChecking=no
+      - PasswordAuthentication=no
+    post-deploy: "yarn install; yarn db:migrate; pm2 startOrRestart config/process.yml --env staging; pm2 save"
+    env:
+      NODE_ENV: staging
+  development:
+    user: ubuntu
+    host:
+      - localhost
+    ref: origin/feature/16-deploy
+    repo: git@github.com:fiuba-laboral-v2/back-end.git
+    path: $HOME/fiuba-laboral-v2/back-end
+    ssh_options:
+      - StrictHostKeyChecking=no
+      - PasswordAuthentication=no
+    post-setup: "yarn install; yarn db:migrate; pm2 startOrRestart config/process.yml --env development; pm2 save"
+    env:
+      NODE_ENV: development
