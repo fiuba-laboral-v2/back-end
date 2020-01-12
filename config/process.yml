@@ -1,0 +1,55 @@
+apps:
+  - script: ./dist/src/index.js
+    name: 'fiuba-laboral-v2-back-end'
+    instances: max
+    exec_mode: cluster
+    watch: true
+    max_memory_restart: 150M
+    env:
+        NODE_ENV: production
+    env_staging:
+        NODE_ENV: staging
+    env_development:
+        NODE_ENV: development
+    env_test:
+        NODE_ENV: test
+    deploy:
+      production:
+        user: ubuntu
+        host:
+          - 192.168.0.13
+        ref: origin/master
+        repo: git@github.com:fiuba-laboral-v2/back-end.git
+        path: $HOME/fiuba-laboral-v2/back-end
+        ssh_options:
+          - StrictHostKeyChecking=no
+          - PasswordAuthentication=no
+        post-deploy: "yarn install; yarn db:migrate; pm2 startOrRestart process.yml --env production; pm2 save"
+        env:
+          NODE_ENV: production
+      staging:
+        user: ubuntu
+        host:
+          - 192.168.0.13
+        ref: origin/staging
+        repo: git@github.com:fiuba-laboral-v2/back-end.git
+        path: $HOME/fiuba-laboral-v2/back-end
+        ssh_options:
+          - StrictHostKeyChecking=no
+          - PasswordAuthentication=no
+        post-deploy: "yarn install; yarn db:migrate; pm2 startOrRestart process.yml --env staging; pm2 save"
+        env:
+          NODE_ENV: staging
+      development:
+        user: ubuntu
+        host:
+          - 192.168.0.13
+        ref: origin/feature/16-deploy
+        repo: git@github.com:fiuba-laboral-v2/back-end.git
+        path: $HOME/fiuba-laboral-v2/back-end
+        ssh_options:
+          - StrictHostKeyChecking=no
+          - PasswordAuthentication=no
+        post-deploy: "yarn install; yarn db:migrate; pm2 startOrRestart process.yml --env development; pm2 save"
+        env:
+          NODE_ENV: development
