@@ -24,8 +24,8 @@ deploy:
     ssh_options:
       - StrictHostKeyChecking=no
       - PasswordAuthentication=no
-    post-setup: yarn install && yarn db:create &&  yarn db:migrate && pm2 startOrRestart config/process.yml --env production && pm2 save
-    post-setup: yarn install && yarn db:migrate && pm2 startOrRestart config/process.yml --env production && pm2 save
+    post-setup: yarn install && yarn db:create; yarn db:migrate && pm2 startOrRestart config/process.yml --env production && pm2 save
+    post-deploy: yarn install && yarn db:migrate && pm2 startOrRestart config/process.yml --env production && pm2 save
     env:
       NODE_ENV: production
   staging:
@@ -38,8 +38,8 @@ deploy:
     ssh_options:
       - StrictHostKeyChecking=no
       - PasswordAuthentication=no
-    post-setup: yarn install && yarn db:create && yarn db:migrate && pm2 startOrRestart config/process.yml --env staging && pm2 save
-    post-setup: yarn install && yarn db:migrate && pm2 startOrRestart config/process.yml --env staging && pm2 save
+    post-setup: yarn install && yarn db:create; yarn db:migrate && pm2 startOrRestart config/process.yml --env staging && pm2 save
+    post-deploy: yarn install && yarn db:migrate && pm2 startOrRestart config/process.yml --env staging && pm2 save
     env:
       NODE_ENV: staging
   development:
@@ -52,7 +52,7 @@ deploy:
     ssh_options:
       - StrictHostKeyChecking=no
       - PasswordAuthentication=no
-    post-setup: yarn install && yarn db:create && yarn db:migrate && pm2 startOrRestart config/process.yml --env development && pm2 save
+    post-setup: yarn install && yarn db:create; yarn db:migrate && pm2 startOrRestart config/process.yml --env development && pm2 save
     post-deploy: yarn install && yarn db:migrate && pm2 startOrRestart config/process.yml --env development && pm2 save
     env:
       NODE_ENV: development
