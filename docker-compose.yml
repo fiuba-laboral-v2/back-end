@@ -1,13 +1,26 @@
-version: '3.2'
+version: '3.4'
 services:
   fiuba-laboral-v2-backend:
     build: .
-    command: yarn dev
+    command: yarn start:pm2
     image: fiuba-laboral-v2-backend-img
     container_name: "fiuba-laboral-v2-backend"
     ports:
       - 5000:5000
     volumes:
       - '.:/usr/src/app'
+    depends_on:
+      - fiuba-laboral-v2-backend-database-postgres
+  fiuba-laboral-v2-backend-database-postgres:
+    image: postgres:latest
+    container_name: fiuba-laboral-v2-backend-database-postgres
+    volumes:
+      - ./data/db:/usr/data/db
+    ports:
+      - 5432:5432
     environment:
-      "NODE_ENV": "development"
+      POSTGRES_DB: fiuba-laboral-v2-backend-database-postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_HOST: 127.0.0.1

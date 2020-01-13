@@ -79,7 +79,8 @@
     "db:drop": "node_modules/.bin/sequelize db:drop",
     "db:test:migrate": "yarn build && NODE_ENV=test node_modules/.bin/sequelize db:migrate",
     "db:test:create": "NODE_ENV=test node_modules/.bin/sequelize db:create",
-    "db:test:drop": "NODE_ENV=test node_modules/.bin/sequelize db:drop"
+    "db:test:drop": "NODE_ENV=test node_modules/.bin/sequelize db:drop",
+    "start:pm2": "yarn build && pm2 start --no-daemon config/process.yml"
   },
   "repository": {
     "type": "git",

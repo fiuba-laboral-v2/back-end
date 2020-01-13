@@ -2,7 +2,7 @@ FROM node:12.14.0
 ADD . /usr/src/app
 WORKDIR /usr/src/app
 COPY . ./
-RUN rm -rf node_modules
-RUN  yarn install
-EXPOSE 5434
-CMD ["yarn", "start"]
+RUN rm -rf node_modules && \
+    yarn install && \
+    npm install pm2@4.2.0 -g
+CMD ["yarn", "start:pm2"]
