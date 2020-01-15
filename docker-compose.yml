@@ -5,10 +5,13 @@ services:
     command: yarn start:pm2
     image: fiuba-laboral-v2-backend-img
     container_name: "fiuba-laboral-v2-backend"
+    environment:
+      - NODE_ENV=development
     ports:
       - 5000:5000
     volumes:
       - '.:/usr/src/app'
+    restart: always
     depends_on:
       - fiuba-laboral-v2-backend-database-postgres
   fiuba-laboral-v2-backend-database-postgres:
@@ -18,6 +21,7 @@ services:
       - ./data/db:/usr/data/db
     ports:
       - 5432:5432
+    restart: always
     environment:
       POSTGRES_DB: fiuba-laboral-v2-backend-database-postgres
       POSTGRES_USER: postgres
