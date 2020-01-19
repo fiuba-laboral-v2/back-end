@@ -1,4 +1,4 @@
-import { TranslationRepository } from "$models/translations";
+import { TranslationRepository } from "../../../src/models/translations";
 
 describe("TranslationRepository", () => {
   describe("translate", () => {

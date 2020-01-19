@@ -30,7 +30,6 @@
     "graphql-tools": "4.0.6",
     "http-status-codes": "1.4.0",
     "husky": "3.1.0",
-    "link-module-alias": "1.2.0",
     "lodash": "4.17.15",
     "node": "12.14.0",
     "nodemon": "2.0.2",
@@ -63,7 +62,7 @@
   },
   "scripts": {
     "dev": "yarn build && concurrently --kill-others \"tsc -w -p .\" \"nodemon dist/src/index.js -e js\" || true",
-    "debug": "yarn build && concurrently --kill-others \"tsc -w -p src\" \"nodemon --inspect dist/index.js -e js\" || true",
+    "debug": "yarn build && concurrently --kill-others \"tsc -w -p src\" \"nodemon --inspect dist/src/index.js -e js\" || true",
     "build": "yarn clean && tsc -p .",
     "start": "node dist/src/index.js",
     "test": "jest --coverage --runInBand",
@@ -80,8 +79,7 @@
     "db:drop": "node_modules/.bin/sequelize db:drop",
     "db:test:migrate": "yarn build && NODE_ENV=test node_modules/.bin/sequelize db:migrate",
     "db:test:create": "NODE_ENV=test node_modules/.bin/sequelize db:create",
-    "db:test:drop": "NODE_ENV=test node_modules/.bin/sequelize db:drop",
-    "postinstall": "link-module-alias"
+    "db:test:drop": "NODE_ENV=test node_modules/.bin/sequelize db:drop"
   },
   "repository": {
     "type": "git",
@@ -97,14 +95,5 @@
     "hooks": {
       "pre-commit": "yarn check-unstaged && yarn lint && yarn test"
     }
-  },
-  "_moduleAliases": {
-    "$root": ".",
-    "$package": "package.json",
-    "$config": "src/config",
-    "$graphql": "src/graphql",
-    "$libs": "src/libs",
-    "$migrations": "src/migrations",
-    "$models": "src/models"
   }
 }
