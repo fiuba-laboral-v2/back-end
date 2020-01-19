@@ -6,7 +6,7 @@
     "ssh_address": "laboral@laboral.fi.uba.ar"
   },
   "staging": {
-    "branch": "staging",
+    "branch": "feature/16-deploy",
     "repository": "https://github.com/fiuba-laboral-v2/back-end.git",
     "location": "./fiuba-laboral-v2/back-end",
     "ssh_address": "laboral@antiguos.fi.uba.ar"
