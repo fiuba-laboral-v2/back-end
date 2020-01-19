@@ -30,6 +30,6 @@ deploy:
 notifications:
   email:
     recipients:
-      llauromanuel@gmail.com
-      dylanalvarez1995@gmail.com
-      sebastian.e.blanco@gmail.com
+      - llauromanuel@gmail.com
+      - dylanalvarez1995@gmail.com
+      - sebastian.e.blanco@gmail.com
