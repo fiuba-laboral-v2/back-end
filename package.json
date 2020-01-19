@@ -31,10 +31,10 @@
     "graphql-tools": "4.0.6",
     "http-status-codes": "1.4.0",
     "husky": "3.1.0",
+    "link-module-alias": "1.2.0",
     "lodash": "4.17.15",
     "node": "12.14.0",
     "nodemon": "2.0.2",
-    "npm-run-all": "4.1.5",
     "pg": "7.17.0",
     "pg-hstore": "2.3.3",
     "reflect-metadata": "0.1.13",
@@ -70,6 +70,8 @@
     "lint:src": "tslint -c tslint.json 'src/**/*.ts'",
     "lint:test": "tslint -c tslint.json 'test/**/*.ts'",
     "lint": "yarn lint:src && yarn lint:test",
+    "preinstall": "which link-module-alias && link-module-alias clean || echo",
+    "postinstall": "link-module-alias",
     "stash": "git stash -u --keep-index",
     "unstash": "git stash pop",
     "check-unstaged": "bash scripts/check_unstaged.sh",
@@ -98,5 +100,13 @@
     "hooks": {
       "pre-commit": "yarn check-unstaged && yarn lint && yarn test"
     }
+  },
+  "_moduleAliases": {
+    "$root": ".",
+    "$package": "package.json",
+    "$models": "src/models",
+    "$src": "src",
+    "$test": "test",
+    "$config": "config"
   }
 }

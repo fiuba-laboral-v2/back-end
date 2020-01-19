@@ -1,4 +1,4 @@
-const deployJSON = require(".,/config/environment.json");
+const deployJSON = require("$config/environment.json");
 const shell = require("shelljs");
 
 const env = process.env.NODE_ENV || "development";
