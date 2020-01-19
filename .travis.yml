@@ -2,7 +2,7 @@ language: node_js
 services:
   - postgresql
 before_install:
-  - openssl aes-256-cbc -K $encrypted_2580f7ff17f7_key -iv $encrypted_2580f7ff17f7_iv
+  - openssl aes-256-cbc -K $encrypted_2092b72ab2aa_key -iv $encrypted_2092b72ab2aa_iv
     -in deploy_key.enc -out ./deploy_key -d
   - eval "$(ssh-agent -s)"
   - chmod 600 ./deploy_key
