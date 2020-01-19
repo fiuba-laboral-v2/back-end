@@ -2,6 +2,11 @@
   "name": "back-end",
   "version": "1.0.0",
   "description": "Trabajo Práctico Profesional, FIUBA, 2020",
+  "contributors": [
+    "Sebastian Blanco <sebastian.e.blanco@gmail.com>",
+    "Dylan Alvarez <dylanalvarez1995@gmail.com>",
+    "Manuel Llauró <llauromanuel@gmail.com>"
+  ],
   "engines": {
     "node": "12.14.0"
   },
@@ -90,7 +95,6 @@
     "type": "git",
     "url": "git+https://github.com/fiuba-laboral-v2/back-end.git"
   },
-  "author": "Dylan Alvarez, Manuel Llauro, Sebastian Blanco",
   "license": "ISC",
   "bugs": {
     "url": "https://fiuba-laboral-v2.atlassian.net"
