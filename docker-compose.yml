@@ -2,7 +2,7 @@ version: '3.4'
 services:
   fiuba-laboral-v2-backend:
     build: .
-    command: yarn start:pm2
+    command: yarn build && yarn start:pm2
     image: fiuba-laboral-v2-backend-img
     container_name: "fiuba-laboral-v2-backend"
     environment:

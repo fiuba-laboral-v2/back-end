@@ -27,10 +27,6 @@ deploy:
     script: yarn install && NODE_ENV=staging yarn deploy
     on:
       branch: staging
-  - provider: script
-    script: yarn install && NODE_ENV=staging yarn deploy
-    on:
-      branch: feature/16-deploy
 notifications:
   email:
     recipients:
