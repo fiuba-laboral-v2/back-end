@@ -10,7 +10,7 @@ const rootQueries = {
         type: GraphQLNonNull(GraphQLID)
       }
     },
-    resolve: ({}, { id }: { id: string }) => {
+    resolve: (_: undefined, { id }: { id: string }) => {
       return RootsRepository.findById(id);
     }
   }
