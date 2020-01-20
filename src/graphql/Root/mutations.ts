@@ -10,7 +10,7 @@ const rootMutations = {
         type: GraphQLString
       }
     },
-    resolve: (_, { title }: { title: string }) => {
+    resolve: ({}, { title }: { title: string }) => {
       return RootsRepository.save(new Root({ title }));
     }
   }

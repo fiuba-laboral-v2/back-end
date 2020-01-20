@@ -16,7 +16,7 @@ const adminQueries = {
         type: GraphQLID
       }
     },
-    resolve: (_, { id }: { id: string }) => {
+    resolve: ({}, { id }: { id: string }) => {
       return mockAdmin[parseInt(id, 10)];
     }
   }

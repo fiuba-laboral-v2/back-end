@@ -16,7 +16,7 @@ const studentQueries = {
         type: GraphQLID
       }
     },
-    resolve: (_, { id }: { id: string }) => {
+    resolve: ({}, { id }: { id: string }) => {
       return mockStudent[parseInt(id, 10)];
     }
   }
