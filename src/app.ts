@@ -3,10 +3,10 @@ import { Logger } from "./libs/logger";
 import { ApolloServer } from "apollo-server-express";
 import depthLimit from "graphql-depth-limit";
 import cors from "cors";
-import schema from "./graphql/schema";
-
+import { schema } from "./graphql";
 
 Logger.info(`Running on ${process.env.NODE_ENV} environment`);
+
 const app: express.Express = express();
 
 const apolloServer = new ApolloServer({
