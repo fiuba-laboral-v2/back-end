@@ -1,5 +1,5 @@
 import studentType from "./type";
-import { GraphQLID } from "graphql";
+import { ID } from "../field_types";
 
 const mockStudent = [{
   id: "001",
@@ -13,7 +13,7 @@ const studentQueries = {
     type: studentType,
     args: {
       id: {
-        type: GraphQLID
+        type: ID
       }
     },
     resolve: (_: undefined, { id }: { id: string }) => {

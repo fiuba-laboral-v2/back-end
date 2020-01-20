@@ -1,5 +1,5 @@
 import adminType from "./type";
-import { GraphQLID } from "graphql";
+import { ID } from "../field_types";
 
 const mockAdmin = [{
   id: "001",
@@ -13,7 +13,7 @@ const adminQueries = {
     type: adminType,
     args: {
       id: {
-        type: GraphQLID
+        type: ID
       }
     },
     resolve: (_: undefined, { id }: { id: string }) => {

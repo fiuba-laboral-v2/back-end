@@ -1,5 +1,5 @@
 import rootType from "./type";
-import { GraphQLString } from "graphql";
+import { String } from "../field_types";
 import { Root, RootsRepository } from "../../models/roots";
 
 const rootMutations = {
@@ -7,7 +7,7 @@ const rootMutations = {
     type: rootType,
     args: {
       title: {
-        type: GraphQLString
+        type: String
       }
     },
     resolve: (_: undefined, { title }: { title: string }) => {

@@ -1,5 +1,5 @@
 import rootType from "./type";
-import { GraphQLID, GraphQLNonNull } from "graphql";
+import { ID, nonNull } from "../field_types";
 import { RootsRepository } from "../../models/roots";
 
 const rootQueries = {
@@ -7,7 +7,7 @@ const rootQueries = {
     type: rootType,
     args: {
       id: {
-        type: GraphQLNonNull(GraphQLID)
+        type: nonNull(ID)
       }
     },
     resolve: (_: undefined, { id }: { id: string }) => {

@@ -1,13 +1,14 @@
-import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString } from "graphql";
+import { GraphQLObjectType } from "graphql";
+import { ID, String, nonNull } from "../field_types";
 
 const rootType = new GraphQLObjectType({
   name: "Root",
   fields: () => ({
     id: {
-      type: GraphQLID
+      type: ID
     },
     title: {
-      type: GraphQLNonNull(GraphQLString)
+      type: nonNull(String)
     }
   })
 });

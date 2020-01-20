@@ -1,19 +1,20 @@
-import { GraphQLID, GraphQLInt, GraphQLNonNull, GraphQLObjectType, GraphQLString } from "graphql";
+import { GraphQLObjectType } from "graphql";
+import { ID, Int, String, nonNull } from "../field_types";
 
 const adminType = new GraphQLObjectType({
   name: "Admin",
   fields: () => ({
     id: {
-      type: GraphQLID
+      type: ID
     },
     name: {
-      type: GraphQLNonNull(GraphQLString)
+      type: nonNull(String)
     },
     surname: {
-      type: GraphQLNonNull(GraphQLString)
+      type: nonNull(String)
     },
     age: {
-      type: GraphQLInt
+      type: Int
     }
   })
 });
