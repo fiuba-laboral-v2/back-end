@@ -7,7 +7,7 @@ services:
     container_name: "fiuba-laboral-v2-backend"
     environment:
       NODE_ENV: staging
-      DATABASE_URL: postgres://postgres:postgres@fiuba-laboral-v2-backend-database-postgres:5434/staging
+      DATABASE_URL: postgres://postgres:postgres@fiuba-laboral-v2-backend-database-postgres:5432/staging
     ports:
       - 5006:5006
     volumes:
