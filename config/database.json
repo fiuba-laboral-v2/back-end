@@ -16,7 +16,7 @@
     "password": "postgres",
     "database": "fiuba-laboral-v2-backend-database-postgres-test",
     "host": "localhost",
-    "port": "5432",
+    "port": "5434",
     "dialect": "postgres"
   },
   "development": {
@@ -24,7 +24,7 @@
     "password": "postgres",
     "database": "fiuba-laboral-v2-backend-database-postgres-development",
     "host": "localhost",
-    "port": "5432",
+    "port": "5434",
     "dialect": "postgres"
   }
 }
