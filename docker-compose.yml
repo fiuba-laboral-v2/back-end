@@ -9,7 +9,7 @@ services:
       - NODE_ENV=staging
       - DATABASE_URL="postgres://postgres:postgres@fiuba-laboral-v2-backend-database-postgres:5432/staging"
     ports:
-      - 5000:5000
+      - 6000:5000
     volumes:
       - '.:/usr/src/app'
     restart: always
@@ -21,7 +21,7 @@ services:
     volumes:
       - ./data/db:/usr/data/db
     ports:
-      - 5432:5432
+      - 5434:5432
     restart: always
     environment:
       POSTGRES_DB: fiuba-laboral-v2-backend-database-postgres
