@@ -1,4 +1,4 @@
-import rootType from "./type";
+import adminType from "./type";
 import { GraphQLID } from "graphql";
 
 const mockAdmin = [{
@@ -10,7 +10,7 @@ const mockAdmin = [{
 
 const adminQueries = {
   getAdminById: {
-    type: rootType,
+    type: adminType,
     args: {
       id: {
         type: GraphQLID
