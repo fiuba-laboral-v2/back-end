@@ -2,7 +2,7 @@ import adminType from "./type";
 import { ID } from "../field_types";
 
 const mockAdmin = [{
-  id: "001",
+  id: "0",
   name: "Bruno",
   surname: "Diaz",
   age: 30
