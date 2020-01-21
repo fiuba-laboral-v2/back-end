@@ -30,4 +30,4 @@ app.use(
 
 apolloServer.applyMiddleware({ app, path: "/graphql" });
 
-export default app;
+export { app, apolloServer };
