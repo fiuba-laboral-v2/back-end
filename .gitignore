@@ -16,6 +16,7 @@ deploy_key
 .DS_Store
 .idea
 .vscode
+.env
 .env.local
 .env.staging.local
 .env.development.local
