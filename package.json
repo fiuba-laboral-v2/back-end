@@ -66,9 +66,9 @@
     "typescript": "3.7.4"
   },
   "scripts": {
-    "dev": "yarn build && concurrently --kill-others \"node_modules/.bin/tsc -w -p .\" \"nodemon dist/src/index.js -e js\" || true",
-    "debug": "yarn build && concurrently --kill-others \"node_modules/.bin/tsc -w -p src\" \"nodemon --inspect dist/index.js -e js\" || true",
-    "build": "yarn clean && node_modules/.bin/tsc -p .",
+    "dev": "yarn build && concurrently --kill-others \"tsc -w -p .\" \"nodemon dist/src/index.js -e js\" || true",
+    "debug": "yarn build && concurrently --kill-others \"tsc -w -p src\" \"nodemon --inspect dist/index.js -e js\" || true",
+    "build": "yarn clean && tsc -p .",
     "start": "node dist/src/index.js",
     "test": "jest --coverage --runInBand",
     "lint:src": "tslint -c tslint.json 'src/**/*.ts'",
