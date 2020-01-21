@@ -22,3 +22,7 @@ deploy_key
 .env.development.local
 .env.test.local
 .env.production.local
+
+# graphql webstorm plugin
+config/.graphqlconfig
+config/schema.graphql
