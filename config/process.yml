@@ -8,8 +8,8 @@ apps:
     env:
       NODE_ENV: development
     env_production:
-        NODE_ENV: production
+      NODE_ENV: production
     env_staging:
-        NODE_ENV: staging
+      NODE_ENV: staging
     env_test:
-        NODE_ENV: test
+      NODE_ENV: test
