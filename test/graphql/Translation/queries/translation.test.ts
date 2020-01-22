@@ -1,5 +1,5 @@
 import { gql } from "apollo-server";
-import { executeQuery } from "../../apolloTestClient";
+import { executeQuery } from "../../ApolloTestClient";
 
 const query = gql`
   query ($path: String!) {
