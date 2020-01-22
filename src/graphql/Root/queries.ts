@@ -1,6 +1,6 @@
 import rootType from "./type";
-import { ID, nonNull } from "../field_types";
-import { RootsRepository } from "../../models/roots";
+import { ID, nonNull } from "../fieldTypes";
+import { RootsRepository } from "../../models/Root";
 
 const rootQueries = {
   getRootById: {

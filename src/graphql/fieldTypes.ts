@@ -1,8 +1,8 @@
 import {
   GraphQLID as ID,
   GraphQLInt as Int,
-  GraphQLString as String,
-  GraphQLNonNull as nonNull
+  GraphQLNonNull as nonNull,
+  GraphQLString as String
 } from "graphql";
 
 export {

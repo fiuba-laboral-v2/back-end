@@ -1,5 +1,5 @@
 import adminType from "./type";
-import { ID } from "../field_types";
+import { ID } from "../fieldTypes";
 
 const mockAdmin = [{
   id: "0",
