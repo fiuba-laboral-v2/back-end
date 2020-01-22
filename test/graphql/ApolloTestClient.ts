@@ -1,8 +1,8 @@
 import { createTestClient } from "apollo-server-testing";
-import { apolloServer } from "../../src/app";
+import { ApolloServer } from "../../src/App";
 import { DocumentNode } from "graphql";
 
-const testClient = createTestClient(apolloServer as any);
+const testClient = createTestClient(ApolloServer as any);
 
 const executeQuery = (query: DocumentNode, variables?: object) => {
   return testClient.query({

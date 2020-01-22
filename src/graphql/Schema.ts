@@ -3,7 +3,7 @@ import queries from "./queries";
 import mutations from "./mutations";
 import types from "./types";
 
-const schema: GraphQLSchema = new GraphQLSchema({
+const Schema: GraphQLSchema = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: "Query",
     fields: queries
@@ -15,4 +15,4 @@ const schema: GraphQLSchema = new GraphQLSchema({
   types: types
 });
 
-export default schema;
+export default Schema;
