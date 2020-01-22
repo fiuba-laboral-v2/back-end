@@ -1,7 +1,7 @@
 # Back-end Bolsa de Trabajo de la FIUBA v2
 Trabajo Práctico Profesional, FIUBA, 2020
 
-[![Build Status](https://travis-ci.com/fiuba-laboral-v2/back-end.svg?branch=master)](https://travis-ci.com/fiuba-laboral-v2/back-end)
+Staging: [![Build Status](https://travis-ci.com/fiuba-laboral-v2/back-end.svg?branch=staging)](https://travis-ci.com/fiuba-laboral-v2/back-end)
 
 # Staging
 
