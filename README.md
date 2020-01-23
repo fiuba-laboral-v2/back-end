@@ -1,7 +1,11 @@
 # Back-end Bolsa de Trabajo de la FIUBA v2
 Trabajo Práctico Profesional, FIUBA, 2020
 
-[![Build Status](https://travis-ci.com/fiuba-laboral-v2/back-end.svg?branch=master)](https://travis-ci.com/fiuba-laboral-v2/back-end)
+Staging: [![Build Status](https://travis-ci.com/fiuba-laboral-v2/back-end.svg?branch=staging)](https://travis-ci.com/fiuba-laboral-v2/back-end)
+
+# Staging
+
+http://antiguos.fi.uba.ar/graphql/
 
 # Set up
 
@@ -34,7 +38,7 @@ In the project directory, you can run:
 ### `yarn dev`
 
 Runs the app in the development mode.<br />
-Open [http://localhost:5000](http://localhost:5000) to view it in the browser.
+Open [http://localhost:5006](http://localhost:5006) to view it in the browser.
 
 The page will reload if you make edits.<br />
 You will also see any lint errors in the console.

@@ -8,11 +8,15 @@ coverage
 build
 dist
 
+# deploy
+deploy_key
+
 # misc
 *.log
 .DS_Store
 .idea
 .vscode
+.env
 .env.local
 .env.staging.local
 .env.development.local

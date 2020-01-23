@@ -2,6 +2,11 @@
   "name": "back-end",
   "version": "1.0.0",
   "description": "Trabajo Práctico Profesional, FIUBA, 2020",
+  "contributors": [
+    "Sebastian Blanco <sebastian.e.blanco@gmail.com>",
+    "Dylan Alvarez <dylanalvarez1995@gmail.com>",
+    "Manuel Llauró <llauromanuel@gmail.com>"
+  ],
   "engines": {
     "node": "12.14.0"
   },
@@ -30,14 +35,13 @@
     "graphql-import-node": "0.0.4",
     "http-status-codes": "1.4.0",
     "husky": "3.1.0",
+    "link-module-alias": "1.2.0",
     "lodash": "4.17.15",
     "node": "12.14.0",
     "nodemon": "2.0.2",
-    "npm-run-all": "4.1.5",
     "pg": "7.17.0",
     "pg-hstore": "2.3.3",
     "reflect-metadata": "0.1.13",
-    "rimraf": "3.0.0",
     "sequelize": "5.21.3",
     "sequelize-cli-typescript": "3.2.0-c",
     "sequelize-typescript": "1",
@@ -71,23 +75,28 @@
     "lint:src": "tslint -c tslint.json 'src/**/*.ts'",
     "lint:test": "tslint -c tslint.json 'test/**/*.ts'",
     "lint": "yarn lint:src && yarn lint:test",
+    "preinstall": "which link-module-alias && link-module-alias clean || echo",
+    "postinstall": "link-module-alias",
     "stash": "git stash -u --keep-index",
     "unstash": "git stash pop",
     "check-unstaged": "bash scripts/check_unstaged.sh",
-    "clean": "rimraf dist",
+    "clean": "rm -rf dist",
     "coveralls": "jest --coverage && cat ./tests/coverage/lcov.info | coveralls",
     "db:migrate": "yarn build && node_modules/.bin/sequelize db:migrate",
     "db:create": "node_modules/.bin/sequelize db:create",
     "db:drop": "node_modules/.bin/sequelize db:drop",
     "db:test:migrate": "yarn build && NODE_ENV=test node_modules/.bin/sequelize db:migrate",
     "db:test:create": "NODE_ENV=test node_modules/.bin/sequelize db:create",
-    "db:test:drop": "NODE_ENV=test node_modules/.bin/sequelize db:drop"
+    "db:test:drop": "NODE_ENV=test node_modules/.bin/sequelize db:drop",
+    "start:pm2": "yarn build && pm2 startOrRestart --no-daemon config/process.yml --env staging",
+    "db:start": "docker-compose up -d fiuba-laboral-v2-backend-database-postgres",
+    "db:up": "docker-compose up fiuba-laboral-v2-backend-database-postgres",
+    "db:stop": "docker-compose stop fiuba-laboral-v2-backend-database-postgres"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/fiuba-laboral-v2/back-end.git"
   },
-  "author": "Dylan Alvarez, Manuel Llauro, Sebastian Blanco",
   "license": "ISC",
   "bugs": {
     "url": "https://fiuba-laboral-v2.atlassian.net"
@@ -97,5 +106,13 @@
     "hooks": {
       "pre-commit": "yarn check-unstaged && yarn lint && yarn test"
     }
+  },
+  "_moduleAliases": {
+    "$root": ".",
+    "$package": "package.json",
+    "$models": "src/models",
+    "$src": "src",
+    "$test": "test",
+    "$config": "config"
   }
 }
