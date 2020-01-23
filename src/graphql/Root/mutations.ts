@@ -1,6 +1,6 @@
 import rootType from "./type";
-import { String } from "../field_types";
-import { Root, RootsRepository } from "../../models/roots";
+import { String } from "../fieldTypes";
+import { Root, RootsRepository } from "../../models/Root";
 
 const rootMutations = {
   saveRoot: {

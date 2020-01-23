@@ -1,5 +1,5 @@
-import { nonNull, String } from "../field_types";
-import { TranslationRepository } from "../../models/translations";
+import { nonNull, String } from "../fieldTypes";
+import { TranslationRepository } from "../../models/Translation";
 
 const translationQueries = {
   translation: {

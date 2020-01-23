@@ -1,5 +1,5 @@
 import studentType from "./type";
-import { ID } from "../field_types";
+import { ID } from "../fieldTypes";
 
 const mockStudent = [{
   id: "001",

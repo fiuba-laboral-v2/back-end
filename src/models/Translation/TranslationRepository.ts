@@ -1,4 +1,4 @@
-import { defaultTranslations } from "./default_translations";
+import { defaultTranslations } from "./defaultTranslations";
 import get from "lodash/get";
 
 export const TranslationRepository = {

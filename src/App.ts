@@ -1,20 +1,14 @@
 import express from "express";
-import { Logger } from "./libs/logger";
-import { ApolloServer } from "apollo-server-express";
+import { ApolloServer as Server } from "apollo-server-express";
 import depthLimit from "graphql-depth-limit";
 import cors from "cors";
-import { schema } from "./graphql";
+import Schema from "./graphql/Schema";
+import { Logger } from "./libs/Logger";
 
 Logger.info(`Running on ${process.env.NODE_ENV} environment`);
 
-const app: express.Express = express();
-
-const apolloServer = new ApolloServer({
-  schema,
-  validationRules: [depthLimit(1000)]
-});
-
-app.use(
+const App: express.Express = express();
+App.use(
   cors({
     origin: (origin, cb) => cb(null, true),
     credentials: true,
@@ -28,6 +22,10 @@ app.use(
   })
 );
 
-apolloServer.applyMiddleware({ app, path: "/graphql" });
+const ApolloServer = new Server({
+  schema: Schema,
+  validationRules: [depthLimit(1000)]
+});
+ApolloServer.applyMiddleware({ app: App, path: "/graphql" });
 
-export { app, apolloServer };
+export { App, ApolloServer };

@@ -1,8 +1,8 @@
-import { app } from "./app";
-import { Logger } from "./libs/logger";
-import Database from "./config/database";
+import { App } from "./App";
+import Database from "./config/Database";
+import { Logger } from "./libs/Logger";
 
 const port = process.env.PORT || 5006;
 
-app.listen(port, () => Logger.info(`Listening on port ${port}`));
+App.listen(port, () => Logger.info(`Listening on port ${port}`));
 Database.setConnection();

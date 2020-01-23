@@ -1,8 +1,7 @@
 import { Sequelize } from "sequelize-typescript";
-import Environment from "../config/environment/environment";
+import Environment from "./Environment";
 import databaseJSON from "../../config/database.json";
-import { Root } from "../models/roots";
-
+import { Root } from "../models/Root";
 
 export default class Database {
   public static sequelize: Sequelize;
