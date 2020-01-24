@@ -70,9 +70,9 @@
   "scripts": {
     "dev": "concurrently --kill-others \"nodemon src/index.ts\" || true",
     "debug": "yarn build && concurrently --kill-others \"yarn watch:build\" \"nodemon --inspect src/index.ts\" || true",
-    "build": "tsc -p .",
-    "watch:build": "yarn postbuild && tsc -w -p . ",
-    "postbuild": "cpy --cwd=src --parents '**/*' '!**/*.ts' ../dist/src",
+    "build": "yarn clean && tsc -p . && yarn build:copy:files",
+    "watch:build": "yarn build:copy:files && tsc -w -p . ",
+    "build:copy:files": "cpy --cwd=src --parents '**/*' '!**/*.ts' ../dist/src",
     "start": "nodemon src/index.ts",
     "test": "jest --coverage --runInBand",
     "lint:src": "tslint -c tslint.json 'src/**/*.ts'",
@@ -91,7 +91,7 @@
     "db:test:migrate": "yarn build && NODE_ENV=test node_modules/.bin/sequelize db:migrate",
     "db:test:create": "NODE_ENV=test node_modules/.bin/sequelize db:create",
     "db:test:drop": "NODE_ENV=test node_modules/.bin/sequelize db:drop",
-    "start:pm2": "yarn build && pm2 startOrRestart --no-daemon src/config/process.yml --env staging",
+    "pm2:start": "yarn build && pm2 startOrRestart --no-daemon src/config/process.yml --env staging",
     "db:start": "docker-compose up -d fiuba-laboral-v2-backend-database-postgres",
     "db:up": "docker-compose up fiuba-laboral-v2-backend-database-postgres",
     "db:stop": "docker-compose stop fiuba-laboral-v2-backend-database-postgres"
@@ -113,11 +113,11 @@
   "_moduleAliases": {
     "$root": ".",
     "$package": "package.json",
-    "$models": "src/models",
-    "$src": "src",
-    "$libs": "src/libs",
-    "$graphql": "src/graphql",
+    "$models": "dist/src/models",
+    "$src": "dist/src",
+    "$libs": "dist/src/libs",
+    "$graphql": "dist/src/graphql",
     "$test": "test",
-    "$config": "src/config"
+    "$config": "dist/src/config"
   }
 }

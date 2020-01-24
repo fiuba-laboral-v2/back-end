@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "rootDir": ".",
-    "baseUrl": "",
+    "baseUrl": ".",
     "outDir": "./dist",
     "resolveJsonModule": true,
     "esModuleInterop": true,
@@ -19,7 +19,15 @@
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "paths": {
+      "$models/*": ["src/models/*"],
+      "$src/*": ["src/*"],
+      "$libs/*": ["src/libs/*"],
+      "$graphql/*": ["src/graphql/*"],
+      "$test/*": ["test/*"],
+      "$config/*": ["src/config/*"]
+    }
   },
   "exclude": [
     "node_modules",
