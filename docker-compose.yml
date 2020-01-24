@@ -2,7 +2,7 @@ version: '3.4'
 services:
   fiuba-laboral-v2-backend:
     build: .
-    command: yarn start:pm2
+    command: yarn pm2:start
     image: fiuba-laboral-v2-backend-img
     container_name: "fiuba-laboral-v2-backend"
     environment:
@@ -10,9 +10,6 @@ services:
       DATABASE_URL: postgres://postgres:postgres@fiuba-laboral-v2-backend-database-postgres:5432/staging
     ports:
       - 5006:5006
-    volumes:
-      - '.:/usr/src/app'
-      - /usr/src/app/node_modules
     restart: always
     depends_on:
       - fiuba-laboral-v2-backend-database-postgres

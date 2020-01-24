@@ -4,4 +4,4 @@ WORKDIR /usr/src/app
 COPY . ./
 RUN yarn install && \
     npm install pm2@4.2.0 -g
-CMD ["yarn", "start:pm2"]
+CMD ["yarn", "pm2:start"]
