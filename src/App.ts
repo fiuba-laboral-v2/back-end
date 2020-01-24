@@ -4,8 +4,9 @@ import depthLimit from "graphql-depth-limit";
 import cors from "cors";
 import Schema from "$graphql/Schema";
 import { Logger } from "$libs/Logger";
+import Environment from "$config/Environment";
 
-Logger.info(`Running on ${process.env.NODE_ENV} environment`);
+Logger.info(`Running on ${Environment.NODE_ENV} environment`);
 
 const App: express.Express = express();
 App.use(
