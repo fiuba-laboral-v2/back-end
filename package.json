@@ -26,7 +26,6 @@
     "apollo-server-testing": "2.9.16",
     "body-parser": "1.19.0",
     "cors": "2.8.5",
-    "cpy-cli": "3.0.0",
     "dotenv": "8.2.0",
     "express": "4.17.1",
     "glob": "7.1.6",
@@ -42,6 +41,7 @@
     "nodemon": "2.0.2",
     "pg": "7.17.0",
     "pg-hstore": "2.3.3",
+    "pm2": "4.2.3",
     "reflect-metadata": "0.1.13",
     "sequelize": "5.21.3",
     "sequelize-cli-typescript": "3.2.0-c",
@@ -68,12 +68,8 @@
     "typescript": "3.7.4"
   },
   "scripts": {
-    "dev": "concurrently --kill-others \"nodemon src/index.ts\" || true",
-    "debug": "yarn build && concurrently --kill-others \"yarn watch:build\" \"nodemon --inspect src/index.ts\" || true",
-    "build": "yarn clean && tsc -p . && yarn build:copy:files",
-    "watch:build": "yarn build:copy:files && tsc -w -p . ",
-    "build:copy:files": "cpy --cwd=src --parents '**/*' '!**/*.ts' ../dist/src",
-    "start": "nodemon src/index.ts",
+    "dev": "nodemon src/index.ts",
+    "build": "yarn clean && tsc -p .",
     "test": "jest --coverage --runInBand",
     "lint:src": "tslint -c tslint.json 'src/**/*.ts'",
     "lint:test": "tslint -c tslint.json 'test/**/*.ts'",
@@ -91,7 +87,7 @@
     "db:test:migrate": "yarn build && NODE_ENV=test node_modules/.bin/sequelize db:migrate",
     "db:test:create": "NODE_ENV=test node_modules/.bin/sequelize db:create",
     "db:test:drop": "NODE_ENV=test node_modules/.bin/sequelize db:drop",
-    "pm2:start": "yarn build && pm2 startOrRestart --no-daemon src/config/process.yml --env staging",
+    "pm2:start": "pm2 startOrRestart --no-daemon src/config/process.yml --env staging",
     "db:start": "docker-compose up -d fiuba-laboral-v2-backend-database-postgres",
     "db:up": "docker-compose up fiuba-laboral-v2-backend-database-postgres",
     "db:stop": "docker-compose stop fiuba-laboral-v2-backend-database-postgres"
@@ -113,11 +109,11 @@
   "_moduleAliases": {
     "$root": ".",
     "$package": "package.json",
-    "$models": "dist/src/models",
-    "$src": "dist/src",
-    "$libs": "dist/src/libs",
-    "$graphql": "dist/src/graphql",
+    "$models": "src/models",
+    "$src": "src",
+    "$libs": "src/libs",
+    "$graphql": "src/graphql",
     "$test": "test",
-    "$config": "dist/src/config"
+    "$config": "src/config"
   }
 }
