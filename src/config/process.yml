@@ -1,5 +1,6 @@
 apps:
-  - script: ./dist/src/index.js
+  - script: ./src/index.ts
+    interpreter: ts-node
     name: 'fiuba-laboral-v2-back-end'
     instances: max
     exec_mode: cluster
