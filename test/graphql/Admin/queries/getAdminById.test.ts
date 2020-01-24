@@ -1,5 +1,5 @@
 import { gql } from "apollo-server";
-import { executeQuery } from "../../ApolloTestClient";
+import { executeQuery } from "$test/graphql/ApolloTestClient";
 
 const query = gql`
   query ($id: ID) {

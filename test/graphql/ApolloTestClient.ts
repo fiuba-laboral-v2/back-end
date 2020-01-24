@@ -1,5 +1,5 @@
 import { createTestClient } from "apollo-server-testing";
-import { ApolloServer } from "../../src/App";
+import { ApolloServer } from "$src/App";
 import { DocumentNode } from "graphql";
 
 const testClient = createTestClient(ApolloServer as any);
