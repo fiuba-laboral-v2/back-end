@@ -68,6 +68,7 @@
     "typescript": "3.7.4"
   },
   "scripts": {
+    "pm2:install": "./node_modules/.bin/pm2 install typescript@3.7.4",
     "dev": "nodemon src/index.ts",
     "build": "yarn clean && tsc -p .",
     "test": "jest --coverage --runInBand",
@@ -75,7 +76,7 @@
     "lint:test": "tslint -c tslint.json 'test/**/*.ts'",
     "lint": "yarn lint:src && yarn lint:test",
     "preinstall": "which link-module-alias && link-module-alias clean || echo",
-    "postinstall": "link-module-alias",
+    "postinstall": "link-module-alias yarn pm2:install",
     "stash": "git stash -u --keep-index",
     "unstash": "git stash pop",
     "check-unstaged": "bash scripts/check_unstaged.sh",
@@ -87,10 +88,10 @@
     "db:test:migrate": "yarn build && NODE_ENV=test node_modules/.bin/sequelize db:migrate && yarn clean",
     "db:test:create": "NODE_ENV=test node_modules/.bin/sequelize db:create",
     "db:test:drop": "NODE_ENV=test node_modules/.bin/sequelize db:drop",
-    "pm2:start": "pm2 startOrRestart --no-daemon src/config/process.yml --env staging",
     "db:start": "docker-compose up -d fiuba-laboral-v2-backend-database-postgres",
     "db:up": "docker-compose up fiuba-laboral-v2-backend-database-postgres",
-    "db:stop": "docker-compose stop fiuba-laboral-v2-backend-database-postgres"
+    "db:stop": "docker-compose stop fiuba-laboral-v2-backend-database-postgres",
+    "pm2:start": "pm2 startOrRestart --no-daemon src/config/process.yml --env staging"
   },
   "repository": {
     "type": "git",
