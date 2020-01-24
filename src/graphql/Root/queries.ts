@@ -1,6 +1,6 @@
 import rootType from "./type";
-import { ID, nonNull } from "../fieldTypes";
-import { RootsRepository } from "../../models/Root";
+import { ID, nonNull } from "$graphql/fieldTypes";
+import { RootsRepository } from "$models/Root";
 
 const rootQueries = {
   getRootById: {

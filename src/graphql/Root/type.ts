@@ -1,5 +1,5 @@
 import { GraphQLObjectType } from "graphql";
-import { ID, nonNull, String } from "../fieldTypes";
+import { ID, nonNull, String } from "$graphql/fieldTypes";
 
 const rootType = new GraphQLObjectType({
   name: "Root",

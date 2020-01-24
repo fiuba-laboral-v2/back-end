@@ -1,5 +1,5 @@
 import adminType from "./type";
-import { ID } from "../fieldTypes";
+import { ID } from "$graphql/fieldTypes";
 
 const mockAdmin = [{
   id: "0",

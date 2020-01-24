@@ -1,5 +1,5 @@
-import { nonNull, String } from "../fieldTypes";
-import { TranslationRepository } from "../../models/Translation";
+import { nonNull, String } from "$graphql/fieldTypes";
+import { TranslationRepository } from "$models/Translation";
 
 const translationQueries = {
   translation: {

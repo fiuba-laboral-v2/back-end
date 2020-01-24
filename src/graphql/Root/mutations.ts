@@ -1,6 +1,6 @@
 import rootType from "./type";
-import { String } from "../fieldTypes";
-import { Root, RootsRepository } from "../../models/Root";
+import { String } from "$graphql/fieldTypes";
+import { Root, RootsRepository } from "$models/Root";
 
 const rootMutations = {
   saveRoot: {

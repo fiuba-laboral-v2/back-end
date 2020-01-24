@@ -2,8 +2,8 @@ import express from "express";
 import { ApolloServer as Server } from "apollo-server-express";
 import depthLimit from "graphql-depth-limit";
 import cors from "cors";
-import Schema from "./graphql/Schema";
-import { Logger } from "./libs/Logger";
+import Schema from "$graphql/Schema";
+import { Logger } from "$libs/Logger";
 
 Logger.info(`Running on ${process.env.NODE_ENV} environment`);
 

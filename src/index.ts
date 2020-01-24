@@ -1,6 +1,6 @@
-import { App } from "./App";
-import Database from "./config/Database";
-import { Logger } from "./libs/Logger";
+import { App } from "$src/App";
+import Database from "$config/Database";
+import { Logger } from "$libs/Logger";
 
 const port = process.env.PORT || 5006;
 
