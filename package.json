@@ -41,7 +41,6 @@
     "nodemon": "2.0.2",
     "pg": "7.17.0",
     "pg-hstore": "2.3.3",
-    "pm2": "4.2.3",
     "reflect-metadata": "0.1.13",
     "sequelize": "5.21.3",
     "sequelize-cli-typescript": "3.2.0-c",
@@ -68,7 +67,6 @@
     "typescript": "3.7.4"
   },
   "scripts": {
-    "pm2:install": "./node_modules/.bin/pm2 install typescript@3.7.4",
     "dev": "nodemon src/index.ts",
     "build": "yarn clean && tsc -p .",
     "test": "jest --coverage --runInBand",
@@ -76,7 +74,7 @@
     "lint:test": "tslint -c tslint.json 'test/**/*.ts'",
     "lint": "yarn lint:src && yarn lint:test",
     "preinstall": "which link-module-alias && link-module-alias clean || echo",
-    "postinstall": "link-module-alias && yarn pm2:install",
+    "postinstall": "link-module-alias",
     "stash": "git stash -u --keep-index",
     "unstash": "git stash pop",
     "check-unstaged": "bash scripts/check_unstaged.sh",
