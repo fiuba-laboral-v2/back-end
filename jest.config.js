@@ -4,6 +4,10 @@ module.exports = {
   globals: {
     'ts-jest': {
       isolatedModules: true
-    },
+    }
   },
+  coveragePathIgnorePatterns: [
+      "node_modules",
+      "test"
+  ]
 };
