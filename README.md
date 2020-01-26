@@ -1,12 +1,10 @@
 # Back-end Bolsa de Trabajo de la FIUBA v2
 Trabajo Práctico Profesional, FIUBA, 2020
 
-**Staging:** [![Build Status](https://travis-ci.com/fiuba-laboral-v2/back-end.svg?branch=staging)](https://travis-ci.com/fiuba-laboral-v2/back-end)  
-**Coverage** [![Coverage Status](https://coveralls.io/repos/github/fiuba-laboral-v2/back-end/badge.svg)](https://coveralls.io/github/fiuba-laboral-v2/back-end)
-
-# Staging
-
-http://antiguos.fi.uba.ar/graphql/
+**Staging:** 
+* **Build:** [![Build Status](https://travis-ci.com/fiuba-laboral-v2/back-end.svg?branch=staging)](https://travis-ci.com/fiuba-laboral-v2/back-end)  
+* **Coverage:** [![Coverage Status](https://coveralls.io/repos/github/fiuba-laboral-v2/back-end/badge.svg)](https://coveralls.io/github/fiuba-laboral-v2/back-end)
+* **URL:** http://antiguos.fi.uba.ar/graphql/
 
 # Set up
 
