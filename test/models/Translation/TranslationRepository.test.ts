@@ -1,4 +1,4 @@
-import { TranslationRepository } from "$models/Translation";
+import { TranslationRepository } from "../../../src/models/Translation";
 
 test("get a root element in default transitions yml", () => {
   expect(

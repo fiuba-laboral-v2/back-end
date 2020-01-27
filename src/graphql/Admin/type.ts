@@ -1,5 +1,5 @@
 import { GraphQLObjectType } from "graphql";
-import { ID, Int, nonNull, String } from "$graphql/fieldTypes";
+import { ID, Int, nonNull, String } from "../fieldTypes";
 
 const adminType = new GraphQLObjectType({
   name: "Admin",

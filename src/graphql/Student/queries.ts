@@ -1,5 +1,5 @@
 import studentType from "./type";
-import { ID } from "$graphql/fieldTypes";
+import { ID } from "../fieldTypes";
 
 const mockStudent = [{
   id: "001",

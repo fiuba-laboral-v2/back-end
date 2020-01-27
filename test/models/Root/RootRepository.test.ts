@@ -1,5 +1,5 @@
-import { Root, RootsRepository } from "$models/Root";
-import Database from "$config/Database";
+import { Root, RootsRepository } from "../../../src/models/Root";
+import Database from "../../../src/config/Database";
 
 beforeAll(async () => {
   await Database.setConnection();
