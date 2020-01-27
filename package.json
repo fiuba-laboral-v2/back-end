@@ -68,7 +68,7 @@
   "scripts": {
     "dev": "nodemon src/index.ts",
     "build:migrations": "yarn clean && tsc -p src/migrations",
-    "test": "jest --no-cache --coverage --runInBand",
+    "test": "jest --coverage --runInBand",
     "coverage": "cat coverage/lcov.info | coveralls",
     "lint:src": "tslint -c tslint.json 'src/**/*.ts'",
     "lint:test": "tslint -c tslint.json 'test/**/*.ts'",
