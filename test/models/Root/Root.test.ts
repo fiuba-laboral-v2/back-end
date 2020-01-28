@@ -1,8 +1,8 @@
 import { Root } from "../../../src/models/Root";
-import Database from "../../../src/config/Database";
+import * as Database from "../../../src/config/Database";
 
 beforeAll(async () => {
-  await Database.setConnection();
+  await Database.default.setConnection();
 });
 
 beforeEach(async () => {
@@ -10,7 +10,7 @@ beforeEach(async () => {
 });
 
 afterAll(async () => {
-  await Database.close();
+  await Database.default.close();
 });
 
 test("create a valid root", async () => {
