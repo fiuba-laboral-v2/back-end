@@ -29,8 +29,8 @@ Trabajo Práctico Profesional, FIUBA, 2020
 To run test db migrations, you can use the following commands:
  
  - `yarn db:test:migrate`
- - `yarn db:test:migrate`
- - `yarn db:test:migrate`
+ - `yarn db:test:create`
+ - `yarn db:test:drop`
 
 In the project directory, you can run:
 
