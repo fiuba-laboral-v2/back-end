@@ -1,15 +1,6 @@
 import { CompanyProfile } from "../../../src/models/CompanyProfile";
+import { CompanyProfileMock } from "./CompanyProfileMock";
 import Database from "../../../src/config/Database";
-
-const createDevartisProfile = () => {
-  return new CompanyProfile({
-    cuit: "30-71181901-7",
-    companyName: "devartis",
-    slogan: "We craft web applications for great businesses",
-    description: "some description",
-    logo: "https://pbs.twimg.com/profile_images/1039514458282844161/apKQh1fu_400x400.jpg"
-  });
-};
 
 beforeAll(async () => {
   await Database.setConnection();
@@ -24,7 +15,7 @@ afterAll(async () => {
 });
 
 test("create a valid profile", async () => {
-  const companyProfile: CompanyProfile = createDevartisProfile();
+  const companyProfile: CompanyProfile = CompanyProfileMock();
   expect(companyProfile).not.toBeNull();
   expect(companyProfile).not.toBeUndefined();
 });
