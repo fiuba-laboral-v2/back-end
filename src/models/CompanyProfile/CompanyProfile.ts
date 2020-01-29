@@ -1,4 +1,5 @@
-import { AllowNull, Column, DataType, Model, Table } from "sequelize-typescript";
+import { AllowNull, Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
+import { CompanyProfilePhoneNumber } from "../CompanyProfilePhoneNumber";
 
 @Table
 export default class CompanyProfile extends Model<CompanyProfile> {
@@ -18,4 +19,7 @@ export default class CompanyProfile extends Model<CompanyProfile> {
 
   @Column(DataType.TEXT)
   public logo: string;
+
+  @HasMany(() => CompanyProfilePhoneNumber)
+  public phoneNumbers: CompanyProfilePhoneNumber[];
 }

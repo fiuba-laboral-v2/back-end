@@ -15,8 +15,9 @@ afterAll(async () => {
 });
 
 test("create a new companyProfile", async () => {
-  const companyProfileMock: CompanyProfile = CompanyProfileMock();
-  const companyProfile: CompanyProfile = await CompanyProfileRepository.save(companyProfileMock);
+  const companyProfileMock = CompanyProfileMock();
+  let companyProfile: CompanyProfile = new CompanyProfile(companyProfileMock);
+  companyProfile = await CompanyProfileRepository.save(companyProfile);
   expect(companyProfile.cuit).toEqual(companyProfileMock.cuit);
   expect(companyProfile.companyName).toEqual(companyProfileMock.companyName);
   expect(companyProfile.slogan).toEqual(companyProfileMock.slogan);

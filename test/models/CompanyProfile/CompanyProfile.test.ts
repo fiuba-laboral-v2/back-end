@@ -15,7 +15,8 @@ afterAll(async () => {
 });
 
 test("create a valid profile", async () => {
-  const companyProfile: CompanyProfile = CompanyProfileMock();
+  const companyProfileMock = CompanyProfileMock();
+  const companyProfile: CompanyProfile = new CompanyProfile(companyProfileMock);
   expect(companyProfile).not.toBeNull();
   expect(companyProfile).not.toBeUndefined();
 });
