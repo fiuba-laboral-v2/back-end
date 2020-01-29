@@ -53,10 +53,5 @@ You will also see any lint errors in the console.
     yarn test
 ```
 
-### Build
-```
-    yarn build
-```
-
 Builds the app for production to the `dist` folder.<br />
 Then run it with `yarn start`
