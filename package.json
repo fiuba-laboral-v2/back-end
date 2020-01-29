@@ -67,11 +67,10 @@
     "typescript": "3.7.4"
   },
   "scripts": {
-    "dev": "yarn build && concurrently --kill-others \"tsc -w -p .\" \"nodemon dist/src/index.js -e js\" || true",
-    "debug": "yarn build && concurrently --kill-others \"tsc -w -p src\" \"nodemon --inspect dist/src/index.js -e js\" || true",
+    "dev": "nodemon src/index.ts",
     "build": "tsc -p .",
-    "start": "node dist/src/index.js",
     "test": "jest --coverage --runInBand",
+    "coverage": "cat coverage/lcov.info | coveralls",
     "lint:src": "tslint -c tslint.json 'src/**/*.ts'",
     "lint:test": "tslint -c tslint.json 'test/**/*.ts'",
     "lint": "yarn lint:src && yarn lint:test",
