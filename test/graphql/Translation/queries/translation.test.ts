@@ -8,7 +8,7 @@ const query = gql`
 `;
 
 test("find a translation given its path", async () => {
-  const { data } = await executeQuery(query, { path: "aplicacion.titulo" });
+  const { data } = await executeQuery(query, { path: "app.title" });
 
   expect(data).toEqual({
     translation: "Bolsa de trabajo"

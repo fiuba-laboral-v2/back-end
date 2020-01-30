@@ -2,7 +2,7 @@ import { TranslationRepository } from "../../../src/models/Translation";
 
 test("get a root element in default transitions yml", () => {
   expect(
-    TranslationRepository.translate("mi_empresa")
+    TranslationRepository.translate("my_company")
   ).toEqual("Mi empresa");
 });
 
@@ -15,6 +15,6 @@ test("throw an error if the path is incorrect", () => {
 
 test("get a nested element in default transitions yml", () => {
   expect(
-    TranslationRepository.translate("aplicacion.titulo")
+    TranslationRepository.translate("app.title")
   ).toEqual("Bolsa de trabajo");
 });

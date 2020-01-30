@@ -1,6 +1,6 @@
 export const defaultTranslations = {
-  aplicacion: {
-    titulo: "Bolsa de trabajo"
+  app: {
+    title: "Bolsa de trabajo"
   },
-  mi_empresa: "Mi empresa"
+  my_company: "Mi empresa"
 };
