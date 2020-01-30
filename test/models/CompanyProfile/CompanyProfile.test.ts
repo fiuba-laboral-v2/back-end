@@ -1,5 +1,4 @@
 import { CompanyProfile } from "../../../src/models/CompanyProfile";
-import { CompanyProfileMock } from "./CompanyProfileMock";
 import Database from "../../../src/config/Database";
 
 beforeAll(async () => {
@@ -15,8 +14,13 @@ afterAll(async () => {
 });
 
 test("create a valid profile", async () => {
-  const companyProfileMock = CompanyProfileMock();
-  const companyProfile: CompanyProfile = new CompanyProfile(companyProfileMock);
+  const companyProfile: CompanyProfile = new CompanyProfile({
+    cuit: "30-71181901-7",
+    companyName: "devartis",
+    slogan: "We craft web applications for great businesses",
+    description: "some description",
+    logo: "https://pbs.twimg.com/profile_images/1039514458282844161/apKQh1fu_400x400.jpg"
+  });
   expect(companyProfile).not.toBeNull();
   expect(companyProfile).not.toBeUndefined();
 });
