@@ -1,4 +1,5 @@
 import { CompanyProfile } from "../../../src/models/CompanyProfile";
+import { CompanyProfilePhoneNumber } from "../../../src/models/CompanyProfilePhoneNumber";
 import Database from "../../../src/config/Database";
 
 beforeAll(async () => {
@@ -21,8 +22,16 @@ test("create a valid profile", async () => {
     description: "some description",
     logo: "https://pbs.twimg.com/profile_images/1039514458282844161/apKQh1fu_400x400.jpg"
   });
+  const companyProfilePhoneNumber: CompanyProfilePhoneNumber = new CompanyProfilePhoneNumber({
+    phoneNumber: 43076555,
+    companyProfileId: 1
+  });
+  companyProfile.phoneNumbers = [ companyProfilePhoneNumber ];
   expect(companyProfile).not.toBeNull();
   expect(companyProfile).not.toBeUndefined();
+  expect(companyProfile.phoneNumbers).not.toBeUndefined();
+  expect(companyProfile.phoneNumbers).not.toBeNull();
+  expect(companyProfile.phoneNumbers).toHaveLength(1);
 });
 
 test("raise an error if cuit is null", async () => {

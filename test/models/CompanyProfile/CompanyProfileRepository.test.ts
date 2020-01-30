@@ -1,4 +1,5 @@
 import { CompanyProfile, CompanyProfileRepository } from "../../../src/models/CompanyProfile";
+import { CompanyProfilePhoneNumber } from "../../../src/models/CompanyProfilePhoneNumber";
 import Database from "../../../src/config/Database";
 
 beforeAll(async () => {
@@ -21,12 +22,25 @@ test("create a new companyProfile", async () => {
     description: "some description",
     logo: "https://pbs.twimg.com/profile_images/1039514458282844161/apKQh1fu_400x400.jpg"
   });
+  const companyProfilePhoneNumber1: CompanyProfilePhoneNumber = new CompanyProfilePhoneNumber({
+    phoneNumber: 43076555,
+    companyProfileId: 1
+  });
+  const companyProfilePhoneNumber2: CompanyProfilePhoneNumber = new CompanyProfilePhoneNumber({
+    phoneNumber: 43076555,
+    companyProfileId: 2
+  });
+  companyProfile.phoneNumbers = [
+    companyProfilePhoneNumber1,
+    companyProfilePhoneNumber2
+  ];
   const createdCompanyProfile: CompanyProfile = await CompanyProfileRepository.save(companyProfile);
   expect(createdCompanyProfile.cuit).toEqual(companyProfile.cuit);
   expect(createdCompanyProfile.companyName).toEqual(companyProfile.companyName);
   expect(createdCompanyProfile.slogan).toEqual(companyProfile.slogan);
   expect(createdCompanyProfile.description).toEqual(companyProfile.description);
   expect(createdCompanyProfile.logo).toEqual(companyProfile.logo);
+  expect(createdCompanyProfile.phoneNumbers).toHaveLength(companyProfile.phoneNumbers.length);
 });
 
 test("raise an error if cuit is null", async () => {
