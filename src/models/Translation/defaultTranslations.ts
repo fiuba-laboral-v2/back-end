@@ -1,6 +1,6 @@
 export const defaultTranslations = {
-  job_board: "Bolsa de trabajo",
-  applicant: {
-    apply: "Postularme"
-  }
+  aplicacion: {
+    titulo: "Bolsa de trabajo"
+  },
+  mi_empresa: "Mi empresa"
 };
