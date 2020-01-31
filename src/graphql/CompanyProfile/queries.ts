@@ -1,5 +1,5 @@
-import { companyProfileType } from "./type";
-import { ID, nonNull } from "../fieldTypes";
+import { companyProfileType, ICompanyProfile } from "./type";
+import { ID, nonNull, List } from "../fieldTypes";
 import { CompanyProfile, CompanyProfileRepository } from "../../models/CompanyProfile";
 
 const companyProfileQueries = {
@@ -20,9 +20,12 @@ const companyProfileQueries = {
     }
   },
   getCompanyProfiles: {
-    type: companyProfileType,
-    resolve: (_: undefined, __: undefined) => {
-      return CompanyProfileRepository.findAll();
+    type: List(companyProfileType),
+    resolve: async (_: undefined, __: undefined): Promise<ICompanyProfile[]> => {
+      const companyProfiles: CompanyProfile[] = await CompanyProfileRepository.findAll();
+      return companyProfiles.map(companyProfile => {
+        return companyProfile.serialize();
+      });
     }
   }
 };
