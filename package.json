@@ -80,7 +80,7 @@
     "check-unstaged": "bash scripts/check_unstaged.sh",
 
     "build": "tsc --project .",
-    "build-migrations": "tsc src/migrations/*.ts --outDir dist/src/migrations",
+    "build-migrations": "tsc -p src/migrations",
     "clean": "rm -rf dist",
 
     "db:migrate": "yarn build-migrations && node_modules/.bin/sequelize db:migrate",
