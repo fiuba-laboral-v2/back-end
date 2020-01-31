@@ -31,7 +31,7 @@ export default class CompanyProfile extends Model<CompanyProfile> {
       slogan: this.slogan,
       description: this.description,
       logo: this.logo,
-      phoneNumbers: this.phoneNumbers.map(phoneNumber => {
+      phoneNumbers: this.phoneNumbers?.map(phoneNumber => {
         return phoneNumber.phoneNumber;
       })
     };
