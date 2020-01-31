@@ -22,4 +22,18 @@ export default class CompanyProfile extends Model<CompanyProfile> {
 
   @HasMany(() => CompanyProfilePhoneNumber)
   public phoneNumbers: CompanyProfilePhoneNumber[];
+
+  public serialize() {
+    return {
+      id: this.id,
+      cuit: this.cuit,
+      companyName: this.companyName,
+      slogan: this.slogan,
+      description: this.description,
+      logo: this.logo,
+      phoneNumbers: this.phoneNumbers.map(phoneNumber => {
+        return phoneNumber.phoneNumber;
+      })
+    };
+  }
 }
