@@ -23,7 +23,7 @@ const companyProfileMutations = {
         type: String
       },
       phoneNumbers: {
-        type: new List(Int)
+        type: List(Int)
       }
     },
     resolve: async (_: undefined, args: ICompanyProfile) => {

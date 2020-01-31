@@ -23,7 +23,7 @@ const companyProfileType = new GraphQLObjectType({
       type: String
     },
     phoneNumbers: {
-      type: new List(Int)
+      type: List(Int)
     }
   })
 });
