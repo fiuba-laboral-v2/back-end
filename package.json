@@ -80,13 +80,14 @@
     "check-unstaged": "bash scripts/check_unstaged.sh",
 
     "build": "tsc --project .",
-    "build-migrations": "tsc -p src/migrations",
+    "build-migrations": "yarn clean:compiled-migrations && tsc -p src/migrations",
     "clean": "rm -rf dist",
+    "clean:compiled-migrations": "rm -rf dist_migrations",
 
-    "db:migrate": "yarn build-migrations && node_modules/.bin/sequelize db:migrate",
+    "db:migrate": "yarn build-migrations && sequelize db:migrate && yarn clean:compiled-migrations",
     "db:create": "node_modules/.bin/sequelize db:create",
     "db:drop": "node_modules/.bin/sequelize db:drop",
-    "db:test:migrate": "yarn build-migrations && NODE_ENV=test node_modules/.bin/sequelize db:migrate",
+    "db:test:migrate": "yarn build-migrations && NODE_ENV=test sequelize db:migrate && yarn clean:compiled-migrations",
     "db:test:create": "NODE_ENV=test node_modules/.bin/sequelize db:create",
     "db:test:drop": "NODE_ENV=test node_modules/.bin/sequelize db:drop",
 

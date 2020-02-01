@@ -11,6 +11,7 @@ data
 # production
 build
 dist
+dist_migrations
 
 # deploy
 deploy_key
