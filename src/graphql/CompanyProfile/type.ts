@@ -24,6 +24,9 @@ const companyProfileType = new GraphQLObjectType({
     },
     phoneNumbers: {
       type: List(Int)
+    },
+    photos: {
+      type: List(String)
     }
   })
 });
@@ -35,6 +38,7 @@ interface ICompanyProfile {
   description: string;
   logo: string;
   phoneNumbers: number[];
+  photos: string[];
 }
 
 export { companyProfileType, ICompanyProfile };

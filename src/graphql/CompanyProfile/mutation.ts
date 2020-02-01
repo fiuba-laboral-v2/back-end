@@ -2,6 +2,7 @@ import { companyProfileType, ICompanyProfile } from "./type";
 import { Int, List, nonNull, String } from "../fieldTypes";
 import { CompanyProfile, CompanyProfileRepository } from "../../models/CompanyProfile";
 import { CompanyProfilePhoneNumberRepository } from "../../models/CompanyProfilePhoneNumber";
+import { CompanyProfilePhotoRepository } from "../../models/CompanyProfilePhoto";
 
 const companyProfileMutations = {
   saveCompanyProfile: {
@@ -24,10 +25,13 @@ const companyProfileMutations = {
       },
       phoneNumbers: {
         type: List(Int)
+      },
+      photos: {
+        type: List(String)
       }
     },
     resolve: async (_: undefined, args: ICompanyProfile) => {
-      const { cuit, companyName, slogan, description, logo, phoneNumbers } = args;
+      const { cuit, companyName, slogan, description, logo, phoneNumbers, photos } = args;
       const companyProfile: CompanyProfile = await CompanyProfileRepository.save(
         new CompanyProfile({
           cuit,
@@ -40,7 +44,9 @@ const companyProfileMutations = {
       companyProfile.phoneNumbers = await CompanyProfilePhoneNumberRepository.createPhoneNumbers(
         companyProfile, phoneNumbers
       );
-      await CompanyProfileRepository.save(companyProfile);
+      companyProfile.photos = await CompanyProfilePhotoRepository.createPhotos(
+        companyProfile, photos
+      );
       return companyProfile.serialize();
     }
   }
