@@ -1,18 +1,10 @@
 import { CompanyProfilePhoto } from "./index";
-import { CompanyProfile } from "../CompanyProfile";
 
 export const CompanyProfilePhotoRepository = {
-  createPhotos: async (companyProfile: CompanyProfile, photos: string[]) => {
+  build: (photos: string[]) => {
     const companyProfilePhoneNumbers: CompanyProfilePhoto[] = [];
     for (const photo of  photos) {
-      const companyProfilePhoto: CompanyProfilePhoto =
-        await CompanyProfilePhotoRepository.save(
-          new CompanyProfilePhoto({
-            photo: photo,
-            companyProfileId: companyProfile.id
-          })
-        );
-      companyProfilePhoneNumbers.push(companyProfilePhoto);
+      companyProfilePhoneNumbers.push(new CompanyProfilePhoto({ photo: photo }));
     }
     return companyProfilePhoneNumbers;
   },

@@ -1,6 +1,12 @@
 import { CompanyProfile, CompanyProfileRepository } from "../../../src/models/CompanyProfile";
-import { CompanyProfilePhoneNumberRepository } from "../../../src/models/CompanyProfilePhoneNumber";
-import { CompanyProfilePhotoRepository } from "../../../src/models/CompanyProfilePhoto";
+import {
+  CompanyProfilePhoneNumber,
+  CompanyProfilePhoneNumberRepository
+} from "../../../src/models/CompanyProfilePhoneNumber";
+import {
+  CompanyProfilePhoto,
+  CompanyProfilePhotoRepository
+} from "../../../src/models/CompanyProfilePhoto";
 import Database from "../../../src/config/Database";
 
 beforeAll(async () => {
@@ -23,20 +29,24 @@ test("create a new companyProfile", async () => {
     description: "some description",
     logo: "https://pbs.twimg.com/profile_images/1039514458282844161/apKQh1fu_400x400.jpg"
   };
-  const phoneNumbers = [43076555, 43076555];
-  const photos = [
-    "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQV" +
-    "QI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
-    "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAHAAACNbyblAAAAHElEQV" +
-    "QI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
-  ];
-  const companyProfile: CompanyProfile = await CompanyProfileRepository.save(
-    new CompanyProfile(companyProfileData)
+  const companyProfile: CompanyProfile = new CompanyProfile(companyProfileData);
+  const phoneNumbers: CompanyProfilePhoneNumber[] = CompanyProfilePhoneNumberRepository.build(
+    [
+      43076555,
+      43076556,
+      43076455,
+      43076599
+    ]
   );
-  companyProfile.phoneNumbers = await CompanyProfilePhoneNumberRepository.createPhoneNumbers(
-    companyProfile, phoneNumbers
+  const photos: CompanyProfilePhoto[] = CompanyProfilePhotoRepository.build(
+    [
+      `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38G
+      IAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==`,
+      `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38G
+      IAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==`
+    ]
   );
-  companyProfile.photos = await CompanyProfilePhotoRepository.createPhotos(companyProfile, photos);
+  await CompanyProfileRepository.save(companyProfile, phoneNumbers, photos);
 
   expect(companyProfile.cuit).toEqual(companyProfileData.cuit);
   expect(companyProfile.companyName).toEqual(companyProfileData.companyName);
@@ -71,25 +81,24 @@ test("retrieve by id", async () => {
     description: "some description",
     logo: "https://pbs.twimg.com/profile_images/1039514458282844161/apKQh1fu_400x400.jpg"
   };
-  const phoneNumbers = [
-    43076555,
-    43076556,
-    43076455,
-    43076599
-  ];
-  const photos = [
-    "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQV" +
-    "QI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
-    "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAHAAACNbyblAAAAHElEQV" +
-    "QI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
-  ];
-  const companyProfile: CompanyProfile = await CompanyProfileRepository.save(
-    new CompanyProfile(companyProfileData)
+  const companyProfile: CompanyProfile = new CompanyProfile(companyProfileData);
+  const phoneNumbers: CompanyProfilePhoneNumber[] = CompanyProfilePhoneNumberRepository.build(
+    [
+      43076555,
+      43076556,
+      43076455,
+      43076599
+    ]
   );
-  companyProfile.phoneNumbers = await CompanyProfilePhoneNumberRepository.createPhoneNumbers(
-    companyProfile, phoneNumbers
+  const photos: CompanyProfilePhoto[] = CompanyProfilePhotoRepository.build(
+    [
+      `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38G
+      IAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==`,
+      `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38G
+      IAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==`
+    ]
   );
-  companyProfile.photos = await CompanyProfilePhotoRepository.createPhotos(companyProfile, photos);
+  await CompanyProfileRepository.save(companyProfile, phoneNumbers, photos);
 
   const expectedCompanyProfile = await CompanyProfileRepository.findById(companyProfile.id);
   expect(expectedCompanyProfile).not.toBeNull();
@@ -106,25 +115,24 @@ test("retrieve all CompanyProfiles", async () => {
     description: "some description",
     logo: "https://pbs.twimg.com/profile_images/1039514458282844161/apKQh1fu_400x400.jpg"
   };
-  const phoneNumbers = [
-    43076555,
-    43076556,
-    43076455,
-    43076599
-  ];
-  const photos = [
-    "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQV" +
-    "QI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
-    "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAHAAACNbyblAAAAHElEQV" +
-    "QI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
-  ];
-  const companyProfile: CompanyProfile = await CompanyProfileRepository.save(
-    new CompanyProfile(companyProfileData)
+  const companyProfile: CompanyProfile = new CompanyProfile(companyProfileData);
+  const phoneNumbers: CompanyProfilePhoneNumber[] = CompanyProfilePhoneNumberRepository.build(
+    [
+      43076555,
+      43076556,
+      43076455,
+      43076599
+    ]
   );
-  companyProfile.phoneNumbers = await CompanyProfilePhoneNumberRepository.createPhoneNumbers(
-    companyProfile, phoneNumbers
+  const photos: CompanyProfilePhoto[] = CompanyProfilePhotoRepository.build(
+    [
+      `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38G
+      IAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==`,
+      `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38G
+      IAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==`
+    ]
   );
-  companyProfile.photos = await CompanyProfilePhotoRepository.createPhotos(companyProfile, photos);
+  await CompanyProfileRepository.save(companyProfile, phoneNumbers, photos);
 
   const expectedCompanyProfiles = await CompanyProfileRepository.findAll();
   expect(expectedCompanyProfiles).not.toBeNull();

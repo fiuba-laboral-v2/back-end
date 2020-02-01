@@ -1,8 +1,14 @@
 import { companyProfileType, ICompanyProfile } from "./type";
 import { Int, List, nonNull, String } from "../fieldTypes";
 import { CompanyProfile, CompanyProfileRepository } from "../../models/CompanyProfile";
-import { CompanyProfilePhoneNumberRepository } from "../../models/CompanyProfilePhoneNumber";
-import { CompanyProfilePhotoRepository } from "../../models/CompanyProfilePhoto";
+import {
+  CompanyProfilePhoneNumber,
+  CompanyProfilePhoneNumberRepository
+} from "../../models/CompanyProfilePhoneNumber";
+import {
+  CompanyProfilePhoto,
+  CompanyProfilePhotoRepository
+} from "../../models/CompanyProfilePhoto";
 
 const companyProfileMutations = {
   saveCompanyProfile: {
@@ -32,20 +38,19 @@ const companyProfileMutations = {
     },
     resolve: async (_: undefined, args: ICompanyProfile) => {
       const { cuit, companyName, slogan, description, logo, phoneNumbers, photos } = args;
-      const companyProfile: CompanyProfile = await CompanyProfileRepository.save(
-        new CompanyProfile({
-          cuit,
-          companyName,
-          slogan,
-          description,
-          logo
-        })
-      );
-      companyProfile.phoneNumbers = await CompanyProfilePhoneNumberRepository.createPhoneNumbers(
-        companyProfile, phoneNumbers
-      );
-      companyProfile.photos = await CompanyProfilePhotoRepository.createPhotos(
-        companyProfile, photos
+      const companyProfile: CompanyProfile = new CompanyProfile({
+        cuit,
+        companyName,
+        slogan,
+        description,
+        logo
+      });
+      const companyProfilePhoneNumbers: CompanyProfilePhoneNumber[] =
+        CompanyProfilePhoneNumberRepository.build(phoneNumbers);
+      const companyProfilePhotos: CompanyProfilePhoto[] =
+        CompanyProfilePhotoRepository.build(photos);
+      await CompanyProfileRepository.save(
+        companyProfile, companyProfilePhoneNumbers, companyProfilePhotos
       );
       return companyProfile.serialize();
     }
