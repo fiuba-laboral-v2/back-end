@@ -8,19 +8,21 @@ import {
 } from "../../../../src/models/CompanyProfilePhoneNumber";
 
 const query = gql`
-    mutation ($cuit: String!, $companyName: String!, $slogan: String, $description: String,
-        $logo: String, $phoneNumbers: [Int], $photos: [String]) {
-        saveCompanyProfile(cuit: $cuit, companyName: $companyName, slogan: $slogan,
-            description: $description, logo: $logo, phoneNumbers: $phoneNumbers, photos: $photos) {
-          cuit
-          companyName
-          slogan
-          description
-          logo
-          phoneNumbers
-          photos
-        }
+  mutation (
+    $cuit: String!, $companyName: String!, $slogan: String, $description: String,
+    $logo: String, $phoneNumbers: [Int], $photos: [String]) {
+    saveCompanyProfile(
+        cuit: $cuit, companyName: $companyName, slogan: $slogan, description: $description,
+        logo: $logo, phoneNumbers: $phoneNumbers, photos: $photos) {
+      cuit
+      companyName
+      slogan
+      description
+      logo
+      phoneNumbers
+      photos
     }
+  }
 `;
 
 beforeAll(async () => {

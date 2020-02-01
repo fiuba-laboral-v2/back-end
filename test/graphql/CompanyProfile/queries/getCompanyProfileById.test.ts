@@ -4,12 +4,12 @@ import { CompanyProfile, CompanyProfileRepository } from "../../../../src/models
 import Database from "../../../../src/config/Database";
 
 const query = gql`
-    query ($id: ID!) {
-        getCompanyProfileById(id: $id) {
-            cuit
-            companyName
-        }
+  query ($id: ID!) {
+    getCompanyProfileById(id: $id) {
+        cuit
+        companyName
     }
+  }
 `;
 
 beforeAll(async () => {
