@@ -12,16 +12,12 @@ const companyProfileQueries = {
     },
     resolve: async (_: undefined, { id }: { id: number }) => {
       const companyProfile: CompanyProfile | null = await CompanyProfileRepository.findById(id);
-      if (companyProfile) {
-        return companyProfile.serialize();
-      } else {
-        return null;
-      }
+      return companyProfile?.serialize();
     }
   },
   getCompanyProfiles: {
     type: List(companyProfileType),
-    resolve: async (_: undefined, __: undefined): Promise<ICompanyProfile[]> => {
+    resolve: async (): Promise<ICompanyProfile[]> => {
       const companyProfiles: CompanyProfile[] = await CompanyProfileRepository.findAll();
       return companyProfiles.map(companyProfile => {
         return companyProfile.serialize();
