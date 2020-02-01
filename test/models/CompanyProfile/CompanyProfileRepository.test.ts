@@ -1,5 +1,4 @@
 import { CompanyProfile, CompanyProfileRepository } from "../../../src/models/CompanyProfile";
-import { CompanyProfilePhoneNumber } from "../../../src/models/CompanyProfilePhoneNumber";
 import { CompanyProfilePhoneNumberRepository } from "../../../src/models/CompanyProfilePhoneNumber";
 import Database from "../../../src/config/Database";
 
@@ -16,32 +15,26 @@ afterAll(async () => {
 });
 
 test("create a new companyProfile", async () => {
-  const companyProfile: CompanyProfile = new CompanyProfile({
+  const companyProfileData = {
     cuit: "30-71181901-7",
     companyName: "devartis",
     slogan: "We craft web applications for great businesses",
     description: "some description",
     logo: "https://pbs.twimg.com/profile_images/1039514458282844161/apKQh1fu_400x400.jpg"
-  });
-  const companyProfilePhoneNumber1: CompanyProfilePhoneNumber = new CompanyProfilePhoneNumber({
-    phoneNumber: 43076555,
-    companyProfileId: 1
-  });
-  const companyProfilePhoneNumber2: CompanyProfilePhoneNumber = new CompanyProfilePhoneNumber({
-    phoneNumber: 43076555,
-    companyProfileId: 2
-  });
-  companyProfile.phoneNumbers = [
-    companyProfilePhoneNumber1,
-    companyProfilePhoneNumber2
-  ];
-  const createdCompanyProfile: CompanyProfile = await CompanyProfileRepository.save(companyProfile);
-  expect(createdCompanyProfile.cuit).toEqual(companyProfile.cuit);
-  expect(createdCompanyProfile.companyName).toEqual(companyProfile.companyName);
-  expect(createdCompanyProfile.slogan).toEqual(companyProfile.slogan);
-  expect(createdCompanyProfile.description).toEqual(companyProfile.description);
-  expect(createdCompanyProfile.logo).toEqual(companyProfile.logo);
-  expect(createdCompanyProfile.phoneNumbers).toHaveLength(companyProfile.phoneNumbers.length);
+  };
+  const companyProfile: CompanyProfile = await CompanyProfileRepository.save(
+    new CompanyProfile(companyProfileData)
+  );
+  const phoneNumbers = [43076555, 43076555];
+  companyProfile.phoneNumbers = await CompanyProfilePhoneNumberRepository.createPhoneNumbers(
+    companyProfile, phoneNumbers
+  );
+  expect(companyProfile.cuit).toEqual(companyProfileData.cuit);
+  expect(companyProfile.companyName).toEqual(companyProfileData.companyName);
+  expect(companyProfile.slogan).toEqual(companyProfileData.slogan);
+  expect(companyProfile.description).toEqual(companyProfileData.description);
+  expect(companyProfile.logo).toEqual(companyProfileData.logo);
+  expect(companyProfile.phoneNumbers).toHaveLength(phoneNumbers.length);
 });
 
 test("raise an error if cuit is null", async () => {
