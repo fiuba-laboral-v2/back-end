@@ -1,5 +1,5 @@
-import { CompanyProfilePhoneNumber } from "../../../src/models/CompanyProfilePhoneNumber";
 import Database from "../../../src/config/Database";
+import { CompanyProfilePhoneNumber } from "../../../src/models/CompanyProfilePhoneNumber";
 
 beforeAll(async () => {
   await Database.setConnection();

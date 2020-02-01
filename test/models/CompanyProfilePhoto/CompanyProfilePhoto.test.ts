@@ -1,5 +1,5 @@
-import { CompanyProfilePhoto } from "../../../src/models/CompanyProfilePhoto";
 import Database from "../../../src/config/Database";
+import { CompanyProfilePhoto } from "../../../src/models/CompanyProfilePhoto";
 
 beforeAll(async () => {
   await Database.setConnection();
