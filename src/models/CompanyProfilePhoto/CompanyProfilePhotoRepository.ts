@@ -8,9 +8,6 @@ export const CompanyProfilePhotoRepository = {
     }
     return companyProfilePhoneNumbers;
   },
-  save: async (companyProfilePhoto: CompanyProfilePhoto) => {
-    return companyProfilePhoto.save();
-  },
   truncate: async () => {
     return CompanyProfilePhoto.destroy({ truncate: true });
   }
