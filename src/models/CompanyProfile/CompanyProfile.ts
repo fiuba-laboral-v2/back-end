@@ -1,5 +1,6 @@
 import { AllowNull, Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
 import { CompanyProfilePhoneNumber } from "../CompanyProfilePhoneNumber";
+import { CompanyProfilePhoto } from "../CompanyProfilePhoto";
 
 @Table
 export default class CompanyProfile extends Model<CompanyProfile> {
@@ -22,6 +23,9 @@ export default class CompanyProfile extends Model<CompanyProfile> {
 
   @HasMany(() => CompanyProfilePhoneNumber)
   public phoneNumbers: CompanyProfilePhoneNumber[];
+
+  @HasMany(() => CompanyProfilePhoto)
+  public photos: CompanyProfilePhoto[];
 
   public serialize() {
     return {

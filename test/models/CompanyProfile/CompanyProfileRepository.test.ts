@@ -1,5 +1,6 @@
 import { CompanyProfile, CompanyProfileRepository } from "../../../src/models/CompanyProfile";
 import { CompanyProfilePhoneNumberRepository } from "../../../src/models/CompanyProfilePhoneNumber";
+import { CompanyProfilePhotoRepository } from "../../../src/models/CompanyProfilePhoto";
 import Database from "../../../src/config/Database";
 
 beforeAll(async () => {
@@ -22,19 +23,28 @@ test("create a new companyProfile", async () => {
     description: "some description",
     logo: "https://pbs.twimg.com/profile_images/1039514458282844161/apKQh1fu_400x400.jpg"
   };
+  const phoneNumbers = [43076555, 43076555];
+  const photos = [
+    "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQV" +
+    "QI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+    "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAHAAACNbyblAAAAHElEQV" +
+    "QI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
+  ];
   const companyProfile: CompanyProfile = await CompanyProfileRepository.save(
     new CompanyProfile(companyProfileData)
   );
-  const phoneNumbers = [43076555, 43076555];
   companyProfile.phoneNumbers = await CompanyProfilePhoneNumberRepository.createPhoneNumbers(
     companyProfile, phoneNumbers
   );
+  companyProfile.photos = await CompanyProfilePhotoRepository.createPhotos(companyProfile, photos);
+
   expect(companyProfile.cuit).toEqual(companyProfileData.cuit);
   expect(companyProfile.companyName).toEqual(companyProfileData.companyName);
   expect(companyProfile.slogan).toEqual(companyProfileData.slogan);
   expect(companyProfile.description).toEqual(companyProfileData.description);
   expect(companyProfile.logo).toEqual(companyProfileData.logo);
   expect(companyProfile.phoneNumbers).toHaveLength(phoneNumbers.length);
+  expect(companyProfile.photos).toHaveLength(photos.length);
 });
 
 test("raise an error if cuit is null", async () => {
@@ -67,13 +77,20 @@ test("retrieve by id", async () => {
     43076455,
     43076599
   ];
+  const photos = [
+    "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQV" +
+    "QI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+    "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAHAAACNbyblAAAAHElEQV" +
+    "QI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
+  ];
   const companyProfile: CompanyProfile = await CompanyProfileRepository.save(
     new CompanyProfile(companyProfileData)
   );
   companyProfile.phoneNumbers = await CompanyProfilePhoneNumberRepository.createPhoneNumbers(
     companyProfile, phoneNumbers
   );
-  await CompanyProfileRepository.save(companyProfile);
+  companyProfile.photos = await CompanyProfilePhotoRepository.createPhotos(companyProfile, photos);
+
   const expectedCompanyProfile = await CompanyProfileRepository.findById(companyProfile.id);
   expect(expectedCompanyProfile).not.toBeNull();
   expect(expectedCompanyProfile).not.toBeUndefined();
@@ -95,13 +112,20 @@ test("retrieve all CompanyProfiles", async () => {
     43076455,
     43076599
   ];
+  const photos = [
+    "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQV" +
+    "QI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+    "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAHAAACNbyblAAAAHElEQV" +
+    "QI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
+  ];
   const companyProfile: CompanyProfile = await CompanyProfileRepository.save(
     new CompanyProfile(companyProfileData)
   );
   companyProfile.phoneNumbers = await CompanyProfilePhoneNumberRepository.createPhoneNumbers(
     companyProfile, phoneNumbers
   );
-  await CompanyProfileRepository.save(companyProfile);
+  companyProfile.photos = await CompanyProfilePhotoRepository.createPhotos(companyProfile, photos);
+
   const expectedCompanyProfiles = await CompanyProfileRepository.findAll();
   expect(expectedCompanyProfiles).not.toBeNull();
   expect(expectedCompanyProfiles).not.toBeUndefined();
