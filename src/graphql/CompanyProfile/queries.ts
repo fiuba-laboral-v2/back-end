@@ -16,7 +16,7 @@ const companyProfileQueries = {
     },
     resolve: async (_: undefined, { id }: { id: number }) => {
       const companyProfile: CompanyProfile | null = await CompanyProfileRepository.findById(id);
-      return companyProfile === null ? null : CompanyProfileSerializer.serialize(companyProfile);
+      return companyProfile ? CompanyProfileSerializer.serialize(companyProfile) : null;
     }
   },
   getCompanyProfiles: {
