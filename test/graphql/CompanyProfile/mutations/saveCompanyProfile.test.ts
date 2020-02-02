@@ -1,13 +1,13 @@
 import { gql } from "apollo-server";
 import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
-import { ICompanyProfile } from "../../../../src/graphql/CompanyProfile";
+import { ICompanyProfile } from "../../../../src/models/CompanyProfile";
 import { CompanyProfileRepository } from "../../../../src/models/CompanyProfile";
 import {
   CompanyProfilePhoneNumberRepository
 } from "../../../../src/models/CompanyProfilePhoneNumber";
 
-const query = gql`
+const queryWithAllData = gql`
   mutation (
     $cuit: String!, $companyName: String!, $slogan: String, $description: String,
     $logo: String, $phoneNumbers: [Int], $photos: [String]) {
@@ -25,6 +25,15 @@ const query = gql`
   }
 `;
 
+const queryWithOnlyObligatoryData = gql`
+  mutation ($cuit: String!, $companyName: String!) {
+    saveCompanyProfile(cuit: $cuit, companyName: $companyName) {
+      cuit
+      companyName
+    }
+  }
+`;
+
 beforeAll(async () => {
   await Database.setConnection();
 });
@@ -38,8 +47,8 @@ afterAll(async () => {
   await Database.close();
 });
 
-test("create companyProfile", async () => {
-  const companyProfileParams: ICompanyProfile = {
+describe("saveCompanyProfile", () => {
+  const companyProfileData: ICompanyProfile = {
     cuit: "30711819017",
     companyName: "devartis",
     slogan: "We craft web applications for great businesses",
@@ -48,18 +57,35 @@ test("create companyProfile", async () => {
     phoneNumbers: [
       43076555,
       43076556,
-      43076557
+      43076455,
+      43076599
     ],
     photos: [
-      "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQV" +
-      "QI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
-      "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAHAAACNbyblAAAAHElEQV" +
-      "QI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
+      `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//
+        8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==`,
+      `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//
+        8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==`
     ]
   };
-  const response = await executeMutation(query, companyProfileParams);
-  expect(response.errors).toBeUndefined();
-  expect(response.data).not.toBeUndefined();
-  expect(response.data).toEqual({ saveCompanyProfile: companyProfileParams });
-});
 
+  const companyProfileDataWithMinimumData = {
+    cuit: "30711819017",
+    companyName: "devartis"
+  };
+
+  test("create companyProfile", async () => {
+    const response = await executeMutation(queryWithAllData, companyProfileData);
+    expect(response.errors).toBeUndefined();
+    expect(response.data).not.toBeUndefined();
+    expect(response.data).toEqual({ saveCompanyProfile: companyProfileData });
+  });
+
+  test("create companyProfile with only obligatory data", async () => {
+    const response = await executeMutation(
+      queryWithOnlyObligatoryData, companyProfileDataWithMinimumData
+    );
+    expect(response.errors).toBeUndefined();
+    expect(response.data).not.toBeUndefined();
+    expect(response.data).toEqual({ saveCompanyProfile: companyProfileDataWithMinimumData });
+  });
+});
