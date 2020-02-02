@@ -40,7 +40,7 @@ afterAll(async () => {
 
 test("create companyProfile", async () => {
   const companyProfileParams: ICompanyProfile = {
-    cuit: "30-71181901-7",
+    cuit: "30711819017",
     companyName: "devartis",
     slogan: "We craft web applications for great businesses",
     description: "some description",

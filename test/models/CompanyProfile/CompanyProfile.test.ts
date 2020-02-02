@@ -16,7 +16,7 @@ afterAll(async () => {
 
 test("create a valid profile", async () => {
   const companyProfile: CompanyProfile = new CompanyProfile({
-    cuit: "30-71181901-7",
+    cuit: "30711819017",
     companyName: "devartis",
     slogan: "We craft web applications for great businesses",
     description: "some description",
@@ -44,7 +44,7 @@ test("raise an error if cuit is null", async () => {
 
 test("raise an error if companyName is null", async () => {
   const companyProfile: CompanyProfile = new CompanyProfile({
-    cuit: "30-71181901-7",
+    cuit: "30711819017",
     companyName: null
   });
   await expect(companyProfile.save()).rejects.toThrow();

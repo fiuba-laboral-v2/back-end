@@ -23,7 +23,7 @@ afterAll(async () => {
 
 test("create a new companyProfile", async () => {
   const companyProfileData = {
-    cuit: "30-71181901-7",
+    cuit: "30711819017",
     companyName: "devartis",
     slogan: "We craft web applications for great businesses",
     description: "some description",
@@ -67,7 +67,7 @@ test("raise an error if cuit is null", async () => {
 
 test("raise an error if cuit is null", async () => {
   const companyProfile: CompanyProfile = new CompanyProfile({
-    cuit: "30-71181901-7",
+    cuit: "30711819017",
     companyName: null
   });
   await expect(CompanyProfileRepository.save(companyProfile)).rejects.toThrow();
@@ -75,7 +75,7 @@ test("raise an error if cuit is null", async () => {
 
 test("retrieve by id", async () => {
   const companyProfileData = {
-    cuit: "30-71181901-7",
+    cuit: "30711819017",
     companyName: "devartis",
     slogan: "We craft web applications for great businesses",
     description: "some description",
@@ -109,7 +109,7 @@ test("retrieve by id", async () => {
 
 test("retrieve all CompanyProfiles", async () => {
   const companyProfileData = {
-    cuit: "30-71181901-7",
+    cuit: "30711819017",
     companyName: "devartis",
     slogan: "We craft web applications for great businesses",
     description: "some description",
@@ -143,7 +143,7 @@ test("retrieve all CompanyProfiles", async () => {
 
 test("rollback transaction and raise error if photo is null", async () => {
   const companyProfileData = {
-    cuit: "30-71181901-7",
+    cuit: "30711819017",
     companyName: "devartis",
     slogan: "We craft web applications for great businesses",
     description: "some description",
@@ -163,7 +163,7 @@ test("rollback transaction and raise error if photo is null", async () => {
 
 test("rollback transaction and raise error if phoneNumber is null", async () => {
   const companyProfileData = {
-    cuit: "30-71181901-7",
+    cuit: "30711819017",
     companyName: "devartis",
     slogan: "We craft web applications for great businesses",
     description: "some description",

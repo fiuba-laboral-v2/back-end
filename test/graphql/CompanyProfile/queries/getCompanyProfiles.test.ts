@@ -25,7 +25,7 @@ afterAll(async () => {
 });
 
 test("returns all companyProfiles", async () => {
-  const companyProfileParams = { cuit: "30-71181901-7", companyName: "devartis" };
+  const companyProfileParams = { cuit: "30711819017", companyName: "devartis" };
   await CompanyProfileRepository.save(new CompanyProfile(companyProfileParams));
   const response = await executeQuery(query);
 

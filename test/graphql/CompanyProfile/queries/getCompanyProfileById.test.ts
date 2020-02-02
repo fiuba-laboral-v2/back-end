@@ -25,7 +25,7 @@ afterAll(async () => {
 });
 
 test("find a companyProfile given its id", async () => {
-  const companyProfileParams = { cuit: "30-71181901-7", companyName: "devartis"};
+  const companyProfileParams = { cuit: "30711819017", companyName: "devartis"};
   const companyProfile: CompanyProfile = await CompanyProfileRepository.save(
     new CompanyProfile(companyProfileParams)
   );
