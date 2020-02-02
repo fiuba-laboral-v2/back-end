@@ -1,13 +1,17 @@
 import { Sequelize } from "sequelize-typescript";
 import Environment from "./Environment";
 import databaseJSON from "../../config/database.json";
-import { Root } from "../models/Root";
+import { models } from "../models";
 
 export default class Database {
   public static sequelize: Sequelize;
 
   public static close() {
-    this.sequelize.close();
+    this.sequelize?.close();
+  }
+
+  public static transaction() {
+    return this.sequelize?.transaction();
   }
 
   public static setConnection() {
@@ -17,6 +21,6 @@ export default class Database {
     } else {
       this.sequelize = new Sequelize(config.database, config.username, config.password, config);
     }
-    this.sequelize.addModels([Root]);
+    this.sequelize.addModels(models);
   }
 }
