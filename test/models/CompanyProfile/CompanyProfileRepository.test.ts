@@ -140,3 +140,47 @@ test("retrieve all CompanyProfiles", async () => {
   expect(expectedCompanyProfiles!.length).toEqual(1);
   expect(expectedCompanyProfiles[0].id).toEqual(companyProfile.id);
 });
+
+test("rollback transaction and raise error if photo is null", async () => {
+  const companyProfileData = {
+    cuit: "30-71181901-7",
+    companyName: "devartis",
+    slogan: "We craft web applications for great businesses",
+    description: "some description",
+    logo: "https://pbs.twimg.com/profile_images/1039514458282844161/apKQh1fu_400x400.jpg"
+  };
+  const companyProfile: CompanyProfile = new CompanyProfile(companyProfileData);
+  const photo: CompanyProfilePhoto = new CompanyProfilePhoto({ photo: null });
+  await expect(CompanyProfileRepository.save(
+    companyProfile, [],[photo]
+  )).rejects.toThrow();
+
+  const expectedCompanyProfiles = await CompanyProfileRepository.findAll();
+  expect(expectedCompanyProfiles).not.toBeNull();
+  expect(expectedCompanyProfiles).not.toBeUndefined();
+  expect(expectedCompanyProfiles!.length).toEqual(0);
+});
+
+test("rollback transaction and raise error if phoneNumber is null", async () => {
+  const companyProfileData = {
+    cuit: "30-71181901-7",
+    companyName: "devartis",
+    slogan: "We craft web applications for great businesses",
+    description: "some description",
+    logo: "https://pbs.twimg.com/profile_images/1039514458282844161/apKQh1fu_400x400.jpg"
+  };
+  const companyProfile: CompanyProfile = new CompanyProfile(companyProfileData);
+  const phoneNumber: CompanyProfilePhoneNumber = new CompanyProfilePhoneNumber(
+    {
+      phoneNumber: null
+    }
+    );
+  await expect(CompanyProfileRepository.save(
+    companyProfile, [phoneNumber]
+  )).rejects.toThrow();
+
+  const expectedCompanyProfiles = await CompanyProfileRepository.findAll();
+  expect(expectedCompanyProfiles).not.toBeNull();
+  expect(expectedCompanyProfiles).not.toBeUndefined();
+  expect(expectedCompanyProfiles!.length).toEqual(0);
+});
