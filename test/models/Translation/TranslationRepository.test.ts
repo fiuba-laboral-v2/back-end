@@ -2,8 +2,8 @@ import { TranslationRepository } from "../../../src/models/Translation";
 
 test("get a root element in default transitions yml", () => {
   expect(
-    TranslationRepository.translate("job_board")
-  ).toEqual("Bolsa de trabajo");
+    TranslationRepository.translate("my_company")
+  ).toEqual("Mi empresa");
 });
 
 test("throw an error if the path is incorrect", () => {
@@ -15,6 +15,6 @@ test("throw an error if the path is incorrect", () => {
 
 test("get a nested element in default transitions yml", () => {
   expect(
-    TranslationRepository.translate("applicant.apply")
-  ).toEqual("Postularme");
+    TranslationRepository.translate("app.title")
+  ).toEqual("Bolsa de trabajo");
 });
