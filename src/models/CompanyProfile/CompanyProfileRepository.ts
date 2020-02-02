@@ -1,9 +1,30 @@
 import { CompanyProfile } from "./index";
-import { CompanyProfilePhoto } from "../CompanyProfilePhoto";
-import { CompanyProfilePhoneNumber } from "../CompanyProfilePhoneNumber";
+import { CompanyProfilePhoto, CompanyProfilePhotoRepository } from "../CompanyProfilePhoto";
+import {
+  CompanyProfilePhoneNumber,
+  CompanyProfilePhoneNumberRepository
+} from "../CompanyProfilePhoneNumber";
 import Database from "../../config/Database";
+import { ICompanyProfile } from "../../graphql/CompanyProfile";
 
 export const CompanyProfileRepository = {
+  create: async (values: ICompanyProfile) => {
+    const { cuit, companyName, slogan, description, logo, phoneNumbers, photos } = values;
+    const companyProfile: CompanyProfile = new CompanyProfile({
+      cuit,
+      companyName,
+      slogan,
+      description,
+      logo
+    });
+    const companyProfilePhoneNumbers: CompanyProfilePhoneNumber[] =
+      CompanyProfilePhoneNumberRepository.build(phoneNumbers);
+    const companyProfilePhotos: CompanyProfilePhoto[] =
+      CompanyProfilePhotoRepository.build(photos);
+    return CompanyProfileRepository.save(
+      companyProfile, companyProfilePhoneNumbers, companyProfilePhotos
+    );
+  },
   save: async (
     companyProfile: CompanyProfile,
     phoneNumbers: CompanyProfilePhoneNumber[] = [],
