@@ -29,8 +29,6 @@ test("returns all companyProfiles", async () => {
   await CompanyProfileRepository.save(new CompanyProfile(companyProfileParams));
   const response = await executeQuery(query);
 
-  expect(response).not.toBeNull();
-  expect(response).not.toBeUndefined();
   expect(response.errors).toBeUndefined();
   expect(response.data).not.toBeUndefined();
   expect(response.data).toEqual({

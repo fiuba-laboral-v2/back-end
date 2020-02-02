@@ -58,8 +58,6 @@ test("create companyProfile", async () => {
     ]
   };
   const response = await executeMutation(query, companyProfileParams);
-  expect(response).not.toBeNull();
-  expect(response).not.toBeUndefined();
   expect(response.errors).toBeUndefined();
   expect(response).toHaveProperty("data");
   expect(response.data).toEqual({

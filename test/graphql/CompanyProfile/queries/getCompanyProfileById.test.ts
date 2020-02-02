@@ -6,8 +6,8 @@ import Database from "../../../../src/config/Database";
 const query = gql`
   query ($id: ID!) {
     getCompanyProfileById(id: $id) {
-        cuit
-        companyName
+      cuit
+      companyName
     }
   }
 `;
@@ -30,8 +30,6 @@ test("find a companyProfile given its id", async () => {
     new CompanyProfile(companyProfileParams)
   );
   const response = await executeQuery(query, { id: companyProfile.id });
-  expect(response).not.toBeNull();
-  expect(response).not.toBeUndefined();
   expect(response.errors).toBeUndefined();
   expect(response.data).not.toBeUndefined();
   expect(response.data).toEqual({
@@ -42,8 +40,6 @@ test("find a companyProfile given its id", async () => {
 test("returns null if the CompanyProfile does no exists", async () => {
   const notExistentId: number = 9999;
   const response = await executeQuery(query, { id: notExistentId });
-  expect(response).not.toBeNull();
-  expect(response).not.toBeUndefined();
   expect(response.errors).toBeUndefined();
   expect(response.data).not.toBeUndefined();
   expect(response.data).toEqual({
