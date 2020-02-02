@@ -59,8 +59,7 @@ test("create companyProfile", async () => {
   };
   const response = await executeMutation(query, companyProfileParams);
   expect(response.errors).toBeUndefined();
-  expect(response).toHaveProperty("data");
-  expect(response.data).toEqual({
-    saveCompanyProfile: companyProfileParams});
+  expect(response.data).not.toBeUndefined();
+  expect(response.data).toEqual({ saveCompanyProfile: companyProfileParams });
 });
 
