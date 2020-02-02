@@ -6,14 +6,12 @@ import Database from "../../config/Database";
 export const CompanyProfileRepository = {
   save: async (
     companyProfile: CompanyProfile,
-    phoneNumbers?: CompanyProfilePhoneNumber[],
-    photos?: CompanyProfilePhoto[]
+    phoneNumbers: CompanyProfilePhoneNumber[] = [],
+    photos: CompanyProfilePhoto[] = []
   ) => {
     const transaction = await Database.transaction();
     try {
       await companyProfile.save({ transaction: transaction });
-      phoneNumbers = phoneNumbers || [];
-      photos = photos || [];
       for (const phoneNumber of phoneNumbers) {
         phoneNumber.companyProfileId = companyProfile.id;
         await phoneNumber.save({ transaction: transaction });
