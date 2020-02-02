@@ -34,7 +34,7 @@ const companyProfileMutations = {
       }
     },
     resolve: async (_: undefined, args: ICompanyProfile) => {
-      const companyProfile: CompanyProfile =  await CompanyProfileRepository.create(args);
+      const companyProfile: CompanyProfile = await CompanyProfileRepository.create(args);
       return CompanyProfileSerializer.serialize(companyProfile);
     }
   }
