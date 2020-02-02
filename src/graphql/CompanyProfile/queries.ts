@@ -1,9 +1,10 @@
-import { companyProfileType, ICompanyProfile } from "./type";
+import { companyProfileType } from "./type";
 import { ID, nonNull, List } from "../fieldTypes";
 import {
   CompanyProfile,
   CompanyProfileRepository,
-  CompanyProfileSerializer
+  CompanyProfileSerializer,
+  ICompanyProfile
 } from "../../models/CompanyProfile";
 
 const companyProfileQueries = {

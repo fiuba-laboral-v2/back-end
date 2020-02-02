@@ -1,11 +1,10 @@
-import { CompanyProfile } from "./index";
+import { CompanyProfile, ICompanyProfile } from "./index";
 import { CompanyProfilePhoto, CompanyProfilePhotoRepository } from "../CompanyProfilePhoto";
 import {
   CompanyProfilePhoneNumber,
   CompanyProfilePhoneNumberRepository
 } from "../CompanyProfilePhoneNumber";
 import Database from "../../config/Database";
-import { ICompanyProfile } from "../../graphql/CompanyProfile";
 
 export const CompanyProfileRepository = {
   create: async (values: ICompanyProfile) => {

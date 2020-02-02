@@ -31,14 +31,4 @@ const companyProfileType = new GraphQLObjectType({
   })
 });
 
-interface ICompanyProfile {
-  cuit: string;
-  companyName: string;
-  slogan: string;
-  description: string;
-  logo: string;
-  phoneNumbers: number[];
-  photos: string[];
-}
-
-export { companyProfileType, ICompanyProfile };
+export { companyProfileType };
