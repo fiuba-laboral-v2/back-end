@@ -2,7 +2,7 @@ import { gql } from "apollo-server";
 import { executeQuery } from "../../ApolloTestClient";
 
 const query = gql`
-  query ($paths: [String!]!) {
+  query getTranslations($paths: [String!]!) {
     getTranslations(paths: $paths)
   }
 `;

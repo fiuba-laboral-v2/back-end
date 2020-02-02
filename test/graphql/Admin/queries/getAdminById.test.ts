@@ -2,7 +2,7 @@ import { gql } from "apollo-server";
 import { executeQuery } from "../../ApolloTestClient";
 
 const query = gql`
-  query ($id: ID) {
+  query getAdminById($id: ID) {
     getAdminById(id: $id) {
       id
       name
