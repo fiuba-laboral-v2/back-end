@@ -1,6 +1,10 @@
 import { companyProfileType, ICompanyProfile } from "./type";
 import { Int, List, nonNull, String } from "../fieldTypes";
-import { CompanyProfile, CompanyProfileRepository } from "../../models/CompanyProfile";
+import {
+  CompanyProfile,
+  CompanyProfileRepository,
+  CompanyProfileSerializer
+} from "../../models/CompanyProfile";
 import {
   CompanyProfilePhoneNumber,
   CompanyProfilePhoneNumberRepository
@@ -52,7 +56,7 @@ const companyProfileMutations = {
       await CompanyProfileRepository.save(
         companyProfile, companyProfilePhoneNumbers, companyProfilePhotos
       );
-      return companyProfile.serialize();
+      return CompanyProfileSerializer.serialize(companyProfile);
     }
   }
 };

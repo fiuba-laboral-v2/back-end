@@ -26,21 +26,4 @@ export default class CompanyProfile extends Model<CompanyProfile> {
 
   @HasMany(() => CompanyProfilePhoto)
   public photos: CompanyProfilePhoto[];
-
-  public serialize() {
-    return {
-      id: this.id,
-      cuit: this.cuit,
-      companyName: this.companyName,
-      slogan: this.slogan,
-      description: this.description,
-      logo: this.logo,
-      phoneNumbers: this.phoneNumbers?.map(phoneNumber => {
-        return phoneNumber.phoneNumber;
-      }),
-      photos: this.photos?.map(photo => {
-        return photo.photo;
-      })
-    };
-  }
 }
