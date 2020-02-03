@@ -7291,9 +7291,9 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
 
-"validations@git://github.com/fiuba-laboral-v2/validations.git#4009f6b6ded87a2c0e2ae2f9f9c3bc7e02b33149":
+"validations@git://github.com/fiuba-laboral-v2/validations.git#feature/64-company-profile-validations":
   version "1.0.0"
-  resolved "git://github.com/fiuba-laboral-v2/validations.git#4009f6b6ded87a2c0e2ae2f9f9c3bc7e02b33149"
+  resolved "git://github.com/fiuba-laboral-v2/validations.git#887792505ee8a814753244410f8a0ab36d5e0b28"
   dependencies:
     "@types/bluebird" "3.5.29"
     "@types/node" "13.1.4"
