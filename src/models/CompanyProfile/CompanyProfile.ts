@@ -1,7 +1,7 @@
 import { AllowNull, Column, DataType, HasMany, Model, Table, Is } from "sequelize-typescript";
 import { CompanyProfilePhoneNumber } from "../CompanyProfilePhoneNumber";
 import { CompanyProfilePhoto } from "../CompanyProfilePhoto";
-import { validateCuit } from "validations";
+import { validateCuit, validateName } from "validations";
 
 @Table
 export default class CompanyProfile extends Model<CompanyProfile> {
@@ -11,6 +11,7 @@ export default class CompanyProfile extends Model<CompanyProfile> {
   public cuit: string;
 
   @AllowNull(false)
+  @Is("name", validateName)
   @Column(DataType.TEXT)
   public companyName: string;
 
