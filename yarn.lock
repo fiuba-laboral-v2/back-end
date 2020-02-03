@@ -7291,6 +7291,21 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
 
+"validations@git+https://github.com/fiuba-laboral-v2/validations.git#feature/64-company-profile-validations":
+  version "1.0.0"
+  resolved "git+https://github.com/fiuba-laboral-v2/validations.git#887792505ee8a814753244410f8a0ab36d5e0b28"
+  dependencies:
+    "@types/bluebird" "3.5.29"
+    "@types/node" "13.1.4"
+    "@types/node-fetch" "2.5.4"
+    "@types/validator" "12.0.1"
+    express "4.17.1"
+    husky "3.1.0"
+    node "12.14.0"
+    nodemon "2.0.2"
+    reflect-metadata "0.1.13"
+    typescript-logging "0.6.4"
+
 validator@^10.11.0:
   version "10.11.0"
   resolved "https://registry.yarnpkg.com/validator/-/validator-10.11.0.tgz#003108ea6e9a9874d31ccc9e5006856ccd76b228"
