@@ -81,3 +81,11 @@ test("raise an error if name is empty", async () => {
   });
   await expect(companyProfile.save()).rejects.toThrow();
 });
+
+test("raise an error if name has digits", async () => {
+  const companyProfile: CompanyProfile = new CompanyProfile({
+    cuit: "3057341761199",
+    companyName: "Google34"
+  });
+  await expect(companyProfile.save()).rejects.toThrow();
+});
