@@ -6,6 +6,7 @@ import { CompanyProfileRepository } from "../../../../src/models/CompanyProfile"
 import {
   CompanyProfilePhoneNumberRepository
 } from "../../../../src/models/CompanyProfilePhoneNumber";
+import { CompanyProfilePhotoRepository } from "../../../../src/models/CompanyProfilePhoto";
 
 const queryWithAllData = gql`
   mutation (
@@ -41,6 +42,7 @@ beforeAll(async () => {
 beforeEach(async () => {
   await CompanyProfileRepository.truncate();
   await CompanyProfilePhoneNumberRepository.truncate();
+  await CompanyProfilePhotoRepository.truncate();
 });
 
 afterAll(async () => {
