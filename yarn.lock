@@ -7293,7 +7293,7 @@ validate-npm-package-license@^3.0.1:
 
 "validations@git://github.com/fiuba-laboral-v2/validations.git#feature/64-company-profile-validations":
   version "1.0.0"
-  resolved "git://github.com/fiuba-laboral-v2/validations.git#439ad223dabfd897397bdf0516c4a2df89517447"
+  resolved "git://github.com/fiuba-laboral-v2/validations.git#82b44c5b41aabae4fcc64fccc54f1fba946b8740"
   dependencies:
     "@types/bluebird" "3.5.29"
     "@types/node" "13.1.4"
