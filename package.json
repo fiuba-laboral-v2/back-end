@@ -45,7 +45,7 @@
     "sequelize-cli-typescript": "3.2.0-c",
     "sequelize-typescript": "1",
     "typescript-logging": "0.6.4",
-    "validations": "git://github.com/fiuba-laboral-v2/validations.git#feature/64-company-profile-validations"
+    "validations-fiuba-laboral-v2": "1.0.0"
   },
   "devDependencies": {
     "@babel/core": "7.0.0",
@@ -77,12 +77,10 @@
     "stash": "git stash -u --keep-index",
     "unstash": "git stash pop",
     "check-unstaged": "bash scripts/check_unstaged.sh",
-    "postinstall": "yarn upgrade-validations",
     "build": "tsc --project .",
     "build-migrations": "yarn clean:compiled-migrations && tsc -p src/migrations",
     "clean": "rm -rf dist",
     "clean:compiled-migrations": "rm -rf dist_migrations",
-    "upgrade-validations": "yarn upgrade validations && cd node_modules/validations && yarn build",
     "db:migrate": "yarn build-migrations && sequelize db:migrate && yarn clean:compiled-migrations",
     "db:create": "node_modules/.bin/sequelize db:create",
     "db:drop": "node_modules/.bin/sequelize db:drop",

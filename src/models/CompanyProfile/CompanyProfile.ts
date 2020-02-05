@@ -1,7 +1,7 @@
 import { AllowNull, Column, DataType, HasMany, Model, Table, Is } from "sequelize-typescript";
 import { CompanyProfilePhoneNumber } from "../CompanyProfilePhoneNumber";
 import { CompanyProfilePhoto } from "../CompanyProfilePhoto";
-import { validateCuit, validateName } from "validations";
+import { validateCuit, validateName } from "validations-fiuba-laboral-v2";
 
 @Table
 export default class CompanyProfile extends Model<CompanyProfile> {
