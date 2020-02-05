@@ -57,3 +57,35 @@ test("raise an error if companyName and cuit is null", async () => {
   });
   await expect(companyProfile.save()).rejects.toThrow();
 });
+
+test("raise an error if cuit has less than eleven digits", async () => {
+  const companyProfile: CompanyProfile = new CompanyProfile({
+    cuit: "30",
+    companyName: "devartis"
+  });
+  await expect(companyProfile.save()).rejects.toThrow();
+});
+
+test("raise an error if cuit has more than eleven digits", async () => {
+  const companyProfile: CompanyProfile = new CompanyProfile({
+    cuit: "3057341761199",
+    companyName: "devartis"
+  });
+  await expect(companyProfile.save()).rejects.toThrow();
+});
+
+test("raise an error if name is empty", async () => {
+  const companyProfile: CompanyProfile = new CompanyProfile({
+    cuit: "3057341761199",
+    companyName: ""
+  });
+  await expect(companyProfile.save()).rejects.toThrow();
+});
+
+test("raise an error if name has digits", async () => {
+  const companyProfile: CompanyProfile = new CompanyProfile({
+    cuit: "3057341761199",
+    companyName: "Google34"
+  });
+  await expect(companyProfile.save()).rejects.toThrow();
+});

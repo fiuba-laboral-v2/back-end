@@ -1,4 +1,7 @@
 language: node_js
+cache:
+  yarn: false
+  npm: false
 services:
   - postgresql
   - docker
@@ -8,11 +11,12 @@ before_install:
   - eval "$(ssh-agent -s)"
   - chmod 600 ./deploy_key
   - ssh-add ./deploy_key
+install: yarn install
 env:
   - NODE_ENV="test_travis"
     DATABASE_URL="postgres://postgres:postgres@localhost:5432/test_travis"
 before_script:
-  - yarn db:create && yarn db:migrate && yarn install
+  - yarn db:create && yarn db:migrate
 script:
   - yarn lint && yarn test
 after_success: yarn coverage
