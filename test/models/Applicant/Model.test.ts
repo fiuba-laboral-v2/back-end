@@ -1,6 +1,6 @@
+import Database from "../../../src/config/Database";
 import { Applicant } from "../../../src/models/Applicant/Model";
 import { Career } from "../../../src/models/Career/Model";
-import Database from "../../../src/config/Database";
 
 describe("Applicant model", () => {
   beforeAll(async () => {

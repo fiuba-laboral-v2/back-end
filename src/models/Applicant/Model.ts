@@ -9,7 +9,7 @@ import { CareerApplicant } from "../CareerApplicant/Model";
     attributes: { exclude: [ "deletedAt" ] }
   },
   paranoid: true,
-  tableName: "Applicant"
+  tableName: "Applicants"
 })
 export class Applicant extends Model<Applicant> {
   @Column({
