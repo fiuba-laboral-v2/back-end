@@ -1,6 +1,8 @@
-import { Column, DataType, BelongsToMany, Model, Table } from "sequelize-typescript";
+import { Column, DataType, BelongsToMany, Model, Table, Is } from "sequelize-typescript";
+import { validateName } from "validations-fiuba-laboral-v2";
 import { Career } from "../Career/Model";
 import { CareerApplicant } from "../CareerApplicant/Model";
+
 
 @Table({
   defaultScope: {
@@ -18,6 +20,7 @@ export class Applicant extends Model<Applicant> {
   })
   public uuid: string;
 
+  @Is("name", validateName)
   @Column({
     allowNull: false,
     type: DataType.TEXT
