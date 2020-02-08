@@ -6,8 +6,7 @@ import { CareerApplicant } from "../CareerApplicant/Model";
   defaultScope: {
     attributes: { exclude: [ "deletedAt" ] }
   },
-  paranoid: true,
-  tableName: "Career"
+  tableName: "Careers"
 })
 export class Career extends Model<Career> {
   @Column({
