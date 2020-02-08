@@ -1,7 +1,7 @@
 import Database from "../../../src/config/Database";
-import { Applicant } from "../../../src/models/Applicant/Model";
-import { Career } from "../../../src/models/Career/Model";
-import { CareerApplicant } from "../../../src/models/CareerApplicant/Model";
+import { Applicant } from "../../../src/models/Applicant";
+import { Career } from "../../../src/models/Career";
+import { CareerApplicant } from "../../../src/models/CareerApplicant";
 
 describe("Applicant model", () => {
   beforeAll(async () => {
@@ -22,7 +22,7 @@ describe("Applicant model", () => {
     const applicant: Applicant = new Applicant({
       name: "Bruno",
       surname: "Diaz",
-      padron: "1",
+      padron: 1,
       description: "Batman",
       credits: 150
     });
@@ -44,7 +44,7 @@ describe("Applicant model", () => {
     const applicant: Applicant = new Applicant({
       name: "Bruno",
       surname: "Diaz",
-      padron: "1",
+      padron: 1,
       description: "Batman",
       credits: 150
     });
@@ -65,5 +65,13 @@ describe("Applicant model", () => {
     const result = await Applicant.findOne({ where: { name: "Bruno" }, include: [Career] });
 
     expect(result.careers[0].code).toEqual(career.code);
+    expect(applicant).toEqual(expect.objectContaining({
+      uuid: applicant.uuid,
+      name: "Bruno",
+      surname: "Diaz",
+      padron: 1,
+      description: "Batman",
+      credits: 150
+    }));
   });
 });
