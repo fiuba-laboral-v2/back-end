@@ -4,6 +4,8 @@ import { CompanyProfilePhoto } from "./CompanyProfilePhoto";
 import { Applicant } from "./Applicant";
 import { Career } from "./Career";
 import { CareerApplicant } from "./CareerApplicant";
+import { Capability } from "./Capability";
+import { ApplicantCapability } from "./ApplicantCapability";
 
 const models = [
   CompanyProfile,
@@ -11,7 +13,9 @@ const models = [
   CompanyProfilePhoto,
   Applicant,
   Career,
-  CareerApplicant
+  CareerApplicant,
+  Capability,
+  ApplicantCapability
 ];
 
 export { models };

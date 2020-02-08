@@ -56,5 +56,10 @@ describe("Applicant model", () => {
     const result = await Career.findByPk(career.code ,{ include: [Applicant] });
 
     expect(result.applicants[0].name).toEqual(applicant.name);
+    expect(result).toEqual(expect.objectContaining({
+      code: career.code,
+      description: career.description,
+      credits: career.credits
+    }));
   });
 });

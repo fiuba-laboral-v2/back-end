@@ -2,6 +2,8 @@ import { Column, DataType, BelongsToMany, Model, Table, Is } from "sequelize-typ
 import { validateName } from "validations-fiuba-laboral-v2";
 import { Career } from "../Career/Model";
 import { CareerApplicant } from "../CareerApplicant/Model";
+import { Capability } from "../Capability/Model";
+import { ApplicantCapability } from "../ApplicantCapability/Model";
 
 
 @Table({
@@ -52,4 +54,7 @@ export class Applicant extends Model<Applicant> {
 
   @BelongsToMany(() => Career, () => CareerApplicant)
   public careers: Career[];
+
+  @BelongsToMany(() => Capability, () => ApplicantCapability)
+  public capabilities: Capability[];
 }
