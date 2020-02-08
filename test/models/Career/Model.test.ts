@@ -2,8 +2,10 @@ import Database from "../../../src/config/Database";
 import { Applicant } from "../../../src/models/Applicant";
 import { Career } from "../../../src/models/Career";
 import { CareerApplicant } from "../../../src/models/CareerApplicant";
+import { careerMocks } from "./mocks";
 
 describe("Applicant model", () => {
+  const careerData = careerMocks.careerData();
   beforeAll(async () => {
     await Database.setConnection();
   });
@@ -18,11 +20,11 @@ describe("Applicant model", () => {
     await Database.close();
   });
 
-  test("create a valid applicant", async () => {
+  it("create a valid applicant", async () => {
     const career: Career = new Career({
-      code: 1,
-      description: "Ingeniería Informática",
-      credits: 250
+      code: careerData.code,
+      description: careerData.description,
+      credits: careerData.credits
     });
 
     await career.save();
@@ -31,7 +33,7 @@ describe("Applicant model", () => {
     expect(career).not.toBeUndefined();
   });
 
-  test("Persist the many to many relation between Career and Applicant", async () => {
+  it("Persist the many to many relation between Career and Applicant", async () => {
     const applicant: Applicant = new Applicant({
       name: "Bruno",
       surname: "Diaz",
@@ -40,9 +42,9 @@ describe("Applicant model", () => {
       credits: 150
     });
     const career: Career = new Career({
-      code: 3,
-      description: "Ingeniería Mecanica",
-      credits: 250
+      code: careerData.code,
+      description: careerData.description,
+      credits: careerData.credits
     });
     applicant.careers = [ career ];
     career.applicants = [ applicant ];
@@ -63,7 +65,7 @@ describe("Applicant model", () => {
     }));
   });
 
-  test("raise an error if code is null", async () => {
+  it("raise an error if code is null", async () => {
     const career: Career = new Career({
       description: "Ingeniería Informática",
       credits: 250
@@ -72,7 +74,7 @@ describe("Applicant model", () => {
     await expect(career.save()).rejects.toThrow();
   });
 
-  test("raise an error if description is null", async () => {
+  it("raise an error if description is null", async () => {
     const career: Career = new Career({
       code: 1,
       description: null,
@@ -82,7 +84,7 @@ describe("Applicant model", () => {
     await expect(career.save()).rejects.toThrow();
   });
 
-  test("raise an error if credits is null", async () => {
+  it("raise an error if credits is null", async () => {
     const career: Career = new Career({
       code: 1,
       description: "Ingeniería Informática"

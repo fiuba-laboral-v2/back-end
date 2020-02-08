@@ -18,7 +18,7 @@ describe("Applicant model", () => {
     await Database.close();
   });
 
-  test("create a valid capability", async () => {
+  it("create a valid capability", async () => {
     const capability: Capability = new Capability({ description: "Python" });
 
     await capability.save();
@@ -27,7 +27,7 @@ describe("Applicant model", () => {
     expect(capability).not.toBeUndefined();
   });
 
-  test("Persist the many to many relation between Capability and Applicant", async () => {
+  it("persist the many to many relation between Capability and Applicant", async () => {
     const applicant: Applicant = new Applicant({
       name: "Bruno",
       surname: "Diaz",
@@ -54,7 +54,7 @@ describe("Applicant model", () => {
     }));
   });
 
-  test("raise an error if description is null", async () => {
+  it("raise an error if description is null", async () => {
     const capability: Capability = new Capability();
 
     await expect(capability.save()).rejects.toThrow();

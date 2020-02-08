@@ -2,6 +2,9 @@ import Database from "../../../src/config/Database";
 import { Applicant } from "../../../src/models/Applicant";
 import { Career } from "../../../src/models/Career";
 import { CareerApplicant } from "../../../src/models/CareerApplicant";
+import { ApplicantCapability } from "../../../src/models/ApplicantCapability";
+import { Capability } from "../../../src/models/Capability";
+
 
 describe("Applicant model", () => {
   beforeAll(async () => {
@@ -18,7 +21,7 @@ describe("Applicant model", () => {
     await Database.close();
   });
 
-  test("create a valid applicant", async () => {
+  it("create a valid applicant", async () => {
     const applicant: Applicant = new Applicant({
       name: "Bruno",
       surname: "Diaz",
@@ -31,16 +34,22 @@ describe("Applicant model", () => {
       description: "Ingeniería Informática",
       credits: 250
     });
+    const capability: Capability = new Capability({ description: "Python" });
+
     applicant.careers = [ career ];
+    applicant.capabilities = [ capability ];
 
     expect(applicant).not.toBeNull();
     expect(applicant).not.toBeUndefined();
     expect(applicant.careers).not.toBeUndefined();
     expect(applicant.careers).not.toBeNull();
     expect(applicant.careers).toHaveLength(1);
+    expect(applicant.capabilities).not.toBeUndefined();
+    expect(applicant.capabilities).not.toBeNull();
+    expect(applicant.capabilities).toHaveLength(1);
   });
 
-  test("Persist the many to many relation between Applicant and Career", async () => {
+  it("Persist the many to many relation between Applicant, Career and Capability", async () => {
     const applicant: Applicant = new Applicant({
       name: "Bruno",
       surname: "Diaz",
@@ -53,18 +62,31 @@ describe("Applicant model", () => {
       description: "Ingeniería Mecanica",
       credits: 250
     });
+    const capability: Capability = new Capability({ description: "Python" });
+
     applicant.careers = [ career ];
+    applicant.capabilities = [ capability ];
+
     career.applicants = [ applicant ];
+    capability.applicants = [ applicant ];
 
     const savedCareer = await career.save();
+    const savedCapability = await capability.save();
     const saverdApplicant = await applicant.save();
 
     await CareerApplicant.create({
        careerCode: savedCareer.code , applicantUuid: saverdApplicant.uuid
     });
-    const result = await Applicant.findOne({ where: { name: "Bruno" }, include: [Career] });
+    await ApplicantCapability.create({
+      capabilityUuid: savedCapability.uuid , applicantUuid: saverdApplicant.uuid
+   });
+    const result = await Applicant.findOne({
+       where: { name: "Bruno" },
+       include: [Career, Capability]
+    });
 
     expect(result.careers[0].code).toEqual(career.code);
+    expect(result.capabilities[0].uuid).toEqual(savedCapability.uuid);
     expect(applicant).toEqual(expect.objectContaining({
       uuid: applicant.uuid,
       name: "Bruno",
@@ -75,7 +97,7 @@ describe("Applicant model", () => {
     }));
   });
 
-  test("raise an error if name is null", async () => {
+  it("raise an error if name is null", async () => {
     const applicant: Applicant = new Applicant({
       name: null,
       surname: "Diaz",
@@ -87,7 +109,7 @@ describe("Applicant model", () => {
     await expect(applicant.save()).rejects.toThrow();
   });
 
-  test("raise an error if surname is null", async () => {
+  it("raise an error if surname is null", async () => {
     const applicant: Applicant = new Applicant({
       name: "Bruno",
       padron: 1,
@@ -99,7 +121,7 @@ describe("Applicant model", () => {
   });
 
 
-  test("raise an error if padron is null", async () => {
+  it("raise an error if padron is null", async () => {
     const applicant: Applicant = new Applicant({
       name: "Bruno",
       surname: "Diaz",
@@ -110,7 +132,7 @@ describe("Applicant model", () => {
     await expect(applicant.save()).rejects.toThrow();
   });
 
-  test("raise an error if description is null", async () => {
+  it("raise an error if description is null", async () => {
     const applicant: Applicant = new Applicant({
       name: null,
       surname: "Diaz",
@@ -121,7 +143,7 @@ describe("Applicant model", () => {
     await expect(applicant.save()).rejects.toThrow();
   });
 
-  test("raise an error if credits is null", async () => {
+  it("raise an error if credits is null", async () => {
     const applicant: Applicant = new Applicant({
       name: "Bruno",
       surname: "Diaz",
