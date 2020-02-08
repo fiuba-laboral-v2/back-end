@@ -53,4 +53,10 @@ describe("Applicant model", () => {
       description: savedCapability.description
     }));
   });
+
+  test("raise an error if description is null", async () => {
+    const capability: Capability = new Capability();
+
+    await expect(capability.save()).rejects.toThrow();
+  });
 });

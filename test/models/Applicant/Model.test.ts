@@ -74,4 +74,61 @@ describe("Applicant model", () => {
       credits: 150
     }));
   });
+
+  test("raise an error if name is null", async () => {
+    const applicant: Applicant = new Applicant({
+      name: null,
+      surname: "Diaz",
+      padron: 1,
+      description: "Batman",
+      credits: 150
+    });
+
+    await expect(applicant.save()).rejects.toThrow();
+  });
+
+  test("raise an error if surname is null", async () => {
+    const applicant: Applicant = new Applicant({
+      name: "Bruno",
+      padron: 1,
+      description: "Batman",
+      credits: 150
+    });
+
+    await expect(applicant.save()).rejects.toThrow();
+  });
+
+
+  test("raise an error if padron is null", async () => {
+    const applicant: Applicant = new Applicant({
+      name: "Bruno",
+      surname: "Diaz",
+      description: "Batman",
+      credits: 150
+    });
+
+    await expect(applicant.save()).rejects.toThrow();
+  });
+
+  test("raise an error if description is null", async () => {
+    const applicant: Applicant = new Applicant({
+      name: null,
+      surname: "Diaz",
+      padron: 1,
+      credits: 150
+    });
+
+    await expect(applicant.save()).rejects.toThrow();
+  });
+
+  test("raise an error if credits is null", async () => {
+    const applicant: Applicant = new Applicant({
+      name: "Bruno",
+      surname: "Diaz",
+      padron: 1,
+      description: "Batman"
+    });
+
+    await expect(applicant.save()).rejects.toThrow();
+  });
 });

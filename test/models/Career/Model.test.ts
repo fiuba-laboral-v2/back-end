@@ -62,4 +62,32 @@ describe("Applicant model", () => {
       credits: career.credits
     }));
   });
+
+  test("raise an error if code is null", async () => {
+    const career: Career = new Career({
+      description: "Ingeniería Informática",
+      credits: 250
+    });
+
+    await expect(career.save()).rejects.toThrow();
+  });
+
+  test("raise an error if description is null", async () => {
+    const career: Career = new Career({
+      code: 1,
+      description: null,
+      credits: 250
+    });
+
+    await expect(career.save()).rejects.toThrow();
+  });
+
+  test("raise an error if credits is null", async () => {
+    const career: Career = new Career({
+      code: 1,
+      description: "Ingeniería Informática"
+    });
+
+    await expect(career.save()).rejects.toThrow();
+  });
 });
