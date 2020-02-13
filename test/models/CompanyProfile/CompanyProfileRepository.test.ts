@@ -10,6 +10,7 @@ describe("CompanyProfileRepository", () => {
     slogan: "We craft web applications for great businesses",
     description: "some description",
     logo: "https://pbs.twimg.com/profile_images/1039514458282844161/apKQh1fu_400x400.jpg",
+    website: "https://www.devartis.com/",
     phoneNumbers: [
       43076555,
       43076556,
@@ -50,6 +51,7 @@ describe("CompanyProfileRepository", () => {
     expect(companyProfile.slogan).toEqual(companyProfileData.slogan);
     expect(companyProfile.description).toEqual(companyProfileData.description);
     expect(companyProfile.logo).toEqual(companyProfileData.logo);
+    expect(companyProfile.website).toEqual(companyProfileData.website);
     expect(companyProfile.phoneNumbers).toHaveLength(companyProfileData.phoneNumbers.length);
     expect(companyProfile.photos).toHaveLength(companyProfileData.photos.length);
   });
