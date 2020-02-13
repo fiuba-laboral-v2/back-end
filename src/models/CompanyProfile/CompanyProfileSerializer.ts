@@ -9,6 +9,7 @@ const CompanyProfileSerializer = {
       slogan: companyProfile.slogan,
       description: companyProfile.description,
       logo: companyProfile.logo,
+      website: companyProfile.website,
       phoneNumbers: companyProfile.phoneNumbers?.map(phoneNumber => phoneNumber.phoneNumber) || [],
       photos: companyProfile.photos?.map(photo => photo.photo) || []
     };
