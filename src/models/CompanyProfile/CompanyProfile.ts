@@ -24,6 +24,9 @@ export default class CompanyProfile extends Model<CompanyProfile> {
   @Column(DataType.TEXT)
   public logo: string;
 
+  @Column(DataType.TEXT)
+  public website: string;
+
   @HasMany(() => CompanyProfilePhoneNumber)
   public phoneNumbers: CompanyProfilePhoneNumber[];
 
