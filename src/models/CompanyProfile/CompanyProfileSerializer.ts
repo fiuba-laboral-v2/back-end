@@ -10,6 +10,7 @@ const CompanyProfileSerializer = {
       description: companyProfile.description,
       logo: companyProfile.logo,
       website: companyProfile.website,
+      email: companyProfile.email,
       phoneNumbers: companyProfile.phoneNumbers?.map(phoneNumber => phoneNumber.phoneNumber) || [],
       photos: companyProfile.photos?.map(photo => photo.photo) || []
     };

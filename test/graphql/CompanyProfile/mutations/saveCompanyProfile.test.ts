@@ -11,16 +11,18 @@ import { CompanyProfilePhotoRepository } from "../../../../src/models/CompanyPro
 const queryWithAllData = gql`
   mutation (
     $cuit: String!, $companyName: String!, $slogan: String, $description: String,
-    $logo: String, $website: String, $phoneNumbers: [Int], $photos: [String]) {
+    $logo: String, $website: String, $email: String, $phoneNumbers: [Int], $photos: [String]) {
     saveCompanyProfile(
         cuit: $cuit, companyName: $companyName, slogan: $slogan, description: $description,
-        logo: $logo, website: $website, phoneNumbers: $phoneNumbers, photos: $photos) {
+        logo: $logo, website: $website, email: $email, phoneNumbers: $phoneNumbers,
+        photos: $photos) {
       cuit
       companyName
       slogan
       description
       logo
       website
+      email
       phoneNumbers
       photos
     }
@@ -59,6 +61,7 @@ describe("saveCompanyProfile", () => {
       description: "some description",
       logo: "https://pbs.twimg.com/profile_images/1039514458282844161/apKQh1fu_400x400.jpg",
       website: "https://www.devartis.com/",
+      email: "info@devartis.com",
       phoneNumbers: [
         43076555,
         43076556,

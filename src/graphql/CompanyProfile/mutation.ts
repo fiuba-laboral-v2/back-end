@@ -29,6 +29,9 @@ const companyProfileMutations = {
       website: {
         type: String
       },
+      email: {
+        type: String
+      },
       phoneNumbers: {
         type: List(Int)
       },

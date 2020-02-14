@@ -25,6 +25,9 @@ const companyProfileType = new GraphQLObjectType({
     website: {
       type: String
     },
+    email: {
+      type: String
+    },
     phoneNumbers: {
       type: List(Int)
     },
