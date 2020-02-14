@@ -9,7 +9,8 @@ describe("CompanyProfileRepository", () => {
     companyName: "devartis",
     slogan: "We craft web applications for great businesses",
     description: "some description",
-    logo: "https://pbs.twimg.com/profile_images/1039514458282844161/apKQh1fu_400x400.jpg",
+    logo: `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//
+          8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==`,
     website: "https://www.devartis.com/",
     email: "info@devartis.com",
     phoneNumbers: [
