@@ -8,14 +8,25 @@ import Database from "../../config/Database";
 
 export const CompanyProfileRepository = {
   create: async (values: ICompanyProfile) => {
-    const { cuit, companyName, slogan, description, logo, website, phoneNumbers, photos } = values;
+    const {
+      cuit,
+      companyName,
+      slogan,
+      description,
+      logo,
+      website,
+      email,
+      phoneNumbers,
+      photos
+    } = values;
     const companyProfile: CompanyProfile = new CompanyProfile({
       cuit,
       companyName,
       slogan,
       description,
       logo,
-      website
+      website,
+      email
     });
     const companyProfilePhoneNumbers: CompanyProfilePhoneNumber[] =
       CompanyProfilePhoneNumberRepository.build(phoneNumbers);
