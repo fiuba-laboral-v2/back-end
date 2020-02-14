@@ -23,7 +23,8 @@ describe("CompanyProfile", () => {
     slogan: "We craft web applications for great businesses",
     description: "some description",
     logo: "https://pbs.twimg.com/profile_images/1039514458282844161/apKQh1fu_400x400.jpg",
-    website: "https://www.devartis.com/"
+    website: "https://www.devartis.com/",
+    email: "info@devartis.com"
   };
 
   it("create a valid profile", async () => {
@@ -39,7 +40,7 @@ describe("CompanyProfile", () => {
     });
     companyProfile.phoneNumbers = [ phoneNumber ];
     companyProfile.photos = [ photo ];
-    companyProfile.save();
+    await companyProfile.save();
     expect(companyProfile).not.toBeNull();
     expect(companyProfile).not.toBeUndefined();
     expect(companyProfile.phoneNumbers).not.toBeUndefined();
@@ -48,6 +49,14 @@ describe("CompanyProfile", () => {
     expect(companyProfile.photos).not.toBeUndefined();
     expect(companyProfile.photos).not.toBeNull();
     expect(companyProfile.photos).toHaveLength(1);
+    expect(companyProfile.id).toBeGreaterThan(0);
+    expect(companyProfile.cuit).toBe(companyProfileCompleteData.cuit);
+    expect(companyProfile.companyName).toBe(companyProfileCompleteData.companyName);
+    expect(companyProfile.slogan).toBe(companyProfileCompleteData.slogan);
+    expect(companyProfile.description).toBe(companyProfileCompleteData.description);
+    expect(companyProfile.logo).toBe(companyProfileCompleteData.logo);
+    expect(companyProfile.website).toBe(companyProfileCompleteData.website);
+    expect(companyProfile.email).toBe(companyProfileCompleteData.email);
   });
 
   it("raise an error if cuit is null", async () => {
