@@ -7,6 +7,11 @@ import {
   CompanyProfilePhoneNumberRepository
 } from "../../../../src/models/CompanyProfilePhoneNumber";
 import { CompanyProfilePhotoRepository } from "../../../../src/models/CompanyProfilePhoto";
+import {
+  companyProfileMockData,
+  phoneNumbers,
+  photos
+} from "../../../models/CompanyProfile/CompanyPrfileMockData";
 
 const queryWithAllData = gql`
   mutation (
@@ -55,27 +60,8 @@ describe("saveCompanyProfile", () => {
 
   describe("saveCompanyProfile", () => {
     const companyProfileData: ICompanyProfile = {
-      cuit: "30711819017",
-      companyName: "devartis",
-      slogan: "We craft web applications for great businesses",
-      description: "some description",
-      logo: `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNb
-             yblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJR
-             U5ErkJggg==`,
-      website: "https://www.devartis.com/",
-      email: "info@devartis.com",
-      phoneNumbers: [
-        43076555,
-        43076556,
-        43076455,
-        43076599
-      ],
-      photos: [
-        `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAA
-        AAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==`,
-        `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblA
-        AAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==`
-      ]
+      ...companyProfileMockData,
+      ...{ photos: photos, phoneNumbers: phoneNumbers }
     };
 
     const companyProfileDataWithMinimumData = {
