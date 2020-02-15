@@ -1,30 +1,13 @@
 import { CompanyProfile, CompanyProfileRepository } from "../../../src/models/CompanyProfile";
 import { CompanyProfilePhoneNumber } from "../../../src/models/CompanyProfilePhoneNumber";
 import { CompanyProfilePhoto } from "../../../src/models/CompanyProfilePhoto";
+import { companyProfileMockData, phoneNumbers, photos } from "./CompanyPrfileMockData";
 import Database from "../../../src/config/Database";
 
 describe("CompanyProfileRepository", () => {
-  const companyProfileData = {
-    cuit: "30711819017",
-    companyName: "devartis",
-    slogan: "We craft web applications for great businesses",
-    description: "some description",
-    logo: `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//
-          8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==`,
-    website: "https://www.devartis.com/",
-    email: "info@devartis.com",
-    phoneNumbers: [
-      43076555,
-      43076556,
-      43076455,
-      43076599
-    ],
-    photos: [
-      `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//
-        8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==`,
-      `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//
-        8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==`
-    ]
+  const companyProfileCompleteData = {
+    ...companyProfileMockData,
+    ...{ photos: photos, phoneNumbers: phoneNumbers }
   };
 
   const companyProfileDataWithMinimumData = {
@@ -46,19 +29,23 @@ describe("CompanyProfileRepository", () => {
 
   it("create a new companyProfile", async () => {
     const companyProfile: CompanyProfile = await CompanyProfileRepository.create(
-      companyProfileData
+      companyProfileCompleteData
     );
     expect(companyProfile).toEqual(expect.objectContaining({
-      cuit: companyProfileData.cuit,
-      companyName: companyProfileData.companyName,
-      slogan: companyProfileData.slogan,
-      description: companyProfileData.description,
-      logo: companyProfileData.logo,
-      website: companyProfileData.website,
-      email: companyProfileData.email
+      cuit: companyProfileCompleteData.cuit,
+      companyName: companyProfileCompleteData.companyName,
+      slogan: companyProfileCompleteData.slogan,
+      description: companyProfileCompleteData.description,
+      logo: companyProfileCompleteData.logo,
+      website: companyProfileCompleteData.website,
+      email: companyProfileCompleteData.email
     }));
-    expect(companyProfile.phoneNumbers).toHaveLength(companyProfileData.phoneNumbers.length);
-    expect(companyProfile.photos).toHaveLength(companyProfileData.photos.length);
+    expect(companyProfile.phoneNumbers).toHaveLength(
+      companyProfileCompleteData.phoneNumbers.length
+    );
+    expect(companyProfile.photos).toHaveLength(
+      companyProfileCompleteData.photos.length
+    );
   });
 
   it("raise an error if cuit is null", async () => {
@@ -79,7 +66,7 @@ describe("CompanyProfileRepository", () => {
 
   it("retrieve by id", async () => {
     const companyProfile: CompanyProfile = await CompanyProfileRepository.create(
-      companyProfileData
+      companyProfileCompleteData
     );
     const expectedCompanyProfile = await CompanyProfileRepository.findById(companyProfile.id);
     expect(expectedCompanyProfile).not.toBeNull();
@@ -90,7 +77,7 @@ describe("CompanyProfileRepository", () => {
 
   it("retrieve all CompanyProfiles", async () => {
     const companyProfile: CompanyProfile = await CompanyProfileRepository.create(
-      companyProfileData
+      companyProfileCompleteData
     );
     const expectedCompanyProfiles = await CompanyProfileRepository.findAll();
     expect(expectedCompanyProfiles).not.toBeNull();
@@ -128,7 +115,7 @@ describe("CompanyProfileRepository", () => {
 
   it("deletes a companyProfile", async () => {
     const companyProfile: CompanyProfile = await CompanyProfileRepository.create(
-      companyProfileData
+      companyProfileCompleteData
     );
     const id: number = companyProfile.id;
     expect(await CompanyProfileRepository.findById(id)).not.toBeNull();
