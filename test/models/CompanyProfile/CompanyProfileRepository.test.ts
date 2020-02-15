@@ -48,13 +48,15 @@ describe("CompanyProfileRepository", () => {
     const companyProfile: CompanyProfile = await CompanyProfileRepository.create(
       companyProfileData
     );
-    expect(companyProfile.cuit).toEqual(companyProfileData.cuit);
-    expect(companyProfile.companyName).toEqual(companyProfileData.companyName);
-    expect(companyProfile.slogan).toEqual(companyProfileData.slogan);
-    expect(companyProfile.description).toEqual(companyProfileData.description);
-    expect(companyProfile.logo).toEqual(companyProfileData.logo);
-    expect(companyProfile.website).toEqual(companyProfileData.website);
-    expect(companyProfile.email).toEqual(companyProfileData.email);
+    expect(companyProfile).toEqual(expect.objectContaining({
+      cuit: companyProfileData.cuit,
+      companyName: companyProfileData.companyName,
+      slogan: companyProfileData.slogan,
+      description: companyProfileData.description,
+      logo: companyProfileData.logo,
+      website: companyProfileData.website,
+      email: companyProfileData.email
+    }));
     expect(companyProfile.phoneNumbers).toHaveLength(companyProfileData.phoneNumbers.length);
     expect(companyProfile.photos).toHaveLength(companyProfileData.photos.length);
   });
