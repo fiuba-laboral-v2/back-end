@@ -7,27 +7,27 @@ import { validateCuit, validateName } from "validations-fiuba-laboral-v2";
 export default class CompanyProfile extends Model<CompanyProfile> {
   @AllowNull(false)
   @Is("cuit", validateCuit)
-  @Column(DataType.TEXT)
+  @Column(DataType.STRING)
   public cuit: string;
 
   @AllowNull(false)
   @Is("name", validateName)
-  @Column(DataType.TEXT)
+  @Column(DataType.STRING)
   public companyName: string;
 
-  @Column(DataType.TEXT)
+  @Column(DataType.STRING)
   public slogan: string;
 
-  @Column(DataType.TEXT)
+  @Column(DataType.STRING)
   public description: string;
 
   @Column(DataType.TEXT)
   public logo: string;
 
-  @Column(DataType.TEXT)
+  @Column(DataType.STRING)
   public website: string;
 
-  @Column(DataType.TEXT)
+  @Column(DataType.STRING)
   public email: string;
 
   @HasMany(() => CompanyProfilePhoneNumber)
