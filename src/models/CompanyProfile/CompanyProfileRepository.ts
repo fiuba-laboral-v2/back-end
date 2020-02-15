@@ -1,10 +1,10 @@
-import { UserInputError } from "apollo-server";
 import { CompanyProfile, ICompanyProfile } from "./index";
 import { CompanyProfilePhoto, CompanyProfilePhotoRepository } from "../CompanyProfilePhoto";
 import {
   CompanyProfilePhoneNumber,
   CompanyProfilePhoneNumberRepository
 } from "../CompanyProfilePhoneNumber";
+import { CompanyNotFoundError } from "./Errors/CompanyNotFoundError";
 import Database from "../../config/Database";
 
 export const CompanyProfileRepository = {
@@ -65,7 +65,7 @@ export const CompanyProfileRepository = {
     const companyProfile: CompanyProfile | null = await CompanyProfile.findOne(
       { where: { id: id } }
     );
-    if (!companyProfile)  throw new UserInputError("Company Not found", { invalidArgs: id });
+    if (!companyProfile)  throw new CompanyNotFoundError(id);
     return companyProfile;
   },
   findAll: async () => {
