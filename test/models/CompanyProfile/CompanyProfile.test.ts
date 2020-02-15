@@ -41,22 +41,18 @@ describe("CompanyProfile", () => {
     companyProfile.phoneNumbers = [ phoneNumber ];
     companyProfile.photos = [ photo ];
     await companyProfile.save();
-    expect(companyProfile).not.toBeNull();
-    expect(companyProfile).not.toBeUndefined();
-    expect(companyProfile.phoneNumbers).not.toBeUndefined();
-    expect(companyProfile.phoneNumbers).not.toBeNull();
     expect(companyProfile.phoneNumbers).toHaveLength(1);
-    expect(companyProfile.photos).not.toBeUndefined();
-    expect(companyProfile.photos).not.toBeNull();
     expect(companyProfile.photos).toHaveLength(1);
     expect(companyProfile.id).toBeGreaterThan(0);
-    expect(companyProfile.cuit).toBe(companyProfileCompleteData.cuit);
-    expect(companyProfile.companyName).toBe(companyProfileCompleteData.companyName);
-    expect(companyProfile.slogan).toBe(companyProfileCompleteData.slogan);
-    expect(companyProfile.description).toBe(companyProfileCompleteData.description);
-    expect(companyProfile.logo).toBe(companyProfileCompleteData.logo);
-    expect(companyProfile.website).toBe(companyProfileCompleteData.website);
-    expect(companyProfile.email).toBe(companyProfileCompleteData.email);
+    expect(companyProfile).toEqual(expect.objectContaining({
+      cuit: companyProfileCompleteData.cuit,
+      companyName: companyProfileCompleteData.companyName,
+      slogan: companyProfileCompleteData.slogan,
+      description: companyProfileCompleteData.description,
+      logo: companyProfileCompleteData.logo,
+      website: companyProfileCompleteData.website,
+      email: companyProfileCompleteData.email
+    }));
   });
 
   it("raise an error if cuit is null", async () => {
