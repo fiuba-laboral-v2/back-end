@@ -131,6 +131,6 @@ describe("CompanyProfileRepository", () => {
     const id: number = companyProfile.id;
     expect(await CompanyProfileRepository.findById(id)).not.toBeNull();
     await CompanyProfileRepository.truncate();
-    expect(await CompanyProfileRepository.findById(id)).toBeNull();
+    await expect(CompanyProfileRepository.findById(id)).rejects.toThrow();
   });
 });
