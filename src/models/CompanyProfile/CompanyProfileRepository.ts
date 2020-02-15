@@ -65,7 +65,7 @@ export const CompanyProfileRepository = {
   findById: async (id: number) => {
     const companyProfile: CompanyProfile | null = await CompanyProfile.findOne(
       { where: { id: id } }
-      );
+    );
     if (!companyProfile)  throw new UserInputError("Company Not found", { invalidArgs: id });
     return companyProfile;
   },
