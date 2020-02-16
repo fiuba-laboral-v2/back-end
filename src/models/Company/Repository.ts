@@ -45,7 +45,7 @@ export const CompanyRepository = {
     try {
       await company.save({ transaction: transaction });
       for (const phoneNumber of phoneNumbers) {
-        phoneNumber.companyProfileId = company.id;
+        phoneNumber.companyId = company.id;
         await phoneNumber.save({ transaction: transaction });
       }
       for (const photo of photos) {

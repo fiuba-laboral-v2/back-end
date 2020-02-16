@@ -16,7 +16,7 @@ afterAll(async () => {
 test("create a valid CompanyPhoneNumber", async () => {
   const companyPhoneNumber: CompanyPhoneNumber = new CompanyPhoneNumber({
     phoneNumber: 43076555,
-    companyProfileId: 0
+    companyId: 0
   });
   expect(companyPhoneNumber).not.toBeNull();
   expect(companyPhoneNumber).not.toBeUndefined();
@@ -25,7 +25,7 @@ test("create a valid CompanyPhoneNumber", async () => {
 test("raise and error if phoneNumber is null", async () => {
   const companyPhoneNumber: CompanyPhoneNumber = new CompanyPhoneNumber({
     phoneNumber: null,
-    companyProfileId: 0
+    companyId: 0
   });
   await expect(companyPhoneNumber.save()).rejects.toThrow();
 });
@@ -33,7 +33,7 @@ test("raise and error if phoneNumber is null", async () => {
 test("raise and error if companyId is null", async () => {
   const companyPhoneNumber: CompanyPhoneNumber = new CompanyPhoneNumber({
     phoneNumber: 43076555,
-    companyProfileId: null
+    companyId: null
   });
   await expect(companyPhoneNumber.save()).rejects.toThrow();
 });

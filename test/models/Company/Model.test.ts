@@ -22,7 +22,7 @@ describe("Company", () => {
     const company: Company = new Company(companyMockData);
     const phoneNumber: CompanyPhoneNumber = new CompanyPhoneNumber({
       phoneNumber: 43076555,
-      companyProfileId: 1
+      companyId: 1
     });
     const photo: CompanyPhoto = new CompanyPhoto({
       photo: `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACN
