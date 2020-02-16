@@ -7,15 +7,8 @@ import { careerMocks } from "./mocks";
 describe("Applicant model", () => {
   const careerData = careerMocks.careerData();
   beforeAll(async () => {
-    // await Career.sync({ force: true });
-    // await Applicant.sync({ force: true });
-    // await CareerApplicant.sync({ force: true });
     await Database.setConnection();
   });
-
-  // beforeEach(async () => {
-
-  // });
 
   afterAll(async () => {
     await Database.close();
