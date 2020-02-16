@@ -2,7 +2,7 @@ import { Company, ICompanyProfile } from "./index";
 import { CompanyPhoto, CompanyProfilePhotoRepository } from "../CompanyPhoto";
 import {
   CompanyPhoneNumber,
-  CompanyProfilePhoneNumberRepository
+  CompanyPhoneNumberRepository
 } from "../CompanyPhoneNumber";
 import { CompanyNotFoundError } from "./Errors/CompanyNotFoundError";
 import Database from "../../config/Database";
@@ -29,7 +29,7 @@ export const CompanyRepository = {
       email
     });
     const companyPhoneNumbers: CompanyPhoneNumber[] =
-      CompanyProfilePhoneNumberRepository.build(phoneNumbers);
+      CompanyPhoneNumberRepository.build(phoneNumbers);
     const companyPhotos: CompanyPhoto[] =
       CompanyProfilePhotoRepository.build(photos);
     return CompanyRepository.save(

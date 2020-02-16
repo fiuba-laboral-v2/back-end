@@ -1,6 +1,6 @@
 import { CompanyPhoneNumber } from "./index";
 
-export const CompanyProfilePhoneNumberRepository = {
+export const CompanyPhoneNumberRepository = {
   build: (phoneNumbers: number[] = []) => {
     const companyPhoneNumbers: CompanyPhoneNumber[] = [];
     for (const phoneNumber of  phoneNumbers) {

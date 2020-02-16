@@ -1,4 +1,4 @@
 import CompanyPhoneNumber from "./Model";
-import { CompanyProfilePhoneNumberRepository } from "./CompanyProfilePhoneNumberRepository";
+import { CompanyPhoneNumberRepository } from "./Repository";
 
-export { CompanyPhoneNumber, CompanyProfilePhoneNumberRepository };
+export { CompanyPhoneNumber, CompanyPhoneNumberRepository };

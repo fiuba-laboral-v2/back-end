@@ -4,7 +4,7 @@ import Database from "../../../../src/config/Database";
 import { ICompanyProfile } from "../../../../src/models/Company";
 import { CompanyRepository } from "../../../../src/models/Company";
 import {
-  CompanyProfilePhoneNumberRepository
+  CompanyPhoneNumberRepository
 } from "../../../../src/models/CompanyPhoneNumber";
 import { CompanyProfilePhotoRepository } from "../../../../src/models/CompanyPhoto";
 import {
@@ -50,7 +50,7 @@ describe("saveCompanyProfile", () => {
 
   beforeEach(async () => {
     await CompanyRepository.truncate();
-    await CompanyProfilePhoneNumberRepository.truncate();
+    await CompanyPhoneNumberRepository.truncate();
     await CompanyProfilePhotoRepository.truncate();
   });
 
