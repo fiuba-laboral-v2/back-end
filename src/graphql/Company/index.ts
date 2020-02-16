@@ -1,5 +1,5 @@
 import { companyTypes } from "./Types/";
-import companyProfileMutations from "./mutation";
+import companyMutations from "./mutation";
 import companyProfileQueries from "./queries";
 
-export { companyProfileMutations, companyTypes, companyProfileQueries };
+export { companyMutations, companyTypes, companyProfileQueries };

@@ -7,8 +7,8 @@ import {
   ICompany
 } from "../../models/Company";
 
-const companyProfileMutations = {
-  saveCompanyProfile: {
+const companyMutations = {
+  saveCompany: {
     type: graphQLCompany,
     args: {
       cuit: {
@@ -46,4 +46,4 @@ const companyProfileMutations = {
   }
 };
 
-export default companyProfileMutations;
+export default companyMutations;

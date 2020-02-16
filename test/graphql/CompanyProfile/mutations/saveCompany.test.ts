@@ -17,7 +17,7 @@ const queryWithAllData = gql`
   mutation (
     $cuit: String!, $companyName: String!, $slogan: String, $description: String,
     $logo: String, $website: String, $email: String, $phoneNumbers: [Int], $photos: [String]) {
-    saveCompanyProfile(
+    saveCompany(
         cuit: $cuit, companyName: $companyName, slogan: $slogan, description: $description,
         logo: $logo, website: $website, email: $email, phoneNumbers: $phoneNumbers,
         photos: $photos) {
@@ -36,14 +36,14 @@ const queryWithAllData = gql`
 
 const queryWithOnlyObligatoryData = gql`
   mutation ($cuit: String!, $companyName: String!) {
-    saveCompanyProfile(cuit: $cuit, companyName: $companyName) {
+    saveCompany(cuit: $cuit, companyName: $companyName) {
       cuit
       companyName
     }
   }
 `;
 
-describe("saveCompanyProfile", () => {
+describe("saveCompany", () => {
   beforeAll(async () => {
     await Database.setConnection();
   });
@@ -58,7 +58,7 @@ describe("saveCompanyProfile", () => {
     await Database.close();
   });
 
-  describe("saveCompanyProfile", () => {
+  describe("saveCompany", () => {
     const companyProfileData: ICompany = {
       ...companyMockData,
       ...{ photos: photos, phoneNumbers: phoneNumbers }
@@ -73,7 +73,7 @@ describe("saveCompanyProfile", () => {
       const response = await executeMutation(queryWithAllData, companyProfileData);
       expect(response.errors).toBeUndefined();
       expect(response.data).not.toBeUndefined();
-      expect(response.data).toEqual({ saveCompanyProfile: companyProfileData });
+      expect(response.data).toEqual({ saveCompany: companyProfileData });
     });
 
     it("creates companyProfile with only obligatory data", async () => {
@@ -82,7 +82,7 @@ describe("saveCompanyProfile", () => {
       );
       expect(response.errors).toBeUndefined();
       expect(response.data).not.toBeUndefined();
-      expect(response.data).toEqual({ saveCompanyProfile: companyProfileDataWithMinimumData });
+      expect(response.data).toEqual({ saveCompany: companyProfileDataWithMinimumData });
     });
   });
 });
