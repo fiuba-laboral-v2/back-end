@@ -1,7 +1,7 @@
 import { CompanyProfile, CompanyProfileRepository } from "../../../src/models/CompanyProfile";
 import { CompanyProfilePhoneNumber } from "../../../src/models/CompanyProfilePhoneNumber";
 import { CompanyProfilePhoto } from "../../../src/models/CompanyProfilePhoto";
-import { companyProfileMockData, phoneNumbers, photos } from "./CompanyPrfileMockData";
+import { companyProfileMockData, phoneNumbers, photos } from "./CompanyProfileMockData";
 import Database from "../../../src/config/Database";
 
 describe("CompanyProfileRepository", () => {

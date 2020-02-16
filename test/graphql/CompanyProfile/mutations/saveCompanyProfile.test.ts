@@ -11,7 +11,7 @@ import {
   companyProfileMockData,
   phoneNumbers,
   photos
-} from "../../../models/CompanyProfile/CompanyPrfileMockData";
+} from "../../../models/CompanyProfile/CompanyProfileMockData";
 
 const queryWithAllData = gql`
   mutation (

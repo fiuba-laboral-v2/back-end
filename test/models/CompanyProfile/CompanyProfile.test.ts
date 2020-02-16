@@ -1,7 +1,7 @@
 import { CompanyProfile } from "../../../src/models/CompanyProfile";
 import { CompanyProfilePhoneNumber } from "../../../src/models/CompanyProfilePhoneNumber";
 import { CompanyProfilePhoto } from "../../../src/models/CompanyProfilePhoto";
-import { companyProfileMockData } from "./CompanyPrfileMockData";
+import { companyProfileMockData } from "./CompanyProfileMockData";
 import Database from "../../../src/config/Database";
 
 
