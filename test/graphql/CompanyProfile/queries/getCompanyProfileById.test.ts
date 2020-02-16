@@ -1,6 +1,6 @@
 import { gql } from "apollo-server";
 import { executeQuery } from "../../ApolloTestClient";
-import { CompanyProfile, CompanyProfileRepository } from "../../../../src/models/CompanyProfile";
+import { CompanyProfile, CompanyProfileRepository } from "../../../../src/models/Company";
 import Database from "../../../../src/config/Database";
 
 const query = gql`

@@ -1,4 +1,4 @@
-import { CompanyProfile } from "./CompanyProfile";
+import { CompanyProfile } from "./Company";
 import { CompanyProfilePhoneNumber } from "./CompanyProfilePhoneNumber";
 import { CompanyProfilePhoto } from "./CompanyProfilePhoto";
 

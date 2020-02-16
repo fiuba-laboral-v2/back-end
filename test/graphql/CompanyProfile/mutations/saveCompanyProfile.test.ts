@@ -1,8 +1,8 @@
 import { gql } from "apollo-server";
 import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
-import { ICompanyProfile } from "../../../../src/models/CompanyProfile";
-import { CompanyProfileRepository } from "../../../../src/models/CompanyProfile";
+import { ICompanyProfile } from "../../../../src/models/Company";
+import { CompanyProfileRepository } from "../../../../src/models/Company";
 import {
   CompanyProfilePhoneNumberRepository
 } from "../../../../src/models/CompanyProfilePhoneNumber";

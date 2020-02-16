@@ -5,7 +5,7 @@ import {
   CompanyProfileRepository,
   CompanyProfileSerializer,
   ICompanyProfile
-} from "../../models/CompanyProfile";
+} from "../../models/Company";
 
 const companyProfileQueries = {
   getCompanyProfileById: {

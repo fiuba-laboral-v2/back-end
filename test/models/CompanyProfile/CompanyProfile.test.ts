@@ -1,4 +1,4 @@
-import { CompanyProfile } from "../../../src/models/CompanyProfile";
+import { CompanyProfile } from "../../../src/models/Company";
 import { CompanyProfilePhoneNumber } from "../../../src/models/CompanyProfilePhoneNumber";
 import { CompanyProfilePhoto } from "../../../src/models/CompanyProfilePhoto";
 import { companyProfileMockData } from "./CompanyProfileMockData";

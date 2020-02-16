@@ -7,7 +7,7 @@ import {
   Model,
   Table
 } from "sequelize-typescript";
-import { CompanyProfile } from "../CompanyProfile";
+import { CompanyProfile } from "../Company";
 
 @Table
 export default class CompanyProfilePhoneNumber extends Model<CompanyProfilePhoneNumber> {
