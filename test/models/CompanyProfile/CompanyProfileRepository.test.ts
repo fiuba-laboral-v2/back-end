@@ -1,6 +1,6 @@
 import { Company, CompanyProfileRepository } from "../../../src/models/Company";
 import { CompanyPhoneNumber } from "../../../src/models/CompanyPhoneNumber";
-import { CompanyProfilePhoto } from "../../../src/models/CompanyProfilePhoto";
+import { CompanyPhoto } from "../../../src/models/CompanyPhoto";
 import { companyProfileMockData, phoneNumbers, photos } from "./CompanyProfileMockData";
 import Database from "../../../src/config/Database";
 
@@ -88,7 +88,7 @@ describe("CompanyProfileRepository", () => {
 
   it("rollback transaction and raise error if photo is null", async () => {
     const company: Company = new Company(companyProfileDataWithMinimumData);
-    const photo: CompanyProfilePhoto = new CompanyProfilePhoto({ photo: null });
+    const photo: CompanyPhoto = new CompanyPhoto({ photo: null });
     await expect(CompanyProfileRepository.save(
       company, [],[photo]
     )).rejects.toThrow();

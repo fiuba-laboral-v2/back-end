@@ -6,7 +6,7 @@ import { CompanyProfileRepository } from "../../../../src/models/Company";
 import {
   CompanyProfilePhoneNumberRepository
 } from "../../../../src/models/CompanyPhoneNumber";
-import { CompanyProfilePhotoRepository } from "../../../../src/models/CompanyProfilePhoto";
+import { CompanyProfilePhotoRepository } from "../../../../src/models/CompanyPhoto";
 import {
   companyProfileMockData,
   phoneNumbers,

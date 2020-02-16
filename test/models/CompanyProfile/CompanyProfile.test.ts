@@ -1,6 +1,6 @@
 import { Company } from "../../../src/models/Company";
 import { CompanyPhoneNumber } from "../../../src/models/CompanyPhoneNumber";
-import { CompanyProfilePhoto } from "../../../src/models/CompanyProfilePhoto";
+import { CompanyPhoto } from "../../../src/models/CompanyPhoto";
 import { companyProfileMockData } from "./CompanyProfileMockData";
 import Database from "../../../src/config/Database";
 
@@ -24,7 +24,7 @@ describe("CompanyProfile", () => {
       phoneNumber: 43076555,
       companyProfileId: 1
     });
-    const photo: CompanyProfilePhoto = new CompanyProfilePhoto({
+    const photo: CompanyPhoto = new CompanyPhoto({
       photo: `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACN
               byblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAAB
               JRU5ErkJggg==`,

@@ -10,7 +10,7 @@ import {
 import { Company } from "../Company";
 
 @Table
-export default class CompanyProfilePhoto extends Model<CompanyProfilePhoto> {
+export default class CompanyPhoto extends Model<CompanyPhoto> {
   @AllowNull(false)
   @Column(DataType.TEXT)
   public photo: string;

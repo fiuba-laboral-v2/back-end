@@ -1,5 +1,5 @@
 import { Company, ICompanyProfile } from "./index";
-import { CompanyProfilePhoto, CompanyProfilePhotoRepository } from "../CompanyProfilePhoto";
+import { CompanyPhoto, CompanyProfilePhotoRepository } from "../CompanyPhoto";
 import {
   CompanyPhoneNumber,
   CompanyProfilePhoneNumberRepository
@@ -30,16 +30,16 @@ export const CompanyProfileRepository = {
     });
     const companyPhoneNumbers: CompanyPhoneNumber[] =
       CompanyProfilePhoneNumberRepository.build(phoneNumbers);
-    const companyProfilePhotos: CompanyProfilePhoto[] =
+    const companyPhotos: CompanyPhoto[] =
       CompanyProfilePhotoRepository.build(photos);
     return CompanyProfileRepository.save(
-      company, companyPhoneNumbers, companyProfilePhotos
+      company, companyPhoneNumbers, companyPhotos
     );
   },
   save: async (
     company: Company,
     phoneNumbers: CompanyPhoneNumber[] = [],
-    photos: CompanyProfilePhoto[] = []
+    photos: CompanyPhoto[] = []
   ) => {
     const transaction = await Database.transaction();
     try {

@@ -1,11 +1,11 @@
 import { Company } from "./Company";
 import { CompanyPhoneNumber } from "./CompanyPhoneNumber";
-import { CompanyProfilePhoto } from "./CompanyProfilePhoto";
+import { CompanyPhoto } from "./CompanyPhoto";
 
 const models = [
   Company,
   CompanyPhoneNumber,
-  CompanyProfilePhoto
+  CompanyPhoto
 ];
 
 export { models };

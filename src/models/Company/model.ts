@@ -1,6 +1,6 @@
 import { AllowNull, Column, DataType, HasMany, Model, Table, Is } from "sequelize-typescript";
 import { CompanyPhoneNumber } from "../CompanyPhoneNumber";
-import { CompanyProfilePhoto } from "../CompanyProfilePhoto";
+import { CompanyPhoto } from "../CompanyPhoto";
 import { validateCuit, validateName } from "validations-fiuba-laboral-v2";
 
 @Table
@@ -33,6 +33,6 @@ export default class Company extends Model<Company> {
   @HasMany(() => CompanyPhoneNumber)
   public phoneNumbers: CompanyPhoneNumber[];
 
-  @HasMany(() => CompanyProfilePhoto)
-  public photos: CompanyProfilePhoto[];
+  @HasMany(() => CompanyPhoto)
+  public photos: CompanyPhoto[];
 }
