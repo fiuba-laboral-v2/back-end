@@ -1,4 +1,4 @@
 import CompanyPhoto from "./Model";
-import { CompanyProfilePhotoRepository } from "./CompanyProfilePhotoRepository";
+import { CompanyPhotoRepository } from "./Repository";
 
-export { CompanyPhoto, CompanyProfilePhotoRepository };
+export { CompanyPhoto, CompanyPhotoRepository };

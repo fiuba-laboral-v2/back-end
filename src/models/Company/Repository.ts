@@ -1,5 +1,5 @@
 import { Company, ICompanyProfile } from "./index";
-import { CompanyPhoto, CompanyProfilePhotoRepository } from "../CompanyPhoto";
+import { CompanyPhoto, CompanyPhotoRepository } from "../CompanyPhoto";
 import {
   CompanyPhoneNumber,
   CompanyPhoneNumberRepository
@@ -31,7 +31,7 @@ export const CompanyRepository = {
     const companyPhoneNumbers: CompanyPhoneNumber[] =
       CompanyPhoneNumberRepository.build(phoneNumbers);
     const companyPhotos: CompanyPhoto[] =
-      CompanyProfilePhotoRepository.build(photos);
+      CompanyPhotoRepository.build(photos);
     return CompanyRepository.save(
       company, companyPhoneNumbers, companyPhotos
     );

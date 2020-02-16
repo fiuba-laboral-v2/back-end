@@ -6,7 +6,7 @@ import { CompanyRepository } from "../../../../src/models/Company";
 import {
   CompanyPhoneNumberRepository
 } from "../../../../src/models/CompanyPhoneNumber";
-import { CompanyProfilePhotoRepository } from "../../../../src/models/CompanyPhoto";
+import { CompanyPhotoRepository } from "../../../../src/models/CompanyPhoto";
 import {
   companyMockData,
   phoneNumbers,
@@ -51,7 +51,7 @@ describe("saveCompanyProfile", () => {
   beforeEach(async () => {
     await CompanyRepository.truncate();
     await CompanyPhoneNumberRepository.truncate();
-    await CompanyProfilePhotoRepository.truncate();
+    await CompanyPhotoRepository.truncate();
   });
 
   afterAll(async () => {
