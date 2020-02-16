@@ -5,6 +5,7 @@ import { ApplicantRepository } from "../../../src/models/Applicant";
 import Database from "../../../src/config/Database";
 import { careerMocks } from "../Career/mocks";
 import { applicantMocks } from "./mocks";
+import { notDeepEqual } from "assert";
 
 describe("ApplicantRepository", () => {
   beforeAll(async () => {
@@ -80,5 +81,17 @@ describe("ApplicantRepository", () => {
     const applicant = await ApplicantRepository.findByUuid(savedApplicant.uuid);
 
     expect(applicant).toBeNull();
+  });
+
+  it("can create an applicant without a career and without capabilities", async () => {
+    const applicantData = applicantMocks.applicantData([]);
+    const savedApplicant = await ApplicantRepository.create({
+      ...applicantData,
+      capabilities: []
+    });
+
+    const applicant = await ApplicantRepository.findByUuid(savedApplicant.uuid);
+
+    expect(applicant).not.toBeNull();
   });
 });

@@ -40,13 +40,7 @@ describe("Applicant model", () => {
     applicant.careers = [ career ];
     applicant.capabilities = [ capability ];
 
-    expect(applicant).not.toBeNull();
-    expect(applicant).not.toBeUndefined();
-    expect(applicant.careers).not.toBeUndefined();
-    expect(applicant.careers).not.toBeNull();
     expect(applicant.careers).toHaveLength(1);
-    expect(applicant.capabilities).not.toBeUndefined();
-    expect(applicant.capabilities).not.toBeNull();
     expect(applicant.capabilities).toHaveLength(1);
   });
 

@@ -12,16 +12,15 @@ export const ApplicantRepository = {
     padron,
     description,
     credits,
-    careersCodes,
-    capabilities
+    careersCodes = [],
+    capabilities = []
   }: IApplicant) => {
-    const careers = await CareerRepository.findByCode(careersCodes);
+    const careers = careersCodes.length > 0 ? await CareerRepository.findByCode(careersCodes): [];
     const capabilityModels: Capability[] = [];
-    if (capabilities) {
-      for (const capability of capabilities) {
-        const result = await CapabilityRepository.findOrCreate(capability);
-        capabilityModels.push(result[0]);
-      }
+
+    for (const capability of capabilities) {
+      const result = await CapabilityRepository.findOrCreate(capability);
+      capabilityModels.push(result[0]);
     }
 
     const applicant: Applicant = new Applicant({
@@ -36,25 +35,22 @@ export const ApplicantRepository = {
     try {
       await applicant.save({ transaction });
 
-      if (careers) {
-        applicant.careers = careers;
-        careers.forEach(async career => (
-          await CareerApplicant.create(
-            { careerCode: career.code , applicantUuid: applicant.uuid },
+      applicant.careers = careers;
+      careers.forEach(async career => (
+        await CareerApplicant.create(
+          { careerCode: career.code , applicantUuid: applicant.uuid },
+          { transaction }
+        )
+      ));
+
+      applicant.capabilities = capabilityModels;
+      for (const capability of capabilityModels) {
+          await ApplicantCapability.create(
+            { capabilityUuid: capability.uuid , applicantUuid: applicant.uuid},
             { transaction }
-          )
-        ));
+          );
       }
 
-      if (capabilityModels) {
-        applicant.capabilities = capabilityModels;
-        for (const capability of capabilityModels) {
-            await ApplicantCapability.create(
-              { capabilityUuid: capability.uuid , applicantUuid: applicant.uuid},
-              { transaction }
-            );
-        }
-      }
       await transaction.commit();
       return applicant;
     } catch (error) {
