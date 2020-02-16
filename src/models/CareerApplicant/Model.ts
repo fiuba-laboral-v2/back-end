@@ -2,7 +2,7 @@ import { Table, Model, Column, ForeignKey, PrimaryKey } from "sequelize-typescri
 import { Applicant } from "../Applicant/Model";
 import { Career } from "../Career/Model";
 
-@Table
+@Table({ tableName: "CareersApplicants" })
 export class CareerApplicant extends Model<CareerApplicant> {
     @ForeignKey(() => Career)
     @PrimaryKey

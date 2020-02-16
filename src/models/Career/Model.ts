@@ -2,12 +2,7 @@ import { Column, DataType, Model, BelongsToMany, Table } from "sequelize-typescr
 import { Applicant } from "../Applicant/Model";
 import { CareerApplicant } from "../CareerApplicant/Model";
 
-@Table({
-  defaultScope: {
-    attributes: { exclude: [ "deletedAt" ] }
-  },
-  tableName: "Careers"
-})
+@Table({ tableName: "Careers" })
 export class Career extends Model<Career> {
   @Column({
     allowNull: false,

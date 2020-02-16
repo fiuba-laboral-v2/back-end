@@ -6,12 +6,7 @@ import { Capability } from "../Capability/Model";
 import { ApplicantCapability } from "../ApplicantCapability/Model";
 
 
-@Table({
-  defaultScope: {
-    attributes: { exclude: [ "deletedAt" ] }
-  },
-  tableName: "Applicants"
-})
+@Table({ tableName: "Applicants" })
 export class Applicant extends Model<Applicant> {
   @Column({
     allowNull: false,

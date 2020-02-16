@@ -62,16 +62,23 @@ export const ApplicantRepository = {
       throw new Error(error);
     }
   },
-  findByUuid: async (uuid: string)  => {
-    return Applicant.findByPk(uuid, { include: [Career, Capability] });
-  },
-  findByPadron: async (padron: number)  => {
-    return Applicant.findOne({ where: { padron }, include: [Career, Capability]});
-  },
+  findByUuid: async (uuid: string)  =>
+    Applicant.findByPk(uuid, { include: [Career, Capability] }),
+  findByPadron: async (padron: number)  =>
+    Applicant.findOne({ where: { padron }, include: [Career, Capability]}),
   deleteByUuid: async (uuid: string) => {
-    return Applicant.destroy({ where: { uuid } });
+    const transaction = await Database.transaction();
+    try {
+      await ApplicantCapability.destroy({ where: { applicantUuid: uuid }, transaction });
+      await CareerApplicant.destroy({ where: { applicantUuid: uuid }, transaction});
+      const applicantDestroyed =  await Applicant.destroy({ where: { uuid }, transaction });
+      await transaction.commit();
+      return applicantDestroyed;
+    } catch (error) {
+      await transaction.rollback();
+      throw new Error(error);
+    }
   },
-  truncate: async () => {
-    return Applicant.destroy({ truncate: true });
-  }
+  truncate: async () =>
+    Applicant.destroy({ truncate: true })
 };
