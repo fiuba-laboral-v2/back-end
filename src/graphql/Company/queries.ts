@@ -2,7 +2,7 @@ import { graphQLCompany } from "./Types/GraphQLCompany";
 import { ID, nonNull, List } from "../fieldTypes";
 import {
   Company,
-  CompanyProfileRepository,
+  CompanyRepository,
   CompanyProfileSerializer,
   ICompanyProfile
 } from "../../models/Company";
@@ -16,14 +16,14 @@ const companyProfileQueries = {
       }
     },
     resolve: async (_: undefined, { id }: { id: number }) => {
-      const company: Company = await CompanyProfileRepository.findById(id);
+      const company: Company = await CompanyRepository.findById(id);
       return CompanyProfileSerializer.serialize(company);
     }
   },
   getCompanyProfiles: {
     type: List(graphQLCompany),
     resolve: async (): Promise<ICompanyProfile[]> => {
-      const companies: Company[] = await CompanyProfileRepository.findAll();
+      const companies: Company[] = await CompanyRepository.findAll();
       return companies.map(company => {
         return CompanyProfileSerializer.serialize(company);
       });

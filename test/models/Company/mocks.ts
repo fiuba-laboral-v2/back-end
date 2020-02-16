@@ -1,6 +1,6 @@
 import faker from "faker";
 
-const companyProfileMockData = {
+const companyMockData = {
   cuit: faker.random.arrayElement([ "30711819017", "30701307115", "30703088534" ]),
   companyName: faker.company.companyName(),
   slogan: faker.company.catchPhrase(),
@@ -22,4 +22,4 @@ const phoneNumbers = [
   parseInt(faker.phone.phoneNumber("0165#######"), 10)
 ];
 
-export { companyProfileMockData, phoneNumbers, photos };
+export { companyMockData, phoneNumbers, photos };

@@ -7,7 +7,7 @@ import {
 import { CompanyNotFoundError } from "./Errors/CompanyNotFoundError";
 import Database from "../../config/Database";
 
-export const CompanyProfileRepository = {
+export const CompanyRepository = {
   create: async ({
     cuit,
     companyName,
@@ -32,7 +32,7 @@ export const CompanyProfileRepository = {
       CompanyProfilePhoneNumberRepository.build(phoneNumbers);
     const companyPhotos: CompanyPhoto[] =
       CompanyProfilePhotoRepository.build(photos);
-    return CompanyProfileRepository.save(
+    return CompanyRepository.save(
       company, companyPhoneNumbers, companyPhotos
     );
   },

@@ -1,11 +1,11 @@
 import { Company } from "../../../src/models/Company";
 import { CompanyPhoneNumber } from "../../../src/models/CompanyPhoneNumber";
 import { CompanyPhoto } from "../../../src/models/CompanyPhoto";
-import { companyProfileMockData } from "./CompanyProfileMockData";
+import { companyMockData } from "./mocks";
 import Database from "../../../src/config/Database";
 
 
-describe("CompanyProfile", () => {
+describe("Company", () => {
   beforeAll(async () => {
     await Database.setConnection();
   });
@@ -18,8 +18,8 @@ describe("CompanyProfile", () => {
     await Database.close();
   });
 
-  it("create a valid profile", async () => {
-    const company: Company = new Company(companyProfileMockData);
+  it("create a valid company", async () => {
+    const company: Company = new Company(companyMockData);
     const phoneNumber: CompanyPhoneNumber = new CompanyPhoneNumber({
       phoneNumber: 43076555,
       companyProfileId: 1
@@ -37,13 +37,13 @@ describe("CompanyProfile", () => {
     expect(company.photos).toHaveLength(1);
     expect(company.id).toBeGreaterThan(0);
     expect(company).toEqual(expect.objectContaining({
-      cuit: companyProfileMockData.cuit,
-      companyName: companyProfileMockData.companyName,
-      slogan: companyProfileMockData.slogan,
-      description: companyProfileMockData.description,
-      logo: companyProfileMockData.logo,
-      website: companyProfileMockData.website,
-      email: companyProfileMockData.email
+      cuit: companyMockData.cuit,
+      companyName: companyMockData.companyName,
+      slogan: companyMockData.slogan,
+      description: companyMockData.description,
+      logo: companyMockData.logo,
+      website: companyMockData.website,
+      email: companyMockData.email
     }));
   });
 

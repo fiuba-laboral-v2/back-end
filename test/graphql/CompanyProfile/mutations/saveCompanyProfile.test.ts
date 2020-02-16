@@ -2,16 +2,16 @@ import { gql } from "apollo-server";
 import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 import { ICompanyProfile } from "../../../../src/models/Company";
-import { CompanyProfileRepository } from "../../../../src/models/Company";
+import { CompanyRepository } from "../../../../src/models/Company";
 import {
   CompanyProfilePhoneNumberRepository
 } from "../../../../src/models/CompanyPhoneNumber";
 import { CompanyProfilePhotoRepository } from "../../../../src/models/CompanyPhoto";
 import {
-  companyProfileMockData,
+  companyMockData,
   phoneNumbers,
   photos
-} from "../../../models/CompanyProfile/CompanyProfileMockData";
+} from "../../../models/Company/mocks";
 
 const queryWithAllData = gql`
   mutation (
@@ -49,7 +49,7 @@ describe("saveCompanyProfile", () => {
   });
 
   beforeEach(async () => {
-    await CompanyProfileRepository.truncate();
+    await CompanyRepository.truncate();
     await CompanyProfilePhoneNumberRepository.truncate();
     await CompanyProfilePhotoRepository.truncate();
   });
@@ -60,7 +60,7 @@ describe("saveCompanyProfile", () => {
 
   describe("saveCompanyProfile", () => {
     const companyProfileData: ICompanyProfile = {
-      ...companyProfileMockData,
+      ...companyMockData,
       ...{ photos: photos, phoneNumbers: phoneNumbers }
     };
 
