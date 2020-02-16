@@ -9,9 +9,9 @@ describe("Applicant model", () => {
   });
 
   beforeEach(async () => {
-    await Capability.destroy({ truncate: true });
-    await Applicant.destroy({ truncate: true });
-    await ApplicantCapability.destroy({ truncate: true });
+    await Capability.sync({ force: true });
+    await ApplicantCapability.sync({ force: true });
+    await Applicant.sync({ force: true });
   });
 
   afterAll(async () => {

@@ -8,11 +8,8 @@ export const CapabilityRepository = {
   },
   findByDescription: async (description: string[])  =>
     Capability.findAll({ where: { description: { [Op.or]: description }} }),
-  findOrCreateMany: async (descriptions: string[] = [])  =>
-    descriptions.map(async description => {
-      const capability = await Capability.findOrCreate({ where: { description } });
-      return capability[0];
-    }),
+  findOrCreate: async (description: string) =>
+    Capability.findOrCreate({ where: { description } }),
   findAll: async () =>
     Capability.findAll(),
   deleteByCode: async (code: string) =>

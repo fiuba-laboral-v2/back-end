@@ -2,7 +2,12 @@ import { Table, Model, Column, ForeignKey, PrimaryKey } from "sequelize-typescri
 import { Capability } from "../Capability/Model";
 import { Applicant } from "../Applicant/Model";
 
-@Table
+@Table({
+    defaultScope: {
+      attributes: { exclude: [ "deletedAt" ] }
+    },
+    tableName: "ApplicantsCapabilities"
+  })
 export class ApplicantCapability extends Model<ApplicantCapability> {
     @ForeignKey(() => Applicant)
     @PrimaryKey

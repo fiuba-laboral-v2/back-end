@@ -3,16 +3,18 @@ import { DataType } from "sequelize-typescript";
 
 export = {
   up: (queryInterface: QueryInterface) => {
-    return queryInterface.createTable("ApplicantCapabilities", {
+    return queryInterface.createTable("ApplicantsCapabilities", {
       applicantUuid: {
         allowNull: false,
         primaryKey: true,
-        type: DataType.UUID
+        type: DataType.UUID,
+        references: { model: "Applicants", key: "uuid" }
       },
       capabilityUuid: {
         allowNull: false,
         primaryKey: true,
-        type: DataType.UUID
+        type: DataType.UUID,
+        references: { model: "Capabilities", key: "uuid" }
       },
       createdAt: {
         allowNull: false,

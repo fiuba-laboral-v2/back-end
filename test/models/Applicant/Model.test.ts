@@ -12,9 +12,10 @@ describe("Applicant model", () => {
   });
 
   beforeEach(async () => {
-    await Applicant.destroy({ truncate: true });
-    await Career.destroy({ truncate: true });
-    await CareerApplicant.destroy({ truncate: true });
+    await ApplicantCapability.sync({ force: true });
+    await CareerApplicant.sync({ force: true });
+    await Applicant.sync({ force: true });
+    await Career.sync({ force: true });
   });
 
   afterAll(async () => {

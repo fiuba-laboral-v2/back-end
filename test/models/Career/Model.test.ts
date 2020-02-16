@@ -7,14 +7,15 @@ import { careerMocks } from "./mocks";
 describe("Applicant model", () => {
   const careerData = careerMocks.careerData();
   beforeAll(async () => {
+    // await Career.sync({ force: true });
+    // await Applicant.sync({ force: true });
+    // await CareerApplicant.sync({ force: true });
     await Database.setConnection();
   });
 
-  beforeEach(async () => {
-    await Career.destroy({ truncate: true });
-    await Applicant.destroy({ truncate: true });
-    await CareerApplicant.destroy({ truncate: true });
-  });
+  // beforeEach(async () => {
+
+  // });
 
   afterAll(async () => {
     await Database.close();
@@ -41,11 +42,7 @@ describe("Applicant model", () => {
       description: "Batman",
       credits: 150
     });
-    const career: Career = new Career({
-      code: careerData.code,
-      description: careerData.description,
-      credits: careerData.credits
-    });
+    const career: Career = new Career({ ...careerMocks.careerData() });
     applicant.careers = [ career ];
     career.applicants = [ applicant ];
 
