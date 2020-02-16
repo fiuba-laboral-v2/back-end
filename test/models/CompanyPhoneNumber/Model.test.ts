@@ -13,7 +13,7 @@ afterAll(async () => {
   await Database.close();
 });
 
-test("create a valid CompanyProfilePhoneNumber", async () => {
+test("create a valid CompanyPhoneNumber", async () => {
   const companyPhoneNumber: CompanyPhoneNumber = new CompanyPhoneNumber({
     phoneNumber: 43076555,
     companyProfileId: 0
@@ -30,7 +30,7 @@ test("raise and error if phoneNumber is null", async () => {
   await expect(companyPhoneNumber.save()).rejects.toThrow();
 });
 
-test("raise and error if companyProfileId is null", async () => {
+test("raise and error if companyId is null", async () => {
   const companyPhoneNumber: CompanyPhoneNumber = new CompanyPhoneNumber({
     phoneNumber: 43076555,
     companyProfileId: null

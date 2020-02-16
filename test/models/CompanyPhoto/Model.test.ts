@@ -1,7 +1,7 @@
 import Database from "../../../src/config/Database";
 import { CompanyPhoto } from "../../../src/models/CompanyPhoto";
 
-describe("CompanyProfilePhoto", () => {
+describe("CompanyPhoto", () => {
   beforeAll(async () => {
     await Database.setConnection();
   });
@@ -14,7 +14,7 @@ describe("CompanyProfilePhoto", () => {
     await Database.close();
   });
 
-  it("create a valid CompanyProfilePhoto", async () => {
+  it("create a valid CompanyPhoto", async () => {
     const companyPhoto: CompanyPhoto = new CompanyPhoto({
       photo: `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNby
             blAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5E
@@ -33,7 +33,7 @@ describe("CompanyProfilePhoto", () => {
     await expect(companyPhoto.save()).rejects.toThrow();
   });
 
-  it("raise and error if companyProfileId is null", async () => {
+  it("raise and error if companyId is null", async () => {
     const companyPhoto: CompanyPhoto = new CompanyPhoto({
       photo: `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNby
             blAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5E
