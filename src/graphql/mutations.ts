@@ -1,5 +1,5 @@
 import { merge } from "lodash";
-import { companyProfileMutations } from "./CompanyProfile";
+import { companyProfileMutations } from "./Company";
 
 const mutations = () => merge(
   companyProfileMutations

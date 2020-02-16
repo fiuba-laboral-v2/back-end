@@ -1,6 +1,6 @@
 import { merge } from "lodash";
 import { translationQueries } from "./Translation";
-import { companyProfileQueries } from "./CompanyProfile";
+import { companyProfileQueries } from "./Company";
 
 const queries = () => merge(
   translationQueries,

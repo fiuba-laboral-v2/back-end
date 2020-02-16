@@ -1,4 +1,4 @@
-import { companyProfileType } from "./CompanyProfile";
+import { companyProfileType } from "./Company";
 
 const types = [
   companyProfileType
