@@ -4,7 +4,7 @@ import {
   Company,
   CompanyRepository,
   CompanySerializer,
-  ICompanyProfile
+  ICompany
 } from "../../models/Company";
 
 const companyProfileQueries = {
@@ -22,7 +22,7 @@ const companyProfileQueries = {
   },
   getCompanyProfiles: {
     type: List(graphQLCompany),
-    resolve: async (): Promise<ICompanyProfile[]> => {
+    resolve: async (): Promise<ICompany[]> => {
       const companies: Company[] = await CompanyRepository.findAll();
       return companies.map(company => {
         return CompanySerializer.serialize(company);

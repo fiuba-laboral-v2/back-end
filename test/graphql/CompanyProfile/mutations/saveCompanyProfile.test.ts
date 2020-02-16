@@ -1,7 +1,7 @@
 import { gql } from "apollo-server";
 import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
-import { ICompanyProfile } from "../../../../src/models/Company";
+import { ICompany } from "../../../../src/models/Company";
 import { CompanyRepository } from "../../../../src/models/Company";
 import {
   CompanyPhoneNumberRepository
@@ -59,7 +59,7 @@ describe("saveCompanyProfile", () => {
   });
 
   describe("saveCompanyProfile", () => {
-    const companyProfileData: ICompanyProfile = {
+    const companyProfileData: ICompany = {
       ...companyMockData,
       ...{ photos: photos, phoneNumbers: phoneNumbers }
     };

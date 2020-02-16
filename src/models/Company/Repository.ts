@@ -1,4 +1,4 @@
-import { Company, ICompanyProfile } from "./index";
+import { Company, ICompany } from "./index";
 import { CompanyPhoto, CompanyPhotoRepository } from "../CompanyPhoto";
 import {
   CompanyPhoneNumber,
@@ -18,7 +18,7 @@ export const CompanyRepository = {
     email,
     phoneNumbers,
     photos
-  }: ICompanyProfile) => {
+  }: ICompany) => {
     const company: Company = new Company({
       cuit,
       companyName,

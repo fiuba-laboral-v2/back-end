@@ -4,7 +4,7 @@ import {
   Company,
   CompanyRepository,
   CompanySerializer,
-  ICompanyProfile
+  ICompany
 } from "../../models/Company";
 
 const companyProfileMutations = {
@@ -39,7 +39,7 @@ const companyProfileMutations = {
         type: List(String)
       }
     },
-    resolve: async (_: undefined, args: ICompanyProfile) => {
+    resolve: async (_: undefined, args: ICompany) => {
       const company: Company = await CompanyRepository.create(args);
       return CompanySerializer.serialize(company);
     }

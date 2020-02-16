@@ -1,4 +1,4 @@
-export interface ICompanyProfile {
+export interface ICompany {
   cuit: string;
   companyName: string;
   slogan?: string;
