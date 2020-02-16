@@ -2,7 +2,7 @@ import { GraphQLObjectType } from "graphql";
 import { ID, Int, nonNull, String, List } from "../../fieldTypes";
 
 const graphQLCompany = new GraphQLObjectType({
-  name: "CompanyProfile",
+  name: "Company",
   fields: () => ({
     id: {
       type: ID

@@ -21,5 +21,5 @@ export default class CompanyPhoto extends Model<CompanyPhoto> {
   public companyProfileId: number;
 
   @BelongsTo(() => Company)
-  public companyProfile: Company;
+  public company: Company;
 }

@@ -59,30 +59,30 @@ describe("saveCompany", () => {
   });
 
   describe("saveCompany", () => {
-    const companyProfileData: ICompany = {
+    const companyData: ICompany = {
       ...companyMockData,
       ...{ photos: photos, phoneNumbers: phoneNumbers }
     };
 
-    const companyProfileDataWithMinimumData = {
+    const companyDataWithMinimumData = {
       cuit: "30711819017",
       companyName: "devartis"
     };
 
-    it("create companyProfile", async () => {
-      const response = await executeMutation(queryWithAllData, companyProfileData);
+    it("create company", async () => {
+      const response = await executeMutation(queryWithAllData, companyData);
       expect(response.errors).toBeUndefined();
       expect(response.data).not.toBeUndefined();
-      expect(response.data).toEqual({ saveCompany: companyProfileData });
+      expect(response.data).toEqual({ saveCompany: companyData });
     });
 
-    it("creates companyProfile with only obligatory data", async () => {
+    it("creates company with only obligatory data", async () => {
       const response = await executeMutation(
-        queryWithOnlyObligatoryData, companyProfileDataWithMinimumData
+        queryWithOnlyObligatoryData, companyDataWithMinimumData
       );
       expect(response.errors).toBeUndefined();
       expect(response.data).not.toBeUndefined();
-      expect(response.data).toEqual({ saveCompany: companyProfileDataWithMinimumData });
+      expect(response.data).toEqual({ saveCompany: companyDataWithMinimumData });
     });
   });
 });

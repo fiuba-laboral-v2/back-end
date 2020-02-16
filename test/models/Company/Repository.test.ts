@@ -5,12 +5,12 @@ import { companyMockData, phoneNumbers, photos } from "./mocks";
 import Database from "../../../src/config/Database";
 
 describe("CompanyRepository", () => {
-  const companyProfileCompleteData = {
+  const companyCompleteData = {
     ...companyMockData,
     ...{ photos: photos, phoneNumbers: phoneNumbers }
   };
 
-  const companyProfileDataWithMinimumData = {
+  const companyDataWithMinimumData = {
     cuit: "30711819017",
     companyName: "devartis"
   };
@@ -29,22 +29,22 @@ describe("CompanyRepository", () => {
 
   it("create a new company", async () => {
     const company: Company = await CompanyRepository.create(
-      companyProfileCompleteData
+      companyCompleteData
     );
     expect(company).toEqual(expect.objectContaining({
-      cuit: companyProfileCompleteData.cuit,
-      companyName: companyProfileCompleteData.companyName,
-      slogan: companyProfileCompleteData.slogan,
-      description: companyProfileCompleteData.description,
-      logo: companyProfileCompleteData.logo,
-      website: companyProfileCompleteData.website,
-      email: companyProfileCompleteData.email
+      cuit: companyCompleteData.cuit,
+      companyName: companyCompleteData.companyName,
+      slogan: companyCompleteData.slogan,
+      description: companyCompleteData.description,
+      logo: companyCompleteData.logo,
+      website: companyCompleteData.website,
+      email: companyCompleteData.email
     }));
     expect(company.phoneNumbers).toHaveLength(
-      companyProfileCompleteData.phoneNumbers.length
+      companyCompleteData.phoneNumbers.length
     );
     expect(company.photos).toHaveLength(
-      companyProfileCompleteData.photos.length
+      companyCompleteData.photos.length
     );
   });
 
@@ -66,56 +66,56 @@ describe("CompanyRepository", () => {
 
   it("retrieve by id", async () => {
     const company: Company = await CompanyRepository.create(
-      companyProfileCompleteData
+      companyCompleteData
     );
-    const expectedCompanyProfile = await CompanyRepository.findById(company.id);
-    expect(expectedCompanyProfile).not.toBeNull();
-    expect(expectedCompanyProfile).not.toBeUndefined();
-    expect(expectedCompanyProfile!.id).toEqual(company.id);
+    const expectedCompany = await CompanyRepository.findById(company.id);
+    expect(expectedCompany).not.toBeNull();
+    expect(expectedCompany).not.toBeUndefined();
+    expect(expectedCompany!.id).toEqual(company.id);
   });
 
 
-  it("retrieve all CompanyProfiles", async () => {
+  it("retrieve all Companies", async () => {
     const company: Company = await CompanyRepository.create(
-      companyProfileCompleteData
+      companyCompleteData
     );
-    const expectedCompanyProfiles = await CompanyRepository.findAll();
-    expect(expectedCompanyProfiles).not.toBeNull();
-    expect(expectedCompanyProfiles).not.toBeUndefined();
-    expect(expectedCompanyProfiles!.length).toEqual(1);
-    expect(expectedCompanyProfiles[0].id).toEqual(company.id);
+    const expectedCompanies = await CompanyRepository.findAll();
+    expect(expectedCompanies).not.toBeNull();
+    expect(expectedCompanies).not.toBeUndefined();
+    expect(expectedCompanies!.length).toEqual(1);
+    expect(expectedCompanies[0].id).toEqual(company.id);
   });
 
   it("rollback transaction and raise error if photo is null", async () => {
-    const company: Company = new Company(companyProfileDataWithMinimumData);
+    const company: Company = new Company(companyDataWithMinimumData);
     const photo: CompanyPhoto = new CompanyPhoto({ photo: null });
     await expect(CompanyRepository.save(
       company, [],[photo]
     )).rejects.toThrow();
 
-    const expectedCompanyProfiles = await CompanyRepository.findAll();
-    expect(expectedCompanyProfiles).not.toBeNull();
-    expect(expectedCompanyProfiles).not.toBeUndefined();
-    expect(expectedCompanyProfiles!.length).toEqual(0);
+    const expectedCompanies = await CompanyRepository.findAll();
+    expect(expectedCompanies).not.toBeNull();
+    expect(expectedCompanies).not.toBeUndefined();
+    expect(expectedCompanies!.length).toEqual(0);
   });
 
   it("rollback transaction and raise error if phoneNumber is null", async () => {
-    const company: Company = new Company(companyProfileDataWithMinimumData);
+    const company: Company = new Company(companyDataWithMinimumData);
     const phoneNumber: CompanyPhoneNumber = new CompanyPhoneNumber(
       { phoneNumber: null }
     );
     await expect(CompanyRepository.save(
       company, [phoneNumber]
     )).rejects.toThrow();
-    const expectedCompanyProfiles = await CompanyRepository.findAll();
-    expect(expectedCompanyProfiles).not.toBeNull();
-    expect(expectedCompanyProfiles).not.toBeUndefined();
-    expect(expectedCompanyProfiles!.length).toEqual(0);
+    const expectedCompanies = await CompanyRepository.findAll();
+    expect(expectedCompanies).not.toBeNull();
+    expect(expectedCompanies).not.toBeUndefined();
+    expect(expectedCompanies!.length).toEqual(0);
   });
 
-  it("deletes a companyProfile", async () => {
+  it("deletes a company", async () => {
     const company: Company = await CompanyRepository.create(
-      companyProfileCompleteData
+      companyCompleteData
     );
     const id: number = company.id;
     expect(await CompanyRepository.findById(id)).not.toBeNull();
