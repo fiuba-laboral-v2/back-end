@@ -3,7 +3,7 @@ import { ID, nonNull, List } from "../fieldTypes";
 import {
   Company,
   CompanyRepository,
-  CompanyProfileSerializer,
+  CompanySerializer,
   ICompanyProfile
 } from "../../models/Company";
 
@@ -17,7 +17,7 @@ const companyProfileQueries = {
     },
     resolve: async (_: undefined, { id }: { id: number }) => {
       const company: Company = await CompanyRepository.findById(id);
-      return CompanyProfileSerializer.serialize(company);
+      return CompanySerializer.serialize(company);
     }
   },
   getCompanyProfiles: {
@@ -25,7 +25,7 @@ const companyProfileQueries = {
     resolve: async (): Promise<ICompanyProfile[]> => {
       const companies: Company[] = await CompanyRepository.findAll();
       return companies.map(company => {
-        return CompanyProfileSerializer.serialize(company);
+        return CompanySerializer.serialize(company);
       });
     }
   }

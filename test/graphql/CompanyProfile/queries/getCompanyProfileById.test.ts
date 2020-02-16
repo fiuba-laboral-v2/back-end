@@ -24,7 +24,7 @@ afterAll(async () => {
   await Database.close();
 });
 
-test("find a companyProfile given its id", async () => {
+test("find a company given its id", async () => {
   const companyParams = { cuit: "30711819017", companyName: "devartis"};
   const company: Company = await CompanyRepository.save(
     new Company(companyParams)

@@ -1,6 +1,6 @@
 import Company from "./Model";
 import { CompanyRepository } from "./Repository";
-import { CompanyProfileSerializer } from "./CompanyProfileSerializer";
+import { CompanySerializer } from "./Serializer";
 import { ICompanyProfile } from "./CompanyProfileInterface";
 
-export { Company, CompanyRepository, CompanyProfileSerializer, ICompanyProfile };
+export { Company, CompanyRepository, CompanySerializer, ICompanyProfile };

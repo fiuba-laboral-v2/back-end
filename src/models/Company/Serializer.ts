@@ -1,6 +1,6 @@
 import { Company } from "./index";
 
-const CompanyProfileSerializer = {
+const CompanySerializer = {
   serialize: (company: Company) => {
     return {
       id: company.id,
@@ -17,4 +17,4 @@ const CompanyProfileSerializer = {
   }
 };
 
-export { CompanyProfileSerializer };
+export { CompanySerializer };
