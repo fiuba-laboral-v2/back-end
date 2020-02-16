@@ -26,6 +26,12 @@ const companyProfileMutations = {
       logo: {
         type: String
       },
+      website: {
+        type: String
+      },
+      email: {
+        type: String
+      },
       phoneNumbers: {
         type: List(Int)
       },

@@ -9,8 +9,10 @@ const CompanyProfileSerializer = {
       slogan: companyProfile.slogan,
       description: companyProfile.description,
       logo: companyProfile.logo,
-      phoneNumbers: companyProfile.phoneNumbers?.map(phoneNumber => phoneNumber.phoneNumber),
-      photos: companyProfile.photos?.map(photo => photo.photo)
+      website: companyProfile.website,
+      email: companyProfile.email,
+      phoneNumbers: companyProfile.phoneNumbers?.map(phoneNumber => phoneNumber.phoneNumber) || [],
+      photos: companyProfile.photos?.map(photo => photo.photo) || []
     };
   }
 };

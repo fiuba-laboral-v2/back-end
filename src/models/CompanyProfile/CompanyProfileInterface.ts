@@ -4,6 +4,8 @@ export interface ICompanyProfile {
   slogan?: string;
   description?: string;
   logo?: string;
+  website?: string;
+  email?: string;
   phoneNumbers?: number[];
   photos?: string[];
 }

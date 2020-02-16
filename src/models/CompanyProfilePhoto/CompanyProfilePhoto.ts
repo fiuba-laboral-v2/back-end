@@ -12,7 +12,7 @@ import { CompanyProfile } from "../CompanyProfile";
 @Table
 export default class CompanyProfilePhoto extends Model<CompanyProfilePhoto> {
   @AllowNull(false)
-  @Column(DataType.STRING)
+  @Column(DataType.TEXT)
   public photo: string;
 
   @ForeignKey(() => CompanyProfile)

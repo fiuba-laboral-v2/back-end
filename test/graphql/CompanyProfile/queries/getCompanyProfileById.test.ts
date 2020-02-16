@@ -37,12 +37,8 @@ test("find a companyProfile given its id", async () => {
   });
 });
 
-test("returns null if the CompanyProfile does no exists", async () => {
+test("returns error if the CompanyProfile does not exists", async () => {
   const notExistentId: number = 9999;
   const response = await executeQuery(query, { id: notExistentId });
-  expect(response.errors).toBeUndefined();
-  expect(response.data).not.toBeUndefined();
-  expect(response.data).toEqual({
-    getCompanyProfileById: null
-  });
+  expect(response.errors).not.toBeUndefined();
 });

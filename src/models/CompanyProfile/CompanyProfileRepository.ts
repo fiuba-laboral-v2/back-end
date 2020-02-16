@@ -4,17 +4,29 @@ import {
   CompanyProfilePhoneNumber,
   CompanyProfilePhoneNumberRepository
 } from "../CompanyProfilePhoneNumber";
+import { CompanyNotFoundError } from "./Errors/CompanyNotFoundError";
 import Database from "../../config/Database";
 
 export const CompanyProfileRepository = {
-  create: async (values: ICompanyProfile) => {
-    const { cuit, companyName, slogan, description, logo, phoneNumbers, photos } = values;
+  create: async ({
+    cuit,
+    companyName,
+    slogan,
+    description,
+    logo,
+    website,
+    email,
+    phoneNumbers,
+    photos
+  }: ICompanyProfile) => {
     const companyProfile: CompanyProfile = new CompanyProfile({
       cuit,
       companyName,
       slogan,
       description,
-      logo
+      logo,
+      website,
+      email
     });
     const companyProfilePhoneNumbers: CompanyProfilePhoneNumber[] =
       CompanyProfilePhoneNumberRepository.build(phoneNumbers);
@@ -50,7 +62,11 @@ export const CompanyProfileRepository = {
     }
   },
   findById: async (id: number) => {
-    return CompanyProfile.findOne({ where: { id: id } });
+    const companyProfile: CompanyProfile | null = await CompanyProfile.findOne(
+      { where: { id: id } }
+    );
+    if (!companyProfile)  throw new CompanyNotFoundError(id);
+    return companyProfile;
   },
   findAll: async () => {
     return CompanyProfile.findAll({});
