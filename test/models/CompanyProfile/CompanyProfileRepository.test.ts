@@ -1,5 +1,5 @@
 import { Company, CompanyProfileRepository } from "../../../src/models/Company";
-import { CompanyProfilePhoneNumber } from "../../../src/models/CompanyProfilePhoneNumber";
+import { CompanyPhoneNumber } from "../../../src/models/CompanyPhoneNumber";
 import { CompanyProfilePhoto } from "../../../src/models/CompanyProfilePhoto";
 import { companyProfileMockData, phoneNumbers, photos } from "./CompanyProfileMockData";
 import Database from "../../../src/config/Database";
@@ -101,7 +101,7 @@ describe("CompanyProfileRepository", () => {
 
   it("rollback transaction and raise error if phoneNumber is null", async () => {
     const company: Company = new Company(companyProfileDataWithMinimumData);
-    const phoneNumber: CompanyProfilePhoneNumber = new CompanyProfilePhoneNumber(
+    const phoneNumber: CompanyPhoneNumber = new CompanyPhoneNumber(
       { phoneNumber: null }
     );
     await expect(CompanyProfileRepository.save(

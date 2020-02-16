@@ -1,5 +1,5 @@
 import { AllowNull, Column, DataType, HasMany, Model, Table, Is } from "sequelize-typescript";
-import { CompanyProfilePhoneNumber } from "../CompanyProfilePhoneNumber";
+import { CompanyPhoneNumber } from "../CompanyPhoneNumber";
 import { CompanyProfilePhoto } from "../CompanyProfilePhoto";
 import { validateCuit, validateName } from "validations-fiuba-laboral-v2";
 
@@ -30,8 +30,8 @@ export default class Company extends Model<Company> {
   @Column(DataType.STRING)
   public email: string;
 
-  @HasMany(() => CompanyProfilePhoneNumber)
-  public phoneNumbers: CompanyProfilePhoneNumber[];
+  @HasMany(() => CompanyPhoneNumber)
+  public phoneNumbers: CompanyPhoneNumber[];
 
   @HasMany(() => CompanyProfilePhoto)
   public photos: CompanyProfilePhoto[];

@@ -1,5 +1,5 @@
 import { Company } from "../../../src/models/Company";
-import { CompanyProfilePhoneNumber } from "../../../src/models/CompanyProfilePhoneNumber";
+import { CompanyPhoneNumber } from "../../../src/models/CompanyPhoneNumber";
 import { CompanyProfilePhoto } from "../../../src/models/CompanyProfilePhoto";
 import { companyProfileMockData } from "./CompanyProfileMockData";
 import Database from "../../../src/config/Database";
@@ -20,7 +20,7 @@ describe("CompanyProfile", () => {
 
   it("create a valid profile", async () => {
     const company: Company = new Company(companyProfileMockData);
-    const phoneNumber: CompanyProfilePhoneNumber = new CompanyProfilePhoneNumber({
+    const phoneNumber: CompanyPhoneNumber = new CompanyPhoneNumber({
       phoneNumber: 43076555,
       companyProfileId: 1
     });

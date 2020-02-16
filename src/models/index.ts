@@ -1,10 +1,10 @@
 import { Company } from "./Company";
-import { CompanyProfilePhoneNumber } from "./CompanyProfilePhoneNumber";
+import { CompanyPhoneNumber } from "./CompanyPhoneNumber";
 import { CompanyProfilePhoto } from "./CompanyProfilePhoto";
 
 const models = [
   Company,
-  CompanyProfilePhoneNumber,
+  CompanyPhoneNumber,
   CompanyProfilePhoto
 ];
 

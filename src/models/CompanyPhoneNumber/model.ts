@@ -10,7 +10,7 @@ import {
 import { Company } from "../Company";
 
 @Table
-export default class CompanyProfilePhoneNumber extends Model<CompanyProfilePhoneNumber> {
+export default class CompanyPhoneNumber extends Model<CompanyPhoneNumber> {
   @AllowNull(false)
   @Column(DataType.INTEGER)
   public phoneNumber: number;
