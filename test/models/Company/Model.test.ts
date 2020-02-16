@@ -28,7 +28,7 @@ describe("Company", () => {
       photo: `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACN
               byblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAAB
               JRU5ErkJggg==`,
-      companyProfileId: 1
+      companyId: 1
     });
     company.phoneNumbers = [ phoneNumber ];
     company.photos = [ photo ];

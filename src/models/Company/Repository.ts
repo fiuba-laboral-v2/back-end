@@ -49,7 +49,7 @@ export const CompanyRepository = {
         await phoneNumber.save({ transaction: transaction });
       }
       for (const photo of photos) {
-        photo.companyProfileId = company.id;
+        photo.companyId = company.id;
         await photo.save({ transaction: transaction });
       }
       company.photos = photos;

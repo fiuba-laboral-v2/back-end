@@ -19,7 +19,7 @@ describe("CompanyPhoto", () => {
       photo: `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNby
             blAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5E
             rkJggg==`,
-      companyProfileId: 0
+      companyId: 0
     });
     expect(companyPhoto).not.toBeNull();
     expect(companyPhoto).not.toBeUndefined();
@@ -28,7 +28,7 @@ describe("CompanyPhoto", () => {
   it("raise and error if photo is null", async () => {
     const companyPhoto: CompanyPhoto = new CompanyPhoto({
       photo: null,
-      companyProfileId: 0
+      companyId: 0
     });
     await expect(companyPhoto.save()).rejects.toThrow();
   });
@@ -38,7 +38,7 @@ describe("CompanyPhoto", () => {
       photo: `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNby
             blAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5E
             rkJggg==`,
-      companyProfileId: null
+      companyId: null
     });
     await expect(companyPhoto.save()).rejects.toThrow();
   });

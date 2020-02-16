@@ -18,7 +18,7 @@ export default class CompanyPhoto extends Model<CompanyPhoto> {
   @ForeignKey(() => Company)
   @AllowNull(false)
   @Column(DataType.INTEGER)
-  public companyProfileId: number;
+  public companyId: number;
 
   @BelongsTo(() => Company)
   public company: Company;
