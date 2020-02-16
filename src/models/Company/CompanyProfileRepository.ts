@@ -1,4 +1,4 @@
-import { CompanyProfile, ICompanyProfile } from "./index";
+import { Company, ICompanyProfile } from "./index";
 import { CompanyProfilePhoto, CompanyProfilePhotoRepository } from "../CompanyProfilePhoto";
 import {
   CompanyProfilePhoneNumber,
@@ -19,7 +19,7 @@ export const CompanyProfileRepository = {
     phoneNumbers,
     photos
   }: ICompanyProfile) => {
-    const companyProfile: CompanyProfile = new CompanyProfile({
+    const company: Company = new Company({
       cuit,
       companyName,
       slogan,
@@ -33,45 +33,45 @@ export const CompanyProfileRepository = {
     const companyProfilePhotos: CompanyProfilePhoto[] =
       CompanyProfilePhotoRepository.build(photos);
     return CompanyProfileRepository.save(
-      companyProfile, companyProfilePhoneNumbers, companyProfilePhotos
+      company, companyProfilePhoneNumbers, companyProfilePhotos
     );
   },
   save: async (
-    companyProfile: CompanyProfile,
+    company: Company,
     phoneNumbers: CompanyProfilePhoneNumber[] = [],
     photos: CompanyProfilePhoto[] = []
   ) => {
     const transaction = await Database.transaction();
     try {
-      await companyProfile.save({ transaction: transaction });
+      await company.save({ transaction: transaction });
       for (const phoneNumber of phoneNumbers) {
-        phoneNumber.companyProfileId = companyProfile.id;
+        phoneNumber.companyProfileId = company.id;
         await phoneNumber.save({ transaction: transaction });
       }
       for (const photo of photos) {
-        photo.companyProfileId = companyProfile.id;
+        photo.companyProfileId = company.id;
         await photo.save({ transaction: transaction });
       }
-      companyProfile.photos = photos;
-      companyProfile.phoneNumbers = phoneNumbers;
+      company.photos = photos;
+      company.phoneNumbers = phoneNumbers;
       await transaction.commit();
-      return companyProfile;
+      return company;
     } catch (error) {
       await transaction.rollback();
       throw new Error(error);
     }
   },
   findById: async (id: number) => {
-    const companyProfile: CompanyProfile | null = await CompanyProfile.findOne(
+    const company: Company | null = await Company.findOne(
       { where: { id: id } }
     );
-    if (!companyProfile)  throw new CompanyNotFoundError(id);
-    return companyProfile;
+    if (!company)  throw new CompanyNotFoundError(id);
+    return company;
   },
   findAll: async () => {
-    return CompanyProfile.findAll({});
+    return Company.findAll({});
   },
   truncate: async () => {
-    return CompanyProfile.destroy({ truncate: true });
+    return Company.destroy({ truncate: true });
   }
 };

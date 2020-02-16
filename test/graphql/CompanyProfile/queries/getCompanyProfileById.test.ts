@@ -1,6 +1,6 @@
 import { gql } from "apollo-server";
 import { executeQuery } from "../../ApolloTestClient";
-import { CompanyProfile, CompanyProfileRepository } from "../../../../src/models/Company";
+import { Company, CompanyProfileRepository } from "../../../../src/models/Company";
 import Database from "../../../../src/config/Database";
 
 const query = gql`
@@ -25,15 +25,15 @@ afterAll(async () => {
 });
 
 test("find a companyProfile given its id", async () => {
-  const companyProfileParams = { cuit: "30711819017", companyName: "devartis"};
-  const companyProfile: CompanyProfile = await CompanyProfileRepository.save(
-    new CompanyProfile(companyProfileParams)
+  const companyParams = { cuit: "30711819017", companyName: "devartis"};
+  const company: Company = await CompanyProfileRepository.save(
+    new Company(companyParams)
   );
-  const response = await executeQuery(query, { id: companyProfile.id });
+  const response = await executeQuery(query, { id: company.id });
   expect(response.errors).toBeUndefined();
   expect(response.data).not.toBeUndefined();
   expect(response.data).toEqual({
-    getCompanyProfileById: companyProfileParams
+    getCompanyProfileById: companyParams
   });
 });
 

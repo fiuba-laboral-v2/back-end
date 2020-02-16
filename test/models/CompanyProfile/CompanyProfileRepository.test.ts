@@ -1,4 +1,4 @@
-import { CompanyProfile, CompanyProfileRepository } from "../../../src/models/Company";
+import { Company, CompanyProfileRepository } from "../../../src/models/Company";
 import { CompanyProfilePhoneNumber } from "../../../src/models/CompanyProfilePhoneNumber";
 import { CompanyProfilePhoto } from "../../../src/models/CompanyProfilePhoto";
 import { companyProfileMockData, phoneNumbers, photos } from "./CompanyProfileMockData";
@@ -27,11 +27,11 @@ describe("CompanyProfileRepository", () => {
     await Database.close();
   });
 
-  it("create a new companyProfile", async () => {
-    const companyProfile: CompanyProfile = await CompanyProfileRepository.create(
+  it("create a new company", async () => {
+    const company: Company = await CompanyProfileRepository.create(
       companyProfileCompleteData
     );
-    expect(companyProfile).toEqual(expect.objectContaining({
+    expect(company).toEqual(expect.objectContaining({
       cuit: companyProfileCompleteData.cuit,
       companyName: companyProfileCompleteData.companyName,
       slogan: companyProfileCompleteData.slogan,
@@ -40,57 +40,57 @@ describe("CompanyProfileRepository", () => {
       website: companyProfileCompleteData.website,
       email: companyProfileCompleteData.email
     }));
-    expect(companyProfile.phoneNumbers).toHaveLength(
+    expect(company.phoneNumbers).toHaveLength(
       companyProfileCompleteData.phoneNumbers.length
     );
-    expect(companyProfile.photos).toHaveLength(
+    expect(company.photos).toHaveLength(
       companyProfileCompleteData.photos.length
     );
   });
 
   it("raise an error if cuit is null", async () => {
-    const companyProfile: CompanyProfile = new CompanyProfile({
+    const company: Company = new Company({
       cuit: null,
       companyName: "devartis"
     });
-    await expect(CompanyProfileRepository.save(companyProfile)).rejects.toThrow();
+    await expect(CompanyProfileRepository.save(company)).rejects.toThrow();
   });
 
   it("raise an error if cuit is null", async () => {
-    const companyProfile: CompanyProfile = new CompanyProfile({
+    const company: Company = new Company({
       cuit: "30711819017",
       companyName: null
     });
-    await expect(CompanyProfileRepository.save(companyProfile)).rejects.toThrow();
+    await expect(CompanyProfileRepository.save(company)).rejects.toThrow();
   });
 
   it("retrieve by id", async () => {
-    const companyProfile: CompanyProfile = await CompanyProfileRepository.create(
+    const company: Company = await CompanyProfileRepository.create(
       companyProfileCompleteData
     );
-    const expectedCompanyProfile = await CompanyProfileRepository.findById(companyProfile.id);
+    const expectedCompanyProfile = await CompanyProfileRepository.findById(company.id);
     expect(expectedCompanyProfile).not.toBeNull();
     expect(expectedCompanyProfile).not.toBeUndefined();
-    expect(expectedCompanyProfile!.id).toEqual(companyProfile.id);
+    expect(expectedCompanyProfile!.id).toEqual(company.id);
   });
 
 
   it("retrieve all CompanyProfiles", async () => {
-    const companyProfile: CompanyProfile = await CompanyProfileRepository.create(
+    const company: Company = await CompanyProfileRepository.create(
       companyProfileCompleteData
     );
     const expectedCompanyProfiles = await CompanyProfileRepository.findAll();
     expect(expectedCompanyProfiles).not.toBeNull();
     expect(expectedCompanyProfiles).not.toBeUndefined();
     expect(expectedCompanyProfiles!.length).toEqual(1);
-    expect(expectedCompanyProfiles[0].id).toEqual(companyProfile.id);
+    expect(expectedCompanyProfiles[0].id).toEqual(company.id);
   });
 
   it("rollback transaction and raise error if photo is null", async () => {
-    const companyProfile: CompanyProfile = new CompanyProfile(companyProfileDataWithMinimumData);
+    const company: Company = new Company(companyProfileDataWithMinimumData);
     const photo: CompanyProfilePhoto = new CompanyProfilePhoto({ photo: null });
     await expect(CompanyProfileRepository.save(
-      companyProfile, [],[photo]
+      company, [],[photo]
     )).rejects.toThrow();
 
     const expectedCompanyProfiles = await CompanyProfileRepository.findAll();
@@ -100,12 +100,12 @@ describe("CompanyProfileRepository", () => {
   });
 
   it("rollback transaction and raise error if phoneNumber is null", async () => {
-    const companyProfile: CompanyProfile = new CompanyProfile(companyProfileDataWithMinimumData);
+    const company: Company = new Company(companyProfileDataWithMinimumData);
     const phoneNumber: CompanyProfilePhoneNumber = new CompanyProfilePhoneNumber(
       { phoneNumber: null }
     );
     await expect(CompanyProfileRepository.save(
-      companyProfile, [phoneNumber]
+      company, [phoneNumber]
     )).rejects.toThrow();
     const expectedCompanyProfiles = await CompanyProfileRepository.findAll();
     expect(expectedCompanyProfiles).not.toBeNull();
@@ -114,10 +114,10 @@ describe("CompanyProfileRepository", () => {
   });
 
   it("deletes a companyProfile", async () => {
-    const companyProfile: CompanyProfile = await CompanyProfileRepository.create(
+    const company: Company = await CompanyProfileRepository.create(
       companyProfileCompleteData
     );
-    const id: number = companyProfile.id;
+    const id: number = company.id;
     expect(await CompanyProfileRepository.findById(id)).not.toBeNull();
     await CompanyProfileRepository.truncate();
     await expect(CompanyProfileRepository.findById(id)).rejects.toThrow();

@@ -1,9 +1,9 @@
-import { CompanyProfile } from "./Company";
+import { Company } from "./Company";
 import { CompanyProfilePhoneNumber } from "./CompanyProfilePhoneNumber";
 import { CompanyProfilePhoto } from "./CompanyProfilePhoto";
 
 const models = [
-  CompanyProfile,
+  Company,
   CompanyProfilePhoneNumber,
   CompanyProfilePhoto
 ];

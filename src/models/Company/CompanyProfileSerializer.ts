@@ -1,18 +1,18 @@
-import { CompanyProfile } from "./index";
+import { Company } from "./index";
 
 const CompanyProfileSerializer = {
-  serialize: (companyProfile: CompanyProfile) => {
+  serialize: (company: Company) => {
     return {
-      id: companyProfile.id,
-      cuit: companyProfile.cuit,
-      companyName: companyProfile.companyName,
-      slogan: companyProfile.slogan,
-      description: companyProfile.description,
-      logo: companyProfile.logo,
-      website: companyProfile.website,
-      email: companyProfile.email,
-      phoneNumbers: companyProfile.phoneNumbers?.map(phoneNumber => phoneNumber.phoneNumber) || [],
-      photos: companyProfile.photos?.map(photo => photo.photo) || []
+      id: company.id,
+      cuit: company.cuit,
+      companyName: company.companyName,
+      slogan: company.slogan,
+      description: company.description,
+      logo: company.logo,
+      website: company.website,
+      email: company.email,
+      phoneNumbers: company.phoneNumbers?.map(phoneNumber => phoneNumber.phoneNumber) || [],
+      photos: company.photos?.map(photo => photo.photo) || []
     };
   }
 };

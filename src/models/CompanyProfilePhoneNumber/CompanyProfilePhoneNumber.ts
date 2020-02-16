@@ -7,7 +7,7 @@ import {
   Model,
   Table
 } from "sequelize-typescript";
-import { CompanyProfile } from "../Company";
+import { Company } from "../Company";
 
 @Table
 export default class CompanyProfilePhoneNumber extends Model<CompanyProfilePhoneNumber> {
@@ -15,11 +15,11 @@ export default class CompanyProfilePhoneNumber extends Model<CompanyProfilePhone
   @Column(DataType.INTEGER)
   public phoneNumber: number;
 
-  @ForeignKey(() => CompanyProfile)
+  @ForeignKey(() => Company)
   @AllowNull(false)
   @Column(DataType.INTEGER)
   public companyProfileId: number;
 
-  @BelongsTo(() => CompanyProfile)
-  public companyProfile: CompanyProfile;
+  @BelongsTo(() => Company)
+  public companyProfile: Company;
 }

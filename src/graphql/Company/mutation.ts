@@ -1,7 +1,7 @@
 import { graphQLCompany } from "./Types/GraphQLCompany";
 import { Int, List, nonNull, String } from "../fieldTypes";
 import {
-  CompanyProfile,
+  Company,
   CompanyProfileRepository,
   CompanyProfileSerializer,
   ICompanyProfile
@@ -40,8 +40,8 @@ const companyProfileMutations = {
       }
     },
     resolve: async (_: undefined, args: ICompanyProfile) => {
-      const companyProfile: CompanyProfile = await CompanyProfileRepository.create(args);
-      return CompanyProfileSerializer.serialize(companyProfile);
+      const company: Company = await CompanyProfileRepository.create(args);
+      return CompanyProfileSerializer.serialize(company);
     }
   }
 };

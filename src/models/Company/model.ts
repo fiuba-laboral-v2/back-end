@@ -4,7 +4,7 @@ import { CompanyProfilePhoto } from "../CompanyProfilePhoto";
 import { validateCuit, validateName } from "validations-fiuba-laboral-v2";
 
 @Table
-export default class CompanyProfile extends Model<CompanyProfile> {
+export default class Company extends Model<Company> {
   @AllowNull(false)
   @Is("cuit", validateCuit)
   @Column(DataType.STRING)

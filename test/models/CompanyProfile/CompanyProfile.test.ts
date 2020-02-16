@@ -1,4 +1,4 @@
-import { CompanyProfile } from "../../../src/models/Company";
+import { Company } from "../../../src/models/Company";
 import { CompanyProfilePhoneNumber } from "../../../src/models/CompanyProfilePhoneNumber";
 import { CompanyProfilePhoto } from "../../../src/models/CompanyProfilePhoto";
 import { companyProfileMockData } from "./CompanyProfileMockData";
@@ -11,7 +11,7 @@ describe("CompanyProfile", () => {
   });
 
   beforeEach(async () => {
-    await CompanyProfile.destroy({ truncate: true });
+    await Company.destroy({ truncate: true });
   });
 
   afterAll(async () => {
@@ -19,7 +19,7 @@ describe("CompanyProfile", () => {
   });
 
   it("create a valid profile", async () => {
-    const companyProfile: CompanyProfile = new CompanyProfile(companyProfileMockData);
+    const company: Company = new Company(companyProfileMockData);
     const phoneNumber: CompanyProfilePhoneNumber = new CompanyProfilePhoneNumber({
       phoneNumber: 43076555,
       companyProfileId: 1
@@ -30,13 +30,13 @@ describe("CompanyProfile", () => {
               JRU5ErkJggg==`,
       companyProfileId: 1
     });
-    companyProfile.phoneNumbers = [ phoneNumber ];
-    companyProfile.photos = [ photo ];
-    await companyProfile.save();
-    expect(companyProfile.phoneNumbers).toHaveLength(1);
-    expect(companyProfile.photos).toHaveLength(1);
-    expect(companyProfile.id).toBeGreaterThan(0);
-    expect(companyProfile).toEqual(expect.objectContaining({
+    company.phoneNumbers = [ phoneNumber ];
+    company.photos = [ photo ];
+    await company.save();
+    expect(company.phoneNumbers).toHaveLength(1);
+    expect(company.photos).toHaveLength(1);
+    expect(company.id).toBeGreaterThan(0);
+    expect(company).toEqual(expect.objectContaining({
       cuit: companyProfileMockData.cuit,
       companyName: companyProfileMockData.companyName,
       slogan: companyProfileMockData.slogan,
@@ -48,63 +48,63 @@ describe("CompanyProfile", () => {
   });
 
   it("raise an error if cuit is null", async () => {
-    const companyProfile: CompanyProfile = new CompanyProfile({
+    const company: Company = new Company({
       cuit: null,
       companyName: "devartis"
     });
-    await expect(companyProfile.save()).rejects.toThrow();
+    await expect(company.save()).rejects.toThrow();
   });
 
   it("raise an error if companyName is null", async () => {
-    const companyProfile: CompanyProfile = new CompanyProfile({
+    const company: Company = new Company({
       cuit: "30711819017",
       companyName: null
     });
-    await expect(companyProfile.save()).rejects.toThrow();
+    await expect(company.save()).rejects.toThrow();
   });
 
   it("raise an error if companyName and cuit is null", async () => {
-    const companyProfile: CompanyProfile = new CompanyProfile({
+    const company: Company = new Company({
       cuit: null,
       companyName: null
     });
-    await expect(companyProfile.save()).rejects.toThrow();
+    await expect(company.save()).rejects.toThrow();
   });
 
   it("raise an error if cuit has less than eleven digits", async () => {
-    const companyProfile: CompanyProfile = new CompanyProfile({
+    const company: Company = new Company({
       cuit: "30",
       companyName: "devartis"
     });
-    await expect(companyProfile.save()).rejects.toThrow();
+    await expect(company.save()).rejects.toThrow();
   });
 
   it("raise an error if cuit has more than eleven digits", async () => {
-    const companyProfile: CompanyProfile = new CompanyProfile({
+    const company: Company = new Company({
       cuit: "3057341761199",
       companyName: "devartis"
     });
-    await expect(companyProfile.save()).rejects.toThrow();
+    await expect(company.save()).rejects.toThrow();
   });
 
   it("raise an error if name is empty", async () => {
-    const companyProfile: CompanyProfile = new CompanyProfile({
+    const company: Company = new Company({
       cuit: "3057341761199",
       companyName: ""
     });
-    await expect(companyProfile.save()).rejects.toThrow();
+    await expect(company.save()).rejects.toThrow();
   });
 
   it("raise an error if name has digits", async () => {
-    const companyProfile: CompanyProfile = new CompanyProfile({
+    const company: Company = new Company({
       cuit: "3057341761199",
       companyName: "Google34"
     });
-    await expect(companyProfile.save()).rejects.toThrow();
+    await expect(company.save()).rejects.toThrow();
   });
 
   it("creates a valid profile with a logo with more than 255 characters", async () => {
-    const companyProfile: CompanyProfile = new CompanyProfile({
+    const company: Company = new Company({
       cuit: "30711819017",
       companyName: "devartis",
       logo: `data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gKgSUNDX1BS
@@ -128,9 +128,9 @@ describe("CompanyProfile", () => {
             EQEDEQH/xAAcAAEAAgMBAQEAAAAAAAAAAAAABgcCBAUDAQj/xAAaAQEAAgMBAAAA
             AAAAAAAAAAAABQYBAwQC/9oADAMBAAIQAxAAAAG5Q AgICAgICAgICAgICAgIA==`
     });
-    await companyProfile.save();
-    expect(companyProfile).not.toBeNull();
-    expect(companyProfile).not.toBeUndefined();
-    expect(companyProfile.logo).not.toBeUndefined();
+    await company.save();
+    expect(company).not.toBeNull();
+    expect(company).not.toBeUndefined();
+    expect(company.logo).not.toBeUndefined();
   });
 });
