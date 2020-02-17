@@ -76,5 +76,5 @@ export const ApplicantRepository = {
     }
   },
   truncate: async () =>
-    Applicant.destroy({ truncate: true })
+    Applicant.truncate({ cascade: true })
 };

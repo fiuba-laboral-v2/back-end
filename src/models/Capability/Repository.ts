@@ -27,5 +27,5 @@ export const CapabilityRepository = {
     }
   },
   truncate: async () =>
-    Capability.destroy({ truncate: true })
+    Capability.truncate({ cascade: true })
 };
