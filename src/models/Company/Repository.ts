@@ -72,6 +72,6 @@ export const CompanyRepository = {
     return Company.findAll({});
   },
   truncate: async () => {
-    return Company.destroy({ truncate: true });
+    return Company.truncate({ cascade: true });
   }
 };
