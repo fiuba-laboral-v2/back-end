@@ -2,7 +2,7 @@ import faker from "faker";
 
 const companyMockData = {
   cuit: faker.random.arrayElement([ "30711819017", "30701307115", "30703088534" ]),
-  companyName: faker.company.companyName(),
+  companyName: faker.name.firstName(),
   slogan: faker.company.catchPhrase(),
   description: faker.lorem.sentence(),
   logo: faker.image.dataUri(),
