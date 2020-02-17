@@ -3,7 +3,7 @@ export const defaultTranslations = {
     title: "Bolsa de trabajo",
     log_out: "Cerrar Sesión"
   },
-  company_profile: {
+  company: {
     title: "Perfil de mi empresa",
     explanation: "Así se va a mostrar a los postulantes"
   },
