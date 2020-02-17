@@ -25,5 +25,5 @@ export const CareerRepository = {
     }
   },
   truncate: async () =>
-    Career.destroy({ truncate: true })
+    Career.truncate({ cascade: true })
 };
