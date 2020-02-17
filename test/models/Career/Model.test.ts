@@ -4,7 +4,7 @@ import { Career } from "../../../src/models/Career";
 import { CareerApplicant } from "../../../src/models/CareerApplicant";
 import { careerMocks } from "./mocks";
 
-describe("Applicant model", () => {
+describe("Career model", () => {
   const careerData = careerMocks.careerData();
   beforeAll(async () => {
     await Database.setConnection();

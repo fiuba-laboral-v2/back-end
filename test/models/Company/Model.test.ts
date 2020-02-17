@@ -11,7 +11,7 @@ describe("Company", () => {
   });
 
   beforeEach(async () => {
-    await Company.destroy({ truncate: true });
+    await Company.truncate({ cascade: true });
   });
 
   afterAll(async () => {
