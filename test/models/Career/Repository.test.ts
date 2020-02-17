@@ -1,7 +1,7 @@
 import { Career, CareerRepository } from "../../../src/models/Career";
 import Database from "../../../src/config/Database";
 import { careerMocks } from "./mocks";
-import { map } from "lodash";
+import map from "lodash/map";
 
 describe("CareerRepository", () => {
   const careerData = careerMocks.careerData();
