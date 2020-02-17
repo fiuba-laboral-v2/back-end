@@ -1,7 +1,7 @@
 import { GraphQLObjectType } from "graphql";
 import { ID, Int, nonNull, String, List } from "../../fieldTypes";
 
-const graphQLCompany = new GraphQLObjectType({
+const GraphQLCompany = new GraphQLObjectType({
   name: "Company",
   fields: () => ({
     id: {
@@ -37,4 +37,4 @@ const graphQLCompany = new GraphQLObjectType({
   })
 });
 
-export { graphQLCompany };
+export { GraphQLCompany };

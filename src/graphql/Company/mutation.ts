@@ -1,4 +1,4 @@
-import { graphQLCompany } from "./Types/GraphQLCompany";
+import { GraphQLCompany } from "./Types/GraphQLCompany";
 import { Int, List, nonNull, String } from "../fieldTypes";
 import {
   Company,
@@ -9,7 +9,7 @@ import {
 
 const companyMutations = {
   saveCompany: {
-    type: graphQLCompany,
+    type: GraphQLCompany,
     args: {
       cuit: {
         type: nonNull(String)

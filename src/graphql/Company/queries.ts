@@ -1,4 +1,4 @@
-import { graphQLCompany } from "./Types/GraphQLCompany";
+import { GraphQLCompany } from "./Types/GraphQLCompany";
 import { ID, nonNull, List } from "../fieldTypes";
 import {
   Company,
@@ -9,7 +9,7 @@ import {
 
 const companyQueries = {
   getCompanyById: {
-    type: graphQLCompany,
+    type: GraphQLCompany,
     args: {
       id: {
         type: nonNull(ID)
@@ -21,7 +21,7 @@ const companyQueries = {
     }
   },
   getCompanies: {
-    type: List(graphQLCompany),
+    type: List(GraphQLCompany),
     resolve: async (): Promise<ICompany[]> => {
       const companies: Company[] = await CompanyRepository.findAll();
       return companies.map(company => {

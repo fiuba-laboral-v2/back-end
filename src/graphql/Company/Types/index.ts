@@ -1,5 +1,5 @@
-import { graphQLCompany } from "./GraphQLCompany";
+import { GraphQLCompany } from "./GraphQLCompany";
 
-const companyTypes = [ graphQLCompany ];
+const companyTypes = [ GraphQLCompany ];
 
 export { companyTypes };
