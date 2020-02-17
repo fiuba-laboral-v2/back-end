@@ -1,10 +1,10 @@
 import { merge } from "lodash";
 import { translationQueries } from "./Translation";
-import { companyProfileQueries } from "./CompanyProfile";
+import { companyQueries } from "./Company";
 
 const queries = () => merge(
   translationQueries,
-  companyProfileQueries
+  companyQueries
 );
 
 export default queries;

@@ -1,21 +1,21 @@
-import { CompanyProfile } from "./CompanyProfile";
-import { CompanyProfilePhoneNumber } from "./CompanyProfilePhoneNumber";
-import { CompanyProfilePhoto } from "./CompanyProfilePhoto";
 import { Applicant } from "./Applicant";
 import { Career } from "./Career";
 import { CareerApplicant } from "./CareerApplicant";
 import { Capability } from "./Capability";
 import { ApplicantCapability } from "./ApplicantCapability";
+import { Company } from "./Company";
+import { CompanyPhoneNumber } from "./CompanyPhoneNumber";
+import { CompanyPhoto } from "./CompanyPhoto";
 
 const models = [
-  CompanyProfile,
-  CompanyProfilePhoneNumber,
-  CompanyProfilePhoto,
   Applicant,
   Career,
   CareerApplicant,
   Capability,
-  ApplicantCapability
+  ApplicantCapability,
+  Company,
+  CompanyPhoneNumber,
+  CompanyPhoto
 ];
 
 export { models };

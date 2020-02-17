@@ -1,8 +1,8 @@
 import { merge } from "lodash";
-import { companyProfileMutations } from "./CompanyProfile";
+import { companyMutations } from "./Company";
 
 const mutations = () => merge(
-  companyProfileMutations
+  companyMutations
 );
 
 export default mutations;

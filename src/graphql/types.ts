@@ -1,7 +1,7 @@
-import { companyProfileType } from "./CompanyProfile";
+import { companyTypes } from "./Company";
 
 const types = [
-  companyProfileType
+  ...companyTypes
 ];
 
 export default types;
