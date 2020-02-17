@@ -69,7 +69,7 @@
   },
   "scripts": {
     "dev": "nodemon src/index.ts",
-    "test": "jest --coverage --runInBand",
+    "test": "jest --coverage --runInBand --colors --verbose=false",
     "coverage": "cat coverage/lcov.info | coveralls",
     "coveralls": "jest --coverage && cat ./tests/coverage/lcov.info | coveralls",
     "lint:src": "tslint -c tslint.json 'src/**/*.ts'",

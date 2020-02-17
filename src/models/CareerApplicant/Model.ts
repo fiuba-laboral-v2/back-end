@@ -7,7 +7,7 @@ export class CareerApplicant extends Model<CareerApplicant> {
     @ForeignKey(() => Career)
     @PrimaryKey
     @Column
-    public careerCode: string;
+    public careerCode: number;
 
     @ForeignKey(() => Applicant)
     @PrimaryKey

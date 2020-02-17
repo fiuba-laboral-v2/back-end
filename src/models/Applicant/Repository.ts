@@ -3,6 +3,7 @@ import { CareerRepository, Career } from "../Career";
 import { CapabilityRepository, Capability } from "../Capability";
 import { ApplicantCapability } from "../ApplicantCapability";
 import { CareerApplicant } from "../CareerApplicant";
+import { ApplicantNotFound } from "./Errors/ApplicantNotFound";
 import Database from "../../config/Database";
 
 export const ApplicantRepository = {
@@ -60,8 +61,12 @@ export const ApplicantRepository = {
   },
   findByUuid: async (uuid: string)  =>
     Applicant.findByPk(uuid, { include: [Career, Capability] }),
-  findByPadron: async (padron: number)  =>
-    Applicant.findOne({ where: { padron }, include: [Career, Capability]}),
+  findByPadron: async (padron: number): Promise<Applicant> => {
+    const applicant =  await Applicant.findOne({ where: { padron }, include: [Career, Capability]});
+    if (!applicant) throw new ApplicantNotFound(padron);
+
+    return applicant;
+  },
   deleteByUuid: async (uuid: string) => {
     const transaction = await Database.transaction();
     try {
