@@ -1,5 +1,5 @@
-import GraphQLCareer from "./Types";
-import { Int, nonNull, String } from "../fieldTypes";
+import { GraphQLCareer } from "./Types/Career";
+import { Int, nonNull, String, ID } from "../fieldTypes";
 
 import {
   Career,
@@ -9,17 +9,17 @@ import {
 } from "../../models/Career";
 
 const careerMutations = {
-  addCareer: {
+  saveCareer: {
     type: GraphQLCareer,
     args: {
       code: {
-        type: nonNull(String)
+        type: nonNull(ID)
       },
       description: {
         type: nonNull(String)
       },
       credits: {
-        type: Int
+        type: nonNull(Int)
       }
     },
     resolve: async (_: undefined, props: ICareer) => {

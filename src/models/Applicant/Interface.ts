@@ -4,6 +4,6 @@ export interface IApplicant {
   padron: number;
   description?: string;
   credits: number;
-  careersCodes: number[];
+  careersCodes: string[];
   capabilities?: string[];
 }

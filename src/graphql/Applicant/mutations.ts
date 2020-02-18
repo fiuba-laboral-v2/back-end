@@ -28,7 +28,7 @@ const applicantMutations = {
         type: String
       },
       careersCodes: {
-        type: nonNull(List(Int))
+        type: nonNull(List(String))
       },
       capabilities: {
         type: List(String)

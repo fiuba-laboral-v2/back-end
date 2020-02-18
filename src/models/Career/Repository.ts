@@ -13,7 +13,7 @@ export const CareerRepository = {
     const career: Career = new Career({ code, description, credits });
     return career.save();
   },
-  findByCode: async (codes: number[])  => {
+  findByCode: async (codes: string[])  => {
     const careers = await Career.findAll({ where: { code: { [Op.or]: codes }} });
     if (careers.length < codes.length) {
       throw new CareersNotFound(difference(codes, map(careers, ({code}) => code)));

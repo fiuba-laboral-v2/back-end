@@ -11,7 +11,7 @@ import { careerMocks } from "../../../models/Career/mocks";
 const queryWithAllData = gql`
   mutation SaveApplicant(
     $name: String!, $surname: String!, $padron: Int!, $credits: Int!, $description: String,
-    $careers: [Int]!, $capabilities: [String]) {
+    $careers: [String]!, $capabilities: [String]) {
     saveApplicant(
       name: $name, surname: $surname, padron: $padron, credits: $credits,
       description: $description, careersCodes: $careers, capabilities: $capabilities) {

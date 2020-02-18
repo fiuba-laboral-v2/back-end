@@ -66,7 +66,7 @@ describe("Applicant model", () => {
 
   it("raise an error if description is null", async () => {
     const career: Career = new Career({
-      code: 1,
+      code: "1",
       description: null,
       credits: 250
     });
@@ -76,7 +76,7 @@ describe("Applicant model", () => {
 
   it("raise an error if credits is null", async () => {
     const career: Career = new Career({
-      code: 1,
+      code: "1",
       description: "Ingeniería Informática"
     });
 

@@ -31,7 +31,7 @@ describe("Applicant model", () => {
       credits: 150
     });
     const career: Career = new Career({
-      code: 1,
+      code: "1",
       description: "Ingeniería Informática",
       credits: 250
     });

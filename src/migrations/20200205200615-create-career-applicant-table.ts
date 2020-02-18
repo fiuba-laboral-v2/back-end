@@ -7,7 +7,7 @@ export = {
       careerCode: {
         allowNull: false,
         primaryKey: true,
-        type: DataType.INTEGER,
+        type: DataType.TEXT,
         references: { model: "Careers", key: "code" }
       },
       applicantUuid: {

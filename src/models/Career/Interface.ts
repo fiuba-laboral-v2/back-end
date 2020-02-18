@@ -1,5 +1,5 @@
 export interface ICareer {
-  code: number;
+  code: string;
   description: string;
   credits: number;
 }

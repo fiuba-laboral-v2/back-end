@@ -7,9 +7,9 @@ export class Career extends Model<Career> {
   @Column({
     allowNull: false,
     primaryKey: true,
-    type: DataType.INTEGER
+    type: DataType.STRING
   })
-  public code: number;
+  public code: string;
 
   @Column({
     allowNull: false,
