@@ -6,6 +6,7 @@ import map from "lodash/map";
 describe("CareerRepository", () => {
   beforeAll(async () => {
     await Database.setConnection();
+    await Career.truncate({ cascade: true });
   });
 
   beforeEach(async () => await Career.truncate({ cascade: true }));

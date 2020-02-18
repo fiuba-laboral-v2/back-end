@@ -1,9 +1,9 @@
-import { companyProfileType } from "./CompanyProfile";
+import { companyTypes } from "./Company";
 import { ApplicantTypes } from "./Applicant";
 import CareerTypes from "./Career/Types";
 
 const types = [
-  companyProfileType,
+  ...companyTypes,
   ...ApplicantTypes,
   ...CareerTypes
 ];
