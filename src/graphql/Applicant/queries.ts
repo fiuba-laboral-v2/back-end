@@ -20,7 +20,7 @@ const applicantQueries = {
       try {
         const applicant: Applicant = await ApplicantRepository.findByPadron(padron);
 
-        return applicant && ApplicantSerializer.serialize(applicant);
+        return ApplicantSerializer.serialize(applicant);
       } catch (e) {
         throw new UserInputError("Applicant Not found", { invalidArgs: padron });
       }
