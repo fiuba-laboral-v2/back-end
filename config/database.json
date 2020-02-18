@@ -17,7 +17,8 @@
     "database": "fiuba-laboral-v2-backend-database-postgres-test",
     "host": "localhost",
     "port": "5434",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "logging": false
   },
   "development": {
     "username": "postgres",

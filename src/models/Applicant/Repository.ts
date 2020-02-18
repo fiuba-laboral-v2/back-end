@@ -37,19 +37,19 @@ export const ApplicantRepository = {
       await applicant.save({ transaction });
 
       applicant.careers = careers;
-      careers.forEach(async career => (
-        await CareerApplicant.create(
-          { careerCode: career.code , applicantUuid: applicant.uuid },
-          { transaction }
-        )
-      ));
+      for (const career of careers) {
+          await CareerApplicant.create(
+            { careerCode: career.code , applicantUuid: applicant.uuid },
+            { transaction }
+          );
+      }
 
       applicant.capabilities = capabilityModels;
       for (const capability of capabilityModels) {
-          await ApplicantCapability.create(
-            { capabilityUuid: capability.uuid , applicantUuid: applicant.uuid},
-            { transaction }
-          );
+        await ApplicantCapability.create(
+          { capabilityUuid: capability.uuid , applicantUuid: applicant.uuid},
+          { transaction }
+        );
       }
 
       await transaction.commit();
