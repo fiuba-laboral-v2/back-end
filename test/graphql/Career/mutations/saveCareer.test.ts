@@ -1,7 +1,7 @@
 import { gql, ApolloError } from "apollo-server";
 import { executeMutation, executeQuery } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
-
+import { Career } from "../../../../src/models/Career";
 import { careerMocks } from "../../../models/Career/mocks";
 
 const SAVE_CAREER = gql`
@@ -18,6 +18,7 @@ describe("saveCareer", () => {
 
   beforeAll(async () => {
     await Database.setConnection();
+    await Career.truncate({ cascade: true });
   });
 
   afterAll(async () => {

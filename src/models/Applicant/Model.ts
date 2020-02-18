@@ -36,7 +36,7 @@ export class Applicant extends Model<Applicant> {
   public padron: number;
 
   @Column({
-    allowNull: false,
+    allowNull: true,
     type: DataType.TEXT
   })
   public description: string;

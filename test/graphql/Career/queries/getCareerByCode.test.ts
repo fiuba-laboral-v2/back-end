@@ -3,7 +3,6 @@ import { executeQuery } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
 import { CareerRepository } from "../../../../src/models/Career";
-import { CareersNotFound } from "../../../../src/models/Career/Errors/CareersNotFound";
 
 import { careerMocks } from "../../../models/Career/mocks";
 
