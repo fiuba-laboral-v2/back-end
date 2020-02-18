@@ -3,7 +3,7 @@ import { executeQuery } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
 import { CareerRepository } from "../../../../src/models/Career";
-
+import { Career } from "../../../../src/models/Career";
 import { careerMocks } from "../../../models/Career/mocks";
 
 import { UserInputError } from "apollo-server";
@@ -22,6 +22,7 @@ describe("getCareerByCode", () => {
 
   beforeAll(async () => {
     await Database.setConnection();
+    await Career.truncate({ cascade: true });
   });
 
   afterAll(async () => {

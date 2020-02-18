@@ -5,7 +5,6 @@ import { ApplicantRepository } from "../../../src/models/Applicant";
 import Database from "../../../src/config/Database";
 import { careerMocks } from "../Career/mocks";
 import { applicantMocks } from "./mocks";
-import { notDeepEqual } from "assert";
 
 describe("ApplicantRepository", () => {
   beforeAll(async () => {

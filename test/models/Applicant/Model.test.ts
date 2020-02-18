@@ -12,10 +12,8 @@ describe("Applicant model", () => {
   });
 
   beforeEach(async () => {
-    await ApplicantCapability.sync({ force: true });
-    await CareerApplicant.sync({ force: true });
-    await Applicant.sync({ force: true });
-    await Career.sync({ force: true });
+    await Applicant.truncate({ cascade: true });
+    await Career.truncate({ cascade: true });
   });
 
   afterAll(async () => {

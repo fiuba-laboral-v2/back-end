@@ -42,7 +42,7 @@ describe("CareerRepository", () => {
     const expectedCareers = await CareerRepository.findAll();
     expect(expectedCareers).not.toBeNull();
     expect(expectedCareers).not.toBeUndefined();
-    expect(expectedCareers!.length).toEqual(1);
+    expect(expectedCareers?.length).toEqual(1);
     expect(expectedCareers[0].code).toEqual(career.code);
   });
 
