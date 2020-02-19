@@ -2,8 +2,8 @@ import { TranslationRepository } from "../../../src/models/Translation";
 
 test("get a root element in default transitions yml", () => {
   expect(
-    TranslationRepository.translate("my_company")
-  ).toEqual("Mi empresa");
+    TranslationRepository.translate("companies")
+  ).toEqual("Empresas");
 });
 
 test("throw an error if the path is incorrect", () => {
