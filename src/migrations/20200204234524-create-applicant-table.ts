@@ -25,7 +25,7 @@ export = {
         type: DataType.INTEGER
       },
       description: {
-        allowNull: true,
+        allowNull: false,
         type: DataType.TEXT
       },
       credits: {
