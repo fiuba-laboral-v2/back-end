@@ -5,7 +5,7 @@ const GraphQLCapability = new GraphQLObjectType({
   name: "Capability",
   fields: () => ({
     uuid: {
-      type: ID
+      type: nonNull(ID)
     },
     description: {
       type: String

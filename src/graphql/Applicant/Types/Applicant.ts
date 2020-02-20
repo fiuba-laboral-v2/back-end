@@ -7,7 +7,7 @@ const GraphQLApplicant = new GraphQLObjectType({
   name: "Applicant",
   fields: () => ({
     uuid: {
-      type: ID
+      type: nonNull(ID)
     },
     name: {
       type: nonNull(String)
@@ -28,7 +28,7 @@ const GraphQLApplicant = new GraphQLObjectType({
       type: nonNull(List(GraphQLCareer))
     },
     capabilities: {
-      type: List(GraphQLCapability)
+      type: nonNull(List(GraphQLCapability))
     }
   })
 });
