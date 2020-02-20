@@ -11,7 +11,7 @@ export const defaultTranslations = {
     title: "Mi Perfil",
     explanation: "Asi se verá el perfil de un aplicante",
     padron: "Padron",
-    capabilities: "Capacidades",
+    capabilities: "Aptitudes",
     careers: "Carreras",
     credits: "Créditos"
   },
