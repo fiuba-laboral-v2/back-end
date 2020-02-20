@@ -7,7 +7,7 @@ export = {
       code: {
         allowNull: false,
         primaryKey: true,
-        type: DataType.TEXT
+        type: DataType.INTEGER
       },
       description: {
         allowNull: false,
