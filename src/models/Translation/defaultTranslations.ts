@@ -9,7 +9,7 @@ export const defaultTranslations = {
   },
   applicant: {
     title: "Mi Perfil",
-    explanation: "Asi se verá el perfil de un aplicante",
+    explanation: "Así se va a mostrar un postulante una empresa",
     padron: "Padron",
     capabilities: "Aptitudes",
     careers: "Carreras",
