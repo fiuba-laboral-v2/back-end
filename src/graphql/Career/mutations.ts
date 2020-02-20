@@ -2,7 +2,6 @@ import { GraphQLCareer } from "./Types/Career";
 import { Int, nonNull, String, ID } from "../fieldTypes";
 
 import {
-  Career,
   ICareer,
   CareerRepository,
   CareerSerializer
@@ -23,7 +22,7 @@ const careerMutations = {
       }
     },
     resolve: async (_: undefined, props: ICareer) => {
-      const newCareer: Career = await CareerRepository.create(props);
+      const newCareer = await CareerRepository.create(props);
       return CareerSerializer.serialize(newCareer);
     }
   }

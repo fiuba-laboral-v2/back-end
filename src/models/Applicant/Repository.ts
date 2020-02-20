@@ -24,7 +24,7 @@ export const ApplicantRepository = {
       capabilityModels.push(result[0]);
     }
 
-    const applicant: Applicant = new Applicant({
+    const applicant = new Applicant({
       name,
       surname,
       padron,
@@ -61,7 +61,7 @@ export const ApplicantRepository = {
   },
   findByUuid: async (uuid: string)  =>
     Applicant.findByPk(uuid, { include: [Career, Capability] }),
-  findByPadron: async (padron: number): Promise<Applicant> => {
+  findByPadron: async (padron: number) => {
     const applicant =  await Applicant.findOne({ where: { padron }, include: [Career, Capability]});
     if (!applicant) throw new ApplicantNotFound(padron);
 

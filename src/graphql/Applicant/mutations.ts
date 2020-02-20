@@ -2,7 +2,6 @@ import { GraphQLApplicant } from "./Types/Applicant";
 import { Int, List, nonNull, String } from "../fieldTypes";
 
 import {
-  Applicant,
   IApplicant,
   ApplicantRepository,
   ApplicantSerializer
@@ -35,7 +34,7 @@ const applicantMutations = {
       }
     },
     resolve: async (_: undefined, props: IApplicant) => {
-      const applicant: Applicant = await ApplicantRepository.create(props);
+      const applicant = await ApplicantRepository.create(props);
       return ApplicantSerializer.serialize(applicant);
     }
   }

@@ -10,7 +10,7 @@ import map from "lodash/map";
 
 export const CareerRepository = {
   create: async ({ code, description, credits }: ICareer) => {
-    const career: Career = new Career({ code, description, credits });
+    const career = new Career({ code, description, credits });
     return career.save();
   },
   findByCode: async (codes: string[])  => {
