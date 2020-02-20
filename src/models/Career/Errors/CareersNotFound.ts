@@ -1,5 +1,5 @@
 export class CareersNotFound extends Error {
-  constructor(code: string[]) {
-    super(`Careers with code: ${code} does not exists`);
+  constructor(codes: string[]) {
+    super(`Careers with codes: ${codes} does not exists`);
   }
 }
