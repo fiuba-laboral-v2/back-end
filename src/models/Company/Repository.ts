@@ -62,9 +62,10 @@ export const CompanyRepository = {
     }
   },
   findById: async (id: number) => {
-    const company: Company | null = await Company.findOne(
-      { where: { id: id } }
-    );
+    const company: Company | null = await Company.findByPk(
+      id,
+      { include: [CompanyPhoneNumber, CompanyPhoto] }
+      );
     if (!company)  throw new CompanyNotFoundError(id);
     return company;
   },
