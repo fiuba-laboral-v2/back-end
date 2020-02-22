@@ -18,7 +18,7 @@ export const ApplicantRepository = {
     capabilities = []
   }: IApplicant) => {
     const careers = applicantCareers.length > 0 ?
-     await CareerRepository.findByCode(map(applicantCareers, career => career.code)): [];
+     await CareerRepository.findByCodes(map(applicantCareers, career => career.code)): [];
     const capabilityModels: Capability[] = [];
 
     for (const capability of capabilities) {

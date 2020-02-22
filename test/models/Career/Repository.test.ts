@@ -55,7 +55,7 @@ describe("CareerRepository", () => {
     const secondaryCareer: Career = await CareerRepository.create(secondCareerData);
     await CareerRepository.create(thirdCareerData);
 
-    const expectedCareers = await CareerRepository.findByCode(
+    const expectedCareers = await CareerRepository.findByCodes(
       [careerData.code, secondaryCareer.code]
     );
     expect(expectedCareers).not.toBeNull();
