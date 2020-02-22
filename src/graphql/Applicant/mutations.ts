@@ -1,4 +1,5 @@
 import { GraphQLApplicant } from "./Types/Applicant";
+import { GraphQLCareerCredits } from "./Types/CareerCredits";
 import { Int, List, nonNull, String } from "../fieldTypes";
 
 import {
@@ -20,14 +21,11 @@ const applicantMutations = {
       padron: {
         type: nonNull(Int)
       },
-      credits: {
-        type: nonNull(Int)
-      },
       description: {
         type: String
       },
-      careersCodes: {
-        type: nonNull(List(String))
+      careers: {
+        type: nonNull(List(GraphQLCareerCredits))
       },
       capabilities: {
         type: List(String)

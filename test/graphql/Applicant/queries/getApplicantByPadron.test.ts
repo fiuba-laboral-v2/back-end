@@ -17,7 +17,6 @@ const GET_APPLICANT_BY_PADRON = gql`
       name
       surname
       padron
-      credits
       description
       capabilities {
         uuid
@@ -27,6 +26,7 @@ const GET_APPLICANT_BY_PADRON = gql`
         code
         description
         credits
+        creditsCount
       }
     }
   }
@@ -50,18 +50,25 @@ describe("getApplicantByPadron", () => {
       const applicantData = applicantMocks.applicantData([career.code]);
       const applicant = await ApplicantRepository.create(applicantData);
 
-      const response = await executeQuery(GET_APPLICANT_BY_PADRON, { padron: applicant.padron });
-      expect(response.errors).toBeUndefined();
-      expect(response.data).not.toBeUndefined();
-      expect(response.data.getApplicantByPadron).toMatchObject({
+      const {data, errors} = await executeQuery(
+        GET_APPLICANT_BY_PADRON, { padron: applicant.padron }
+      );
+      expect(errors).toBeUndefined();
+      expect(data).not.toBeUndefined();
+      expect(data.getApplicantByPadron).toMatchObject({
         name: applicantData.name,
         surname: applicantData.surname,
         description: applicantData.description,
-        padron: applicantData.padron,
-        credits: applicantData.credits
+        padron: applicantData.padron
       });
-      expect(response.data.getApplicantByPadron).toHaveProperty("capabilities");
-      expect(response.data.getApplicantByPadron).toHaveProperty("careers");
+      expect(data.getApplicantByPadron).toHaveProperty("capabilities");
+      expect(data.getApplicantByPadron).toHaveProperty("careers");
+      expect(data.getApplicantByPadron.careers[0]).toMatchObject({
+        code: career.code,
+        credits: career.credits,
+        description: career.description,
+        creditsCount: applicantData.careers[0].creditsCount
+      });
     });
   });
 

@@ -68,7 +68,7 @@ describe("Applicant model", () => {
     const saverdApplicant = await applicant.save();
 
     await CareerApplicant.create({
-       careerCode: savedCareer.code , applicantUuid: saverdApplicant.uuid
+       careerCode: savedCareer.code , applicantUuid: saverdApplicant.uuid, creditsCount: 150
     });
     await ApplicantCapability.create({
       capabilityUuid: savedCapability.uuid , applicantUuid: saverdApplicant.uuid
@@ -78,15 +78,22 @@ describe("Applicant model", () => {
        include: [Career, Capability]
     });
 
-    expect(result.careers[0].code).toEqual(career.code);
+    // expect(result.careers[0].code).toEqual(career.code);
     expect(result.capabilities[0].uuid).toEqual(savedCapability.uuid);
+    expect(result.careers[0]).toMatchObject({
+      code: career.code,
+      CareerApplicant: {
+        applicantUuid: applicant.uuid,
+        careerCode: career.code,
+        creditsCount: 150
+      }
+    });
     expect(applicant).toEqual(expect.objectContaining({
       uuid: applicant.uuid,
       name: "Bruno",
       surname: "Diaz",
       padron: 1,
-      description: "Batman",
-      credits: 150
+      description: "Batman"
     }));
   });
 
@@ -131,17 +138,6 @@ describe("Applicant model", () => {
       surname: "Diaz",
       padron: 1,
       credits: 150
-    });
-
-    await expect(applicant.save()).rejects.toThrow();
-  });
-
-  it("raise an error if credits is null", async () => {
-    const applicant: Applicant = new Applicant({
-      name: "Bruno",
-      surname: "Diaz",
-      padron: 1,
-      description: "Batman"
     });
 
     await expect(applicant.save()).rejects.toThrow();

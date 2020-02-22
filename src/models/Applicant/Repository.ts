@@ -5,6 +5,8 @@ import { ApplicantCapability } from "../ApplicantCapability";
 import { CareerApplicant } from "../CareerApplicant";
 import { ApplicantNotFound } from "./Errors/ApplicantNotFound";
 import Database from "../../config/Database";
+import map from "lodash/map";
+import find from "lodash/find";
 
 export const ApplicantRepository = {
   create: async ({
@@ -12,11 +14,11 @@ export const ApplicantRepository = {
     surname,
     padron,
     description,
-    credits,
-    careersCodes = [],
+    careers: applicantCareers = [],
     capabilities = []
   }: IApplicant) => {
-    const careers = careersCodes.length > 0 ? await CareerRepository.findByCode(careersCodes): [];
+    const careers = applicantCareers.length > 0 ?
+     await CareerRepository.findByCode(map(applicantCareers, career => career.code)): [];
     const capabilityModels: Capability[] = [];
 
     for (const capability of capabilities) {
@@ -28,8 +30,7 @@ export const ApplicantRepository = {
       name,
       surname,
       padron,
-      description,
-      credits
+      description
     });
 
     const transaction = await Database.transaction();
@@ -38,10 +39,14 @@ export const ApplicantRepository = {
 
       applicant.careers = careers;
       for (const career of careers) {
-          await CareerApplicant.create(
-            { careerCode: career.code , applicantUuid: applicant.uuid },
-            { transaction }
-          );
+        const applicantCareer = find(applicantCareers, c => c.code === career.code);
+        await CareerApplicant.create({
+          careerCode: career.code,
+          applicantUuid: applicant.uuid,
+          creditsCount: applicantCareer!.creditsCount
+        },
+          { transaction }
+        );
       }
 
       applicant.capabilities = capabilityModels;

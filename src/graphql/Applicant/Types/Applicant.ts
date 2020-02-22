@@ -1,7 +1,7 @@
 import { GraphQLObjectType } from "graphql";
 import { ID, Int, nonNull, String, List } from "../../fieldTypes";
 import { GraphQLCapability } from "./Capability";
-import { GraphQLCareer } from "../../Career/Types/Career";
+import { GraphQLApplicantCareer } from "./ApplicantCareers";
 
 const GraphQLApplicant = new GraphQLObjectType({
   name: "Applicant",
@@ -18,14 +18,11 @@ const GraphQLApplicant = new GraphQLObjectType({
     padron: {
       type: nonNull(Int)
     },
-    credits: {
-      type: nonNull(Int)
-    },
     description: {
       type: String
     },
     careers: {
-      type: nonNull(List(GraphQLCareer))
+      type: nonNull(List(GraphQLApplicantCareer))
     },
     capabilities: {
       type: nonNull(List(GraphQLCapability))

@@ -1,16 +1,26 @@
-import { Table, Model, Column, ForeignKey, PrimaryKey } from "sequelize-typescript";
+import { Table, Model, Column, ForeignKey, PrimaryKey, DataType } from "sequelize-typescript";
 import { Applicant } from "../Applicant/Model";
 import { Career } from "../Career/Model";
 
 @Table({ tableName: "CareersApplicants" })
 export class CareerApplicant extends Model<CareerApplicant> {
-    @ForeignKey(() => Career)
-    @PrimaryKey
-    @Column
-    public careerCode: number;
+  public defaultScope: {
+    exclude: [ "createdAt", "updatedAt" ]
+  };
 
-    @ForeignKey(() => Applicant)
-    @PrimaryKey
-    @Column
-    public applicantUuid: string;
+  @ForeignKey(() => Career)
+  @PrimaryKey
+  @Column
+  public careerCode: string;
+
+  @ForeignKey(() => Applicant)
+  @PrimaryKey
+  @Column
+  public applicantUuid: string;
+
+  @Column({
+    allowNull: false,
+    type: DataType.INTEGER
+  })
+  public creditsCount: number;
 }

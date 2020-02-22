@@ -32,8 +32,7 @@ describe("Career model", () => {
       name: "Bruno",
       surname: "Diaz",
       padron: 1,
-      description: "Batman",
-      credits: 150
+      description: "Batman"
     });
     const career: Career = new Career({ ...careerMocks.careerData() });
     applicant.careers = [ career ];
@@ -43,16 +42,22 @@ describe("Career model", () => {
     const saverdApplicant = await applicant.save();
 
     await CareerApplicant.create({
-       careerCode: savedCareer.code , applicantUuid: saverdApplicant.uuid
+       careerCode: savedCareer.code , applicantUuid: saverdApplicant.uuid, creditsCount: 100
     });
     const result = await Career.findByPk(career.code ,{ include: [Applicant] });
 
-    expect(result.applicants[0].name).toEqual(applicant.name);
-    expect(result).toEqual(expect.objectContaining({
+    expect(result.applicants[0]).toMatchObject({
+      name: applicant.name,
+      CareerApplicant: {
+        applicantUuid: applicant.uuid,
+        careerCode: career.code,
+        creditsCount: 100
+      }
+    });
+    expect(result).toMatchObject({
       code: career.code,
-      description: career.description,
-      credits: career.credits
-    }));
+      description: career.description
+    });
   });
 
   it("raise an error if code is null", async () => {
