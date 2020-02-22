@@ -84,6 +84,7 @@
     "clean:compiled-migrations": "rm -rf dist_migrations",
     "db:create": "node_modules/.bin/sequelize db:create && yarn build-migrations",
     "db:migrate": "sequelize db:migrate",
+    "db:staging:migrate": "yarn build-migrations && sequelize db:migrate",
     "db:migrate:down": "sequelize db:migrate:undo",
     "db:migrate:down:all": "sequelize db:migrate:undo:all",
     "db:drop": "node_modules/.bin/sequelize db:drop",
