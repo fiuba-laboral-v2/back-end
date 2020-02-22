@@ -50,7 +50,7 @@ describe("getCompanyById", () => {
   });
 
   it("returns error if the Company does not exists", async () => {
-    const notExistentId: number = 9999;
+    const notExistentId = 9999;
     const response = await executeQuery(query, { id: notExistentId });
     expect(response.errors).not.toBeUndefined();
   });
