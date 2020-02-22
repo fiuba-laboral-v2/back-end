@@ -1,4 +1,4 @@
-import { TEXT, INTEGER, QueryInterface } from "sequelize";
+import { STRING, INTEGER, QueryInterface } from "sequelize";
 
 
 export = {
@@ -19,7 +19,7 @@ export = {
           allowNull: false,
           primaryKey: true,
           unique: true,
-          type: TEXT
+          type: STRING
         }
       );
 
@@ -30,7 +30,7 @@ export = {
           allowNull: false,
           primaryKey: true,
           unique: true,
-          type: TEXT,
+          type: STRING,
           references: { model: "Careers", key: "code" }
         }
       );
