@@ -1,7 +1,9 @@
 import { companyTypes } from "./Company";
+import { userTypes } from "./User/Types";
 
 const types = [
-  ...companyTypes
+  ...companyTypes,
+  ...userTypes
 ];
 
 export default types;

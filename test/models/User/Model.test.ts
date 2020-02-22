@@ -15,13 +15,13 @@ describe("User", () => {
     await Database.close();
   });
 
-  it("instantiates a valid user", () => {
+  it("instantiates a valid user", async () => {
     const user = new User({
       email: "asd@qwe.com",
       password: "somethingVerySecret123"
     });
 
-    expect(user.save()).rejects.not.toThrow();
+    await user.save();
   });
 
   it("checks for email validity using sequelize", () => {

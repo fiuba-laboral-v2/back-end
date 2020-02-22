@@ -4,7 +4,9 @@ import depthLimit from "graphql-depth-limit";
 import cors from "cors";
 import Schema from "./graphql/Schema";
 import { Logger } from "./libs/Logger";
-import Environment from "./config/Environment";
+import { Environment } from "./config/Environment";
+import { JWT } from "./JWT";
+import { ExpressContext } from "apollo-server-express/dist/ApolloServer";
 
 Logger.info(`Running on ${Environment.NODE_ENV} environment`);
 
@@ -23,10 +25,22 @@ App.use(
   })
 );
 
+interface IApolloServerContext {
+  currentUserEmail?: string;
+}
+
 const ApolloServer = new Server({
   schema: Schema,
-  validationRules: [depthLimit(1000)]
+  validationRules: [depthLimit(1000)],
+  context: (expressContext: ExpressContext) => {
+    const apolloServerContext: IApolloServerContext = {
+      currentUserEmail: JWT.extractTokenPayload(expressContext.req)?.email
+    };
+    return apolloServerContext;
+  }
 });
-ApolloServer.applyMiddleware({ app: App, path: "/graphql" });
 
-export { App, ApolloServer };
+ApolloServer.applyMiddleware({ app: App, path: "/graphql" });
+JWT.applyMiddleware({ app: App });
+
+export { App, IApolloServerContext };
