@@ -1,5 +1,3 @@
-import { UserInputError } from "apollo-server";
-
 import { GraphQLCareer } from "./Types/Career";
 import { ID, nonNull } from "../fieldTypes";
 import {
@@ -17,7 +15,6 @@ const careerQueries = {
     },
     resolve: async (_: undefined, { code }) => {
       const career = await CareerRepository.findByCode(code);
-
       return CareerSerializer.serialize(career);
     }
   }
