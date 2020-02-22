@@ -1,4 +1,3 @@
-import { IUser } from "./Interface";
-import { User } from "./Model";
-
-export { IUser, User };
+export { IUser } from "./Interface";
+export { User } from "./Model";
+export { UserRespository } from "./Repository";
