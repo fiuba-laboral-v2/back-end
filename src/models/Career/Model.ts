@@ -7,7 +7,7 @@ export class Career extends Model<Career> {
   @Column({
     allowNull: false,
     primaryKey: true,
-    type: DataType.INTEGER
+    type: DataType.STRING
   })
   public code: string;
 
@@ -25,4 +25,6 @@ export class Career extends Model<Career> {
 
   @BelongsToMany(() => Applicant, () => CareerApplicant)
   public applicants: Applicant[];
+
+  public CareerApplicant: CareerApplicant;
 }

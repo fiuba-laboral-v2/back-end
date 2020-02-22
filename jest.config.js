@@ -10,5 +10,8 @@ module.exports = {
     'ts-jest': {
       isolatedModules: true
     }
-  }
+  },
+  watchPathIgnorePatterns: [
+    "/node_modules/"
+  ]
 };

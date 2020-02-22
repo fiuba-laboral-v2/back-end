@@ -1,5 +1,6 @@
 import faker from "faker";
 import { IApplicant } from "../../../src/models/Applicant";
+import map from "lodash/map";
 
 const applicantMocks = {
   applicantData: (careersCodes: string[]): IApplicant => ({
@@ -7,8 +8,7 @@ const applicantMocks = {
     surname: faker.name.lastName(),
     padron: faker.random.number(),
     description: faker.random.words(),
-    credits: faker.random.number(),
-    careersCodes,
+    careers: map(careersCodes, c => ({ code: c, creditsCount: faker.random.number()})),
     capabilities: [faker.random.word()]
   })
 };
