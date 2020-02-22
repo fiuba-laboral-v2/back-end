@@ -1,7 +1,11 @@
 import { companyTypes } from "./Company";
+import { ApplicantTypes } from "./Applicant";
+import CareerTypes from "./Career/Types";
 
 const types = [
-  ...companyTypes
+  ...companyTypes,
+  ...ApplicantTypes,
+  ...CareerTypes
 ];
 
 export default types;

@@ -1,11 +1,10 @@
 
 import { CareerRepository } from "../../../src/models/Career";
-import { ApplicantRepository } from "../../../src/models/Applicant";
+import { ApplicantRepository, Errors } from "../../../src/models/Applicant";
 
 import Database from "../../../src/config/Database";
 import { careerMocks } from "../Career/mocks";
 import { applicantMocks } from "./mocks";
-import { notDeepEqual } from "assert";
 
 describe("ApplicantRepository", () => {
   beforeAll(async () => {
@@ -20,15 +19,25 @@ describe("ApplicantRepository", () => {
     const career = await CareerRepository.create(careerMocks.careerData());
     const applicantData = applicantMocks.applicantData([career.code]);
     const applicant = await ApplicantRepository.create(applicantData);
+    const applicantCareers = await applicant.getCareers();
 
     expect(applicant).toEqual(expect.objectContaining({
       uuid: applicant.uuid,
       name: applicantData.name,
       surname: applicantData.surname,
       padron: applicantData.padron,
-      description: applicantData.description,
-      credits: applicantData.credits
+      description: applicantData.description
     }));
+    expect(applicantCareers[0]).toMatchObject({
+      code: career.code,
+      description: career.description,
+      credits: career.credits,
+      CareerApplicant: {
+        applicantUuid: applicant.uuid,
+        careerCode: career.code,
+        creditsCount: applicantData.careers[0].creditsCount
+      }
+    });
     expect(applicant.careers[0].description).toEqual(career.description);
     expect(applicant.capabilities[0].description).toEqual(applicantData.capabilities[0]);
   });
@@ -45,10 +54,20 @@ describe("ApplicantRepository", () => {
       name: applicantData.name,
       surname: applicantData.surname,
       padron: applicantData.padron,
-      description: applicantData.description,
-      credits: applicantData.credits
+      description: applicantData.description
     }));
-    expect(applicant.careers[0].description).toEqual(career.description);
+
+    const applicantCareers = await applicant.getCareers();
+    expect(applicantCareers[0]).toMatchObject({
+      code: career.code,
+      description: career.description,
+      credits: career.credits,
+      CareerApplicant: {
+        applicantUuid: applicant.uuid,
+        careerCode: career.code,
+        creditsCount: applicantData.careers[0].creditsCount
+      }
+    });
     expect(applicant.capabilities[0].description).toEqual(applicantData.capabilities[0]);
   });
 
@@ -64,10 +83,20 @@ describe("ApplicantRepository", () => {
       name: applicantData.name,
       surname: applicantData.surname,
       padron: applicantData.padron,
-      description: applicantData.description,
-      credits: applicantData.credits
+      description: applicantData.description
     }));
-    expect(applicant.careers[0].description).toEqual(career.description);
+
+    const applicantCareers = await applicant.getCareers();
+    expect(applicantCareers[0]).toMatchObject({
+      code: career.code,
+      description: career.description,
+      credits: career.credits,
+      CareerApplicant: {
+        applicantUuid: applicant.uuid,
+        careerCode: career.code,
+        creditsCount: applicantData.careers[0].creditsCount
+      }
+    });
     expect(applicant.capabilities[0].description).toEqual(applicantData.capabilities[0]);
   });
 
@@ -93,5 +122,12 @@ describe("ApplicantRepository", () => {
     const applicant = await ApplicantRepository.findByUuid(savedApplicant.uuid);
 
     expect(applicant).not.toBeNull();
+  });
+
+  it("raise ApplicantNotFound if the aplicant doesn't exists", async () => {
+    const applicantData = applicantMocks.applicantData([]);
+
+    await expect(ApplicantRepository.findByPadron(applicantData.padron))
+      .rejects.toThrow(Errors.ApplicantNotFound);
   });
 });
