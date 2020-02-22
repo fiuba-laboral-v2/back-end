@@ -64,7 +64,7 @@
     "ts-jest": "24.2.0",
     "ts-node": "8.5.4",
     "tslint": "5.18.0",
-    "tslint-config-fiuba-laboral-v2": "1.0.3",
+    "tslint-config-fiuba-laboral-v2": "1.0.5",
     "typescript": "3.7.4"
   },
   "scripts": {
@@ -79,12 +79,12 @@
     "unstash": "git stash pop",
     "check-unstaged": "bash scripts/check_unstaged.sh",
     "build": "tsc --project .",
-    "build-migrations": "yarn clean:compiled-migrations && tsc -p src/migrations",
+    "build-migrations": "tsc -p src/migrations",
     "clean": "rm -rf dist",
     "clean:compiled-migrations": "rm -rf dist_migrations",
     "db:create": "node_modules/.bin/sequelize db:create && yarn build-migrations",
     "db:migrate": "sequelize db:migrate",
-    "db:staging:migrate": "tsc -p src/migrations && sequelize db:migrate",
+    "db:staging:migrate": "build-migrations && sequelize db:migrate",
     "db:migrate:down": "sequelize db:migrate:undo",
     "db:migrate:down:all": "sequelize db:migrate:undo:all",
     "db:drop": "node_modules/.bin/sequelize db:drop",

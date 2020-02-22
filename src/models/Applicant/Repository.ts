@@ -40,11 +40,12 @@ export const ApplicantRepository = {
       applicant.careers = careers;
       for (const career of careers) {
         const applicantCareer = find(applicantCareers, c => c.code === career.code);
-        await CareerApplicant.create({
+        await CareerApplicant.create(
+          {
           careerCode: career.code,
           applicantUuid: applicant.uuid,
           creditsCount: applicantCareer!.creditsCount
-        },
+          },
           { transaction }
         );
       }
