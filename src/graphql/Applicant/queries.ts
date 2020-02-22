@@ -1,5 +1,3 @@
-import { UserInputError } from "apollo-server";
-
 import { GraphQLApplicant } from "./Types/Applicant";
 import { nonNull, Int } from "../fieldTypes";
 import {
@@ -17,7 +15,6 @@ const applicantQueries = {
     },
     resolve: async (_: undefined, { padron }) => {
       const applicant = await ApplicantRepository.findByPadron(padron);
-
       return ApplicantSerializer.serialize(applicant);
     }
   }
