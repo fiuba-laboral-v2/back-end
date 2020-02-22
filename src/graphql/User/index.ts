@@ -1,4 +1,3 @@
-import { userQueries } from "./queries";
-import { userTypes } from "./Types";
-
-export { userTypes, userQueries };
+export { userMutations } from "./mutations";
+export { userQueries } from "./queries";
+export { userTypes } from "./Types";
