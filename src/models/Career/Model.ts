@@ -1,6 +1,4 @@
 import { Column, DataType, Model, BelongsToMany, Table } from "sequelize-typescript";
-import {
-  Association } from "sequelize";
 import { Applicant } from "../Applicant/Model";
 import { CareerApplicant } from "../CareerApplicant/Model";
 
@@ -27,10 +25,6 @@ export class Career extends Model<Career> {
 
   @BelongsToMany(() => Applicant, () => CareerApplicant)
   public applicants: Applicant[];
-
-  public associations: {
-    careerApplicants: Association<Career,Applicant>;
-  };
 
   public CareerApplicant: CareerApplicant;
 }

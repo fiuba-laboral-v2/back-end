@@ -3,10 +3,10 @@ import {
   HasManyGetAssociationsMixin,
   HasManyAddAssociationMixin,
   HasManyHasAssociationMixin,
-  Association,
   HasManyCountAssociationsMixin,
   HasManySetAssociationsMixin,
-  HasManyCreateAssociationMixin } from "sequelize";
+  HasManyCreateAssociationMixin,
+} from "sequelize";
 import { validateName } from "validations-fiuba-laboral-v2";
 import { Career } from "../Career/Model";
 import { CareerApplicant } from "../CareerApplicant/Model";
@@ -18,18 +18,6 @@ import { ApplicantCapability } from "../ApplicantCapability/Model";
   tableName: "Applicants"
  })
 export class Applicant extends Model<Applicant> {
-  public defaultScope: {
-    timestamps: false,
-    include: [
-      {
-        model: CareerApplicant,
-          attributes: {
-            exclude: ["creditsCount"]
-          }
-      }
-    ]
-  };
-
   @Column({
     allowNull: false,
     primaryKey: true,
@@ -75,8 +63,4 @@ export class Applicant extends Model<Applicant> {
   public setCareers!: HasManySetAssociationsMixin<Career[], string>;
   public countCareers!: HasManyCountAssociationsMixin;
   public createCareer!: HasManyCreateAssociationMixin<Career>;
-
-  public associations: {
-    careers: Association<Career,Applicant>;
-  };
 }
