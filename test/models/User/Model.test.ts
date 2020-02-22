@@ -15,7 +15,7 @@ describe("User", () => {
     await Database.close();
   });
 
-  it("create a valid user", () => {
+  it("instantiates a valid user", () => {
     const user = new User({
       email: "asd@qwe.com",
       password: "somethingVerySecret123"
@@ -24,7 +24,7 @@ describe("User", () => {
     expect(user.save()).rejects.not.toThrow();
   });
 
-  it("check for email validity using sequelize", () => {
+  it("checks for email validity using sequelize", () => {
     const user = new User({
       email: "asdqwe.com",
       password: "somethingVerySecret123"
@@ -33,32 +33,30 @@ describe("User", () => {
     expect(user.save()).rejects.toThrow();
   });
 
-  it("check for password validity in constructor", () => {
-    expect(() => new User({
-        email: "asd@qwe.com",
-        password: "somethingWithoutDigits"
-      })
-    ).toThrow(PasswordWithoutDigitsError);
+  it("checks for password validity before creation", () => {
+    const user = new User({
+      email: "asd@qwe.com",
+      password: "somethingWithoutDigits"
+    });
+
+    expect(user.save()).rejects.toThrow(PasswordWithoutDigitsError);
   });
 
-  it("hashes password on create", () => {
+  it("hashes password before creation", () => {
     const unhashedPassword = "somethingWithDigits99";
-
-    expect(
-      new User({
-        email: "asd@qwe.com",
-        password: unhashedPassword
-      }).password
-    ).not.toEqual(unhashedPassword);
+    const user = new User({ email: "asd@qwe.com", password: unhashedPassword });
+    User.beforeCreateHook(user);
+    expect(user.password).not.toEqual(unhashedPassword);
   });
 
-  it("tests valid password match", async () => {
+  it("tests valid password match after creation", async () => {
     const unhashedPassword = "somethingWithDigits99";
 
     const user = new User({
       email: "asd@qwe.com",
       password: unhashedPassword
     });
+    User.beforeCreateHook(user);
 
     expect(await user.passwordMatches(unhashedPassword)).toBe(true);
   });

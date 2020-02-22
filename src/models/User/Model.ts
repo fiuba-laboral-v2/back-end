@@ -1,10 +1,25 @@
-import { AllowNull, Column, DataType, Is, Model, PrimaryKey, Table } from "sequelize-typescript";
-import { BuildOptions } from "sequelize";
+import {
+  AllowNull,
+  BeforeCreate,
+  Column,
+  DataType,
+  Is,
+  Model,
+  PrimaryKey,
+  Table
+} from "sequelize-typescript";
 import { compare, hashSync } from "bcrypt";
 import { validateEmail, validatePassword } from "validations-fiuba-laboral-v2";
 
 @Table
 export class User extends Model<User> {
+  @BeforeCreate
+  public static beforeCreateHook(user: User): void {
+    user.setPassword(user.password);
+  }
+
+  private static readonly bcryptSaltOrRounds = 10;
+
   @Is(validateEmail)
   @PrimaryKey
   @AllowNull(false)
@@ -15,14 +30,9 @@ export class User extends Model<User> {
   @Column(DataType.STRING)
   public password: string;
 
-  constructor(values?: object, options?: BuildOptions) {
-    super(values, options);
-    this.setPassword(this.password);
-  }
-
   public setPassword(password: string) {
     validatePassword(password);
-    this.password = hashSync(password, 10);
+    this.password = hashSync(password, User.bcryptSaltOrRounds);
   }
 
   public passwordMatches(password) {
