@@ -9,7 +9,7 @@ import { Applicant } from "../../../../src/models/Applicant";
 
 import { applicantMocks } from "../../../models/Applicant/mocks";
 import { careerMocks } from "../../../models/Career/mocks";
-import { UserInputError } from "apollo-server";
+import { ApolloError } from "apollo-server";
 
 const GET_APPLICANT_BY_PADRON = gql`
   query GetApplicantByPadron($padron: Int!) {
@@ -76,7 +76,9 @@ describe("getApplicantByPadron", () => {
     it("fetchs the applicant", async () => {
       const response = await executeQuery(GET_APPLICANT_BY_PADRON, { padron: 1 });
 
-      expect(response.errors[0]).toEqual(new UserInputError("Applicant Not found"));
+      expect(response.errors[0]).toEqual(
+        new ApolloError(`Applicant with padron: 1 does not exist`)
+      );
     });
   });
 });

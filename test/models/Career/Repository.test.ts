@@ -1,4 +1,4 @@
-import { Career, CareerRepository } from "../../../src/models/Career";
+import { Career, CareerRepository, Errors } from "../../../src/models/Career";
 import Database from "../../../src/config/Database";
 import { careerMocks } from "./mocks";
 import map from "lodash/map";
@@ -64,5 +64,12 @@ describe("CareerRepository", () => {
     expect(map(expectedCareers, "code")).toEqual(
       expect.arrayContaining([career.code, secondaryCareer.code])
     );
+  });
+
+  it("raise CareersNotFound if the career doesn't exists", async () => {
+    const careerData = careerMocks.careerData();
+
+    await expect(CareerRepository.findByCode(careerData.code))
+      .rejects.toThrow(Errors.CareersNotFound);
   });
 });

@@ -16,13 +16,9 @@ const careerQueries = {
       }
     },
     resolve: async (_: undefined, { code }) => {
-      try {
-        const career = await CareerRepository.findByCode(code);
+      const career = await CareerRepository.findByCode(code);
 
-        return CareerSerializer.serialize(career);
-      } catch {
-        throw new UserInputError("Career Not found", { invalidArgs: Object.keys(code) });
-      }
+      return CareerSerializer.serialize(career);
     }
   }
 };

@@ -6,7 +6,7 @@ import { CareerRepository } from "../../../../src/models/Career";
 import { Career } from "../../../../src/models/Career";
 import { careerMocks } from "../../../models/Career/mocks";
 
-import { UserInputError } from "apollo-server";
+import { ApolloError } from "apollo-server";
 
 const GET_CAREER_BY_CODE = gql`
   query GetCareerByCode($code: ID!) {
@@ -45,6 +45,6 @@ describe("getCareerByCode", () => {
   it("throws Career Not found if the code doesn't exists", async () => {
     const response = await executeQuery(GET_CAREER_BY_CODE, { code: "3" });
 
-    expect(response.errors[0]).toEqual(new UserInputError("Career Not found"));
+    expect(response.errors[0]).toEqual(new ApolloError(`Careers with codes: [3] does not exist`));
   });
 });

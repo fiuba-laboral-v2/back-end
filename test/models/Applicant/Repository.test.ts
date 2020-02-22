@@ -1,6 +1,6 @@
 
 import { CareerRepository } from "../../../src/models/Career";
-import { ApplicantRepository } from "../../../src/models/Applicant";
+import { ApplicantRepository, Errors } from "../../../src/models/Applicant";
 
 import Database from "../../../src/config/Database";
 import { careerMocks } from "../Career/mocks";
@@ -122,5 +122,12 @@ describe("ApplicantRepository", () => {
     const applicant = await ApplicantRepository.findByUuid(savedApplicant.uuid);
 
     expect(applicant).not.toBeNull();
+  });
+
+  it("raise ApplicantNotFound if the aplicant doesn't exists", async () => {
+    const applicantData = applicantMocks.applicantData([]);
+
+    await expect(ApplicantRepository.findByPadron(applicantData.padron))
+      .rejects.toThrow(Errors.ApplicantNotFound);
   });
 });

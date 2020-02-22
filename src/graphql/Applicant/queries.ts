@@ -16,13 +16,9 @@ const applicantQueries = {
       }
     },
     resolve: async (_: undefined, { padron }) => {
-      try {
-        const applicant = await ApplicantRepository.findByPadron(padron);
+      const applicant = await ApplicantRepository.findByPadron(padron);
 
-        return ApplicantSerializer.serialize(applicant);
-      } catch (e) {
-        throw new UserInputError("Applicant Not found", { invalidArgs: padron });
-      }
+      return ApplicantSerializer.serialize(applicant);
     }
   }
 };
