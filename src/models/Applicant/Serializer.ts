@@ -20,8 +20,9 @@ const ApplicantSerializer = {
     padron: applicant.padron,
     description: applicant.description,
     careers: applicantCareerMapper(applicant),
-    capabilities: map(applicant.capabilities,
-       capability => pick(capability, ["uuid", "description"])
+    capabilities: map(
+      applicant.capabilities,
+      capability => pick(capability, ["uuid", "description"])
     )
   })
 };

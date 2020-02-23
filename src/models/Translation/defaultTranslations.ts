@@ -7,6 +7,15 @@ export const defaultTranslations = {
     title: "Perfil de mi empresa",
     explanation: "Así se va a mostrar a los postulantes"
   },
-  my_company: "Mi empresa",
+  applicant: {
+    title: "Mi Perfil",
+    explanation: "Así se va a mostrar un postulante una empresa",
+    padron: "Padron",
+    capabilities: "Aptitudes",
+    careers: "Carreras",
+    credits: "Créditos"
+  },
+  applicants: "Postulantes",
+  companies: "Empresas",
   edit: "Editar"
 };
