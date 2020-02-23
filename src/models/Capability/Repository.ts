@@ -5,7 +5,7 @@ import Database from "../../config/Database";
 
 export const CapabilityRepository = {
   create: async ({ description }: ICapability) => {
-    const capability: Capability = new Capability({ description });
+    const capability = new Capability({ description });
     return capability.save();
   },
   findByDescription: async (description: string[])  =>

@@ -72,6 +72,8 @@ describe("CompanyRepository", () => {
     expect(expectedCompany).not.toBeNull();
     expect(expectedCompany).not.toBeUndefined();
     expect(expectedCompany!.id).toEqual(company.id);
+    expect(expectedCompany!.photos).toHaveLength(company.photos.length);
+    expect(expectedCompany!.phoneNumbers).toHaveLength(company.phoneNumbers.length);
   });
 
 
