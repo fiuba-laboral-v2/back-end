@@ -19,7 +19,7 @@ describe("UserRepository", () => {
     const email = "asd@qwe.com";
     const user = await UserRepository.create({ email: email, password: "AValidPassword123" });
 
-    expect(user.id).not.toBeNull();
+    expect(user.uuid).not.toBeNull();
     expect(user.email).toEqual(email);
   });
 

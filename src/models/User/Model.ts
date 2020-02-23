@@ -5,8 +5,8 @@ import {
   DataType,
   Is,
   Model,
-  PrimaryKey,
-  Table
+  Table,
+  Unique
 } from "sequelize-typescript";
 import { compare, hashSync } from "bcrypt";
 import { validateEmail, validatePassword } from "validations-fiuba-laboral-v2";
@@ -20,8 +20,16 @@ export class User extends Model<User> {
 
   private static readonly bcryptSaltOrRounds = 10;
 
+  @Column({
+    allowNull: false,
+    primaryKey: true,
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4
+  })
+  public uuid: string;
+
   @Is(validateEmail)
-  @PrimaryKey
+  @Unique
   @AllowNull(false)
   @Column(DataType.STRING)
   public email: string;

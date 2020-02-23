@@ -24,6 +24,19 @@ describe("User", () => {
     await user.save();
   });
 
+  it("raise an error when creating an user with an existing email", async () => {
+    await new User({
+      email: "asd@qwe.com",
+      password: "somethingVerySecret123"
+    }).save();
+    const secondUSer = new User({
+      email: "asd@qwe.com",
+      password: "somethingVerySecret123"
+    });
+
+    await expect(secondUSer.save()).rejects.toThrow();
+  });
+
   it("checks for email validity using sequelize", () => {
     const email = "asdqwe.com";
     const user = new User({

@@ -5,7 +5,7 @@ import { UserNotFound } from "./Errors";
 export const UserRepository = {
   create: (attributes: IUser) => User.create(attributes),
   findByEmail: async (email: string) => {
-    const user = await User.findByPk(email);
+    const user = await User.findOne({ where: { email } });
     if (!user) throw new UserNotFound(email);
 
     return user;
