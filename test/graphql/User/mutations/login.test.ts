@@ -3,6 +3,7 @@ import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 import { User } from "../../../../src/models/User";
 import { UserRepository } from "../../../../src/models/User/Repository";
+import { JWT } from "../../../../src/JWT";
 
 const LOGIN = gql`
   mutation ($email: String!, $password: String!) {
@@ -45,13 +46,13 @@ describe("User login query", () => {
 
   it("returns a token", async () => {
     const email = "asd@asd.com";
-    await UserRepository.create({email: email, password: "AValidPassword3"});
+    const user = await UserRepository.create({email: email, password: "AValidPassword3"});
     const response = await executeMutation(LOGIN, {
       email: email,
       password: "AValidPassword3"
     });
     expect(response.errors).toBeUndefined();
     const token: string = response.data.login;
-    expect(typeof token).toBe("string");
+    expect(token).toEqual(JWT.createToken(user));
   });
 });
