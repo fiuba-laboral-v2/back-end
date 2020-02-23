@@ -1,5 +1,5 @@
 import { GraphQLUser } from "./Types/GraphQLUser";
-import { IApolloServerContext } from "../../App";
+import { IApolloServerContext } from "../../server";
 import { UserRepository } from "../../models/User/Repository";
 import { AuthenticationError } from "apollo-server-errors";
 

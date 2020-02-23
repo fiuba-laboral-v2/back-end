@@ -1,5 +1,5 @@
 import { createTestClient } from "apollo-server-testing";
-import { IApolloServerContext } from "../../src/App";
+import { IApolloServerContext } from "../../src/server";
 import { DocumentNode } from "graphql";
 import { ApolloServer as Server } from "apollo-server-express/dist/ApolloServer";
 import Schema from "../../src/graphql/Schema";
