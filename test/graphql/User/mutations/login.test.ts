@@ -4,7 +4,7 @@ import Database from "../../../../src/config/Database";
 import { User } from "../../../../src/models/User";
 import { UserRepository } from "../../../../src/models/User/Repository";
 
-const mutation = gql`
+const LOGIN = gql`
   mutation ($email: String!, $password: String!) {
     login(email: $email, password: $password)
   }
@@ -24,7 +24,7 @@ describe("User login query", () => {
   });
 
   it("should return error if user is not registered", async () => {
-    const response = await executeMutation(mutation, {
+    const response = await executeMutation(LOGIN, {
       email: "asd@asd.com",
       password: "AValidPassword000"
     });
@@ -36,7 +36,7 @@ describe("User login query", () => {
   it("checks for password match", async () => {
     const email = "asd@asd.com";
     await UserRepository.create({email: email, password: "AValidPassword1"});
-    const response = await executeMutation(mutation, {
+    const response = await executeMutation(LOGIN, {
       email: email,
       password: "AValidPassword2"
     });
@@ -46,7 +46,7 @@ describe("User login query", () => {
   it("returns a token", async () => {
     const email = "asd@asd.com";
     await UserRepository.create({email: email, password: "AValidPassword3"});
-    const response = await executeMutation(mutation, {
+    const response = await executeMutation(LOGIN, {
       email: email,
       password: "AValidPassword3"
     });
