@@ -4,7 +4,7 @@ import Database from "../../../../src/config/Database";
 import { User } from "../../../../src/models/User";
 import { UserRepository } from "../../../../src/models/User/Repository";
 
-const mutation = gql`
+const SIGNUP = gql`
   mutation ($email: String!, $password: String!) {
     signup(email: $email, password: $password)
   }
@@ -24,7 +24,7 @@ describe("User signup query", () => {
   });
 
   it("should return an error if password is invalid", async () => {
-    const response = await executeMutation(mutation, {
+    const response = await executeMutation(SIGNUP, {
       email: "asd@asd.com",
       password: "an invalid password"
     });
@@ -33,7 +33,7 @@ describe("User signup query", () => {
 
   it("creates a valid user", async () => {
     const email = "bbb@eee.com";
-    await executeMutation(mutation, {
+    await executeMutation(SIGNUP, {
       email: email,
       password: "AValidPassword000"
     });
@@ -41,7 +41,7 @@ describe("User signup query", () => {
   });
 
   it("returns a token", async () => {
-    const response = await executeMutation(mutation, {
+    const response = await executeMutation(SIGNUP, {
       email: "asd@asd.com",
       password: "AValidPassword000"
     });
