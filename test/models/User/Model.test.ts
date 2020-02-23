@@ -25,12 +25,13 @@ describe("User", () => {
   });
 
   it("checks for email validity using sequelize", () => {
+    const email = "asdqwe.com";
     const user = new User({
-      email: "asdqwe.com",
+      email: email,
       password: "somethingVerySecret123"
     });
 
-    expect(user.save()).rejects.toThrow();
+    expect(user.save()).rejects.toThrow(`Email invalid: ${email}`);
   });
 
   it("checks for password validity before creation", () => {
