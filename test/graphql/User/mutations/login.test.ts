@@ -23,7 +23,7 @@ describe("User login query", () => {
     await Database.close();
   });
 
-  it("expects there to be a user with given email", async () => {
+  it("should return error if user is not registered", async () => {
     const response = await executeMutation(mutation, {
       email: "asd@asd.com",
       password: "AValidPassword000"

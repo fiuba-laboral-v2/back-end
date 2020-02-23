@@ -23,7 +23,7 @@ describe("User signup query", () => {
     await Database.close();
   });
 
-  it("delegates model validation to repository", async () => {
+  it("should return an error if password is invalid", async () => {
     const response = await executeMutation(mutation, {
       email: "asd@asd.com",
       password: "an invalid password"
