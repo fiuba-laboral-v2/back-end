@@ -4,7 +4,10 @@ import { sign } from "jsonwebtoken";
 import { Application, Request } from "express";
 import jwt from "express-jwt";
 
-export interface IPayload { email: string; }
+export interface IPayload {
+  uuid: string;
+  email: string;
+}
 
 let JWT_SECRET: string;
 if (["test", "development", "test_travis"].includes(Environment.NODE_ENV)) {
@@ -16,7 +19,10 @@ if (["test", "development", "test_travis"].includes(Environment.NODE_ENV)) {
 
 export const JWT = {
   createToken: (user: User) => {
-    const payload: IPayload = { email: user.email };
+    const payload: IPayload = {
+      uuid: user.uuid,
+      email: user.email
+    };
 
     return sign(
       payload,
