@@ -28,7 +28,9 @@ describe("User login query", () => {
       email: "asd@asd.com",
       password: "AValidPassword000"
     });
-    expect(response.errors[0].message).toEqual("No user with that email");
+    expect(response.errors[0].message).toEqual(
+      `User with email: asd@asd.com does not exist`
+    );
   });
 
   it("checks for password match", async () => {

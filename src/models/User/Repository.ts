@@ -1,7 +1,13 @@
 import { User } from "./Model";
 import { IUser } from "./Interface";
+import { UserNotFound } from "./Errors";
 
 export const UserRepository = {
   create: (attributes: IUser) => User.create(attributes),
-  findByEmail: (email: string) => User.findByPk(email)
+  findByEmail: async (email: string) => {
+    const user = await User.findByPk(email);
+    if (!user) throw new UserNotFound(email);
+
+    return user;
+  }
 };

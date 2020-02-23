@@ -1,6 +1,6 @@
 import Database from "../../../src/config/Database";
 import { UserRepository } from "../../../src/models/User/Repository";
-import { User } from "../../../src/models/User";
+import { User, UserNotFound } from "../../../src/models/User";
 
 describe("UserRepository", () => {
   beforeAll(async () => {
@@ -53,10 +53,11 @@ describe("UserRepository", () => {
     expect(foundUser.password).toEqual(passwordToFind);
   });
 
-  it("returns null when it does not find a user with the given email", async () => {
+  it("returns error when it does not find a user with the given email", async () => {
     await UserRepository.create({ email: "qqq@qqq.com", password: "AValidPassword789" });
     await UserRepository.create({ email: "www@www.com", password: "AValidPassword012" });
-
-    expect(await UserRepository.findByEmail("yyy@yyy.com")).toBeNull();
+    await expect(
+      UserRepository.findByEmail("yyy@yyy.com")
+    ).rejects.toThrow(UserNotFound);
   });
 });

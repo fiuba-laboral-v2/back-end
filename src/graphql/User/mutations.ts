@@ -31,8 +31,6 @@ export const userMutations = {
     },
     resolve: async (_: undefined, { email, password }: IUser) => {
       const user = await UserRepository.findByEmail(email);
-
-      if (!user) throw new UserInputError("No user with that email");
       const valid = await user.passwordMatches(password);
       if (!valid) throw new UserInputError("Incorrect password");
 
