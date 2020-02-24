@@ -133,4 +133,18 @@ describe("Company", () => {
     expect(company).not.toBeUndefined();
     expect(company.logo).not.toBeUndefined();
   });
+
+  it("raise an error if new company has an already existing cuit", async () => {
+    await new Company({
+      cuit: "30711819017",
+      companyName: "Devartis SA"
+    }).save();
+
+    const company = new Company({
+      cuit: "30711819017",
+      companyName: "Devartis Clone SA"
+    });
+
+    await expect(company.save()).rejects.toThrow("Validation error");
+  });
 });
