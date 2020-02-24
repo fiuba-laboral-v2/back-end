@@ -3,6 +3,7 @@ import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 import { User } from "../../../../src/models/User";
 import { UserRepository } from "../../../../src/models/User/Repository";
+import { JWT } from "../../../../src/JWT";
 
 const SIGNUP = gql`
   mutation ($email: String!, $password: String!) {
@@ -47,6 +48,6 @@ describe("User signup query", () => {
     });
     expect(response.errors).toBeUndefined();
     const token: string = response.data.signup;
-    expect(typeof token).toBe("string");
+    expect(JWT.decodeToken(token).email).toEqual("asd@asd.com");
   });
 });

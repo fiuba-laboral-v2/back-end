@@ -1,7 +1,7 @@
 import { User } from "./models/User";
 import { Environment } from "./config/Environment";
-import { sign } from "jsonwebtoken";
-import { Application, Request } from "express";
+import { sign, verify } from "jsonwebtoken";
+import { Application } from "express";
 import jwt from "express-jwt";
 
 export interface IPayload {
@@ -30,6 +30,17 @@ export const JWT = {
       { expiresIn: "2d" }
     );
   },
+  decodeToken: (token: string): IPayload | undefined => {
+    try {
+      const payload = verify(token, JWT_SECRET) as any;
+      return {
+        uuid: payload.uuid,
+        email: payload.email
+      };
+    } catch (e) {
+      return undefined;
+    }
+  },
   applyMiddleware: ({ app }: { app: Application }) => {
     app.use(
       jwt({
@@ -38,5 +49,5 @@ export const JWT = {
       })
     );
   },
-  extractTokenPayload: (request: Request): IPayload => (request as any).user
+  extractTokenPayload: (token: string): IPayload | undefined => JWT.decodeToken(token)
 };

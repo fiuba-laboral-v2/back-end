@@ -13,8 +13,9 @@ export const ApolloServer = new Server({
   schema: Schema,
   validationRules: [depthLimit(1000)],
   context: (expressContext: ExpressContext) => {
+    const token = expressContext.req.headers.authorization || "";
     const apolloServerContext: IApolloServerContext = {
-      currentUserEmail: JWT.extractTokenPayload(expressContext.req)?.email
+      currentUserEmail: JWT.extractTokenPayload(token)?.email
     };
     return apolloServerContext;
   }

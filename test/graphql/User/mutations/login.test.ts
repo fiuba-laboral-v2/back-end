@@ -53,6 +53,9 @@ describe("User login query", () => {
     });
     expect(response.errors).toBeUndefined();
     const token: string = response.data.login;
-    expect(token).toEqual(JWT.createToken(user));
+    expect(JWT.decodeToken(token)).toEqual({
+      email: email,
+      uuid: user.uuid
+    });
   });
 });
