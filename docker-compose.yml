@@ -5,9 +5,8 @@ services:
     command: yarn pm2:start
     image: fiuba-laboral-v2-backend-img
     container_name: "fiuba-laboral-v2-backend"
-    environment:
-      NODE_ENV: staging
-      DATABASE_URL: postgres://postgres:postgres@fiuba-laboral-v2-backend-database-postgres:5432/staging
+    env_file:
+      - .env
     ports:
       - 5006:5006
     restart: always
@@ -21,9 +20,5 @@ services:
     ports:
       - 5434:5432
     restart: always
-    environment:
-      POSTGRES_DB: fiuba-laboral-v2-backend-database-postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_PORT: 5432
-      POSTGRES_HOST: 127.0.0.1
+    env_file:
+      - .env
