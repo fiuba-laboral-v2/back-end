@@ -47,32 +47,36 @@ describe("User", () => {
     expect(user.save()).rejects.toThrow(`Email invalid: ${email}`);
   });
 
-  it("checks for password validity before creation", () => {
-    const user = new User({
-      email: "asd@qwe.com",
-      password: "somethingWithoutDigits"
+  describe("Before create", () => {
+    it("checks for password validity before creation", () => {
+      const user = new User({
+        email: "asd@qwe.com",
+        password: "somethingWithoutDigits"
+      });
+
+      expect(user.save()).rejects.toThrow(PasswordWithoutDigitsError);
     });
 
-    expect(user.save()).rejects.toThrow(PasswordWithoutDigitsError);
-  });
-
-  it("hashes password before creation", () => {
-    const unhashedPassword = "somethingWithDigits99";
-    const user = new User({ email: "asd@qwe.com", password: unhashedPassword });
-    User.beforeCreateHook(user);
-    expect(user.password).not.toEqual(unhashedPassword);
-  });
-
-  it("tests valid password match after creation", async () => {
-    const unhashedPassword = "somethingWithDigits99";
-
-    const user = new User({
-      email: "asd@qwe.com",
-      password: unhashedPassword
+    it("hashes password before creation", () => {
+      const unhashedPassword = "somethingWithDigits99";
+      const user = new User({ email: "asd@qwe.com", password: unhashedPassword });
+      User.beforeCreateHook(user);
+      expect(user.password).not.toEqual(unhashedPassword);
     });
-    User.beforeCreateHook(user);
+  });
 
-    expect(await user.passwordMatches(unhashedPassword)).toBe(true);
+  describe("After create", () => {
+    it("tests valid password match after creation", async () => {
+      const unhashedPassword = "somethingWithDigits99";
+
+      const user = new User({
+        email: "asd@qwe.com",
+        password: unhashedPassword
+      });
+      User.beforeCreateHook(user);
+
+      expect(await user.passwordMatches(unhashedPassword)).toBe(true);
+    });
   });
 
   it("tests invalid password match", async () => {
