@@ -1,9 +1,12 @@
 import { GraphQLObjectType } from "graphql";
-import { nonNull, String } from "../../fieldTypes";
+import { ID, nonNull, String } from "../../fieldTypes";
 
 const GraphQLUser = new GraphQLObjectType({
   name: "User",
   fields: () => ({
+    uuid: {
+      type: nonNull(ID)
+    },
     email: {
       type: nonNull(String)
     }
