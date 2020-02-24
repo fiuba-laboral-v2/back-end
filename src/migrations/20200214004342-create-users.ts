@@ -12,7 +12,6 @@ export = {
       },
       email: {
         allowNull: false,
-        primaryKey: true,
         type: STRING,
         unique: true
       },
