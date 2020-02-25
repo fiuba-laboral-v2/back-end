@@ -5,11 +5,17 @@ import { ApolloServer as Server } from "apollo-server-express/dist/ApolloServer"
 import Schema from "../../src/graphql/Schema";
 
 export const testCurrentUserEmail = "test@test.test";
+export const testCurrentUserUuid = "5bca6c9d-8367-4500-be05-0db55066b2a1";
 
 const LoggedInTestClient = createTestClient(new Server({
   schema: Schema,
   context: () => {
-    const apolloServerContext: IApolloServerContext = { currentUserEmail: testCurrentUserEmail };
+    const apolloServerContext: IApolloServerContext = {
+      currentUser: {
+        uuid: testCurrentUserUuid,
+        email: testCurrentUserEmail
+      }
+    };
     return apolloServerContext;
   }
 }));

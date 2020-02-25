@@ -5,8 +5,13 @@ import { ExpressContext } from "apollo-server-express/dist/ApolloServer";
 import { JWT } from "./JWT";
 
 
+interface ICurrentUser {
+  uuid: string;
+  email: string;
+}
+
 export interface IApolloServerContext {
-  currentUserEmail?: string;
+  currentUser?: ICurrentUser;
 }
 
 export const ApolloServer = new Server({
@@ -15,7 +20,7 @@ export const ApolloServer = new Server({
   context: (expressContext: ExpressContext) => {
     const token = expressContext.req.headers.authorization || "";
     const apolloServerContext: IApolloServerContext = {
-      currentUserEmail: JWT.extractTokenPayload(token)?.email
+      currentUser: JWT.extractTokenPayload(token)
     };
     return apolloServerContext;
   }
