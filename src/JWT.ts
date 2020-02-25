@@ -38,7 +38,7 @@ export const JWT = {
         email: payload.email
       };
     } catch (e) {
-      return undefined;
+      return;
     }
   },
   applyMiddleware: ({ app }: { app: Application }) => {
