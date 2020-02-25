@@ -1,21 +1,41 @@
 import { createTestClient } from "apollo-server-testing";
-import { ApolloServer } from "../../src/App";
+import { IApolloServerContext } from "../../src/server";
 import { DocumentNode } from "graphql";
+import { ApolloServer as Server } from "apollo-server-express/dist/ApolloServer";
+import Schema from "../../src/graphql/Schema";
 
-const testClient = createTestClient(ApolloServer as any);
+export const testCurrentUserEmail = "test@test.test";
+export const testCurrentUserUuid = "5bca6c9d-8367-4500-be05-0db55066b2a1";
 
-const executeQuery = (query: DocumentNode, variables?: object) => {
-  return testClient.query({
+const LoggedInTestClient = createTestClient(new Server({
+  schema: Schema,
+  context: () => {
+    const apolloServerContext: IApolloServerContext = {
+      currentUser: {
+        uuid: testCurrentUserUuid,
+        email: testCurrentUserEmail
+      }
+    };
+    return apolloServerContext;
+  }
+}));
+
+const LoggedOutTestClient = createTestClient(new Server({
+  schema: Schema
+}));
+
+const client = (loggedIn: boolean) => loggedIn ? LoggedInTestClient : LoggedOutTestClient;
+
+export const executeQuery = (query: DocumentNode, variables?: object, loggedIn = true) => {
+  return client(loggedIn).query({
     query: query,
     variables: variables
   });
 };
 
-const executeMutation = (mutation: DocumentNode, variables?: object) => {
-  return testClient.mutate({
+export const executeMutation = (mutation: DocumentNode, variables?: object, loggedIn = true) => {
+  return client(loggedIn).mutate({
     mutation: mutation,
     variables: variables
   });
 };
-
-export { executeQuery, executeMutation };

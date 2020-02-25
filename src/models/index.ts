@@ -6,6 +6,7 @@ import { ApplicantCapability } from "./ApplicantCapability";
 import { Company } from "./Company";
 import { CompanyPhoneNumber } from "./CompanyPhoneNumber";
 import { CompanyPhoto } from "./CompanyPhoto";
+import { User } from "./User";
 
 const models = [
   Applicant,
@@ -15,7 +16,8 @@ const models = [
   ApplicantCapability,
   Company,
   CompanyPhoneNumber,
-  CompanyPhoto
+  CompanyPhoto,
+  User
 ];
 
 export { models };
