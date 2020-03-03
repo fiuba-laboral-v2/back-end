@@ -1,10 +1,10 @@
-
 import { CareerRepository } from "../../../src/models/Career";
-import { ApplicantRepository, Errors } from "../../../src/models/Applicant";
+import { ApplicantRepository, Errors, IApplicantEditable } from "../../../src/models/Applicant";
 
 import Database from "../../../src/config/Database";
 import { careerMocks } from "../Career/mocks";
 import { applicantMocks } from "./mocks";
+import { CapabilityRepository } from "../../../src/models/Capability";
 
 describe("ApplicantRepository", () => {
   beforeAll(async () => {
@@ -129,5 +129,66 @@ describe("ApplicantRepository", () => {
 
     await expect(ApplicantRepository.findByPadron(applicantData.padron))
       .rejects.toThrow(Errors.ApplicantNotFound);
+  });
+
+  describe("Update", () => {
+    it("Should update all props", async () => {
+      const career = await CareerRepository.create(careerMocks.careerData());
+      const applicantData = applicantMocks.applicantData([career.code]);
+      const applicant = await ApplicantRepository.create(applicantData);
+      const newCareer = await CareerRepository.create(careerMocks.careerData());
+      const newProps: IApplicantEditable = {
+        name: "newName",
+        surname: "newSurname",
+        description: "newDescription",
+        capabilities: ["CSS", "clojure"],
+        careers: [
+          {
+            code: newCareer.code,
+            creditsCount: 8
+          }
+        ]
+      };
+      await ApplicantRepository.update(applicant, newProps);
+      const capabilities = await CapabilityRepository.findByDescription(
+        [...newProps.capabilities, ...applicantData.capabilities]
+      );
+      expect(applicant).toEqual(expect.objectContaining({
+        name: newProps.name,
+        surname: newProps.surname,
+        description: newProps.description
+      }));
+
+      expect(
+        applicant.capabilities.map(capability => capability.description)
+      ).toEqual(expect.arrayContaining(
+        capabilities.map(capability => capability.description)
+      ));
+      expect(
+        applicant.careers.map(aCareer => aCareer.code)
+      ).toEqual(expect.arrayContaining([career.code, newCareer.code]));
+    });
+
+    it("Should update name", async () => {
+      const career = await CareerRepository.create(careerMocks.careerData());
+      const applicantData = applicantMocks.applicantData([career.code]);
+      const applicant = await ApplicantRepository.create(applicantData);
+      const newProps: IApplicantEditable = { name: "newName" };
+      await ApplicantRepository.update(applicant, newProps);
+      expect(applicant).toEqual(expect.objectContaining({
+        name: newProps.name
+      }));
+    });
+
+    it("Should update surname", async () => {
+      const career = await CareerRepository.create(careerMocks.careerData());
+      const applicantData = applicantMocks.applicantData([career.code]);
+      const applicant = await ApplicantRepository.create(applicantData);
+      const newProps: IApplicantEditable = { surname: "newSurname" };
+      await ApplicantRepository.update(applicant, newProps);
+      expect(applicant).toEqual(expect.objectContaining({
+        surname: newProps.surname
+      }));
+    });
   });
 });

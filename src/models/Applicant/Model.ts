@@ -63,4 +63,24 @@ export class Applicant extends Model<Applicant> {
   public setCareers!: HasManySetAssociationsMixin<Career[], string>;
   public countCareers!: HasManyCountAssociationsMixin;
   public createCareer!: HasManyCreateAssociationMixin<Career>;
+
+  public addCapabilities(newCapabilities: Capability[] = []) {
+    if (this.capabilities) {
+      for (const capability of newCapabilities) {
+        this.capabilities.push(capability);
+      }
+    } else {
+      this.capabilities = newCapabilities;
+    }
+  }
+
+  public addCareers(newCareers: Career[] = []) {
+    if (this.careers) {
+      for (const career of newCareers) {
+        this.careers.push(career);
+      }
+    } else {
+      this.careers = newCareers;
+    }
+  }
 }
