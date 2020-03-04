@@ -14,6 +14,7 @@ export interface IApplicant {
 
 
 export interface IApplicantEditable {
+  padron: number;
   name?: string;
   surname?: string;
   description?: string;
