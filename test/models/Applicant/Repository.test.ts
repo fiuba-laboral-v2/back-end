@@ -205,13 +205,33 @@ describe("ApplicantRepository", () => {
       }));
     });
 
-    it("Should update adding new capacilities", async () => {
+    it("Should update by adding new capacilities", async () => {
       const applicant = await createApplicant();
       const newProps: IApplicantEditable = { capabilities: ["CSS", "clojure"] };
       await ApplicantRepository.update(applicant, newProps);
       expect(
         applicant.capabilities.map(capability => capability.description)
       ).toEqual(expect.arrayContaining(["CSS", "clojure"]));
+    });
+
+    it("Should update by adding new careers", async () => {
+      const applicant = await createApplicant();
+      const newCareer = await CareerRepository.create(careerMocks.careerData());
+      const newProps: IApplicantEditable = {
+        careers: [
+          {
+            code: newCareer.code,
+            creditsCount: 8
+          }
+        ]
+      };
+      await ApplicantRepository.update(applicant, newProps);
+      expect(
+        applicant.careers.map(career => career.code)
+      ).toEqual(expect.arrayContaining([
+        ...applicant.careers.map(career => career.code),
+        newCareer.code
+      ]));
     });
   });
 });
