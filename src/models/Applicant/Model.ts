@@ -1,11 +1,6 @@
 import { Column, DataType, BelongsToMany, Model, Table, Is } from "sequelize-typescript";
 import {
-  HasManyGetAssociationsMixin,
-  HasManyAddAssociationMixin,
-  HasManyHasAssociationMixin,
-  HasManyCountAssociationsMixin,
-  HasManySetAssociationsMixin,
-  HasManyCreateAssociationMixin,
+  HasManyGetAssociationsMixin
 } from "sequelize";
 import { validateName } from "validations-fiuba-laboral-v2";
 import { Career } from "../Career/Model";
@@ -58,29 +53,18 @@ export class Applicant extends Model<Applicant> {
   public capabilities: Capability[];
 
   public getCareers!: HasManyGetAssociationsMixin<Career>;
-  public addCareer!: HasManyAddAssociationMixin<Career,string>;
-  public hasCareers!: HasManyHasAssociationMixin<Career, string>;
-  public setCareers!: HasManySetAssociationsMixin<Career[], string>;
-  public countCareers!: HasManyCountAssociationsMixin;
-  public createCareer!: HasManyCreateAssociationMixin<Career>;
 
   public addCapabilities(newCapabilities: Capability[] = []) {
-    if (this.capabilities) {
-      for (const capability of newCapabilities) {
-        this.capabilities.push(capability);
-      }
-    } else {
-      this.capabilities = newCapabilities;
+    this.capabilities = this.capabilities || [];
+    for (const capability of newCapabilities) {
+      this.capabilities.push(capability);
     }
   }
 
   public addCareers(newCareers: Career[] = []) {
-    if (this.careers) {
-      for (const career of newCareers) {
-        this.careers.push(career);
-      }
-    } else {
-      this.careers = newCareers;
+    this.careers = this.careers || [];
+    for (const career of newCareers) {
+      this.careers.push(career);
     }
   }
 }

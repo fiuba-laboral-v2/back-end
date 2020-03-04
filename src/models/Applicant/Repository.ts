@@ -7,6 +7,7 @@ import { ApplicantNotFound } from "./Errors/ApplicantNotFound";
 import Database from "../../config/Database";
 import map from "lodash/map";
 import find from "lodash/find";
+import pick from "lodash/pick";
 
 export const ApplicantRepository = {
   create: async ({
@@ -91,7 +92,7 @@ export const ApplicantRepository = {
     }
   },
   update: async (applicant: Applicant, newProps: IApplicantEditable) => {
-    await applicant.update(newProps, { validate: true });
+    await applicant.set(pick(newProps, ["name", "surname", "description"]));
     const capabilities = await CapabilityRepository.findOrCreateByDescriptions(
       newProps.capabilities!
     );
