@@ -198,11 +198,20 @@ describe("ApplicantRepository", () => {
 
     it("Should update description", async () => {
       const applicant = await createApplicant();
-      const newProps: IApplicantEditable = { description: "newdescription" };
+      const newProps: IApplicantEditable = { description: "newDescription" };
       await ApplicantRepository.update(applicant, newProps);
       expect(applicant).toEqual(expect.objectContaining({
         description: newProps.description
       }));
+    });
+
+    it("Should update adding new capacilities", async () => {
+      const applicant = await createApplicant();
+      const newProps: IApplicantEditable = { capabilities: ["CSS", "clojure"] };
+      await ApplicantRepository.update(applicant, newProps);
+      expect(
+        applicant.capabilities.map(capability => capability.description)
+      ).toEqual(expect.arrayContaining(["CSS", "clojure"]));
     });
   });
 });
