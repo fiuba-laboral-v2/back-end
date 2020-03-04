@@ -132,10 +132,14 @@ describe("ApplicantRepository", () => {
   });
 
   describe("Update", () => {
-    it("Should update all props", async () => {
+    const createApplicant = async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
       const applicantData = applicantMocks.applicantData([career.code]);
-      const applicant = await ApplicantRepository.create(applicantData);
+      return ApplicantRepository.create(applicantData);
+    };
+
+    it("Should update all props", async () => {
+      const applicant = await createApplicant();
       const newCareer = await CareerRepository.create(careerMocks.careerData());
       const newProps: IApplicantEditable = {
         name: "newName",
@@ -150,9 +154,14 @@ describe("ApplicantRepository", () => {
         ]
       };
       await ApplicantRepository.update(applicant, newProps);
-      const capabilities = await CapabilityRepository.findByDescription(
-        [...newProps.capabilities, ...applicantData.capabilities]
-      );
+      const capabilitiesDescription = [
+        ...newProps.capabilities,
+        ...applicant.capabilities.map(capability => capability.description)
+      ];
+      const careersCodes = [
+        ...applicant.careers.map(career => career.code),
+        newCareer.code
+      ];
       expect(applicant).toEqual(expect.objectContaining({
         name: newProps.name,
         surname: newProps.surname,
@@ -162,17 +171,15 @@ describe("ApplicantRepository", () => {
       expect(
         applicant.capabilities.map(capability => capability.description)
       ).toEqual(expect.arrayContaining(
-        capabilities.map(capability => capability.description)
+        capabilitiesDescription
       ));
       expect(
         applicant.careers.map(aCareer => aCareer.code)
-      ).toEqual(expect.arrayContaining([career.code, newCareer.code]));
+      ).toEqual(expect.arrayContaining(careersCodes));
     });
 
     it("Should update name", async () => {
-      const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantData = applicantMocks.applicantData([career.code]);
-      const applicant = await ApplicantRepository.create(applicantData);
+      const applicant = await createApplicant();
       const newProps: IApplicantEditable = { name: "newName" };
       await ApplicantRepository.update(applicant, newProps);
       expect(applicant).toEqual(expect.objectContaining({
@@ -181,9 +188,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("Should update surname", async () => {
-      const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantData = applicantMocks.applicantData([career.code]);
-      const applicant = await ApplicantRepository.create(applicantData);
+      const applicant = await createApplicant();
       const newProps: IApplicantEditable = { surname: "newSurname" };
       await ApplicantRepository.update(applicant, newProps);
       expect(applicant).toEqual(expect.objectContaining({
@@ -192,9 +197,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("Should update description", async () => {
-      const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantData = applicantMocks.applicantData([career.code]);
-      const applicant = await ApplicantRepository.create(applicantData);
+      const applicant = await createApplicant();
       const newProps: IApplicantEditable = { description: "newdescription" };
       await ApplicantRepository.update(applicant, newProps);
       expect(applicant).toEqual(expect.objectContaining({
