@@ -244,7 +244,8 @@ describe("ApplicantRepository", () => {
         ]
       };
       await expect(ApplicantRepository.update(applicant, newProps))
-        .rejects.toThrow("SequelizeUniqueConstraintError: Validation error");
+        .rejects
+        .toThrow("SequelizeUniqueConstraintError: Validation error");
     });
 
     it("Should raise an error when adding an existing capability", async () => {
@@ -253,7 +254,8 @@ describe("ApplicantRepository", () => {
         capabilities: [applicant.capabilities[0].description]
       };
       await expect(ApplicantRepository.update(applicant, newProps))
-        .rejects.toThrow("SequelizeUniqueConstraintError: Validation error");
+        .rejects
+        .toThrow("SequelizeUniqueConstraintError: Validation error");
     });
   });
 });
