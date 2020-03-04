@@ -190,5 +190,16 @@ describe("ApplicantRepository", () => {
         surname: newProps.surname
       }));
     });
+
+    it("Should update description", async () => {
+      const career = await CareerRepository.create(careerMocks.careerData());
+      const applicantData = applicantMocks.applicantData([career.code]);
+      const applicant = await ApplicantRepository.create(applicantData);
+      const newProps: IApplicantEditable = { description: "newdescription" };
+      await ApplicantRepository.update(applicant, newProps);
+      expect(applicant).toEqual(expect.objectContaining({
+        description: newProps.description
+      }));
+    });
   });
 });
