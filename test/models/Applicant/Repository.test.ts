@@ -4,7 +4,6 @@ import { ApplicantRepository, Errors, IApplicantEditable } from "../../../src/mo
 import Database from "../../../src/config/Database";
 import { careerMocks } from "../Career/mocks";
 import { applicantMocks } from "./mocks";
-import { CapabilityRepository } from "../../../src/models/Capability";
 
 describe("ApplicantRepository", () => {
   beforeAll(async () => {
@@ -232,6 +231,29 @@ describe("ApplicantRepository", () => {
         ...applicant.careers.map(career => career.code),
         newCareer.code
       ]));
+    });
+
+    it("Should raise an error when adding an existing career", async () => {
+      const applicant = await createApplicant();
+      const newProps: IApplicantEditable = {
+        careers: [
+          {
+            code: applicant.careers[0].code,
+            creditsCount: 8
+          }
+        ]
+      };
+      await expect(ApplicantRepository.update(applicant, newProps))
+        .rejects.toThrow("SequelizeUniqueConstraintError: Validation error");
+    });
+
+    it("Should raise an error when adding an existing capability", async () => {
+      const applicant = await createApplicant();
+      const newProps: IApplicantEditable = {
+        capabilities: [applicant.capabilities[0].description]
+      };
+      await expect(ApplicantRepository.update(applicant, newProps))
+        .rejects.toThrow("SequelizeUniqueConstraintError: Validation error");
     });
   });
 });
