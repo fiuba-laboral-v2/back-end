@@ -53,7 +53,6 @@ describe("updateApplicant", () => {
   });
 
   it("update all possible data", async () => {
-    jest.setTimeout(30000000);
     const applicant = await createApplicant();
     const newCareer = await CareerRepository.create(careerMocks.careerData());
     const dataToUpdate = {
