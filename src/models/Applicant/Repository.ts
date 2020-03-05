@@ -6,7 +6,6 @@ import { CareerApplicant } from "../CareerApplicant";
 import { ApplicantNotFound } from "./Errors/ApplicantNotFound";
 import Database from "../../config/Database";
 import map from "lodash/map";
-import find from "lodash/find";
 import pick from "lodash/pick";
 
 export const ApplicantRepository = {
@@ -42,27 +41,8 @@ export const ApplicantRepository = {
     const transaction = await Database.transaction();
     try {
       await applicant.save({ transaction });
-      applicant.addCareers(careers);
-      for (const career of careers) {
-        const applicantCareer = find(applicantCareers, c => c.code === career.code);
-        await CareerApplicant.create(
-          {
-            careerCode: career.code,
-            applicantUuid: applicant.uuid,
-            creditsCount: applicantCareer!.creditsCount
-          },
-          { transaction }
-        );
-      }
-
-      applicant.addCapabilities(capabilities);
-      for (const capability of capabilities) {
-        await ApplicantCapability.create(
-          { capabilityUuid: capability.uuid , applicantUuid: applicant.uuid},
-          { transaction }
-        );
-      }
-
+      await applicant.addCareers(careers, applicantCareers, transaction);
+      await applicant.addCapabilities(capabilities, transaction);
       await transaction.commit();
       return applicant;
     } catch (error) {
