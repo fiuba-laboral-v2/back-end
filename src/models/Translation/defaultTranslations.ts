@@ -8,6 +8,11 @@ export const defaultTranslations = {
     explanation: "Así se va a mostrar a los postulantes"
   },
   applicant: {
+    edit: {
+      myDetail: "Editando Mi perfil",
+      editing: "Editando",
+      explanation: "Ahora puede editar su perfil"
+    },
     title: "Mi Perfil",
     explanation: "Así se va a mostrar un postulante una empresa",
     padron: "Padron",
