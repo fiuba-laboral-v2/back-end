@@ -13,7 +13,10 @@ export const defaultTranslations = {
     padron: "Padron",
     capabilities: "Aptitudes",
     careers: "Carreras",
-    credits: "Créditos"
+    credits: "Créditos",
+    description: "Descripción",
+    name: "Nombre",
+    lastName: "Apellido"
   },
   applicants: "Postulantes",
   companies: "Empresas",
