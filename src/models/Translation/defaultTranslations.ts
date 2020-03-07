@@ -23,6 +23,9 @@ export const defaultTranslations = {
     name: "Nombre",
     lastName: "Apellido"
   },
+  career: {
+    selectACareer: "Seleccione una careera"
+  },
   applicants: "Postulantes",
   companies: "Empresas",
   edit: "Editar"
