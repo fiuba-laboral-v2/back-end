@@ -1,12 +1,13 @@
 import { Applicant, IApplicant, IApplicantEditable, IApplicantCareer } from "./index";
-import { CareerRepository, Career } from "../Career";
+import { Career } from "../Career";
 import { CapabilityRepository, Capability } from "../Capability";
 import { ApplicantCapability } from "../ApplicantCapability";
 import { CareerApplicant } from "../CareerApplicant";
 import { ApplicantNotFound } from "./Errors/ApplicantNotFound";
 import Database from "../../config/Database";
-import map from "lodash/map";
 import pick from "lodash/pick";
+import { Transaction } from "sequelize";
+import { CareerApplicantRepository } from "../CareerApplicant/Repository";
 
 export const ApplicantRepository = {
   create: async ({
@@ -36,13 +37,15 @@ export const ApplicantRepository = {
     applicantCareers: IApplicantCareer[] = [],
     capabilities: Capability[] = []
   ) => {
-    const careers = applicantCareers.length > 0 ?
-      await CareerRepository.findByCodes(map(applicantCareers, career => career.code)): [];
     const transaction = await Database.transaction();
     try {
       await applicant.save({ transaction });
-      await applicant.addCareers(careers, applicantCareers, transaction);
-      await applicant.addCapabilities(capabilities, transaction);
+      await ApplicantRepository.updateOrCreateCareersApplicants(
+        applicant,
+        applicantCareers,
+        transaction
+      );
+      await ApplicantRepository.addCapabilities(applicant, capabilities, transaction);
       await transaction.commit();
       return applicant;
     } catch (error) {
@@ -71,12 +74,56 @@ export const ApplicantRepository = {
       throw new Error(error);
     }
   },
+  addCapabilities: async (
+    applicant: Applicant,
+    capabilities: Capability[],
+    transaction?: Transaction
+  ) => {
+    applicant.capabilities = applicant.capabilities || [];
+    for (const capability of capabilities) {
+      await ApplicantCapability.create(
+        { capabilityUuid: capability.uuid , applicantUuid: applicant.uuid},
+        { transaction }
+      );
+      applicant.capabilities.push(capability);
+    }
+    return applicant;
+  },
+  updateOrCreateCareersApplicants: async (
+    applicant: Applicant,
+    applicantCareers: IApplicantCareer[],
+    transaction?: Transaction
+  ) => {
+    for (const applicantCareer of applicantCareers) {
+      await CareerApplicantRepository.updateOrCreate(
+        applicant,
+        applicantCareer,
+        transaction
+      );
+    }
+    return applicant;
+  },
   update: async (applicant: Applicant, newProps: IApplicantEditable) => {
-    await applicant.set(pick(newProps, ["name", "surname", "description"]));
     const capabilities = await CapabilityRepository.findOrCreateByDescriptions(
       newProps.capabilities!
     );
-    return ApplicantRepository.save(applicant, newProps.careers, capabilities);
+    const transaction = await Database.transaction();
+    try {
+      await applicant.update(
+        pick(newProps, ["name", "surname", "description"]),
+        { validate: true, transaction: transaction }
+      );
+      await ApplicantRepository.updateOrCreateCareersApplicants(
+        applicant,
+        newProps.careers || [],
+        transaction);
+      await ApplicantRepository.addCapabilities(applicant, capabilities, transaction);
+      await transaction.commit();
+      return applicant;
+    } catch (error) {
+      await transaction.rollback();
+      throw new Error(error);
+    }
   },
   truncate: async () =>
     Applicant.truncate({ cascade: true })

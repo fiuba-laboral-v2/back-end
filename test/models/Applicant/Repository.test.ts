@@ -253,23 +253,6 @@ describe("ApplicantRepository", () => {
       ]));
     });
 
-    it("Should raise an error when adding an existing career", async () => {
-      const padron = (await createApplicant()).padron;
-      const applicant = await ApplicantRepository.findByPadron(padron);
-      const newProps: IApplicantEditable = {
-        padron: applicant.padron,
-        careers: [
-          {
-            code: applicant.careers[0].code,
-            creditsCount: 8
-          }
-        ]
-      };
-      await expect(ApplicantRepository.update(applicant, newProps))
-        .rejects
-        .toThrow("SequelizeUniqueConstraintError: Validation error");
-    });
-
     it("Should raise an error when adding an existing capability", async () => {
       const padron = (await createApplicant()).padron;
       const applicant = await ApplicantRepository.findByPadron(padron);
@@ -280,6 +263,24 @@ describe("ApplicantRepository", () => {
       await expect(ApplicantRepository.update(applicant, newProps))
         .rejects
         .toThrow("SequelizeUniqueConstraintError: Validation error");
+    });
+
+    it("Should update credits count of applicant careers", async () => {
+      const padron = (await createApplicant()).padron;
+      const applicant = await ApplicantRepository.findByPadron(padron);
+      const career = applicant.careers[0];
+      const newProps: IApplicantEditable = {
+        padron: applicant.padron,
+        careers: [
+          {
+            code: career.code,
+            creditsCount: 100
+          }
+        ]
+      };
+      await ApplicantRepository.update(applicant, newProps);
+      expect(applicant.careers[0].CareerApplicant.creditsCount)
+        .toEqual(newProps.careers[0].creditsCount);
     });
   });
 });
