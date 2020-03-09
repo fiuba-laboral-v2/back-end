@@ -125,6 +125,28 @@ export const ApplicantRepository = {
       throw new Error(error);
     }
   },
+  deleteCapabilities: async (applicant: Applicant, descriptions: string[]) => {
+    const uuids = applicant.capabilities
+      .filter(c => descriptions.includes(c.description))
+      .map(c => c.uuid);
+    await ApplicantCapability.destroy(
+      { where: { applicantUuid: applicant.uuid, capabilityUuid: uuids } }
+    );
+    applicant.capabilities = applicant.capabilities
+      .filter(capabilities => !uuids.includes(capabilities.uuid));
+    return applicant;
+  },
+  deleteCareers: async (applicant: Applicant, careerCodes: string[]) => {
+    const codes = applicant.careers
+      .filter(c => careerCodes.includes(c.code))
+      .map(c => c.code);
+    await CareerApplicant.destroy(
+      { where: { applicantUuid: applicant.uuid, careerCode: codes } }
+    );
+    applicant.careers = applicant.careers
+      .filter(capabilities => !codes.includes(capabilities.code));
+    return applicant;
+  },
   truncate: async () =>
     Applicant.truncate({ cascade: true })
 };

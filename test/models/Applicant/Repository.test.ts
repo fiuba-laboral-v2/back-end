@@ -3,6 +3,7 @@ import { ApplicantRepository, Errors, IApplicantEditable } from "../../../src/mo
 
 import Database from "../../../src/config/Database";
 import { careerMocks } from "../Career/mocks";
+import { capabilityMocks } from "../Capability/mocks";
 import { applicantMocks } from "./mocks";
 
 describe("ApplicantRepository", () => {
@@ -97,18 +98,6 @@ describe("ApplicantRepository", () => {
       }
     });
     expect(applicant.capabilities[0].description).toEqual(applicantData.capabilities[0]);
-  });
-
-  it("can delete an applicant by uuid", async () => {
-    const career = await CareerRepository.create(careerMocks.careerData());
-    const applicantData = applicantMocks.applicantData([career.code]);
-    const savedApplicant = await ApplicantRepository.create(applicantData);
-
-    await ApplicantRepository.deleteByUuid(savedApplicant.uuid);
-
-    const applicant = await ApplicantRepository.findByUuid(savedApplicant.uuid);
-
-    expect(applicant).toBeNull();
   });
 
   it("can create an applicant without a career and without capabilities", async () => {
@@ -281,6 +270,61 @@ describe("ApplicantRepository", () => {
       await ApplicantRepository.update(applicant, newProps);
       expect(applicant.careers[0].CareerApplicant.creditsCount)
         .toEqual(newProps.careers[0].creditsCount);
+    });
+  });
+
+  describe("Delete", () => {
+    it("should delete an applicant by uuid", async () => {
+      const career = await CareerRepository.create(careerMocks.careerData());
+      const applicantData = applicantMocks.applicantData([career.code]);
+      const savedApplicant = await ApplicantRepository.create(applicantData);
+
+      await ApplicantRepository.deleteByUuid(savedApplicant.uuid);
+
+      const applicant = await ApplicantRepository.findByUuid(savedApplicant.uuid);
+
+      expect(applicant).toBeNull();
+    });
+
+    it("should delete all applicant capabilities", async () => {
+      const career = await CareerRepository.create(careerMocks.careerData());
+      const capabilities = capabilityMocks.capabilitiesData(3);
+      const applicantData = applicantMocks.applicantData(
+        [career.code],
+        capabilities.map(c => c.description)
+      );
+      const applicant = await ApplicantRepository.create(applicantData);
+
+      expect(applicant.capabilities.length).toEqual(capabilities.length);
+
+      await ApplicantRepository.deleteCapabilities(
+        applicant, capabilities.map(c => c.description)
+      );
+      expect(applicant.capabilities.length).toEqual(0);
+    });
+
+    it("should delete all applicant careers", async () => {
+      const careers = await careerMocks.createCareers(10);
+      const codes = careers.map(c => c.code);
+      const applicantData = applicantMocks.applicantData(codes);
+      const applicant = await ApplicantRepository.create(applicantData);
+      expect(applicant.careers.length).toEqual(careers.length);
+      await ApplicantRepository.deleteCareers(applicant, codes);
+      expect(applicant.careers.length).toEqual(0);
+    });
+
+    it("should not delete when deleting a not existing applicant capability", async () => {
+      const career = await CareerRepository.create(careerMocks.careerData());
+      const applicantData = applicantMocks.applicantData(
+        [career.code],
+        ["capability_1"]);
+      const applicant = await ApplicantRepository.create(applicantData);
+      const numberOfCapabilitiesBefore = applicant.capabilities.length;
+      await ApplicantRepository.deleteCapabilities(
+        applicant,
+        ["not existing description"]
+      );
+      expect(applicant.capabilities.length).toEqual(numberOfCapabilitiesBefore);
     });
   });
 });
