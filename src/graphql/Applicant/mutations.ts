@@ -64,6 +64,38 @@ const applicantMutations = {
       await ApplicantRepository.update(applicant, props);
       return ApplicantSerializer.serialize(applicant);
     }
+  },
+  deleteApplicantCapabilities: {
+    type: GraphQLApplicant,
+    args: {
+      padron: {
+        type: nonNull(Int)
+      },
+      capabilities: {
+        type: List(String)
+      }
+    },
+    resolve: async (_: undefined, props: { padron: number, capabilities: string[] }) => {
+      const applicant = await ApplicantRepository.findByPadron(props.padron);
+      await ApplicantRepository.deleteCapabilities(applicant, props.capabilities);
+      return ApplicantSerializer.serialize(applicant);
+    }
+  },
+  deleteApplicantCareers: {
+    type: GraphQLApplicant,
+    args: {
+      padron: {
+        type: nonNull(Int)
+      },
+      careersCodes: {
+        type: List(String)
+      }
+    },
+    resolve: async (_: undefined, props: { padron: number, careersCodes: string[] }) => {
+      const applicant = await ApplicantRepository.findByPadron(props.padron);
+      await ApplicantRepository.deleteCareers(applicant, props.careersCodes);
+      return ApplicantSerializer.serialize(applicant);
+    }
   }
 };
 
