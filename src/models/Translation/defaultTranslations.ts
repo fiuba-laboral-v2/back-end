@@ -23,6 +23,8 @@ export const defaultTranslations = {
     name: "Nombre",
     lastName: "Apellido"
   },
+  save: "Guardar",
+  cancel: "Cancelar",
   career: {
     selectACareer: "Seleccione una careera"
   },
