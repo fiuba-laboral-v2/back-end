@@ -45,7 +45,11 @@ export const ApplicantRepository = {
         applicantCareers,
         transaction
       );
-      await ApplicantRepository.addCapabilities(applicant, capabilities, transaction);
+      await ApplicantRepository.updateOrCreateApplicantCapabilities(
+        applicant,
+        capabilities,
+        transaction
+      );
       await transaction.commit();
       return applicant;
     } catch (error) {
@@ -74,13 +78,14 @@ export const ApplicantRepository = {
       throw new Error(error);
     }
   },
-  addCapabilities: async (
+  updateOrCreateApplicantCapabilities: async (
     applicant: Applicant,
     capabilities: Capability[],
     transaction?: Transaction
   ) => {
     applicant.capabilities = applicant.capabilities || [];
     for (const capability of capabilities) {
+      if (applicant.hasCapability(capability)) continue;
       await ApplicantCapability.create(
         { capabilityUuid: capability.uuid , applicantUuid: applicant.uuid},
         { transaction }
@@ -116,8 +121,13 @@ export const ApplicantRepository = {
       await ApplicantRepository.updateOrCreateCareersApplicants(
         applicant,
         newProps.careers || [],
-        transaction);
-      await ApplicantRepository.addCapabilities(applicant, capabilities, transaction);
+        transaction
+      );
+      await ApplicantRepository.updateOrCreateApplicantCapabilities(
+        applicant,
+        capabilities,
+        transaction
+      );
       await transaction.commit();
       return applicant;
     } catch (error) {

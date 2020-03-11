@@ -242,16 +242,14 @@ describe("ApplicantRepository", () => {
       ]));
     });
 
-    it("Should raise an error when adding an existing capability", async () => {
+    it("Should not raise an error when adding an existing capability", async () => {
       const padron = (await createApplicant()).padron;
       const applicant = await ApplicantRepository.findByPadron(padron);
       const newProps: IApplicantEditable = {
         padron: applicant.padron,
         capabilities: [applicant.capabilities[0].description]
       };
-      await expect(ApplicantRepository.update(applicant, newProps))
-        .rejects
-        .toThrow("SequelizeUniqueConstraintError: Validation error");
+      await expect(ApplicantRepository.update(applicant, newProps)).resolves.not.toThrow();
     });
 
     it("Should update credits count of applicant careers", async () => {

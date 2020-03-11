@@ -5,6 +5,7 @@ import { Career } from "../Career/Model";
 import { CareerApplicant } from "../CareerApplicant/Model";
 import { Capability } from "../Capability/Model";
 import { ApplicantCapability } from "../ApplicantCapability/Model";
+import { ICapability } from "../Capability";
 
 
 @Table({
@@ -51,4 +52,10 @@ export class Applicant extends Model<Applicant> {
   public capabilities: Capability[];
 
   public getCareers!: HasManyGetAssociationsMixin<Career>;
+
+  public hasCapability(capability: ICapability) {
+    return this.capabilities
+      .map(({ description }: ICapability) => description)
+      .includes(capability.description);
+  }
 }
