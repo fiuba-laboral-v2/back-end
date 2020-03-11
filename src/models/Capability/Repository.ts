@@ -26,9 +26,8 @@ export const CapabilityRepository = {
     const transaction = await Database.transaction();
     try {
       await ApplicantCapability.destroy({ where: { capabilityUuid: code }, transaction});
-      const careerDestroyed = await Capability.destroy({ where: { code }, transaction });
+      await Capability.destroy({ where: { code }, transaction });
       await transaction.commit();
-      return careerDestroyed;
     } catch (error) {
       await transaction.rollback();
       throw new Error(error);
