@@ -21,7 +21,7 @@ export const CareerApplicantRepository = {
     return career.CareerApplicant.update(
       { creditsCount: applicantCareer!.creditsCount },
       { validate: true, transaction: transaction }
-      );
+    );
   },
   create: async (
     applicant: Applicant,
