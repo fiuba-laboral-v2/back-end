@@ -21,8 +21,7 @@ export const ApplicantRepository = {
     const capabilityModels: Capability[] = [];
 
     for (const capability of capabilities) {
-      const result = await CapabilityRepository.findOrCreate(capability);
-      capabilityModels.push(result[0]);
+      capabilityModels.push(await CapabilityRepository.findOrCreate(capability));
     }
     const applicant = new Applicant({
       name,
