@@ -123,28 +123,12 @@ export const ApplicantRepository = {
     const capabilities = await CapabilityRepository.findOrCreateByDescriptions(
       newProps.capabilities!
     );
-    const transaction = await Database.transaction();
-    try {
-      await applicant.update(
-        pick(newProps, ["name", "surname", "description"]),
-        { validate: true, transaction: transaction }
-      );
-      await ApplicantRepository.updateOrCreateCareersApplicants(
-        applicant,
-        newProps.careers || [],
-        transaction
-      );
-      await ApplicantRepository.updateOrCreateApplicantCapabilities(
-        applicant,
-        capabilities,
-        transaction
-      );
-      await transaction.commit();
-      return applicant;
-    } catch (error) {
-      await transaction.rollback();
-      throw new Error(error);
-    }
+    await applicant.set(pick(newProps, ["name", "surname", "description"]));
+    return ApplicantRepository.save(
+      applicant,
+      newProps.careers || [],
+      capabilities
+    );
   },
   deleteCapabilities: async (applicant: Applicant, descriptions: string[]) => {
     const uuids = applicant.capabilities
