@@ -44,7 +44,7 @@ describe("deleteApplicantCapabilities", () => {
 
   it("should delete all applicant capabilities", async () => {
     const career = await CareerRepository.create(careerMocks.careerData());
-    const capabilities = capabilityMocks.capabilitiesData(3);
+    const capabilities = capabilityMocks.capabilitiesData({ size: 3 });
     const descriptions = capabilities.map(c => c.description);
     const applicantData = applicantMocks.applicantData(
       [career.code],

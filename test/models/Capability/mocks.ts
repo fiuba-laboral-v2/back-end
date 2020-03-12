@@ -6,7 +6,7 @@ const capabilityMocks = {
     uuid: "faker.random",
     description: faker.random.words()
   }),
-  capabilitiesData: (size: number) => {
+  capabilitiesData: ({ size }: { size: number }) => {
     const descriptions: ICapability[] = [];
     for (let i = 0; i < size ; i++) {
       descriptions.push(capabilityMocks.capabilityData());
