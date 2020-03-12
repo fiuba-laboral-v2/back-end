@@ -57,9 +57,21 @@ export const ApplicantRepository = {
     }
   },
   findByUuid: async (uuid: string)  =>
-    Applicant.findByPk(uuid, { include: [Career, Capability] }),
+    Applicant.findByPk(uuid, {
+      include: [
+        { model: Career, include: [ CareerApplicant ] },
+        Capability
+      ]
+    }),
   findByPadron: async (padron: number) => {
-    const applicant =  await Applicant.findOne({ where: { padron }, include: [Career, Capability]});
+    const applicant =  await Applicant.findOne(
+      {
+        where: { padron },
+        include: [
+          { model: Career, include: [ CareerApplicant ] },
+          Capability
+        ]
+      });
     if (!applicant) throw new ApplicantNotFound(padron);
 
     return applicant;
@@ -153,7 +165,7 @@ export const ApplicantRepository = {
       { where: { applicantUuid: applicant.uuid, careerCode: codes } }
     );
     applicant.careers = applicant.careers
-      .filter(capabilities => !codes.includes(capabilities.code));
+      .filter(({ code }: Career) => !codes.includes(code));
     return applicant;
   },
   truncate: async () =>

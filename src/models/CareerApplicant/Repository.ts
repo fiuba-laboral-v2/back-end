@@ -12,13 +12,19 @@ export const CareerApplicantRepository = {
   ) => {
     const career = find(applicant.careers, c => c.code === applicantCareer.code);
     if (!career) {
-      await CareerApplicantRepository.create(applicant, applicantCareer, transaction);
+      const careerApplicant = await CareerApplicantRepository.create(
+        applicant,
+        applicantCareer,
+        transaction
+      );
       const newCareer = await CareerRepository.findByCode(applicantCareer.code);
+      newCareer.careerApplicant = careerApplicant;
       applicant.careers = applicant.careers || [];
-      return applicant.careers.push(newCareer);
+      applicant.careers.push(newCareer);
+      return careerApplicant;
     }
 
-    return career.CareerApplicant.update(
+    return career.careerApplicant.update(
       { creditsCount: applicantCareer!.creditsCount },
       { validate: true, transaction: transaction }
     );

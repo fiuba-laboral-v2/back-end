@@ -266,7 +266,7 @@ describe("ApplicantRepository", () => {
         ]
       };
       await ApplicantRepository.update(applicant, newProps);
-      expect(applicant.careers[0].CareerApplicant.creditsCount)
+      expect(applicant.careers[0].careerApplicant.creditsCount)
         .toEqual(newProps.careers[0].creditsCount);
     });
   });
