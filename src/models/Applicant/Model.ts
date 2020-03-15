@@ -1,17 +1,11 @@
 import { Column, DataType, BelongsToMany, Model, Table, Is } from "sequelize-typescript";
-import {
-  HasManyGetAssociationsMixin,
-  HasManyAddAssociationMixin,
-  HasManyHasAssociationMixin,
-  HasManyCountAssociationsMixin,
-  HasManySetAssociationsMixin,
-  HasManyCreateAssociationMixin,
-} from "sequelize";
+import { HasManyGetAssociationsMixin } from "sequelize";
 import { validateName } from "validations-fiuba-laboral-v2";
 import { Career } from "../Career/Model";
 import { CareerApplicant } from "../CareerApplicant/Model";
 import { Capability } from "../Capability/Model";
 import { ApplicantCapability } from "../ApplicantCapability/Model";
+import { ICapability } from "../Capability";
 
 
 @Table({
@@ -58,9 +52,10 @@ export class Applicant extends Model<Applicant> {
   public capabilities: Capability[];
 
   public getCareers!: HasManyGetAssociationsMixin<Career>;
-  public addCareer!: HasManyAddAssociationMixin<Career,string>;
-  public hasCareers!: HasManyHasAssociationMixin<Career, string>;
-  public setCareers!: HasManySetAssociationsMixin<Career[], string>;
-  public countCareers!: HasManyCountAssociationsMixin;
-  public createCareer!: HasManyCreateAssociationMixin<Career>;
+
+  public hasCapability(capability: ICapability) {
+    return this.capabilities
+      .map(({ description }: ICapability) => description)
+      .includes(capability.description);
+  }
 }

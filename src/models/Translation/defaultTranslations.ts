@@ -8,12 +8,25 @@ export const defaultTranslations = {
     explanation: "Así se va a mostrar a los postulantes"
   },
   applicant: {
+    edit: {
+      myDetail: "Editando Mi perfil",
+      editing: "Editando",
+      explanation: "Ahora puede editar su perfil"
+    },
     title: "Mi Perfil",
     explanation: "Así se va a mostrar un postulante una empresa",
     padron: "Padron",
     capabilities: "Aptitudes",
     careers: "Carreras",
-    credits: "Créditos"
+    creditsProgress: "% de los créditos aprobados",
+    description: "Descripción",
+    name: "Nombre",
+    lastName: "Apellido"
+  },
+  save: "Guardar",
+  cancel: "Cancelar",
+  career: {
+    selectACareer: "Seleccione una careera"
   },
   applicants: "Postulantes",
   companies: "Empresas",

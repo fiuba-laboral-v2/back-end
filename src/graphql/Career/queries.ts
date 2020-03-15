@@ -1,6 +1,7 @@
 import { GraphQLCareer } from "./Types/Career";
-import { ID, nonNull } from "../fieldTypes";
+import { List, ID, nonNull } from "../fieldTypes";
 import {
+  Career,
   CareerRepository,
   CareerSerializer
 } from "../../models/Career";
@@ -16,6 +17,13 @@ const careerQueries = {
     resolve: async (_: undefined, { code }) => {
       const career = await CareerRepository.findByCode(code);
       return CareerSerializer.serialize(career);
+    }
+  },
+  getCareers: {
+    type: List(GraphQLCareer),
+    resolve: async () => {
+      const careers = await CareerRepository.findAll();
+      return careers.map((career: Career) => CareerSerializer.serialize(career));
     }
   }
 };
