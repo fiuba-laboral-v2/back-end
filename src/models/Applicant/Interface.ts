@@ -1,4 +1,4 @@
-interface IApplicantCareer {
+export interface IApplicantCareer {
   code: string;
   creditsCount: number;
 }
@@ -9,5 +9,15 @@ export interface IApplicant {
   padron: number;
   description?: string;
   careers: IApplicantCareer[];
+  capabilities?: string[];
+}
+
+
+export interface IApplicantEditable {
+  padron: number;
+  name?: string;
+  surname?: string;
+  description?: string;
+  careers?: IApplicantCareer[];
   capabilities?: string[];
 }

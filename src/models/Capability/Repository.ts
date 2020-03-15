@@ -10,17 +10,25 @@ export const CapabilityRepository = {
   },
   findByDescription: async (description: string[])  =>
     Capability.findAll({ where: { description: { [Op.or]: description }} }),
-  findOrCreate: async (description: string) =>
-    Capability.findOrCreate({ where: { description } }),
+  findOrCreate: async (description: string) => {
+    const [ capability ] = await Capability.findOrCreate({ where: { description } });
+    return capability;
+  },
+  findOrCreateByDescriptions: async (descriptions: string[] = []) => {
+    const capabilities: Capability[] = [];
+    for (const description of descriptions) {
+      capabilities.push(await CapabilityRepository.findOrCreate(description));
+    }
+    return capabilities;
+  },
   findAll: async () =>
     Capability.findAll(),
   deleteByCode: async (code: string) => {
     const transaction = await Database.transaction();
     try {
       await ApplicantCapability.destroy({ where: { capabilityUuid: code }, transaction});
-      const carrerDestroyed = await Capability.destroy({ where: { code }, transaction });
+      await Capability.destroy({ where: { code }, transaction });
       await transaction.commit();
-      return carrerDestroyed;
     } catch (error) {
       await transaction.rollback();
       throw new Error(error);
