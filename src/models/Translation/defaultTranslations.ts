@@ -13,7 +13,19 @@ export const defaultTranslations = {
     padron: "Padron",
     capabilities: "Aptitudes",
     careers: "Carreras",
-    credits: "Créditos"
+    credits: "Créditos",
+    signUp: {
+      title: "Registro",
+      email: "Email",
+      password: "Contraseña",
+      name: "Nombre",
+      surname: "Apellido",
+      padron: "Padron",
+      careersTitle: "Elegi tu carrera",
+      credits: "Créditos acumulados",
+      addCareerBtn: "Agregar carrera",
+      submit: "Enviar"
+    }
   },
   applicants: "Postulantes",
   companies: "Empresas",

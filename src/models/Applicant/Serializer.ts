@@ -15,6 +15,7 @@ const applicantCareerMapper = async (applicant: Applicant) => {
 
 const ApplicantSerializer = {
   serialize: (applicant: Applicant) => ({
+    uuid: applicant.uuid,
     name: applicant.name,
     surname: applicant.surname,
     padron: applicant.padron,
