@@ -1,6 +1,7 @@
 import { GraphQLCareer } from "./Types/Career";
 import { ID, List, nonNull } from "../fieldTypes";
 import {
+  Career,
   CareerRepository,
   CareerSerializer
 } from "../../models/Career";
