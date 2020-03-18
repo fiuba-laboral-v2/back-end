@@ -18,10 +18,23 @@ export const defaultTranslations = {
     padron: "Padron",
     capabilities: "Aptitudes",
     careers: "Carreras",
+    credits: "Créditos",
     creditsProgress: "% de los créditos aprobados",
     description: "Descripción",
     name: "Nombre",
-    lastName: "Apellido"
+    lastName: "Apellido",
+    signUp: {
+      title: "Registro",
+      email: "Email",
+      password: "Contraseña",
+      name: "Nombre",
+      surname: "Apellido",
+      padron: "Padron",
+      careersTitle: "Elegi tu carrera",
+      credits: "Créditos acumulados",
+      addCareerBtn: "Agregar carrera",
+      submit: "Enviar"
+    }
   },
   save: "Guardar",
   cancel: "Cancelar",
