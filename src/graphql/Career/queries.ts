@@ -20,7 +20,7 @@ const careerQueries = {
   },
   getCareers: {
     type: List(GraphQLCareer),
-    resolve: async (_: undefined, { code }) => {
+    resolve: async () => {
       const careers = await CareerRepository.findAll();
       return careers.map(career => CareerSerializer.serialize(career));
     }
