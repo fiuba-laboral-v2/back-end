@@ -42,6 +42,14 @@ describe("ApplicantRepository", () => {
     expect(applicant.capabilities[0].description).toEqual(applicantData.capabilities[0]);
   });
 
+  it("should create two valid applicant in the same career", async () => {
+    const career = await CareerRepository.create(careerMocks.careerData());
+    await ApplicantRepository.create(applicantMocks.applicantData([career.code]));
+    await expect(
+      ApplicantRepository.create(applicantMocks.applicantData([career.code]))
+    ).resolves.not.toThrow(Errors.ApplicantNotFound);
+  });
+
   it("can retreive an applicant by padron", async () => {
     const career = await CareerRepository.create(careerMocks.careerData());
     const applicantData = applicantMocks.applicantData([career.code]);
