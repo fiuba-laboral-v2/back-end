@@ -8,8 +8,6 @@ interface IApplicantsData {
   numberOfApplicantsData: number;
 }
 
-const range = n => [  ...Array(n).keys() ];
-
 const applicantMocks = {
   applicantData: (
     careersCodes: string[],
@@ -30,7 +28,7 @@ const applicantMocks = {
       numberOfApplicantsData
     }: IApplicantsData
   ) => (
-    range(numberOfApplicantsData).map(
+    [ ...Array(numberOfApplicantsData) ].map(
       _ => applicantMocks.applicantData(careersCodes, capabilitiesDescriptions)
     )
   )
