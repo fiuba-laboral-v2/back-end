@@ -2,7 +2,6 @@ import { Applicant, IApplicantCareer } from "../Applicant";
 import { Career, CareerRepository } from "../Career";
 import { CareerApplicant } from "./Model";
 import { CareerApplicantNotFound } from "./Errors";
-import find from "lodash/find";
 import { Transaction } from "sequelize";
 
 export const CareerApplicantRepository = {
@@ -11,7 +10,7 @@ export const CareerApplicantRepository = {
     applicantCareer: IApplicantCareer,
     transaction?: Transaction
   ) => {
-    const career = find(applicant.careers, c => c.code === applicantCareer.code);
+    const career = applicant.careers.find(c => c.code === applicantCareer.code);
     if (!career) {
       const newCareerApplicant = await CareerApplicantRepository.create(
         applicant,
