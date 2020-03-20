@@ -52,8 +52,8 @@ describe("getApplicants", () => {
       const career = await CareerRepository.create(careerMocks.careerData());
       const applicantData = applicantMocks.applicantData([career.code]);
       const applicant = await ApplicantRepository.create(applicantData);
-
       const { data, errors } = await executeQuery(GET_APPLICANTS);
+
       expect(errors).toBeUndefined();
       expect(data.getApplicants).toEqual(expect.arrayContaining(
         [ await ApplicantSerializer.serialize(applicant) ]
