@@ -5,6 +5,7 @@ import Database from "../../../src/config/Database";
 import { careerMocks } from "../Career/mocks";
 import { capabilityMocks } from "../Capability/mocks";
 import { applicantMocks } from "./mocks";
+import { CareerApplicantRepository } from "../../../src/models/CareerApplicant/Repository";
 
 describe("ApplicantRepository", () => {
   beforeAll(async () => {
@@ -274,8 +275,11 @@ describe("ApplicantRepository", () => {
         ]
       };
       await ApplicantRepository.update(applicant, newProps);
-      expect(applicant.careers[0].careerApplicant.creditsCount)
-        .toEqual(newProps.careers[0].creditsCount);
+
+      const careerApplicant = await CareerApplicantRepository.findByApplicantAndCareer(
+        applicant.uuid, career.code
+      );
+      expect(careerApplicant.creditsCount).toEqual(newProps.careers[0].creditsCount);
     });
   });
 

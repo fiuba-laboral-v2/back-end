@@ -1,4 +1,4 @@
-import { Column, DataType, Model, BelongsToMany, Table, HasOne } from "sequelize-typescript";
+import { Column, DataType, Model, BelongsToMany, Table, HasMany } from "sequelize-typescript";
 import { Applicant } from "../Applicant/Model";
 import { CareerApplicant } from "../CareerApplicant/Model";
 
@@ -26,6 +26,6 @@ export class Career extends Model<Career> {
   @BelongsToMany(() => Applicant, () => CareerApplicant)
   public applicants: Applicant[];
 
-  @HasOne(() => CareerApplicant)
-  public careerApplicant: CareerApplicant;
+  @HasMany(() => CareerApplicant)
+  public careersApplicants: CareerApplicant[];
 }

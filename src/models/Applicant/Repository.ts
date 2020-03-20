@@ -56,22 +56,16 @@ export const ApplicantRepository = {
       throw new Error(error);
     }
   },
+  findAll: async () => Applicant.findAll({ include: [ Career, Capability ] }),
   findByUuid: async (uuid: string)  =>
-    Applicant.findByPk(uuid, {
-      include: [
-        { model: Career, include: [ CareerApplicant ] },
-        Capability
-      ]
-    }),
+    Applicant.findByPk(uuid, { include: [ Career, Capability ] }),
   findByPadron: async (padron: number) => {
     const applicant =  await Applicant.findOne(
       {
         where: { padron },
-        include: [
-          { model: Career, include: [ CareerApplicant ] },
-          Capability
-        ]
-      });
+        include: [ Career, Capability ]
+      }
+    );
     if (!applicant) throw new ApplicantNotFound(padron);
 
     return applicant;
