@@ -15,9 +15,10 @@ describe("ApplicantRepository", () => {
   });
 
   beforeEach(async () => {
-    ApplicantRepository.truncate();
-    CareerRepository.truncate();
-    CapabilityRepository.truncate();
+    await CareerApplicantRepository.truncate();
+    await ApplicantRepository.truncate();
+    await CareerRepository.truncate();
+    await CapabilityRepository.truncate();
   });
 
   afterAll(async () => {
@@ -88,7 +89,7 @@ describe("ApplicantRepository", () => {
     expect(applicant.capabilities[0].description).toEqual(applicantData.capabilities[0]);
   });
 
-  it("can retreive an applicant by uuid", async () => {
+  it("can retrieve an applicant by uuid", async () => {
     const career = await CareerRepository.create(careerMocks.careerData());
     const applicantData = applicantMocks.applicantData([career.code]);
     const savedApplicant = await ApplicantRepository.create(applicantData);
@@ -224,7 +225,7 @@ describe("ApplicantRepository", () => {
       }));
     });
 
-    it("Should update by adding new capacilities", async () => {
+    it("Should update by adding new capabilities", async () => {
       const padron = (await createApplicant()).padron;
       const applicant = await ApplicantRepository.findByPadron(padron);
       const newProps: IApplicantEditable = {
