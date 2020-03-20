@@ -1,7 +1,8 @@
 import { Applicant, IApplicantCareer } from "../Applicant";
 import { Career, CareerRepository } from "../Career";
-import find from "lodash/find";
 import { CareerApplicant } from "./Model";
+import { CareerApplicantNotFound } from "./Errors";
+import find from "lodash/find";
 import { Transaction } from "sequelize";
 
 export const CareerApplicantRepository = {
@@ -33,11 +34,11 @@ export const CareerApplicantRepository = {
     );
   },
   findByApplicantAndCareer: async (applicantUuid: string, careerCode: string) => {
-    const careerApplicant =  CareerApplicant.findOne({
+    const careerApplicant =  await CareerApplicant.findOne({
       where: { applicantUuid: applicantUuid, careerCode: careerCode  },
       include: [ Career, Applicant ]
     });
-    if (!careerApplicant) throw new Error("careerApplicant not found");
+    if (!careerApplicant) throw new CareerApplicantNotFound(applicantUuid, careerCode);
 
     return careerApplicant;
   },

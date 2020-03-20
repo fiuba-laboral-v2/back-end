@@ -6,10 +6,18 @@ import { careerMocks } from "../Career/mocks";
 import { capabilityMocks } from "../Capability/mocks";
 import { applicantMocks } from "./mocks";
 import { CareerApplicantRepository } from "../../../src/models/CareerApplicant/Repository";
+import { CareerApplicantNotFound } from "../../../src/models/CareerApplicant/Errors";
+import { CapabilityRepository } from "../../../src/models/Capability";
 
 describe("ApplicantRepository", () => {
   beforeAll(async () => {
     await Database.setConnection();
+  });
+
+  beforeEach(async () => {
+    ApplicantRepository.truncate();
+    CareerRepository.truncate();
+    CapabilityRepository.truncate();
   });
 
   afterAll(async () => {
@@ -335,6 +343,16 @@ describe("ApplicantRepository", () => {
         ["not existing description"]
       );
       expect(applicant.capabilities.length).toEqual(numberOfCapabilitiesBefore);
+    });
+
+    it("Should raise an error if no career applicant is found", async () => {
+      const career = await CareerRepository.create(careerMocks.careerData());
+      const applicantData = applicantMocks.applicantData([career.code]);
+      const applicant = await ApplicantRepository.create(applicantData);
+      await ApplicantRepository.deleteCareers(applicant, [career.code]);
+      await expect(
+        CareerApplicantRepository.findByApplicantAndCareer(applicant.uuid, career.code)
+      ).rejects.toThrow(CareerApplicantNotFound);
     });
   });
 });
