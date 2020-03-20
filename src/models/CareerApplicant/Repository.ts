@@ -19,7 +19,6 @@ export const CareerApplicantRepository = {
       );
       newCareerApplicant.career = await CareerRepository.findByCode(applicantCareer.code);
       newCareerApplicant.applicant = applicant;
-      applicant.careers = applicant.careers || [];
       applicant.careers.push(newCareerApplicant.career);
       return newCareerApplicant;
     }

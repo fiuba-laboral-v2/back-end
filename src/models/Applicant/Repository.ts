@@ -88,7 +88,6 @@ export const ApplicantRepository = {
     capabilities: Capability[],
     transaction?: Transaction
   ) => {
-    applicant.capabilities = applicant.capabilities || [];
     for (const capability of capabilities) {
       if (applicant.hasCapability(capability)) continue;
       await ApplicantCapability.create(
