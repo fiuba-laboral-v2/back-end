@@ -11,8 +11,8 @@ const CompanySerializer = {
       logo: company.logo,
       website: company.website,
       email: company.email,
-      phoneNumbers: company.phoneNumbers?.map(phoneNumber => phoneNumber.phoneNumber) || [],
-      photos: company.photos?.map(photo => photo.photo) || []
+      phoneNumbers: company.phoneNumbers?.map(phoneNumber => phoneNumber.phoneNumber),
+      photos: company.photos?.map(photo => photo.photo)
     };
   }
 };

@@ -22,8 +22,8 @@ import { ICapability } from "../Capability";
 export class Applicant extends Model<Applicant> {
   @BeforeCreate
   public static beforeCreateHook(applicant: Applicant): void {
-    applicant.capabilities = [];
-    applicant.careers = [];
+    applicant.capabilities = applicant.capabilities || [];
+    applicant.careers = applicant.careers || [];
   }
 
   @Column({
