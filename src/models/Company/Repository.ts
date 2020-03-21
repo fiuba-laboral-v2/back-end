@@ -28,13 +28,9 @@ export const CompanyRepository = {
       website,
       email
     });
-    const companyPhoneNumbers: CompanyPhoneNumber[] =
-      CompanyPhoneNumberRepository.build(phoneNumbers);
-    const companyPhotos: CompanyPhoto[] =
-      CompanyPhotoRepository.build(photos);
-    return CompanyRepository.save(
-      company, companyPhoneNumbers, companyPhotos
-    );
+    const companyPhoneNumbers = CompanyPhoneNumberRepository.build(phoneNumbers);
+    const companyPhotos = CompanyPhotoRepository.build(photos);
+    return CompanyRepository.save(company, companyPhoneNumbers, companyPhotos);
   },
   save: async (
     company: Company,
@@ -52,8 +48,6 @@ export const CompanyRepository = {
         photo.companyId = company.id;
         await photo.save({ transaction: transaction });
       }
-      company.photos = photos;
-      company.phoneNumbers = phoneNumbers;
       await transaction.commit();
       return company;
     } catch (error) {
@@ -62,15 +56,13 @@ export const CompanyRepository = {
     }
   },
   findById: async (id: number) => {
-    const company = await Company.findByPk(
-      id,
-      { include: [ CompanyPhoneNumber, CompanyPhoto ] }
-    );
+    const company = await Company.findByPk(id);
     if (!company)  throw new CompanyNotFoundError(id);
+
     return company;
   },
   findAll: async () => {
-    return Company.findAll({});
+    return Company.findAll();
   },
   truncate: async () => {
     return Company.truncate({ cascade: true });

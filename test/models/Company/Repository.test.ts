@@ -40,10 +40,10 @@ describe("CompanyRepository", () => {
       website: companyCompleteData.website,
       email: companyCompleteData.email
     }));
-    expect(company.phoneNumbers).toHaveLength(
+    expect((await company.getPhoneNumbers())).toHaveLength(
       companyCompleteData.phoneNumbers.length
     );
-    expect(company.photos).toHaveLength(
+    expect((await company.getPhotos())).toHaveLength(
       companyCompleteData.photos.length
     );
   });
@@ -71,9 +71,17 @@ describe("CompanyRepository", () => {
     const expectedCompany = await CompanyRepository.findById(company.id);
     expect(expectedCompany).not.toBeNull();
     expect(expectedCompany).not.toBeUndefined();
-    expect(expectedCompany!.id).toEqual(company.id);
-    expect(expectedCompany!.photos).toHaveLength(company.photos.length);
-    expect(expectedCompany!.phoneNumbers).toHaveLength(company.phoneNumbers.length);
+    expect(expectedCompany.id).toEqual(company.id);
+    expect(
+      (await expectedCompany.getPhotos())
+    ).toHaveLength(
+      (await company.getPhotos()).length
+    );
+    expect(
+      (await expectedCompany.getPhoneNumbers())
+    ).toHaveLength(
+      (await company.getPhoneNumbers()).length
+    );
   });
 
 
