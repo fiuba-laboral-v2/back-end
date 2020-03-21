@@ -1,5 +1,5 @@
 import { GraphQLApplicant } from "./Types/Applicant";
-import { nonNull, Int } from "../fieldTypes";
+import { nonNull, Int, List } from "../fieldTypes";
 import {
   ApplicantRepository,
   ApplicantSerializer
@@ -16,6 +16,13 @@ const applicantQueries = {
     resolve: async (_: undefined, { padron }) => {
       const applicant = await ApplicantRepository.findByPadron(padron);
       return ApplicantSerializer.serialize(applicant);
+    }
+  },
+  getApplicants: {
+    type: List(GraphQLApplicant),
+    resolve: async () => {
+      const applicants = await ApplicantRepository.findAll();
+      return applicants.map(applicant => ApplicantSerializer.serialize(applicant));
     }
   }
 };

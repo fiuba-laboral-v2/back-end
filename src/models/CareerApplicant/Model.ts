@@ -4,7 +4,8 @@ import {
   Column,
   ForeignKey,
   PrimaryKey,
-  DataType
+  DataType,
+  BelongsTo
 } from "sequelize-typescript";
 import { Applicant } from "../Applicant/Model";
 import { Career } from "../Career/Model";
@@ -30,4 +31,10 @@ export class CareerApplicant extends Model<CareerApplicant> {
     type: DataType.INTEGER
   })
   public creditsCount: number;
+
+  @BelongsTo(() => Career, "careerCode")
+  public career: Career;
+
+  @BelongsTo(() => Applicant, "applicantUuid")
+  public applicant: Applicant;
 }

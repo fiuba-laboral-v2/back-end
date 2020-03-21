@@ -1,10 +1,25 @@
-import { AllowNull, Column, DataType, HasMany, Model, Table, Is } from "sequelize-typescript";
+import {
+  AllowNull,
+  Column,
+  DataType,
+  HasMany,
+  Model,
+  Table,
+  Is,
+  BeforeCreate
+} from "sequelize-typescript";
 import { CompanyPhoneNumber } from "../CompanyPhoneNumber";
 import { CompanyPhoto } from "../CompanyPhoto";
 import { validateCuit, validateName } from "validations-fiuba-laboral-v2";
 
 @Table
 export default class Company extends Model<Company> {
+  @BeforeCreate
+  public static beforeCreateHook(company: Company): void {
+    company.phoneNumbers = company.phoneNumbers || [];
+    company.photos = company.photos || [];
+  }
+
   @AllowNull(false)
   @Is("cuit", validateCuit)
   @Column(DataType.STRING)

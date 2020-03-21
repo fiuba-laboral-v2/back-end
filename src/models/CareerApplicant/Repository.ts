@@ -1,8 +1,8 @@
 import { Applicant, IApplicantCareer } from "../Applicant";
-import find from "lodash/find";
+import { Career, CareerRepository } from "../Career";
 import { CareerApplicant } from "./Model";
+import { CareerApplicantNotFound } from "./Errors";
 import { Transaction } from "sequelize";
-import { CareerRepository } from "../Career";
 
 export const CareerApplicantRepository = {
   updateOrCreate: async (
@@ -10,31 +10,44 @@ export const CareerApplicantRepository = {
     applicantCareer: IApplicantCareer,
     transaction?: Transaction
   ) => {
-    const career = find(applicant.careers, c => c.code === applicantCareer.code);
+    const career = applicant.careers.find(c => c.code === applicantCareer.code);
     if (!career) {
-      const careerApplicant = await CareerApplicantRepository.create(
+      return CareerApplicantRepository.create(
         applicant,
         applicantCareer,
         transaction
       );
-      const newCareer = await CareerRepository.findByCode(applicantCareer.code);
-      newCareer.careerApplicant = careerApplicant;
-      applicant.careers = applicant.careers || [];
-      applicant.careers.push(newCareer);
-      return careerApplicant;
     }
-
-    return career.careerApplicant.update(
+    const careerApplicant = await CareerApplicantRepository.findByApplicantAndCareer(
+      applicant.uuid,
+      career.code
+    );
+    return careerApplicant!.update(
       { creditsCount: applicantCareer!.creditsCount },
       { validate: true, transaction: transaction }
     );
+  },
+  findByApplicantAndCareer: async (applicantUuid: string, careerCode: string) => {
+    const careerApplicant =  await CareerApplicant.findOne({
+      where: { applicantUuid: applicantUuid, careerCode: careerCode  },
+      include: [ Career, Applicant ]
+    });
+    if (!careerApplicant) throw new CareerApplicantNotFound(applicantUuid, careerCode);
+
+    return careerApplicant;
+  },
+  findByApplicant: async (applicantUuid: string) => {
+    return CareerApplicant.findAll({
+      where: { applicantUuid: applicantUuid },
+      include: [ Career, Applicant ]
+    });
   },
   create: async (
     applicant: Applicant,
     applicantCareer: IApplicantCareer,
     transaction?: Transaction
   ) => {
-    return CareerApplicant.create(
+    const careerApplicant = await CareerApplicant.create(
       {
         careerCode: applicantCareer.code,
         applicantUuid: applicant.uuid,
@@ -42,6 +55,10 @@ export const CareerApplicantRepository = {
       },
       { transaction }
     );
+    careerApplicant.career = await CareerRepository.findByCode(applicantCareer.code);
+    careerApplicant.applicant = applicant;
+    applicant.careers.push(careerApplicant.career);
+    return careerApplicant;
   },
   truncate: async () =>
     CareerApplicant.truncate({ cascade: true })

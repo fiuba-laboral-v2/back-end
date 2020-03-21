@@ -1,4 +1,12 @@
-import { Column, DataType, BelongsToMany, Model, Table, Is } from "sequelize-typescript";
+import {
+  Column,
+  DataType,
+  BelongsToMany,
+  Model,
+  Table,
+  Is,
+  BeforeCreate
+} from "sequelize-typescript";
 import { HasManyGetAssociationsMixin } from "sequelize";
 import { validateName } from "validations-fiuba-laboral-v2";
 import { Career } from "../Career/Model";
@@ -12,6 +20,12 @@ import { ICapability } from "../Capability";
   tableName: "Applicants"
  })
 export class Applicant extends Model<Applicant> {
+  @BeforeCreate
+  public static beforeCreateHook(applicant: Applicant): void {
+    applicant.capabilities = applicant.capabilities || [];
+    applicant.careers = applicant.careers || [];
+  }
+
   @Column({
     allowNull: false,
     primaryKey: true,

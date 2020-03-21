@@ -1,27 +1,26 @@
 import { Applicant } from "./index";
+import { CareerApplicantRepository, CareerApplicantSerializer } from "../CareerApplicant";
 
-import map from "lodash/map";
 import pick from "lodash/pick";
 
-const applicantCareerMapper = (applicant: Applicant) => {
-  return map(applicant.careers, career => ({
-    code: career.code,
-    description: career.description,
-    credits: career.credits,
-    creditsCount: career.careerApplicant.creditsCount
-  }));
+const applicantCareerMapper = async (applicant: Applicant) => {
+  const careersApplicants = await CareerApplicantRepository.findByApplicant(
+    applicant.uuid
+  );
+  return careersApplicants.map(careerApplicant =>
+    CareerApplicantSerializer.serialize(careerApplicant)
+  );
 };
 
 const ApplicantSerializer = {
-  serialize: (applicant: Applicant) => ({
+  serialize: async (applicant: Applicant) => ({
     uuid: applicant.uuid,
     name: applicant.name,
     surname: applicant.surname,
     padron: applicant.padron,
     description: applicant.description,
-    careers: applicantCareerMapper(applicant),
-    capabilities: map(
-      applicant.capabilities,
+    careers: await applicantCareerMapper(applicant),
+    capabilities: applicant.capabilities.map(
       capability => pick(capability, ["uuid", "description"])
     )
   })

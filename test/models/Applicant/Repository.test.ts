@@ -5,10 +5,20 @@ import Database from "../../../src/config/Database";
 import { careerMocks } from "../Career/mocks";
 import { capabilityMocks } from "../Capability/mocks";
 import { applicantMocks } from "./mocks";
+import { CareerApplicantRepository } from "../../../src/models/CareerApplicant/Repository";
+import { CareerApplicantNotFound } from "../../../src/models/CareerApplicant/Errors";
+import { CapabilityRepository } from "../../../src/models/Capability";
 
 describe("ApplicantRepository", () => {
   beforeAll(async () => {
     await Database.setConnection();
+  });
+
+  beforeEach(async () => {
+    await CareerApplicantRepository.truncate();
+    await ApplicantRepository.truncate();
+    await CareerRepository.truncate();
+    await CapabilityRepository.truncate();
   });
 
   afterAll(async () => {
@@ -79,7 +89,7 @@ describe("ApplicantRepository", () => {
     expect(applicant.capabilities[0].description).toEqual(applicantData.capabilities[0]);
   });
 
-  it("can retreive an applicant by uuid", async () => {
+  it("can retrieve an applicant by uuid", async () => {
     const career = await CareerRepository.create(careerMocks.careerData());
     const applicantData = applicantMocks.applicantData([career.code]);
     const savedApplicant = await ApplicantRepository.create(applicantData);
@@ -215,7 +225,7 @@ describe("ApplicantRepository", () => {
       }));
     });
 
-    it("Should update by adding new capacilities", async () => {
+    it("Should update by adding new capabilities", async () => {
       const padron = (await createApplicant()).padron;
       const applicant = await ApplicantRepository.findByPadron(padron);
       const newProps: IApplicantEditable = {
@@ -274,8 +284,11 @@ describe("ApplicantRepository", () => {
         ]
       };
       await ApplicantRepository.update(applicant, newProps);
-      expect(applicant.careers[0].careerApplicant.creditsCount)
-        .toEqual(newProps.careers[0].creditsCount);
+
+      const careerApplicant = await CareerApplicantRepository.findByApplicantAndCareer(
+        applicant.uuid, career.code
+      );
+      expect(careerApplicant.creditsCount).toEqual(newProps.careers[0].creditsCount);
     });
   });
 
@@ -331,6 +344,16 @@ describe("ApplicantRepository", () => {
         ["not existing description"]
       );
       expect(applicant.capabilities.length).toEqual(numberOfCapabilitiesBefore);
+    });
+
+    it("Should raise an error if no career applicant is found", async () => {
+      const career = await CareerRepository.create(careerMocks.careerData());
+      const applicantData = applicantMocks.applicantData([career.code]);
+      const applicant = await ApplicantRepository.create(applicantData);
+      await ApplicantRepository.deleteCareers(applicant, [career.code]);
+      await expect(
+        CareerApplicantRepository.findByApplicantAndCareer(applicant.uuid, career.code)
+      ).rejects.toThrow(CareerApplicantNotFound);
     });
   });
 });
