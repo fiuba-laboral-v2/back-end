@@ -62,7 +62,10 @@ describe("deleteApplicantCareers", () => {
       careersCodes: ["undefined_code"]
     });
     expect(errors).toBeUndefined();
-    expect(data.deleteApplicantCareers.careers)
-      .toHaveLength(applicant.careers.length);
+    expect(
+      data.deleteApplicantCareers.careers
+    ).toHaveLength(
+      (await applicant.getCareers()).length
+    );
   });
 });

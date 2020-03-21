@@ -68,6 +68,8 @@ describe("updateApplicant", () => {
         }
       ]
     };
+    const careersBeforeUpdate = await applicant.getCareers();
+    const capabilitiesBeforeUpdate = await applicant.getCapabilities();
     const { data, errors } = await executeMutation(updateApplicant, dataToUpdate);
 
     expect(errors).toBeUndefined();
@@ -82,7 +84,7 @@ describe("updateApplicant", () => {
     ).toEqual(expect.arrayContaining(
       [
         ...dataToUpdate.capabilities,
-        ...applicant.capabilities.map(c => c.description)
+        ...capabilitiesBeforeUpdate.map(c => c.description)
       ]
     ));
     expect(
@@ -90,7 +92,7 @@ describe("updateApplicant", () => {
     ).toEqual(expect.arrayContaining(
       [
         ...dataToUpdate.careers.map(c => c.code),
-        ...applicant.careers.map(c => c.code)
+        ...careersBeforeUpdate.map(c => c.code)
       ]
     ));
   });

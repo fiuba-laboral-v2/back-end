@@ -1,5 +1,4 @@
 import { Applicant, IApplicantCareer } from "../Applicant";
-import { Career, CareerRepository } from "../Career";
 import { CareerApplicant } from "./Model";
 import { CareerApplicantNotFound } from "./Errors";
 import { Transaction } from "sequelize";
@@ -10,7 +9,7 @@ export const CareerApplicantRepository = {
     applicantCareer: IApplicantCareer,
     transaction?: Transaction
   ) => {
-    const career = applicant.careers.find(c => c.code === applicantCareer.code);
+    const career = (await applicant.getCareers()).find(c => c.code === applicantCareer.code);
     if (!career) {
       return CareerApplicantRepository.create(
         applicant,
@@ -29,25 +28,18 @@ export const CareerApplicantRepository = {
   },
   findByApplicantAndCareer: async (applicantUuid: string, careerCode: string) => {
     const careerApplicant =  await CareerApplicant.findOne({
-      where: { applicantUuid: applicantUuid, careerCode: careerCode  },
-      include: [ Career, Applicant ]
+      where: { applicantUuid: applicantUuid, careerCode: careerCode  }
     });
     if (!careerApplicant) throw new CareerApplicantNotFound(applicantUuid, careerCode);
 
     return careerApplicant;
-  },
-  findByApplicant: async (applicantUuid: string) => {
-    return CareerApplicant.findAll({
-      where: { applicantUuid: applicantUuid },
-      include: [ Career, Applicant ]
-    });
   },
   create: async (
     applicant: Applicant,
     applicantCareer: IApplicantCareer,
     transaction?: Transaction
   ) => {
-    const careerApplicant = await CareerApplicant.create(
+    return CareerApplicant.create(
       {
         careerCode: applicantCareer.code,
         applicantUuid: applicant.uuid,
@@ -55,10 +47,6 @@ export const CareerApplicantRepository = {
       },
       { transaction }
     );
-    careerApplicant.career = await CareerRepository.findByCode(applicantCareer.code);
-    careerApplicant.applicant = applicant;
-    applicant.careers.push(careerApplicant.career);
-    return careerApplicant;
   },
   truncate: async () =>
     CareerApplicant.truncate({ cascade: true })

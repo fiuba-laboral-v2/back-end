@@ -5,7 +5,8 @@ import {
   Model,
   Table,
   Is,
-  BeforeCreate
+  BeforeCreate,
+    HasMany
 } from "sequelize-typescript";
 import { HasManyGetAssociationsMixin } from "sequelize";
 import { validateName } from "validations-fiuba-laboral-v2";
@@ -59,6 +60,9 @@ export class Applicant extends Model<Applicant> {
   })
   public description: string;
 
+  @HasMany(() => CareerApplicant)
+  public careersApplicants: CareerApplicant[];
+
   @BelongsToMany(() => Career, () => CareerApplicant)
   public careers: Career[];
 
@@ -66,9 +70,11 @@ export class Applicant extends Model<Applicant> {
   public capabilities: Capability[];
 
   public getCareers!: HasManyGetAssociationsMixin<Career>;
+  public getCapabilities!: HasManyGetAssociationsMixin<Capability>;
+  public getCareersApplicants!: HasManyGetAssociationsMixin<CareerApplicant>;
 
-  public hasCapability(capability: ICapability) {
-    return this.capabilities
+  public async hasCapability(capability: ICapability) {
+    return (await this.getCapabilities())
       .map(({ description }: ICapability) => description)
       .includes(capability.description);
   }

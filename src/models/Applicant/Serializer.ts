@@ -1,16 +1,7 @@
 import { Applicant } from "./index";
-import { CareerApplicantRepository, CareerApplicantSerializer } from "../CareerApplicant";
+import { CareerApplicantSerializer } from "../CareerApplicant";
 
 import pick from "lodash/pick";
-
-const applicantCareerMapper = async (applicant: Applicant) => {
-  const careersApplicants = await CareerApplicantRepository.findByApplicant(
-    applicant.uuid
-  );
-  return careersApplicants.map(careerApplicant =>
-    CareerApplicantSerializer.serialize(careerApplicant)
-  );
-};
 
 const ApplicantSerializer = {
   serialize: async (applicant: Applicant) => ({
@@ -19,8 +10,10 @@ const ApplicantSerializer = {
     surname: applicant.surname,
     padron: applicant.padron,
     description: applicant.description,
-    careers: await applicantCareerMapper(applicant),
-    capabilities: applicant.capabilities.map(
+    careers: await Promise.all((await applicant.getCareersApplicants()).map(
+      async careerApplicant => CareerApplicantSerializer.serialize(careerApplicant)
+    )),
+    capabilities: (await applicant.getCapabilities()).map(
       capability => pick(capability, ["uuid", "description"])
     )
   })

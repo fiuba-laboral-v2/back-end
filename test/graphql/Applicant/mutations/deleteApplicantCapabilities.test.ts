@@ -68,7 +68,10 @@ describe("deleteApplicantCapabilities", () => {
       capabilities: ["does not exists"]
     });
     expect(errors).toBeUndefined();
-    expect(data.deleteApplicantCapabilities.capabilities)
-      .toHaveLength(applicant.capabilities.length);
+    expect(
+      data.deleteApplicantCapabilities.capabilities
+    ).toHaveLength(
+      (await applicant.getCapabilities()).length
+    );
   });
 });
