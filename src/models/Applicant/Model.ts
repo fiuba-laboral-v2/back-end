@@ -5,7 +5,6 @@ import {
   Model,
   Table,
   Is,
-  BeforeCreate,
     HasMany
 } from "sequelize-typescript";
 import { HasManyGetAssociationsMixin } from "sequelize";
@@ -21,12 +20,6 @@ import { ICapability } from "../Capability";
   tableName: "Applicants"
  })
 export class Applicant extends Model<Applicant> {
-  @BeforeCreate
-  public static beforeCreateHook(applicant: Applicant): void {
-    applicant.capabilities = applicant.capabilities || [];
-    applicant.careers = applicant.careers || [];
-  }
-
   @Column({
     allowNull: false,
     primaryKey: true,
