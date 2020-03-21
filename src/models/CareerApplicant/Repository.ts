@@ -12,15 +12,11 @@ export const CareerApplicantRepository = {
   ) => {
     const career = applicant.careers.find(c => c.code === applicantCareer.code);
     if (!career) {
-      const newCareerApplicant = await CareerApplicantRepository.create(
+      return CareerApplicantRepository.create(
         applicant,
         applicantCareer,
         transaction
       );
-      newCareerApplicant.career = await CareerRepository.findByCode(applicantCareer.code);
-      newCareerApplicant.applicant = applicant;
-      applicant.careers.push(newCareerApplicant.career);
-      return newCareerApplicant;
     }
 
     const careerApplicant = await CareerApplicantRepository.findByApplicantAndCareer(
@@ -52,7 +48,7 @@ export const CareerApplicantRepository = {
     applicantCareer: IApplicantCareer,
     transaction?: Transaction
   ) => {
-    return CareerApplicant.create(
+    const careerApplicant = await CareerApplicant.create(
       {
         careerCode: applicantCareer.code,
         applicantUuid: applicant.uuid,
@@ -60,6 +56,10 @@ export const CareerApplicantRepository = {
       },
       { transaction }
     );
+    careerApplicant.career = await CareerRepository.findByCode(applicantCareer.code);
+    careerApplicant.applicant = applicant;
+    applicant.careers.push(careerApplicant.career);
+    return careerApplicant;
   },
   truncate: async () =>
     CareerApplicant.truncate({ cascade: true })
