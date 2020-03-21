@@ -64,6 +64,15 @@ describe("ApplicantRepository", () => {
     ).resolves.not.toThrow(Errors.ApplicantNotFound);
   });
 
+  it("rollback transaction and raise error if name is large", async () => {
+    const career = await CareerRepository.create(careerMocks.careerData());
+    const applicantData = applicantMocks.applicantData([career.code]);
+    applicantData.name = "and the transaction will rolback because it is large";
+    await expect(
+      ApplicantRepository.create(applicantData)
+    ).rejects.toThrow();
+  });
+
   it("can retreive an applicant by padron", async () => {
     const career = await CareerRepository.create(careerMocks.careerData());
     const applicantData = applicantMocks.applicantData([career.code]);
