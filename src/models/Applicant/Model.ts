@@ -7,13 +7,12 @@ import {
   Is,
     HasMany
 } from "sequelize-typescript";
-import { HasManyGetAssociationsMixin } from "sequelize";
+import { HasManyGetAssociationsMixin, HasManyHasAssociationMixin } from "sequelize";
 import { validateName } from "validations-fiuba-laboral-v2";
 import { Career } from "../Career/Model";
 import { CareerApplicant } from "../CareerApplicant/Model";
 import { Capability } from "../Capability/Model";
 import { ApplicantCapability } from "../ApplicantCapability/Model";
-import { ICapability } from "../Capability";
 
 
 @Table({
@@ -65,10 +64,5 @@ export class Applicant extends Model<Applicant> {
   public getCareers!: HasManyGetAssociationsMixin<Career>;
   public getCapabilities!: HasManyGetAssociationsMixin<Capability>;
   public getCareersApplicants!: HasManyGetAssociationsMixin<CareerApplicant>;
-
-  public async hasCapability(capability: ICapability) {
-    return (await this.getCapabilities())
-      .map(({ description }: ICapability) => description)
-      .includes(capability.description);
-  }
+  public hasCapability: HasManyHasAssociationMixin<Capability, "description">;
 }
