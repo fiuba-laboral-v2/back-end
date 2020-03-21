@@ -18,7 +18,6 @@ export const CareerApplicantRepository = {
         transaction
       );
     }
-
     const careerApplicant = await CareerApplicantRepository.findByApplicantAndCareer(
       applicant.uuid,
       career.code
