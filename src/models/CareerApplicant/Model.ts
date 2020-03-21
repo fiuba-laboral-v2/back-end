@@ -9,6 +9,7 @@ import {
 } from "sequelize-typescript";
 import { Applicant } from "../Applicant/Model";
 import { Career } from "../Career/Model";
+import { HasOneGetAssociationMixin } from "sequelize";
 
 @Table({ tableName: "CareersApplicants" })
 export class CareerApplicant extends Model<CareerApplicant> {
@@ -37,4 +38,7 @@ export class CareerApplicant extends Model<CareerApplicant> {
 
   @BelongsTo(() => Applicant, "applicantUuid")
   public applicant: Applicant;
+
+  public getCareer!: HasOneGetAssociationMixin<Career>;
+  public getApplicant!: HasOneGetAssociationMixin<Applicant>;
 }

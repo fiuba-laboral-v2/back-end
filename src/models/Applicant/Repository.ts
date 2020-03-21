@@ -1,5 +1,4 @@
 import { Applicant, IApplicant, IApplicantEditable, IApplicantCareer } from "./index";
-import { Career } from "../Career";
 import { CapabilityRepository, Capability } from "../Capability";
 import { ApplicantCapability } from "../ApplicantCapability";
 import { CareerApplicant } from "../CareerApplicant";
@@ -56,16 +55,10 @@ export const ApplicantRepository = {
       throw new Error(error);
     }
   },
-  findAll: async () => Applicant.findAll({ include: [ Career, Capability ] }),
-  findByUuid: async (uuid: string)  =>
-    Applicant.findByPk(uuid, { include: [ Career, Capability ] }),
+  findAll: async () => Applicant.findAll(),
+  findByUuid: async (uuid: string)  => Applicant.findByPk(uuid),
   findByPadron: async (padron: number) => {
-    const applicant =  await Applicant.findOne(
-      {
-        where: { padron },
-        include: [ Career, Capability ]
-      }
-    );
+    const applicant =  await Applicant.findOne({ where: { padron } });
     if (!applicant) throw new ApplicantNotFound(padron);
 
     return applicant;
@@ -89,12 +82,11 @@ export const ApplicantRepository = {
     transaction?: Transaction
   ) => {
     for (const capability of capabilities) {
-      if (applicant.hasCapability(capability)) continue;
+      if (await applicant.hasCapability(capability)) continue;
       await ApplicantCapability.create(
         { capabilityUuid: capability.uuid , applicantUuid: applicant.uuid},
         { transaction }
       );
-      applicant.capabilities.push(capability);
     }
     return applicant;
   },
@@ -124,25 +116,21 @@ export const ApplicantRepository = {
     );
   },
   deleteCapabilities: async (applicant: Applicant, descriptions: string[]) => {
-    const uuids = applicant.capabilities
+    const uuids = (await applicant.getCapabilities())
       .filter(c => descriptions.includes(c.description))
       .map(c => c.uuid);
     await ApplicantCapability.destroy(
       { where: { applicantUuid: applicant.uuid, capabilityUuid: uuids } }
     );
-    applicant.capabilities = applicant.capabilities
-      .filter(capabilities => !uuids.includes(capabilities.uuid));
     return applicant;
   },
   deleteCareers: async (applicant: Applicant, careerCodes: string[]) => {
-    const codes = applicant.careers
+    const codes = (await applicant.getCareers())
       .filter(c => careerCodes.includes(c.code))
       .map(c => c.code);
     await CareerApplicant.destroy(
       { where: { applicantUuid: applicant.uuid, careerCode: codes } }
     );
-    applicant.careers = applicant.careers
-      .filter(({ code }: Career) => !codes.includes(code));
     return applicant;
   },
   truncate: async () =>

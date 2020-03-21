@@ -1,12 +1,15 @@
 import { CareerApplicant } from "./index";
 
 const CareerApplicantSerializer = {
-  serialize: (careerApplicant: CareerApplicant) => ({
-    code: careerApplicant.careerCode,
-    description: careerApplicant.career.description,
-    credits: careerApplicant.career.credits,
-    creditsCount: careerApplicant.creditsCount
-  })
+  serialize: async (careerApplicant: CareerApplicant) => {
+    const { credits, description } = await careerApplicant.getCareer();
+    return {
+      code: careerApplicant.careerCode,
+      description: description,
+      credits: credits,
+      creditsCount: careerApplicant.creditsCount
+    };
+  }
 };
 
 export { CareerApplicantSerializer };
