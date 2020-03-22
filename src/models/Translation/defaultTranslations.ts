@@ -43,5 +43,6 @@ export const defaultTranslations = {
   },
   applicants: "Postulantes",
   companies: "Empresas",
-  edit: "Editar"
+  edit: "Editar",
+  view: "Ver"
 };
