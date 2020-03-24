@@ -61,7 +61,7 @@ describe("ApplicantRepository", () => {
     await ApplicantRepository.create(applicantMocks.applicantData([career.code]));
     await expect(
       ApplicantRepository.create(applicantMocks.applicantData([career.code]))
-    ).resolves.not.toThrow(Errors.ApplicantNotFound);
+    ).resolves.not.toThrow(Errors.ApplicantPadronNotFound);
   });
 
   it("rollback transaction and raise error if name is large", async () => {
@@ -155,11 +155,11 @@ describe("ApplicantRepository", () => {
     const applicantData = applicantMocks.applicantData([]);
 
     await expect(ApplicantRepository.findByPadron(applicantData.padron))
-      .rejects.toThrow(Errors.ApplicantNotFound);
+      .rejects.toThrow(Errors.ApplicantPadronNotFound);
   });
 
   describe("Update", () => {
-    const createApplicant = async ()  => {
+    const createApplicant = async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
       const applicantData = applicantMocks.applicantData([career.code]);
       return ApplicantRepository.create(applicantData);
@@ -321,9 +321,8 @@ describe("ApplicantRepository", () => {
 
       await ApplicantRepository.deleteByUuid(savedApplicant.uuid);
 
-      const applicant = await ApplicantRepository.findByUuid(savedApplicant.uuid);
-
-      expect(applicant).toBeNull();
+      await expect(ApplicantRepository.findByUuid(savedApplicant.uuid))
+        .rejects.toThrow(Errors.ApplicantNotFound);
     });
 
     it("should delete all applicant capabilities", async () => {

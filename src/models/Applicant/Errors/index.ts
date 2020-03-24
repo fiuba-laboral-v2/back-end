@@ -1,3 +1,4 @@
+import { ApplicantPadronNotFound } from "./ApplicantPadronNotFound";
 import { ApplicantNotFound } from "./ApplicantNotFound";
 
-export default { ApplicantNotFound };
+export default { ApplicantPadronNotFound, ApplicantNotFound };

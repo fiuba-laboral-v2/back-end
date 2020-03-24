@@ -2,6 +2,7 @@ import { Applicant, IApplicant, IApplicantEditable, IApplicantCareer } from "./i
 import { CapabilityRepository, Capability } from "../Capability";
 import { ApplicantCapability } from "../ApplicantCapability";
 import { CareerApplicant } from "../CareerApplicant";
+import { ApplicantPadronNotFound } from "./Errors/ApplicantPadronNotFound";
 import { ApplicantNotFound } from "./Errors/ApplicantNotFound";
 import Database from "../../config/Database";
 import pick from "lodash/pick";
@@ -56,10 +57,15 @@ export const ApplicantRepository = {
     }
   },
   findAll: async () => Applicant.findAll(),
-  findByUuid: async (uuid: string)  => Applicant.findByPk(uuid),
+  findByUuid: async (uuid: string) => {
+    const applicant = await Applicant.findByPk(uuid);
+    if (!applicant) throw new ApplicantNotFound(uuid);
+
+    return applicant;
+  },
   findByPadron: async (padron: number) => {
-    const applicant =  await Applicant.findOne({ where: { padron } });
-    if (!applicant) throw new ApplicantNotFound(padron);
+    const applicant = await Applicant.findOne({ where: { padron } });
+    if (!applicant) throw new ApplicantPadronNotFound(padron);
 
     return applicant;
   },
@@ -67,8 +73,8 @@ export const ApplicantRepository = {
     const transaction = await Database.transaction();
     try {
       await ApplicantCapability.destroy({ where: { applicantUuid: uuid }, transaction });
-      await CareerApplicant.destroy({ where: { applicantUuid: uuid }, transaction});
-      const applicantDestroyed =  await Applicant.destroy({ where: { uuid }, transaction });
+      await CareerApplicant.destroy({ where: { applicantUuid: uuid }, transaction });
+      const applicantDestroyed = await Applicant.destroy({ where: { uuid }, transaction });
       await transaction.commit();
       return applicantDestroyed;
     } catch (error) {
@@ -84,7 +90,7 @@ export const ApplicantRepository = {
     for (const capability of capabilities) {
       if (await applicant.hasCapability(capability)) continue;
       await ApplicantCapability.create(
-        { capabilityUuid: capability.uuid , applicantUuid: applicant.uuid},
+        { capabilityUuid: capability.uuid, applicantUuid: applicant.uuid },
         { transaction }
       );
     }
