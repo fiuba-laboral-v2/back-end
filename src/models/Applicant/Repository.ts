@@ -2,7 +2,6 @@ import { Applicant, IApplicant, IApplicantEditable, IApplicantCareer } from "./i
 import { CapabilityRepository, Capability } from "../Capability";
 import { ApplicantCapability } from "../ApplicantCapability";
 import { CareerApplicant } from "../CareerApplicant";
-import { ApplicantPadronNotFound } from "./Errors/ApplicantPadronNotFound";
 import { ApplicantNotFound } from "./Errors/ApplicantNotFound";
 import Database from "../../config/Database";
 import pick from "lodash/pick";
@@ -65,7 +64,7 @@ export const ApplicantRepository = {
   },
   findByPadron: async (padron: number) => {
     const applicant = await Applicant.findOne({ where: { padron } });
-    if (!applicant) throw new ApplicantPadronNotFound(padron);
+    if (!applicant) throw new ApplicantNotFound(padron);
 
     return applicant;
   },

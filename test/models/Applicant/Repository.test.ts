@@ -8,6 +8,7 @@ import { applicantMocks } from "./mocks";
 import { CareerApplicantRepository } from "../../../src/models/CareerApplicant/Repository";
 import { CareerApplicantNotFound } from "../../../src/models/CareerApplicant/Errors";
 import { CapabilityRepository } from "../../../src/models/Capability";
+import { random } from "faker";
 
 describe("ApplicantRepository", () => {
   beforeAll(async () => {
@@ -61,7 +62,7 @@ describe("ApplicantRepository", () => {
     await ApplicantRepository.create(applicantMocks.applicantData([career.code]));
     await expect(
       ApplicantRepository.create(applicantMocks.applicantData([career.code]))
-    ).resolves.not.toThrow(Errors.ApplicantPadronNotFound);
+    ).resolves.not.toThrow(Errors.ApplicantNotFound);
   });
 
   it("rollback transaction and raise error if name is large", async () => {
@@ -155,7 +156,7 @@ describe("ApplicantRepository", () => {
     const applicantData = applicantMocks.applicantData([]);
 
     await expect(ApplicantRepository.findByPadron(applicantData.padron))
-      .rejects.toThrow(Errors.ApplicantPadronNotFound);
+      .rejects.toThrow(Errors.ApplicantNotFound);
   });
 
   describe("Update", () => {
