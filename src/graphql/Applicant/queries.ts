@@ -1,11 +1,23 @@
 import { GraphQLApplicant } from "./Types/Applicant";
-import { nonNull, Int, List } from "../fieldTypes";
+import { nonNull, Int, List, ID } from "../fieldTypes";
 import {
   ApplicantRepository,
   ApplicantSerializer
 } from "../../models/Applicant";
 
 const applicantQueries = {
+  getApplicant: {
+    type: GraphQLApplicant,
+    args: {
+      uuid: {
+        type: nonNull(ID)
+      }
+    },
+    resolve: async (_: undefined, { uuid }) => {
+      const applicant = await ApplicantRepository.findByUuid(uuid);
+      return ApplicantSerializer.serialize(applicant);
+    }
+  },
   getApplicantByPadron: {
     type: GraphQLApplicant,
     args: {
