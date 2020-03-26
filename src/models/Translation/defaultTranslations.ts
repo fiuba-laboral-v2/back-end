@@ -24,7 +24,7 @@ export const defaultTranslations = {
     name: "Nombre",
     lastName: "Apellido",
     signUp: {
-      title: "Registro",
+      title: "Crear tu cuenta",
       email: "Email",
       password: "Contraseña",
       name: "Nombre",
@@ -33,7 +33,7 @@ export const defaultTranslations = {
       careersTitle: "Elegi tu carrera",
       credits: "Créditos acumulados",
       addCareerBtn: "Agregar carrera",
-      submit: "Enviar"
+      submit: "Guardar"
     }
   },
   save: "Guardar",
