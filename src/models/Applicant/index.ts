@@ -3,6 +3,7 @@ import { IApplicant, IApplicantEditable, IApplicantCareer } from "./Interface";
 import { ApplicantRepository } from "./Repository";
 import { ApplicantSerializer } from "./Serializer";
 import Errors from "./Errors";
+import { Section } from "./Sections";
 
 export {
   Applicant,
@@ -11,5 +12,6 @@ export {
   IApplicantCareer,
   ApplicantRepository,
   ApplicantSerializer,
-  Errors
+  Errors,
+  Section,
 };

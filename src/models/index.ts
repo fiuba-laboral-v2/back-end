@@ -1,4 +1,4 @@
-import { Applicant } from "./Applicant";
+import { Applicant, Section } from "./Applicant";
 import { Career } from "./Career";
 import { CareerApplicant } from "./CareerApplicant";
 import { Capability } from "./Capability";
@@ -10,6 +10,7 @@ import { User } from "./User";
 
 const models = [
   Applicant,
+  Section,
   Career,
   CareerApplicant,
   Capability,
