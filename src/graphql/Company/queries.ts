@@ -3,8 +3,7 @@ import { ID, nonNull, List } from "../fieldTypes";
 import {
   Company,
   CompanyRepository,
-  CompanySerializer,
-  ICompany
+  CompanySerializer
 } from "../../models/Company";
 
 const companyQueries = {
@@ -22,11 +21,9 @@ const companyQueries = {
   },
   getCompanies: {
     type: List(GraphQLCompany),
-    resolve: async (): Promise<ICompany[]> => {
-      const companies: Company[] = await CompanyRepository.findAll();
-      return companies.map(company => {
-        return CompanySerializer.serialize(company);
-      });
+    resolve: async () => {
+      const companies = await CompanyRepository.findAll();
+      return companies.map(company => CompanySerializer.serialize(company));
     }
   }
 };

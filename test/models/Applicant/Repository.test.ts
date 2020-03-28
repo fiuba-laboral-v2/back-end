@@ -8,6 +8,7 @@ import { applicantMocks } from "./mocks";
 import { CareerApplicantRepository } from "../../../src/models/CareerApplicant/Repository";
 import { CareerApplicantNotFound } from "../../../src/models/CareerApplicant/Errors";
 import { CapabilityRepository } from "../../../src/models/Capability";
+import { random } from "faker";
 
 describe("ApplicantRepository", () => {
   beforeAll(async () => {
@@ -321,9 +322,8 @@ describe("ApplicantRepository", () => {
 
       await ApplicantRepository.deleteByUuid(savedApplicant.uuid);
 
-      const applicant = await ApplicantRepository.findByUuid(savedApplicant.uuid);
-
-      expect(applicant).toBeNull();
+      await expect(ApplicantRepository.findByUuid(savedApplicant.uuid))
+        .rejects.toThrow(Errors.ApplicantNotFound);
     });
 
     it("should delete all applicant capabilities", async () => {

@@ -57,7 +57,12 @@ export const ApplicantRepository = {
     }
   },
   findAll: async () => Applicant.findAll(),
-  findByUuid: async (uuid: string) => Applicant.findByPk(uuid),
+  findByUuid: async (uuid: string) => {
+    const applicant = await Applicant.findByPk(uuid);
+    if (!applicant) throw new ApplicantNotFound(uuid);
+
+    return applicant;
+  },
   findByPadron: async (padron: number) => {
     const applicant = await Applicant.findOne({ where: { padron } });
     if (!applicant) throw new ApplicantNotFound(padron);
