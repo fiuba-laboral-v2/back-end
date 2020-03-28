@@ -3,7 +3,10 @@ import {
   DataType,
   Model,
   Table,
+  ForeignKey,
+  BelongsTo,
 } from "sequelize-typescript";
+import { Applicant } from "../Model";
 
 @Table({
   tableName: "Sections"
@@ -16,6 +19,16 @@ export class Section extends Model<Section> {
     defaultValue: DataType.UUIDV4
   })
   public uuid: string;
+
+  @ForeignKey(() => Applicant)
+  @Column({
+    allowNull: false,
+    type: DataType.UUID
+  })
+  public applicantUuid: string;
+
+  @BelongsTo(() => Applicant)
+  public applicant: Applicant;
 
   @Column({
     allowNull: false,

@@ -1,24 +1,36 @@
 import Database from "../../../../src/config/Database";
-import { Section } from "../../../../src/models/Applicant";
-import { random } from "faker";
+import { Applicant } from "../../../../src/models/Applicant";
+import { Section } from "../../../../src/models/Applicant/Section";
+import { random, lorem } from "faker";
 
 describe("Section model", () => {
+  let applicant: Applicant;
+
   beforeAll(async () => {
     await Database.setConnection();
-  });
-
-  beforeEach(async () => {
+    await Applicant.truncate({ cascade: true });
     await Section.truncate({ cascade: true });
+    const myApplicant = new Applicant({
+      name: "Bruno",
+      surname: "Diaz",
+      padron: 1,
+      description: "Batman",
+      credits: 150
+    });
+    applicant = await myApplicant.save();
   });
 
   afterAll(async () => {
+    await Applicant.truncate({ cascade: true });
+    await Section.truncate({ cascade: true });
     await Database.close();
   });
 
   it("creates a valid section with a title and a description", async () => {
-    const params = { title: random.words(), description: random.words() };
+    const params = {
+      applicantUuid: applicant.uuid, title: random.words(), description: lorem.paragraphs()
+    };
     const section = new Section(params);
-    await section.save();
 
     expect(section).toBeDefined();
     expect(section).toHaveProperty("uuid");
@@ -29,13 +41,19 @@ describe("Section model", () => {
   });
 
   it("raise an error if no title is provided", async () => {
-    const section = new Section({ description: random.words() });
+    const section = new Section({ applicantUuid: applicant.uuid, description: lorem.paragraphs() });
 
     await expect(section.save()).rejects.toThrow();
   });
 
-  it("raise an error if no descriptino is provided", async () => {
-    const section = new Section({ title: random.words() });
+  it("raise an error if no description is provided", async () => {
+    const section = new Section({ applicantUuid: applicant.uuid, title: random.words() });
+
+    await expect(section.save()).rejects.toThrow();
+  });
+
+  it("raise an error if no applicantUuid is provided", async () => {
+    const section = new Section({ title: random.words(), description: lorem.paragraphs() });
 
     await expect(section.save()).rejects.toThrow();
   });

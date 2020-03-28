@@ -10,6 +10,11 @@ export = {
         type: UUID,
         defaultValue: uuid()
       },
+      applicantUuid: {
+        allowNull: false,
+        references: { model: "Applicants", key: "uuid" },
+        type: UUID
+      },
       title: {
         allowNull: false,
         type: TEXT,

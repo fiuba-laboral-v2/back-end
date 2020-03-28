@@ -1,4 +1,5 @@
-import { Applicant, Section } from "./Applicant";
+import { Applicant } from "./Applicant";
+import { Section } from "./Applicant/Section";
 import { Career } from "./Career";
 import { CareerApplicant } from "./CareerApplicant";
 import { Capability } from "./Capability";

@@ -159,7 +159,7 @@ describe("ApplicantRepository", () => {
   });
 
   describe("Update", () => {
-    const createApplicant = async ()  => {
+    const createApplicant = async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
       const applicantData = applicantMocks.applicantData([career.code]);
       return ApplicantRepository.create(applicantData);
