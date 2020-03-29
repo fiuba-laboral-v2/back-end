@@ -52,7 +52,7 @@ const applicantMutations = {
         type: String
       },
       padron: {
-        type: nonNull(Int)
+        type: Int
       },
       description: {
         type: String

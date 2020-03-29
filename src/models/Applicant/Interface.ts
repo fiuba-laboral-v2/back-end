@@ -15,7 +15,7 @@ export interface IApplicant {
 
 export interface IApplicantEditable {
   uuid: string;
-  padron: number;
+  padron?: number;
   name?: string;
   surname?: string;
   description?: string;

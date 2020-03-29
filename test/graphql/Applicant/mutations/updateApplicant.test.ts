@@ -11,7 +11,7 @@ import { careerMocks } from "../../../models/Career/mocks";
 
 const UPDATE_APPLICANT = gql`
     mutation updateApplicant(
-        $uuid: ID!, $padron: Int!, $name: String, $surname: String, $description: String,
+        $uuid: ID!, $padron: Int, $name: String, $surname: String, $description: String,
         $careers: [CareerCredits], $capabilities: [String], $sections: [Section]
     ) {
         updateApplicant(

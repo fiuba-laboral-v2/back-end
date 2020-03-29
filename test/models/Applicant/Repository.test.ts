@@ -167,11 +167,10 @@ describe("ApplicantRepository", () => {
     };
 
     it("Should update all props", async () => {
-      const { padron, uuid } = await createApplicant();
+      const { uuid } = await createApplicant();
       const newCareer = await CareerRepository.create(careerMocks.careerData());
       const newProps: IApplicantEditable = {
         uuid,
-        padron,
         name: "newName",
         surname: "newSurname",
         description: "newDescription",
@@ -215,10 +214,9 @@ describe("ApplicantRepository", () => {
     });
 
     it("Should update name", async () => {
-      const { padron, uuid } = await createApplicant();
+      const { uuid } = await createApplicant();
       const newProps: IApplicantEditable = {
         uuid,
-        padron,
         name: "newName"
       };
       const applicant = await ApplicantRepository.update(newProps);
@@ -229,10 +227,9 @@ describe("ApplicantRepository", () => {
     });
 
     it("Should update surname", async () => {
-      const { padron, uuid } = await createApplicant();
+      const { uuid } = await createApplicant();
       const newProps: IApplicantEditable = {
         uuid,
-        padron,
         surname: "newSurname"
       };
       const applicant = await ApplicantRepository.update(newProps);
@@ -242,10 +239,9 @@ describe("ApplicantRepository", () => {
     });
 
     it("Should update description", async () => {
-      const { padron, uuid } = await createApplicant();
+      const { uuid } = await createApplicant();
       const newProps: IApplicantEditable = {
         uuid,
-        padron,
         description: "newDescription"
       };
       const applicant = await ApplicantRepository.update(newProps);
@@ -255,10 +251,9 @@ describe("ApplicantRepository", () => {
     });
 
     it("Should update by adding new capabilities", async () => {
-      const { padron, uuid } = await createApplicant();
+      const { uuid } = await createApplicant();
       const newProps: IApplicantEditable = {
         uuid,
-        padron,
         capabilities: ["CSS", "clojure"]
       };
       const applicant = await ApplicantRepository.update(newProps);
@@ -272,7 +267,6 @@ describe("ApplicantRepository", () => {
       const newCareer = await CareerRepository.create(careerMocks.careerData());
       const newProps: IApplicantEditable = {
         uuid: applicant.uuid,
-        padron: applicant.padron,
         careers: [
           {
             code: newCareer.code,
@@ -295,7 +289,6 @@ describe("ApplicantRepository", () => {
 
       const props: IApplicantEditable = {
         uuid: applicant.uuid,
-        padron: applicant.padron,
         sections: [{
           title: "myTitle",
           description: "some description"
@@ -307,7 +300,6 @@ describe("ApplicantRepository", () => {
 
       const newProps: IApplicantEditable = {
         uuid: applicant.uuid,
-        padron: applicant.padron,
         sections: [{
           title: "new myTitle",
           description: "new some description"
@@ -326,7 +318,6 @@ describe("ApplicantRepository", () => {
       const applicant = await createApplicant();
       const newProps: IApplicantEditable = {
         uuid: applicant.uuid,
-        padron: applicant.padron,
         capabilities: [(await applicant.getCapabilities())[0].description]
       };
       await expect(ApplicantRepository.update(newProps)).resolves.not.toThrow();
@@ -337,7 +328,6 @@ describe("ApplicantRepository", () => {
       const [career] = await applicant.getCareers();
       const newProps: IApplicantEditable = {
         uuid: applicant.uuid,
-        padron: applicant.padron,
         careers: [
           {
             code: career.code,
