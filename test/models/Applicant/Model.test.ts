@@ -97,8 +97,8 @@ describe("Applicant model", () => {
 
   it("creates a valid section with a title and a description", async () => {
     const myApplicant: Applicant = new Applicant(params);
-
     const applicant = await myApplicant.save();
+
     const sectionParams = { title: random.words(), description: lorem.paragraphs() };
     await applicant.createSection(sectionParams);
 

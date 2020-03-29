@@ -1,5 +1,5 @@
 import faker from "faker";
-import { IApplicant } from "../../../src/models/Applicant";
+import { IApplicant, TSection } from "../../../src/models/Applicant";
 
 interface IApplicantsData {
   careersCodes: string[];
@@ -10,7 +10,8 @@ interface IApplicantsData {
 const applicantMocks = {
   applicantData: (
     careersCodes: string[],
-    capabilitiesDescriptions: string[] = []
+    capabilitiesDescriptions: string[] = [],
+    sections: TSection[] = []
   ): IApplicant => ({
     name: faker.name.firstName(),
     surname: faker.name.lastName(),
@@ -18,7 +19,8 @@ const applicantMocks = {
     description: faker.random.words(),
     careers: careersCodes.map(c => ({ code: c, creditsCount: faker.random.number() })),
     capabilities: capabilitiesDescriptions.length === 0 ?
-      [faker.random.words()]: capabilitiesDescriptions
+      [faker.random.words()] : capabilitiesDescriptions,
+    sections
   }),
   applicantsData: (
     {
@@ -27,10 +29,10 @@ const applicantMocks = {
       numberOfApplicantsData
     }: IApplicantsData
   ) => (
-    [ ...Array(numberOfApplicantsData) ].map(
-      _ => applicantMocks.applicantData(careersCodes, capabilitiesDescriptions)
+      [...Array(numberOfApplicantsData)].map(
+        _ => applicantMocks.applicantData(careersCodes, capabilitiesDescriptions)
+      )
     )
-  )
 };
 
 export { applicantMocks };

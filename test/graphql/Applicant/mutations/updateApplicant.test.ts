@@ -9,14 +9,14 @@ import { Applicant, ApplicantRepository } from "../../../../src/models/Applicant
 import { applicantMocks } from "../../../models/Applicant/mocks";
 import { careerMocks } from "../../../models/Career/mocks";
 
-const updateApplicant = gql`
+const UPDATE_APPLICANT = gql`
     mutation updateApplicant(
-        $padron: Int!, $name: String, $surname: String, $description: String,
-        $careers: [CareerCredits], $capabilities: [String]
+        $uuid: ID!, $padron: Int!, $name: String, $surname: String, $description: String,
+        $careers: [CareerCredits], $capabilities: [String], $sections: [Section]
     ) {
         updateApplicant(
-            padron: $padron, name: $name, surname: $surname description: $description,
-            careers: $careers, capabilities: $capabilities
+            uuid: $uuid, padron: $padron, name: $name, surname: $surname description: $description,
+            careers: $careers, capabilities: $capabilities, sections: $sections
         ) {
             name
             surname
@@ -31,12 +31,16 @@ const updateApplicant = gql`
                 credits
                 creditsCount
             }
+            sections {
+              title
+              description
+            }
         }
     }
 `;
 
 describe("updateApplicant", () => {
-  const createApplicant = async ()  => {
+  const createApplicant = async () => {
     const career = await CareerRepository.create(careerMocks.careerData());
     const applicantData = applicantMocks.applicantData([career.code]);
     return ApplicantRepository.create(applicantData);
@@ -56,6 +60,7 @@ describe("updateApplicant", () => {
     const applicant = await createApplicant();
     const newCareer = await CareerRepository.create(careerMocks.careerData());
     const dataToUpdate = {
+      uuid: applicant.uuid,
       padron: applicant.padron,
       name: "newName",
       surname: "newSurname",
@@ -66,21 +71,29 @@ describe("updateApplicant", () => {
           code: newCareer.code,
           creditsCount: 8
         }
+      ],
+      sections: [
+        {
+          title: "title",
+          description: "description"
+        }
       ]
     };
     const careersBeforeUpdate = await applicant.getCareers();
     const capabilitiesBeforeUpdate = await applicant.getCapabilities();
-    const { data, errors } = await executeMutation(updateApplicant, dataToUpdate);
+    const {
+      data: { updateApplicant }, errors
+    } = await executeMutation(UPDATE_APPLICANT, dataToUpdate);
 
     expect(errors).toBeUndefined();
-    expect(data.updateApplicant).toMatchObject({
+    expect(updateApplicant).toMatchObject({
       padron: dataToUpdate.padron,
       name: dataToUpdate.name,
       surname: dataToUpdate.surname,
       description: dataToUpdate.description
     });
     expect(
-      data.updateApplicant.capabilities.map(c => c.description)
+      updateApplicant.capabilities.map(c => c.description)
     ).toEqual(expect.arrayContaining(
       [
         ...dataToUpdate.capabilities,
@@ -88,11 +101,18 @@ describe("updateApplicant", () => {
       ]
     ));
     expect(
-      data.updateApplicant.careers.map(c => c.code)
+      updateApplicant.careers.map(c => c.code)
     ).toEqual(expect.arrayContaining(
       [
         ...dataToUpdate.careers.map(c => c.code),
         ...careersBeforeUpdate.map(c => c.code)
+      ]
+    ));
+    expect(
+      updateApplicant.sections.map(c => c.title)
+    ).toEqual(expect.arrayContaining(
+      [
+        ...dataToUpdate.sections.map(c => c.title)
       ]
     ));
   });

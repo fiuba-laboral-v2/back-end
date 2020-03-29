@@ -32,8 +32,8 @@
     "cors": "2.8.5",
     "dotenv": "8.2.0",
     "express": "4.17.1",
-    "faker": "4.1.0",
     "express-jwt": "^5.3.1",
+    "faker": "4.1.0",
     "glob": "7.1.6",
     "graphql": "14.5.8",
     "graphql-depth-limit": "1.1.0",
@@ -70,7 +70,7 @@
     "ts-jest": "24.2.0",
     "ts-node": "8.5.4",
     "tslint": "5.18.0",
-    "tslint-config-fiuba-laboral-v2": "1.0.5",
+    "tslint-config-fiuba-laboral-v2": "^1.0.6",
     "typescript": "3.7.4"
   },
   "scripts": {

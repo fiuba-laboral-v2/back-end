@@ -1,6 +1,8 @@
 import { GraphQLApplicant } from "./Types/Applicant";
 import { GraphQLCareerCredits } from "./Types/CareerCredits";
-import { Int, List, nonNull, String } from "../fieldTypes";
+import { GraphQLSection } from "./Types/Section";
+
+import { ID, Int, List, nonNull, String } from "../fieldTypes";
 
 import {
   IApplicant,
@@ -40,6 +42,9 @@ const applicantMutations = {
   updateApplicant: {
     type: GraphQLApplicant,
     args: {
+      uuid: {
+        type: nonNull(ID)
+      },
       name: {
         type: String
       },
@@ -57,11 +62,13 @@ const applicantMutations = {
       },
       capabilities: {
         type: List(String)
+      },
+      sections: {
+        type: List(GraphQLSection)
       }
     },
     resolve: async (_: undefined, props: IApplicantEditable) => {
-      const applicant = await ApplicantRepository.findByPadron(props.padron);
-      await ApplicantRepository.update(applicant, props);
+      const applicant = await ApplicantRepository.update(props);
       return ApplicantSerializer.serialize(applicant);
     }
   },

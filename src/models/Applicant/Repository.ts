@@ -110,14 +110,22 @@ export const ApplicantRepository = {
     }
     return applicant;
   },
-  update: async (applicant: Applicant, newProps: IApplicantEditable) => {
-    const capabilities = await CapabilityRepository.findOrCreateByDescriptions(
-      newProps.capabilities!
-    );
-    await applicant.set(pick(newProps, ["name", "surname", "description"]));
+  update: async ({
+    uuid,
+    sections = [],
+    capabilities: newCapabilities = [],
+    careers,
+    ...props
+  }: IApplicantEditable) => {
+    const applicant = await ApplicantRepository.findByUuid(uuid);
+    const capabilities = await CapabilityRepository.findOrCreateByDescriptions(newCapabilities);
+    await applicant.set(pick(props, ["name", "surname", "description"]));
+    for (const section of sections) {
+      await applicant.createSection(section);
+    }
     return ApplicantRepository.save(
       applicant,
-      newProps.careers || [],
+      careers || [],
       capabilities
     );
   },
