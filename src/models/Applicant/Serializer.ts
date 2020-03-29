@@ -17,7 +17,7 @@ const ApplicantSerializer = {
       capability => pick(capability, ["uuid", "description"])
     )),
     sections: await Promise.all((await applicant.getSections()).map(
-      section => pick(section, ["title", "description"])
+      section => pick(section, ["title", "text"])
     ))
   })
 };

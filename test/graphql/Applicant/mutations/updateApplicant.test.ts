@@ -33,7 +33,7 @@ const UPDATE_APPLICANT = gql`
             }
             sections {
               title
-              description
+              text
             }
         }
     }
@@ -75,7 +75,7 @@ describe("updateApplicant", () => {
       sections: [
         {
           title: "title",
-          description: "description"
+          text: "description"
         }
       ]
     };

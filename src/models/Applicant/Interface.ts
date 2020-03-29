@@ -26,5 +26,5 @@ export interface IApplicantEditable {
 
 export type TSection = {
   title: string;
-  description: string;
+  text: string;
 };

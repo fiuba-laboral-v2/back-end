@@ -20,7 +20,7 @@ export = {
         type: TEXT,
         unique: true
       },
-      description: {
+      text: {
         allowNull: false,
         type: TEXT
       },

@@ -26,9 +26,9 @@ describe("Section model", () => {
     await Database.close();
   });
 
-  it("creates a valid section with a title and a description", async () => {
+  it("creates a valid section with a title and a text", async () => {
     const params = {
-      applicantUuid: applicant.uuid, title: random.words(), description: lorem.paragraphs()
+      applicantUuid: applicant.uuid, title: random.words(), text: lorem.paragraphs()
     };
     const section = new Section(params);
 
@@ -36,17 +36,17 @@ describe("Section model", () => {
     expect(section).toHaveProperty("uuid");
     expect(section).toMatchObject({
       title: params.title,
-      description: params.description
+      text: params.text
     });
   });
 
   it("raise an error if no title is provided", async () => {
-    const section = new Section({ applicantUuid: applicant.uuid, description: lorem.paragraphs() });
+    const section = new Section({ applicantUuid: applicant.uuid, text: lorem.paragraphs() });
 
     await expect(section.save()).rejects.toThrow();
   });
 
-  it("raise an error if no description is provided", async () => {
+  it("raise an error if no text is provided", async () => {
     const section = new Section({ applicantUuid: applicant.uuid, title: random.words() });
 
     await expect(section.save()).rejects.toThrow();

@@ -95,11 +95,11 @@ describe("Applicant model", () => {
     }));
   });
 
-  it("creates a valid section with a title and a description", async () => {
+  it("creates a valid section with a title and a text", async () => {
     const myApplicant: Applicant = new Applicant(params);
     const applicant = await myApplicant.save();
 
-    const sectionParams = { title: random.words(), description: lorem.paragraphs() };
+    const sectionParams = { title: random.words(), text: lorem.paragraphs() };
     await applicant.createSection(sectionParams);
 
     const [section] = await applicant.getSections();
@@ -107,7 +107,7 @@ describe("Applicant model", () => {
     expect(section).toHaveProperty("uuid");
     expect(section).toMatchObject({
       title: sectionParams.title,
-      description: sectionParams.description
+      text: sectionParams.text
     });
   });
 

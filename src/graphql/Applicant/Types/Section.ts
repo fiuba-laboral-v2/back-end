@@ -7,7 +7,7 @@ const GraphQLSection = new GraphQLInputObjectType({
     title: {
       type: nonNull(String)
     },
-    description: {
+    text: {
       type: nonNull(String)
     }
   })
@@ -19,7 +19,7 @@ const GraphQLSectionOutput = new GraphQLObjectType({
     title: {
       type: nonNull(String)
     },
-    description: {
+    text: {
       type: nonNull(String)
     }
   })

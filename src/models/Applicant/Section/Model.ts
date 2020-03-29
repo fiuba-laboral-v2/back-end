@@ -40,5 +40,5 @@ export class Section extends Model<Section> {
     allowNull: false,
     type: DataType.TEXT
   })
-  public description: string;
+  public text: string;
 }

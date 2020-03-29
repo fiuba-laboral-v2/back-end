@@ -184,7 +184,7 @@ describe("ApplicantRepository", () => {
         sections: [
           {
             title: "title",
-            description: "some description"
+            text: "some description"
           }
         ]
       };
@@ -291,7 +291,7 @@ describe("ApplicantRepository", () => {
         uuid: applicant.uuid,
         sections: [{
           title: "myTitle",
-          description: "some description"
+          text: "some description"
         }]
       };
 
@@ -302,7 +302,7 @@ describe("ApplicantRepository", () => {
         uuid: applicant.uuid,
         sections: [{
           title: "new myTitle",
-          description: "new some description"
+          text: "new some description"
         }]
       };
       const updatedApplicant = await ApplicantRepository.update(newProps);

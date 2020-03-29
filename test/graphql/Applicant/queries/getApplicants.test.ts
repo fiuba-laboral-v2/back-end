@@ -30,7 +30,7 @@ const GET_APPLICANTS = gql`
             }
             sections {
               title
-              description
+              text
             }
         }
     }
