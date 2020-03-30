@@ -18,7 +18,6 @@ export const defaultTranslations = {
     padron: "Padron",
     capabilities: "Aptitudes",
     careers: "Carreras",
-    career: "Carrera",
     credits: "Créditos",
     creditsProgress: "% de los créditos aprobados",
     description: "Descripción",
@@ -32,6 +31,7 @@ export const defaultTranslations = {
       surname: "Apellido",
       padron: "Padron",
       careersTitle: "Elegi tu carrera",
+      career: "Carrera",
       credits: "Créditos",
       submit: "Guardar"
     }
