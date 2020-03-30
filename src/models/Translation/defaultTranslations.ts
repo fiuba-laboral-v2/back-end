@@ -18,6 +18,7 @@ export const defaultTranslations = {
     padron: "Padron",
     capabilities: "Aptitudes",
     careers: "Carreras",
+    career: "Carrera",
     credits: "Créditos",
     creditsProgress: "% de los créditos aprobados",
     description: "Descripción",
