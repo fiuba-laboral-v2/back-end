@@ -103,6 +103,21 @@ const applicantMutations = {
       await ApplicantRepository.deleteCareers(applicant, props.careersCodes);
       return ApplicantSerializer.serialize(applicant);
     }
+  },
+  deleteSection: {
+    type: GraphQLApplicant,
+    args: {
+      uuid: {
+        type: nonNull(ID)
+      },
+      sectionUuid: {
+        type: nonNull(ID)
+      }
+    },
+    resolve: async (_: undefined, { uuid, sectionUuid }: { uuid: string, sectionUuid: string }) => {
+      const applicant = await ApplicantRepository.deleteSection(uuid, sectionUuid);
+      return ApplicantSerializer.serialize(applicant);
+    }
   }
 };
 

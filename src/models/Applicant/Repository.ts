@@ -10,7 +10,6 @@ import { Transaction } from "sequelize";
 import { CareerApplicantRepository } from "../CareerApplicant/Repository";
 import { Section } from "./Section";
 import { omit } from "lodash";
-import { TSection } from "./Interface";
 
 export const ApplicantRepository = {
   create: async ({
@@ -154,17 +153,17 @@ export const ApplicantRepository = {
     );
     return applicant;
   },
-  deleteSection: async (uuid: string, section: TSection) => {
+  deleteSection: async (uuid: string, sectionUuid: string) => {
     const applicant = await ApplicantRepository.findByUuid(uuid);
-    if (await applicant.hasSection(section.uuid!)) {
+    if (await applicant.hasSection(sectionUuid)) {
       await Section.destroy({
         where: {
-          uuid: section.uuid!
+          uuid: sectionUuid
         }
       });
-      return section;
+      return applicant;
     }
-    throw new ApplicantDoesntHaveSection(uuid, section.uuid!);
+    throw new ApplicantDoesntHaveSection(uuid, sectionUuid);
   },
   truncate: async () => {
     Section.truncate({ cascade: true });

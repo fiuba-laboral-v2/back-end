@@ -400,7 +400,7 @@ describe("ApplicantRepository", () => {
         text: "My text",
         displayOrder: 1
       });
-      await ApplicantRepository.deleteSection(applicant.uuid, section);
+      await ApplicantRepository.deleteSection(applicant.uuid, section.uuid);
       expect((await applicant.getSections()).length).toEqual(0);
     });
 
