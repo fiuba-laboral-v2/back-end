@@ -41,4 +41,11 @@ export class Section extends Model<Section> {
     type: DataType.TEXT
   })
   public text: string;
+
+  @Column({
+    allowNull: false,
+    autoIncrement: true,
+    type: DataType.INTEGER
+  })
+  public displayOrder: number;
 }

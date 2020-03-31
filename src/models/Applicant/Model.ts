@@ -74,6 +74,7 @@ export class Applicant extends Model<Applicant> {
   public getCareersApplicants!: HasManyGetAssociationsMixin<CareerApplicant>;
   public hasCapability: HasManyHasAssociationMixin<Capability, "description">;
   public getSections!: HasManyGetAssociationsMixin<Section>;
+  public hasSection!: HasManyHasAssociationMixin<Section, string>;
   public createSection!: HasManyCreateAssociationMixin<Section>;
 
 }

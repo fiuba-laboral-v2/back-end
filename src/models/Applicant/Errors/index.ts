@@ -1,3 +1,4 @@
 import { ApplicantNotFound } from "./ApplicantNotFound";
+import { ApplicantDoesntHaveSection } from "./ApplicantDoesntHaveSection";
 
-export default { ApplicantNotFound };
+export default { ApplicantNotFound, ApplicantDoesntHaveSection };

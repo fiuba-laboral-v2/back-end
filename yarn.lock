@@ -7444,7 +7444,7 @@ tslib@^1.10.0, tslib@^1.8.0, tslib@^1.8.1, tslib@^1.9.0, tslib@^1.9.3:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.11.1.tgz#eb15d128827fbee2841549e171f45ed338ac7e35"
   integrity sha512-aZW88SY8kQbU7gpV19lN24LtXh/yD4ZZg6qieAJDDg+YBsJcSmLGK9QpnUjAKVG/xefmvJGd1WUmfpT/g6AJGA==
 
-tslint-config-fiuba-laboral-v2@^1.0.6:
+tslint-config-fiuba-laboral-v2@1.0.7:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/tslint-config-fiuba-laboral-v2/-/tslint-config-fiuba-laboral-v2-1.0.7.tgz#1b9b46c023efb0e92fa2d180e54825934fb567c5"
   integrity sha512-utnV98QVcWr6OI2tdsq9oV5WWNvKc39QXObh8FzL/tgnCQ91aydTOAudodpB0Ck+wgV9GvQXmyjg7nOrshUqhg==

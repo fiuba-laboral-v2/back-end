@@ -3,11 +3,14 @@ import { CapabilityRepository, Capability } from "../Capability";
 import { ApplicantCapability } from "../ApplicantCapability";
 import { CareerApplicant } from "../CareerApplicant";
 import { ApplicantNotFound } from "./Errors/ApplicantNotFound";
+import { ApplicantDoesntHaveSection } from "./Errors/ApplicantDoesntHaveSection";
 import Database from "../../config/Database";
 import pick from "lodash/pick";
 import { Transaction } from "sequelize";
 import { CareerApplicantRepository } from "../CareerApplicant/Repository";
 import { Section } from "./Section";
+import { omit } from "lodash";
+import { TSection } from "./Interface";
 
 export const ApplicantRepository = {
   create: async ({
@@ -121,7 +124,11 @@ export const ApplicantRepository = {
     const capabilities = await CapabilityRepository.findOrCreateByDescriptions(newCapabilities);
     await applicant.set(pick(props, ["name", "surname", "description"]));
     for (const section of sections) {
-      await applicant.createSection(section);
+      if (section.uuid && (await applicant.hasSection(section.uuid))) {
+        await Section.update(omit(section, ["uuid"]), { where: { uuid: section.uuid } });
+      } else {
+        await applicant.createSection(section);
+      }
     }
     return ApplicantRepository.save(
       applicant,
@@ -146,6 +153,18 @@ export const ApplicantRepository = {
       { where: { applicantUuid: applicant.uuid, careerCode: codes } }
     );
     return applicant;
+  },
+  deleteSection: async (uuid: string, section: TSection) => {
+    const applicant = await ApplicantRepository.findByUuid(uuid);
+    if (await applicant.hasSection(section.uuid!)) {
+      await Section.destroy({
+        where: {
+          uuid: section.uuid!
+        }
+      });
+      return section;
+    }
+    throw new ApplicantDoesntHaveSection(uuid, section.uuid!);
   },
   truncate: async () => {
     Section.truncate({ cascade: true });

@@ -25,6 +25,8 @@ export interface IApplicantEditable {
 }
 
 export type TSection = {
+  uuid?: string;
   title: string;
   text: string;
+  displayOrder: number;
 };

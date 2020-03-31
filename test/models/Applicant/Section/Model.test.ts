@@ -28,7 +28,10 @@ describe("Section model", () => {
 
   it("creates a valid section with a title and a text", async () => {
     const params = {
-      applicantUuid: applicant.uuid, title: random.words(), text: lorem.paragraphs()
+      applicantUuid: applicant.uuid,
+      title: random.words(),
+      text: lorem.paragraphs(),
+      displayOrder: 1
     };
     const section = new Section(params);
 
@@ -36,7 +39,8 @@ describe("Section model", () => {
     expect(section).toHaveProperty("uuid");
     expect(section).toMatchObject({
       title: params.title,
-      text: params.text
+      text: params.text,
+      displayOrder: 1
     });
   });
 
@@ -57,4 +61,21 @@ describe("Section model", () => {
 
     await expect(section.save()).rejects.toThrow();
   });
+
+  it("raise an error if there are 2 sections with the same display order for the same applicant",
+     async () => {
+      const params = {
+        applicantUuid: applicant.uuid,
+        title: random.words(),
+        text: lorem.paragraphs(),
+        displayOrder: 1
+      };
+      const section = new Section(params);
+      await section.save();
+
+      const sectionWithSameDisplayOrder = new Section({
+        ...params, title: "New Title", text: "New Text"
+      });
+      await expect(sectionWithSameDisplayOrder.save()).rejects.toThrow();
+    });
 });
