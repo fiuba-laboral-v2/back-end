@@ -18,6 +18,7 @@ import { CareerApplicant } from "../CareerApplicant/Model";
 import { Capability } from "../Capability/Model";
 import { ApplicantCapability } from "../ApplicantCapability/Model";
 import { Section } from "./Section";
+import { ApplicantLink } from "./Link";
 
 
 @Table({
@@ -60,6 +61,9 @@ export class Applicant extends Model<Applicant> {
   @HasMany(() => Section)
   public sections: Section[];
 
+  @HasMany(() => ApplicantLink)
+  public links: ApplicantLink[];
+
   @HasMany(() => CareerApplicant)
   public careersApplicants: CareerApplicant[];
 
@@ -76,5 +80,7 @@ export class Applicant extends Model<Applicant> {
   public getSections!: HasManyGetAssociationsMixin<Section>;
   public hasSection!: HasManyHasAssociationMixin<Section, string>;
   public createSection!: HasManyCreateAssociationMixin<Section>;
-
+  public getLinks!: HasManyGetAssociationsMixin<ApplicantLink>;
+  public hasLink!: HasManyHasAssociationMixin<ApplicantLink, string>;
+  public createLink!: HasManyCreateAssociationMixin<ApplicantLink>;
 }
