@@ -385,6 +385,25 @@ describe("ApplicantRepository", () => {
       expect((await applicant.getCareers()).length).toEqual(0);
     });
 
+    it("should delete a section of an applicant", async () => {
+      const careers = await careerMocks.createCareers(10);
+      const codes = careers.map(c => c.code);
+      const applicantData = applicantMocks.applicantData(codes);
+      const applicant = await ApplicantRepository.create(applicantData);
+
+      await ApplicantRepository.update({
+        uuid: applicant.uuid, sections: [{ title: "My title", text: "My text", displayOrder: 1 }]
+      });
+      const [section] = await applicant.getSections();
+      expect(section).toMatchObject({
+        title: "My title",
+        text: "My text",
+        displayOrder: 1
+      });
+      await ApplicantRepository.deleteSection(applicant.uuid, section);
+      expect((await applicant.getSections()).length).toEqual(0);
+    });
+
     it("should not delete when deleting a not existing applicant capability", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
       const applicantData = applicantMocks.applicantData(
