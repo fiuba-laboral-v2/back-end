@@ -254,7 +254,6 @@ describe("updateApplicant", () => {
 
     it("should be able to update the fields of an existing section", async () => {
       applicant = await createApplicant();
-      await applicant.save();
       await addNewLink(applicant);
       const applicantWithMoreLinks = await addNewLink(applicant);
       const [firstLink, SecondLink] = await applicantWithMoreLinks.getLinks();
