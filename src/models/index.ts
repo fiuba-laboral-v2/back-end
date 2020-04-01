@@ -1,5 +1,6 @@
 import { Applicant } from "./Applicant";
 import { Section } from "./Applicant/Section";
+import { ApplicantLink } from "./Applicant/Link";
 import { Career } from "./Career";
 import { CareerApplicant } from "./CareerApplicant";
 import { Capability } from "./Capability";
@@ -12,6 +13,7 @@ import { User } from "./User";
 const models = [
   Applicant,
   Section,
+  ApplicantLink,
   Career,
   CareerApplicant,
   Capability,

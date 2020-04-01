@@ -1,5 +1,5 @@
-import { Applicant, IApplicant, IApplicantEditable, IApplicantCareer } from "./index";
-import { CapabilityRepository, Capability } from "../Capability";
+import { Applicant, IApplicant, IApplicantCareer, IApplicantEditable } from "./index";
+import { Capability, CapabilityRepository } from "../Capability";
 import { ApplicantCapability } from "../ApplicantCapability";
 import { CareerApplicant } from "../CareerApplicant";
 import { ApplicantNotFound } from "./Errors/ApplicantNotFound";
@@ -10,16 +10,20 @@ import { Transaction } from "sequelize";
 import { CareerApplicantRepository } from "../CareerApplicant/Repository";
 import { Section } from "./Section";
 import { SectionRepository } from "./Section/Repository";
+import { ApplicantLink, ApplicantLinkRepository } from "./Link";
+import { ApplicantDoesntHaveLink } from "./Errors/ApplicantDoesntHaveLink";
 
 export const ApplicantRepository = {
-  create: async ({
-    name,
-    surname,
-    padron,
-    description,
-    careers: applicantCareers = [],
-    capabilities = []
-  }: IApplicant) => {
+  create: async (
+    {
+      name,
+      surname,
+      padron,
+      description,
+      careers: applicantCareers = [],
+      capabilities = []
+    }: IApplicant
+  ) => {
     const capabilityModels: Capability[] = [];
 
     for (const capability of capabilities) {
@@ -112,18 +116,24 @@ export const ApplicantRepository = {
     }
     return applicant;
   },
-  update: async ({
-    uuid,
-    sections = [],
-    capabilities: newCapabilities = [],
-    careers,
-    ...props
-  }: IApplicantEditable) => {
+  update: async (
+    {
+      uuid,
+      sections = [],
+      links = [],
+      capabilities: newCapabilities = [],
+      careers,
+      ...props
+    }: IApplicantEditable
+  ) => {
     const applicant = await ApplicantRepository.findByUuid(uuid);
     const capabilities = await CapabilityRepository.findOrCreateByDescriptions(newCapabilities);
     await applicant.set(pick(props, ["name", "surname", "description"]));
     for (const section of sections) {
       await SectionRepository.updateOrCreate(applicant, section);
+    }
+    for (const link of links) {
+      await ApplicantLinkRepository.updateOrCreate(applicant, link);
     }
     return ApplicantRepository.save(
       applicant,
@@ -160,6 +170,12 @@ export const ApplicantRepository = {
       return applicant;
     }
     throw new ApplicantDoesntHaveSection(uuid, sectionUuid);
+  },
+  deleteLink: async (uuid: string, linkUuid: string) => {
+    const applicant = await ApplicantRepository.findByUuid(uuid);
+    if (!await applicant.hasLink(linkUuid)) throw new ApplicantDoesntHaveLink(uuid, linkUuid);
+    await ApplicantLink.destroy({ where: { uuid: linkUuid } });
+    return applicant;
   },
   truncate: async () => {
     Applicant.truncate({ cascade: true });

@@ -8,7 +8,7 @@ import { applicantMocks } from "./mocks";
 import { CareerApplicantRepository } from "../../../src/models/CareerApplicant/Repository";
 import { CareerApplicantNotFound } from "../../../src/models/CareerApplicant/Errors";
 import { CapabilityRepository } from "../../../src/models/Capability";
-import { random } from "faker";
+import { random, internet } from "faker";
 
 describe("ApplicantRepository", () => {
   beforeAll(async () => {
@@ -187,6 +187,12 @@ describe("ApplicantRepository", () => {
             text: "some description",
             displayOrder: 1
           }
+        ],
+        links: [
+          {
+            name: "someName",
+            url: "https://some.url"
+          }
         ]
       };
       const applicant = await ApplicantRepository.update(newProps);
@@ -316,6 +322,35 @@ describe("ApplicantRepository", () => {
       ]));
     });
 
+    it("Should update by adding new links", async () => {
+      const applicant = await createApplicant();
+
+      const props: IApplicantEditable = {
+        uuid: applicant.uuid,
+        links: [{
+          name: random.word(),
+          url: internet.url()
+        }]
+      };
+
+      await ApplicantRepository.update(props);
+
+      const newProps: IApplicantEditable = {
+        uuid: applicant.uuid,
+        links: [{
+          name: "new name",
+          url: internet.url()
+        }]
+      };
+      const updatedApplicant = await ApplicantRepository.update(newProps);
+      expect(
+        (await updatedApplicant.getLinks()).map(link => link.name)
+      ).toEqual(expect.arrayContaining([
+        ...props.links.map(link => link.name),
+        ...newProps.links.map(link => link.name)
+      ]));
+    });
+
     it("Should not raise an error when adding an existing capability", async () => {
       const applicant = await createApplicant();
       const newProps: IApplicantEditable = {
@@ -402,6 +437,24 @@ describe("ApplicantRepository", () => {
       });
       await ApplicantRepository.deleteSection(applicant.uuid, section.uuid);
       expect((await applicant.getSections()).length).toEqual(0);
+    });
+
+    it("should delete a link of an applicant", async () => {
+      const careers = await careerMocks.createCareers(10);
+      const codes = careers.map(c => c.code);
+      const applicantData = applicantMocks.applicantData(codes);
+      const applicant = await ApplicantRepository.create(applicantData);
+
+      await ApplicantRepository.update({
+        uuid: applicant.uuid, links: [{ name: "someName", url: "https://some.url" }]
+      });
+      const [link] = await applicant.getLinks();
+      expect(link).toMatchObject({
+        name: "someName",
+        url: "https://some.url"
+      });
+      await ApplicantRepository.deleteLink(applicant.uuid, link.uuid);
+      expect((await applicant.getLinks()).length).toEqual(0);
     });
 
     it("should not delete when deleting a not existing applicant capability", async () => {

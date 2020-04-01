@@ -10,6 +10,7 @@ import {
   ApplicantRepository,
   ApplicantSerializer
 } from "../../models/Applicant";
+import { GraphQLLinkInput } from "./Types/Link";
 
 const applicantMutations = {
   saveApplicant: {
@@ -65,6 +66,9 @@ const applicantMutations = {
       },
       sections: {
         type: List(GraphQLSectionInput)
+      },
+      links: {
+        type: List(GraphQLLinkInput)
       }
     },
     resolve: async (_: undefined, props: IApplicantEditable) => {
@@ -122,6 +126,21 @@ const applicantMutations = {
     },
     resolve: async (_: undefined, { uuid, sectionUuid }: { uuid: string, sectionUuid: string }) => {
       const applicant = await ApplicantRepository.deleteSection(uuid, sectionUuid);
+      return ApplicantSerializer.serialize(applicant);
+    }
+  },
+  deleteLink: {
+    type: GraphQLApplicant,
+    args: {
+      uuid: {
+        type: nonNull(ID)
+      },
+      linkUuid: {
+        type: nonNull(ID)
+      }
+    },
+    resolve: async (_: undefined, { uuid, linkUuid }: { uuid: string, linkUuid: string }) => {
+      const applicant = await ApplicantRepository.deleteLink(uuid, linkUuid);
       return ApplicantSerializer.serialize(applicant);
     }
   }

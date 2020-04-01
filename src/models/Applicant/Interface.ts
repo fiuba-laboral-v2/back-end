@@ -1,3 +1,5 @@
+import { TLink } from "./Link/Interface";
+
 export interface IApplicantCareer {
   code: string;
   creditsCount: number;
@@ -22,6 +24,7 @@ export interface IApplicantEditable {
   careers?: IApplicantCareer[];
   capabilities?: string[];
   sections?: TSection[];
+  links?: TLink[];
 }
 
 export type TSection = {

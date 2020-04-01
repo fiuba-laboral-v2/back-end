@@ -1,6 +1,6 @@
 import Database from "../../../../src/config/Database";
 import { Applicant } from "../../../../src/models/Applicant";
-import { Section, SectionRepository } from "../../../../src/models/Applicant/Section";
+import { SectionRepository } from "../../../../src/models/Applicant/Section";
 import { random, lorem } from "faker";
 
 describe("Section model", () => {

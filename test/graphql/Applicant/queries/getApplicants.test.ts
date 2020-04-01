@@ -32,6 +32,10 @@ const GET_APPLICANTS = gql`
               title
               text
             }
+            links {
+              name
+              url
+            }
         }
     }
 `;
