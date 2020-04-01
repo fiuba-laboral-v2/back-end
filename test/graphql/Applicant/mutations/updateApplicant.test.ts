@@ -8,37 +8,43 @@ import { Applicant, ApplicantRepository } from "../../../../src/models/Applicant
 
 import { applicantMocks } from "../../../models/Applicant/mocks";
 import { careerMocks } from "../../../models/Career/mocks";
-import { random, lorem } from "faker";
+import { random, lorem, internet } from "faker";
 
 import { pick } from "lodash";
 
 const UPDATE_APPLICANT = gql`
     mutation updateApplicant(
         $uuid: ID!, $padron: Int, $name: String, $surname: String, $description: String,
-        $careers: [CareerCredits], $capabilities: [String], $sections: [SectionInput]
+        $careers: [CareerCredits], $capabilities: [String], $sections: [SectionInput],
+        $links: [LinkInput]
     ) {
         updateApplicant(
             uuid: $uuid, padron: $padron, name: $name, surname: $surname description: $description,
-            careers: $careers, capabilities: $capabilities, sections: $sections
+            careers: $careers, capabilities: $capabilities, sections: $sections, links: $links
         ) {
             name
             surname
             padron
             description
             capabilities {
-                description
+              description
             }
             careers {
-                code
-                description
-                credits
-                creditsCount
+              code
+              description
+              credits
+              creditsCount
             }
             sections {
               uuid
               title
               text
               displayOrder
+            }
+            links {
+              uuid
+              name
+              url
             }
         }
     }
@@ -71,19 +77,19 @@ describe("updateApplicant", () => {
       surname: "newSurname",
       description: "newDescription",
       capabilities: ["CSS", "clojure"],
-      careers: [
-        {
-          code: newCareer.code,
-          creditsCount: 8
-        }
-      ],
-      sections: [
-        {
-          title: "title",
-          text: "description",
-          displayOrder: 1
-        }
-      ]
+      careers: [{
+        code: newCareer.code,
+        creditsCount: 8
+      }],
+      sections: [{
+        title: "title",
+        text: "description",
+        displayOrder: 1
+      }],
+      links: [{
+        name: "my link",
+        url: "https://some.url"
+      }]
     };
     const careersBeforeUpdate = await applicant.getCareers();
     const capabilitiesBeforeUpdate = await applicant.getCapabilities();
@@ -122,6 +128,14 @@ describe("updateApplicant", () => {
       [
         ...dataToUpdate.sections.map(({ title, text, displayOrder }) =>
           ({ title, text, displayOrder }))
+      ]
+    ));
+    expect(
+      updateApplicant.links.map(({ name, url }) => ({ name, url })
+      )
+    ).toEqual(expect.arrayContaining(
+      [
+        ...dataToUpdate.links.map(({ name, url }) => ({ name, url }))
       ]
     ));
   });
@@ -166,7 +180,7 @@ describe("updateApplicant", () => {
       ));
     });
 
-    it("should be able to update de fields of an existing section", async () => {
+    it("should be able to update the fields of an existing section", async () => {
       applicant = await createApplicant();
       await applicant.save();
       await addNewSection(applicant, 1);
@@ -197,6 +211,77 @@ describe("updateApplicant", () => {
           ...params.sections.map(({ title, text, displayOrder }) =>
             ({ title, text, displayOrder })),
           pick(SecondSection, ["title", "text", "displayOrder"])
+        ]
+      ));
+    });
+  });
+
+  describe("when a link exists", () => {
+    let applicant: Applicant;
+    let initialData;
+
+    const addNewLink = async ({ uuid }) => {
+      initialData = {
+        uuid,
+        links: [{ name: random.word(), url: internet.url() }]
+      };
+      return ApplicantRepository.update(initialData);
+    };
+
+    it("should be able to add a new link", async () => {
+      applicant = await createApplicant();
+      await applicant.save();
+      await addNewLink(applicant);
+      const params = {
+        uuid: applicant.uuid,
+        links: [{ name: "other", url: "https://other.url" }]
+      };
+      const {
+        data: { updateApplicant }, errors
+      } = await executeMutation(UPDATE_APPLICANT, params);
+
+
+      expect(updateApplicant.links.length).toEqual(2);
+      expect(
+        updateApplicant.links.map(({ name, url }) => ({ name, url })
+        )
+      ).toEqual(expect.arrayContaining(
+        [
+          ...initialData.links.map(({ name, url }) => ({ name, url })),
+          ...params.links.map(({ name, url }) => ({ name, url }))
+        ]
+      ));
+    });
+
+    it("should be able to update the fields of an existing section", async () => {
+      applicant = await createApplicant();
+      await applicant.save();
+      await addNewLink(applicant);
+      const applicantWithMoreLinks = await addNewLink(applicant);
+      const [firstLink, SecondLink] = await applicantWithMoreLinks.getLinks();
+      const params = {
+        uuid: applicant.uuid,
+        links: [{ uuid: firstLink.uuid, name: "other", url: "https://other.url" }]
+      };
+
+      const {
+        data: { updateApplicant }, errors
+      } = await executeMutation(UPDATE_APPLICANT, params);
+
+      expect(errors).toBeUndefined();
+      expect(updateApplicant.links.find(({ uuid }) => uuid === firstLink.uuid))
+        .toMatchObject({
+          uuid: firstLink.uuid, name: "other", url: "https://other.url"
+        });
+      expect(
+        updateApplicant.links.map(({ name, url }) =>
+          ({ name, url })
+        )
+      ).toEqual(expect.arrayContaining(
+        [
+          ...params.links.map(({ name, url }) =>
+            ({ name, url })),
+          pick(SecondLink, ["name", "url"])
         ]
       ));
     });

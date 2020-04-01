@@ -10,6 +10,7 @@ import {
   ApplicantRepository,
   ApplicantSerializer
 } from "../../models/Applicant";
+import { GraphQLLinkInput } from "./Types/Link";
 
 const applicantMutations = {
   saveApplicant: {
@@ -65,6 +66,9 @@ const applicantMutations = {
       },
       sections: {
         type: List(GraphQLSectionInput)
+      },
+      links: {
+        type: List(GraphQLLinkInput)
       }
     },
     resolve: async (_: undefined, props: IApplicantEditable) => {

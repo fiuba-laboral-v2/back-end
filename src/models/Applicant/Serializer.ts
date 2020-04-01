@@ -18,6 +18,9 @@ const ApplicantSerializer = {
     ),
     sections: (await Promise.all(await applicant.getSections())).map(
       section => pick(section, ["uuid", "title", "text", "displayOrder"])
+    ),
+    links: (await Promise.all(await applicant.getLinks())).map(
+      link => pick(link, ["uuid", "name", "url"])
     )
   })
 };
