@@ -9,8 +9,9 @@ import { careerMocks } from "../../../models/Career/mocks";
 import { capabilityMocks } from "../../../models/Capability/mocks";
 
 const deleteApplicantCapabilities = gql`
-    mutation deleteApplicantCapabilities($padron: Int!, $capabilities: [String]) {
-        deleteApplicantCapabilities(padron: $padron, capabilities: $capabilities) {
+    mutation deleteApplicantCapabilities($uuid: ID!, $capabilities: [String]) {
+        deleteApplicantCapabilities(uuid: $uuid, capabilities: $capabilities) {
+            uuid
             name
             surname
             padron
@@ -52,7 +53,7 @@ describe("deleteApplicantCapabilities", () => {
     );
     const applicant = await ApplicantRepository.create(applicantData);
     const { data, errors } = await executeMutation(deleteApplicantCapabilities, {
-      padron: applicant.padron,
+      uuid: applicant.uuid,
       capabilities: descriptions
     });
     expect(errors).toBeUndefined();
@@ -64,7 +65,7 @@ describe("deleteApplicantCapabilities", () => {
     const applicantData = applicantMocks.applicantData([career.code]);
     const applicant = await ApplicantRepository.create(applicantData);
     const { data, errors } = await executeMutation(deleteApplicantCapabilities, {
-      padron: applicant.padron,
+      uuid: applicant.uuid,
       capabilities: ["does not exists"]
     });
     expect(errors).toBeUndefined();
