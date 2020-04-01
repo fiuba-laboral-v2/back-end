@@ -1,3 +1,4 @@
 import { Section } from "./Model";
+import { SectionRepository } from "./Repository";
 
-export { Section };
+export { Section, SectionRepository };
