@@ -11,12 +11,11 @@ import { careerMocks } from "../../../models/Career/mocks";
 import { random, lorem } from "faker";
 
 import { pick } from "lodash";
-import { Section } from "../../../../src/models/Applicant/Section";
 
 const UPDATE_APPLICANT = gql`
     mutation updateApplicant(
         $uuid: ID!, $padron: Int, $name: String, $surname: String, $description: String,
-        $careers: [CareerCredits], $capabilities: [String], $sections: [Section]
+        $careers: [CareerCredits], $capabilities: [String], $sections: [SectionInput]
     ) {
         updateApplicant(
             uuid: $uuid, padron: $padron, name: $name, surname: $surname description: $description,
@@ -55,7 +54,6 @@ describe("updateApplicant", () => {
   beforeAll(async () => {
     await Database.setConnection();
     await Career.truncate({ cascade: true });
-    await Section.truncate({ cascade: true });
     await Applicant.truncate({ cascade: true });
   });
 

@@ -9,7 +9,6 @@ describe("Section model", () => {
   beforeAll(async () => {
     await Database.setConnection();
     await Applicant.truncate({ cascade: true });
-    await Section.truncate({ cascade: true });
     const myApplicant = new Applicant({
       name: "Bruno",
       surname: "Diaz",
@@ -22,7 +21,6 @@ describe("Section model", () => {
 
   afterAll(async () => {
     await Applicant.truncate({ cascade: true });
-    await Section.truncate({ cascade: true });
     await Database.close();
   });
 
@@ -62,8 +60,9 @@ describe("Section model", () => {
     await expect(section.save()).rejects.toThrow();
   });
 
-  it("raise an error if there are 2 sections with the same display order for the same applicant",
-     async () => {
+  it(
+    "raise an error if there are 2 sections with the same display order for the same applicant",
+    async () => {
       const params = {
         applicantUuid: applicant.uuid,
         title: random.words(),

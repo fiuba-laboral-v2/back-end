@@ -10,6 +10,7 @@ import { Transaction } from "sequelize";
 import { CareerApplicantRepository } from "../CareerApplicant/Repository";
 import { Section } from "./Section";
 import { omit } from "lodash";
+import { SectionRepository } from "./Section/Repository";
 
 export const ApplicantRepository = {
   create: async ({
@@ -123,11 +124,7 @@ export const ApplicantRepository = {
     const capabilities = await CapabilityRepository.findOrCreateByDescriptions(newCapabilities);
     await applicant.set(pick(props, ["name", "surname", "description"]));
     for (const section of sections) {
-      if (section.uuid && (await applicant.hasSection(section.uuid))) {
-        await Section.update(omit(section, ["uuid"]), { where: { uuid: section.uuid } });
-      } else {
-        await applicant.createSection(section);
-      }
+      await SectionRepository.updateOrCreate(applicant, section);
     }
     return ApplicantRepository.save(
       applicant,
@@ -166,7 +163,6 @@ export const ApplicantRepository = {
     throw new ApplicantDoesntHaveSection(uuid, sectionUuid);
   },
   truncate: async () => {
-    Section.truncate({ cascade: true });
     Applicant.truncate({ cascade: true });
   }
 };
