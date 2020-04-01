@@ -82,9 +82,12 @@ const applicantMutations = {
         type: List(String)
       }
     },
-    resolve: async (_: undefined, props: { uuid: string, capabilities: string[] }) => {
-      const applicant = await ApplicantRepository.findByUuid(props.uuid);
-      await ApplicantRepository.deleteCapabilities(applicant, props.capabilities);
+    resolve: async (
+      _: undefined,
+      { uuid, capabilities }: { uuid: string, capabilities: string[] }
+    ) => {
+      const applicant = await ApplicantRepository.findByUuid(uuid);
+      await ApplicantRepository.deleteCapabilities(applicant, capabilities);
       return ApplicantSerializer.serialize(applicant);
     }
   },
@@ -98,9 +101,12 @@ const applicantMutations = {
         type: List(String)
       }
     },
-    resolve: async (_: undefined, props: { uuid: string, careersCodes: string[] }) => {
-      const applicant = await ApplicantRepository.findByUuid(props.uuid);
-      await ApplicantRepository.deleteCareers(applicant, props.careersCodes);
+    resolve: async (
+      _: undefined,
+      { uuid, careersCodes }: { uuid: string, careersCodes: string[] }
+      ) => {
+      const applicant = await ApplicantRepository.findByUuid(uuid);
+      await ApplicantRepository.deleteCareers(applicant, careersCodes);
       return ApplicantSerializer.serialize(applicant);
     }
   },
