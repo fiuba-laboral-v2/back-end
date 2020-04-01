@@ -166,7 +166,6 @@ export const ApplicantRepository = {
     throw new ApplicantDoesntHaveSection(uuid, sectionUuid);
   },
   truncate: async () => {
-    Section.truncate({ cascade: true });
     Applicant.truncate({ cascade: true });
   }
 };

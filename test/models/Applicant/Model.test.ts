@@ -1,6 +1,5 @@
 import Database from "../../../src/config/Database";
 import { Applicant } from "../../../src/models/Applicant";
-import { Section } from "../../../src/models/Applicant/Section";
 import { Career } from "../../../src/models/Career";
 import { CareerApplicant } from "../../../src/models/CareerApplicant";
 import { ApplicantCapability } from "../../../src/models/ApplicantCapability";
@@ -14,7 +13,6 @@ describe("Applicant model", () => {
   });
 
   beforeEach(async () => {
-    await Section.truncate({ cascade: true });
     await Applicant.truncate({ cascade: true });
     await Career.truncate({ cascade: true });
   });
