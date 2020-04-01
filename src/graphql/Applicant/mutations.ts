@@ -122,6 +122,21 @@ const applicantMutations = {
       const applicant = await ApplicantRepository.deleteSection(uuid, sectionUuid);
       return ApplicantSerializer.serialize(applicant);
     }
+  },
+  deleteLink: {
+    type: GraphQLApplicant,
+    args: {
+      uuid: {
+        type: nonNull(ID)
+      },
+      linkUuid: {
+        type: nonNull(ID)
+      }
+    },
+    resolve: async (_: undefined, { uuid, linkUuid }: { uuid: string, linkUuid: string }) => {
+      const applicant = await ApplicantRepository.deleteLink(uuid, linkUuid);
+      return ApplicantSerializer.serialize(applicant);
+    }
   }
 };
 
