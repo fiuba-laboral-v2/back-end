@@ -36,7 +36,7 @@ const DELETE_LINK = gql`
     }
 `;
 
-describe("deleteSection", () => {
+describe("deleteLink", () => {
   beforeAll(async () => {
     await Database.setConnection();
     await Career.truncate({ cascade: true });
