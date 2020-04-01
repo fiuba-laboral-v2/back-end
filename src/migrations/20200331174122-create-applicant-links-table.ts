@@ -15,6 +15,7 @@ export = {
         applicantUuid: {
           allowNull: false,
           references: { model: "Applicants", key: "uuid" },
+          onDelete: "CASCADE",
           type: UUID
         },
         name: {
