@@ -9,7 +9,6 @@ import pick from "lodash/pick";
 import { Transaction } from "sequelize";
 import { CareerApplicantRepository } from "../CareerApplicant/Repository";
 import { Section } from "./Section";
-import { omit } from "lodash";
 import { SectionRepository } from "./Section/Repository";
 import { ApplicantLink, ApplicantLinkRepository } from "./Link";
 import { ApplicantDoesntHaveLink } from "./Errors/ApplicantDoesntHaveLink";

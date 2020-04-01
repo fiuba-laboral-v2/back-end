@@ -31,8 +31,8 @@ export const defaultTranslations = {
       surname: "Apellido",
       padron: "Padron",
       careersTitle: "Elegi tu carrera",
-      credits: "Créditos acumulados",
-      addCareerBtn: "Agregar carrera",
+      career: "Carrera",
+      credits: "Créditos",
       submit: "Guardar"
     }
   },

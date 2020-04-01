@@ -79,32 +79,38 @@ const applicantMutations = {
   deleteApplicantCapabilities: {
     type: GraphQLApplicant,
     args: {
-      padron: {
-        type: nonNull(Int)
+      uuid: {
+        type: nonNull(ID)
       },
       capabilities: {
         type: List(String)
       }
     },
-    resolve: async (_: undefined, props: { padron: number, capabilities: string[] }) => {
-      const applicant = await ApplicantRepository.findByPadron(props.padron);
-      await ApplicantRepository.deleteCapabilities(applicant, props.capabilities);
+    resolve: async (
+      _: undefined,
+      { uuid, capabilities }: { uuid: string, capabilities: string[] }
+    ) => {
+      const applicant = await ApplicantRepository.findByUuid(uuid);
+      await ApplicantRepository.deleteCapabilities(applicant, capabilities);
       return ApplicantSerializer.serialize(applicant);
     }
   },
   deleteApplicantCareers: {
     type: GraphQLApplicant,
     args: {
-      padron: {
-        type: nonNull(Int)
+      uuid: {
+        type: nonNull(ID)
       },
       careersCodes: {
         type: List(String)
       }
     },
-    resolve: async (_: undefined, props: { padron: number, careersCodes: string[] }) => {
-      const applicant = await ApplicantRepository.findByPadron(props.padron);
-      await ApplicantRepository.deleteCareers(applicant, props.careersCodes);
+    resolve: async (
+      _: undefined,
+      { uuid, careersCodes }: { uuid: string, careersCodes: string[] }
+      ) => {
+      const applicant = await ApplicantRepository.findByUuid(uuid);
+      await ApplicantRepository.deleteCareers(applicant, careersCodes);
       return ApplicantSerializer.serialize(applicant);
     }
   },
