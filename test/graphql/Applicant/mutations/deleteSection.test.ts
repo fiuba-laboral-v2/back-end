@@ -2,7 +2,6 @@ import { gql } from "apollo-server";
 import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 import { CareerRepository, Career } from "../../../../src/models/Career";
-import { Section } from "../../../../src/models/Applicant/Section";
 import { Applicant, ApplicantRepository } from "../../../../src/models/Applicant";
 import { applicantMocks } from "../../../models/Applicant/mocks";
 import { careerMocks } from "../../../models/Career/mocks";
@@ -36,7 +35,6 @@ const DELETE_SECTION = gql`
 describe("deleteSection", () => {
   beforeAll(async () => {
     await Database.setConnection();
-    await Section.truncate({ cascade: true });
     await Career.truncate({ cascade: true });
     await Applicant.truncate({ cascade: true });
   });

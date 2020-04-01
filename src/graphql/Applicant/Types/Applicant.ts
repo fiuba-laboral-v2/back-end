@@ -2,7 +2,7 @@ import { GraphQLObjectType } from "graphql";
 import { ID, Int, nonNull, String, List } from "../../fieldTypes";
 import { GraphQLCapability } from "./Capability";
 import { GraphQLApplicantCareer } from "./ApplicantCareers";
-import { GraphQLSectionOutput } from "./Section";
+import { GraphQLSection } from "./Section";
 
 const GraphQLApplicant = new GraphQLObjectType({
   name: "Applicant",
@@ -29,7 +29,7 @@ const GraphQLApplicant = new GraphQLObjectType({
       type: nonNull(List(GraphQLCapability))
     },
     sections: {
-      type: nonNull(List(GraphQLSectionOutput))
+      type: nonNull(List(GraphQLSection))
     }
   })
 });

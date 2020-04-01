@@ -1,6 +1,6 @@
 import { GraphQLApplicant } from "./Types/Applicant";
 import { GraphQLCareerCredits } from "./Types/CareerCredits";
-import { GraphQLSection } from "./Types/Section";
+import { GraphQLSectionInput } from "./Types/Section";
 
 import { ID, Int, List, nonNull, String } from "../fieldTypes";
 
@@ -64,7 +64,7 @@ const applicantMutations = {
         type: List(String)
       },
       sections: {
-        type: List(GraphQLSection)
+        type: List(GraphQLSectionInput)
       }
     },
     resolve: async (_: undefined, props: IApplicantEditable) => {

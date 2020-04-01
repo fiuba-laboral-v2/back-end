@@ -1,8 +1,8 @@
 import { GraphQLInputObjectType, GraphQLObjectType } from "graphql";
 import { nonNull, String, ID, Int } from "../../fieldTypes";
 
-const GraphQLSection = new GraphQLInputObjectType({
-  name: "Section",
+const GraphQLSectionInput = new GraphQLInputObjectType({
+  name: "SectionInput",
   fields: () => ({
     uuid: {
       type: ID
@@ -19,8 +19,8 @@ const GraphQLSection = new GraphQLInputObjectType({
   })
 });
 
-const GraphQLSectionOutput = new GraphQLObjectType({
-  name: "SectionOutput",
+const GraphQLSection = new GraphQLObjectType({
+  name: "Section",
   fields: () => ({
     uuid: {
       type: nonNull(ID)
@@ -37,4 +37,4 @@ const GraphQLSectionOutput = new GraphQLObjectType({
   })
 });
 
-export { GraphQLSection, GraphQLSectionOutput };
+export { GraphQLSectionInput, GraphQLSection };
