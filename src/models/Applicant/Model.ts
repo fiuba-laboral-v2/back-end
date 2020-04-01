@@ -5,19 +5,24 @@ import {
   Model,
   Table,
   Is,
-    HasMany
+  HasMany
 } from "sequelize-typescript";
-import { HasManyGetAssociationsMixin, HasManyHasAssociationMixin } from "sequelize";
+import {
+  HasManyGetAssociationsMixin,
+  HasManyHasAssociationMixin,
+  HasManyCreateAssociationMixin,
+} from "sequelize";
 import { validateName } from "validations-fiuba-laboral-v2";
 import { Career } from "../Career/Model";
 import { CareerApplicant } from "../CareerApplicant/Model";
 import { Capability } from "../Capability/Model";
 import { ApplicantCapability } from "../ApplicantCapability/Model";
+import { Section } from "./Section";
 
 
 @Table({
   tableName: "Applicants"
- })
+})
 export class Applicant extends Model<Applicant> {
   @Column({
     allowNull: false,
@@ -52,6 +57,9 @@ export class Applicant extends Model<Applicant> {
   })
   public description: string;
 
+  @HasMany(() => Section)
+  public sections: Section[];
+
   @HasMany(() => CareerApplicant)
   public careersApplicants: CareerApplicant[];
 
@@ -65,4 +73,8 @@ export class Applicant extends Model<Applicant> {
   public getCapabilities!: HasManyGetAssociationsMixin<Capability>;
   public getCareersApplicants!: HasManyGetAssociationsMixin<CareerApplicant>;
   public hasCapability: HasManyHasAssociationMixin<Capability, "description">;
+  public getSections!: HasManyGetAssociationsMixin<Section>;
+  public hasSection!: HasManyHasAssociationMixin<Section, string>;
+  public createSection!: HasManyCreateAssociationMixin<Section>;
+
 }

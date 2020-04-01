@@ -10,14 +10,23 @@ export interface IApplicant {
   description?: string;
   careers: IApplicantCareer[];
   capabilities?: string[];
+  sections?: TSection[];
 }
 
-
 export interface IApplicantEditable {
-  padron: number;
+  uuid: string;
+  padron?: number;
   name?: string;
   surname?: string;
   description?: string;
   careers?: IApplicantCareer[];
   capabilities?: string[];
+  sections?: TSection[];
 }
+
+export type TSection = {
+  uuid?: string;
+  title: string;
+  text: string;
+  displayOrder: number;
+};

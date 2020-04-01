@@ -8,15 +8,18 @@ import { Applicant, ApplicantRepository } from "../../../../src/models/Applicant
 
 import { applicantMocks } from "../../../models/Applicant/mocks";
 import { careerMocks } from "../../../models/Career/mocks";
+import { random, lorem } from "faker";
 
-const updateApplicant = gql`
+import { pick } from "lodash";
+
+const UPDATE_APPLICANT = gql`
     mutation updateApplicant(
-        $padron: Int!, $name: String, $surname: String, $description: String,
-        $careers: [CareerCredits], $capabilities: [String]
+        $uuid: ID!, $padron: Int, $name: String, $surname: String, $description: String,
+        $careers: [CareerCredits], $capabilities: [String], $sections: [SectionInput]
     ) {
         updateApplicant(
-            padron: $padron, name: $name, surname: $surname description: $description,
-            careers: $careers, capabilities: $capabilities
+            uuid: $uuid, padron: $padron, name: $name, surname: $surname description: $description,
+            careers: $careers, capabilities: $capabilities, sections: $sections
         ) {
             name
             surname
@@ -31,12 +34,18 @@ const updateApplicant = gql`
                 credits
                 creditsCount
             }
+            sections {
+              uuid
+              title
+              text
+              displayOrder
+            }
         }
     }
 `;
 
 describe("updateApplicant", () => {
-  const createApplicant = async ()  => {
+  const createApplicant = async () => {
     const career = await CareerRepository.create(careerMocks.careerData());
     const applicantData = applicantMocks.applicantData([career.code]);
     return ApplicantRepository.create(applicantData);
@@ -56,6 +65,7 @@ describe("updateApplicant", () => {
     const applicant = await createApplicant();
     const newCareer = await CareerRepository.create(careerMocks.careerData());
     const dataToUpdate = {
+      uuid: applicant.uuid,
       padron: applicant.padron,
       name: "newName",
       surname: "newSurname",
@@ -66,21 +76,30 @@ describe("updateApplicant", () => {
           code: newCareer.code,
           creditsCount: 8
         }
+      ],
+      sections: [
+        {
+          title: "title",
+          text: "description",
+          displayOrder: 1
+        }
       ]
     };
     const careersBeforeUpdate = await applicant.getCareers();
     const capabilitiesBeforeUpdate = await applicant.getCapabilities();
-    const { data, errors } = await executeMutation(updateApplicant, dataToUpdate);
+    const {
+      data: { updateApplicant }, errors
+    } = await executeMutation(UPDATE_APPLICANT, dataToUpdate);
 
     expect(errors).toBeUndefined();
-    expect(data.updateApplicant).toMatchObject({
+    expect(updateApplicant).toMatchObject({
       padron: dataToUpdate.padron,
       name: dataToUpdate.name,
       surname: dataToUpdate.surname,
       description: dataToUpdate.description
     });
     expect(
-      data.updateApplicant.capabilities.map(c => c.description)
+      updateApplicant.capabilities.map(c => c.description)
     ).toEqual(expect.arrayContaining(
       [
         ...dataToUpdate.capabilities,
@@ -88,12 +107,98 @@ describe("updateApplicant", () => {
       ]
     ));
     expect(
-      data.updateApplicant.careers.map(c => c.code)
+      updateApplicant.careers.map(c => c.code)
     ).toEqual(expect.arrayContaining(
       [
         ...dataToUpdate.careers.map(c => c.code),
         ...careersBeforeUpdate.map(c => c.code)
       ]
     ));
+    expect(
+      updateApplicant.sections.map(({ title, text, displayOrder }) =>
+        ({ title, text, displayOrder })
+      )
+    ).toEqual(expect.arrayContaining(
+      [
+        ...dataToUpdate.sections.map(({ title, text, displayOrder }) =>
+          ({ title, text, displayOrder }))
+      ]
+    ));
+  });
+
+  describe("when a section exists", () => {
+    let applicant: Applicant;
+    let initialData;
+
+    const addNewSection = async ({ uuid }, displayOrder) => {
+      initialData = {
+        uuid,
+        sections: [{ title: random.words(), text: lorem.paragraphs(), displayOrder }]
+      };
+      return ApplicantRepository.update(initialData);
+    };
+
+    it("should be able to add a new section", async () => {
+      applicant = await createApplicant();
+      await applicant.save();
+      await addNewSection(applicant, 1);
+      const params = {
+        uuid: applicant.uuid,
+        sections: [{ title: random.words(), text: lorem.paragraphs(), displayOrder: 2 }]
+      };
+      const {
+        data: { updateApplicant }, errors
+      } = await executeMutation(UPDATE_APPLICANT, params);
+
+
+      expect(updateApplicant.sections.length).toEqual(2);
+      expect(
+        updateApplicant.sections.map(({ title, text, displayOrder }) =>
+          ({ title, text, displayOrder })
+        )
+      ).toEqual(expect.arrayContaining(
+        [
+          ...initialData.sections.map(({ title, text, displayOrder }) =>
+            ({ title, text, displayOrder })),
+          ...params.sections.map(({ title, text, displayOrder }) =>
+            ({ title, text, displayOrder }))
+        ]
+      ));
+    });
+
+    it("should be able to update de fields of an existing section", async () => {
+      applicant = await createApplicant();
+      await applicant.save();
+      await addNewSection(applicant, 1);
+      const applicantWithMoreSections = await addNewSection(applicant, 2);
+      const [firstSection, SecondSection] = await applicantWithMoreSections.getSections();
+      const params = {
+        uuid: applicant.uuid,
+        sections: [
+          { uuid: firstSection.uuid, title: "New title", text: "New text", displayOrder: 1 }
+        ]
+      };
+
+      const {
+        data: { updateApplicant }, errors
+      } = await executeMutation(UPDATE_APPLICANT, params);
+
+      expect(errors).toBeUndefined();
+      expect(updateApplicant.sections.find(({ uuid }) => uuid === firstSection.uuid))
+        .toMatchObject({
+          uuid: firstSection.uuid, title: "New title", text: "New text", displayOrder: 1
+        });
+      expect(
+        updateApplicant.sections.map(({ title, text, displayOrder }) =>
+          ({ title, text, displayOrder })
+        )
+      ).toEqual(expect.arrayContaining(
+        [
+          ...params.sections.map(({ title, text, displayOrder }) =>
+            ({ title, text, displayOrder })),
+          pick(SecondSection, ["title", "text", "displayOrder"])
+        ]
+      ));
+    });
   });
 });

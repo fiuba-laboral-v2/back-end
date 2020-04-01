@@ -1,6 +1,8 @@
 import { GraphQLApplicant } from "./Types/Applicant";
 import { GraphQLCareerCredits } from "./Types/CareerCredits";
-import { Int, List, nonNull, String } from "../fieldTypes";
+import { GraphQLSectionInput } from "./Types/Section";
+
+import { ID, Int, List, nonNull, String } from "../fieldTypes";
 
 import {
   IApplicant,
@@ -40,6 +42,9 @@ const applicantMutations = {
   updateApplicant: {
     type: GraphQLApplicant,
     args: {
+      uuid: {
+        type: nonNull(ID)
+      },
       name: {
         type: String
       },
@@ -47,7 +52,7 @@ const applicantMutations = {
         type: String
       },
       padron: {
-        type: nonNull(Int)
+        type: Int
       },
       description: {
         type: String
@@ -57,11 +62,13 @@ const applicantMutations = {
       },
       capabilities: {
         type: List(String)
+      },
+      sections: {
+        type: List(GraphQLSectionInput)
       }
     },
     resolve: async (_: undefined, props: IApplicantEditable) => {
-      const applicant = await ApplicantRepository.findByPadron(props.padron);
-      await ApplicantRepository.update(applicant, props);
+      const applicant = await ApplicantRepository.update(props);
       return ApplicantSerializer.serialize(applicant);
     }
   },
@@ -94,6 +101,21 @@ const applicantMutations = {
     resolve: async (_: undefined, props: { padron: number, careersCodes: string[] }) => {
       const applicant = await ApplicantRepository.findByPadron(props.padron);
       await ApplicantRepository.deleteCareers(applicant, props.careersCodes);
+      return ApplicantSerializer.serialize(applicant);
+    }
+  },
+  deleteSection: {
+    type: GraphQLApplicant,
+    args: {
+      uuid: {
+        type: nonNull(ID)
+      },
+      sectionUuid: {
+        type: nonNull(ID)
+      }
+    },
+    resolve: async (_: undefined, { uuid, sectionUuid }: { uuid: string, sectionUuid: string }) => {
+      const applicant = await ApplicantRepository.deleteSection(uuid, sectionUuid);
       return ApplicantSerializer.serialize(applicant);
     }
   }

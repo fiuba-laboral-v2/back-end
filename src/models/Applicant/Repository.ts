@@ -3,10 +3,14 @@ import { CapabilityRepository, Capability } from "../Capability";
 import { ApplicantCapability } from "../ApplicantCapability";
 import { CareerApplicant } from "../CareerApplicant";
 import { ApplicantNotFound } from "./Errors/ApplicantNotFound";
+import { ApplicantDoesntHaveSection } from "./Errors/ApplicantDoesntHaveSection";
 import Database from "../../config/Database";
 import pick from "lodash/pick";
 import { Transaction } from "sequelize";
 import { CareerApplicantRepository } from "../CareerApplicant/Repository";
+import { Section } from "./Section";
+import { omit } from "lodash";
+import { SectionRepository } from "./Section/Repository";
 
 export const ApplicantRepository = {
   create: async ({
@@ -109,14 +113,22 @@ export const ApplicantRepository = {
     }
     return applicant;
   },
-  update: async (applicant: Applicant, newProps: IApplicantEditable) => {
-    const capabilities = await CapabilityRepository.findOrCreateByDescriptions(
-      newProps.capabilities!
-    );
-    await applicant.set(pick(newProps, ["name", "surname", "description"]));
+  update: async ({
+    uuid,
+    sections = [],
+    capabilities: newCapabilities = [],
+    careers,
+    ...props
+  }: IApplicantEditable) => {
+    const applicant = await ApplicantRepository.findByUuid(uuid);
+    const capabilities = await CapabilityRepository.findOrCreateByDescriptions(newCapabilities);
+    await applicant.set(pick(props, ["name", "surname", "description"]));
+    for (const section of sections) {
+      await SectionRepository.updateOrCreate(applicant, section);
+    }
     return ApplicantRepository.save(
       applicant,
-      newProps.careers || [],
+      careers || [],
       capabilities
     );
   },
@@ -138,6 +150,19 @@ export const ApplicantRepository = {
     );
     return applicant;
   },
-  truncate: async () =>
-    Applicant.truncate({ cascade: true })
+  deleteSection: async (uuid: string, sectionUuid: string) => {
+    const applicant = await ApplicantRepository.findByUuid(uuid);
+    if (await applicant.hasSection(sectionUuid)) {
+      await Section.destroy({
+        where: {
+          uuid: sectionUuid
+        }
+      });
+      return applicant;
+    }
+    throw new ApplicantDoesntHaveSection(uuid, sectionUuid);
+  },
+  truncate: async () => {
+    Applicant.truncate({ cascade: true });
+  }
 };

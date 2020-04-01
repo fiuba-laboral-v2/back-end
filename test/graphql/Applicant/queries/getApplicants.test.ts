@@ -28,6 +28,10 @@ const GET_APPLICANTS = gql`
                 credits
                 creditsCount
             }
+            sections {
+              title
+              text
+            }
         }
     }
 `;
@@ -56,7 +60,7 @@ describe("getApplicants", () => {
 
       expect(errors).toBeUndefined();
       expect(data.getApplicants).toEqual(expect.arrayContaining(
-        [ await ApplicantSerializer.serialize(applicant) ]
+        [await ApplicantSerializer.serialize(applicant)]
       ));
     });
 
