@@ -11,6 +11,8 @@ import { CareerApplicantRepository } from "../CareerApplicant/Repository";
 import { Section } from "./Section";
 import { omit } from "lodash";
 import { SectionRepository } from "./Section/Repository";
+import { ApplicantLink, ApplicantLinkRepository } from "./Link";
+import { ApplicantDoesntHaveLink } from "./Errors/ApplicantDoesntHaveLink";
 
 export const ApplicantRepository = {
   create: async ({
@@ -116,6 +118,7 @@ export const ApplicantRepository = {
   update: async ({
     uuid,
     sections = [],
+    links = [],
     capabilities: newCapabilities = [],
     careers,
     ...props
@@ -125,6 +128,9 @@ export const ApplicantRepository = {
     await applicant.set(pick(props, ["name", "surname", "description"]));
     for (const section of sections) {
       await SectionRepository.updateOrCreate(applicant, section);
+    }
+    for (const link of links) {
+      await ApplicantLinkRepository.updateOrCreate(applicant, link);
     }
     return ApplicantRepository.save(
       applicant,
@@ -161,6 +167,18 @@ export const ApplicantRepository = {
       return applicant;
     }
     throw new ApplicantDoesntHaveSection(uuid, sectionUuid);
+  },
+  deleteLink: async (uuid: string, linkUuid: string) => {
+    const applicant = await ApplicantRepository.findByUuid(uuid);
+    if (await applicant.hasLink(linkUuid)) {
+      await ApplicantLink.destroy({
+        where: {
+          uuid: linkUuid
+        }
+      });
+      return applicant;
+    }
+    throw new ApplicantDoesntHaveLink(uuid, linkUuid);
   },
   truncate: async () => {
     Applicant.truncate({ cascade: true });
