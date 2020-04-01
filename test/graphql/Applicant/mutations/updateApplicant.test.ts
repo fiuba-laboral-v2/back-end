@@ -230,7 +230,6 @@ describe("updateApplicant", () => {
 
     it("should be able to add a new link", async () => {
       applicant = await createApplicant();
-      await applicant.save();
       await addNewLink(applicant);
       const params = {
         uuid: applicant.uuid,
