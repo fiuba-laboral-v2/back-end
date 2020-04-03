@@ -9,18 +9,21 @@ const query = gql`
 
 describe("getTranslations", () => {
   it("find translations given their path", async () => {
-    const { data } = await executeQuery(query, { paths: ["app.title", "companies"] });
+    const { data } = await executeQuery(query, {
+      paths: ["applicant.signUp.title", "companies"]
+    });
 
     expect(data).toEqual({
-      getTranslations: ["Bolsa de trabajo", "Empresas"]
+      getTranslations: ["Crear tu cuenta", "Empresas"]
     });
   });
 
   it("return an error if a path doesn't exist", async () => {
-    const { errors } = await executeQuery(query, { paths: ["app.title", "notExistingPath"] });
+    const { errors } = await executeQuery(query, {
+      paths: ["applicant.signUp.title", "notExistingPath"]
+    });
 
     expect(errors).toHaveLength(1);
     expect(errors![0].message).toMatch(/Missing translation:/);
   });
-
 });
