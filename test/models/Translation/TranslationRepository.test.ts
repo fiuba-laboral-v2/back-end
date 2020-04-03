@@ -16,7 +16,7 @@ describe("TranslationRepository", () => {
 
   it("get a nested element in default transitions yml", () => {
     expect(
-      TranslationRepository.translate("app.title")
-    ).toEqual("Bolsa de trabajo");
+      TranslationRepository.translate("applicant.signUp.title")
+    ).toEqual("Crear tu cuenta");
   });
 });
