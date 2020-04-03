@@ -10,6 +10,9 @@ export const defaultTranslations = {
     capabilities: "Aptitudes",
     careers: "Carreras",
     creditsProgress: "% de los créditos aprobados",
+    edit: {
+      title: "Editar tu perfil"
+    },
     signUp: {
       title: "Crear tu cuenta",
       email: "Email",
