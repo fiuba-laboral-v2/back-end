@@ -95,7 +95,7 @@
     "db:migrate:down:all": "sequelize db:migrate:undo:all",
     "db:drop": "node_modules/.bin/sequelize db:drop",
     "db:test:create": "NODE_ENV=test node_modules/.bin/sequelize db:create && yarn build-migrations",
-    "db:test:migrate": "NODE_ENV=test sequelize db:migrate",
+    "db:test:migrate": "yarn build-migrations && NODE_ENV=test sequelize db:migrate",
     "db:test:migrate:down": "NODE_ENV=test sequelize db:migrate:undo",
     "db:test:migrate:down:all": "NODE_ENV=test sequelize db:migrate:undo:all",
     "db:test:drop": "NODE_ENV=test node_modules/.bin/sequelize db:drop",
