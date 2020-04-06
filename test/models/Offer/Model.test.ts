@@ -26,9 +26,11 @@ describe("Offer", () => {
 
   it("should create a valid offer", async () => {
     const company = await new Company(companyMockData).save();
-    const offer = new Offer(OfferMocks.completeData(company.id));
+    const offerAttributes = OfferMocks.completeData(company.id);
+    const offer = new Offer(offerAttributes);
     await offer.save();
     expect(offer.uuid).not.toBeUndefined();
+    expect(offer).toEqual(expect.objectContaining(offerAttributes));
     expect(await offer.getCompany()).toEqual(expect.objectContaining(companyMockData));
   });
 
