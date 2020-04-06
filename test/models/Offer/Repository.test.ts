@@ -11,7 +11,6 @@ describe("OfferRepository", () => {
   });
 
   beforeEach(async () => {
-    await OfferRepository.truncate();
     await CompanyRepository.truncate();
   });
 
@@ -19,7 +18,7 @@ describe("OfferRepository", () => {
     await Database.close();
   });
 
-  describe("create", () => {
+  describe("Create", () => {
     it("should create a new offer", async () => {
       const company = await new Company(companyMockData).save();
       const offerProps = OfferMocks.completeData(company.id);
@@ -28,7 +27,7 @@ describe("OfferRepository", () => {
     });
   });
 
-  describe("get", () => {
+  describe("Get", () => {
     it("should get the only offer by uuid", async () => {
       const company = await new Company(companyMockData).save();
       const offerProps = OfferMocks.completeData(company.id);
@@ -41,6 +40,15 @@ describe("OfferRepository", () => {
       await expect(
         OfferRepository.findByUuid("4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da")
       ).rejects.toThrow(OfferNotFound);
+    });
+  });
+
+  describe("Delete", () => {
+    it("should delete all offers if all companies are deleted", async () => {
+      const company = await new Company(companyMockData).save();
+      const offer = await OfferRepository.create(OfferMocks.completeData(company.id));
+      await CompanyRepository.truncate();
+      await expect(OfferRepository.findByUuid(offer.uuid)).rejects.toThrow(OfferNotFound);
     });
   });
 });

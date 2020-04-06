@@ -11,7 +11,6 @@ describe("Offer", () => {
   });
 
   beforeEach(async () => {
-    await Offer.truncate({ cascade: true });
     await Company.truncate({ cascade: true });
   });
 
