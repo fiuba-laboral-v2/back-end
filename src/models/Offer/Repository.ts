@@ -2,7 +2,7 @@ import { Offer, IOffer } from "./index";
 import { OfferNotFound } from "./Errors";
 
 export const OfferRepository = {
-  create: async (attributes: IOffer) => {
+  create: (attributes: IOffer) => {
     return new Offer({ ...attributes }).save();
   },
   findByUuid: async (uuid: string) => {
