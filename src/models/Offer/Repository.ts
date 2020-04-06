@@ -11,7 +11,7 @@ export const OfferRepository = {
 
     return offer;
   },
-  truncate: async () => {
+  truncate: () => {
     return Offer.truncate({ cascade: true });
   }
 };
