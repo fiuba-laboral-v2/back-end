@@ -1,6 +1,7 @@
 import Database from "../../../src/config/Database";
 import { OfferRepository, Offer } from "../../../src/models/Offer";
 import { OfferNotFound } from "../../../src/models/Offer/Errors";
+import { OfferMocks } from "./mocks";
 import { Company, CompanyRepository } from "../../../src/models/Company";
 import { companyMockData } from "../Company/mocks";
 
@@ -23,21 +24,10 @@ describe("OfferRepository", () => {
     return company.save();
   };
 
-  const offerData = (companyId?: number) => (
-    {
-      companyId: companyId,
-      title: "Java developer ssr",
-      description: "something",
-      hoursPerDay: 8,
-      minimumSalary: 52500,
-      maximumSalary: 70000
-    }
-  );
-
   describe("create", () => {
     it("should create a new offer", async () => {
       const company = await createCompany();
-      const offerProps = offerData(company.id);
+      const offerProps = OfferMocks.completeData(company.id);
       const offer = await OfferRepository.create(offerProps);
       expect(offer).toEqual(expect.objectContaining(offerProps));
     });
@@ -46,7 +36,7 @@ describe("OfferRepository", () => {
   describe("get", () => {
     it("should get the only offer by uuid", async () => {
       const company = await createCompany();
-      const offerProps = offerData(company.id);
+      const offerProps = OfferMocks.completeData(company.id);
       const { uuid } = await OfferRepository.create(offerProps);
       const offer = await OfferRepository.findByUuid(uuid);
       expect(offer).toEqual(expect.objectContaining(offerProps));

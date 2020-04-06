@@ -1,5 +1,6 @@
 import Database from "../../../src/config/Database";
 import { Offer } from "../../../src/models/Offer";
+import { OfferMocks } from "./mocks";
 import { Company } from "../../../src/models/Company";
 import { companyMockData } from "../Company/mocks";
 
@@ -23,33 +24,20 @@ describe("Offer", () => {
     return company.save();
   };
 
-  const offerData = (companyId?: number) => (
-    {
-      companyId: companyId,
-      title: "Java developer ssr",
-      description: "something",
-      hoursPerDay: 8,
-      minimumSalary: 52500,
-      maximumSalary: 70000
-    }
-  );
-
   const offerWithoutProperty = async (property: string) => {
     const company = await createCompany();
-    const data = offerData(company.id);
-    delete data[property];
-    return new Offer(data);
+    return new Offer(OfferMocks.offerWithoutProperty(company.id, property));
   };
 
   it("should create a valid offer", async () => {
     const company = await createCompany();
-    const offer = new Offer(offerData(company.id));
+    const offer = new Offer(OfferMocks.completeData(company.id));
     await offer.save();
     expect(offer.uuid).not.toBeUndefined();
   });
 
   it("should raise error if offer does not belong to any company", async () => {
-    const offer = new Offer(offerData());
+    const offer = new Offer(OfferMocks.completeData());
     await expect(offer.save()).rejects.toThrow();
   });
 
