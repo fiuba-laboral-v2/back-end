@@ -46,19 +46,19 @@ export default class Offer extends Model<Offer> {
     allowNull: false,
     type: DataType.INTEGER
   })
-  public hoursPerDay: string;
+  public hoursPerDay: number;
 
   @Column({
     allowNull: false,
     type: DataType.FLOAT
   })
-  public minimumSalary: string;
+  public minimumSalary: number;
 
   @Column({
     allowNull: false,
     type: DataType.FLOAT
   })
-  public maximumSalary: string;
+  public maximumSalary: number;
 
   @Column({
     allowNull: false,
