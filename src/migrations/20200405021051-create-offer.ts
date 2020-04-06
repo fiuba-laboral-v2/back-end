@@ -1,4 +1,4 @@
-import { QueryInterface, DATE, UUID, TEXT, INTEGER, FLOAT } from "sequelize";
+import { QueryInterface, DATE, UUID, TEXT, INTEGER } from "sequelize";
 import uuid from "uuid/v4";
 
 export = {
@@ -32,11 +32,11 @@ export = {
         },
         minimumSalary: {
           allowNull: false,
-          type: FLOAT
+          type: INTEGER
         },
         maximumSalary: {
           allowNull: false,
-          type: FLOAT
+          type: INTEGER
         },
         createdAt: {
           allowNull: false,

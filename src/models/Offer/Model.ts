@@ -50,13 +50,13 @@ export default class Offer extends Model<Offer> {
 
   @Column({
     allowNull: false,
-    type: DataType.FLOAT
+    type: DataType.INTEGER
   })
   public minimumSalary: number;
 
   @Column({
     allowNull: false,
-    type: DataType.FLOAT
+    type: DataType.INTEGER
   })
   public maximumSalary: number;
 

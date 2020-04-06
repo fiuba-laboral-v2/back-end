@@ -10,7 +10,7 @@ const OfferMocks = {
         description: faker.lorem.sentence(),
         hoursPerDay: faker.random.number(),
         minimumSalary: minimumSalary,
-        maximumSalary: minimumSalary + 1000.01
+        maximumSalary: minimumSalary + 1000
       }
     );
   },
