@@ -34,6 +34,7 @@ describe("Offer", () => {
     const offer = new Offer(OfferMocks.completeData(company.id));
     await offer.save();
     expect(offer.uuid).not.toBeUndefined();
+    expect(await offer.getCompany()).toEqual(expect.objectContaining(companyMockData));
   });
 
   it("should raise error if offer does not belong to any company", async () => {
