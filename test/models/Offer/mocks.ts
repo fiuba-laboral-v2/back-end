@@ -1,4 +1,5 @@
 import faker from "faker";
+import { omit } from "lodash";
 
 const OfferMocks = {
   completeData: (companyId?: number) => {
@@ -15,9 +16,7 @@ const OfferMocks = {
     );
   },
   offerWithoutProperty: (companyId: number, property: string) => {
-    const data = OfferMocks.completeData(companyId);
-    delete data[property];
-    return data;
+    return omit(OfferMocks.completeData(companyId), [property]);
   }
 };
 
