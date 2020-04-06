@@ -19,18 +19,13 @@ describe("Offer", () => {
     await Database.close();
   });
 
-  const createCompany = async () => {
-    const company = new Company(companyMockData);
-    return company.save();
-  };
-
   const offerWithoutProperty = async (property: string) => {
-    const company = await createCompany();
+    const company = await new Company(companyMockData).save();
     return new Offer(OfferMocks.offerWithoutProperty(company.id, property));
   };
 
   it("should create a valid offer", async () => {
-    const company = await createCompany();
+    const company = await new Company(companyMockData).save();
     const offer = new Offer(OfferMocks.completeData(company.id));
     await offer.save();
     expect(offer.uuid).not.toBeUndefined();

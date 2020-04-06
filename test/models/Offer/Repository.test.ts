@@ -19,14 +19,9 @@ describe("OfferRepository", () => {
     await Database.close();
   });
 
-  const createCompany = async () => {
-    const company = new Company(companyMockData);
-    return company.save();
-  };
-
   describe("create", () => {
     it("should create a new offer", async () => {
-      const company = await createCompany();
+      const company = await new Company(companyMockData).save();
       const offerProps = OfferMocks.completeData(company.id);
       const offer = await OfferRepository.create(offerProps);
       expect(offer).toEqual(expect.objectContaining(offerProps));
@@ -35,7 +30,7 @@ describe("OfferRepository", () => {
 
   describe("get", () => {
     it("should get the only offer by uuid", async () => {
-      const company = await createCompany();
+      const company = await new Company(companyMockData).save();
       const offerProps = OfferMocks.completeData(company.id);
       const { uuid } = await OfferRepository.create(offerProps);
       const offer = await OfferRepository.findByUuid(uuid);
