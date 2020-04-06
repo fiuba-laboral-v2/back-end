@@ -60,17 +60,5 @@ export default class Offer extends Model<Offer> {
   })
   public maximumSalary: number;
 
-  @Column({
-    allowNull: false,
-    type: DataType.DATE
-  })
-  public createdAt: string;
-
-  @Column({
-    allowNull: false,
-    type: DataType.DATE
-  })
-  public updatedAt: string;
-
   public getCompany: HasOneGetAssociationMixin<Company>;
 }
