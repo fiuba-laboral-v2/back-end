@@ -1,12 +1,19 @@
+import faker from "faker";
+
 const OfferMocks = {
-  completeData: (companyId?: number) => ({
-    companyId: companyId,
-    title: "Java developer ssr",
-    description: "something",
-    hoursPerDay: 8,
-    minimumSalary: 52500,
-    maximumSalary: 70000
-  }),
+  completeData: (companyId?: number) => {
+    const minimumSalary = faker.random.number();
+    return (
+      {
+        companyId: companyId,
+        title: faker.name.title(),
+        description: faker.lorem.sentence(),
+        hoursPerDay: faker.random.number(),
+        minimumSalary: minimumSalary,
+        maximumSalary: minimumSalary + 1000.01
+      }
+    );
+  },
   offerWithoutProperty: (companyId: number, property: string) => {
     const data = OfferMocks.completeData(companyId);
     delete data[property];
