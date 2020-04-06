@@ -25,7 +25,7 @@ export default class Offer extends Model<Offer> {
     allowNull: false,
     type: DataType.INTEGER
   })
-  public companyId: string;
+  public companyId: number;
 
   @BelongsTo(() => Company)
   public company: Company;
