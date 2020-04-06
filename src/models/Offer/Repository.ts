@@ -3,11 +3,7 @@ import { OfferNotFound } from "./Errors";
 
 export const OfferRepository = {
   create: async (attributes: IOffer) => {
-    const company = new Offer({ ...attributes });
-    return OfferRepository.save(company);
-  },
-  save: async (offer: Offer) => {
-    return offer.save();
+    return new Offer({ ...attributes }).save();
   },
   findByUuid: async (uuid: string) => {
     const offer = await Offer.findByPk(uuid);
