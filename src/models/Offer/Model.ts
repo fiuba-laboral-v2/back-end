@@ -4,13 +4,20 @@ import {
   Model,
   Table,
   ForeignKey,
-  BelongsTo
+  BelongsTo, Is
 } from "sequelize-typescript";
 import { HasOneGetAssociationMixin } from "sequelize";
-
 import { Company } from "../Company";
+import { validatePositiveNumber, validateSalaryRange } from "validations-fiuba-laboral-v2";
 
-@Table
+@Table({
+  tableName: "Offers",
+  validate: {
+    validateSalaryRange(this: Offer) {
+      validateSalaryRange(this.minimumSalary, this.maximumSalary);
+    }
+  }
+})
 export default class Offer extends Model<Offer> {
   @Column({
     allowNull: false,
@@ -42,18 +49,21 @@ export default class Offer extends Model<Offer> {
   })
   public description: string;
 
+  @Is("hoursPerDay", validatePositiveNumber)
   @Column({
     allowNull: false,
     type: DataType.INTEGER
   })
   public hoursPerDay: number;
 
+  @Is("minimumSalary", validatePositiveNumber)
   @Column({
     allowNull: false,
     type: DataType.INTEGER
   })
   public minimumSalary: number;
 
+  @Is("maximumSalary", validatePositiveNumber)
   @Column({
     allowNull: false,
     type: DataType.INTEGER

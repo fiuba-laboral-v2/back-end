@@ -1,6 +1,8 @@
 import faker from "faker";
 import { omit } from "lodash";
 
+export type TOfferNumbersProperties = "hoursPerDay" | "minimumSalary" | "maximumSalary";
+
 const OfferMocks = {
   completeData: (companyId?: number) => {
     const minimumSalary = faker.random.number();
@@ -17,6 +19,24 @@ const OfferMocks = {
   },
   offerWithoutProperty: (companyId: number, property: string) => {
     return omit(OfferMocks.completeData(companyId), [property]);
+  },
+  offerWithNegativeNumberProperty: (
+    companyId: number,
+    property: TOfferNumbersProperties,
+    value: number) => {
+    const data = OfferMocks.completeData(companyId);
+    data[property] = value;
+    return data;
+  },
+  offerWithSpecificSalaryRange: (
+    companyId: number,
+    minimumSalary: number,
+    maximumSalary: number
+  ) => {
+    const data = OfferMocks.completeData(companyId);
+    data.minimumSalary = minimumSalary;
+    data.maximumSalary = maximumSalary;
+    return data;
   }
 };
 

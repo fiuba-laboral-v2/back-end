@@ -1,5 +1,5 @@
 import { User } from "../../../src/models/User/Model";
-import { PasswordWithoutDigitsError } from "validations-fiuba-laboral-v2";
+import { PasswordWithoutDigitsError, InvalidEmailError } from "validations-fiuba-laboral-v2";
 import Database from "../../../src/config/Database";
 
 describe("User", () => {
@@ -44,7 +44,7 @@ describe("User", () => {
       password: "somethingVerySecret123"
     });
 
-    expect(user.save()).rejects.toThrow(`Email invalid: ${email}`);
+    expect(user.save()).rejects.toThrow(InvalidEmailError.buildMessage(email));
   });
 
   describe("Before create", () => {
