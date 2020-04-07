@@ -9,6 +9,7 @@ import {
 } from "sequelize-typescript";
 import { CompanyPhoneNumber } from "../CompanyPhoneNumber";
 import { CompanyPhoto } from "../CompanyPhoto";
+import { Offer } from "../Offer";
 import { validateCuit, validateName } from "validations-fiuba-laboral-v2";
 import { HasManyGetAssociationsMixin } from "sequelize";
 
@@ -45,6 +46,10 @@ export default class Company extends Model<Company> {
   @HasMany(() => CompanyPhoto)
   public photos: CompanyPhoto[];
 
+  @HasMany(() => Offer)
+  public offers: Offer[];
+
   public getPhoneNumbers!: HasManyGetAssociationsMixin<CompanyPhoneNumber>;
   public getPhotos!: HasManyGetAssociationsMixin<CompanyPhoto>;
+  public getOffers!: HasManyGetAssociationsMixin<Offer>;
 }

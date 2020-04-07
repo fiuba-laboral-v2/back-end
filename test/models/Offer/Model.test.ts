@@ -40,6 +40,7 @@ describe("Offer", () => {
     expect(offer.uuid).not.toBeUndefined();
     expect(offer).toEqual(expect.objectContaining(offerAttributes));
     expect(await offer.getCompany()).toEqual(expect.objectContaining(companyMockData));
+    expect(await company.getOffers()).toMatchObject([ offerAttributes ]);
   });
 
   it("should raise error if offer does not belong to any company", async () => {
