@@ -1,0 +1,1 @@
+export { OfferSection } from "./Model";

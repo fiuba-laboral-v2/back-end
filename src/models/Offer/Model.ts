@@ -4,10 +4,13 @@ import {
   Model,
   Table,
   ForeignKey,
-  BelongsTo, Is
+  BelongsTo,
+  Is,
+  HasMany
 } from "sequelize-typescript";
-import { HasOneGetAssociationMixin } from "sequelize";
+import { HasOneGetAssociationMixin, HasManyGetAssociationsMixin } from "sequelize";
 import { Company } from "../Company";
+import { OfferSection } from "./OfferSection";
 import { validateIntegerGreaterThan, validateSalaryRange } from "validations-fiuba-laboral-v2";
 
 @Table({
@@ -70,5 +73,9 @@ export default class Offer extends Model<Offer> {
   })
   public maximumSalary: number;
 
+  @HasMany(() => OfferSection)
+  public sections: OfferSection[];
+
   public getCompany: HasOneGetAssociationMixin<Company>;
+  public getSections: HasManyGetAssociationsMixin<OfferSection>;
 }
