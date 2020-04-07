@@ -11,7 +11,12 @@ export const defaultTranslations = {
     careers: "Carreras",
     creditsProgress: "% de los créditos aprobados",
     edit: {
-      title: "Editar tu perfil"
+      title: "Editar tu perfil",
+      links: "Links",
+      link: "Link",
+      linkTitle: "Título",
+      careers: "Carreras",
+      submit: "Guardar"
     },
     signUp: {
       title: "Crear tu cuenta",
