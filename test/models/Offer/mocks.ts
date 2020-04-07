@@ -17,9 +17,8 @@ const OfferMocks = {
       }
     );
   },
-  offerWithoutProperty: (companyId: number, property: string) => {
-    return omit(OfferMocks.completeData(companyId), [property]);
-  },
+  offerWithoutProperty: (companyId: number, property: string) =>
+    omit(OfferMocks.completeData(companyId), [property]),
   offerWithNegativeNumberProperty: (
     companyId: number,
     property: TOfferNumbersProperties,
