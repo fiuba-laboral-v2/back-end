@@ -3,7 +3,7 @@ import { Offer } from "../../../src/models/Offer";
 import { OfferMocks, TOfferNumbersProperties } from "./mocks";
 import { Company } from "../../../src/models/Company";
 import { companyMockData } from "../Company/mocks";
-import { NegativeNumberError, SalaryRangeError } from "validations-fiuba-laboral-v2";
+import { NumberIsTooSmallError, SalaryRangeError } from "validations-fiuba-laboral-v2";
 
 
 describe("Offer", () => {
@@ -65,7 +65,7 @@ describe("Offer", () => {
 
   it("should raise error if offer has negative hoursPerDay", async () => {
     const offer = await offerWithNegativeNumberProperty("hoursPerDay", -23);
-    await expect(offer.save()).rejects.toThrow(NegativeNumberError.buildMessage(-23));
+    await expect(offer.save()).rejects.toThrow(NumberIsTooSmallError.buildMessage(-23, 0));
   });
 
   it("should raise error if offer does not has a minimumSalary", async () => {
@@ -75,7 +75,7 @@ describe("Offer", () => {
 
   it("should raise error if offer has negative minimumSalary", async () => {
     const offer = await offerWithNegativeNumberProperty("minimumSalary", -23);
-    await expect(offer.save()).rejects.toThrow(NegativeNumberError.buildMessage(-23));
+    await expect(offer.save()).rejects.toThrow(NumberIsTooSmallError.buildMessage(-23, 0));
   });
 
   it("should raise error if offer does not has a maximumSalary", async () => {
@@ -85,7 +85,7 @@ describe("Offer", () => {
 
   it("should raise error if offer has negative maximumSalary", async () => {
     const offer = await offerWithNegativeNumberProperty("maximumSalary", -23);
-    await expect(offer.save()).rejects.toThrow(NegativeNumberError.buildMessage(-23));
+    await expect(offer.save()).rejects.toThrow(NumberIsTooSmallError.buildMessage(-23, 0));
   });
 
   it("should raise error if minimumSalary if bigger than maximumSalary", async () => {

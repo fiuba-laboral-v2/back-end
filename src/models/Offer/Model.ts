@@ -8,7 +8,7 @@ import {
 } from "sequelize-typescript";
 import { HasOneGetAssociationMixin } from "sequelize";
 import { Company } from "../Company";
-import { validatePositiveNumber, validateSalaryRange } from "validations-fiuba-laboral-v2";
+import { validateIntegerGreaterThan, validateSalaryRange } from "validations-fiuba-laboral-v2";
 
 @Table({
   tableName: "Offers",
@@ -49,21 +49,21 @@ export default class Offer extends Model<Offer> {
   })
   public description: string;
 
-  @Is("hoursPerDay", validatePositiveNumber)
+  @Is("hoursPerDay", (hoursPerDay: number) => validateIntegerGreaterThan(hoursPerDay, 0))
   @Column({
     allowNull: false,
     type: DataType.INTEGER
   })
   public hoursPerDay: number;
 
-  @Is("minimumSalary", validatePositiveNumber)
+  @Is("minimumSalary", (minimumSalary: number) => validateIntegerGreaterThan(minimumSalary, 0))
   @Column({
     allowNull: false,
     type: DataType.INTEGER
   })
   public minimumSalary: number;
 
-  @Is("maximumSalary", validatePositiveNumber)
+  @Is("maximumSalary", (maximumSalary: number) => validateIntegerGreaterThan(maximumSalary, 0))
   @Column({
     allowNull: false,
     type: DataType.INTEGER
