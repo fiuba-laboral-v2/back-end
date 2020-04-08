@@ -34,6 +34,5 @@ export const OfferRepository = {
     if (!offer) throw new OfferNotFound(uuid);
 
     return offer;
-  },
-  truncate: () => Offer.truncate({ cascade: true })
+  }
 };
