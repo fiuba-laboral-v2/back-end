@@ -21,7 +21,7 @@ import { validateIntegerGreaterThan, validateSalaryRange } from "validations-fiu
     }
   }
 })
-export default class Offer extends Model<Offer> {
+export class Offer extends Model<Offer> {
   @Column({
     allowNull: false,
     primaryKey: true,

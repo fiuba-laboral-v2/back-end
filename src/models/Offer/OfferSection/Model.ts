@@ -1,5 +1,5 @@
 import { Column, DataType, Model, Table, ForeignKey, BelongsTo } from "sequelize-typescript";
-import { Offer } from "../";
+import { Offer } from "../Model";
 
 @Table({
   tableName: "OffersSections"

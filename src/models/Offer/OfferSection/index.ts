@@ -1,1 +1,4 @@
-export { OfferSection } from "./Model";
+import { OfferSection } from "./Model";
+import { IOfferSection } from "./Interface";
+
+export { OfferSection, IOfferSection };

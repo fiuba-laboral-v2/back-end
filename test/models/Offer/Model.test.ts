@@ -1,9 +1,9 @@
+import { NumberIsTooSmallError, SalaryRangeError } from "validations-fiuba-laboral-v2";
 import Database from "../../../src/config/Database";
 import { Offer } from "../../../src/models/Offer";
-import { OfferMocks, TOfferNumbersProperties } from "./mocks";
 import { Company } from "../../../src/models/Company";
 import { companyMockData } from "../Company/mocks";
-import { NumberIsTooSmallError, SalaryRangeError } from "validations-fiuba-laboral-v2";
+import { OfferMocks, TOfferNumbersProperties } from "./mocks";
 
 
 describe("Offer", () => {
@@ -34,7 +34,7 @@ describe("Offer", () => {
 
   it("should create a valid offer", async () => {
     const company = await new Company(companyMockData).save();
-    const offerAttributes = OfferMocks.completeData(company.id);
+    const offerAttributes = OfferMocks.withObligatoryData(company.id);
     const offer = new Offer(offerAttributes);
     await offer.save();
     expect(offer.uuid).not.toBeUndefined();
@@ -44,7 +44,7 @@ describe("Offer", () => {
   });
 
   it("should raise error if offer does not belong to any company", async () => {
-    const offer = new Offer(OfferMocks.completeData());
+    const offer = new Offer(OfferMocks.withNoCompanyId());
     await expect(offer.save()).rejects.toThrow();
   });
 

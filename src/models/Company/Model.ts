@@ -9,12 +9,12 @@ import {
 } from "sequelize-typescript";
 import { CompanyPhoneNumber } from "../CompanyPhoneNumber";
 import { CompanyPhoto } from "../CompanyPhoto";
-import { Offer } from "../Offer";
+import { Offer } from "../Offer/Model";
 import { validateCuit, validateName } from "validations-fiuba-laboral-v2";
 import { HasManyGetAssociationsMixin } from "sequelize";
 
 @Table
-export default class Company extends Model<Company> {
+export class Company extends Model<Company> {
   @AllowNull(false)
   @Is("cuit", validateCuit)
   @Column(DataType.STRING)

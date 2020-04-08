@@ -64,7 +64,5 @@ export const CompanyRepository = {
   findAll: async () => {
     return Company.findAll();
   },
-  truncate: async () => {
-    return Company.truncate({ cascade: true });
-  }
+  truncate: () => Company.truncate({ cascade: true })
 };

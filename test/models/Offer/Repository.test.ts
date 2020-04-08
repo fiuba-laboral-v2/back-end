@@ -1,38 +1,52 @@
 import Database from "../../../src/config/Database";
-import { OfferRepository, Offer } from "../../../src/models/Offer";
+import { OfferRepository } from "../../../src/models/Offer/Repository";
+import { CompanyRepository } from "../../../src/models/Company/Repository";
 import { OfferNotFound } from "../../../src/models/Offer/Errors";
-import { OfferMocks } from "./mocks";
-import { Company, CompanyRepository } from "../../../src/models/Company";
+import { OfferSection } from "../../../src/models/Offer/OfferSection";
+import { Offer } from "../../../src/models/Offer";
 import { companyMockData } from "../Company/mocks";
+import { OfferMocks } from "./mocks";
+import { omit } from "lodash";
 
 describe("OfferRepository", () => {
-  beforeAll(async () => {
-    await Database.setConnection();
-  });
+  beforeAll(async () => await Database.setConnection());
 
-  beforeEach(async () => {
-    await CompanyRepository.truncate();
-  });
+  beforeEach(async () => await CompanyRepository.truncate());
 
-  afterAll(async () => {
-    await Database.close();
-  });
+  afterAll(async () => await Database.close());
 
   describe("Create", () => {
     it("should create a new offer", async () => {
-      const company = await new Company(companyMockData).save();
-      const offerProps = OfferMocks.completeData(company.id);
+      const company = await CompanyRepository.create(companyMockData);
+      const offerProps = OfferMocks.withObligatoryData(company.id);
       const offer = await OfferRepository.create(offerProps);
       expect(offer).toEqual(expect.objectContaining(offerProps));
+    });
+
+    it("should create a new offer with one section", async () => {
+      const company = await CompanyRepository.create(companyMockData);
+      const attributes = OfferMocks.withOneSection(company.id);
+      const offer = await OfferRepository.create(attributes);
+      expect(offer).toEqual(expect.objectContaining(
+        omit(attributes, ["sections"])
+      ));
+
+      const sections = await offer.getSections();
+      const allSections = await OfferSection.findAll();
+      expect(allSections).toHaveLength(1);
+      expect(allSections[0]).toEqual(expect.objectContaining(attributes.sections[0]));
+      expect(sections).toHaveLength(1);
+      expect(sections[0]).toEqual(expect.objectContaining(attributes.sections[0]));
     });
   });
 
   describe("Get", () => {
     it("should get the only offer by uuid", async () => {
-      const company = await new Company(companyMockData).save();
-      const offerProps = OfferMocks.completeData(company.id);
+      const company = await CompanyRepository.create(companyMockData);
+      const offerProps = OfferMocks.withObligatoryData(company.id);
       const { uuid } = await OfferRepository.create(offerProps);
-      const offer = await OfferRepository.findByUuid(uuid);
+      // const offer = await OfferRepository.findByUuid(uuid);
+      const offer = await Offer.findOne({ where: { uuid } });
       expect(offer).toEqual(expect.objectContaining(offerProps));
     });
 
@@ -45,8 +59,8 @@ describe("OfferRepository", () => {
 
   describe("Delete", () => {
     it("should delete all offers if all companies are deleted", async () => {
-      const company = await new Company(companyMockData).save();
-      const offer = await OfferRepository.create(OfferMocks.completeData(company.id));
+      const company = await CompanyRepository.create(companyMockData);
+      const offer = await OfferRepository.create(OfferMocks.withObligatoryData(company.id));
       await CompanyRepository.truncate();
       await expect(OfferRepository.findByUuid(offer.uuid)).rejects.toThrow(OfferNotFound);
     });

@@ -1,10 +1,10 @@
+import { random, lorem } from "faker";
 import Database from "../../../../src/config/Database";
 import { Offer } from "../../../../src/models/Offer";
 import { Company } from "../../../../src/models/Company";
 import { OfferSection } from "../../../../src/models/Offer/OfferSection";
 import { OfferMocks } from "../mocks";
 import { companyMockData } from "../../Company/mocks";
-import { random, lorem } from "faker";
 
 describe("OfferSection", () => {
 
@@ -22,7 +22,7 @@ describe("OfferSection", () => {
 
   const createOffer = async () => {
     const company = await new Company(companyMockData).save();
-    return new Offer(OfferMocks.completeData(company.id)).save();
+    return new Offer(OfferMocks.withObligatoryData(company.id)).save();
   };
 
   const sectionAttributes = (offerUuid: string) => (
