@@ -10,7 +10,7 @@ export const OfferRepository = {
       sections = [],
       ...attributes
     }: IOffer) => {
-    const offer = new Offer(omit(attributes, ["sections"]));
+    const offer = new Offer(attributes);
     const offerSections = sections.map(section => new OfferSection(omit(section, ["uuid"])));
     return OfferRepository.save(offer, offerSections);
   },
