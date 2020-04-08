@@ -2,8 +2,6 @@ import Database from "../../../src/config/Database";
 import { OfferRepository } from "../../../src/models/Offer/Repository";
 import { CompanyRepository } from "../../../src/models/Company/Repository";
 import { OfferNotFound } from "../../../src/models/Offer/Errors";
-import { OfferSection } from "../../../src/models/Offer/OfferSection";
-import { Offer } from "../../../src/models/Offer";
 import { companyMockData } from "../Company/mocks";
 import { OfferMocks } from "./mocks";
 import { omit } from "lodash";
@@ -32,9 +30,6 @@ describe("OfferRepository", () => {
       ));
 
       const sections = await offer.getSections();
-      const allSections = await OfferSection.findAll();
-      expect(allSections).toHaveLength(1);
-      expect(allSections[0]).toEqual(expect.objectContaining(attributes.sections[0]));
       expect(sections).toHaveLength(1);
       expect(sections[0]).toEqual(expect.objectContaining(attributes.sections[0]));
     });
@@ -45,8 +40,7 @@ describe("OfferRepository", () => {
       const company = await CompanyRepository.create(companyMockData);
       const offerProps = OfferMocks.withObligatoryData(company.id);
       const { uuid } = await OfferRepository.create(offerProps);
-      // const offer = await OfferRepository.findByUuid(uuid);
-      const offer = await Offer.findOne({ where: { uuid } });
+      const offer = await OfferRepository.findByUuid(uuid);
       expect(offer).toEqual(expect.objectContaining(offerProps));
     });
 
