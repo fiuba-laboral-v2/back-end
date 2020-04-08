@@ -20,6 +20,12 @@ const OfferMocks = {
     if (!sections) return omit(data, ["sections"]);
     return data;
   },
+  withOneSectionButNullCompanyId: () => OfferMocks.withOneSection(null),
+  withSectionWithNoTitle: (companyId: number) => {
+    const data = OfferMocks.withOneSection(companyId);
+    delete data.sections[0].title;
+    return data;
+  },
   withOneSection: (companyId: number) => (
     OfferMocks.completeData(
       companyId,
