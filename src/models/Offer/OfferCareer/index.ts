@@ -1,0 +1,1 @@
+export { OfferCareer } from "./Model";
