@@ -1,4 +1,3 @@
-import { omit } from "lodash";
 import Database from "../../config/Database";
 import { Offer, IOffer } from "./";
 import { OfferSection } from "./OfferSection";
@@ -11,7 +10,7 @@ export const OfferRepository = {
       ...attributes
     }: IOffer) => {
     const offer = new Offer(attributes);
-    const offerSections = sections.map(section => new OfferSection(omit(section, ["uuid"])));
+    const offerSections = sections.map(section => new OfferSection(section));
     return OfferRepository.save(offer, offerSections);
   },
   save: async (offer: Offer, sections: OfferSection[] = []) => {
