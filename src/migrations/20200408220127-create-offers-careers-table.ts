@@ -33,7 +33,7 @@ export = {
         "OffersCareers",
         ["careerCode", "offerUuid"],
         {
-          type: "unique",
+          type: "primary key",
           name: "OffersSections_careerCode_offerUuid_key",
           transaction
         }
