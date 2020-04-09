@@ -1,4 +1,5 @@
 import { IOfferSection } from "./OfferSection/Interface";
+import { IOfferCareer } from "./OfferCareer/Interface";
 
 export interface IOffer {
   companyId: number;
@@ -8,4 +9,5 @@ export interface IOffer {
   minimumSalary: number;
   maximumSalary: number;
   sections?: IOfferSection[];
+  careers?: IOfferCareer[];
 }

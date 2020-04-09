@@ -2,11 +2,16 @@ import faker from "faker";
 import { omit } from "lodash";
 import { IOffer } from ".././../../src/models/Offer/Interface";
 import { IOfferSection } from ".././../../src/models/Offer/OfferSection/Interface";
+import { IOfferCareer } from ".././../../src/models/Offer/OfferCareer/Interface";
 
 export type TOfferNumbersProperties = "hoursPerDay" | "minimumSalary" | "maximumSalary";
 
 const OfferMocks = {
-  completeData: (companyId?: number, sections?: IOfferSection[]): IOffer => {
+  completeData: (
+    companyId?: number,
+    sections?: IOfferSection[],
+    careers?: IOfferCareer[]
+  ): IOffer => {
     const minimumSalary = faker.random.number();
     const data = {
       companyId: companyId,
@@ -15,9 +20,11 @@ const OfferMocks = {
       hoursPerDay: faker.random.number(),
       minimumSalary: minimumSalary,
       maximumSalary: minimumSalary + 1000,
-      sections: sections
+      sections: sections,
+      careers: careers
     };
-    if (!sections) return omit(data, ["sections"]);
+    if (!sections) delete data.sections;
+    if (!careers) delete data.careers;
     return data;
   },
   withOneSectionButNullCompanyId: () => OfferMocks.withOneSection(null),
@@ -34,6 +41,29 @@ const OfferMocks = {
           title: faker.random.words(),
           text: faker.lorem.paragraphs(),
           displayOrder: 1
+        }
+      ]
+    )
+  ),
+  withOneCareer: (companyId: number, careerCode: string) => (
+    OfferMocks.completeData(companyId, undefined, [ { careerCode: careerCode } ])
+  ),
+  withOneCareerWithNullCareerCode: (companyId: number) => (
+    OfferMocks.completeData(companyId, undefined, [ { careerCode: null } ])
+  ),
+  withOneCareerAndOneSection: (companyId: number, careerCode: string) => (
+    OfferMocks.completeData(
+      companyId,
+      [
+        {
+          title: faker.random.words(),
+          text: faker.lorem.paragraphs(),
+          displayOrder: 1
+        }
+      ],
+      [
+        {
+          careerCode: careerCode
         }
       ]
     )
