@@ -14,7 +14,7 @@ export const OfferRepository = {
     const offer = new Offer(attributes);
     return OfferRepository.save(offer, sections, careers);
   },
-  save: async (offer: Offer, sections: IOfferSection[] = [], careers: IOfferCareer[] = []) => {
+  save: async (offer: Offer, sections: IOfferSection[], careers: IOfferCareer[]) => {
     const transaction = await Database.transaction();
     try {
       await offer.save({ transaction });
