@@ -1,6 +1,6 @@
 import Database from "../../config/Database";
 import { Offer, IOffer } from "./";
-import { OfferSection } from "./OfferSection";
+import { OfferSection, IOfferSection } from "./OfferSection";
 import { OfferNotFound } from "./Errors";
 
 export const OfferRepository = {
@@ -10,17 +10,15 @@ export const OfferRepository = {
       ...attributes
     }: IOffer) => {
     const offer = new Offer(attributes);
-    const offerSections = sections.map(section => new OfferSection(section));
-    return OfferRepository.save(offer, offerSections);
+    return OfferRepository.save(offer, sections);
   },
-  save: async (offer: Offer, sections: OfferSection[] = []) => {
+  save: async (offer: Offer, sections: IOfferSection[] = []) => {
     const transaction = await Database.transaction();
     try {
       await offer.save({ transaction });
-      await Promise.all(sections.map(section => {
-        section.offerUuid = offer.uuid;
-        return section.save({ transaction });
-      }));
+      await Promise.all(sections.map(section => (
+        OfferSection.create({ ...section, offerUuid: offer.uuid }, { transaction })
+      )));
       await transaction.commit();
       return offer;
     } catch (e) {
