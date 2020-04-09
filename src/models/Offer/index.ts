@@ -1,5 +1,5 @@
-import Offer from "./Model";
+import { Offer } from "./Model";
 import { OfferRepository } from "./Repository";
-import { IOffer } from "./interface";
+import { IOffer } from "./Interface";
 
 export { Offer, IOffer, OfferRepository };
