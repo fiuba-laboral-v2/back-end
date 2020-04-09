@@ -32,7 +32,6 @@ describe("OfferCareer", () => {
   describe("Valid create", () => {
     it("should create a valid offer career", async () => {
       const { offerCareer, attributes } = await createOfferCareer();
-      expect(offerCareer).toHaveProperty("uuid");
       expect(offerCareer).toMatchObject(attributes);
     });
 

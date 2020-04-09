@@ -1,5 +1,4 @@
 import { DATE, UUID, QueryInterface, STRING } from "sequelize";
-import uuid from "uuid/v4";
 
 export = {
   up: (queryInterface: QueryInterface) => {
@@ -7,12 +6,6 @@ export = {
       await queryInterface.createTable(
         "OffersCareers",
         {
-          uuid: {
-            allowNull: false,
-            primaryKey: true,
-            type: UUID,
-            defaultValue: uuid()
-          },
           careerCode: {
             allowNull: false,
             references: { model: "Careers", key: "code" },

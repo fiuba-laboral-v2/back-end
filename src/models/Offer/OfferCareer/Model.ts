@@ -4,14 +4,6 @@ import { Career } from "../../Career/Model";
 
 @Table({ tableName: "OffersCareers" })
 export class OfferCareer extends Model<OfferCareer> {
-  @Column({
-    allowNull: false,
-    primaryKey: true,
-    type: DataType.UUID,
-    defaultValue: DataType.UUIDV4
-  })
-  public uuid: string;
-
   @ForeignKey(() => Career)
   @Column({
     allowNull: false,
