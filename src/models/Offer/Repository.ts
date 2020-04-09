@@ -4,7 +4,7 @@ import { OfferSection, IOfferSection } from "./OfferSection";
 import { OfferNotFound } from "./Errors";
 
 export const OfferRepository = {
-  create: async (
+  create: (
     {
       sections = [],
       ...attributes
