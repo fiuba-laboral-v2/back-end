@@ -12,6 +12,8 @@ export const defaultTranslations = {
     creditsProgress: "% de los créditos aprobados",
     edit: {
       title: "Editar tu perfil",
+      name: "Nombre",
+      surname: "Apellido",
       links: "Links",
       link: "Link",
       linkTitle: "Título",
