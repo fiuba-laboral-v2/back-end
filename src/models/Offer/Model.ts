@@ -6,11 +6,14 @@ import {
   ForeignKey,
   BelongsTo,
   Is,
-  HasMany
+  HasMany,
+  BelongsToMany
 } from "sequelize-typescript";
 import { HasOneGetAssociationMixin, HasManyGetAssociationsMixin } from "sequelize";
 import { Company } from "../Company";
 import { OfferSection } from "./OfferSection";
+import { OfferCareer } from "./OfferCareer";
+import { Career } from "../Career/Model";
 import { validateIntegerGreaterThan, validateSalaryRange } from "validations-fiuba-laboral-v2";
 
 @Table({
@@ -76,6 +79,10 @@ export class Offer extends Model<Offer> {
   @HasMany(() => OfferSection)
   public sections: OfferSection[];
 
+  @BelongsToMany(() => Career, () => OfferCareer)
+  public careers: Career[];
+
   public getCompany: HasOneGetAssociationMixin<Company>;
   public getSections: HasManyGetAssociationsMixin<OfferSection>;
+  public getCareers: HasManyGetAssociationsMixin<Career>;
 }
