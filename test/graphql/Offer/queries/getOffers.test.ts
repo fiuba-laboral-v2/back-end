@@ -1,4 +1,4 @@
-import { gql, ApolloError } from "apollo-server";
+import { gql } from "apollo-server";
 import { executeQuery } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
@@ -47,7 +47,7 @@ describe("getOffers", () => {
   afterAll(() => Database.close());
 
   describe("when offers exists", () => {
-    it("should return two offers when two offers exists", async () => {
+    const createOffers = async ()  => {
       const { id } = await CompanyRepository.create(companyMockData);
       const career1 = await CareerRepository.create(careerMocks.careerData());
       const career2 = await CareerRepository.create(careerMocks.careerData());
@@ -55,6 +55,18 @@ describe("getOffers", () => {
       const offerAttributes2 = OfferMocks.withOneCareer(id, career2.code);
       await OfferRepository.create(offerAttributes1);
       await OfferRepository.create(offerAttributes2);
+      return { career1, career2, offerAttributes1, offerAttributes2 };
+    };
+
+    it("should return two offers if two offers were created", async () => {
+      await createOffers();
+      const { data: { getOffers }, errors } = await executeQuery(GET_OFFERS);
+      expect(errors).toBeUndefined();
+      expect(getOffers).toHaveLength(2);
+    });
+
+    it("should return two offers when two offers exists", async () => {
+      const { offerAttributes1, offerAttributes2 } = await createOffers();
       const { data: { getOffers }, errors } = await executeQuery(GET_OFFERS);
       expect(errors).toBeUndefined();
       expect(getOffers).toHaveLength(2);
@@ -64,18 +76,25 @@ describe("getOffers", () => {
           omit(offerAttributes2, ["careers"])
         ]
       );
-      expect(
-        getOffers
-          .map(offer => offer.careers)
-          .reduce((careers1, careers2) => careers1.concat(careers2))
-      ).toMatchObject(
+    });
+
+    it("should return two offers with one career each", async () => {
+      const {
+        career1: { code: code1, description: description1, credits: credits1 },
+        career2: { code: code2, description: description2, credits: credits2 }
+      } = await createOffers();
+      const { data: { getOffers }, errors } = await executeQuery(GET_OFFERS);
+      expect(errors).toBeUndefined();
+      expect(getOffers).toMatchObject(
         [
-          pick(career1, ["code", "description", "credits"]),
-          pick(career2, ["code", "description", "credits"])
+          { careers: [ { code: code1, description: description1, credits: credits1 } ] },
+          { careers: [ { code: code2, description: description2, credits: credits2 } ] }
         ]
       );
     });
+  });
 
+  describe("when no offers exists", () => {
     it("should return no offers when no offers were created", async () => {
       const { data: { getOffers }, errors } = await executeQuery(GET_OFFERS);
       expect(errors).toBeUndefined();
