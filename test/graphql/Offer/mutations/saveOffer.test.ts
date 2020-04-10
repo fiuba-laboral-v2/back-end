@@ -42,6 +42,26 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
     }
 `;
 
+const SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA = gql`
+    mutation saveOffer(
+        $companyId: Int!, $title: String!, $description: String!, $hoursPerDay: Int!,
+        $minimumSalary: Int!, $maximumSalary: Int!
+    ) {
+        saveOffer(
+            companyId: $companyId, title: $title, description: $description,
+            hoursPerDay: $hoursPerDay, minimumSalary: $minimumSalary, maximumSalary: $maximumSalary
+        ) {
+            uuid
+            companyId
+            title
+            description
+            hoursPerDay
+            minimumSalary
+            maximumSalary
+        }
+    }
+`;
+
 describe("saveOffer", () => {
 
   beforeAll(() => Database.setConnection());
@@ -54,10 +74,21 @@ describe("saveOffer", () => {
   afterAll(() => Database.close());
 
   describe("when the input values are valid", () => {
-    it("should create a new offer", async () => {
+    it("should create a new offer with only obligatory data", async () => {
+      const { id } = await CompanyRepository.create(companyMockData);
+      const offerAttributes = OfferMocks.completeData(id);
+      const { data: { saveOffer }, errors } = await executeMutation(
+        SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
+        offerAttributes
+      );
+      expect(errors).toBeUndefined();
+      expect(saveOffer).toMatchObject(offerAttributes);
+    });
+
+    it("should create a new offer with one section and one career", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
-      const company = await CompanyRepository.create(companyMockData);
-      const offerAttributes = OfferMocks.withOneCareerAndOneSection(company.id, career.code);
+      const { id } = await CompanyRepository.create(companyMockData);
+      const offerAttributes = OfferMocks.withOneCareerAndOneSection(id, career.code);
       const { data: { saveOffer }, errors } = await executeMutation(
         SAVE_OFFER_WITH_COMPLETE_DATA,
         offerAttributes
@@ -74,6 +105,16 @@ describe("saveOffer", () => {
           credits: career.credits
         }
       );
+    });
+  });
+
+  describe("when the input values are invalid", () => {
+    it("should raise an error if no company id is provided", async () => {
+      const { errors } = await executeMutation(
+        SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
+        OfferMocks.withNoCompanyId()
+      );
+      expect(errors).not.toBeUndefined();
     });
   });
 });
