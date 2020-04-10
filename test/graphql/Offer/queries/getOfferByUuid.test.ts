@@ -39,14 +39,14 @@ const GET_OFFER_BY_UUID = gql`
 `;
 
 describe("getOfferByUuid", () => {
-  beforeAll(async () => Database.setConnection());
+  beforeAll(() => Database.setConnection());
 
   beforeEach(async () => {
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
   });
 
-  afterAll(async () => Database.close());
+  afterAll(() => Database.close());
 
   const createOffer = async () => {
     const company = await CompanyRepository.create(companyMockData);
