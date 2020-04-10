@@ -1,7 +1,7 @@
 import { saveOffer } from "./saveOffer";
 
 const offerMutations = {
-  saveOffer: saveOffer
+  saveOffer
 };
 
 export { offerMutations };
