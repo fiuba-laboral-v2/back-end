@@ -48,7 +48,7 @@ describe("getOfferByUuid", () => {
 
   afterAll(async () => Database.close());
 
-  const createCareer = async () => {
+  const createOffer = async () => {
     const company = await CompanyRepository.create(companyMockData);
     const career = await CareerRepository.create(careerMocks.careerData());
     const offerAttributes = OfferMocks.withOneCareerAndOneSection(company.id, career.code);
@@ -58,7 +58,7 @@ describe("getOfferByUuid", () => {
 
   describe("when and offer exists", () => {
     it("should find an offer by uuid", async () => {
-      const { offer, offerAttributes, career } = await createCareer();
+      const { offer, offerAttributes, career } = await createOffer();
       const { data: { getOfferByUuid }, errors } = await executeQuery(
         GET_OFFER_BY_UUID,
         { uuid: offer.uuid }
