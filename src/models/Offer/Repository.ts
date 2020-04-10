@@ -14,14 +14,14 @@ export const OfferRepository = {
     const offer = new Offer(attributes);
     return OfferRepository.save(offer, sections, careers);
   },
-  save: async (offer: Offer, sections: IOfferSection[], careers: IOfferCareer[]) => {
+  save: async (offer: Offer, sections: IOfferSection[], offersCareers: IOfferCareer[]) => {
     const transaction = await Database.transaction();
     try {
       await offer.save({ transaction });
       await Promise.all(sections.map(section => (
         OfferSection.create({ ...section, offerUuid: offer.uuid }, { transaction })
       )));
-      await Promise.all(careers.map(({ careerCode }) => (
+      await Promise.all(offersCareers.map(({ careerCode }) => (
         OfferCareer.create({ careerCode, offerUuid: offer.uuid }, { transaction })
       )));
       await transaction.commit();
