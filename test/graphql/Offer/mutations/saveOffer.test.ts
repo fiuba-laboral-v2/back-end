@@ -7,7 +7,6 @@ import { CompanyRepository } from "../../../../src/models/Company";
 import { careerMocks } from "../../../models/Career/mocks";
 import { companyMockData } from "../../../models/Company/mocks";
 import { OfferMocks } from "../../../models/Offer/mocks";
-import { omit } from "lodash";
 
 const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
     mutation saveOffer(
@@ -21,7 +20,6 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
             sections: $sections, careers: $careers
         ) {
             uuid
-            companyId
             title
             description
             hoursPerDay
@@ -38,6 +36,18 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
                 description
                 credits
             }
+            company {
+              id
+              cuit
+              companyName
+              slogan
+              description
+              logo
+              website
+              email
+              phoneNumbers
+              photos
+            }
         }
     }
 `;
@@ -52,7 +62,6 @@ const SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA = gql`
             hoursPerDay: $hoursPerDay, minimumSalary: $minimumSalary, maximumSalary: $maximumSalary
         ) {
             uuid
-            companyId
             title
             description
             hoursPerDay
@@ -82,29 +91,29 @@ describe("saveOffer", () => {
         offerAttributes
       );
       expect(errors).toBeUndefined();
-      expect(saveOffer).toMatchObject(offerAttributes);
+      expect(saveOffer).toHaveProperty("uuid");
+      expect(saveOffer).toMatchObject(
+        {
+          title: offerAttributes.title,
+          description: offerAttributes.description,
+          hoursPerDay: offerAttributes.hoursPerDay,
+          minimumSalary: offerAttributes.minimumSalary,
+          maximumSalary: offerAttributes.maximumSalary
+        }
+      );
     });
 
     it("should create a new offer with one section and one career", async () => {
-      const career = await CareerRepository.create(careerMocks.careerData());
+      const { code } = await CareerRepository.create(careerMocks.careerData());
       const { id } = await CompanyRepository.create(companyMockData);
-      const offerAttributes = OfferMocks.withOneCareerAndOneSection(id, career.code);
+      const offerAttributes = OfferMocks.withOneCareerAndOneSection(id, code);
       const { data: { saveOffer }, errors } = await executeMutation(
         SAVE_OFFER_WITH_COMPLETE_DATA,
         offerAttributes
       );
       expect(errors).toBeUndefined();
-      expect(saveOffer).toMatchObject(omit(offerAttributes, ["sections", "careers"]));
-      expect(saveOffer.careers).toHaveLength(1);
       expect(saveOffer.sections).toHaveLength(1);
-      expect(saveOffer.sections[0]).toMatchObject(offerAttributes.sections[0]);
-      expect(saveOffer.careers[0]).toMatchObject(
-        {
-          code: career.code,
-          description: career.description,
-          credits: career.credits
-        }
-      );
+      expect(saveOffer.careers).toHaveLength(1);
     });
   });
 

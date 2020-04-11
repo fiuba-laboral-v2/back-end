@@ -1,10 +1,6 @@
 import { GraphQLCompany } from "./Types/GraphQLCompany";
 import { ID, nonNull, List } from "../fieldTypes";
-import {
-  Company,
-  CompanyRepository,
-  CompanySerializer
-} from "../../models/Company";
+import { CompanyRepository } from "../../models/Company";
 
 const companyQueries = {
   getCompanyById: {
@@ -14,17 +10,11 @@ const companyQueries = {
         type: nonNull(ID)
       }
     },
-    resolve: async (_: undefined, { id }: { id: number }) => {
-      const company: Company = await CompanyRepository.findById(id);
-      return CompanySerializer.serialize(company);
-    }
+    resolve: (_: undefined, { id }: { id: number }) => CompanyRepository.findById(id)
   },
   getCompanies: {
     type: List(GraphQLCompany),
-    resolve: async () => {
-      const companies = await CompanyRepository.findAll();
-      return companies.map(company => CompanySerializer.serialize(company));
-    }
+    resolve: () => CompanyRepository.findAll()
   }
 };
 

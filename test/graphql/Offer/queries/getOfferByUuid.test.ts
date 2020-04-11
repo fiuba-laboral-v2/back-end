@@ -11,18 +11,16 @@ import { careerMocks } from "../../../models/Career/mocks";
 import { companyMockData } from "../../../models/Company/mocks";
 import { OfferMocks } from "../../../models/Offer/mocks";
 
-import { omit } from "lodash";
-
 const GET_OFFER_BY_UUID = gql`
   query ($uuid: ID!) {
     getOfferByUuid(uuid: $uuid) {
       uuid
-      companyId
       title
       description
       hoursPerDay
       minimumSalary
       maximumSalary
+      createdAt
       sections {
           uuid
           title
@@ -33,6 +31,17 @@ const GET_OFFER_BY_UUID = gql`
           code
           description
           credits
+      }
+      company {
+        cuit
+        companyName
+        slogan
+        description
+        logo
+        website
+        email
+        phoneNumbers
+        photos
       }
     }
   }
@@ -51,26 +60,55 @@ describe("getOfferByUuid", () => {
   const createOffer = async () => {
     const company = await CompanyRepository.create(companyMockData);
     const career = await CareerRepository.create(careerMocks.careerData());
-    const offerAttributes = OfferMocks.withOneCareerAndOneSection(company.id, career.code);
-    const offer = await OfferRepository.create(offerAttributes);
-    return { company, career, offer, offerAttributes };
+    const offer = await OfferRepository.create(
+      OfferMocks.withOneCareerAndOneSection(company.id, career.code)
+    );
+    return { offer, career, company };
   };
 
   describe("when and offer exists", () => {
     it("should find an offer by uuid", async () => {
-      const { offer, offerAttributes, career } = await createOffer();
+      const { offer, career, company } = await createOffer();
       const { data: { getOfferByUuid }, errors } = await executeQuery(
         GET_OFFER_BY_UUID,
         { uuid: offer.uuid }
       );
       expect(errors).toBeUndefined();
-      expect(getOfferByUuid).toMatchObject(omit(offerAttributes, ["careers"]));
-      expect(getOfferByUuid.careers).toHaveLength(1);
-      expect(getOfferByUuid.careers[0]).toMatchObject(
+      expect(getOfferByUuid).toMatchObject(
         {
-          code: career.code,
-          description: career.description,
-          credits: career.credits
+          uuid: offer.uuid,
+          title: offer.title,
+          description: offer.description,
+          hoursPerDay: offer.hoursPerDay,
+          minimumSalary: offer.minimumSalary,
+          maximumSalary: offer.maximumSalary,
+          createdAt: offer.createdAt.getTime().toString(),
+          careers: [
+            {
+              code: career.code,
+              description: career.description,
+              credits: career.credits
+            }
+          ],
+          sections: await offer.getSections().map(section =>(
+            {
+              uuid: section.uuid,
+              title: section.title,
+              text: section.text,
+              displayOrder: section.displayOrder
+            }
+          )),
+          company: {
+            cuit: company.cuit,
+            companyName: company.companyName,
+            slogan: company.slogan,
+            description: company.description,
+            logo: company.logo,
+            website: company.website,
+            email: company.email,
+            phoneNumbers: await company.getPhoneNumbers(),
+            photos: await company.getPhotos()
+          }
         }
       );
     });
