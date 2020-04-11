@@ -6,36 +6,28 @@ const GraphQLCompany = new GraphQLObjectType({
   name: "Company",
   fields: () => ({
     id: {
-      type: ID,
-      resolve: ({ id }: Company) => id
+      type: ID
     },
     cuit: {
-      type: nonNull(String),
-      resolve: ({ cuit }: Company) => cuit
+      type: nonNull(String)
     },
     companyName: {
-      type: nonNull(String),
-      resolve: ({ companyName }: Company) => companyName
+      type: nonNull(String)
     },
     slogan: {
-      type: String,
-      resolve: ({ slogan }: Company) => slogan
+      type: String
     },
     description: {
-      type: String,
-      resolve: ({ description }: Company) => description
+      type: String
     },
     logo: {
-      type: String,
-      resolve: ({ logo }: Company) => logo
+      type: String
     },
     website: {
-      type: String,
-      resolve: ({ website }: Company) => website
+      type: String
     },
     email: {
-      type: String,
-      resolve: ({ email }: Company) => email
+      type: String
     },
     phoneNumbers: {
       type: List(Int),

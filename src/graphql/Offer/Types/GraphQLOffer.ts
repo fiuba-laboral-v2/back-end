@@ -9,32 +9,25 @@ const GraphQLOffer = new GraphQLObjectType({
   name: "Offer",
   fields: () => ({
     uuid: {
-      type: nonNull(ID),
-      resolve: ({ uuid }: Offer) => uuid
+      type: nonNull(ID)
     },
     title: {
-      type: nonNull(String),
-      resolve: ({ title }: Offer) => title
+      type: nonNull(String)
     },
     description: {
-      type: nonNull(String),
-      resolve: ({ description }: Offer) => description
+      type: nonNull(String)
     },
     hoursPerDay: {
-      type: nonNull(Int),
-      resolve: ({ hoursPerDay }: Offer) => hoursPerDay
+      type: nonNull(Int)
     },
     minimumSalary: {
-      type: nonNull(Int),
-      resolve: ({ minimumSalary }: Offer) => minimumSalary
+      type: nonNull(Int)
     },
     maximumSalary: {
-      type: nonNull(Int),
-      resolve: ({ maximumSalary }: Offer) => maximumSalary
+      type: nonNull(Int)
     },
     createdAt: {
-      type: nonNull(String),
-      resolve: ({ createdAt }: Offer) => createdAt
+      type: nonNull(String)
     },
     sections: {
       type: List(GraphQLOfferSection),
