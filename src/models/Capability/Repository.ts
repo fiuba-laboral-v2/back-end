@@ -17,5 +17,5 @@ export const CapabilityRepository = {
     }
     return capabilities;
   },
-  truncate: async () => Capability.truncate({ cascade: true })
+  truncate: () => Capability.truncate({ cascade: true })
 };
