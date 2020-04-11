@@ -2,6 +2,7 @@ import { GraphQLObjectType } from "graphql";
 import { ID, Int, List, nonNull, String } from "../../fieldTypes";
 import { GraphQLOfferSection } from "./GraphQLOfferSection";
 import { GraphQLCareer } from "../../Career/Types/Career";
+import { GraphQLCompany } from "../../Company/Types/GraphQLCompany";
 import { Offer } from "../../../models/Offer";
 
 const GraphQLOffer = new GraphQLObjectType({
@@ -10,10 +11,6 @@ const GraphQLOffer = new GraphQLObjectType({
     uuid: {
       type: nonNull(ID),
       resolve: ({ uuid }: Offer) => uuid
-    },
-    companyId: {
-      type: nonNull(Int),
-      resolve: ({ companyId }: Offer) => companyId
     },
     title: {
       type: nonNull(String),
@@ -42,6 +39,10 @@ const GraphQLOffer = new GraphQLObjectType({
     careers: {
       type: List(GraphQLCareer),
       resolve: (offer: Offer) => offer.getCareers()
+    },
+    company: {
+      type: GraphQLCompany,
+      resolve: (offer: Offer) => offer.getCompany()
     }
   })
 });

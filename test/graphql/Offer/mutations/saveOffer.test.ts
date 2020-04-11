@@ -2,12 +2,13 @@ import { gql } from "apollo-server";
 import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
-import { CareerRepository } from "../../../../src/models/Career";
-import { CompanyRepository } from "../../../../src/models/Company";
+import { Career, CareerRepository } from "../../../../src/models/Career";
+import { Company, CompanyRepository } from "../../../../src/models/Company";
 import { careerMocks } from "../../../models/Career/mocks";
 import { companyMockData } from "../../../models/Company/mocks";
 import { OfferMocks } from "../../../models/Offer/mocks";
-import { omit } from "lodash";
+import { IOfferSection } from "../../../../src/models/Offer/OfferSection";
+import { IOffer } from "../../../../src/models/Offer";
 
 const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
     mutation saveOffer(
@@ -21,7 +22,6 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
             sections: $sections, careers: $careers
         ) {
             uuid
-            companyId
             title
             description
             hoursPerDay
@@ -38,6 +38,18 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
                 description
                 credits
             }
+            company {
+              id
+              cuit
+              companyName
+              slogan
+              description
+              logo
+              website
+              email
+              phoneNumbers
+              photos
+            }
         }
     }
 `;
@@ -52,7 +64,6 @@ const SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA = gql`
             hoursPerDay: $hoursPerDay, minimumSalary: $minimumSalary, maximumSalary: $maximumSalary
         ) {
             uuid
-            companyId
             title
             description
             hoursPerDay
@@ -73,6 +84,59 @@ describe("saveOffer", () => {
 
   afterAll(() => Database.close());
 
+  const expectedSection = (section: IOfferSection) => (
+    {
+      title: section.title,
+      text: section.text,
+      displayOrder: section.displayOrder
+    }
+  );
+
+  const expectedCareer = (career: Career) => (
+    {
+      code: career.code,
+      description: career.description,
+      credits: career.credits
+    }
+  );
+
+  const expectedCompany = async (company: Company) => (
+    {
+      cuit: company.cuit,
+      companyName: company.companyName,
+      slogan: company.slogan,
+      description: company.description,
+      logo: company.logo,
+      website: company.website,
+      email: company.email,
+      phoneNumbers: await company.getPhoneNumbers(),
+      photos: await company.getPhotos()
+    }
+  );
+
+  const expectedOfferWithObligatoryData = (attributes: IOffer) => (
+    {
+      title: attributes.title,
+      description: attributes.description,
+      hoursPerDay: attributes.hoursPerDay,
+      minimumSalary: attributes.minimumSalary,
+      maximumSalary: attributes.maximumSalary
+    }
+  );
+
+  const expectedCompleteOffer = async (attributes: IOffer, careers: Career[], company: Company) => (
+    {
+      title: attributes.title,
+      description: attributes.description,
+      hoursPerDay: attributes.hoursPerDay,
+      minimumSalary: attributes.minimumSalary,
+      maximumSalary: attributes.maximumSalary,
+      sections: attributes.sections.map(section => expectedSection(section)),
+      careers: careers.map(career => expectedCareer(career)),
+      company: await expectedCompany(company)
+    }
+  );
+
   describe("when the input values are valid", () => {
     it("should create a new offer with only obligatory data", async () => {
       const { id } = await CompanyRepository.create(companyMockData);
@@ -82,28 +146,20 @@ describe("saveOffer", () => {
         offerAttributes
       );
       expect(errors).toBeUndefined();
-      expect(saveOffer).toMatchObject(offerAttributes);
+      expect(saveOffer).toMatchObject(expectedOfferWithObligatoryData(offerAttributes));
     });
 
     it("should create a new offer with one section and one career", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
-      const { id } = await CompanyRepository.create(companyMockData);
-      const offerAttributes = OfferMocks.withOneCareerAndOneSection(id, career.code);
+      const company = await CompanyRepository.create(companyMockData);
+      const offerAttributes = OfferMocks.withOneCareerAndOneSection(company.id, career.code);
       const { data: { saveOffer }, errors } = await executeMutation(
         SAVE_OFFER_WITH_COMPLETE_DATA,
         offerAttributes
       );
       expect(errors).toBeUndefined();
-      expect(saveOffer).toMatchObject(omit(offerAttributes, ["sections", "careers"]));
-      expect(saveOffer.careers).toHaveLength(1);
-      expect(saveOffer.sections).toHaveLength(1);
-      expect(saveOffer.sections[0]).toMatchObject(offerAttributes.sections[0]);
-      expect(saveOffer.careers[0]).toMatchObject(
-        {
-          code: career.code,
-          description: career.description,
-          credits: career.credits
-        }
+      expect(saveOffer).toMatchObject(
+        await expectedCompleteOffer(offerAttributes, [ career ], company)
       );
     });
   });

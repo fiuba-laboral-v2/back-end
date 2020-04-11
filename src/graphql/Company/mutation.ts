@@ -1,11 +1,6 @@
 import { GraphQLCompany } from "./Types/GraphQLCompany";
 import { Int, List, nonNull, String } from "../fieldTypes";
-import {
-  Company,
-  CompanyRepository,
-  CompanySerializer,
-  ICompany
-} from "../../models/Company";
+import { ICompany, CompanyRepository } from "../../models/Company";
 
 const companyMutations = {
   saveCompany: {
@@ -39,10 +34,7 @@ const companyMutations = {
         type: List(String)
       }
     },
-    resolve: async (_: undefined, args: ICompany) => {
-      const company: Company = await CompanyRepository.create(args);
-      return CompanySerializer.serialize(company);
-    }
+    resolve: (_: undefined, args: ICompany) => CompanyRepository.create(args)
   }
 };
 

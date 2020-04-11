@@ -1,38 +1,51 @@
 import { GraphQLObjectType } from "graphql";
 import { ID, Int, nonNull, String, List } from "../../fieldTypes";
+import { Company } from "../../../models/Company";
 
 const GraphQLCompany = new GraphQLObjectType({
   name: "Company",
   fields: () => ({
     id: {
-      type: ID
+      type: ID,
+      resolve: ({ id }: Company) => id
     },
     cuit: {
-      type: nonNull(String)
+      type: nonNull(String),
+      resolve: ({ cuit }: Company) => cuit
     },
     companyName: {
-      type: nonNull(String)
+      type: nonNull(String),
+      resolve: ({ companyName }: Company) => companyName
     },
     slogan: {
-      type: String
+      type: String,
+      resolve: ({ slogan }: Company) => slogan
     },
     description: {
-      type: String
+      type: String,
+      resolve: ({ description }: Company) => description
     },
     logo: {
-      type: String
+      type: String,
+      resolve: ({ logo }: Company) => logo
     },
     website: {
-      type: String
+      type: String,
+      resolve: ({ website }: Company) => website
     },
     email: {
-      type: String
+      type: String,
+      resolve: ({ email }: Company) => email
     },
     phoneNumbers: {
-      type: List(Int)
+      type: List(Int),
+      resolve: async (company: Company) =>
+        (await company.getPhoneNumbers()).map(({ phoneNumber }) => phoneNumber)
     },
     photos: {
-      type: List(String)
+      type: List(String),
+      resolve: async (company: Company) =>
+        (await company.getPhotos()).map(({ photo }) => photo)
     }
   })
 });
