@@ -23,6 +23,7 @@ const GET_OFFER_BY_UUID = gql`
       hoursPerDay
       minimumSalary
       maximumSalary
+      createdAt
       sections {
           uuid
           title
@@ -104,6 +105,7 @@ describe("getOfferByUuid", () => {
       hoursPerDay: offer.hoursPerDay,
       minimumSalary: offer.minimumSalary,
       maximumSalary: offer.maximumSalary,
+      createdAt: offer.createdAt.getTime().toString(),
       sections: (await offer.getSections()).map(section => expectedSection(section)),
       careers: (await offer.getCareers()).map(career => expectedCareer(career)),
       company: await expectedCompany(await offer.getCompany())

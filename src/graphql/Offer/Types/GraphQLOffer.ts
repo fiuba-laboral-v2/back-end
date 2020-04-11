@@ -32,6 +32,10 @@ const GraphQLOffer = new GraphQLObjectType({
       type: nonNull(Int),
       resolve: ({ maximumSalary }: Offer) => maximumSalary
     },
+    createdAt: {
+      type: nonNull(String),
+      resolve: ({ createdAt }: Offer) => createdAt
+    },
     sections: {
       type: List(GraphQLOfferSection),
       resolve: (offer: Offer) => offer.getSections()
