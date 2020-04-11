@@ -7,7 +7,6 @@ import { CompanyRepository } from "../../../../src/models/Company";
 import { careerMocks } from "../../../models/Career/mocks";
 import { companyMockData } from "../../../models/Company/mocks";
 import { OfferMocks } from "../../../models/Offer/mocks";
-import { GraphQLResponse } from "../../ResponseSerializers";
 
 const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
     mutation saveOffer(
@@ -92,23 +91,29 @@ describe("saveOffer", () => {
         offerAttributes
       );
       expect(errors).toBeUndefined();
+      expect(saveOffer).toHaveProperty("uuid");
       expect(saveOffer).toMatchObject(
-        GraphQLResponse.offer.saveOfferWithOnlyObligatoryData(offerAttributes)
+        {
+          title: offerAttributes.title,
+          description: offerAttributes.description,
+          hoursPerDay: offerAttributes.hoursPerDay,
+          minimumSalary: offerAttributes.minimumSalary,
+          maximumSalary: offerAttributes.maximumSalary
+        }
       );
     });
 
     it("should create a new offer with one section and one career", async () => {
-      const career = await CareerRepository.create(careerMocks.careerData());
-      const company = await CompanyRepository.create(companyMockData);
-      const offerAttributes = OfferMocks.withOneCareerAndOneSection(company.id, career.code);
+      const { code } = await CareerRepository.create(careerMocks.careerData());
+      const { id } = await CompanyRepository.create(companyMockData);
+      const offerAttributes = OfferMocks.withOneCareerAndOneSection(id, code);
       const { data: { saveOffer }, errors } = await executeMutation(
         SAVE_OFFER_WITH_COMPLETE_DATA,
         offerAttributes
       );
       expect(errors).toBeUndefined();
-      expect(saveOffer).toMatchObject(
-        await GraphQLResponse.offer.saveOfferWithCompleteData(offerAttributes, [ career ], company)
-      );
+      expect(saveOffer.sections).toHaveLength(1);
+      expect(saveOffer.careers).toHaveLength(1);
     });
   });
 

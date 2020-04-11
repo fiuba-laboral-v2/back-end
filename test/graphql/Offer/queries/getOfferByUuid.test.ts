@@ -6,7 +6,6 @@ import { CareerRepository } from "../../../../src/models/Career";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { OfferRepository } from "../../../../src/models/Offer";
 import { OfferNotFound } from "../../../../src/models/Offer/Errors";
-import { GraphQLResponse } from "../../ResponseSerializers";
 
 import { careerMocks } from "../../../models/Career/mocks";
 import { companyMockData } from "../../../models/Company/mocks";
@@ -59,46 +58,58 @@ describe("getOfferByUuid", () => {
   afterAll(() => Database.close());
 
   const createOffer = async () => {
-    const { id } = await CompanyRepository.create(companyMockData);
-    const { code } = await CareerRepository.create(careerMocks.careerData());
-    return OfferRepository.create(OfferMocks.withOneCareerAndOneSection(id, code));
+    const company = await CompanyRepository.create(companyMockData);
+    const career = await CareerRepository.create(careerMocks.careerData());
+    const offer = await OfferRepository.create(
+      OfferMocks.withOneCareerAndOneSection(company.id, career.code)
+    );
+    return { offer, career, company };
   };
 
   describe("when and offer exists", () => {
     it("should find an offer by uuid", async () => {
-      const offer = await createOffer();
+      const { offer, career, company } = await createOffer();
       const { data: { getOfferByUuid }, errors } = await executeQuery(
         GET_OFFER_BY_UUID,
         { uuid: offer.uuid }
       );
       expect(errors).toBeUndefined();
       expect(getOfferByUuid).toMatchObject(
-        await GraphQLResponse.offer.getOfferByUuid(offer)
-      );
-    });
-
-    it("should find an offer with one career", async () => {
-      const offer = await createOffer();
-      const { data: { getOfferByUuid }, errors } = await executeQuery(
-        GET_OFFER_BY_UUID,
-        { uuid: offer.uuid }
-      );
-      expect(errors).toBeUndefined();
-      expect(getOfferByUuid.careers).toHaveLength(1);
-      expect(getOfferByUuid.careers).toMatchObject(
-        (await GraphQLResponse.offer.getOfferByUuid(offer)).careers
-      );
-    });
-
-    it("should find an offer with its company", async () => {
-      const offer = await createOffer();
-      const { data: { getOfferByUuid }, errors } = await executeQuery(
-        GET_OFFER_BY_UUID,
-        { uuid: offer.uuid }
-      );
-      expect(errors).toBeUndefined();
-      expect(getOfferByUuid.company).toMatchObject(
-        (await GraphQLResponse.offer.getOfferByUuid(offer)).company
+        {
+          uuid: offer.uuid,
+          title: offer.title,
+          description: offer.description,
+          hoursPerDay: offer.hoursPerDay,
+          minimumSalary: offer.minimumSalary,
+          maximumSalary: offer.maximumSalary,
+          createdAt: offer.createdAt.getTime().toString(),
+          careers: [
+            {
+              code: career.code,
+              description: career.description,
+              credits: career.credits
+            }
+          ],
+          sections: await offer.getSections().map(section =>(
+            {
+              uuid: section.uuid,
+              title: section.title,
+              text: section.text,
+              displayOrder: section.displayOrder
+            }
+          )),
+          company: {
+            cuit: company.cuit,
+            companyName: company.companyName,
+            slogan: company.slogan,
+            description: company.description,
+            logo: company.logo,
+            website: company.website,
+            email: company.email,
+            phoneNumbers: await company.getPhoneNumbers(),
+            photos: await company.getPhotos()
+          }
+        }
       );
     });
   });

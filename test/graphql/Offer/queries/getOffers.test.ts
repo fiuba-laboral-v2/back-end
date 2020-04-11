@@ -2,48 +2,18 @@ import { gql } from "apollo-server";
 import { executeQuery } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
-import { Career, CareerRepository } from "../../../../src/models/Career";
-import { Company, CompanyRepository } from "../../../../src/models/Company";
-import { Offer, OfferRepository } from "../../../../src/models/Offer";
-import { OfferSection } from "../../../../src/models/Offer/OfferSection";
+import { CareerRepository } from "../../../../src/models/Career";
+import { CompanyRepository } from "../../../../src/models/Company";
+import { OfferRepository } from "../../../../src/models/Offer";
 
 import { careerMocks } from "../../../models/Career/mocks";
 import { companyMockData } from "../../../models/Company/mocks";
 import { OfferMocks } from "../../../models/Offer/mocks";
-import { GraphQLResponse } from "../../ResponseSerializers";
 
 const GET_OFFERS = gql`
   query {
     getOffers {
       uuid
-      title
-      description
-      hoursPerDay
-      minimumSalary
-      maximumSalary
-      createdAt
-      sections {
-        uuid
-        title
-        text
-        displayOrder
-      }
-      careers {
-        code
-        description
-        credits
-      }
-      company {
-        cuit
-        companyName
-        slogan
-        description
-        logo
-        website
-        email
-        phoneNumbers
-        photos
-      }
     }
   }
 `;
@@ -77,12 +47,15 @@ describe("getOffers", () => {
       expect(getOffers).toHaveLength(2);
     });
 
-    it("should return two offers when two offers exists", async () => {
+    it("should return two offers with there own uuid", async () => {
       const { offer1, offer2 } = await createOffers();
       const { data: { getOffers }, errors } = await executeQuery(GET_OFFERS);
       expect(errors).toBeUndefined();
       expect(getOffers).toMatchObject(
-        await GraphQLResponse.offer.getOffers([ offer1, offer2 ])
+        [
+          { uuid: offer1.uuid },
+          { uuid: offer2.uuid }
+        ]
       );
     });
   });
