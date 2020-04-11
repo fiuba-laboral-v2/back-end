@@ -10,7 +10,7 @@ import { OfferSection } from "../../../../src/models/Offer/OfferSection";
 import { careerMocks } from "../../../models/Career/mocks";
 import { companyMockData } from "../../../models/Company/mocks";
 import { OfferMocks } from "../../../models/Offer/mocks";
-import { omit } from "lodash";
+import { GraphQLResponse } from "../../ResponseSerializers";
 
 const GET_OFFERS = gql`
   query {
@@ -58,52 +58,6 @@ describe("getOffers", () => {
 
   afterAll(() => Database.close());
 
-  const expectedSection = (section: OfferSection) => (
-    {
-      uuid: section.uuid,
-      title: section.title,
-      text: section.text,
-      displayOrder: section.displayOrder
-    }
-  );
-
-  const expectedCareer = (career: Career) => (
-    {
-      code: career.code,
-      description: career.description,
-      credits: career.credits
-    }
-  );
-
-  const expectedCompany = async (company: Company) => (
-    {
-      cuit: company.cuit,
-      companyName: company.companyName,
-      slogan: company.slogan,
-      description: company.description,
-      logo: company.logo,
-      website: company.website,
-      email: company.email,
-      phoneNumbers: await company.getPhoneNumbers(),
-      photos: await company.getPhotos()
-    }
-  );
-
-  const expectedCompleteOffer = async (offer: Offer) => (
-    {
-      uuid: offer.uuid,
-      title: offer.title,
-      description: offer.description,
-      hoursPerDay: offer.hoursPerDay,
-      minimumSalary: offer.minimumSalary,
-      maximumSalary: offer.maximumSalary,
-      createdAt: offer.createdAt.getTime().toString(),
-      sections: (await offer.getSections()).map(section => expectedSection(section)),
-      careers: (await offer.getCareers()).map(career => expectedCareer(career)),
-      company: await expectedCompany(await offer.getCompany())
-    }
-  );
-
   describe("when offers exists", () => {
     const createOffers = async ()  => {
       const { id } = await CompanyRepository.create(companyMockData);
@@ -128,10 +82,7 @@ describe("getOffers", () => {
       const { data: { getOffers }, errors } = await executeQuery(GET_OFFERS);
       expect(errors).toBeUndefined();
       expect(getOffers).toMatchObject(
-        [
-          await expectedCompleteOffer(offer1),
-          await expectedCompleteOffer(offer2)
-        ]
+        await GraphQLResponse.offer.getOffers([ offer1, offer2 ])
       );
     });
   });

@@ -2,17 +2,15 @@ import { gql, ApolloError } from "apollo-server";
 import { executeQuery } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
-import { CareerRepository, Career } from "../../../../src/models/Career";
-import { CompanyRepository, Company } from "../../../../src/models/Company";
-import { OfferRepository, Offer } from "../../../../src/models/Offer";
-import { OfferSection } from "../../../../src/models/Offer/OfferSection";
+import { CareerRepository } from "../../../../src/models/Career";
+import { CompanyRepository } from "../../../../src/models/Company";
+import { OfferRepository } from "../../../../src/models/Offer";
 import { OfferNotFound } from "../../../../src/models/Offer/Errors";
+import { GraphQLResponse } from "../../ResponseSerializers";
 
 import { careerMocks } from "../../../models/Career/mocks";
 import { companyMockData } from "../../../models/Company/mocks";
 import { OfferMocks } from "../../../models/Offer/mocks";
-
-import { omit } from "lodash";
 
 const GET_OFFER_BY_UUID = gql`
   query ($uuid: ID!) {
@@ -66,52 +64,6 @@ describe("getOfferByUuid", () => {
     return OfferRepository.create(OfferMocks.withOneCareerAndOneSection(id, code));
   };
 
-  const expectedSection = (section: OfferSection) => (
-    {
-      uuid: section.uuid,
-      title: section.title,
-      text: section.text,
-      displayOrder: section.displayOrder
-    }
-  );
-
-  const expectedCareer = (career: Career) => (
-    {
-      code: career.code,
-      description: career.description,
-      credits: career.credits
-    }
-  );
-
-  const expectedCompany = async (company: Company) => (
-    {
-      cuit: company.cuit,
-      companyName: company.companyName,
-      slogan: company.slogan,
-      description: company.description,
-      logo: company.logo,
-      website: company.website,
-      email: company.email,
-      phoneNumbers: await company.getPhoneNumbers(),
-      photos: await company.getPhotos()
-    }
-  );
-
-  const expectedCompleteOffer = async (offer: Offer) => (
-    {
-      uuid: offer.uuid,
-      title: offer.title,
-      description: offer.description,
-      hoursPerDay: offer.hoursPerDay,
-      minimumSalary: offer.minimumSalary,
-      maximumSalary: offer.maximumSalary,
-      createdAt: offer.createdAt.getTime().toString(),
-      sections: (await offer.getSections()).map(section => expectedSection(section)),
-      careers: (await offer.getCareers()).map(career => expectedCareer(career)),
-      company: await expectedCompany(await offer.getCompany())
-    }
-  );
-
   describe("when and offer exists", () => {
     it("should find an offer by uuid", async () => {
       const offer = await createOffer();
@@ -120,7 +72,9 @@ describe("getOfferByUuid", () => {
         { uuid: offer.uuid }
       );
       expect(errors).toBeUndefined();
-      expect(getOfferByUuid).toMatchObject(await expectedCompleteOffer(offer));
+      expect(getOfferByUuid).toMatchObject(
+        await GraphQLResponse.offer.getOfferByUuid(offer)
+      );
     });
 
     it("should find an offer with one career", async () => {
@@ -132,7 +86,7 @@ describe("getOfferByUuid", () => {
       expect(errors).toBeUndefined();
       expect(getOfferByUuid.careers).toHaveLength(1);
       expect(getOfferByUuid.careers).toMatchObject(
-        (await expectedCompleteOffer(offer)).careers
+        (await GraphQLResponse.offer.getOfferByUuid(offer)).careers
       );
     });
 
@@ -142,10 +96,10 @@ describe("getOfferByUuid", () => {
         GET_OFFER_BY_UUID,
         { uuid: offer.uuid }
       );
-
-      const company = await offer.getCompany();
       expect(errors).toBeUndefined();
-      expect(getOfferByUuid.company).toMatchObject((await expectedCompleteOffer(offer)).company);
+      expect(getOfferByUuid.company).toMatchObject(
+        (await GraphQLResponse.offer.getOfferByUuid(offer)).company
+      );
     });
   });
 

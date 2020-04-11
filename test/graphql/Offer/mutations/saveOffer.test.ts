@@ -2,13 +2,12 @@ import { gql } from "apollo-server";
 import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
-import { Career, CareerRepository } from "../../../../src/models/Career";
-import { Company, CompanyRepository } from "../../../../src/models/Company";
+import { CareerRepository } from "../../../../src/models/Career";
+import { CompanyRepository } from "../../../../src/models/Company";
 import { careerMocks } from "../../../models/Career/mocks";
 import { companyMockData } from "../../../models/Company/mocks";
 import { OfferMocks } from "../../../models/Offer/mocks";
-import { IOfferSection } from "../../../../src/models/Offer/OfferSection";
-import { IOffer } from "../../../../src/models/Offer";
+import { GraphQLResponse } from "../../ResponseSerializers";
 
 const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
     mutation saveOffer(
@@ -84,59 +83,6 @@ describe("saveOffer", () => {
 
   afterAll(() => Database.close());
 
-  const expectedSection = (section: IOfferSection) => (
-    {
-      title: section.title,
-      text: section.text,
-      displayOrder: section.displayOrder
-    }
-  );
-
-  const expectedCareer = (career: Career) => (
-    {
-      code: career.code,
-      description: career.description,
-      credits: career.credits
-    }
-  );
-
-  const expectedCompany = async (company: Company) => (
-    {
-      cuit: company.cuit,
-      companyName: company.companyName,
-      slogan: company.slogan,
-      description: company.description,
-      logo: company.logo,
-      website: company.website,
-      email: company.email,
-      phoneNumbers: await company.getPhoneNumbers(),
-      photos: await company.getPhotos()
-    }
-  );
-
-  const expectedOfferWithObligatoryData = (attributes: IOffer) => (
-    {
-      title: attributes.title,
-      description: attributes.description,
-      hoursPerDay: attributes.hoursPerDay,
-      minimumSalary: attributes.minimumSalary,
-      maximumSalary: attributes.maximumSalary
-    }
-  );
-
-  const expectedCompleteOffer = async (attributes: IOffer, careers: Career[], company: Company) => (
-    {
-      title: attributes.title,
-      description: attributes.description,
-      hoursPerDay: attributes.hoursPerDay,
-      minimumSalary: attributes.minimumSalary,
-      maximumSalary: attributes.maximumSalary,
-      sections: attributes.sections.map(section => expectedSection(section)),
-      careers: careers.map(career => expectedCareer(career)),
-      company: await expectedCompany(company)
-    }
-  );
-
   describe("when the input values are valid", () => {
     it("should create a new offer with only obligatory data", async () => {
       const { id } = await CompanyRepository.create(companyMockData);
@@ -146,7 +92,9 @@ describe("saveOffer", () => {
         offerAttributes
       );
       expect(errors).toBeUndefined();
-      expect(saveOffer).toMatchObject(expectedOfferWithObligatoryData(offerAttributes));
+      expect(saveOffer).toMatchObject(
+        GraphQLResponse.offer.saveOfferWithOnlyObligatoryData(offerAttributes)
+      );
     });
 
     it("should create a new offer with one section and one career", async () => {
@@ -159,7 +107,7 @@ describe("saveOffer", () => {
       );
       expect(errors).toBeUndefined();
       expect(saveOffer).toMatchObject(
-        await expectedCompleteOffer(offerAttributes, [ career ], company)
+        await GraphQLResponse.offer.saveOfferWithCompleteData(offerAttributes, [ career ], company)
       );
     });
   });
