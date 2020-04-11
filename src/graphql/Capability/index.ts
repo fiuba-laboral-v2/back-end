@@ -1,3 +1,1 @@
-import capabilityTypes from "./Types";
-
-export { capabilityTypes };
+export { capabilityTypes } from "./Types";
