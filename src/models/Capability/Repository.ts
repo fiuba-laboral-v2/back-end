@@ -1,12 +1,13 @@
-import { ICapability, Capability } from "./index";
+import { Capability, ICapability } from "./index";
 
 export const CapabilityRepository = {
   create: async ({ description }: ICapability) => {
     const capability = new Capability({ description });
     return capability.save();
   },
+  findAll: () => Capability.findAll(),
   findOrCreate: async (description: string) => {
-    const [ capability ] = await Capability.findOrCreate({ where: { description } });
+    const [capability] = await Capability.findOrCreate({ where: { description } });
     return capability;
   },
   findOrCreateByDescriptions: async (descriptions: string[] = []) => {
@@ -16,6 +17,5 @@ export const CapabilityRepository = {
     }
     return capabilities;
   },
-  truncate: async () =>
-    Capability.truncate({ cascade: true })
+  truncate: async () => Capability.truncate({ cascade: true })
 };

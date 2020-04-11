@@ -1,6 +1,6 @@
 import { GraphQLObjectType } from "graphql";
 import { ID, Int, nonNull, String, List } from "../../fieldTypes";
-import { GraphQLCapability } from "./Capability";
+import { GraphQLCapability } from "../../Capability/Types/Capability";
 import { GraphQLApplicantCareer } from "./ApplicantCareers";
 import { GraphQLSection } from "./Section";
 import { GraphQLLink } from "./Link";
