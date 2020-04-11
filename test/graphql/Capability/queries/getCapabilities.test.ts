@@ -15,9 +15,7 @@ const GET_CAPABILITIES = gql`
 describe("getCapabilities", () => {
   beforeAll(() => Database.setConnection());
 
-  beforeEach(async () => {
-    await CapabilityRepository.truncate();
-  });
+  beforeEach(() => CapabilityRepository.truncate());
 
   afterAll(() => Database.close());
 
