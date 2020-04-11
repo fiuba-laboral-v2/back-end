@@ -20,6 +20,9 @@ export const defaultTranslations = {
       careers: "Carreras",
       capabilities: "Aptitudes e Idiomas",
       capability: "Aptitud (presione Enter para agregar)",
+      sections: "Secciones",
+      sectionTitle: "Título",
+      sectionContent: "Contenido",
       submit: "Guardar"
     },
     signUp: {
