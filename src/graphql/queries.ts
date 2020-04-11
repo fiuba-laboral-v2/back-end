@@ -5,7 +5,7 @@ import { offerQueries } from "./Offer";
 import { applicantQueries } from "./Applicant";
 import { careerQueries } from "./Career";
 import { userQueries } from "./User";
-import { capabilityQueries } from "./Capability/Queries";
+import { capabilityQueries } from "./Capability";
 
 const queries = () => merge(
   translationQueries,
