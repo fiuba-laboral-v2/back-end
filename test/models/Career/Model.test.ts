@@ -3,6 +3,7 @@ import { Applicant } from "../../../src/models/Applicant";
 import { Career } from "../../../src/models/Career";
 import { CareerApplicant } from "../../../src/models/CareerApplicant";
 import { careerMocks } from "./mocks";
+import { NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
 
 describe("Career model", () => {
   const careerData = careerMocks.careerData();
@@ -35,16 +36,16 @@ describe("Career model", () => {
       description: "Batman"
     });
     const career: Career = new Career({ ...careerMocks.careerData() });
-    applicant.careers = [ career ];
-    career.applicants = [ applicant ];
+    applicant.careers = [career];
+    career.applicants = [applicant];
 
     const savedCareer = await career.save();
     const saverdApplicant = await applicant.save();
 
     await CareerApplicant.create({
-       careerCode: savedCareer.code , applicantUuid: saverdApplicant.uuid, creditsCount: 100
+      careerCode: savedCareer.code, applicantUuid: saverdApplicant.uuid, creditsCount: 100
     });
-    const result = await Career.findByPk(career.code ,{ include: [Applicant] });
+    const result = await Career.findByPk(career.code, { include: [Applicant] });
 
     expect(result.applicants[0]).toMatchObject({
       name: applicant.name,
@@ -67,7 +68,7 @@ describe("Career model", () => {
       credits: 0
     });
 
-    await expect(career.save()).rejects.toThrow("El número debe ser mayor a 0");
+    await expect(career.save()).rejects.toThrow(NumberIsTooSmallError.buildMessage(0, false));
   });
 
   it("should throw an error if credits is negative", async () => {
@@ -77,7 +78,7 @@ describe("Career model", () => {
       credits: -54
     });
 
-    await expect(career.validate()).rejects.toThrow("El número debe ser mayor a 0");
+    await expect(career.validate()).rejects.toThrow(NumberIsTooSmallError.buildMessage(0, false));
   });
 
   it("should throw an error if code is null", async () => {

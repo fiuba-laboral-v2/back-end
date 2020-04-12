@@ -4,7 +4,8 @@ import { Career } from "../../../src/models/Career";
 import { CareerApplicant } from "../../../src/models/CareerApplicant";
 import { ApplicantCapability } from "../../../src/models/ApplicantCapability";
 import { Capability } from "../../../src/models/Capability";
-import { random, lorem } from "faker";
+import { lorem, random } from "faker";
+import { NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
 
 
 describe("Applicant model", () => {
@@ -46,6 +47,7 @@ describe("Applicant model", () => {
   });
 
   it("Persist the many to many relation between Applicant, Career and Capability", async () => {
+    await Capability.truncate({ cascade: true });
     const applicant: Applicant = new Applicant(params);
     const career: Career = new Career({
       code: 3,
@@ -131,7 +133,7 @@ describe("Applicant model", () => {
       credits: 150
     });
     await expect(applicant.validate()).rejects.toThrow(
-      "El número debe ser mayor a 0"
+      NumberIsTooSmallError.buildMessage(0, false)
     );
   });
 
@@ -144,7 +146,7 @@ describe("Applicant model", () => {
       credits: 150
     });
     await expect(applicant.validate()).rejects.toThrow(
-      "El número debe ser mayor a 0"
+      NumberIsTooSmallError.buildMessage(0, false)
     );
   });
 
