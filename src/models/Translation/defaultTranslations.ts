@@ -12,7 +12,7 @@ export const defaultTranslations = {
       title: "Salario Neto"
     },
     workload: {
-      title: "Salario Neto",
+      title: "Carga horaria",
       hoursPerDay: "Horas por dia"
     }
   },
