@@ -47,7 +47,7 @@ describe("getApplicantByPadron", () => {
   describe("when the applicant exists", () => {
     it("fetchs the applicant", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantData = applicantMocks.applicantData([career.code]);
+      const applicantData = applicantMocks.applicantData([career]);
       const applicant = await ApplicantRepository.create(applicantData);
 
       const {data, errors} = await executeQuery(

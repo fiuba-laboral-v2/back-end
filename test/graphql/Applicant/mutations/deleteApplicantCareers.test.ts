@@ -44,7 +44,7 @@ describe("deleteApplicantCareers", () => {
 
   it("should delete all applicant careers", async () => {
     const career = await CareerRepository.create(careerMocks.careerData());
-    const applicantData = applicantMocks.applicantData([career.code]);
+    const applicantData = applicantMocks.applicantData([career]);
     const applicant = await ApplicantRepository.create(applicantData);
     const { data, errors } = await executeMutation(deleteApplicantCareers, {
       uuid: applicant.uuid,
@@ -56,7 +56,7 @@ describe("deleteApplicantCareers", () => {
 
   it("should not delete applicant careers if it does not exists", async () => {
     const career = await CareerRepository.create(careerMocks.careerData());
-    const applicantData = applicantMocks.applicantData([career.code]);
+    const applicantData = applicantMocks.applicantData([career]);
     const applicant = await ApplicantRepository.create(applicantData);
     const { data, errors } = await executeMutation(deleteApplicantCareers, {
       uuid: applicant.uuid,

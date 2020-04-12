@@ -9,7 +9,7 @@ import { Applicant } from "../../../../src/models/Applicant";
 import { applicantMocks } from "../../../models/Applicant/mocks";
 import { careerMocks } from "../../../models/Career/mocks";
 
-import pick from "lodash/pick";
+import { pick } from "lodash";
 
 const queryWithAllData = gql`
   mutation SaveApplicant(
@@ -73,7 +73,7 @@ describe("saveApplicant", () => {
   describe("when the input is valid", () => {
     it("creates a new applicant", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantData = applicantMocks.applicantData([career.code]);
+      const applicantData = applicantMocks.applicantData([career]);
 
       const {data, errors} = await executeMutation(queryWithAllData, {
         ...applicantData
@@ -97,7 +97,7 @@ describe("saveApplicant", () => {
 
     it("creates companyProfile with only obligatory data", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantData = applicantMocks.applicantData([career.code]);
+      const applicantData = applicantMocks.applicantData([career]);
       const {data, errors}  = await executeMutation(
         queryWithOnlyObligatoryData,
         {

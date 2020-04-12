@@ -45,7 +45,7 @@ describe("deleteSection", () => {
 
   it("should delete an existing section", async () => {
     const career = await CareerRepository.create(careerMocks.careerData());
-    const applicantData = applicantMocks.applicantData([career.code]);
+    const applicantData = applicantMocks.applicantData([career]);
     const applicant = await ApplicantRepository.create(applicantData);
 
     await ApplicantRepository.update({

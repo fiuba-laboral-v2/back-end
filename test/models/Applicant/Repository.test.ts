@@ -8,7 +8,7 @@ import { applicantMocks } from "./mocks";
 import { CareerApplicantRepository } from "../../../src/models/CareerApplicant/Repository";
 import { CareerApplicantNotFound } from "../../../src/models/CareerApplicant/Errors";
 import { CapabilityRepository } from "../../../src/models/Capability";
-import { random, internet } from "faker";
+import { internet, random } from "faker";
 
 describe("ApplicantRepository", () => {
   beforeAll(async () => {
@@ -28,7 +28,7 @@ describe("ApplicantRepository", () => {
 
   it("creates a new applicant", async () => {
     const career = await CareerRepository.create(careerMocks.careerData());
-    const applicantData = applicantMocks.applicantData([career.code]);
+    const applicantData = applicantMocks.applicantData([career]);
     const applicant = await ApplicantRepository.create(applicantData);
     const applicantCareers = await applicant.getCareers();
 
@@ -59,15 +59,15 @@ describe("ApplicantRepository", () => {
 
   it("should create two valid applicant in the same career", async () => {
     const career = await CareerRepository.create(careerMocks.careerData());
-    await ApplicantRepository.create(applicantMocks.applicantData([career.code]));
+    await ApplicantRepository.create(applicantMocks.applicantData([career]));
     await expect(
-      ApplicantRepository.create(applicantMocks.applicantData([career.code]))
+      ApplicantRepository.create(applicantMocks.applicantData([career]))
     ).resolves.not.toThrow(Errors.ApplicantNotFound);
   });
 
   it("rollback transaction and raise error if name is large", async () => {
     const career = await CareerRepository.create(careerMocks.careerData());
-    const applicantData = applicantMocks.applicantData([career.code]);
+    const applicantData = applicantMocks.applicantData([career]);
     applicantData.name = "and the transaction will rolback because it is large";
     await expect(
       ApplicantRepository.create(applicantData)
@@ -76,7 +76,7 @@ describe("ApplicantRepository", () => {
 
   it("can retreive an applicant by padron", async () => {
     const career = await CareerRepository.create(careerMocks.careerData());
-    const applicantData = applicantMocks.applicantData([career.code]);
+    const applicantData = applicantMocks.applicantData([career]);
     await ApplicantRepository.create(applicantData);
 
     const applicant = await ApplicantRepository.findByPadron(applicantData.padron);
@@ -109,7 +109,7 @@ describe("ApplicantRepository", () => {
 
   it("can retrieve an applicant by uuid", async () => {
     const career = await CareerRepository.create(careerMocks.careerData());
-    const applicantData = applicantMocks.applicantData([career.code]);
+    const applicantData = applicantMocks.applicantData([career]);
     const savedApplicant = await ApplicantRepository.create(applicantData);
 
     const applicant = await ApplicantRepository.findByUuid(savedApplicant.uuid);
@@ -162,7 +162,7 @@ describe("ApplicantRepository", () => {
   describe("Update", () => {
     const createApplicant = async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantData = applicantMocks.applicantData([career.code]);
+      const applicantData = applicantMocks.applicantData([career]);
       return ApplicantRepository.create(applicantData);
     };
 
@@ -384,7 +384,7 @@ describe("ApplicantRepository", () => {
   describe("Delete", () => {
     it("should delete an applicant by uuid", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantData = applicantMocks.applicantData([career.code]);
+      const applicantData = applicantMocks.applicantData([career]);
       const savedApplicant = await ApplicantRepository.create(applicantData);
 
       await ApplicantRepository.deleteByUuid(savedApplicant.uuid);
@@ -397,7 +397,7 @@ describe("ApplicantRepository", () => {
       const career = await CareerRepository.create(careerMocks.careerData());
       const capabilities = capabilityMocks.capabilitiesData({ size: 3 });
       const applicantData = applicantMocks.applicantData(
-        [career.code],
+        [career],
         capabilities.map(c => c.description)
       );
       const applicant = await ApplicantRepository.create(applicantData);
@@ -412,18 +412,16 @@ describe("ApplicantRepository", () => {
 
     it("should delete all applicant careers", async () => {
       const careers = await careerMocks.createCareers(10);
-      const codes = careers.map(c => c.code);
-      const applicantData = applicantMocks.applicantData(codes);
+      const applicantData = applicantMocks.applicantData(careers);
       const applicant = await ApplicantRepository.create(applicantData);
       expect((await applicant.getCareers()).length).toEqual(careers.length);
-      await ApplicantRepository.deleteCareers(applicant, codes);
+      await ApplicantRepository.deleteCareers(applicant, careers.map(({ code }) => code));
       expect((await applicant.getCareers()).length).toEqual(0);
     });
 
     it("should delete a section of an applicant", async () => {
       const careers = await careerMocks.createCareers(10);
-      const codes = careers.map(c => c.code);
-      const applicantData = applicantMocks.applicantData(codes);
+      const applicantData = applicantMocks.applicantData(careers);
       const applicant = await ApplicantRepository.create(applicantData);
 
       await ApplicantRepository.update({
@@ -442,7 +440,7 @@ describe("ApplicantRepository", () => {
     it("should delete a link of an applicant", async () => {
       const careers = await careerMocks.createCareers(10);
       const codes = careers.map(c => c.code);
-      const applicantData = applicantMocks.applicantData(codes);
+      const applicantData = applicantMocks.applicantData(careers);
       const applicant = await ApplicantRepository.create(applicantData);
 
       await ApplicantRepository.update({
@@ -460,7 +458,7 @@ describe("ApplicantRepository", () => {
     it("should not delete when deleting a not existing applicant capability", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
       const applicantData = applicantMocks.applicantData(
-        [career.code],
+        [career],
         ["capability_1"]);
       const applicant = await ApplicantRepository.create(applicantData);
       const numberOfCapabilitiesBefore = (await applicant.getCapabilities()).length;
@@ -473,7 +471,7 @@ describe("ApplicantRepository", () => {
 
     it("Should raise an error if no career applicant is found", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantData = applicantMocks.applicantData([career.code]);
+      const applicantData = applicantMocks.applicantData([career]);
       const applicant = await ApplicantRepository.create(applicantData);
       await ApplicantRepository.deleteCareers(applicant, [career.code]);
       await expect(

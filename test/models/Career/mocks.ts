@@ -1,5 +1,5 @@
 import faker from "faker";
-import { CareerRepository, ICareer } from "../../../src/models/Career";
+import { Career, CareerRepository, ICareer } from "../../../src/models/Career";
 
 const careerMocks = {
   careerData: () => ({
@@ -8,7 +8,7 @@ const careerMocks = {
     credits: faker.random.number()
   }),
   createCareers: async (size: number) => {
-    const careers: ICareer[] = [];
+    const careers: Career[] = [];
     for (let i = 0; i < size ; i++) {
       careers.push(await CareerRepository.create(careerMocks.careerData()));
     }

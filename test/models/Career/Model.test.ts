@@ -60,13 +60,33 @@ describe("Career model", () => {
     });
   });
 
+  it("raise an error if credits is 0", async () => {
+    const career: Career = new Career({
+      code: "1",
+      description: "Ingeniería Informática",
+      credits: 0
+    });
+
+    await expect(career.save()).rejects.toThrow("El número debe ser mayor a 0");
+  });
+
+  it("raise an error if credits is negative", async () => {
+    const career: Career = new Career({
+      code: "1",
+      description: "Ingeniería Informática",
+      credits: -54
+    });
+
+    await expect(career.validate()).rejects.toThrow("El número debe ser mayor a 0");
+  });
+
   it("raise an error if code is null", async () => {
     const career: Career = new Career({
       description: "Ingeniería Informática",
       credits: 250
     });
 
-    await expect(career.save()).rejects.toThrow();
+    await expect(career.validate()).rejects.toThrow();
   });
 
   it("raise an error if description is null", async () => {

@@ -122,6 +122,32 @@ describe("Applicant model", () => {
     );
   });
 
+  it("raise an error if padron is 0", async () => {
+    const applicant: Applicant = new Applicant({
+      name: "Bruno",
+      surname: "Blanco",
+      padron: 0,
+      description: "Batman",
+      credits: 150
+    });
+    await expect(applicant.validate()).rejects.toThrow(
+      "El número debe ser mayor a 0"
+    );
+  });
+
+  it("raise an error if padron is negative", async () => {
+    const applicant: Applicant = new Applicant({
+      name: "Bruno",
+      surname: "Blanco",
+      padron: -243,
+      description: "Batman",
+      credits: 150
+    });
+    await expect(applicant.validate()).rejects.toThrow(
+      "El número debe ser mayor a 0"
+    );
+  });
+
   it("raise an error if surname has a digit", async () => {
     const applicant: Applicant = new Applicant({
       name: "Bruno",

@@ -1,9 +1,7 @@
 import { Column, DataType, Model, Table, ForeignKey, BelongsTo } from "sequelize-typescript";
 import { Offer } from "../Model";
 
-@Table({
-  tableName: "OffersSections"
-})
+@Table({ tableName: "OffersSections" })
 export class OfferSection extends Model<OfferSection> {
   @Column({
     allowNull: false,
