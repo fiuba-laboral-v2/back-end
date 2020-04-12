@@ -109,7 +109,7 @@ describe("Applicant model", () => {
     });
   });
 
-  it("raise an error if name has a digit", async () => {
+  it("should throw an error if name has a digit", async () => {
     const applicant: Applicant = new Applicant({
       name: "Bruno11",
       surname: "Blanco",
@@ -122,7 +122,7 @@ describe("Applicant model", () => {
     );
   });
 
-  it("raise an error if padron is 0", async () => {
+  it("should throw an error if padron is 0", async () => {
     const applicant: Applicant = new Applicant({
       name: "Bruno",
       surname: "Blanco",
@@ -135,7 +135,7 @@ describe("Applicant model", () => {
     );
   });
 
-  it("raise an error if padron is negative", async () => {
+  it("should throw an error if padron is negative", async () => {
     const applicant: Applicant = new Applicant({
       name: "Bruno",
       surname: "Blanco",
@@ -148,7 +148,7 @@ describe("Applicant model", () => {
     );
   });
 
-  it("raise an error if surname has a digit", async () => {
+  it("should throw an error if surname has a digit", async () => {
     const applicant: Applicant = new Applicant({
       name: "Bruno",
       surname: "Blanco11",
@@ -161,7 +161,7 @@ describe("Applicant model", () => {
     );
   });
 
-  it("raise an error if name is null", async () => {
+  it("should throw an error if name is null", async () => {
     const applicant: Applicant = new Applicant({
       name: null,
       surname: "Diaz",
@@ -173,7 +173,7 @@ describe("Applicant model", () => {
     await expect(applicant.save()).rejects.toThrow();
   });
 
-  it("raise an error if surname is null", async () => {
+  it("should throw an error if surname is null", async () => {
     const applicant: Applicant = new Applicant({
       name: "Bruno",
       padron: 1,
@@ -184,7 +184,7 @@ describe("Applicant model", () => {
     await expect(applicant.save()).rejects.toThrow();
   });
 
-  it("raise an error if padron is null", async () => {
+  it("should throw an error if padron is null", async () => {
     const applicant: Applicant = new Applicant({
       name: "Bruno",
       surname: "Diaz",
@@ -195,7 +195,7 @@ describe("Applicant model", () => {
     await expect(applicant.save()).rejects.toThrow();
   });
 
-  it("raise an error if description is null", async () => {
+  it("should throw an error if description is null", async () => {
     const applicant: Applicant = new Applicant({
       name: null,
       surname: "Diaz",

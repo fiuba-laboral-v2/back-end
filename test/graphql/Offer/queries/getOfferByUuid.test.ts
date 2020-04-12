@@ -115,7 +115,7 @@ describe("getOfferByUuid", () => {
   });
 
   describe("when no offer exists", () => {
-    it("should raise and error if no offer exist", async () => {
+    it("should throw and error if no offer exist", async () => {
       const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       const { errors } = await executeQuery(
         GET_OFFER_BY_UUID,

@@ -25,7 +25,7 @@ describe("CompanyPhoto", () => {
     expect(companyPhoto).not.toBeUndefined();
   });
 
-  it("raise and error if photo is null", async () => {
+  it("should throw and error if photo is null", async () => {
     const companyPhoto: CompanyPhoto = new CompanyPhoto({
       photo: null,
       companyId: 0
@@ -33,7 +33,7 @@ describe("CompanyPhoto", () => {
     await expect(companyPhoto.save()).rejects.toThrow();
   });
 
-  it("raise and error if companyId is null", async () => {
+  it("should throw and error if companyId is null", async () => {
     const companyPhoto: CompanyPhoto = new CompanyPhoto({
       photo: `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNby
             blAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5E

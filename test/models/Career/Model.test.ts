@@ -60,7 +60,7 @@ describe("Career model", () => {
     });
   });
 
-  it("raise an error if credits is 0", async () => {
+  it("should throw an error if credits is 0", async () => {
     const career: Career = new Career({
       code: "1",
       description: "Ingeniería Informática",
@@ -70,7 +70,7 @@ describe("Career model", () => {
     await expect(career.save()).rejects.toThrow("El número debe ser mayor a 0");
   });
 
-  it("raise an error if credits is negative", async () => {
+  it("should throw an error if credits is negative", async () => {
     const career: Career = new Career({
       code: "1",
       description: "Ingeniería Informática",
@@ -80,7 +80,7 @@ describe("Career model", () => {
     await expect(career.validate()).rejects.toThrow("El número debe ser mayor a 0");
   });
 
-  it("raise an error if code is null", async () => {
+  it("should throw an error if code is null", async () => {
     const career: Career = new Career({
       description: "Ingeniería Informática",
       credits: 250
@@ -89,7 +89,7 @@ describe("Career model", () => {
     await expect(career.validate()).rejects.toThrow();
   });
 
-  it("raise an error if description is null", async () => {
+  it("should throw an error if description is null", async () => {
     const career: Career = new Career({
       code: "1",
       description: null,
@@ -99,7 +99,7 @@ describe("Career model", () => {
     await expect(career.save()).rejects.toThrow();
   });
 
-  it("raise an error if credits is null", async () => {
+  it("should throw an error if credits is null", async () => {
     const career: Career = new Career({
       code: "1",
       description: "Ingeniería Informática"

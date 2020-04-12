@@ -65,7 +65,7 @@ describe("ApplicantRepository", () => {
     ).resolves.not.toThrow(Errors.ApplicantNotFound);
   });
 
-  it("rollback transaction and raise error if name is large", async () => {
+  it("should rollback transaction and throw error if name is large", async () => {
     const career = await CareerRepository.create(careerMocks.careerData());
     const applicantData = applicantMocks.applicantData([career]);
     applicantData.name = "and the transaction will rolback because it is large";
@@ -152,7 +152,7 @@ describe("ApplicantRepository", () => {
     expect(applicant).not.toBeNull();
   });
 
-  it("raise ApplicantNotFound if the aplicant doesn't exists", async () => {
+  it("should throw ApplicantNotFound if the aplicant doesn't exists", async () => {
     const applicantData = applicantMocks.applicantData([]);
 
     await expect(ApplicantRepository.findByPadron(applicantData.padron))
@@ -351,7 +351,7 @@ describe("ApplicantRepository", () => {
       ]));
     });
 
-    it("Should not raise an error when adding an existing capability", async () => {
+    it("should not throw an error when adding an existing capability", async () => {
       const applicant = await createApplicant();
       const newProps: IApplicantEditable = {
         uuid: applicant.uuid,
@@ -469,7 +469,7 @@ describe("ApplicantRepository", () => {
       expect((await applicant.getCapabilities()).length).toEqual(numberOfCapabilitiesBefore);
     });
 
-    it("Should raise an error if no career applicant is found", async () => {
+    it("should throw an error if no career applicant is found", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
       const applicantData = applicantMocks.applicantData([career]);
       const applicant = await ApplicantRepository.create(applicantData);

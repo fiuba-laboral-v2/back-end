@@ -46,19 +46,19 @@ describe("OfferCareer", () => {
   });
 
   describe("Errors", () => {
-    it("should raise an error if no careerCode is provided", async () => {
+    it("should throw an error if no careerCode is provided", async () => {
       const { uuid } = await createOffer();
       const offerCareer = new OfferCareer(OfferCareerMocks.withNoCareerCode(uuid));
       await expect(offerCareer.save()).rejects.toThrow();
     });
 
-    it("should raise an error if no offerUuid is provided", async () => {
+    it("should throw an error if no offerUuid is provided", async () => {
       const { code } = await CareerRepository.create(careerMocks.careerData());
       const offerCareer = new OfferCareer(OfferCareerMocks.withNoOfferUuid(code));
       await expect(offerCareer.save()).rejects.toThrow();
     });
 
-    it("should raise an error if adding and existing career to one offer", async () => {
+    it("should throw an error if adding and existing career to one offer", async () => {
         const { uuid } = await createOffer();
         const { code } = await CareerRepository.create(careerMocks.careerData());
         await OfferCareer.create(OfferCareerMocks.completeData(uuid, code));

@@ -54,28 +54,28 @@ describe("OfferSection", () => {
   });
 
   describe("Errors", () => {
-    it("should raise an error if no title is provided", async () => {
+    it("should throw an error if no title is provided", async () => {
       const offer = await createOffer();
       const section = new OfferSection({ offerUuid: offer.uuid, text: lorem.paragraphs() });
 
       await expect(section.save()).rejects.toThrow();
     });
 
-    it("should raise an error if no text is provided", async () => {
+    it("should throw an error if no text is provided", async () => {
       const offer = await createOffer();
       const section = new OfferSection({ offerUuid: offer.uuid, title: random.words() });
 
       await expect(section.save()).rejects.toThrow();
     });
 
-    it("should raise an error if no offerUuid is provided", async () => {
+    it("should throw an error if no offerUuid is provided", async () => {
       const section = new OfferSection({ title: random.words(), description: lorem.paragraphs() });
 
       await expect(section.save()).rejects.toThrow();
     });
 
     it(
-      "should raise an error if two sections have the same display order for the same offer",
+      "should throw an error if two sections have the same display order for the same offer",
       async () => {
         const offer = await createOffer();
         await new OfferSection(sectionAttributes(offer.uuid)).save();

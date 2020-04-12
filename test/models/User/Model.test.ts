@@ -24,7 +24,7 @@ describe("User", () => {
     await user.save();
   });
 
-  it("raise an error when creating an user with an existing email", async () => {
+  it("should throw an error when creating an user with an existing email", async () => {
     await new User({
       email: "asd@qwe.com",
       password: "somethingVerySecret123"

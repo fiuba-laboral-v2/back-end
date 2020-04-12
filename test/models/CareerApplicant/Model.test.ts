@@ -9,19 +9,13 @@ const createCareer = async () => await new Career({
 }).save();
 
 describe("CareerApplicant", () => {
-  beforeAll(async () => {
-    await Database.setConnection();
-  });
+  beforeAll(async () => await Database.setConnection());
 
-  afterEach(async () => {
-    await Career.truncate({ cascade: true });
-  });
+  afterEach(async () => await Career.truncate({ cascade: true }));
 
-  afterAll(async () => {
-    await Database.close();
-  });
+  afterAll(async () => await Database.close());
 
-  it("throws an error if creditsCount is negative", async () => {
+  it("should throw an error if creditsCount is negative", async () => {
     const careerApplicant = new CareerApplicant({
       careerCode: (await createCareer()).code,
       applicantUUID: "sarasa",
@@ -44,7 +38,7 @@ describe("CareerApplicant", () => {
     );
   });
 
-  it("does not throw an error if creditsCount is the same as its careers credits", async () => {
+  it("should not throw an error if creditsCount is the same as its careers credits", async () => {
     const career = await createCareer();
     const careerApplicant = new CareerApplicant({
       careerCode: career.code,

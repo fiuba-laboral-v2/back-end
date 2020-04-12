@@ -53,7 +53,7 @@ describe("Applicant model", () => {
     }));
   });
 
-  it("raise an error if description is null", async () => {
+  it("should throw an error if description is null", async () => {
     const capability: Capability = new Capability();
 
     await expect(capability.save()).rejects.toThrow();
