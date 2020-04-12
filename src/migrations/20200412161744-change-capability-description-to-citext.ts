@@ -30,7 +30,7 @@ export = {
   down: (queryInterface: QueryInterface) => {
     return queryInterface.changeColumn(
       "Capabilities",
-      "cuit",
+      "description",
       {
         type: TEXT,
         allowNull: false
