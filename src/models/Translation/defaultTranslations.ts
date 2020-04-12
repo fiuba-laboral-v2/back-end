@@ -3,6 +3,19 @@ export const defaultTranslations = {
     title: "Perfil de mi empresa",
     explanation: "Así se va a mostrar a los postulantes"
   },
+  offer: {
+    apply: "Postularme",
+    careersTitle: "Carreras",
+    salary: {
+      salaryFrom: "Desde",
+      salaryTo: "Hasta",
+      title: "Salario Neto"
+    },
+    workload: {
+      title: "Carga horaria",
+      hoursPerDay: "Horas por dia"
+    }
+  },
   applicant: {
     title: "Mi Perfil",
     explanation: "Así se va a mostrar un postulante una empresa",
