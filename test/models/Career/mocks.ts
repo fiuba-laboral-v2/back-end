@@ -1,5 +1,6 @@
 import faker from "faker";
-import { CareerRepository, ICareer } from "../../../src/models/Career";
+import { range } from "lodash";
+import { CareerRepository, Career } from "../../../src/models/Career";
 
 const careerMocks = {
   careerData: () => ({
@@ -8,11 +9,13 @@ const careerMocks = {
     credits: faker.random.number()
   }),
   createCareers: async (size: number) => {
-    const careers: ICareer[] = [];
-    for (let i = 0; i < size ; i++) {
-      careers.push(await CareerRepository.create(careerMocks.careerData()));
-    }
-    return careers;
+    return Promise.all(range(0, size).map(code => (
+      CareerRepository.create({
+        code: String(code),
+        description: faker.name.title(),
+        credits: faker.random.number()
+      })
+    )));
   }
 };
 
