@@ -9,13 +9,13 @@ describe("Applicant model", () => {
     await Database.setConnection();
   });
 
-  afterAll(async () => {
-    await Database.close();
-  });
-
-  afterEach(async () => {
+  beforeEach(async () => {
     await Capability.truncate({ cascade: true });
     await Applicant.truncate({ cascade: true });
+  });
+
+  afterAll(async () => {
+    await Database.close();
   });
 
   it("create a valid capability", async () => {
