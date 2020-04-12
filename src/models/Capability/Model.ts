@@ -14,7 +14,8 @@ export class Capability extends Model<Capability> {
 
   @Column({
     allowNull: false,
-    type: DataType.STRING
+    unique: true,
+    type: DataType.CITEXT
   })
   public description: string;
 
