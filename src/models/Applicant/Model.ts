@@ -8,9 +8,9 @@ import {
   HasMany
 } from "sequelize-typescript";
 import {
+  HasManyCreateAssociationMixin,
   HasManyGetAssociationsMixin,
   HasManyHasAssociationMixin,
-  HasManyCreateAssociationMixin,
 } from "sequelize";
 import { validateName } from "validations-fiuba-laboral-v2";
 import { Career } from "../Career/Model";
@@ -19,7 +19,6 @@ import { Capability } from "../Capability/Model";
 import { ApplicantCapability } from "../ApplicantCapability/Model";
 import { Section } from "./Section";
 import { ApplicantLink } from "./Link";
-
 
 @Table({
   tableName: "Applicants"
@@ -40,6 +39,7 @@ export class Applicant extends Model<Applicant> {
   })
   public name: string;
 
+  @Is("name", validateName)
   @Column({
     allowNull: false,
     type: DataType.TEXT

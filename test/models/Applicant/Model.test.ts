@@ -109,6 +109,32 @@ describe("Applicant model", () => {
     });
   });
 
+  it("raise an error if name has a digit", async () => {
+    const applicant: Applicant = new Applicant({
+      name: "Bruno11",
+      surname: "Blanco",
+      padron: 1,
+      description: "Batman",
+      credits: 150
+    });
+    await expect(applicant.validate()).rejects.toThrow(
+      "El nombre no debe contener numeros"
+    );
+  });
+
+  it("raise an error if surname has a digit", async () => {
+    const applicant: Applicant = new Applicant({
+      name: "Bruno",
+      surname: "Blanco11",
+      padron: 1,
+      description: "Batman",
+      credits: 150
+    });
+    await expect(applicant.validate()).rejects.toThrow(
+      "El nombre no debe contener numeros"
+    );
+  });
+
   it("raise an error if name is null", async () => {
     const applicant: Applicant = new Applicant({
       name: null,
@@ -131,7 +157,6 @@ describe("Applicant model", () => {
 
     await expect(applicant.save()).rejects.toThrow();
   });
-
 
   it("raise an error if padron is null", async () => {
     const applicant: Applicant = new Applicant({
