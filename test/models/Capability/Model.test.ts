@@ -2,6 +2,7 @@ import Database from "../../../src/config/Database";
 import { Applicant } from "../../../src/models/Applicant";
 import { Capability } from "../../../src/models/Capability";
 import { ApplicantCapability } from "../../../src/models/ApplicantCapability";
+import { UniqueConstraintError } from "sequelize";
 
 describe("Applicant model", () => {
   beforeAll(async () => {
@@ -35,16 +36,16 @@ describe("Applicant model", () => {
       credits: 150
     });
     const capability: Capability = new Capability({ description: "Python" });
-    applicant.capabilities = [ capability ];
-    capability.applicants = [ applicant ];
+    applicant.capabilities = [capability];
+    capability.applicants = [applicant];
 
     const savedCapability = await capability.save();
     const saverdApplicant = await applicant.save();
 
     await ApplicantCapability.create({
-      capabilityUuid: savedCapability.uuid , applicantUuid: saverdApplicant.uuid
+      capabilityUuid: savedCapability.uuid, applicantUuid: saverdApplicant.uuid
     });
-    const result = await Capability.findByPk(savedCapability.uuid ,{ include: [Applicant] });
+    const result = await Capability.findByPk(savedCapability.uuid, { include: [Applicant] });
 
     expect(result.applicants[0].name).toEqual(applicant.name);
     expect(result).toEqual(expect.objectContaining({
@@ -57,5 +58,12 @@ describe("Applicant model", () => {
     const capability: Capability = new Capability();
 
     await expect(capability.save()).rejects.toThrow();
+  });
+
+  it("should throw an error if adding existing case-insensitive description", async () => {
+    await new Capability({ description: "Python" }).save();
+    await expect(
+      new Capability({ description: "PYTHON" }).save()
+    ).rejects.toThrow(UniqueConstraintError);
   });
 });
