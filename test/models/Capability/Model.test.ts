@@ -60,7 +60,7 @@ describe("Applicant model", () => {
     await expect(capability.save()).rejects.toThrow();
   });
 
-  it("has case-insensitive unique values for description", async () => {
+  it("should throw an error if adding existing case-insensitive description", async () => {
     await new Capability({ description: "Python" }).save();
     await expect(
       new Capability({ description: "PYTHON" }).save()
