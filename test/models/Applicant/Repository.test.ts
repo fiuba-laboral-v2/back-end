@@ -411,7 +411,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("should delete all applicant careers", async () => {
-      const careers = await careerMocks.createCareers(10);
+      const careers = await careerMocks.createTenCareers();
       const codes = careers.map(c => c.code);
       const applicantData = applicantMocks.applicantData(codes);
       const applicant = await ApplicantRepository.create(applicantData);
@@ -421,7 +421,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("should delete a section of an applicant", async () => {
-      const careers = await careerMocks.createCareers(10);
+      const careers = await careerMocks.createTenCareers();
       const codes = careers.map(c => c.code);
       const applicantData = applicantMocks.applicantData(codes);
       const applicant = await ApplicantRepository.create(applicantData);
@@ -440,7 +440,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("should delete a link of an applicant", async () => {
-      const careers = await careerMocks.createCareers(10);
+      const careers = await careerMocks.createTenCareers();
       const codes = careers.map(c => c.code);
       const applicantData = applicantMocks.applicantData(codes);
       const applicant = await ApplicantRepository.create(applicantData);
