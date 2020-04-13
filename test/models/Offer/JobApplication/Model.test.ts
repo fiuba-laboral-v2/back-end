@@ -5,9 +5,9 @@ import { Applicant } from "../../../../src/models/Applicant";
 import { Offer } from "../../../../src/models/Offer";
 import { JobApplication } from "../../../../src/models/Offer/JobApplication";
 import { companyMockData } from "../../Company/mocks";
-import { OfferCareer } from "../../../../src/models/Offer/OfferCareer";
 
 describe("JobApplication", () => {
+  let company: Company;
 
   beforeAll(() => Database.setConnection());
 
@@ -15,46 +15,64 @@ describe("JobApplication", () => {
     await Applicant.truncate({ cascade: true });
     await Company.truncate({ cascade: true });
     await Offer.truncate({ cascade: true });
+    company = await Company.create(companyMockData);
   });
 
   afterAll(() => Database.close());
 
-  const createApplicant = async () => (
-    Applicant.create({
+  const applicantData = () => (
+    {
       name: "Sebastian",
       surname: "Blanco",
       padron: 98539,
       description: "Developer"
-    })
+    }
   );
 
-  const createOffer = async () => {
-    const { id: companyId } = await Company.create(companyMockData);
-    return Offer.create({
-      companyId: companyId,
+  const offerData = () => {
+    return {
+      companyId: company.id,
       title: "Java developer senior",
       description: "some description",
       hoursPerDay: 8,
       minimumSalary: 50000,
       maximumSalary: 80000
-    });
+    };
+  };
+
+  const createJobApplication = async () => {
+    const { uuid: applicantUuid } = await Applicant.create(applicantData());
+    const { uuid: offerUuid } = await Offer.create(offerData());
+    return JobApplication.create({ offerUuid: offerUuid, applicantUuid: applicantUuid });
   };
 
   describe("Valid create", () => {
     it("should create a valid jobApplication", async () => {
-      const offer = await createOffer();
-      const application = await createApplicant();
+      const offer = await Offer.create(offerData());
+      const applicant = await Applicant.create(applicantData());
       const jobApplication = new JobApplication({
         offerUuid: offer.uuid,
-        applicantUuid: application.uuid
+        applicantUuid: applicant.uuid
       });
       await expect(jobApplication.save()).resolves.not.toThrow();
+    });
+
+    describe("Associations", () => {
+      it("should get Applicant from a jobApplication", async () => {
+        const jobApplication = await createJobApplication();
+        expect(await jobApplication.getApplicant()).toMatchObject(applicantData());
+      });
+
+      it("should get an offer from a jobApplication", async () => {
+        const jobApplication = await createJobApplication();
+        expect(await jobApplication.getOffer()).toMatchObject(offerData());
+      });
     });
   });
 
   describe("Errors", () => {
     it("should throw an error if no offerUuid is provided", async () => {
-      const applicant = await createApplicant();
+      const applicant = await Applicant.create(applicantData());
       const jobApplication = new JobApplication({
         offerUuid: null,
         applicantUuid: applicant.uuid
@@ -63,7 +81,7 @@ describe("JobApplication", () => {
     });
 
     it("should throw an error if no applicantUuid is provided", async () => {
-      const { uuid: offerUuid } = await createOffer();
+      const { uuid: offerUuid } = await Offer.create(offerData());
       const jobApplication = new JobApplication({
         offerUuid: offerUuid,
         applicantUuid: null
@@ -72,7 +90,7 @@ describe("JobApplication", () => {
     });
 
     it("should throw an error if given applicantUuid that does not exist", async () => {
-      const { uuid: offerUuid } = await createOffer();
+      const { uuid: offerUuid } = await Offer.create(offerData());
       const jobApplication = new JobApplication({
         offerUuid: offerUuid,
         applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
@@ -81,7 +99,7 @@ describe("JobApplication", () => {
     });
 
     it("should throw an error if given offerUuid that does not exist", async () => {
-      const { uuid: applicantUuid } = await createApplicant();
+      const { uuid: applicantUuid } = await Applicant.create(applicantData());
       const jobApplication = new JobApplication({
         offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
         applicantUuid: applicantUuid
@@ -90,8 +108,8 @@ describe("JobApplication", () => {
     });
 
     it("should throw an error if offerUuid and applicantUuid exist", async () => {
-      const { uuid: applicantUuid } = await createApplicant();
-      const { uuid: offerUuid } = await createOffer();
+      const { uuid: applicantUuid } = await Applicant.create(applicantData());
+      const { uuid: offerUuid } = await Offer.create(offerData());
       const jobApplicationAttributes = {
         offerUuid: offerUuid,
         applicantUuid: applicantUuid
@@ -104,12 +122,6 @@ describe("JobApplication", () => {
   });
 
   describe("Delete cascade", () => {
-    const createJobApplication = async () => {
-      const { uuid: applicantUuid } = await createApplicant();
-      const { uuid: offerUuid } = await createOffer();
-      return JobApplication.create({ offerUuid: offerUuid, applicantUuid: applicantUuid });
-    };
-
     it("should delete all jobApplication if all offers are deleted", async () => {
       await createJobApplication();
       expect(await JobApplication.findAll()).toHaveLength(1);
