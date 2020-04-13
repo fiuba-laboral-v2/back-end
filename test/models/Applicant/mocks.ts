@@ -34,7 +34,7 @@ const applicantMocks = {
       _ => applicantMocks.applicantData(careers, capabilitiesDescriptions)
     )
   ),
-  CreateFourApplicantsWithMinimumData: () => (
+  createFourApplicantsWithMinimumData: () => (
     Promise.all(
       [
         { name: "Sebastian", surname: "Blanco", padron: 98539, careers: [] },
