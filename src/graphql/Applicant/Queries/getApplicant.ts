@@ -1,6 +1,6 @@
 import { GraphQLApplicant } from "../Types/Applicant";
 import { nonNull, ID } from "../../fieldTypes";
-import { ApplicantRepository, ApplicantSerializer } from "../../../models/Applicant";
+import { ApplicantRepository } from "../../../models/Applicant";
 
 const getApplicant = {
   type: GraphQLApplicant,
@@ -9,10 +9,7 @@ const getApplicant = {
       type: nonNull(ID)
     }
   },
-  resolve: async (_: undefined, { uuid }) => {
-    const applicant = await ApplicantRepository.findByUuid(uuid);
-    return ApplicantSerializer.serialize(applicant);
-  }
+  resolve: (_: undefined, { uuid }) => ApplicantRepository.findByUuid(uuid)
 };
 
 export { getApplicant };

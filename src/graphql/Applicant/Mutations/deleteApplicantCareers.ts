@@ -1,10 +1,7 @@
 import { ID, List, nonNull, String } from "../../fieldTypes";
 import { GraphQLApplicant } from "../Types/Applicant";
 
-import {
-  ApplicantRepository,
-  ApplicantSerializer
-} from "../../../models/Applicant";
+import { ApplicantRepository } from "../../../models/Applicant";
 
 const deleteApplicantCareers = {
   type: GraphQLApplicant,
@@ -22,7 +19,7 @@ const deleteApplicantCareers = {
   ) => {
     const applicant = await ApplicantRepository.findByUuid(uuid);
     await ApplicantRepository.deleteCareers(applicant, careersCodes);
-    return ApplicantSerializer.serialize(applicant);
+    return applicant;
   }
 };
 

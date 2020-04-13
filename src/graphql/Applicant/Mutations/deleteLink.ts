@@ -1,7 +1,7 @@
 import { ID, nonNull } from "../../fieldTypes";
 import { GraphQLApplicant } from "../Types/Applicant";
 
-import { ApplicantRepository, ApplicantSerializer } from "../../../models/Applicant";
+import { ApplicantRepository } from "../../../models/Applicant";
 
 const deleteLink = {
   type: GraphQLApplicant,
@@ -13,10 +13,8 @@ const deleteLink = {
       type: nonNull(ID)
     }
   },
-  resolve: async (_: undefined, { uuid, linkUuid }: { uuid: string, linkUuid: string }) => {
-    const applicant = await ApplicantRepository.deleteLink(uuid, linkUuid);
-    return ApplicantSerializer.serialize(applicant);
-  }
+  resolve: (_: undefined, { uuid, linkUuid }: { uuid: string, linkUuid: string }) =>
+    ApplicantRepository.deleteLink(uuid, linkUuid)
 };
 
 export { deleteLink };

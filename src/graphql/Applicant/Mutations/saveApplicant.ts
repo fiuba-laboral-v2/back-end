@@ -2,11 +2,7 @@ import { Int, List, nonNull, String } from "../../fieldTypes";
 import { GraphQLApplicant } from "../Types/Applicant";
 import { GraphQLCareerCredits } from "../Types/CareerCredits";
 
-import {
-  IApplicant,
-  ApplicantRepository,
-  ApplicantSerializer
-} from "../../../models/Applicant";
+import { IApplicant, ApplicantRepository } from "../../../models/Applicant";
 
 const saveApplicant = {
   type: GraphQLApplicant,
@@ -30,10 +26,7 @@ const saveApplicant = {
       type: List(String)
     }
   },
-  resolve: async (_: undefined, props: IApplicant) => {
-    const applicant = await ApplicantRepository.create(props);
-    return ApplicantSerializer.serialize(applicant);
-  }
+  resolve: (_: undefined, props: IApplicant) => ApplicantRepository.create(props)
 };
 
 export { saveApplicant };

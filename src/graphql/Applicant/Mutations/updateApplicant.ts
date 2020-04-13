@@ -3,11 +3,7 @@ import { GraphQLApplicant } from "../Types/Applicant";
 import { GraphQLCareerCredits } from "../Types/CareerCredits";
 import { GraphQLSectionInput } from "../Types/Section";
 
-import {
-  IApplicantEditable,
-  ApplicantRepository,
-  ApplicantSerializer
-} from "../../../models/Applicant";
+import { IApplicantEditable, ApplicantRepository } from "../../../models/Applicant";
 import { GraphQLLinkInput } from "../Types/Link";
 
 const updateApplicant = {
@@ -41,10 +37,7 @@ const updateApplicant = {
       type: List(GraphQLLinkInput)
     }
   },
-  resolve: async (_: undefined, props: IApplicantEditable) => {
-    const applicant = await ApplicantRepository.update(props);
-    return ApplicantSerializer.serialize(applicant);
-  }
+  resolve: (_: undefined, props: IApplicantEditable) => ApplicantRepository.update(props)
 };
 
 export { updateApplicant };

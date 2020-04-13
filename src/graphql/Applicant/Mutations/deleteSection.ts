@@ -1,7 +1,7 @@
 import { ID, nonNull } from "../../fieldTypes";
 import { GraphQLApplicant } from "../Types/Applicant";
 
-import { ApplicantRepository, ApplicantSerializer } from "../../../models/Applicant";
+import { ApplicantRepository } from "../../../models/Applicant";
 
 const deleteSection = {
   type: GraphQLApplicant,
@@ -13,10 +13,8 @@ const deleteSection = {
       type: nonNull(ID)
     }
   },
-  resolve: async (_: undefined, { uuid, sectionUuid }: { uuid: string, sectionUuid: string }) => {
-    const applicant = await ApplicantRepository.deleteSection(uuid, sectionUuid);
-    return ApplicantSerializer.serialize(applicant);
-  }
+  resolve: async (_: undefined, { uuid, sectionUuid }: { uuid: string, sectionUuid: string }) =>
+    ApplicantRepository.deleteSection(uuid, sectionUuid)
 };
 
 export { deleteSection };
