@@ -67,6 +67,20 @@ describe("JobApplication", () => {
         const jobApplication = await createJobApplication();
         expect(await jobApplication.getOffer()).toMatchObject(offerData());
       });
+
+      it("should get all applicant's jobApplications", async () => {
+        const offer = await Offer.create(offerData());
+        const applicant = await Applicant.create(applicantData());
+        const jobApplication = await JobApplication.create({
+          offerUuid: offer.uuid,
+          applicantUuid: applicant.uuid
+        });
+        expect(
+          (await applicant.getJobApplications()).map(aJobApplication => aJobApplication.toJSON())
+        ).toEqual(
+          expect.arrayContaining([ jobApplication.toJSON() ])
+        );
+      });
     });
   });
 
