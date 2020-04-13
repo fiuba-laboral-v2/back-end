@@ -1,5 +1,5 @@
-import ApplicantTypes from "./Types/";
+import ApplicantTypes from "./Types";
 import { applicantMutations } from "./Mutations";
-import applicantQueries from "./queries";
+import { applicantQueries } from "./Queries";
 
 export { ApplicantTypes, applicantMutations, applicantQueries };
