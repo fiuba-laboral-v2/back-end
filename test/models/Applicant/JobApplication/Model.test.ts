@@ -5,6 +5,7 @@ import { Applicant } from "../../../../src/models/Applicant";
 import { Offer } from "../../../../src/models/Offer";
 import { JobApplication } from "../../../../src/models/Applicant/JobApplication";
 import { companyMockData } from "../../Company/mocks";
+import { applicantMocks } from "../../Applicant/mocks";
 
 describe("JobApplication", () => {
   let company: Company;
@@ -55,6 +56,20 @@ describe("JobApplication", () => {
         applicantUuid: applicant.uuid
       });
       await expect(jobApplication.save()).resolves.not.toThrow();
+    });
+
+    it("should create four valid jobApplications for for the same offer", async () => {
+      const offer = await Offer.create(offerData());
+      const applicants = await applicantMocks.CreateFourApplicantsWithMinimumData();
+      const jobApplications = applicants.map(({ uuid }) =>
+        new JobApplication({
+          offerUuid: offer.uuid,
+          applicantUuid: uuid
+        })
+      );
+      await Promise.all(jobApplications.map(jobApplication =>
+        expect(jobApplication.save()).resolves.not.toThrow()
+      ));
     });
 
     describe("Associations", () => {

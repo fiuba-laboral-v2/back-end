@@ -6,9 +6,6 @@ import {
   Errors,
   IApplicantEditable
 } from "../../../src/models/Applicant";
-import { careerMocks } from "../Career/mocks";
-import { capabilityMocks } from "../Capability/mocks";
-import { applicantMocks } from "./mocks";
 import { CareerApplicantRepository } from "../../../src/models/CareerApplicant/Repository";
 import { CareerApplicantNotFound } from "../../../src/models/CareerApplicant/Errors";
 import { CapabilityRepository } from "../../../src/models/Capability";
@@ -16,6 +13,9 @@ import { internet, random } from "faker";
 import { Company } from "../../../src/models/Company";
 import { Offer } from "../../../src/models/Offer";
 import { companyMockData } from "../Company/mocks";
+import { careerMocks } from "../Career/mocks";
+import { capabilityMocks } from "../Capability/mocks";
+import { applicantMocks } from "./mocks";
 
 describe("ApplicantRepository", () => {
   beforeAll(() => Database.setConnection());
