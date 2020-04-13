@@ -1,6 +1,8 @@
 import { Applicant, IApplicant, IApplicantCareer, IApplicantEditable } from "./index";
 import { Capability, CapabilityRepository } from "../Capability";
+import { Offer } from "../Offer";
 import { ApplicantCapability } from "../ApplicantCapability";
+import { JobApplication } from "./JobApplication";
 import { CareerApplicant } from "../CareerApplicant";
 import { ApplicantNotFound } from "./Errors/ApplicantNotFound";
 import { ApplicantDoesntHaveSection } from "./Errors/ApplicantDoesntHaveSection";
@@ -76,17 +78,9 @@ export const ApplicantRepository = {
     return applicant;
   },
   deleteByUuid: async (uuid: string) => {
-    const transaction = await Database.transaction();
-    try {
-      await ApplicantCapability.destroy({ where: { applicantUuid: uuid }, transaction });
-      await CareerApplicant.destroy({ where: { applicantUuid: uuid }, transaction });
-      const applicantDestroyed = await Applicant.destroy({ where: { uuid }, transaction });
-      await transaction.commit();
-      return applicantDestroyed;
-    } catch (error) {
-      await transaction.rollback();
-      throw new Error(error);
-    }
+    await ApplicantCapability.destroy({ where: { applicantUuid: uuid } });
+    await CareerApplicant.destroy({ where: { applicantUuid: uuid } });
+    return Applicant.destroy({ where: { uuid } });
   },
   updateOrCreateApplicantCapabilities: async (
     applicant: Applicant,
@@ -141,6 +135,14 @@ export const ApplicantRepository = {
       capabilities
     );
   },
+  applyToOffer: (applicant: Applicant, offer: Offer) => (
+    JobApplication.create(
+      {
+        offerUuid: offer.uuid,
+        applicantUuid: applicant.uuid
+      }
+    )
+  ),
   deleteCapabilities: async (applicant: Applicant, descriptions: string[]) => {
     const uuids = (await applicant.getCapabilities())
       .filter(c => descriptions.includes(c.description))
