@@ -5,7 +5,7 @@ import {
   HasManyHasAssociationMixin
 } from "sequelize";
 import { validateIntegerInRange, validateName } from "validations-fiuba-laboral-v2";
-import { JobApplication } from "../Offer/JobApplication";
+import { JobApplication } from "./JobApplication";
 import { Career } from "../Career/Model";
 import { CareerApplicant } from "../CareerApplicant/Model";
 import { Capability } from "../Capability/Model";

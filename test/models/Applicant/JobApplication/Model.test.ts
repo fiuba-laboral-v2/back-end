@@ -3,7 +3,7 @@ import Database from "../../../../src/config/Database";
 import { Company } from "../../../../src/models/Company";
 import { Applicant } from "../../../../src/models/Applicant";
 import { Offer } from "../../../../src/models/Offer";
-import { JobApplication } from "../../../../src/models/Offer/JobApplication";
+import { JobApplication } from "../../../../src/models/Applicant/JobApplication";
 import { companyMockData } from "../../Company/mocks";
 
 describe("JobApplication", () => {

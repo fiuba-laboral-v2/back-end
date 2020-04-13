@@ -1,6 +1,7 @@
 import { Applicant } from "./Applicant";
 import { Section } from "./Applicant/Section";
 import { ApplicantLink } from "./Applicant/Link";
+import { JobApplication } from "./Applicant/JobApplication";
 import { Career } from "./Career";
 import { CareerApplicant } from "./CareerApplicant";
 import { Capability } from "./Capability";
@@ -11,13 +12,13 @@ import { CompanyPhoto } from "./CompanyPhoto";
 import { Offer } from "./Offer";
 import { OfferSection } from "./Offer/OfferSection";
 import { OfferCareer } from "./Offer/OfferCareer";
-import { JobApplication } from "./Offer/JobApplication";
 import { User } from "./User";
 
 const models = [
   Applicant,
   Section,
   ApplicantLink,
+  JobApplication,
   Career,
   CareerApplicant,
   Capability,
@@ -28,7 +29,6 @@ const models = [
   Offer,
   OfferSection,
   OfferCareer,
-  JobApplication,
   User
 ];
 
