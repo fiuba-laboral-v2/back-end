@@ -1,8 +1,7 @@
-
 import Database from "../../../../src/config/Database";
 import { Applicant } from "../../../../src/models/Applicant";
 import { ApplicantLink } from "../../../../src/models/Applicant/Link";
-import { random, internet } from "faker";
+import { internet, random } from "faker";
 
 describe("ApplicantLink model", () => {
   let applicant: Applicant;
@@ -44,19 +43,28 @@ describe("ApplicantLink model", () => {
     });
   });
 
-  it("raise an error if no name is provided", async () => {
+  it("should throw an error if no name is provided", async () => {
     const applicantLink = new ApplicantLink({ applicantUuid: applicant.uuid, url: internet.url() });
 
     await expect(applicantLink.save()).rejects.toThrow();
   });
 
-  it("raise an error if no url is provided", async () => {
+  it("should throw an error if invalid url is provided", async () => {
+    const applicantLink = new ApplicantLink({
+      applicantUuid: applicant.uuid,
+      name: "Google",
+      url: "http://google"
+    });
+    await expect(applicantLink.validate()).rejects.toThrow("La URL es inválida");
+  });
+
+  it("should throw an error if no url is provided", async () => {
     const applicantLink = new ApplicantLink({ applicantUuid: applicant.uuid, name: random.word() });
 
     await expect(applicantLink.save()).rejects.toThrow();
   });
 
-  it("raise an error if no applicantUuid is provided", async () => {
+  it("should throw an error if no applicantUuid is provided", async () => {
     const applicantLink = new ApplicantLink({ name: random.word(), url: internet.url() });
 
     await expect(applicantLink.save()).rejects.toThrow();

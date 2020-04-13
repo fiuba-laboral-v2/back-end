@@ -58,7 +58,7 @@ describe("getApplicants", () => {
   describe("when applicants exists", () => {
     it("should fetch the existing applicant", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantData = applicantMocks.applicantData([career.code]);
+      const applicantData = applicantMocks.applicantData([career]);
       const applicant = await ApplicantRepository.create(applicantData);
       const { data, errors } = await executeQuery(GET_APPLICANTS);
 
@@ -72,7 +72,7 @@ describe("getApplicants", () => {
       const career = await CareerRepository.create(careerMocks.careerData());
       const applicantsData = applicantMocks.applicantsData(
         {
-          careersCodes: [career.code],
+          careers: [career],
           capabilitiesDescriptions: [],
           numberOfApplicantsData: 2
         }

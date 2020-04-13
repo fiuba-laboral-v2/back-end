@@ -48,7 +48,7 @@ describe("deleteApplicantCapabilities", () => {
     const capabilities = capabilityMocks.capabilitiesData({ size: 3 });
     const descriptions = capabilities.map(c => c.description);
     const applicantData = applicantMocks.applicantData(
-      [career.code],
+      [career],
       descriptions
     );
     const applicant = await ApplicantRepository.create(applicantData);
@@ -62,7 +62,7 @@ describe("deleteApplicantCapabilities", () => {
 
   it("should not delete applicant capabilities if it does not exists", async () => {
     const career = await CareerRepository.create(careerMocks.careerData());
-    const applicantData = applicantMocks.applicantData([career.code]);
+    const applicantData = applicantMocks.applicantData([career]);
     const applicant = await ApplicantRepository.create(applicantData);
     const { data, errors } = await executeMutation(deleteApplicantCapabilities, {
       uuid: applicant.uuid,

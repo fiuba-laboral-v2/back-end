@@ -66,7 +66,7 @@ describe("CareerRepository", () => {
     );
   });
 
-  it("raise CareersNotFound if the career doesn't exists", async () => {
+  it("should throw CareersNotFound if the career doesn't exists", async () => {
     const careerData = careerMocks.careerData();
 
     await expect(CareerRepository.findByCode(careerData.code))

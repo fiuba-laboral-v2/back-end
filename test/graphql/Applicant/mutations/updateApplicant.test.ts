@@ -53,7 +53,7 @@ const UPDATE_APPLICANT = gql`
 describe("updateApplicant", () => {
   const createApplicant = async () => {
     const career = await CareerRepository.create(careerMocks.careerData());
-    const applicantData = applicantMocks.applicantData([career.code]);
+    const applicantData = applicantMocks.applicantData([career]);
     return ApplicantRepository.create(applicantData);
   };
 

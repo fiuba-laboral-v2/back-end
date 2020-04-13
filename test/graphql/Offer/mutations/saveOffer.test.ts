@@ -118,7 +118,7 @@ describe("saveOffer", () => {
   });
 
   describe("when the input values are invalid", () => {
-    it("should raise an error if no company id is provided", async () => {
+    it("should throw an error if no company id is provided", async () => {
       const { errors } = await executeMutation(
         SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
         OfferMocks.withNoCompanyId()

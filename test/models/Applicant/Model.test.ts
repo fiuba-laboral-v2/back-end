@@ -4,7 +4,8 @@ import { Career } from "../../../src/models/Career";
 import { CareerApplicant } from "../../../src/models/CareerApplicant";
 import { ApplicantCapability } from "../../../src/models/ApplicantCapability";
 import { Capability } from "../../../src/models/Capability";
-import { random, lorem } from "faker";
+import { lorem, random } from "faker";
+import { NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
 
 
 describe("Applicant model", () => {
@@ -46,6 +47,7 @@ describe("Applicant model", () => {
   });
 
   it("Persist the many to many relation between Applicant, Career and Capability", async () => {
+    await Capability.truncate({ cascade: true });
     const applicant: Applicant = new Applicant(params);
     const career: Career = new Career({
       code: 3,
@@ -109,7 +111,59 @@ describe("Applicant model", () => {
     });
   });
 
-  it("raise an error if name is null", async () => {
+  it("should throw an error if name has a digit", async () => {
+    const applicant: Applicant = new Applicant({
+      name: "Bruno11",
+      surname: "Blanco",
+      padron: 1,
+      description: "Batman",
+      credits: 150
+    });
+    await expect(applicant.validate()).rejects.toThrow(
+      "El nombre no debe contener numeros"
+    );
+  });
+
+  it("should throw an error if padron is 0", async () => {
+    const applicant: Applicant = new Applicant({
+      name: "Bruno",
+      surname: "Blanco",
+      padron: 0,
+      description: "Batman",
+      credits: 150
+    });
+    await expect(applicant.validate()).rejects.toThrow(
+      NumberIsTooSmallError.buildMessage(0, false)
+    );
+  });
+
+  it("should throw an error if padron is negative", async () => {
+    const applicant: Applicant = new Applicant({
+      name: "Bruno",
+      surname: "Blanco",
+      padron: -243,
+      description: "Batman",
+      credits: 150
+    });
+    await expect(applicant.validate()).rejects.toThrow(
+      NumberIsTooSmallError.buildMessage(0, false)
+    );
+  });
+
+  it("should throw an error if surname has a digit", async () => {
+    const applicant: Applicant = new Applicant({
+      name: "Bruno",
+      surname: "Blanco11",
+      padron: 1,
+      description: "Batman",
+      credits: 150
+    });
+    await expect(applicant.validate()).rejects.toThrow(
+      "El nombre no debe contener numeros"
+    );
+  });
+
+  it("should throw an error if name is null", async () => {
     const applicant: Applicant = new Applicant({
       name: null,
       surname: "Diaz",
@@ -121,7 +175,7 @@ describe("Applicant model", () => {
     await expect(applicant.save()).rejects.toThrow();
   });
 
-  it("raise an error if surname is null", async () => {
+  it("should throw an error if surname is null", async () => {
     const applicant: Applicant = new Applicant({
       name: "Bruno",
       padron: 1,
@@ -132,8 +186,7 @@ describe("Applicant model", () => {
     await expect(applicant.save()).rejects.toThrow();
   });
 
-
-  it("raise an error if padron is null", async () => {
+  it("should throw an error if padron is null", async () => {
     const applicant: Applicant = new Applicant({
       name: "Bruno",
       surname: "Diaz",
@@ -144,7 +197,7 @@ describe("Applicant model", () => {
     await expect(applicant.save()).rejects.toThrow();
   });
 
-  it("raise an error if description is null", async () => {
+  it("should throw an error if description is null", async () => {
     const applicant: Applicant = new Applicant({
       name: null,
       surname: "Diaz",

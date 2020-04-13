@@ -68,13 +68,13 @@ describe("OfferRepository", () => {
     });
 
     describe("Rollback Transaction", () => {
-      it("should raise error if offer is invalid and not create the section", async () => {
+      it("should throw error if offer is invalid and not create the section", async () => {
         const attributes = OfferMocks.withOneSectionButNullCompanyId();
         await expect(OfferRepository.create(attributes)).rejects.toThrow();
         expect(await OfferSection.findAll()).toHaveLength(0);
       });
 
-      it("should raise error if section is invalid and not create the offer", async () => {
+      it("should throw error if section is invalid and not create the offer", async () => {
         const company = await CompanyRepository.create(companyMockData);
         await expect(
           OfferRepository.create(OfferMocks.withSectionWithNoTitle(company.id))
@@ -83,7 +83,7 @@ describe("OfferRepository", () => {
         expect(await Offer.findAll()).toHaveLength(0);
       });
 
-      it("should raise error if career is invalid and not create the offer", async () => {
+      it("should throw error if career is invalid and not create the offer", async () => {
         const company = await CompanyRepository.create(companyMockData);
         await expect(
           OfferRepository.create(OfferMocks.withOneCareerWithNullCareerCode(company.id))
@@ -104,7 +104,7 @@ describe("OfferRepository", () => {
       expect(offer).toEqual(expect.objectContaining(offerProps));
     });
 
-    it("should raise an error if offer does not exists", async () => {
+    it("should throw an error if offer does not exists", async () => {
       await expect(
         OfferRepository.findByUuid("4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da")
       ).rejects.toThrow(OfferNotFound);

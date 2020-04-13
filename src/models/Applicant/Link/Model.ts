@@ -1,16 +1,8 @@
-import {
-  Column,
-  DataType,
-  Model,
-  Table,
-  ForeignKey,
-  BelongsTo,
-} from "sequelize-typescript";
+import { BelongsTo, Column, DataType, ForeignKey, Is, Model, Table } from "sequelize-typescript";
 import { Applicant } from "../Model";
+import { validateURL } from "validations-fiuba-laboral-v2";
 
-@Table({
-  tableName: "ApplicantsLinks"
-})
+@Table({ tableName: "ApplicantsLinks" })
 export class ApplicantLink extends Model<ApplicantLink> {
   @Column({
     allowNull: false,
@@ -36,6 +28,7 @@ export class ApplicantLink extends Model<ApplicantLink> {
   })
   public name: string;
 
+  @Is(validateURL)
   @Column({
     allowNull: false,
     type: DataType.STRING
