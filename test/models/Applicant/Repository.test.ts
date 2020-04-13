@@ -392,17 +392,6 @@ describe("ApplicantRepository", () => {
   });
 
   describe("Delete", () => {
-    it("should delete an applicant by uuid", async () => {
-      const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantData = applicantMocks.applicantData([career]);
-      const savedApplicant = await ApplicantRepository.create(applicantData);
-
-      await ApplicantRepository.deleteByUuid(savedApplicant.uuid);
-
-      await expect(ApplicantRepository.findByUuid(savedApplicant.uuid))
-        .rejects.toThrow(Errors.ApplicantNotFound);
-    });
-
     it("should delete all applicant capabilities", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
       const capabilities = capabilityMocks.capabilitiesData({ size: 3 });

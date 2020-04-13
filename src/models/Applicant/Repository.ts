@@ -77,11 +77,6 @@ export const ApplicantRepository = {
 
     return applicant;
   },
-  deleteByUuid: async (uuid: string) => {
-    await ApplicantCapability.destroy({ where: { applicantUuid: uuid } });
-    await CareerApplicant.destroy({ where: { applicantUuid: uuid } });
-    return Applicant.destroy({ where: { uuid } });
-  },
   updateOrCreateApplicantCapabilities: async (
     applicant: Applicant,
     capabilities: Capability[],
