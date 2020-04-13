@@ -1,8 +1,6 @@
 import { Applicant, IApplicant, IApplicantCareer, IApplicantEditable } from "./index";
 import { Capability, CapabilityRepository } from "../Capability";
-import { Offer } from "../Offer";
 import { ApplicantCapability } from "../ApplicantCapability";
-import { JobApplication } from "../JobApplication";
 import { CareerApplicant } from "../CareerApplicant";
 import { ApplicantNotFound } from "./Errors/ApplicantNotFound";
 import { ApplicantDoesntHaveSection } from "./Errors/ApplicantDoesntHaveSection";
@@ -130,14 +128,6 @@ export const ApplicantRepository = {
       capabilities
     );
   },
-  applyToOffer: (applicant: Applicant, offer: Offer) => (
-    JobApplication.create(
-      {
-        offerUuid: offer.uuid,
-        applicantUuid: applicant.uuid
-      }
-    )
-  ),
   deleteCapabilities: async (applicant: Applicant, descriptions: string[]) => {
     const uuids = (await applicant.getCapabilities())
       .filter(c => descriptions.includes(c.description))

@@ -1,22 +1,13 @@
 import Database from "../../../src/config/Database";
 import { CareerRepository } from "../../../src/models/Career";
-import {
-  Applicant,
-  ApplicantRepository,
-  Errors,
-  IApplicantEditable
-} from "../../../src/models/Applicant";
+import { ApplicantRepository, Errors, IApplicantEditable } from "../../../src/models/Applicant";
 import { CareerApplicantRepository } from "../../../src/models/CareerApplicant/Repository";
 import { CareerApplicantNotFound } from "../../../src/models/CareerApplicant/Errors";
 import { CapabilityRepository } from "../../../src/models/Capability";
 import { internet, random } from "faker";
-import { Company } from "../../../src/models/Company";
-import { Offer } from "../../../src/models/Offer";
-import { companyMockData } from "../Company/mocks";
 import { careerMocks } from "../Career/mocks";
 import { capabilityMocks } from "../Capability/mocks";
 import { applicantMocks } from "./mocks";
-import { OfferMocks } from "../Offer/mocks";
 
 describe("ApplicantRepository", () => {
   beforeAll(() => Database.setConnection());
@@ -476,27 +467,6 @@ describe("ApplicantRepository", () => {
       await expect(
         CareerApplicantRepository.findByApplicantAndCareer(applicant.uuid, career.code)
       ).rejects.toThrow(CareerApplicantNotFound);
-    });
-  });
-
-  describe("ApplyToOffers", () => {
-    beforeEach(async () => {
-      await Applicant.truncate({ cascade: true });
-      await Company.truncate({ cascade: true });
-      await Offer.truncate({ cascade: true });
-    });
-
-    it("should apply to a new jobApplication", async () => {
-      const { id: companyId } = await Company.create(companyMockData);
-      const offer = await Offer.create(OfferMocks.completeData(companyId));
-      const applicant = await Applicant.create(applicantMocks.applicantData([]));
-      const jobApplication = await ApplicantRepository.applyToOffer(applicant, offer);
-      expect(jobApplication).toMatchObject(
-        {
-          offerUuid: offer.uuid,
-          applicantUuid: applicant.uuid
-        }
-        );
     });
   });
 });
