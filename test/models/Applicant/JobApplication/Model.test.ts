@@ -30,16 +30,16 @@ describe("JobApplication", () => {
     }
   );
 
-  const offerData = () => {
-    return {
+  const offerData = () => (
+    {
       companyId: company.id,
       title: "Java developer senior",
       description: "some description",
       hoursPerDay: 8,
       minimumSalary: 50000,
       maximumSalary: 80000
-    };
-  };
+    }
+  );
 
   const createJobApplication = async () => {
     const { uuid: applicantUuid } = await Applicant.create(applicantData());
