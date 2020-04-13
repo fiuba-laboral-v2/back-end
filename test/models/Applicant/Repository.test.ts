@@ -1,7 +1,6 @@
+import Database from "../../../src/config/Database";
 import { CareerRepository } from "../../../src/models/Career";
 import { ApplicantRepository, Errors, IApplicantEditable } from "../../../src/models/Applicant";
-
-import Database from "../../../src/config/Database";
 import { careerMocks } from "../Career/mocks";
 import { capabilityMocks } from "../Capability/mocks";
 import { applicantMocks } from "./mocks";
@@ -11,9 +10,7 @@ import { CapabilityRepository } from "../../../src/models/Capability";
 import { internet, random } from "faker";
 
 describe("ApplicantRepository", () => {
-  beforeAll(async () => {
-    await Database.setConnection();
-  });
+  beforeAll(() => Database.setConnection());
 
   beforeEach(async () => {
     await CareerApplicantRepository.truncate();
@@ -22,9 +19,7 @@ describe("ApplicantRepository", () => {
     await CapabilityRepository.truncate();
   });
 
-  afterAll(async () => {
-    await Database.close();
-  });
+  afterAll(() => Database.close());
 
   it("creates a new applicant", async () => {
     const career = await CareerRepository.create(careerMocks.careerData());
