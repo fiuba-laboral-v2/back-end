@@ -16,6 +16,7 @@ import { companyMockData } from "../Company/mocks";
 import { careerMocks } from "../Career/mocks";
 import { capabilityMocks } from "../Capability/mocks";
 import { applicantMocks } from "./mocks";
+import { OfferMocks } from "../Offer/mocks";
 
 describe("ApplicantRepository", () => {
   beforeAll(() => Database.setConnection());
@@ -490,36 +491,16 @@ describe("ApplicantRepository", () => {
   });
 
   describe("ApplyToOffers", () => {
-    let company;
-
     beforeEach(async () => {
       await Applicant.truncate({ cascade: true });
       await Company.truncate({ cascade: true });
       await Offer.truncate({ cascade: true });
-      company = await Company.create(companyMockData);
     });
 
-    const offerData = () => (
-      {
-        companyId: company.id,
-        title: "Java developer senior",
-        description: "some description",
-        hoursPerDay: 8,
-        minimumSalary: 50000,
-        maximumSalary: 80000
-      }
-    );
-
-    const applicantData = {
-      name: "Sebastian",
-      surname: "Blanco",
-      padron: 98539,
-      description: "Developer"
-    };
-
     it("should apply to a new jobApplication", async () => {
-      const offer = await Offer.create(offerData());
-      const applicant = await Applicant.create(applicantData);
+      const { id: companyId } = await Company.create(companyMockData);
+      const offer = await Offer.create(OfferMocks.completeData(companyId));
+      const applicant = await Applicant.create(applicantMocks.applicantData([]));
       const jobApplication = await ApplicantRepository.applyToOffer(applicant, offer);
       expect(jobApplication).toMatchObject(
         {
