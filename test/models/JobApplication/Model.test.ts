@@ -1,11 +1,11 @@
 import { UniqueConstraintError, ForeignKeyConstraintError, ValidationError } from "sequelize";
-import Database from "../../../../src/config/Database";
-import { Company } from "../../../../src/models/Company";
-import { Applicant } from "../../../../src/models/Applicant";
-import { Offer } from "../../../../src/models/Offer";
-import { JobApplication } from "../../../../src/models/Applicant/JobApplication";
-import { companyMockData } from "../../Company/mocks";
-import { applicantMocks } from "../../Applicant/mocks";
+import Database from "../../../src/config/Database";
+import { Company } from "../../../src/models/Company";
+import { Applicant } from "../../../src/models/Applicant";
+import { Offer } from "../../../src/models/Offer";
+import { JobApplication } from "../../../src/models/JobApplication";
+import { companyMockData } from "../Company/mocks";
+import { applicantMocks } from "../Applicant/mocks";
 
 describe("JobApplication", () => {
   let company: Company;

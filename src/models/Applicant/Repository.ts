@@ -2,7 +2,7 @@ import { Applicant, IApplicant, IApplicantCareer, IApplicantEditable } from "./i
 import { Capability, CapabilityRepository } from "../Capability";
 import { Offer } from "../Offer";
 import { ApplicantCapability } from "../ApplicantCapability";
-import { JobApplication } from "./JobApplication";
+import { JobApplication } from "../JobApplication";
 import { CareerApplicant } from "../CareerApplicant";
 import { ApplicantNotFound } from "./Errors/ApplicantNotFound";
 import { ApplicantDoesntHaveSection } from "./Errors/ApplicantDoesntHaveSection";

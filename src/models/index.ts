@@ -1,7 +1,7 @@
 import { Applicant } from "./Applicant";
 import { Section } from "./Applicant/Section";
 import { ApplicantLink } from "./Applicant/Link";
-import { JobApplication } from "./Applicant/JobApplication";
+import { JobApplication } from "./JobApplication";
 import { Career } from "./Career";
 import { CareerApplicant } from "./CareerApplicant";
 import { Capability } from "./Capability";
