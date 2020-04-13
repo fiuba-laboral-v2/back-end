@@ -8,9 +8,7 @@ import {
 } from "sequelize-typescript";
 import { Applicant } from "../Model";
 
-@Table({
-  tableName: "Sections"
-})
+@Table({ tableName: "Sections" })
 export class Section extends Model<Section> {
   @Column({
     allowNull: false,

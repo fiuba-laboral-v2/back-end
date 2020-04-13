@@ -43,52 +43,52 @@ describe("Offer", () => {
     expect(await company.getOffers()).toMatchObject([ offerAttributes ]);
   });
 
-  it("should raise error if offer does not belong to any company", async () => {
+  it("should throw error if offer does not belong to any company", async () => {
     const offer = new Offer(OfferMocks.withNoCompanyId());
     await expect(offer.save()).rejects.toThrow();
   });
 
-  it("should raise error if offer does not has a title", async () => {
+  it("should throw error if offer does not has a title", async () => {
     const offer = await offerWithoutProperty("title");
     await expect(offer.save()).rejects.toThrow();
   });
 
-  it("should raise error if offer does not has a description", async () => {
+  it("should throw error if offer does not has a description", async () => {
     const offer = await offerWithoutProperty("description");
     await expect(offer.save()).rejects.toThrow();
   });
 
-  it("should raise error if offer does not has a hoursPerDay", async () => {
+  it("should throw error if offer does not has a hoursPerDay", async () => {
     const offer = await offerWithoutProperty("hoursPerDay");
     await expect(offer.save()).rejects.toThrow();
   });
 
-  it("should raise error if offer has negative hoursPerDay", async () => {
+  it("should throw error if offer has negative hoursPerDay", async () => {
     const offer = await offerWithNegativeNumberProperty("hoursPerDay", -23);
-    await expect(offer.save()).rejects.toThrow(NumberIsTooSmallError.buildMessage(-23, 0));
+    await expect(offer.save()).rejects.toThrow(NumberIsTooSmallError.buildMessage(0, false));
   });
 
-  it("should raise error if offer does not has a minimumSalary", async () => {
+  it("should throw error if offer does not has a minimumSalary", async () => {
     const offer = await offerWithoutProperty("minimumSalary");
     await expect(offer.save()).rejects.toThrow();
   });
 
-  it("should raise error if offer has negative minimumSalary", async () => {
+  it("should throw error if offer has negative minimumSalary", async () => {
     const offer = await offerWithNegativeNumberProperty("minimumSalary", -23);
-    await expect(offer.save()).rejects.toThrow(NumberIsTooSmallError.buildMessage(-23, 0));
+    await expect(offer.save()).rejects.toThrow(NumberIsTooSmallError.buildMessage(0, false));
   });
 
-  it("should raise error if offer does not has a maximumSalary", async () => {
+  it("should throw error if offer does not has a maximumSalary", async () => {
     const offer = await offerWithoutProperty("maximumSalary");
     await expect(offer.save()).rejects.toThrow();
   });
 
-  it("should raise error if offer has negative maximumSalary", async () => {
+  it("should throw error if offer has negative maximumSalary", async () => {
     const offer = await offerWithNegativeNumberProperty("maximumSalary", -23);
-    await expect(offer.save()).rejects.toThrow(NumberIsTooSmallError.buildMessage(-23, 0));
+    await expect(offer.save()).rejects.toThrow(NumberIsTooSmallError.buildMessage(0, false));
   });
 
-  it("should raise error if minimumSalary if bigger than maximumSalary", async () => {
+  it("should throw error if minimumSalary if bigger than maximumSalary", async () => {
     const company = await new Company(companyMockData).save();
     const offer = new Offer(
       await OfferMocks.offerWithSpecificSalaryRange(company.id, 100, 50)

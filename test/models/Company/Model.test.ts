@@ -47,7 +47,7 @@ describe("Company", () => {
     }));
   });
 
-  it("raise an error if cuit is null", async () => {
+  it("should throw an error if cuit is null", async () => {
     const company: Company = new Company({
       cuit: null,
       companyName: "devartis"
@@ -55,7 +55,7 @@ describe("Company", () => {
     await expect(company.save()).rejects.toThrow();
   });
 
-  it("raise an error if companyName is null", async () => {
+  it("should throw an error if companyName is null", async () => {
     const company: Company = new Company({
       cuit: "30711819017",
       companyName: null
@@ -63,7 +63,7 @@ describe("Company", () => {
     await expect(company.save()).rejects.toThrow();
   });
 
-  it("raise an error if companyName and cuit is null", async () => {
+  it("should throw an error if companyName and cuit is null", async () => {
     const company: Company = new Company({
       cuit: null,
       companyName: null
@@ -71,7 +71,7 @@ describe("Company", () => {
     await expect(company.save()).rejects.toThrow();
   });
 
-  it("raise an error if cuit has less than eleven digits", async () => {
+  it("should throw an error if cuit has less than eleven digits", async () => {
     const company: Company = new Company({
       cuit: "30",
       companyName: "devartis"
@@ -79,7 +79,7 @@ describe("Company", () => {
     await expect(company.save()).rejects.toThrow();
   });
 
-  it("raise an error if cuit has more than eleven digits", async () => {
+  it("should throw an error if cuit has more than eleven digits", async () => {
     const company: Company = new Company({
       cuit: "3057341761199",
       companyName: "devartis"
@@ -87,7 +87,7 @@ describe("Company", () => {
     await expect(company.save()).rejects.toThrow();
   });
 
-  it("raise an error if name is empty", async () => {
+  it("should throw an error if name is empty", async () => {
     const company: Company = new Company({
       cuit: "3057341761199",
       companyName: ""
@@ -95,7 +95,7 @@ describe("Company", () => {
     await expect(company.save()).rejects.toThrow();
   });
 
-  it("raise an error if name has digits", async () => {
+  it("should throw an error if name has digits", async () => {
     const company: Company = new Company({
       cuit: "3057341761199",
       companyName: "Google34"
@@ -134,7 +134,7 @@ describe("Company", () => {
     expect(company.logo).not.toBeUndefined();
   });
 
-  it("raise an error if new company has an already existing cuit", async () => {
+  it("should throw an error if new company has an already existing cuit", async () => {
     await new Company({
       cuit: "30711819017",
       companyName: "Devartis SA"

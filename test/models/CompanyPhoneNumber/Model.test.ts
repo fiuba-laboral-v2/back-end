@@ -22,7 +22,7 @@ test("create a valid CompanyPhoneNumber", async () => {
   expect(companyPhoneNumber).not.toBeUndefined();
 });
 
-test("raise and error if phoneNumber is null", async () => {
+test("throw and error if phoneNumber is null", async () => {
   const companyPhoneNumber: CompanyPhoneNumber = new CompanyPhoneNumber({
     phoneNumber: null,
     companyId: 0
@@ -30,7 +30,7 @@ test("raise and error if phoneNumber is null", async () => {
   await expect(companyPhoneNumber.save()).rejects.toThrow();
 });
 
-test("raise and error if companyId is null", async () => {
+test("throw and error if companyId is null", async () => {
   const companyPhoneNumber: CompanyPhoneNumber = new CompanyPhoneNumber({
     phoneNumber: 43076555,
     companyId: null

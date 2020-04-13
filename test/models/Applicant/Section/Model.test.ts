@@ -1,7 +1,7 @@
 import Database from "../../../../src/config/Database";
 import { Applicant } from "../../../../src/models/Applicant";
 import { Section } from "../../../../src/models/Applicant/Section";
-import { random, lorem } from "faker";
+import { lorem, random } from "faker";
 
 describe("Section model", () => {
   let applicant: Applicant;
@@ -42,27 +42,25 @@ describe("Section model", () => {
     });
   });
 
-  it("raise an error if no title is provided", async () => {
+  it("should throw an error if no title is provided", async () => {
     const section = new Section({ applicantUuid: applicant.uuid, text: lorem.paragraphs() });
 
     await expect(section.save()).rejects.toThrow();
   });
 
-  it("raise an error if no text is provided", async () => {
+  it("should throw an error if no text is provided", async () => {
     const section = new Section({ applicantUuid: applicant.uuid, title: random.words() });
 
     await expect(section.save()).rejects.toThrow();
   });
 
-  it("raise an error if no applicantUuid is provided", async () => {
+  it("should throw an error if no applicantUuid is provided", async () => {
     const section = new Section({ title: random.words(), description: lorem.paragraphs() });
 
     await expect(section.save()).rejects.toThrow();
   });
 
-  it(
-    "raise an error if there are 2 sections with the same display order for the same applicant",
-    async () => {
+  it("does not allow 2 sections with the same display order for the same applicant",async () => {
       const params = {
         applicantUuid: applicant.uuid,
         title: random.words(),

@@ -1,20 +1,38 @@
 import {
-  Table,
-  Model,
+  BelongsTo,
   Column,
-  ForeignKey,
-  PrimaryKey,
   DataType,
-  BelongsTo
+  ForeignKey,
+  Model,
+  PrimaryKey,
+  Table
 } from "sequelize-typescript";
 import { Applicant } from "../Applicant/Model";
 import { Career } from "../Career/Model";
 import { HasOneGetAssociationMixin } from "sequelize";
+import { validateIntegerInRange } from "validations-fiuba-laboral-v2";
 
-@Table({ tableName: "CareersApplicants" })
+@Table({
+  tableName: "CareersApplicants",
+  validate: {
+    async validateCreditsCount(this: CareerApplicant) {
+      const validate = validateIntegerInRange({
+        min: {
+          value: 0,
+          include: true
+        },
+        max: {
+          value: (await this.getCareer()).credits,
+          include: true
+        }
+      });
+      validate(this.creditsCount);
+    }
+  }
+})
 export class CareerApplicant extends Model<CareerApplicant> {
   public defaultScope: {
-    exclude: [ "createdAt", "updatedAt" ]
+    exclude: ["createdAt", "updatedAt"]
   };
 
   @ForeignKey(() => Career)

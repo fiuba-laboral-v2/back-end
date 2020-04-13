@@ -1,20 +1,20 @@
 import {
+  BelongsTo,
+  BelongsToMany,
   Column,
   DataType,
-  Model,
-  Table,
   ForeignKey,
-  BelongsTo,
-  Is,
   HasMany,
-  BelongsToMany
+  Is,
+  Model,
+  Table
 } from "sequelize-typescript";
-import { HasOneGetAssociationMixin, HasManyGetAssociationsMixin } from "sequelize";
+import { HasManyGetAssociationsMixin, HasOneGetAssociationMixin } from "sequelize";
 import { Company } from "../Company";
 import { OfferSection } from "./OfferSection";
 import { OfferCareer } from "./OfferCareer";
 import { Career } from "../Career/Model";
-import { validateIntegerGreaterThan, validateSalaryRange } from "validations-fiuba-laboral-v2";
+import { validateIntegerInRange, validateSalaryRange } from "validations-fiuba-laboral-v2";
 
 @Table({
   tableName: "Offers",
@@ -55,21 +55,21 @@ export class Offer extends Model<Offer> {
   })
   public description: string;
 
-  @Is("hoursPerDay", (hoursPerDay: number) => validateIntegerGreaterThan(hoursPerDay, 0))
+  @Is("hoursPerDay", validateIntegerInRange({ min: { value: 0, include: false } }))
   @Column({
     allowNull: false,
     type: DataType.INTEGER
   })
   public hoursPerDay: number;
 
-  @Is("minimumSalary", (minimumSalary: number) => validateIntegerGreaterThan(minimumSalary, 0))
+  @Is("minimumSalary", validateIntegerInRange({ min: { value: 0, include: false } }))
   @Column({
     allowNull: false,
     type: DataType.INTEGER
   })
   public minimumSalary: number;
 
-  @Is("maximumSalary", (maximumSalary: number) => validateIntegerGreaterThan(maximumSalary, 0))
+  @Is("maximumSalary", validateIntegerInRange({ min: { value: 0, include: false } }))
   @Column({
     allowNull: false,
     type: DataType.INTEGER

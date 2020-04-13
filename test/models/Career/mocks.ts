@@ -17,7 +17,7 @@ const careerMocks = {
         { code: "14", description: "Ingenieria Mecánica", credits: 243 },
         { code: "15", description: "Ingenieria Indistrial", credits: 243 },
         { code: "16", description: "Ingenieria en Alimentos", credits: 243 },
-        { code: "17", description: "Ingenieria en Petróleo", credits: 243} ,
+        { code: "17", description: "Ingenieria en Petróleo", credits: 243 },
         { code: "18", description: "Ingenieria en Agrimensura", credits: 243 },
         { code: "19", description: "Ingenieria Naval", credits: 243 },
         { code: "20", description: "Lic. en Análisis de Sistemas", credits: 243 }

@@ -48,7 +48,7 @@ describe("CompanyRepository", () => {
     );
   });
 
-  it("raise an error if cuit is null", async () => {
+  it("should throw an error if cuit is null", async () => {
     const company: Company = new Company({
       cuit: null,
       companyName: "devartis"
@@ -56,7 +56,7 @@ describe("CompanyRepository", () => {
     await expect(CompanyRepository.save(company)).rejects.toThrow();
   });
 
-  it("raise an error if cuit is null", async () => {
+  it("should throw an error if cuit is null", async () => {
     const company: Company = new Company({
       cuit: "30711819017",
       companyName: null
@@ -96,7 +96,7 @@ describe("CompanyRepository", () => {
     expect(expectedCompanies[0].id).toEqual(company.id);
   });
 
-  it("rollback transaction and raise error if photo is null", async () => {
+  it("should rollback transaction and throw error if photo is null", async () => {
     const company: Company = new Company(companyDataWithMinimumData);
     const photo: CompanyPhoto = new CompanyPhoto({ photo: null });
     await expect(CompanyRepository.save(
@@ -109,7 +109,7 @@ describe("CompanyRepository", () => {
     expect(expectedCompanies!.length).toEqual(0);
   });
 
-  it("rollback transaction and raise error if phoneNumber is null", async () => {
+  it("should rollback transaction and throw error if phoneNumber is null", async () => {
     const company: Company = new Company(companyDataWithMinimumData);
     const phoneNumber: CompanyPhoneNumber = new CompanyPhoneNumber(
       { phoneNumber: null }

@@ -1,18 +1,10 @@
+import { BelongsToMany, Column, DataType, HasMany, Is, Model, Table } from "sequelize-typescript";
 import {
-  Column,
-  DataType,
-  BelongsToMany,
-  Model,
-  Table,
-  Is,
-  HasMany
-} from "sequelize-typescript";
-import {
+  HasManyCreateAssociationMixin,
   HasManyGetAssociationsMixin,
   HasManyHasAssociationMixin,
-  HasManyCreateAssociationMixin,
 } from "sequelize";
-import { validateName } from "validations-fiuba-laboral-v2";
+import { validateIntegerInRange, validateName } from "validations-fiuba-laboral-v2";
 import { Career } from "../Career/Model";
 import { CareerApplicant } from "../CareerApplicant/Model";
 import { Capability } from "../Capability/Model";
@@ -20,10 +12,7 @@ import { ApplicantCapability } from "../ApplicantCapability/Model";
 import { Section } from "./Section";
 import { ApplicantLink } from "./Link";
 
-
-@Table({
-  tableName: "Applicants"
-})
+@Table({ tableName: "Applicants" })
 export class Applicant extends Model<Applicant> {
   @Column({
     allowNull: false,
@@ -33,19 +22,21 @@ export class Applicant extends Model<Applicant> {
   })
   public uuid: string;
 
-  @Is("name", validateName)
+  @Is(validateName)
   @Column({
     allowNull: false,
     type: DataType.TEXT
   })
   public name: string;
 
+  @Is(validateName)
   @Column({
     allowNull: false,
     type: DataType.TEXT
   })
   public surname: string;
 
+  @Is("padron", validateIntegerInRange({ min: { value: 0, include: false } }))
   @Column({
     allowNull: false,
     type: DataType.INTEGER
