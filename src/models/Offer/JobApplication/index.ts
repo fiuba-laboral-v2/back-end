@@ -1,0 +1,1 @@
+export { JobApplication } from "./Model";

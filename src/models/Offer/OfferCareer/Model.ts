@@ -7,7 +7,7 @@ export class OfferCareer extends Model<OfferCareer> {
   @ForeignKey(() => Career)
   @Column({
     allowNull: false,
-    unique: true,
+    primaryKey: true,
     type: DataType.INTEGER
   })
   public careerCode: string;
@@ -18,7 +18,7 @@ export class OfferCareer extends Model<OfferCareer> {
   @ForeignKey(() => Offer)
   @Column({
     allowNull: false,
-    unique: true,
+    primaryKey: true,
     type: DataType.UUID
   })
   public offerUuid: string;
