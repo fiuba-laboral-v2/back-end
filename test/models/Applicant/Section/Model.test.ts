@@ -25,7 +25,7 @@ describe("Section model", () => {
   });
 
   afterAll(async () => {
-    await Applicant.truncate({ cascade: true });
+    await UserRepository.truncate();
     await Database.close();
   });
 

@@ -10,6 +10,7 @@ import { applicantMocks } from "../../../models/Applicant/mocks";
 import { careerMocks } from "../../../models/Career/mocks";
 
 import { pick } from "lodash";
+import { UserRepository } from "../../../../src/models/User/Repository";
 
 const queryWithAllData = gql`
   mutation SaveApplicant(
@@ -63,7 +64,7 @@ describe("saveApplicant", () => {
   beforeAll(async () => {
     await Database.setConnection();
     await Career.truncate({ cascade: true });
-    await Applicant.truncate({ cascade: true });
+    await UserRepository.truncate();
   });
 
   afterAll(async () => {

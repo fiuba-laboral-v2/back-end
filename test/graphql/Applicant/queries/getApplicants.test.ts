@@ -9,6 +9,7 @@ import { Applicant } from "../../../../src/models/Applicant";
 
 import { applicantMocks } from "../../../models/Applicant/mocks";
 import { careerMocks } from "../../../models/Career/mocks";
+import { UserRepository } from "../../../../src/models/User/Repository";
 
 const GET_APPLICANTS = gql`
     query getApplicants {
@@ -48,7 +49,7 @@ describe("getApplicants", () => {
 
   beforeEach(async () => {
     await Career.truncate({ cascade: true });
-    await Applicant.truncate({ cascade: true });
+    await UserRepository.truncate();
   });
 
   afterAll(async () => {

@@ -165,7 +165,7 @@ describe("JobApplication", () => {
     it("should delete all jobApplication if all applicants are deleted", async () => {
       await createJobApplication();
       expect(await JobApplication.findAll()).toHaveLength(1);
-      await Applicant.truncate({ cascade: true });
+      await UserRepository.truncate();
       expect(await JobApplication.findAll()).toHaveLength(0);
     });
 

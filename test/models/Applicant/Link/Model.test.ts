@@ -9,7 +9,7 @@ describe("ApplicantLink model", () => {
 
   beforeAll(async () => {
     await Database.setConnection();
-    await Applicant.truncate({ cascade: true });
+    await UserRepository.truncate();
     await ApplicantLink.truncate({ cascade: true });
     const myApplicant = new Applicant({
       name: "Bruno",
@@ -26,7 +26,7 @@ describe("ApplicantLink model", () => {
   });
 
   afterAll(async () => {
-    await Applicant.truncate({ cascade: true });
+    await UserRepository.truncate();
     await ApplicantLink.truncate({ cascade: true });
     await Database.close();
   });

@@ -169,6 +169,6 @@ export const ApplicantRepository = {
     return applicant;
   },
   truncate: async () => {
-    Applicant.truncate({ cascade: true });
+    UserRepository.truncate();
   }
 };
