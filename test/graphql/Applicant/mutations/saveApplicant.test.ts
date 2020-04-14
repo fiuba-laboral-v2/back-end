@@ -12,8 +12,8 @@ import { UserRepository } from "../../../../src/models/User/Repository";
 
 const queryWithAllData = gql`
   mutation SaveApplicant(
-    $name: String!, $surname: String!, $padron: Int!, $description: String,
-    $careers: [CareerCredits]!, $capabilities: [String], $user: UserInput!
+    $name: String!, $surname: String!, $padron: Int!, $user: UserInput!,
+    $careers: [CareerCredits]!, $description: String, $capabilities: [String]
     ) {
     saveApplicant(
       name: $name, surname: $surname, padron: $padron,
