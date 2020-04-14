@@ -1,4 +1,14 @@
-import { BelongsToMany, Column, DataType, HasMany, Is, Model, Table } from "sequelize-typescript";
+import {
+  BelongsTo,
+  BelongsToMany,
+  Column,
+  DataType,
+  ForeignKey,
+  HasMany,
+  Is,
+  Model,
+  Table
+} from "sequelize-typescript";
 import {
   HasManyCreateAssociationMixin,
   HasManyGetAssociationsMixin,
@@ -12,6 +22,7 @@ import { Capability } from "../Capability/Model";
 import { ApplicantCapability } from "../ApplicantCapability/Model";
 import { Section } from "./Section";
 import { ApplicantLink } from "./Link";
+import { User } from "../User";
 
 @Table({ tableName: "Applicants" })
 export class Applicant extends Model<Applicant> {
@@ -49,6 +60,16 @@ export class Applicant extends Model<Applicant> {
     type: DataType.TEXT
   })
   public description: string;
+
+  @ForeignKey(() => User)
+  @Column({
+    allowNull: false,
+    type: DataType.UUID
+  })
+  public userUuid: string;
+
+  @BelongsTo(() => User, "userUuid")
+  public user: User;
 
   @HasMany(() => Section)
   public sections: Section[];

@@ -5,20 +5,6 @@ import { JWT } from "../../JWT";
 import { UserInputError } from "apollo-server-errors";
 
 export const userMutations = {
-  signup: {
-    type: String,
-    args: {
-      email: {
-        type: nonNull(String)
-      },
-      password: {
-        type: nonNull(String)
-      }
-    },
-    resolve: async (_: undefined, attributes: IUser) => {
-      return JWT.createToken(await UserRepository.create(attributes));
-    }
-  },
   login: {
     type: String,
     args: {

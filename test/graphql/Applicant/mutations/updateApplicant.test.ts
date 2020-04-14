@@ -11,6 +11,7 @@ import { careerMocks } from "../../../models/Career/mocks";
 import { random, lorem, internet } from "faker";
 
 import { pick } from "lodash";
+import { UserRepository } from "../../../../src/models/User/Repository";
 
 const UPDATE_APPLICANT = gql`
     mutation updateApplicant(
@@ -60,8 +61,10 @@ describe("updateApplicant", () => {
   beforeAll(async () => {
     await Database.setConnection();
     await Career.truncate({ cascade: true });
-    await Applicant.truncate({ cascade: true });
+    await UserRepository.truncate();
   });
+
+  beforeEach(() => UserRepository.truncate());
 
   afterAll(async () => {
     await Database.close();
