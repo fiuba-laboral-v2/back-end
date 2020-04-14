@@ -1,17 +1,13 @@
 import { Applicant, IApplicant, IApplicantCareer, IApplicantEditable } from "./index";
 import { Capability, CapabilityRepository } from "../Capability";
 import { ApplicantCapability } from "../ApplicantCapability";
-import { CareerApplicant } from "../CareerApplicant";
 import { ApplicantNotFound } from "./Errors/ApplicantNotFound";
-import { ApplicantDoesntHaveSection } from "./Errors/ApplicantDoesntHaveSection";
 import Database from "../../config/Database";
 import { Transaction } from "sequelize";
 import { CareerApplicantRepository } from "../CareerApplicant/Repository";
 import { ApplicantCapabilityRepository } from "../ApplicantCapability/Repository";
-import { Section } from "./Section";
 import { SectionRepository } from "./Section/Repository";
-import { ApplicantLink, ApplicantLinkRepository } from "./Link";
-import { ApplicantDoesntHaveLink } from "./Errors/ApplicantDoesntHaveLink";
+import { ApplicantLinkRepository } from "./Link";
 import pick from "lodash/pick";
 
 export const ApplicantRepository = {
@@ -126,42 +122,6 @@ export const ApplicantRepository = {
     await ApplicantCapabilityRepository.update(applicant, newCapabilities);
 
     return applicant.save();
-  },
-  deleteCapabilities: async (applicant: Applicant, descriptions: string[]) => {
-    const uuids = (await applicant.getCapabilities())
-      .filter(c => descriptions.includes(c.description))
-      .map(c => c.uuid);
-    await ApplicantCapability.destroy(
-      { where: { applicantUuid: applicant.uuid, capabilityUuid: uuids } }
-    );
-    return applicant;
-  },
-  deleteCareers: async (applicant: Applicant, careerCodes: string[]) => {
-    const codes = (await applicant.getCareers())
-      .filter(c => careerCodes.includes(c.code))
-      .map(c => c.code);
-    await CareerApplicant.destroy(
-      { where: { applicantUuid: applicant.uuid, careerCode: codes } }
-    );
-    return applicant;
-  },
-  deleteSection: async (uuid: string, sectionUuid: string) => {
-    const applicant = await ApplicantRepository.findByUuid(uuid);
-    if (await applicant.hasSection(sectionUuid)) {
-      await Section.destroy({
-        where: {
-          uuid: sectionUuid
-        }
-      });
-      return applicant;
-    }
-    throw new ApplicantDoesntHaveSection(uuid, sectionUuid);
-  },
-  deleteLink: async (uuid: string, linkUuid: string) => {
-    const applicant = await ApplicantRepository.findByUuid(uuid);
-    if (!await applicant.hasLink(linkUuid)) throw new ApplicantDoesntHaveLink(uuid, linkUuid);
-    await ApplicantLink.destroy({ where: { uuid: linkUuid } });
-    return applicant;
   },
   truncate: async () => {
     Applicant.truncate({ cascade: true });

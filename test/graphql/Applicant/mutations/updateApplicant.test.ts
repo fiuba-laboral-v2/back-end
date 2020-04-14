@@ -8,9 +8,6 @@ import { Applicant, ApplicantRepository } from "../../../../src/models/Applicant
 
 import { applicantMocks } from "../../../models/Applicant/mocks";
 import { careerMocks } from "../../../models/Career/mocks";
-import { random, lorem, internet } from "faker";
-
-import { pick } from "lodash";
 
 const UPDATE_APPLICANT = gql`
     mutation updateApplicant(
