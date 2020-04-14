@@ -1,4 +1,4 @@
-import { gql } from "apollo-server";
+import { ApolloError, gql } from "apollo-server";
 import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
@@ -59,6 +59,26 @@ describe("saveJobApplication", () => {
             uuid: applicant.uuid
           }
         }
+      );
+    });
+  });
+
+  describe("when the input values are invalid", () => {
+    it("should return an error if no offerUuid is provided", async () => {
+      const { errors } = await executeMutation(SAVE_JOB_APPLICATION, {
+        applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
+      });
+      expect(errors[0]).toEqual(
+        new ApolloError(`Variable "$offerUuid" of required type "String!" was not provided.`)
+      );
+    });
+
+    it("should return an error if no applicantUuid is provided", async () => {
+      const { errors } = await executeMutation(SAVE_JOB_APPLICATION, {
+        offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
+      });
+      expect(errors[0]).toEqual(
+        new ApolloError(`Variable "$applicantUuid" of required type "String!" was not provided.`)
       );
     });
   });
