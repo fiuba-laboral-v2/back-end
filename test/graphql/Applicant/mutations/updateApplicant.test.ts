@@ -67,7 +67,7 @@ describe("updateApplicant", () => {
     await Database.close();
   });
 
-  it("update all possible data", async () => {
+  it("update all possible data deleting all previous values", async () => {
     const applicant = await createApplicant();
     const newCareer = await CareerRepository.create(careerMocks.careerData());
     const dataToUpdate = {
@@ -91,8 +91,7 @@ describe("updateApplicant", () => {
         url: "https://some.url"
       }]
     };
-    const careersBeforeUpdate = await applicant.getCareers();
-    const capabilitiesBeforeUpdate = await applicant.getCapabilities();
+
     const {
       data: { updateApplicant }, errors
     } = await executeMutation(UPDATE_APPLICANT, dataToUpdate);
@@ -108,16 +107,14 @@ describe("updateApplicant", () => {
       updateApplicant.capabilities.map(c => c.description)
     ).toEqual(expect.arrayContaining(
       [
-        ...dataToUpdate.capabilities,
-        ...capabilitiesBeforeUpdate.map(c => c.description)
+        ...dataToUpdate.capabilities
       ]
     ));
     expect(
       updateApplicant.careers.map(c => c.code)
     ).toEqual(expect.arrayContaining(
       [
-        ...dataToUpdate.careers.map(c => c.code),
-        ...careersBeforeUpdate.map(c => c.code)
+        ...dataToUpdate.careers.map(c => c.code)
       ]
     ));
     expect(
@@ -139,149 +136,4 @@ describe("updateApplicant", () => {
       ]
     ));
   });
-
-  // describe("when a section exists", () => {
-  // let applicant: Applicant;
-  // let initialData;
-
-  // const addNewSection = async ({ uuid }, displayOrder) => {
-  //   initialData = {
-  //     uuid,
-  //     sections: [{ title: random.words(), text: lorem.paragraphs(), displayOrder }]
-  //   };
-  //   return ApplicantRepository.update(initialData);
-  // };
-
-  // it("should be able to add a new section", async () => {
-  //   applicant = await createApplicant();
-  //   await applicant.save();
-  //   await addNewSection(applicant, 1);
-  //   const params = {
-  //     uuid: applicant.uuid,
-  //     sections: [{ title: random.words(), text: lorem.paragraphs(), displayOrder: 2 }]
-  //   };
-  //   const {
-  //     data: { updateApplicant }, errors
-  //   } = await executeMutation(UPDATE_APPLICANT, params);
-
-
-  //   expect(updateApplicant.sections.length).toEqual(2);
-  //   expect(
-  //     updateApplicant.sections.map(({ title, text, displayOrder }) =>
-  //       ({ title, text, displayOrder })
-  //     )
-  //   ).toEqual(expect.arrayContaining(
-  //     [
-  //       ...initialData.sections.map(({ title, text, displayOrder }) =>
-  //         ({ title, text, displayOrder })),
-  //       ...params.sections.map(({ title, text, displayOrder }) =>
-  //         ({ title, text, displayOrder }))
-  //     ]
-  //   ));
-  // });
-
-  // it("should be able to update the fields of an existing section", async () => {
-  //   applicant = await createApplicant();
-  //   await applicant.save();
-  //   await addNewSection(applicant, 1);
-  //   const applicantWithMoreSections = await addNewSection(applicant, 2);
-  //   const [firstSection, SecondSection] = await applicantWithMoreSections.getSections();
-  //   const params = {
-  //     uuid: applicant.uuid,
-  //     sections: [
-  //       { uuid: firstSection.uuid, title: "New title", text: "New text", displayOrder: 1 }
-  //     ]
-  //   };
-
-  //   const {
-  //     data: { updateApplicant }, errors
-  //   } = await executeMutation(UPDATE_APPLICANT, params);
-
-  //   expect(errors).toBeUndefined();
-  //   expect(updateApplicant.sections.find(({ uuid }) => uuid === firstSection.uuid))
-  //     .toMatchObject({
-  //       uuid: firstSection.uuid, title: "New title", text: "New text", displayOrder: 1
-  //     });
-  //   expect(
-  //     updateApplicant.sections.map(({ title, text, displayOrder }) =>
-  //       ({ title, text, displayOrder })
-  //     )
-  //   ).toEqual(expect.arrayContaining(
-  //     [
-  //       ...params.sections.map(({ title, text, displayOrder }) =>
-  //         ({ title, text, displayOrder })),
-  //       pick(SecondSection, ["title", "text", "displayOrder"])
-  //     ]
-  //   ));
-  // });
-  // });
-
-  // describe("when a link exists", () => {
-  //   let applicant: Applicant;
-  //   let initialData;
-
-  //   const addNewLink = async ({ uuid }) => {
-  //     initialData = {
-  //       uuid,
-  //       links: [{ name: random.word(), url: internet.url() }]
-  //     };
-  //     return ApplicantRepository.update(initialData);
-  //   };
-
-  // it("should be able to add a new link", async () => {
-  //   applicant = await createApplicant();
-  //   await addNewLink(applicant);
-  //   const params = {
-  //     uuid: applicant.uuid,
-  //     links: [{ name: "other", url: "https://other.url" }]
-  //   };
-  //   const {
-  //     data: { updateApplicant }, errors
-  //   } = await executeMutation(UPDATE_APPLICANT, params);
-
-
-  //   expect(updateApplicant.links.length).toEqual(2);
-  //   expect(
-  //     updateApplicant.links.map(({ name, url }) => ({ name, url })
-  //     )
-  //   ).toEqual(expect.arrayContaining(
-  //     [
-  //       ...initialData.links.map(({ name, url }) => ({ name, url })),
-  //       ...params.links.map(({ name, url }) => ({ name, url }))
-  //     ]
-  //   ));
-  // });
-
-  // it("should be able to update the fields of an existing section", async () => {
-  //   applicant = await createApplicant();
-  //   await addNewLink(applicant);
-  //   const applicantWithMoreLinks = await addNewLink(applicant);
-  //   const [firstLink, SecondLink] = await applicantWithMoreLinks.getLinks();
-  //   const params = {
-  //     uuid: applicant.uuid,
-  //     links: [{ uuid: firstLink.uuid, name: "other", url: "https://other.url" }]
-  //   };
-
-  //   const {
-  //     data: { updateApplicant }, errors
-  //   } = await executeMutation(UPDATE_APPLICANT, params);
-
-  //   expect(errors).toBeUndefined();
-  //   expect(updateApplicant.links.find(({ uuid }) => uuid === firstLink.uuid))
-  //     .toMatchObject({
-  //       uuid: firstLink.uuid, name: "other", url: "https://other.url"
-  //     });
-  //   expect(
-  //     updateApplicant.links.map(({ name, url }) =>
-  //       ({ name, url })
-  //     )
-  //   ).toEqual(expect.arrayContaining(
-  //     [
-  //       ...params.links.map(({ name, url }) =>
-  //         ({ name, url })),
-  //       pick(SecondLink, ["name", "url"])
-  //     ]
-  //   ));
-  // });
-  // });
 });

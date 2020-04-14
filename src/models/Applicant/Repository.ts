@@ -7,6 +7,7 @@ import { ApplicantDoesntHaveSection } from "./Errors/ApplicantDoesntHaveSection"
 import Database from "../../config/Database";
 import { Transaction } from "sequelize";
 import { CareerApplicantRepository } from "../CareerApplicant/Repository";
+import { ApplicantCapabilityRepository } from "../ApplicantCapability/Repository";
 import { Section } from "./Section";
 import { SectionRepository } from "./Section/Repository";
 import { ApplicantLink, ApplicantLinkRepository } from "./Link";
@@ -95,7 +96,7 @@ export const ApplicantRepository = {
     transaction?: Transaction
   ) => {
     for (const applicantCareer of applicantCareers) {
-      await CareerApplicantRepository.updateOrCreate(
+      await CareerApplicantRepository.create(
         applicant,
         applicantCareer,
         transaction
@@ -109,23 +110,22 @@ export const ApplicantRepository = {
       sections = [],
       links = [],
       capabilities: newCapabilities = [],
-      careers,
+      careers = [],
       ...props
     }: IApplicantEditable
   ) => {
     const applicant = await ApplicantRepository.findByUuid(uuid);
-    const capabilities = await CapabilityRepository.findOrCreateByDescriptions(newCapabilities);
     await applicant.set(pick(props, ["name", "surname", "description"]));
 
     await SectionRepository.update(applicant, sections);
 
     await ApplicantLinkRepository.update(applicant, links);
 
-    return ApplicantRepository.save(
-      applicant,
-      careers || [],
-      capabilities
-    );
+    await CareerApplicantRepository.update(applicant, careers);
+
+    await ApplicantCapabilityRepository.update(applicant, newCapabilities);
+
+    return applicant.save();
   },
   deleteCapabilities: async (applicant: Applicant, descriptions: string[]) => {
     const uuids = (await applicant.getCapabilities())

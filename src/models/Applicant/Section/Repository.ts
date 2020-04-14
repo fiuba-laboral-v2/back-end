@@ -11,7 +11,7 @@ export const SectionRepository = {
     for (const section of sections) {
       sectionsUuid.push(await SectionRepository.updateOrCreate(applicant, section));
     }
-    Section.destroy({
+    return Section.destroy({
       where: {
         applicantUuid: applicant.uuid,
         ...(!isEmpty(sectionsUuid) && {

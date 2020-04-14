@@ -10,7 +10,7 @@ export const ApplicantLinkRepository = {
     for (const link of links) {
       linksUuid.push(await ApplicantLinkRepository.updateOrCreate(applicant, link));
     }
-    ApplicantLink.destroy({
+    return ApplicantLink.destroy({
       where: {
         applicantUuid: applicant.uuid,
         ...(!isEmpty(linksUuid) && {

@@ -156,7 +156,7 @@ describe("ApplicantRepository", () => {
       const applicantData = applicantMocks.applicantData([]);
 
       await expect(ApplicantRepository.findByPadron(applicantData.padron))
-      .rejects.toThrow(Errors.ApplicantNotFound);
+        .rejects.toThrow(Errors.ApplicantNotFound);
     });
   });
 
@@ -270,7 +270,23 @@ describe("ApplicantRepository", () => {
       ).toEqual(expect.arrayContaining(["CSS", "clojure"]));
     });
 
-    it("Should update by adding new careers", async () => {
+    it("Should update by deleting all capabilities if none is provided", async () => {
+      const { uuid } = await createApplicant();
+      const newProps: IApplicantEditable = {
+        uuid,
+        capabilities: ["CSS", "clojure"]
+      };
+      const applicant = await ApplicantRepository.update(newProps);
+      expect(
+        (await applicant.getCapabilities()).map(capability => capability.description)
+      ).toEqual(expect.arrayContaining(["CSS", "clojure"]));
+
+      await ApplicantRepository.update({ uuid });
+      expect((await applicant.getCapabilities()).length).toEqual(0);
+    });
+
+
+    it("Should update by keeping only the new careers", async () => {
       const applicant = await createApplicant();
       const newCareer = await CareerRepository.create(careerMocks.careerData());
       const newProps: IApplicantEditable = {
@@ -282,12 +298,11 @@ describe("ApplicantRepository", () => {
           }
         ]
       };
-      const careersBeforeUpdate = await applicant.getCareers();
+
       const updatedApplicant = await ApplicantRepository.update(newProps);
       expect(
         (await updatedApplicant.getCareers()).map(career => career.code)
       ).toEqual(expect.arrayContaining([
-        ...careersBeforeUpdate.map(career => career.code),
         newCareer.code
       ]));
     });
@@ -401,8 +416,8 @@ describe("ApplicantRepository", () => {
       const newProps: IApplicantEditable = {
         uuid: applicant.uuid
       };
-      const updatedApplicant = await ApplicantRepository.update(newProps);
-      expect((await updatedApplicant.getLinks()).length).toEqual(0);
+      await ApplicantRepository.update(newProps);
+      expect((await applicant.getLinks()).length).toEqual(0);
     });
 
     it("should not throw an error when adding an existing capability", async () => {
@@ -432,6 +447,30 @@ describe("ApplicantRepository", () => {
         applicant.uuid, career.code
       );
       expect(careerApplicant.creditsCount).toEqual(newProps.careers[0].creditsCount);
+    });
+
+    it("Should update by deleting all applicant careers if none is provided", async () => {
+      const applicant = await createApplicant();
+      const [career] = await applicant.getCareers();
+      const newProps: IApplicantEditable = {
+        uuid: applicant.uuid,
+        careers: [
+          {
+            code: career.code,
+            creditsCount: 100
+          }
+        ]
+      };
+      await ApplicantRepository.update(newProps);
+
+      const careerApplicant = await CareerApplicantRepository.findByApplicantAndCareer(
+        applicant.uuid, career.code
+      );
+      expect(careerApplicant.creditsCount).toEqual(newProps.careers[0].creditsCount);
+
+      await ApplicantRepository.update({ uuid: applicant.uuid });
+
+      expect((await applicant.getCareers()).length).toEqual(0);
     });
   });
 
