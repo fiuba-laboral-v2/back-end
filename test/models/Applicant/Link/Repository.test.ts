@@ -3,6 +3,7 @@ import Database from "../../../../src/config/Database";
 import { Applicant } from "../../../../src/models/Applicant";
 import { ApplicantLinkRepository } from "../../../../src/models/Applicant/Link";
 import { random, internet } from "faker";
+import { UserRepository } from "../../../../src/models/User/Repository";
 
 describe("ApplicantLinkRepository", () => {
   let applicant: Applicant;
@@ -12,17 +13,20 @@ describe("ApplicantLinkRepository", () => {
   });
 
   beforeEach(async () => {
-    await Applicant.truncate({ cascade: true });
+    await UserRepository.truncate();
     const myApplicant = new Applicant({
       name: "Bruno",
       surname: "Diaz",
       padron: 1,
       description: "Batman",
-      credits: 150
+      credits: 150,
+      userUuid: (await UserRepository.create({
+        email: "sblanco@yahoo.com",
+        password: "fdmgkfHGH4353"
+      })).uuid
     });
     applicant = await myApplicant.save();
   });
-
 
   afterAll(async () => {
     await Applicant.truncate({ cascade: true });
