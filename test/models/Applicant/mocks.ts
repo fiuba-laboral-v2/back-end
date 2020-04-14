@@ -1,5 +1,5 @@
 import faker from "faker";
-import { IApplicant, TSection } from "../../../src/models/Applicant";
+import { IApplicant, TSection, ApplicantRepository } from "../../../src/models/Applicant";
 import { Career } from "../../../src/models/Career";
 
 interface IApplicantsData {
@@ -32,6 +32,16 @@ const applicantMocks = {
   ) => (
     [...Array(numberOfApplicantsData)].map(
       _ => applicantMocks.applicantData(careers, capabilitiesDescriptions)
+    )
+  ),
+  createFourApplicantsWithMinimumData: () => (
+    Promise.all(
+      [
+        { name: "Sebastian", surname: "Blanco", padron: 98539, careers: [] },
+        { name: "Dylan", surname: "Alvarez", padron: 98225, careers: [] },
+        { name: "Manuel", surname: "Llauro", padron: 95736, careers: [] },
+        { name: "Mariano", surname: "Beiro", padron: 85539, careers: [] }
+      ].map(data => ApplicantRepository.create(data))
     )
   )
 };

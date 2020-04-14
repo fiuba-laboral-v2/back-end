@@ -75,19 +75,6 @@ export const ApplicantRepository = {
 
     return applicant;
   },
-  deleteByUuid: async (uuid: string) => {
-    const transaction = await Database.transaction();
-    try {
-      await ApplicantCapability.destroy({ where: { applicantUuid: uuid }, transaction });
-      await CareerApplicant.destroy({ where: { applicantUuid: uuid }, transaction });
-      const applicantDestroyed = await Applicant.destroy({ where: { uuid }, transaction });
-      await transaction.commit();
-      return applicantDestroyed;
-    } catch (error) {
-      await transaction.rollback();
-      throw new Error(error);
-    }
-  },
   updateOrCreateApplicantCapabilities: async (
     applicant: Applicant,
     capabilities: Capability[],
