@@ -5,13 +5,13 @@ import { CareerApplicant } from "../CareerApplicant";
 import { ApplicantNotFound } from "./Errors/ApplicantNotFound";
 import { ApplicantDoesntHaveSection } from "./Errors/ApplicantDoesntHaveSection";
 import Database from "../../config/Database";
-import pick from "lodash/pick";
 import { Transaction } from "sequelize";
 import { CareerApplicantRepository } from "../CareerApplicant/Repository";
 import { Section } from "./Section";
 import { SectionRepository } from "./Section/Repository";
 import { ApplicantLink, ApplicantLinkRepository } from "./Link";
 import { ApplicantDoesntHaveLink } from "./Errors/ApplicantDoesntHaveLink";
+import pick from "lodash/pick";
 
 export const ApplicantRepository = {
   create: async (
@@ -129,12 +129,11 @@ export const ApplicantRepository = {
     const applicant = await ApplicantRepository.findByUuid(uuid);
     const capabilities = await CapabilityRepository.findOrCreateByDescriptions(newCapabilities);
     await applicant.set(pick(props, ["name", "surname", "description"]));
-    for (const section of sections) {
-      await SectionRepository.updateOrCreate(applicant, section);
-    }
-    for (const link of links) {
-      await ApplicantLinkRepository.updateOrCreate(applicant, link);
-    }
+
+    await SectionRepository.update(applicant, sections);
+
+    await ApplicantLinkRepository.update(applicant, links);
+
     return ApplicantRepository.save(
       applicant,
       careers || [],

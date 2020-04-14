@@ -1,13 +1,32 @@
 import { TLink } from "./Interface";
 import { Applicant } from "../Model";
 import { ApplicantLink } from ".";
-import { omit } from "lodash";
+import { Op } from "sequelize";
+import { omit, isEmpty } from "lodash";
 
 export const ApplicantLinkRepository = {
+  update: async (applicant: Applicant, links: TLink[]) => {
+    const linksUuid: string[] = [];
+    for (const link of links) {
+      linksUuid.push(await ApplicantLinkRepository.updateOrCreate(applicant, link));
+    }
+    ApplicantLink.destroy({
+      where: {
+        applicantUuid: applicant.uuid,
+        ...(!isEmpty(linksUuid) && {
+          [Op.not]: {
+            uuid: linksUuid
+          }
+        })
+      }
+    });
+  },
   updateOrCreate: async (applicant: Applicant, link: TLink) => {
     if (link.uuid && (await applicant.hasLink(link.uuid))) {
-      return ApplicantLink.update(omit(link, ["uuid"]), { where: { uuid: link.uuid } });
+      await ApplicantLink.update(omit(link, ["uuid"]), { where: { uuid: link.uuid } });
+      return link.uuid;
     }
-    return applicant.createLink(link);
+    const newLink = await applicant.createLink(link);
+    return newLink.uuid;
   }
 };

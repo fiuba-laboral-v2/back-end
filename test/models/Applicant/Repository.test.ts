@@ -291,7 +291,7 @@ describe("ApplicantRepository", () => {
       ]));
     });
 
-    it("Should update by adding new sections", async () => {
+    it("should update by keeping only the new sections", async () => {
       const applicant = await createApplicant();
 
       const props: IApplicantEditable = {
@@ -317,12 +317,40 @@ describe("ApplicantRepository", () => {
       expect(
         (await updatedApplicant.getSections()).map(section => section.title)
       ).toEqual(expect.arrayContaining([
-        ...props.sections.map(section => section.title),
         ...newProps.sections.map(section => section.title)
       ]));
     });
 
-    it("Should update by adding new links", async () => {
+    it("should update deleting all sections if none is provided", async () => {
+      const applicant = await createApplicant();
+
+      const props: IApplicantEditable = {
+        uuid: applicant.uuid,
+        sections: [
+          {
+            title: "myTitle",
+            text: "some description",
+            displayOrder: 1
+          },
+          {
+            title: "new myTitle",
+            text: "new some description",
+            displayOrder: 2
+          }
+        ]
+      };
+
+      await ApplicantRepository.update(props);
+
+      const newProps: IApplicantEditable = {
+        uuid: applicant.uuid,
+        sections: []
+      };
+      const updatedApplicant = await ApplicantRepository.update(newProps);
+      expect((await updatedApplicant.getSections()).length).toEqual(0);
+    });
+
+    it("Should update by keeping only the new links", async () => {
       const applicant = await createApplicant();
 
       const props: IApplicantEditable = {
@@ -346,9 +374,34 @@ describe("ApplicantRepository", () => {
       expect(
         (await updatedApplicant.getLinks()).map(link => link.name)
       ).toEqual(expect.arrayContaining([
-        ...props.links.map(link => link.name),
         ...newProps.links.map(link => link.name)
       ]));
+    });
+
+    it("should update deleting all links if none is provided", async () => {
+      const applicant = await createApplicant();
+
+      const props: IApplicantEditable = {
+        uuid: applicant.uuid,
+        links: [
+          {
+            name: random.word(),
+            url: internet.url()
+          },
+          {
+            name: "new name",
+            url: internet.url()
+          }
+        ]
+      };
+
+      await ApplicantRepository.update(props);
+
+      const newProps: IApplicantEditable = {
+        uuid: applicant.uuid
+      };
+      const updatedApplicant = await ApplicantRepository.update(newProps);
+      expect((await updatedApplicant.getLinks()).length).toEqual(0);
     });
 
     it("should not throw an error when adding an existing capability", async () => {
