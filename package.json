@@ -85,7 +85,7 @@
     "unstash": "git stash pop",
     "check-unstaged": "bash scripts/check_unstaged.sh",
     "build": "tsc --project .",
-    "build-migrations": "tsc -p src/migrations",
+    "build-migrations": "yarn clean:compiled-migrations && tsc -p src/migrations",
     "clean": "rm -rf dist",
     "clean:compiled-migrations": "rm -rf dist_migrations",
     "db:create": "sequelize db:create",

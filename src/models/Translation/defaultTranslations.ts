@@ -42,6 +42,7 @@ export const defaultTranslations = {
       title: "Crear tu cuenta",
       email: "Email",
       password: "Contraseña",
+      passwordConfirm: "Confirmar contraseña",
       name: "Nombre",
       surname: "Apellido",
       padron: "Padron",
