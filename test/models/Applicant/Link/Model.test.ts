@@ -2,6 +2,7 @@ import Database from "../../../../src/config/Database";
 import { Applicant } from "../../../../src/models/Applicant";
 import { ApplicantLink } from "../../../../src/models/Applicant/Link";
 import { internet, random } from "faker";
+import { UserRepository } from "../../../../src/models/User/Repository";
 
 describe("ApplicantLink model", () => {
   let applicant: Applicant;
@@ -15,7 +16,11 @@ describe("ApplicantLink model", () => {
       surname: "Diaz",
       padron: 1,
       description: "Batman",
-      credits: 150
+      credits: 150,
+      userUuid: (await UserRepository.create({
+        email: "sblanco@yahoo.com",
+        password: "fdmgkfHGH4353"
+      })).uuid
     });
     applicant = await myApplicant.save();
   });
