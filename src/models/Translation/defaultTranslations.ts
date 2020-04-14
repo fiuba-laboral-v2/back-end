@@ -1,8 +1,8 @@
 export const defaultTranslations = {
   logOut: "Cerrar sesión",
-  logIn: "Iniciar sesión",
   login: {
-    title: "Ingresar",
+    prompt: "Iniciar sesión",
+    enter: "Ingresar",
     email: "Email",
     password: "Contraseña"
   },
