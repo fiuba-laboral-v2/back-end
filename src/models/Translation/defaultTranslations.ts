@@ -46,7 +46,7 @@ export const defaultTranslations = {
       name: "Nombre",
       surname: "Apellido",
       padron: "Padron",
-      careersTitle: "Elegi tu carrera",
+      careersTitle: "Elegí tu carrera",
       career: "Carrera",
       credits: "Créditos",
       submit: "Guardar"
