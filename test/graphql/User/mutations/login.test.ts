@@ -16,9 +16,7 @@ describe("User login query", () => {
     await Database.setConnection();
   });
 
-  beforeEach(async () => {
-    await User.destroy({ truncate: true });
-  });
+  beforeEach(() => UserRepository.truncate());
 
   afterAll(async () => {
     await Database.close();

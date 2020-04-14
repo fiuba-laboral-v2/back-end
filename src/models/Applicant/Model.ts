@@ -1,10 +1,10 @@
 import {
+  BelongsTo,
   BelongsToMany,
   Column,
   DataType,
   ForeignKey,
   HasMany,
-  HasOne,
   Is,
   Model,
   Table
@@ -68,7 +68,7 @@ export class Applicant extends Model<Applicant> {
   })
   public userUuid: string;
 
-  @HasOne(() => User, "userUuid")
+  @BelongsTo(() => User, "userUuid")
   public user: User;
 
   @HasMany(() => Section)
