@@ -8,13 +8,14 @@ import { internet, random } from "faker";
 import { careerMocks } from "../Career/mocks";
 import { capabilityMocks } from "../Capability/mocks";
 import { applicantMocks } from "./mocks";
+import { UserRepository } from "../../../src/models/User/Repository";
 
 describe("ApplicantRepository", () => {
   beforeAll(() => Database.setConnection());
 
   beforeEach(async () => {
     await CareerApplicantRepository.truncate();
-    await ApplicantRepository.truncate();
+    await UserRepository.truncate();
     await CareerRepository.truncate();
     await CapabilityRepository.truncate();
   });
@@ -25,7 +26,13 @@ describe("ApplicantRepository", () => {
     it("creates a new applicant", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
       const applicantData = applicantMocks.applicantData([career]);
-      const applicant = await ApplicantRepository.create(applicantData);
+      const applicant = await ApplicantRepository.create({
+        ...applicantData,
+        user: {
+          email: "hello@gmail.com",
+          password: "SecurePasword1010"
+        }
+      });
       const applicantCareers = await applicant.getCareers();
 
       expect(applicant).toEqual(expect.objectContaining({

@@ -12,6 +12,7 @@ import { Section } from "./Section";
 import { SectionRepository } from "./Section/Repository";
 import { ApplicantLink, ApplicantLinkRepository } from "./Link";
 import { ApplicantDoesntHaveLink } from "./Errors/ApplicantDoesntHaveLink";
+import { UserRepository } from "../User/Repository";
 
 export const ApplicantRepository = {
   create: async (
@@ -21,7 +22,8 @@ export const ApplicantRepository = {
       padron,
       description,
       careers: applicantCareers = [],
-      capabilities = []
+      capabilities = [],
+      user
     }: IApplicant
   ) => {
     const capabilityModels: Capability[] = [];
@@ -29,11 +31,13 @@ export const ApplicantRepository = {
     for (const capability of capabilities) {
       capabilityModels.push(await CapabilityRepository.findOrCreate(capability));
     }
+    const { uuid: userUuid } = await UserRepository.create(user);
     const applicant = new Applicant({
       name,
       surname,
       padron,
-      description
+      description,
+      userUuid: userUuid
     });
     return ApplicantRepository.save(applicant, applicantCareers, capabilityModels);
   },
