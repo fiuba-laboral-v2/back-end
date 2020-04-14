@@ -6,9 +6,12 @@ import {
   Is,
   Model,
   Table,
-  Unique
+  Unique,
+  HasOne
 } from "sequelize-typescript";
 import { compare, hashSync } from "bcrypt";
+import { HasOneGetAssociationMixin } from "sequelize";
+import { Applicant } from "../Applicant/Model";
 import { validateEmail, validatePassword } from "validations-fiuba-laboral-v2";
 
 @Table
@@ -37,6 +40,11 @@ export class User extends Model<User> {
   @AllowNull(false)
   @Column(DataType.STRING)
   public password: string;
+
+  @HasOne(() => Applicant, "userUuid")
+  public applicant: Applicant;
+
+  public getApplicant: HasOneGetAssociationMixin<Applicant>;
 
   public setPassword(password: string) {
     validatePassword(password);

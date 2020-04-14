@@ -1,6 +1,6 @@
-import { User } from "../../../src/models/User/Model";
-import { PasswordWithoutDigitsError, InvalidEmailError } from "validations-fiuba-laboral-v2";
 import Database from "../../../src/config/Database";
+import { User } from "../../../src/models/User";
+import { PasswordWithoutDigitsError, InvalidEmailError } from "validations-fiuba-laboral-v2";
 import { UserRepository } from "../../../src/models/User/Repository";
 
 describe("User", () => {
