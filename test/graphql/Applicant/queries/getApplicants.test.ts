@@ -2,10 +2,8 @@ import { gql } from "apollo-server";
 import { executeQuery } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
-import { CareerRepository } from "../../../../src/models/Career";
+import { Career, CareerRepository } from "../../../../src/models/Career";
 import { ApplicantRepository, ApplicantSerializer } from "../../../../src/models/Applicant";
-import { Career } from "../../../../src/models/Career";
-import { Applicant } from "../../../../src/models/Applicant";
 
 import { applicantMocks } from "../../../models/Applicant/mocks";
 import { careerMocks } from "../../../models/Career/mocks";
@@ -71,22 +69,39 @@ describe("getApplicants", () => {
 
     it("should fetch all the applicant", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantsData = applicantMocks.applicantsData(
+      const applicantData = applicantMocks.applicantData([career]);
+      const applicantsData = [
+        applicantData,
         {
-          careers: [career],
-          capabilitiesDescriptions: [],
-          numberOfApplicantsData: 2
+          ...applicantData,
+          user: {
+            email: "another_user@hotmail.com",
+            password: "dsfsGRDFGFD45354"
+          }
         }
-      );
-      const applicants = [];
-      for (const applicantData of applicantsData) {
-        applicants.push(await ApplicantRepository.create(applicantData));
-      }
-
+      ];
+      await Promise.all(applicantsData.map(attributes => ApplicantRepository.create(attributes)));
       const { data, errors } = await executeQuery(GET_APPLICANTS);
       expect(errors).toBeUndefined();
-      expect(data.getApplicants).toEqual(expect.arrayContaining(
-        await Promise.all(applicants.map(applicant => ApplicantSerializer.serialize(applicant)))
+      expect(data.getApplicants).toEqual(applicantsData.map(
+        (
+          {
+            careers,
+            description,
+            name,
+            padron,
+            sections,
+            surname
+          }
+        ) => expect.objectContaining({
+          careers: careers.map(careerAttributes => expect.objectContaining(careerAttributes)),
+          description: description,
+          links: [],
+          name,
+          padron,
+          sections,
+          surname
+        })
       ));
     });
   });

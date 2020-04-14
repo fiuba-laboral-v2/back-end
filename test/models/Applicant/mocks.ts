@@ -1,12 +1,6 @@
 import { ApplicantRepository, IApplicant, TSection } from "../../../src/models/Applicant";
 import { Career } from "../../../src/models/Career";
 
-interface IApplicantsData {
-  careers: Career[];
-  capabilitiesDescriptions: string[];
-  numberOfApplicantsData: number;
-}
-
 const applicantMocks = {
   applicantData: (
     careers: Career[],
@@ -25,17 +19,6 @@ const applicantMocks = {
       password: "SecurePasword1010"
     }
   }),
-  applicantsData: (
-    {
-      careers,
-      capabilitiesDescriptions = [],
-      numberOfApplicantsData
-    }: IApplicantsData
-  ) => (
-    [...Array(numberOfApplicantsData)].map(
-      _ => applicantMocks.applicantData(careers, capabilitiesDescriptions)
-    )
-  ),
   createFourApplicantsWithMinimumData: () => (
     Promise.all(
       [

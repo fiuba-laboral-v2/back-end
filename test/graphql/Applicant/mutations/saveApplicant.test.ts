@@ -2,9 +2,7 @@ import { gql } from "apollo-server";
 import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
-import { CareerRepository } from "../../../../src/models/Career";
-import { Career } from "../../../../src/models/Career";
-import { Applicant } from "../../../../src/models/Applicant";
+import { Career, CareerRepository } from "../../../../src/models/Career";
 
 import { applicantMocks } from "../../../models/Applicant/mocks";
 import { careerMocks } from "../../../models/Career/mocks";
@@ -15,11 +13,12 @@ import { UserRepository } from "../../../../src/models/User/Repository";
 const queryWithAllData = gql`
   mutation SaveApplicant(
     $name: String!, $surname: String!, $padron: Int!, $description: String,
-    $careers: [CareerCredits]!, $capabilities: [String]
+    $careers: [CareerCredits]!, $capabilities: [String], $user: UserInput!
     ) {
     saveApplicant(
       name: $name, surname: $surname, padron: $padron,
-      description: $description, careers: $careers, capabilities: $capabilities
+      description: $description, careers: $careers, capabilities: $capabilities,
+      user: $user
     ) {
       name
       surname
@@ -41,10 +40,11 @@ const queryWithAllData = gql`
 
 const queryWithOnlyObligatoryData = gql`
   mutation SaveApplicant (
-    $name: String!, $surname: String!, $padron: Int!, $careers: [CareerCredits]!
+    $name: String!, $surname: String!, $padron: Int!,
+    $careers: [CareerCredits]!, $user: UserInput!
   ) {
     saveApplicant(
-      name: $name, surname: $surname, padron: $padron, careers: $careers
+        name: $name, surname: $surname, padron: $padron, careers: $careers, user: $user
     ) {
       name
       surname
@@ -67,6 +67,8 @@ describe("saveApplicant", () => {
     await UserRepository.truncate();
   });
 
+  beforeEach(() => UserRepository.truncate());
+
   afterAll(async () => {
     await Database.close();
   });
@@ -76,7 +78,7 @@ describe("saveApplicant", () => {
       const career = await CareerRepository.create(careerMocks.careerData());
       const applicantData = applicantMocks.applicantData([career]);
 
-      const {data, errors} = await executeMutation(queryWithAllData, {
+      const { data, errors } = await executeMutation(queryWithAllData, {
         ...applicantData
       });
       expect(errors).toBeUndefined();
@@ -99,10 +101,10 @@ describe("saveApplicant", () => {
     it("creates companyProfile with only obligatory data", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
       const applicantData = applicantMocks.applicantData([career]);
-      const {data, errors}  = await executeMutation(
+      const { data, errors } = await executeMutation(
         queryWithOnlyObligatoryData,
         {
-          ...pick(applicantData, ["name", "surname", "padron", "credits", "careers"])
+          ...pick(applicantData, ["name", "surname", "padron", "credits", "careers", "user"])
         }
       );
       expect(errors).toBeUndefined();

@@ -64,6 +64,8 @@ describe("updateApplicant", () => {
     await UserRepository.truncate();
   });
 
+  beforeEach(() => UserRepository.truncate());
+
   afterAll(async () => {
     await Database.close();
   });
