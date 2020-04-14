@@ -28,20 +28,21 @@ export const CareerApplicantRepository = {
   },
   update: async (
     applicant: Applicant,
-    applicantCareers: IApplicantCareer[]
-    // transaction?: Transaction
+    applicantCareers: IApplicantCareer[],
+    transaction?: Transaction
   ) => {
     await CareerApplicant.destroy({
       where: {
         applicantUuid: applicant.uuid
-      }
+      },
+      transaction
     });
 
     for (const applicantCareer of applicantCareers) {
       await CareerApplicantRepository.create(
         applicant,
-        applicantCareer
-        // transaction
+        applicantCareer,
+        transaction
       );
     }
   },

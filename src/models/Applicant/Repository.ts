@@ -111,17 +111,24 @@ export const ApplicantRepository = {
     }: IApplicantEditable
   ) => {
     const applicant = await ApplicantRepository.findByUuid(uuid);
-    await applicant.set(pick(props, ["name", "surname", "description"]));
+    const transaction = await Database.transaction();
+    try {
+      await applicant.set(pick(props, ["name", "surname", "description"]));
 
-    await SectionRepository.update(applicant, sections);
+      await SectionRepository.update(applicant, sections, transaction);
 
-    await ApplicantLinkRepository.update(applicant, links);
+      await ApplicantLinkRepository.update(applicant, links, transaction);
 
-    await CareerApplicantRepository.update(applicant, careers);
+      await CareerApplicantRepository.update(applicant, careers, transaction);
 
-    await ApplicantCapabilityRepository.update(applicant, newCapabilities);
+      await ApplicantCapabilityRepository.update(applicant, newCapabilities, transaction);
 
-    return applicant.save();
+      await transaction.commit();
+      return applicant.save();
+    } catch (error) {
+      await transaction.rollback();
+      throw new Error(error);
+    }
   },
   truncate: async () => {
     Applicant.truncate({ cascade: true });
