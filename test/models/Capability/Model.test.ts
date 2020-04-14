@@ -3,6 +3,7 @@ import { Applicant } from "../../../src/models/Applicant";
 import { Capability } from "../../../src/models/Capability";
 import { ApplicantCapability } from "../../../src/models/ApplicantCapability";
 import { UniqueConstraintError } from "sequelize";
+import { UserRepository } from "../../../src/models/User/Repository";
 
 describe("Applicant model", () => {
   beforeAll(async () => {
@@ -11,7 +12,7 @@ describe("Applicant model", () => {
 
   beforeEach(async () => {
     await Capability.truncate({ cascade: true });
-    await Applicant.truncate({ cascade: true });
+    await UserRepository.truncate();
   });
 
   afterAll(async () => {
@@ -33,7 +34,11 @@ describe("Applicant model", () => {
       surname: "Diaz",
       padron: 1,
       description: "Batman",
-      credits: 150
+      credits: 150,
+      userUuid: (await UserRepository.create({
+        email: "sblanco@yahoo.com",
+        password: "fdmgkfHGH4353"
+      })).uuid
     });
     const capability: Capability = new Capability({ description: "Python" });
     applicant.capabilities = [capability];
