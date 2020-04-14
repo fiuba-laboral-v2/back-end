@@ -1,4 +1,3 @@
-import faker from "faker";
 import { ApplicantRepository, IApplicant, TSection } from "../../../src/models/Applicant";
 import { Career } from "../../../src/models/Career";
 
@@ -14,13 +13,12 @@ const applicantMocks = {
     capabilitiesDescriptions: string[] = [],
     sections: TSection[] = []
   ): IApplicant => ({
-    name: faker.name.firstName(),
-    surname: faker.name.lastName(),
-    padron: faker.random.number(),
-    description: faker.random.words(),
+    name: "Sebastián Ezequiel",
+    surname: "Blanco",
+    padron: 98539,
+    description: "Programo en TypeScript",
     careers: careers.map(({ code, credits }) => ({ code, creditsCount: credits - 1 })),
-    capabilities: capabilitiesDescriptions.length === 0 ?
-      [faker.random.words()] : capabilitiesDescriptions,
+    capabilities: capabilitiesDescriptions.length === 0 ? ["Python"] : capabilitiesDescriptions,
     sections,
     user: {
       email: "hello@gmail.com",
@@ -48,7 +46,7 @@ const applicantMocks = {
           careers: [],
           user: {
             email: "sblanco@fi.uba.ar",
-            password: "ASDqwe234"
+            password: "ASDqfdsfsdfwe234"
           }
         },
         {
@@ -58,7 +56,7 @@ const applicantMocks = {
           careers: [],
           user: {
             email: "dalvarez@fi.uba.ar",
-            password: "ASDqwe234"
+            password: "ASDqfedsfswe234"
           }
         },
         {
@@ -68,7 +66,7 @@ const applicantMocks = {
           careers: [],
           user: {
             email: "mllauro@fi.uba.ar",
-            password: "ASDqwe234"
+            password: "ASDfewfewqwe234"
           }
         },
         {
@@ -78,7 +76,7 @@ const applicantMocks = {
           careers: [],
           user: {
             email: "mbeiro@fi.uba.ar",
-            password: "ASDqwe234"
+            password: "ASDqwegregrdfg234"
           }
         }
       ].map(data => ApplicantRepository.create(data))
