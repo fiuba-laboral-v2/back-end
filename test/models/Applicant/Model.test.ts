@@ -6,6 +6,8 @@ import { ApplicantCapability } from "../../../src/models/ApplicantCapability";
 import { Capability } from "../../../src/models/Capability";
 import { lorem, random } from "faker";
 import { NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
+import { UserRepository } from "../../../src/models/User/Repository";
+import { User } from "../../../src/models/User";
 
 
 describe("Applicant model", () => {
@@ -14,7 +16,7 @@ describe("Applicant model", () => {
   });
 
   beforeEach(async () => {
-    await Applicant.truncate({ cascade: true });
+    await UserRepository.truncate();
     await Career.truncate({ cascade: true });
   });
 
@@ -48,19 +50,20 @@ describe("Applicant model", () => {
 
   it("Persist the many to many relation between Applicant, Career and Capability", async () => {
     await Capability.truncate({ cascade: true });
-    const applicant: Applicant = new Applicant(params);
+    const applicant: Applicant = new Applicant({
+      ...params,
+      userUuid: (await UserRepository.create({
+        email: "sblanco@yahoo.com",
+        password: "fdmgkfHGH4353"
+      })).uuid
+    });
     const career: Career = new Career({
       code: 3,
       description: "Ingeniería Mecanica",
       credits: 250
     });
     const capability: Capability = new Capability({ description: "Python" });
-
-    applicant.careers = [career];
-    applicant.capabilities = [capability];
-
-    career.applicants = [applicant];
-    capability.applicants = [applicant];
+    const user = new User({ email: "sblanco@yahoo.com", password: "fdmgkfHGH4353" });
 
     const savedCareer = await career.save();
     const savedCapability = await capability.save();
@@ -96,7 +99,13 @@ describe("Applicant model", () => {
   });
 
   it("creates a valid section with a title and a text", async () => {
-    const myApplicant: Applicant = new Applicant(params);
+    const myApplicant: Applicant = new Applicant({
+      ...params,
+      userUuid: (await UserRepository.create({
+        email: "sblanco@yahoo.com",
+        password: "fdmgkfHGH4353"
+      })).uuid
+    });
     const applicant = await myApplicant.save();
 
     const sectionParams = { title: random.words(), text: lorem.paragraphs() };
