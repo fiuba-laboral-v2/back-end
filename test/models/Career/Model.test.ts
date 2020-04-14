@@ -12,6 +12,8 @@ describe("Career model", () => {
     await Database.setConnection();
   });
 
+  beforeEach(() => UserRepository.truncate());
+
   afterAll(async () => {
     await Database.close();
   });
