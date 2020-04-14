@@ -26,13 +26,7 @@ describe("ApplicantRepository", () => {
     it("creates a new applicant", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
       const applicantData = applicantMocks.applicantData([career]);
-      const applicant = await ApplicantRepository.create({
-        ...applicantData,
-        user: {
-          email: "hello@gmail.com",
-          password: "SecurePasword1010"
-        }
-      });
+      const applicant = await ApplicantRepository.create(applicantData);
       const applicantCareers = await applicant.getCareers();
 
       expect(applicant).toEqual(expect.objectContaining({
@@ -64,7 +58,13 @@ describe("ApplicantRepository", () => {
       const career = await CareerRepository.create(careerMocks.careerData());
       await ApplicantRepository.create(applicantMocks.applicantData([career]));
       await expect(
-        ApplicantRepository.create(applicantMocks.applicantData([career]))
+        ApplicantRepository.create({
+          ...applicantMocks.applicantData([career]),
+          user: {
+            email: "fds@gmail.com",
+            password: "FDSFfdgfrt45"
+          }
+        })
       ).resolves.not.toThrow(Errors.ApplicantNotFound);
     });
 
