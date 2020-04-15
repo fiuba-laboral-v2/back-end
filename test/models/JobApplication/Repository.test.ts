@@ -33,12 +33,24 @@ describe("JobApplicationRepository", () => {
       );
     });
 
-    it("should return true if applicant applied for offer", async () => {
-      const { id: companyId } = await Company.create(companyMockData);
-      const offer = await Offer.create(OfferMocks.completeData(companyId));
-      const applicant = await ApplicantRepository.create(applicantMocks.applicantData([]));
-      await JobApplicationRepository.apply(applicant, offer);
-      expect(await JobApplicationRepository.hasApplied(applicant, offer)).toBe(true);
+    describe("hasApplied", () => {
+      const createOffer = async () => {
+        const { id: companyId } = await Company.create(companyMockData);
+        return Offer.create(OfferMocks.completeData(companyId));
+      };
+
+      it("should return true if applicant applied for offer", async () => {
+        const offer = await createOffer();
+        const applicant = await ApplicantRepository.create(applicantMocks.applicantData([]));
+        await JobApplicationRepository.apply(applicant, offer);
+        expect(await JobApplicationRepository.hasApplied(applicant, offer)).toBe(true);
+      });
+
+      it("should return false if applicant has not applied to the offer", async () => {
+        const offer = await createOffer();
+        const applicant = await ApplicantRepository.create(applicantMocks.applicantData([]));
+        expect(await JobApplicationRepository.hasApplied(applicant, offer)).toBe(false);
+      });
     });
   });
 });
