@@ -9,5 +9,16 @@ export const JobApplicationRepository = {
         offerUuid: offer.uuid,
         applicantUuid: applicant.uuid
       }
-    )
+    ),
+  hasApplied: async (applicant: Applicant, offer: Offer) => {
+    const jobApplication = await JobApplication.findOne(
+      {
+        where: {
+          offerUuid: offer.uuid,
+          applicantUuid: applicant.uuid
+        }
+      }
+    );
+    return jobApplication != null;
+  }
 };

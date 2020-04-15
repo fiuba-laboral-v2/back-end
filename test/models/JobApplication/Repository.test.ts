@@ -32,5 +32,13 @@ describe("JobApplicationRepository", () => {
         }
       );
     });
+
+    it("should return true if applicant applied for offer", async () => {
+      const { id: companyId } = await Company.create(companyMockData);
+      const offer = await Offer.create(OfferMocks.completeData(companyId));
+      const applicant = await ApplicantRepository.create(applicantMocks.applicantData([]));
+      await JobApplicationRepository.create(applicant, offer);
+      expect(await JobApplicationRepository.hasApplied(applicant, offer)).toBe(true);
+    });
   });
 });
