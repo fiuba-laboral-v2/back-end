@@ -192,5 +192,15 @@ describe("getOfferByUuid", () => {
       );
       expect(errors[0].message).toEqual("You are not an applicant");
     });
+
+    it("should return an error if there is no current user", async () => {
+      const { offer: { uuid } } = await createOffer();
+      const { errors } = await executeQuery(
+        GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
+        { uuid: uuid },
+        false
+      );
+      expect(errors[0].message).toEqual("You are not authenticated");
+    });
   });
 });
