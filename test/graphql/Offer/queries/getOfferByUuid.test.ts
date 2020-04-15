@@ -127,7 +127,7 @@ describe("getOfferByUuid", () => {
       );
     });
 
-    it("should find an offer by with hasApplied in true after", async () => {
+    it("should find an offer with hasApplied in true", async () => {
       const { offer } = await createOffer();
       const applicant = await ApplicantRepository.create(
         {
@@ -149,6 +149,28 @@ describe("getOfferByUuid", () => {
         }
       );
     });
+
+    it("should find an offer with hasApplied in false", async () => {
+      const { offer: { uuid } } = await createOffer();
+      await ApplicantRepository.create(
+        {
+          ...applicantMocks.applicantData([]),
+          user: { email: testCurrentUserEmail, password: "AValidPassword2" }
+        }
+      );
+      const { data: { getOfferByUuid }, errors } = await executeQuery(
+        GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
+        { uuid: uuid }
+      );
+      expect(errors).toBeUndefined();
+      expect(getOfferByUuid).toMatchObject(
+        {
+          uuid: uuid,
+          hasApplied: false
+
+        }
+      );
+    });
   });
 
   describe("when no offer exists", () => {
@@ -159,6 +181,16 @@ describe("getOfferByUuid", () => {
         { uuid: randomUuid }
       );
       expect(errors[0]).toEqual(new ApolloError(OfferNotFound.buildMessage(randomUuid)));
+    });
+
+    it("should return an error if the current user is not an applicant", async () => {
+      const { offer: { uuid } } = await createOffer();
+      await UserRepository.create({ email: testCurrentUserEmail, password: "AValidPassword2" });
+      const { errors } = await executeQuery(
+        GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
+        { uuid: uuid }
+      );
+      expect(errors[0].message).toEqual("You are not an applicant");
     });
   });
 });
