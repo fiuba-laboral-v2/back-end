@@ -1,15 +1,19 @@
 import { gql, ApolloError } from "apollo-server";
-import { executeQuery } from "../../ApolloTestClient";
+import { executeQuery, testCurrentUserEmail } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
 import { CareerRepository } from "../../../../src/models/Career";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { OfferRepository } from "../../../../src/models/Offer";
+import { JobApplicationRepository } from "../../../../src/models/JobApplication";
+import { ApplicantRepository } from "../../../../src/models/Applicant";
+import { UserRepository } from "../../../../src/models/User";
 import { OfferNotFound } from "../../../../src/models/Offer/Errors";
 
 import { careerMocks } from "../../../models/Career/mocks";
 import { companyMockData } from "../../../models/Company/mocks";
 import { OfferMocks } from "../../../models/Offer/mocks";
+import { applicantMocks } from "../../../models/Applicant/mocks";
 
 const GET_OFFER_BY_UUID = gql`
   query ($uuid: ID!) {
@@ -47,12 +51,22 @@ const GET_OFFER_BY_UUID = gql`
   }
 `;
 
+const GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION = gql`
+    query ($uuid: ID!) {
+        getOfferByUuid(uuid: $uuid) {
+            uuid
+            hasApplied
+        }
+    }
+`;
+
 describe("getOfferByUuid", () => {
   beforeAll(() => Database.setConnection());
 
   beforeEach(async () => {
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
+    await UserRepository.truncate();
   });
 
   afterAll(() => Database.close());
@@ -109,6 +123,29 @@ describe("getOfferByUuid", () => {
             phoneNumbers: await company.getPhoneNumbers(),
             photos: await company.getPhotos()
           }
+        }
+      );
+    });
+
+    it("should find an offer by with hasApplied in true after", async () => {
+      const { offer } = await createOffer();
+      const applicant = await ApplicantRepository.create(
+        {
+          ...applicantMocks.applicantData([]),
+          user: { email: testCurrentUserEmail, password: "AValidPassword2" }
+        }
+      );
+      await JobApplicationRepository.create(applicant, offer);
+      const { data: { getOfferByUuid }, errors } = await executeQuery(
+        GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
+        { uuid: offer.uuid }
+      );
+      expect(errors).toBeUndefined();
+      expect(getOfferByUuid).toMatchObject(
+        {
+          uuid: offer.uuid,
+          hasApplied: true
+
         }
       );
     });
