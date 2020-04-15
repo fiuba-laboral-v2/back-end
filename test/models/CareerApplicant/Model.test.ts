@@ -19,7 +19,7 @@ describe("CareerApplicant", () => {
   it("should throw an error if creditsCount is negative", async () => {
     const careerApplicant = new CareerApplicant({
       careerCode: (await createCareer()).code,
-      applicantUUID: "sarasa",
+      applicantUuid: "sarasa",
       creditsCount: -12
     });
     await expect(careerApplicant.validate()).rejects.toThrow(
@@ -31,7 +31,7 @@ describe("CareerApplicant", () => {
     const career = await createCareer();
     const careerApplicant = new CareerApplicant({
       careerCode: career.code,
-      applicantUUID: "sarasa",
+      applicantUuid: "sarasa",
       creditsCount: career.credits + 12
     });
     await expect(careerApplicant.validate()).rejects.toThrow(
@@ -43,7 +43,7 @@ describe("CareerApplicant", () => {
     const career = await createCareer();
     const careerApplicant = new CareerApplicant({
       careerCode: career.code,
-      applicantUUID: "sarasa",
+      applicantUuid: "sarasa",
       creditsCount: career.credits
     });
     await expect(careerApplicant.validate()).resolves.not.toThrow();

@@ -1,18 +1,15 @@
 import { Applicant, IApplicant, IApplicantCareer, IApplicantEditable } from "./index";
 import { Capability, CapabilityRepository } from "../Capability";
 import { ApplicantCapability } from "../ApplicantCapability";
-import { CareerApplicant } from "../CareerApplicant";
 import { ApplicantNotFound } from "./Errors/ApplicantNotFound";
-import { ApplicantDoesntHaveSection } from "./Errors/ApplicantDoesntHaveSection";
 import Database from "../../config/Database";
-import pick from "lodash/pick";
 import { Transaction } from "sequelize";
 import { CareerApplicantRepository } from "../CareerApplicant/Repository";
-import { Section } from "./Section";
+import { ApplicantCapabilityRepository } from "../ApplicantCapability/Repository";
 import { SectionRepository } from "./Section/Repository";
-import { ApplicantLink, ApplicantLinkRepository } from "./Link";
-import { ApplicantDoesntHaveLink } from "./Errors/ApplicantDoesntHaveLink";
+import { ApplicantLinkRepository } from "./Link";
 import { UserRepository } from "../User/Repository";
+import pick from "lodash/pick";
 
 export const ApplicantRepository = {
   create: async (
@@ -99,7 +96,7 @@ export const ApplicantRepository = {
     transaction?: Transaction
   ) => {
     for (const applicantCareer of applicantCareers) {
-      await CareerApplicantRepository.updateOrCreate(
+      await CareerApplicantRepository.create(
         applicant,
         applicantCareer,
         transaction
@@ -113,60 +110,29 @@ export const ApplicantRepository = {
       sections = [],
       links = [],
       capabilities: newCapabilities = [],
-      careers,
+      careers = [],
       ...props
     }: IApplicantEditable
   ) => {
     const applicant = await ApplicantRepository.findByUuid(uuid);
-    const capabilities = await CapabilityRepository.findOrCreateByDescriptions(newCapabilities);
-    await applicant.set(pick(props, ["name", "surname", "description"]));
-    for (const section of sections) {
-      await SectionRepository.updateOrCreate(applicant, section);
+    const transaction = await Database.transaction();
+    try {
+      await applicant.set(pick(props, ["name", "surname", "description"]));
+
+      await SectionRepository.update(applicant, sections, transaction);
+
+      await ApplicantLinkRepository.update(applicant, links, transaction);
+
+      await CareerApplicantRepository.update(applicant, careers, transaction);
+
+      await ApplicantCapabilityRepository.update(applicant, newCapabilities, transaction);
+
+      await transaction.commit();
+      return applicant.save();
+    } catch (error) {
+      await transaction.rollback();
+      throw new Error(error);
     }
-    for (const link of links) {
-      await ApplicantLinkRepository.updateOrCreate(applicant, link);
-    }
-    return ApplicantRepository.save(
-      applicant,
-      careers || [],
-      capabilities
-    );
-  },
-  deleteCapabilities: async (applicant: Applicant, descriptions: string[]) => {
-    const uuids = (await applicant.getCapabilities())
-      .filter(c => descriptions.includes(c.description))
-      .map(c => c.uuid);
-    await ApplicantCapability.destroy(
-      { where: { applicantUuid: applicant.uuid, capabilityUuid: uuids } }
-    );
-    return applicant;
-  },
-  deleteCareers: async (applicant: Applicant, careerCodes: string[]) => {
-    const codes = (await applicant.getCareers())
-      .filter(c => careerCodes.includes(c.code))
-      .map(c => c.code);
-    await CareerApplicant.destroy(
-      { where: { applicantUuid: applicant.uuid, careerCode: codes } }
-    );
-    return applicant;
-  },
-  deleteSection: async (uuid: string, sectionUuid: string) => {
-    const applicant = await ApplicantRepository.findByUuid(uuid);
-    if (await applicant.hasSection(sectionUuid)) {
-      await Section.destroy({
-        where: {
-          uuid: sectionUuid
-        }
-      });
-      return applicant;
-    }
-    throw new ApplicantDoesntHaveSection(uuid, sectionUuid);
-  },
-  deleteLink: async (uuid: string, linkUuid: string) => {
-    const applicant = await ApplicantRepository.findByUuid(uuid);
-    if (!await applicant.hasLink(linkUuid)) throw new ApplicantDoesntHaveLink(uuid, linkUuid);
-    await ApplicantLink.destroy({ where: { uuid: linkUuid } });
-    return applicant;
   },
   truncate: async () => {
     UserRepository.truncate();

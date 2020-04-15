@@ -90,6 +90,7 @@ export class Applicant extends Model<Applicant> {
   public capabilities: Capability[];
 
   public getCareers: HasManyGetAssociationsMixin<Career>;
+  public hasCareer: HasManyHasAssociationMixin<Career, string>;
 
   public getCapabilities: HasManyGetAssociationsMixin<Capability>;
   public getCareersApplicants: HasManyGetAssociationsMixin<CareerApplicant>;
