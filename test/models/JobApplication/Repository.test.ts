@@ -19,12 +19,12 @@ describe("JobApplicationRepository", () => {
 
   afterAll(() => Database.close());
 
-  describe("Create", () => {
+  describe("Apply", () => {
     it("should apply to a new jobApplication", async () => {
       const { id: companyId } = await Company.create(companyMockData);
       const offer = await Offer.create(OfferMocks.completeData(companyId));
       const applicant = await ApplicantRepository.create(applicantMocks.applicantData([]));
-      const jobApplication = await JobApplicationRepository.create(applicant, offer);
+      const jobApplication = await JobApplicationRepository.apply(applicant, offer);
       expect(jobApplication).toMatchObject(
         {
           offerUuid: offer.uuid,
@@ -37,7 +37,7 @@ describe("JobApplicationRepository", () => {
       const { id: companyId } = await Company.create(companyMockData);
       const offer = await Offer.create(OfferMocks.completeData(companyId));
       const applicant = await ApplicantRepository.create(applicantMocks.applicantData([]));
-      await JobApplicationRepository.create(applicant, offer);
+      await JobApplicationRepository.apply(applicant, offer);
       expect(await JobApplicationRepository.hasApplied(applicant, offer)).toBe(true);
     });
   });

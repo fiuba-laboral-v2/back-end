@@ -25,7 +25,7 @@ export const saveJobApplication = {
     if (!applicant) throw new ForbiddenError("You are not an applicant");
 
     const offer = await OfferRepository.findByUuid(offerUuid);
-    await JobApplicationRepository.create(applicant, offer);
+    await JobApplicationRepository.apply(applicant, offer);
     return { applicant, offer };
   }
 };

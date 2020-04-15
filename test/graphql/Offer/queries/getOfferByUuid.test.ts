@@ -135,7 +135,7 @@ describe("getOfferByUuid", () => {
           user: { email: testCurrentUserEmail, password: "AValidPassword2" }
         }
       );
-      await JobApplicationRepository.create(applicant, offer);
+      await JobApplicationRepository.apply(applicant, offer);
       const { data: { getOfferByUuid }, errors } = await executeQuery(
         GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
         { uuid: offer.uuid }
