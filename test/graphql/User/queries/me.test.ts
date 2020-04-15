@@ -2,14 +2,13 @@ import { gql } from "apollo-server";
 import { executeQuery, testCurrentUserEmail } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 import { UserRepository } from "../../../../src/models/User/Repository";
-import { User } from "../../../../src/models/User";
 
 const ME = gql`
-  query {
-    me {
-      email
+    query {
+        me {
+            email
+        }
     }
-  }
 `;
 
 describe("Current User query", () => {
@@ -18,7 +17,7 @@ describe("Current User query", () => {
   });
 
   beforeEach(async () => {
-    await User.destroy({ truncate: true });
+    await UserRepository.truncate();
   });
 
   afterAll(async () => {

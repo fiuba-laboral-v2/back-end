@@ -9,5 +9,6 @@ export const UserRepository = {
     if (!user) throw new UserNotFound(email);
 
     return user;
-  }
+  },
+  truncate: () => User.truncate({ cascade: true })
 };

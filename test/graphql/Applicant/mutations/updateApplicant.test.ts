@@ -4,10 +4,12 @@ import Database from "../../../../src/config/Database";
 
 import { CareerRepository } from "../../../../src/models/Career";
 import { Career } from "../../../../src/models/Career";
-import { Applicant, ApplicantRepository } from "../../../../src/models/Applicant";
+import { ApplicantRepository } from "../../../../src/models/Applicant";
 
 import { applicantMocks } from "../../../models/Applicant/mocks";
 import { careerMocks } from "../../../models/Career/mocks";
+
+import { UserRepository } from "../../../../src/models/User/Repository";
 
 const UPDATE_APPLICANT = gql`
     mutation updateApplicant(
@@ -57,8 +59,10 @@ describe("updateApplicant", () => {
   beforeAll(async () => {
     await Database.setConnection();
     await Career.truncate({ cascade: true });
-    await Applicant.truncate({ cascade: true });
+    await UserRepository.truncate();
   });
+
+  beforeEach(() => UserRepository.truncate());
 
   afterAll(async () => {
     await Database.close();

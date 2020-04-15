@@ -1,17 +1,18 @@
 import Database from "../../../src/config/Database";
-import { Applicant } from "../../../src/models/Applicant";
+import { ApplicantRepository } from "../../../src/models/Applicant";
 import { Company } from "../../../src/models/Company";
 import { Offer } from "../../../src/models/Offer";
 import { JobApplicationRepository } from "../../../src/models/JobApplication";
 import { companyMockData } from "../Company/mocks";
 import { applicantMocks } from "../Applicant/mocks";
 import { OfferMocks } from "../Offer/mocks";
+import { UserRepository } from "../../../src/models/User/Repository";
 
 describe("JobApplicationRepository", () => {
   beforeAll(() => Database.setConnection());
 
   beforeEach(async () => {
-    await Applicant.truncate({ cascade: true });
+    await UserRepository.truncate();
     await Company.truncate({ cascade: true });
     await Offer.truncate({ cascade: true });
   });
@@ -22,7 +23,7 @@ describe("JobApplicationRepository", () => {
     it("should apply to a new jobApplication", async () => {
       const { id: companyId } = await Company.create(companyMockData);
       const offer = await Offer.create(OfferMocks.completeData(companyId));
-      const applicant = await Applicant.create(applicantMocks.applicantData([]));
+      const applicant = await ApplicantRepository.create(applicantMocks.applicantData([]));
       const jobApplication = await JobApplicationRepository.create(applicant, offer);
       expect(jobApplication).toMatchObject(
         {

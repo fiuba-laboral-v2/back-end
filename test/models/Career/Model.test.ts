@@ -4,12 +4,15 @@ import { Career } from "../../../src/models/Career";
 import { CareerApplicant } from "../../../src/models/CareerApplicant";
 import { careerMocks } from "./mocks";
 import { NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
+import { UserRepository } from "../../../src/models/User/Repository";
 
 describe("Career model", () => {
   const careerData = careerMocks.careerData();
   beforeAll(async () => {
     await Database.setConnection();
   });
+
+  beforeEach(() => UserRepository.truncate());
 
   afterAll(async () => {
     await Database.close();
@@ -33,7 +36,11 @@ describe("Career model", () => {
       name: "Bruno",
       surname: "Diaz",
       padron: 1,
-      description: "Batman"
+      description: "Batman",
+      userUuid: (await UserRepository.create({
+        email: "sblanco@yahoo.com",
+        password: "fdmgkfHGH4353"
+      })).uuid
     });
     const career: Career = new Career({ ...careerMocks.careerData() });
     applicant.careers = [career];

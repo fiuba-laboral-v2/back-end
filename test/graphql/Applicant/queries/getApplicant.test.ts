@@ -12,6 +12,7 @@ import { careerMocks } from "../../../models/Career/mocks";
 import { ApolloError } from "apollo-server";
 
 import { random } from "faker";
+import { UserRepository } from "../../../../src/models/User/Repository";
 
 const GET_APPLICANT = gql`
   query GetApplicant($uuid: ID!) {
@@ -39,7 +40,7 @@ describe("getApplicantByPadron", () => {
   beforeAll(async () => {
     await Database.setConnection();
     await Career.truncate({ cascade: true });
-    await Applicant.truncate({ cascade: true });
+    await UserRepository.truncate();
   });
 
   afterAll(async () => {

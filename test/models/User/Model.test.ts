@@ -1,15 +1,14 @@
-import { User } from "../../../src/models/User/Model";
-import { PasswordWithoutDigitsError, InvalidEmailError } from "validations-fiuba-laboral-v2";
 import Database from "../../../src/config/Database";
+import { User } from "../../../src/models/User";
+import { PasswordWithoutDigitsError, InvalidEmailError } from "validations-fiuba-laboral-v2";
+import { UserRepository } from "../../../src/models/User/Repository";
 
 describe("User", () => {
   beforeAll(async () => {
     await Database.setConnection();
   });
 
-  beforeEach(async () => {
-    await User.destroy({ truncate: true });
-  });
+  beforeEach(() => UserRepository.truncate());
 
   afterAll(async () => {
     await Database.close();
