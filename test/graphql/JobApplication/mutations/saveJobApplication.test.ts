@@ -79,7 +79,7 @@ describe("saveJobApplication", () => {
       const { errors } = await executeMutation(
         SAVE_JOB_APPLICATION,
         { offerUuid: offer.uuid },
-        false
+        { loggedIn: false }
       );
       expect(errors[0].message).toEqual("You are not authenticated");
     });

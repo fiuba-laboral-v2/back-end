@@ -198,7 +198,7 @@ describe("getOfferByUuid", () => {
       const { errors } = await executeQuery(
         GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
         { uuid: uuid },
-        false
+        { loggedIn: false }
       );
       expect(errors[0].message).toEqual("You are not authenticated");
     });
