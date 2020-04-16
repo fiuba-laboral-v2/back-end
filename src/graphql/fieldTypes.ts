@@ -3,7 +3,8 @@ import {
   GraphQLInt as Int,
   GraphQLNonNull as nonNull,
   GraphQLString as String,
-  GraphQLList as List
+  GraphQLList as List,
+  GraphQLBoolean as Boolean
 } from "graphql";
 
 export {
@@ -11,5 +12,6 @@ export {
   Int,
   String,
   nonNull,
-  List
+  List,
+  Boolean
 };

@@ -1,7 +1,6 @@
 import { gql } from "apollo-server";
 import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
-import { User } from "../../../../src/models/User";
 import { UserRepository } from "../../../../src/models/User/Repository";
 import { JWT } from "../../../../src/JWT";
 

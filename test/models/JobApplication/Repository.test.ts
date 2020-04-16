@@ -19,18 +19,38 @@ describe("JobApplicationRepository", () => {
 
   afterAll(() => Database.close());
 
-  describe("Create", () => {
+  describe("Apply", () => {
     it("should apply to a new jobApplication", async () => {
       const { id: companyId } = await Company.create(companyMockData);
       const offer = await Offer.create(OfferMocks.completeData(companyId));
       const applicant = await ApplicantRepository.create(applicantMocks.applicantData([]));
-      const jobApplication = await JobApplicationRepository.create(applicant, offer);
+      const jobApplication = await JobApplicationRepository.apply(applicant, offer);
       expect(jobApplication).toMatchObject(
         {
           offerUuid: offer.uuid,
           applicantUuid: applicant.uuid
         }
       );
+    });
+
+    describe("hasApplied", () => {
+      const createOffer = async () => {
+        const { id: companyId } = await Company.create(companyMockData);
+        return Offer.create(OfferMocks.completeData(companyId));
+      };
+
+      it("should return true if applicant applied for offer", async () => {
+        const offer = await createOffer();
+        const applicant = await ApplicantRepository.create(applicantMocks.applicantData([]));
+        await JobApplicationRepository.apply(applicant, offer);
+        expect(await JobApplicationRepository.hasApplied(applicant, offer)).toBe(true);
+      });
+
+      it("should return false if applicant has not applied to the offer", async () => {
+        const offer = await createOffer();
+        const applicant = await ApplicantRepository.create(applicantMocks.applicantData([]));
+        expect(await JobApplicationRepository.hasApplied(applicant, offer)).toBe(false);
+      });
     });
   });
 });
