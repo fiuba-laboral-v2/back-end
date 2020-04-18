@@ -4,6 +4,8 @@ export const defaultTranslations = {
     prompt: "Iniciar sesión",
     enter: "Ingresar",
     email: "Email",
+    dontHaveAnAccount: "No tenés cuenta?",
+    register: "Registrate",
     password: "Contraseña"
   },
   company: {
