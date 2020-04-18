@@ -1,10 +1,13 @@
 import { TranslationRepository } from "../../../src/models/Translation";
 
 describe("TranslationRepository", () => {
-  it("get a root element in default transitions yml", () => {
+  it("get an array with the key - values of the path", () => {
     expect(
-      TranslationRepository.translate("companies")
-    ).toEqual("Empresas");
+      TranslationRepository.translate("applicantProfileTitle")
+    ).toEqual([
+      { key: "title", value: "Mi Perfil" },
+      { key: "subtitle", value: "Así se va a mostrar un postulante una empresa" }
+    ]);
   });
 
   it("throw an error if the path is incorrect", () => {
@@ -14,9 +17,4 @@ describe("TranslationRepository", () => {
     }).toThrow(`Missing translation: ${path}`);
   });
 
-  it("get a nested element in default transitions yml", () => {
-    expect(
-      TranslationRepository.translate("applicant.signUp.title")
-    ).toEqual("Crear tu cuenta");
-  });
 });

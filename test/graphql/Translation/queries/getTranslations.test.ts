@@ -2,25 +2,31 @@ import { gql } from "apollo-server";
 import { executeQuery } from "../../ApolloTestClient";
 
 const query = gql`
-  query getTranslations($paths: [String!]!) {
-    getTranslations(paths: $paths)
+  query getTranslations($path: String!) {
+    getTranslations(path: $path) {
+      key
+      value
+    }
   }
 `;
 
 describe("getTranslations", () => {
   it("find translations given their path", async () => {
-    const { data } = await executeQuery(query, {
-      paths: ["applicant.signUp.title", "companies"]
+    const { data, errors } = await executeQuery(query, {
+      path: "applicantProfileDetail"
     });
 
     expect(data).toEqual({
-      getTranslations: ["Crear tu cuenta", "Empresas"]
+      getTranslations: [
+        { key: "padron", value: "Padron" },
+        { key: "capabilities", value: "Aptitudes" }
+      ]
     });
   });
 
   it("return an error if a path doesn't exist", async () => {
     const { errors } = await executeQuery(query, {
-      paths: ["applicant.signUp.title", "notExistingPath"]
+      path: "falalala"
     });
 
     expect(errors).toHaveLength(1);
