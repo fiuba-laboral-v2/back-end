@@ -100,7 +100,7 @@ describe("CompanyRepository", () => {
     const company: Company = new Company(companyDataWithMinimumData);
     const photo: CompanyPhoto = new CompanyPhoto({ photo: null });
     await expect(CompanyRepository.save(
-      company, [],[photo]
+      company, [], [photo]
     )).rejects.toThrow();
 
     const expectedCompanies = await CompanyRepository.findAll();

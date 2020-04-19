@@ -34,7 +34,7 @@ describe("User login query", () => {
 
   it("checks for password match", async () => {
     const email = "asd@asd.com";
-    await UserRepository.create({email: email, password: "AValidPassword1"});
+    await UserRepository.create({ email: email, password: "AValidPassword1" });
     const response = await executeMutation(LOGIN, {
       email: email,
       password: "AValidPassword2"
@@ -44,7 +44,7 @@ describe("User login query", () => {
 
   it("returns a token", async () => {
     const email = "asd@asd.com";
-    const user = await UserRepository.create({email: email, password: "AValidPassword3"});
+    const user = await UserRepository.create({ email: email, password: "AValidPassword3" });
     const response = await executeMutation(LOGIN, {
       email: email,
       password: "AValidPassword3"

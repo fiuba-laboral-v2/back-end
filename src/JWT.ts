@@ -32,7 +32,7 @@ export const JWT = {
   },
   decodeToken: (token: string): IPayload | undefined => {
     try {
-      const payload = verify(token, JWT_SECRET) as any;
+      const payload = verify(token, JWT_SECRET) as IPayload;
       return {
         uuid: payload.uuid,
         email: payload.email

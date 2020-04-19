@@ -65,7 +65,7 @@ describe("Section model", () => {
     await expect(section.save()).rejects.toThrow();
   });
 
-  it("does not allow 2 sections with the same display order for the same applicant",async () => {
+  it("does not allow 2 sections with the same display order for the same applicant", async () => {
       const params = {
         applicantUuid: applicant.uuid,
         title: random.words(),

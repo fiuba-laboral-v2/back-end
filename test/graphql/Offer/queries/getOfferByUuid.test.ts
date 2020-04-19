@@ -104,7 +104,7 @@ describe("getOfferByUuid", () => {
               credits: career.credits
             }
           ],
-          sections: await offer.getSections().map(section =>(
+          sections: await offer.getSections().map(section => (
             {
               uuid: section.uuid,
               title: section.title,

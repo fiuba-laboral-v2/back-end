@@ -17,7 +17,7 @@ export = {
           "companyId",
           {
               type: INTEGER,
-              references: {}
+              references: { }
           }
         );
     }
