@@ -1,6 +1,6 @@
 export const defaultTranslations = {
   applicantList: [
-    { key: "applicants", value: "Postulantes" }
+    { key: "title", value: "Postulantes" }
   ],
   applicantListItem: [
     { key: "editButtonText", value: "Editar" },
@@ -34,7 +34,7 @@ export const defaultTranslations = {
     { key: "credits", value: "Créditos" }
   ],
   companiesList: [
-    { key: "companies", value: "Empresas" }
+    { key: "title", value: "Empresas" }
   ],
   companyListItem: [
     { key: "view", value: "Ver" }
