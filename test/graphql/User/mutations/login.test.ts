@@ -3,6 +3,7 @@ import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 import { UserRepository } from "../../../../src/models/User/Repository";
 import { JWT } from "../../../../src/JWT";
+import { BadCredentials } from "../../../../src/graphql/User/Errors";
 
 const LOGIN = gql`
   mutation ($email: String!, $password: String!) {
@@ -38,7 +39,7 @@ describe("User login query", () => {
       email: email,
       password: "AValidPassword2"
     });
-    expect(response.errors[0].message).toEqual("Incorrect password");
+    expect(response.errors[0].message).toEqual(BadCredentials.buildMessage());
   });
 
   it("returns a token", async () => {
