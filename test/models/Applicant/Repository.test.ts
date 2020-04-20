@@ -14,6 +14,7 @@ describe("ApplicantRepository", () => {
   beforeEach(async () => {
     await UserRepository.truncate();
     await CareerRepository.truncate();
+    await CapabilityRepository.truncate();
   });
 
   afterAll(() => Database.close());
