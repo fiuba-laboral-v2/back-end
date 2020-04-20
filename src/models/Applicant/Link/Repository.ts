@@ -6,24 +6,24 @@ import { omit, isEmpty } from "lodash";
 import { Transaction } from "sequelize";
 
 export const ApplicantLinkRepository = {
-  update: async (applicant: Applicant, links: TLink[], transaction?: Transaction) => {
-    const linksUuid: string[] = [];
+  update: async (links: TLink[], applicant: Applicant, transaction?: Transaction) => {
+    const linkUuids: string[] = [];
     for (const link of links) {
-      linksUuid.push(await ApplicantLinkRepository.updateOrCreate(applicant, link, transaction));
+      linkUuids.push(await ApplicantLinkRepository.updateOrCreate(link, applicant, transaction));
     }
     return ApplicantLink.destroy({
       where: {
         applicantUuid: applicant.uuid,
-        ...(!isEmpty(linksUuid) && {
+        ...(!isEmpty(linkUuids) && {
           [Op.not]: {
-            uuid: linksUuid
+            uuid: linkUuids
           }
         })
       },
       transaction
     });
   },
-  updateOrCreate: async (applicant: Applicant, link: TLink, transaction?: Transaction) => {
+  updateOrCreate: async (link: TLink, applicant: Applicant, transaction?: Transaction) => {
     if (link.uuid && (await applicant.hasLink(link.uuid))) {
       await ApplicantLink.update(
         omit(link, ["uuid"]),

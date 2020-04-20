@@ -13,8 +13,8 @@ export const CareerApplicantRepository = {
     return careerApplicant;
   },
   create: async (
-    applicant: Applicant,
     applicantCareer: IApplicantCareer,
+    applicant: Applicant,
     transaction?: Transaction
   ) => {
     return CareerApplicant.create(
@@ -27,8 +27,8 @@ export const CareerApplicantRepository = {
     );
   },
   update: async (
-    applicant: Applicant,
     applicantCareers: IApplicantCareer[],
+    applicant: Applicant,
     transaction?: Transaction
   ) => {
     await CareerApplicant.destroy({
@@ -40,8 +40,8 @@ export const CareerApplicantRepository = {
 
     for (const applicantCareer of applicantCareers) {
       await CareerApplicantRepository.create(
-        applicant,
         applicantCareer,
+        applicant,
         transaction
       );
     }

@@ -39,7 +39,7 @@ describe("Section model", () => {
       displayOrder: 1
     };
 
-    await SectionRepository.updateOrCreate(applicant, params);
+    await SectionRepository.updateOrCreate(params, applicant);
     const [section] = await applicant.getSections();
 
     expect(section).toBeDefined();
@@ -59,7 +59,7 @@ describe("Section model", () => {
       displayOrder: 1
     };
 
-    await SectionRepository.updateOrCreate(applicant, params);
+    await SectionRepository.updateOrCreate(params, applicant);
     const [firstSection] = await applicant.getSections();
 
     const newParams = {
@@ -69,7 +69,7 @@ describe("Section model", () => {
       displayOrder: 1
     };
 
-    await SectionRepository.updateOrCreate(applicant, newParams);
+    await SectionRepository.updateOrCreate(newParams, applicant);
     const [section] = await applicant.getSections();
 
     expect(section).toBeDefined();

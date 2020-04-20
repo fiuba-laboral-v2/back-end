@@ -7,10 +7,10 @@ import isEmpty from "lodash/isEmpty";
 import { Transaction } from "sequelize";
 
 export const SectionRepository = {
-  update: async (applicant: Applicant, sections: TSection[], transaction?: Transaction) => {
+  update: async (sections: TSection[], applicant: Applicant, transaction?: Transaction) => {
     const sectionsUuid: string[] = [];
     for (const section of sections) {
-      sectionsUuid.push(await SectionRepository.updateOrCreate(applicant, section, transaction));
+      sectionsUuid.push(await SectionRepository.updateOrCreate(section, applicant, transaction));
     }
     return Section.destroy({
       where: {
@@ -24,7 +24,7 @@ export const SectionRepository = {
       transaction
     });
   },
-  updateOrCreate: async (applicant: Applicant, section: TSection, transaction?: Transaction) => {
+  updateOrCreate: async (section: TSection, applicant: Applicant, transaction?: Transaction) => {
     if (section.uuid && (await applicant.hasSection(section.uuid))) {
       await Section.update(
         omit(section, ["uuid"]),

@@ -97,8 +97,8 @@ export const ApplicantRepository = {
   ) => {
     for (const applicantCareer of applicantCareers) {
       await CareerApplicantRepository.create(
-        applicant,
         applicantCareer,
+        applicant,
         transaction
       );
     }
@@ -119,13 +119,13 @@ export const ApplicantRepository = {
     try {
       await applicant.set(pick(props, ["name", "surname", "description"]));
 
-      await SectionRepository.update(applicant, sections, transaction);
+      await SectionRepository.update(sections, applicant, transaction);
 
-      await ApplicantLinkRepository.update(applicant, links, transaction);
+      await ApplicantLinkRepository.update(links, applicant, transaction);
 
-      await CareerApplicantRepository.update(applicant, careers, transaction);
+      await CareerApplicantRepository.update(careers, applicant, transaction);
 
-      await ApplicantCapabilityRepository.update(applicant, newCapabilities, transaction);
+      await ApplicantCapabilityRepository.update(newCapabilities, applicant, transaction);
 
       await transaction.commit();
       return applicant.save();

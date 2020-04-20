@@ -6,8 +6,8 @@ import { CapabilityRepository } from "../Capability";
 
 export const ApplicantCapabilityRepository = {
   update: async (
-    applicant: Applicant,
     newCapabilities: string[],
+    applicant: Applicant,
     transaction?: Transaction
   ) => {
     await ApplicantCapability.destroy({
