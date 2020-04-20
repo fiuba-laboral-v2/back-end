@@ -1,23 +1,23 @@
 import { TEXT, STRING, QueryInterface } from "sequelize";
 
 export = {
-    up: (queryInterface: QueryInterface) => {
-        return queryInterface.changeColumn(
-          "CompanyProfiles",
-          "logo",
-          {
-              type: TEXT
-          }
-        );
-    },
+  up: (queryInterface: QueryInterface) => {
+    return queryInterface.changeColumn(
+      "CompanyProfiles",
+      "logo",
+      {
+        type: TEXT
+      }
+    );
+  },
 
-    down: (queryInterface: QueryInterface) => {
-        return queryInterface.changeColumn(
-          "CompanyProfiles",
-          "logo",
-          {
-              type: STRING
-          }
-        );
-    }
+  down: (queryInterface: QueryInterface) => {
+    return queryInterface.changeColumn(
+      "CompanyProfiles",
+      "logo",
+      {
+        type: STRING
+      }
+    );
+  }
 };
