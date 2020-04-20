@@ -4,7 +4,6 @@ import { CompanyPhoto } from "../../../src/models/CompanyPhoto";
 import { companyMockData } from "./mocks";
 import Database from "../../../src/config/Database";
 
-
 describe("Company", () => {
   beforeAll(async () => {
     await Database.setConnection();

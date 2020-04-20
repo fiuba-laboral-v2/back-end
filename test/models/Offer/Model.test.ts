@@ -5,7 +5,6 @@ import { Company } from "../../../src/models/Company";
 import { companyMockData } from "../Company/mocks";
 import { OfferMocks, TOfferNumbersProperties } from "./mocks";
 
-
 describe("Offer", () => {
   beforeAll(async () => {
     await Database.setConnection();

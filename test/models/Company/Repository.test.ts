@@ -84,7 +84,6 @@ describe("CompanyRepository", () => {
     );
   });
 
-
   it("retrieve all Companies", async () => {
     const company: Company = await CompanyRepository.create(
       companyCompleteData

@@ -7,7 +7,6 @@ import { ApplicantRepository } from "../../../../src/models/Applicant";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { OfferRepository } from "../../../../src/models/Offer";
 
-
 import { OfferMocks } from "../../../models/Offer/mocks";
 import { companyMockData } from "../../../models/Company/mocks";
 import { applicantMocks } from "../../../models/Applicant/mocks";
@@ -24,7 +23,6 @@ const SAVE_JOB_APPLICATION = gql`
     }
   }
 `;
-
 
 describe("saveJobApplication", () => {
 
