@@ -33,7 +33,8 @@ export = {
     return queryInterface.sequelize.transaction(async transaction => {
       await queryInterface.removeConstraint(
         "Capabilities",
-        "Capabilities_description_key"
+        "Capabilities_description_key",
+        { transaction }
       );
 
       await queryInterface.changeColumn(
