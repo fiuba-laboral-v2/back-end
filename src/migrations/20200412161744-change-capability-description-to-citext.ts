@@ -7,6 +7,7 @@ export = {
         "CREATE EXTENSION citext",
         { transaction }
       );
+
       await queryInterface.changeColumn(
         "Capabilities",
         "description",
@@ -16,6 +17,7 @@ export = {
         },
         { transaction }
       );
+
       await queryInterface.addConstraint(
         "Capabilities",
         ["description"],
@@ -29,6 +31,11 @@ export = {
   },
   down: (queryInterface: QueryInterface) => {
     return queryInterface.sequelize.transaction(async transaction => {
+      await queryInterface.removeConstraint(
+        "Capabilities",
+        "Capabilities_description_key"
+      );
+
       await queryInterface.changeColumn(
         "Capabilities",
         "description",
@@ -38,10 +45,7 @@ export = {
         },
         { transaction }
       );
-      await queryInterface.removeConstraint(
-        "Capabilities",
-        "Capabilities_description_key"
-      );
+
       await queryInterface.sequelize.query(
         "DROP EXTENSION citext",
         { transaction }
