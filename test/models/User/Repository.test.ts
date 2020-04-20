@@ -1,19 +1,13 @@
 import Database from "../../../src/config/Database";
 import { UserRepository } from "../../../src/models/User/Repository";
-import { User, UserNotFound } from "../../../src/models/User";
+import { UserNotFound } from "../../../src/models/User";
 
 describe("UserRepository", () => {
-  beforeAll(async () => {
-    await Database.setConnection();
-  });
+  beforeAll(() => Database.setConnection());
 
-  beforeEach(async () => {
-    await User.destroy({ truncate: true });
-  });
+  beforeEach(() => UserRepository.truncate());
 
-  afterAll(async () => {
-    await Database.close();
-  });
+  afterAll(() => Database.close());
 
   it("creates a user", async () => {
     const email = "asd@qwe.com";

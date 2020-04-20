@@ -57,7 +57,7 @@ export const CompanyRepository = {
   },
   findById: async (id: number) => {
     const company = await Company.findByPk(id);
-    if (!company)  throw new CompanyNotFoundError(id);
+    if (!company) throw new CompanyNotFoundError(id);
 
     return company;
   },

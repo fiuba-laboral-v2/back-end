@@ -1,9 +1,13 @@
 import { GraphQLObjectType } from "graphql";
-import { ID, Int, List, nonNull, String } from "../../fieldTypes";
+import { AuthenticationError, ForbiddenError } from "apollo-server-errors";
+import { IApolloServerContext } from "../../../server";
+import { ID, Int, List, nonNull, String, Boolean } from "../../fieldTypes";
 import { GraphQLOfferSection } from "./GraphQLOfferSection";
 import { GraphQLCareer } from "../../Career/Types/Career";
 import { GraphQLCompany } from "../../Company/Types/GraphQLCompany";
 import { Offer } from "../../../models/Offer";
+import { UserRepository } from "../../../models/User";
+import { JobApplicationRepository } from "../../../models/JobApplication";
 
 const GraphQLOffer = new GraphQLObjectType({
   name: "Offer",
@@ -40,6 +44,18 @@ const GraphQLOffer = new GraphQLObjectType({
     company: {
       type: GraphQLCompany,
       resolve: (offer: Offer) => offer.getCompany()
+    },
+    hasApplied: {
+      type: nonNull(Boolean),
+      resolve: async (offer: Offer, _, { currentUser }: IApolloServerContext) => {
+        if (!currentUser) throw new AuthenticationError("You are not authenticated");
+
+        const user = await UserRepository.findByEmail(currentUser.email);
+        const applicant = await user.getApplicant();
+        if (!applicant) throw new ForbiddenError("You are not an applicant");
+
+        return JobApplicationRepository.hasApplied(applicant, offer);
+      }
     }
   })
 });

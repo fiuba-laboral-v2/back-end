@@ -1,4 +1,13 @@
 export const defaultTranslations = {
+  logOut: "Cerrar sesión",
+  login: {
+    prompt: "Iniciar sesión",
+    enter: "Ingresar",
+    email: "Email",
+    dontHaveAnAccount: "No tenés cuenta?",
+    register: "Registrate",
+    password: "Contraseña"
+  },
   company: {
     title: "Perfil de mi empresa",
     explanation: "Así se va a mostrar a los postulantes"
@@ -42,10 +51,11 @@ export const defaultTranslations = {
       title: "Crear tu cuenta",
       email: "Email",
       password: "Contraseña",
+      passwordConfirm: "Confirmar contraseña",
       name: "Nombre",
       surname: "Apellido",
       padron: "Padron",
-      careersTitle: "Elegi tu carrera",
+      careersTitle: "Elegí tu carrera",
       career: "Carrera",
       credits: "Créditos",
       submit: "Guardar"
@@ -56,6 +66,7 @@ export const defaultTranslations = {
   },
   applicants: "Postulantes",
   companies: "Empresas",
+  jobOffers: "Ofertas de trabajo",
   edit: "Editar",
   view: "Ver"
 };

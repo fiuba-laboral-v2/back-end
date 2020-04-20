@@ -2,26 +2,31 @@ import Database from "../../../../src/config/Database";
 import { Applicant } from "../../../../src/models/Applicant";
 import { ApplicantLink } from "../../../../src/models/Applicant/Link";
 import { internet, random } from "faker";
+import { UserRepository } from "../../../../src/models/User/Repository";
 
 describe("ApplicantLink model", () => {
   let applicant: Applicant;
 
   beforeAll(async () => {
     await Database.setConnection();
-    await Applicant.truncate({ cascade: true });
+    await UserRepository.truncate();
     await ApplicantLink.truncate({ cascade: true });
     const myApplicant = new Applicant({
       name: "Bruno",
       surname: "Diaz",
       padron: 1,
       description: "Batman",
-      credits: 150
+      credits: 150,
+      userUuid: (await UserRepository.create({
+        email: "sblanco@yahoo.com",
+        password: "fdmgkfHGH4353"
+      })).uuid
     });
     applicant = await myApplicant.save();
   });
 
   afterAll(async () => {
-    await Applicant.truncate({ cascade: true });
+    await UserRepository.truncate();
     await ApplicantLink.truncate({ cascade: true });
     await Database.close();
   });

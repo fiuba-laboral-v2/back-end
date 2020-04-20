@@ -26,14 +26,22 @@ const LoggedOutTestClient = createTestClient(new Server({
 
 const client = (loggedIn: boolean) => loggedIn ? LoggedInTestClient : LoggedOutTestClient;
 
-export const executeQuery = (query: DocumentNode, variables?: object, loggedIn = true) => {
+export const executeQuery = (
+  query: DocumentNode,
+  variables?: object,
+  { loggedIn }: { loggedIn: boolean } = { loggedIn: true }
+) => {
   return client(loggedIn).query({
     query: query,
     variables: variables
   });
 };
 
-export const executeMutation = (mutation: DocumentNode, variables?: object, loggedIn = true) => {
+export const executeMutation = (
+  mutation: DocumentNode,
+  variables?: object,
+  { loggedIn }: { loggedIn: boolean } = { loggedIn: true }
+) => {
   return client(loggedIn).mutate({
     mutation: mutation,
     variables: variables

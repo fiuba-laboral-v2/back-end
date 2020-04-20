@@ -1,15 +1,19 @@
 import { gql, ApolloError } from "apollo-server";
-import { executeQuery } from "../../ApolloTestClient";
+import { executeQuery, testCurrentUserEmail } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
 import { CareerRepository } from "../../../../src/models/Career";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { OfferRepository } from "../../../../src/models/Offer";
+import { JobApplicationRepository } from "../../../../src/models/JobApplication";
+import { ApplicantRepository } from "../../../../src/models/Applicant";
+import { UserRepository } from "../../../../src/models/User";
 import { OfferNotFound } from "../../../../src/models/Offer/Errors";
 
 import { careerMocks } from "../../../models/Career/mocks";
 import { companyMockData } from "../../../models/Company/mocks";
 import { OfferMocks } from "../../../models/Offer/mocks";
+import { applicantMocks } from "../../../models/Applicant/mocks";
 
 const GET_OFFER_BY_UUID = gql`
   query ($uuid: ID!) {
@@ -47,12 +51,22 @@ const GET_OFFER_BY_UUID = gql`
   }
 `;
 
+const GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION = gql`
+    query ($uuid: ID!) {
+        getOfferByUuid(uuid: $uuid) {
+            uuid
+            hasApplied
+        }
+    }
+`;
+
 describe("getOfferByUuid", () => {
   beforeAll(() => Database.setConnection());
 
   beforeEach(async () => {
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
+    await UserRepository.truncate();
   });
 
   afterAll(() => Database.close());
@@ -90,7 +104,7 @@ describe("getOfferByUuid", () => {
               credits: career.credits
             }
           ],
-          sections: await offer.getSections().map(section =>(
+          sections: await offer.getSections().map(section => (
             {
               uuid: section.uuid,
               title: section.title,
@@ -112,6 +126,51 @@ describe("getOfferByUuid", () => {
         }
       );
     });
+
+    it("should find an offer with hasApplied in true", async () => {
+      const { offer } = await createOffer();
+      const applicant = await ApplicantRepository.create(
+        {
+          ...applicantMocks.applicantData([]),
+          user: { email: testCurrentUserEmail, password: "AValidPassword2" }
+        }
+      );
+      await JobApplicationRepository.apply(applicant, offer);
+      const { data: { getOfferByUuid }, errors } = await executeQuery(
+        GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
+        { uuid: offer.uuid }
+      );
+      expect(errors).toBeUndefined();
+      expect(getOfferByUuid).toMatchObject(
+        {
+          uuid: offer.uuid,
+          hasApplied: true
+
+        }
+      );
+    });
+
+    it("should find an offer with hasApplied in false", async () => {
+      const { offer: { uuid } } = await createOffer();
+      await ApplicantRepository.create(
+        {
+          ...applicantMocks.applicantData([]),
+          user: { email: testCurrentUserEmail, password: "AValidPassword2" }
+        }
+      );
+      const { data: { getOfferByUuid }, errors } = await executeQuery(
+        GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
+        { uuid: uuid }
+      );
+      expect(errors).toBeUndefined();
+      expect(getOfferByUuid).toMatchObject(
+        {
+          uuid: uuid,
+          hasApplied: false
+
+        }
+      );
+    });
   });
 
   describe("when no offer exists", () => {
@@ -122,6 +181,26 @@ describe("getOfferByUuid", () => {
         { uuid: randomUuid }
       );
       expect(errors[0]).toEqual(new ApolloError(OfferNotFound.buildMessage(randomUuid)));
+    });
+
+    it("should return an error if the current user is not an applicant", async () => {
+      const { offer: { uuid } } = await createOffer();
+      await UserRepository.create({ email: testCurrentUserEmail, password: "AValidPassword2" });
+      const { errors } = await executeQuery(
+        GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
+        { uuid: uuid }
+      );
+      expect(errors[0].message).toEqual("You are not an applicant");
+    });
+
+    it("should return an error if there is no current user", async () => {
+      const { offer: { uuid } } = await createOffer();
+      const { errors } = await executeQuery(
+        GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
+        { uuid: uuid },
+        { loggedIn: false }
+      );
+      expect(errors[0].message).toEqual("You are not authenticated");
     });
   });
 });

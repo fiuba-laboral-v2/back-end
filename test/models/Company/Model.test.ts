@@ -4,7 +4,6 @@ import { CompanyPhoto } from "../../../src/models/CompanyPhoto";
 import { companyMockData } from "./mocks";
 import Database from "../../../src/config/Database";
 
-
 describe("Company", () => {
   beforeAll(async () => {
     await Database.setConnection();
@@ -30,8 +29,8 @@ describe("Company", () => {
               JRU5ErkJggg==`,
       companyId: 1
     });
-    company.phoneNumbers = [ phoneNumber ];
-    company.photos = [ photo ];
+    company.phoneNumbers = [phoneNumber];
+    company.photos = [photo];
     await company.save();
     expect(company.phoneNumbers).toHaveLength(1);
     expect(company.photos).toHaveLength(1);

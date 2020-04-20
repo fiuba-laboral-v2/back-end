@@ -1,6 +1,7 @@
 import { companyTypes } from "./Company";
 import { offerTypes } from "./Offer";
-import { ApplicantTypes } from "./Applicant";
+import { applicantTypes } from "./Applicant";
+import { jobApplicationTypes } from "./JobApplication";
 import CareerTypes from "./Career/Types";
 import { userTypes } from "./User/Types";
 import { capabilityTypes } from "./Capability";
@@ -8,10 +9,11 @@ import { capabilityTypes } from "./Capability";
 const types = [
   ...companyTypes,
   ...offerTypes,
-  ...ApplicantTypes,
+  ...applicantTypes,
   ...CareerTypes,
   ...userTypes,
-  ...capabilityTypes
+  ...capabilityTypes,
+  ...jobApplicationTypes
 ];
 
 export default types;

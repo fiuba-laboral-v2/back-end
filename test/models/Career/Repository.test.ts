@@ -1,20 +1,13 @@
-import { Career, CareerRepository, Errors } from "../../../src/models/Career";
 import Database from "../../../src/config/Database";
+import { Career, CareerRepository, Errors } from "../../../src/models/Career";
 import { careerMocks } from "./mocks";
-import map from "lodash/map";
 
 describe("CareerRepository", () => {
-  beforeAll(async () => {
-    await Database.setConnection();
-    await Career.truncate({ cascade: true });
-  });
+  beforeAll(async () => Database.setConnection());
 
   beforeEach(async () => await Career.truncate({ cascade: true }));
 
-  afterAll(async () => {
-    await Career.truncate({ cascade: true });
-    await Database.close();
-  });
+  afterAll(async () => Database.close());
 
   it("deletes all asked Careers", async () => {
     const career: Career = await CareerRepository.create(careerMocks.careerData());
@@ -61,7 +54,7 @@ describe("CareerRepository", () => {
     expect(expectedCareers).not.toBeNull();
     expect(expectedCareers).not.toBeUndefined();
     expect(expectedCareers?.length).toEqual(2);
-    expect(map(expectedCareers, "code")).toEqual(
+    expect(expectedCareers.map(({ code }) => code)).toEqual(
       expect.arrayContaining([career.code, secondaryCareer.code])
     );
   });
