@@ -45,9 +45,9 @@ describe("ApplicantRepository", () => {
       });
       expect((await applicant.getCareers())[0].description).toEqual(career.description);
       expect(
-        (await applicant.getCapabilities())[0].description
+        (await applicant.getCapabilities())[0].description.toLowerCase()
       ).toEqual(
-        applicantData.capabilities[0]
+        applicantData.capabilities[0].toLowerCase()
       );
     });
 
@@ -117,9 +117,9 @@ describe("ApplicantRepository", () => {
         }
       });
       expect(
-        (await applicant.getCapabilities())[0].description
+        (await applicant.getCapabilities())[0].description.toLowerCase()
       ).toEqual(
-        applicantData.capabilities[0]
+        applicantData.capabilities[0].toLowerCase()
       );
     });
 
@@ -150,9 +150,9 @@ describe("ApplicantRepository", () => {
         }
       });
       expect(
-        (await applicant.getCapabilities())[0].description
+        (await applicant.getCapabilities())[0].description.toLowerCase()
       ).toEqual(
-        applicantData.capabilities[0]
+        applicantData.capabilities[0].toLowerCase()
       );
     });
 

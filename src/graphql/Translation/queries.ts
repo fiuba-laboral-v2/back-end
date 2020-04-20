@@ -1,16 +1,17 @@
 import { nonNull, String, List } from "../fieldTypes";
 import { TranslationRepository } from "../../models/Translation";
+import { GraphQLTranslation } from "./Types/Translation";
 
 const translationQueries = {
   getTranslations: {
-    type: nonNull(List(nonNull(String))),
+    type: nonNull(List(nonNull(GraphQLTranslation))),
     args: {
-      paths: {
-        type: nonNull(List(nonNull(String)))
+      translationGroup: {
+        type: nonNull(String)
       }
     },
-    resolve: (_: undefined, { paths }: { paths: [string] }) => {
-      return paths.map(path => TranslationRepository.translate(path));
+    resolve: (_: undefined, { translationGroup }: { translationGroup: string }) => {
+      return TranslationRepository.translate(translationGroup);
     }
   }
 };
