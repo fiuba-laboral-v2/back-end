@@ -78,19 +78,25 @@ describe("updateApplicant", () => {
       surname: "newSurname",
       description: "newDescription",
       capabilities: ["CSS", "clojure"],
-      careers: [{
-        code: newCareer.code,
-        creditsCount: 8
-      }],
-      sections: [{
-        title: "title",
-        text: "description",
-        displayOrder: 1
-      }],
-      links: [{
-        name: "my link",
-        url: "https://some.url"
-      }]
+      careers: [
+        {
+          code: newCareer.code,
+          creditsCount: 8
+        }
+      ],
+      sections: [
+        {
+          title: "title",
+          text: "description",
+          displayOrder: 1
+        }
+      ],
+      links: [
+        {
+          name: "my link",
+          url: "https://some.url"
+        }
+      ]
     };
 
     const {

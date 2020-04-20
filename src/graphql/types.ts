@@ -1,6 +1,6 @@
 import { companyTypes } from "./Company";
 import { offerTypes } from "./Offer";
-import { ApplicantTypes } from "./Applicant";
+import { applicantTypes } from "./Applicant";
 import { jobApplicationTypes } from "./JobApplication";
 import CareerTypes from "./Career/Types";
 import { userTypes } from "./User/Types";
@@ -10,7 +10,7 @@ import translationTypes from "./Translation/Types";
 const types = [
   ...companyTypes,
   ...offerTypes,
-  ...ApplicantTypes,
+  ...applicantTypes,
   ...CareerTypes,
   ...userTypes,
   ...capabilityTypes,

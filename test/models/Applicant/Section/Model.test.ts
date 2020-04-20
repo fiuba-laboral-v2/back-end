@@ -65,19 +65,19 @@ describe("Section model", () => {
     await expect(section.save()).rejects.toThrow();
   });
 
-  it("does not allow 2 sections with the same display order for the same applicant",async () => {
-      const params = {
-        applicantUuid: applicant.uuid,
-        title: random.words(),
-        text: lorem.paragraphs(),
-        displayOrder: 1
-      };
-      const section = new Section(params);
-      await section.save();
+  it("does not allow 2 sections with the same display order for the same applicant", async () => {
+    const params = {
+      applicantUuid: applicant.uuid,
+      title: random.words(),
+      text: lorem.paragraphs(),
+      displayOrder: 1
+    };
+    const section = new Section(params);
+    await section.save();
 
-      const sectionWithSameDisplayOrder = new Section({
-        ...params, title: "New Title", text: "New Text"
-      });
-      await expect(sectionWithSameDisplayOrder.save()).rejects.toThrow();
+    const sectionWithSameDisplayOrder = new Section({
+      ...params, title: "New Title", text: "New Text"
     });
+    await expect(sectionWithSameDisplayOrder.save()).rejects.toThrow();
+  });
 });

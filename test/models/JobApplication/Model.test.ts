@@ -1,7 +1,7 @@
 import { ForeignKeyConstraintError, UniqueConstraintError, ValidationError } from "sequelize";
 import Database from "../../../src/config/Database";
 import { Company } from "../../../src/models/Company";
-import { Applicant, ApplicantRepository } from "../../../src/models/Applicant";
+import { ApplicantRepository } from "../../../src/models/Applicant";
 import { Offer } from "../../../src/models/Offer";
 import { JobApplication } from "../../../src/models/JobApplication";
 import { companyMockData } from "../Company/mocks";
@@ -23,16 +23,15 @@ describe("JobApplication", () => {
 
   afterAll(() => Database.close());
 
-  const offerData = () => (
-    {
+  const offerData = () =>
+    ({
       companyId: company.id,
       title: "Java developer senior",
       description: "some description",
       hoursPerDay: 8,
       minimumSalary: 50000,
       maximumSalary: 80000
-    }
-  );
+    });
 
   const createJobApplication = async () => {
     const { uuid: applicantUuid } = await ApplicantRepository.create(
@@ -93,7 +92,7 @@ describe("JobApplication", () => {
         expect(
           (await applicant.getJobApplications()).map(aJobApplication => aJobApplication.toJSON())
         ).toEqual(
-          expect.arrayContaining([ jobApplication.toJSON() ])
+          expect.arrayContaining([jobApplication.toJSON()])
         );
       });
     });

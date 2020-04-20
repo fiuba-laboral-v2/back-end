@@ -2,11 +2,9 @@ import Database from "../../../src/config/Database";
 import { CareerRepository } from "../../../src/models/Career";
 import { ApplicantRepository, Errors, IApplicantEditable } from "../../../src/models/Applicant";
 import { CareerApplicantRepository } from "../../../src/models/CareerApplicant/Repository";
-import { CareerApplicantNotFound } from "../../../src/models/CareerApplicant/Errors";
 import { CapabilityRepository } from "../../../src/models/Capability";
 import { internet, random } from "faker";
 import { careerMocks } from "../Career/mocks";
-import { capabilityMocks } from "../Capability/mocks";
 import { applicantMocks } from "./mocks";
 import { UserRepository } from "../../../src/models/User/Repository";
 
@@ -14,10 +12,8 @@ describe("ApplicantRepository", () => {
   beforeAll(() => Database.setConnection());
 
   beforeEach(async () => {
-    await CareerApplicantRepository.truncate();
     await UserRepository.truncate();
     await CareerRepository.truncate();
-    await CapabilityRepository.truncate();
   });
 
   afterAll(() => Database.close());
@@ -168,6 +164,8 @@ describe("ApplicantRepository", () => {
   });
 
   describe("Update", () => {
+    beforeEach(() => CapabilityRepository.truncate());
+
     const createApplicant = async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
       const applicantData = applicantMocks.applicantData([career]);
@@ -291,7 +289,6 @@ describe("ApplicantRepository", () => {
       await ApplicantRepository.update({ uuid });
       expect((await applicant.getCapabilities()).length).toEqual(0);
     });
-
 
     it("Should update by keeping only the new careers", async () => {
       const applicant = await createApplicant();

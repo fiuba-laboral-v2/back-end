@@ -70,7 +70,7 @@
     "ts-jest": "24.2.0",
     "ts-node": "8.5.4",
     "tslint": "5.18.0",
-    "tslint-config-fiuba-laboral-v2": "1.0.8",
+    "tslint-config-fiuba-laboral-v2": "1.0.9",
     "typescript": "3.7.4"
   },
   "scripts": {
@@ -98,6 +98,7 @@
     "db:test:migrate:down": "NODE_ENV=test sequelize db:migrate:undo",
     "db:test:migrate:down:all": "NODE_ENV=test sequelize db:migrate:undo:all",
     "db:test:drop": "NODE_ENV=test node_modules/.bin/sequelize db:drop",
+    "db:all:migrate": "yarn build-migrations && sequelize db:migrate && NODE_ENV=test sequelize db:migrate",
     "pm2:start": "yarn build && pm2 startOrRestart --no-daemon config/process.yml --env staging",
     "db:start": "docker-compose up -d fiuba-laboral-v2-backend-database-postgres",
     "db:up": "docker-compose up fiuba-laboral-v2-backend-database-postgres",

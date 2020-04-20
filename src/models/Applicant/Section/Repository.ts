@@ -26,7 +26,10 @@ export const SectionRepository = {
   },
   updateOrCreate: async (applicant: Applicant, section: TSection, transaction?: Transaction) => {
     if (section.uuid && (await applicant.hasSection(section.uuid))) {
-      await Section.update(omit(section, ["uuid"]), { where: { uuid: section.uuid }, transaction });
+      await Section.update(
+        omit(section, ["uuid"]),
+        { where: { uuid: section.uuid }, transaction }
+      );
       return section.uuid;
     } else {
       const newSection = await applicant.createSection(section, { transaction });

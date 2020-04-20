@@ -46,10 +46,10 @@ const OfferMocks = {
     )
   ),
   withOneCareer: (companyId: number, careerCode: string) => (
-    OfferMocks.completeData(companyId, undefined, [ { careerCode: careerCode } ])
+    OfferMocks.completeData(companyId, undefined, [{ careerCode: careerCode }])
   ),
   withOneCareerWithNullCareerCode: (companyId: number) => (
-    OfferMocks.completeData(companyId, undefined, [ { careerCode: null } ])
+    OfferMocks.completeData(companyId, undefined, [{ careerCode: null }])
   ),
   withOneCareerAndOneSection: (companyId: number, careerCode: string) => (
     OfferMocks.completeData(
