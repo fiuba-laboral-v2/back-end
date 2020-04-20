@@ -2,8 +2,8 @@ import { gql } from "apollo-server";
 import { executeQuery } from "../../ApolloTestClient";
 
 const query = gql`
-  query getTranslations($path: String!) {
-    getTranslations(path: $path) {
+  query getTranslations($translationGroup: String!) {
+    getTranslations(translationGroup: $translationGroup) {
       key
       value
     }
@@ -11,9 +11,9 @@ const query = gql`
 `;
 
 describe("getTranslations", () => {
-  it("find translations given their path", async () => {
+  it("find translations given their translationGroup", async () => {
     const { data, errors } = await executeQuery(query, {
-      path: "applicantProfileDetail"
+      translationGroup: "applicantProfileDetail"
     });
 
     expect(data).toEqual({
@@ -24,9 +24,9 @@ describe("getTranslations", () => {
     });
   });
 
-  it("return an error if a path doesn't exist", async () => {
+  it("return an error if a translationGroup doesn't exist", async () => {
     const { errors } = await executeQuery(query, {
-      path: "falalala"
+      translationGroup: "falalala"
     });
 
     expect(errors).toHaveLength(1);

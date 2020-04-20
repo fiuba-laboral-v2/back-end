@@ -31,7 +31,7 @@ export const defaultTranslations = {
   ],
   careerSelector: [
     { key: "career", value: "Carrera" },
-    { key: "credits", value: "Créditos" }
+    { key: "credits", value: "Créditos aprobados" }
   ],
   companiesList: [
     { key: "title", value: "Empresas" }

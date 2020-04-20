@@ -1,3 +1,3 @@
 import { GraphQLTranslation } from "./Translation";
 
-export = [GraphQLTranslation];
+export const translationTypes = [GraphQLTranslation];
