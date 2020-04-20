@@ -59,12 +59,12 @@ describe("OfferCareer", () => {
     });
 
     it("should throw an error if adding and existing career to one offer", async () => {
-        const { uuid } = await createOffer();
-        const { code } = await CareerRepository.create(careerMocks.careerData());
-        await OfferCareer.create(OfferCareerMocks.completeData(uuid, code));
-        const offerCareer = new OfferCareer(OfferCareerMocks.completeData(uuid, code));
-        await expect(offerCareer.save()).rejects.toThrow();
-      });
+      const { uuid } = await createOffer();
+      const { code } = await CareerRepository.create(careerMocks.careerData());
+      await OfferCareer.create(OfferCareerMocks.completeData(uuid, code));
+      const offerCareer = new OfferCareer(OfferCareerMocks.completeData(uuid, code));
+      await expect(offerCareer.save()).rejects.toThrow();
+    });
   });
 
   describe("Delete cascade", () => {

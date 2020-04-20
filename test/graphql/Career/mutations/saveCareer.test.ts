@@ -39,7 +39,7 @@ describe("saveCareer", () => {
   });
 
   it("throws Career Not found if the code doesn't exists", async () => {
-    const response = await executeMutation(SAVE_CAREER, { code: "3" , credits: 250});
+    const response = await executeMutation(SAVE_CAREER, { code: "3" , credits: 250 });
 
     expect(response.errors[0]).toEqual(
       new ApolloError(`Variable "$description" of required type "String!" was not provided.`)

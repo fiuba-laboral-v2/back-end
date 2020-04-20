@@ -5,7 +5,6 @@ import { Company } from "../../../src/models/Company";
 import { companyMockData } from "../Company/mocks";
 import { OfferMocks, TOfferNumbersProperties } from "./mocks";
 
-
 describe("Offer", () => {
   beforeAll(async () => {
     await Database.setConnection();
@@ -40,7 +39,7 @@ describe("Offer", () => {
     expect(offer.uuid).not.toBeUndefined();
     expect(offer).toEqual(expect.objectContaining(offerAttributes));
     expect(await offer.getCompany()).toEqual(expect.objectContaining(companyMockData));
-    expect(await company.getOffers()).toMatchObject([ offerAttributes ]);
+    expect(await company.getOffers()).toMatchObject([offerAttributes]);
   });
 
   it("should throw error if offer does not belong to any company", async () => {

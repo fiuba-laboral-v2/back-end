@@ -49,13 +49,13 @@ describe("CareerRepository", () => {
     await CareerRepository.create(thirdCareerData);
 
     const expectedCareers = await CareerRepository.findByCodes(
-      [ careerData.code, secondaryCareer.code ]
+      [careerData.code, secondaryCareer.code]
     );
     expect(expectedCareers).not.toBeNull();
     expect(expectedCareers).not.toBeUndefined();
     expect(expectedCareers?.length).toEqual(2);
-    expect(expectedCareers.map(({ code }) =>  code)).toEqual(
-      expect.arrayContaining([ career.code, secondaryCareer.code ])
+    expect(expectedCareers.map(({ code }) => code)).toEqual(
+      expect.arrayContaining([career.code, secondaryCareer.code])
     );
   });
 

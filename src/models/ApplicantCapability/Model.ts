@@ -4,13 +4,13 @@ import { Applicant } from "../Applicant/Model";
 
 @Table({ tableName: "ApplicantsCapabilities" })
 export class ApplicantCapability extends Model<ApplicantCapability> {
-    @ForeignKey(() => Applicant)
-    @PrimaryKey
-    @Column
-    public applicantUuid: string;
+  @ForeignKey(() => Applicant)
+  @PrimaryKey
+  @Column
+  public applicantUuid: string;
 
-    @ForeignKey(() => Capability)
-    @PrimaryKey
-    @Column
-    public capabilityUuid: string;
+  @ForeignKey(() => Capability)
+  @PrimaryKey
+  @Column
+  public capabilityUuid: string;
 }

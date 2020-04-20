@@ -9,7 +9,6 @@ import { NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
 import { UserRepository } from "../../../src/models/User/Repository";
 import { User } from "../../../src/models/User";
 
-
 describe("Applicant model", () => {
   beforeAll(async () => {
     await Database.setConnection();

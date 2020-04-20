@@ -25,14 +25,13 @@ describe("OfferSection", () => {
     return new Offer(OfferMocks.withObligatoryData(company.id)).save();
   };
 
-  const sectionAttributes = (offerUuid: string) => (
-    {
+  const sectionAttributes = (offerUuid: string) =>
+    ({
       offerUuid: offerUuid,
       title: random.words(),
       text: lorem.paragraphs(),
       displayOrder: 1
-    }
-  );
+    });
 
   describe("Valid create", () => {
     it("should create a valid section", async () => {
@@ -48,7 +47,7 @@ describe("OfferSection", () => {
         const offer = await createOffer();
         const attributes = sectionAttributes(offer.uuid);
         await new OfferSection(attributes).save();
-        expect(await offer.getSections()).toMatchObject([ attributes ]);
+        expect(await offer.getSections()).toMatchObject([attributes]);
       });
     });
   });

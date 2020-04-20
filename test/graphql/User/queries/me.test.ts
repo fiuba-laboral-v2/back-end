@@ -32,7 +32,7 @@ describe("Current User query", () => {
   });
 
   it("returns error if the current user is not set in context", async () => {
-    const response = await executeQuery(ME, {}, { loggedIn: false });
+    const response = await executeQuery(ME, { }, { loggedIn: false });
     expect(response.errors[0].message).toEqual("You are not authenticated");
   });
 });

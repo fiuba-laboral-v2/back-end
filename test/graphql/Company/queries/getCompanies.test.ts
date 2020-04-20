@@ -32,6 +32,6 @@ test("returns all companies", async () => {
   expect(response.errors).toBeUndefined();
   expect(response.data).not.toBeUndefined();
   expect(response.data).toEqual({
-    getCompanies: [ companyParams ]
+    getCompanies: [companyParams]
   });
 });

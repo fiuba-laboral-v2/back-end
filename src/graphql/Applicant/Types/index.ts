@@ -4,7 +4,7 @@ import { GraphQLApplicantCareer } from "./ApplicantCareers";
 import { GraphQLSectionInput, GraphQLSection } from "./Section";
 import { GraphQLLinkInput, GraphQLLink } from "./Link";
 
-export =[
+export const applicantTypes = [
   GraphQLApplicant,
   GraphQLCareerCredits,
   GraphQLApplicantCareer,

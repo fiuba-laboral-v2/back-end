@@ -290,7 +290,6 @@ describe("ApplicantRepository", () => {
       expect((await applicant.getCapabilities()).length).toEqual(0);
     });
 
-
     it("Should update by keeping only the new careers", async () => {
       const applicant = await createApplicant();
       const newCareer = await CareerRepository.create(careerMocks.careerData());

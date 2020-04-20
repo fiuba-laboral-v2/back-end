@@ -3,7 +3,7 @@ import uuid from "uuid/v4";
 
 export = {
   up: (queryInterface: QueryInterface) => {
-    return  queryInterface.createTable(
+    return queryInterface.createTable(
       "Offers",
       {
         uuid: {

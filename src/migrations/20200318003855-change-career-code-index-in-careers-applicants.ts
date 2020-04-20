@@ -1,6 +1,5 @@
 import { QueryInterface } from "sequelize";
 
-
 export = {
   up: async (queryInterface: QueryInterface) => {
     await queryInterface.removeConstraint(

@@ -10,4 +10,3 @@ const offerTypes = [
 ];
 
 export { offerTypes };
-
