@@ -15,7 +15,7 @@ export interface IApolloServerContext {
 
 export const ApolloServer = new Server({
   schema: Schema,
-  validationRules: [ depthLimit(1000) ],
+  validationRules: [depthLimit(1000)],
   context: (expressContext: ExpressContext) => {
     const token = expressContext.req.headers.authorization || "";
     const apolloServerContext: IApolloServerContext = {

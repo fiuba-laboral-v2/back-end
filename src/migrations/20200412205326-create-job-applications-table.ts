@@ -31,7 +31,7 @@ export = {
       );
       await queryInterface.addConstraint(
         "JobApplications",
-        [ "applicantUuid", "offerUuid" ],
+        ["applicantUuid", "offerUuid"],
         {
           type: "primary key",
           name: "JobApplications_applicantUuid_offerUuid_key",

@@ -47,7 +47,7 @@ describe("OfferSection", () => {
         const offer = await createOffer();
         const attributes = sectionAttributes(offer.uuid);
         await new OfferSection(attributes).save();
-        expect(await offer.getSections()).toMatchObject([ attributes ]);
+        expect(await offer.getSections()).toMatchObject([attributes]);
       });
     });
   });

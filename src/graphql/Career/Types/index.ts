@@ -1,3 +1,3 @@
 import { GraphQLCareer } from "./Career";
 
-export = [ GraphQLCareer ];
+export = [GraphQLCareer];

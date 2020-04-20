@@ -46,10 +46,10 @@ const OfferMocks = {
     )
   ),
   withOneCareer: (companyId: number, careerCode: string) => (
-    OfferMocks.completeData(companyId, undefined, [ { careerCode: careerCode } ])
+    OfferMocks.completeData(companyId, undefined, [{ careerCode: careerCode }])
   ),
   withOneCareerWithNullCareerCode: (companyId: number) => (
-    OfferMocks.completeData(companyId, undefined, [ { careerCode: null } ])
+    OfferMocks.completeData(companyId, undefined, [{ careerCode: null }])
   ),
   withOneCareerAndOneSection: (companyId: number, careerCode: string) => (
     OfferMocks.completeData(
@@ -71,7 +71,7 @@ const OfferMocks = {
   withNoCompanyId: () => OfferMocks.completeData(),
   withObligatoryData: (companyId: number) => OfferMocks.completeData(companyId),
   offerWithoutProperty: (companyId: number, property: string) =>
-    omit(OfferMocks.completeData(companyId), [ property ]),
+    omit(OfferMocks.completeData(companyId), [property]),
   offerWithNegativeNumberProperty: (
     companyId: number,
     property: TOfferNumbersProperties,

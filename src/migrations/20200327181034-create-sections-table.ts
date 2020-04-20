@@ -46,7 +46,7 @@ export = {
 
       await queryInterface.addConstraint(
         "Sections",
-        [ "applicantUuid", "displayOrder" ],
+        ["applicantUuid", "displayOrder"],
         {
           type: "unique",
           name: "Sections_applicantUuid_displayOrder_key",

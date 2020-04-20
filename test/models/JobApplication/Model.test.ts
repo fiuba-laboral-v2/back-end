@@ -72,7 +72,7 @@ describe("JobApplication", () => {
         expect(await jobApplication.getApplicant()).toMatchObject(
           pick(
             applicantMocks.applicantData([]),
-            [ "name", "surname", "padron", "description" ]
+            ["name", "surname", "padron", "description"]
           )
         );
       });
@@ -92,7 +92,7 @@ describe("JobApplication", () => {
         expect(
           (await applicant.getJobApplications()).map(aJobApplication => aJobApplication.toJSON())
         ).toEqual(
-          expect.arrayContaining([ jobApplication.toJSON() ])
+          expect.arrayContaining([jobApplication.toJSON()])
         );
       });
     });

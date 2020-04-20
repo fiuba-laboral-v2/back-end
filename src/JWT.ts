@@ -10,7 +10,7 @@ export interface IPayload {
 }
 
 let JWT_SECRET: string;
-if ([ "test", "development", "test_travis" ].includes(Environment.NODE_ENV)) {
+if (["test", "development", "test_travis"].includes(Environment.NODE_ENV)) {
   JWT_SECRET = "Environment.JWT_SECRET";
 } else {
   if (!Environment.JWT_SECRET) throw new Error("JWT_SECRET not set");

@@ -21,7 +21,7 @@ export const CareerRepository = {
     return careers;
   },
   findByCode: async (codes: string) => {
-    const [ career ] = await CareerRepository.findByCodes([ codes ]);
+    const [career] = await CareerRepository.findByCodes([codes]);
     return career;
   },
   findAll: async () =>

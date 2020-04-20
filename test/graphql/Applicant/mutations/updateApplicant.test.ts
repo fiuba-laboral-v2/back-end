@@ -52,7 +52,7 @@ const UPDATE_APPLICANT = gql`
 describe("updateApplicant", () => {
   const createApplicant = async () => {
     const career = await CareerRepository.create(careerMocks.careerData());
-    const applicantData = applicantMocks.applicantData([ career ]);
+    const applicantData = applicantMocks.applicantData([career]);
     return ApplicantRepository.create(applicantData);
   };
 
@@ -77,7 +77,7 @@ describe("updateApplicant", () => {
       name: "newName",
       surname: "newSurname",
       description: "newDescription",
-      capabilities: [ "CSS", "clojure" ],
+      capabilities: ["CSS", "clojure"],
       careers: [
         {
           code: newCareer.code,

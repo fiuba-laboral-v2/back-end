@@ -14,13 +14,13 @@ const ApplicantSerializer = {
       async careerApplicant => CareerApplicantSerializer.serialize(careerApplicant)
     )),
     capabilities: (await Promise.all(await applicant.getCapabilities())).map(
-      capability => pick(capability, [ "uuid", "description" ])
+      capability => pick(capability, ["uuid", "description"])
     ),
     sections: (await Promise.all(await applicant.getSections())).map(
-      section => pick(section, [ "uuid", "title", "text", "displayOrder" ])
+      section => pick(section, ["uuid", "title", "text", "displayOrder"])
     ),
     links: (await Promise.all(await applicant.getLinks())).map(
-      link => pick(link, [ "uuid", "name", "url" ])
+      link => pick(link, ["uuid", "name", "url"])
     )
   })
 };

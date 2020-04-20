@@ -20,8 +20,8 @@ describe("getCapabilities", () => {
   afterAll(() => Database.close());
 
   it("brings all capabilities in the database", async () => {
-    const [ java, python, ruby ] = await Promise.all(
-      [ "java", "python", "ruby" ].map(description =>
+    const [java, python, ruby] = await Promise.all(
+      ["java", "python", "ruby"].map(description =>
         CapabilityRepository.create({ description: description })
       )
     );

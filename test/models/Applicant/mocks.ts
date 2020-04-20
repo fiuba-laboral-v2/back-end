@@ -12,7 +12,7 @@ const applicantMocks = {
     padron: 98539,
     description: "Programo en TypeScript",
     careers: careers.map(({ code, credits }) => ({ code, creditsCount: credits - 1 })),
-    capabilities: capabilitiesDescriptions.length === 0 ? [ "Python" ] : capabilitiesDescriptions,
+    capabilities: capabilitiesDescriptions.length === 0 ? ["Python"] : capabilitiesDescriptions,
     sections,
     user: {
       email: "hello@gmail.com",

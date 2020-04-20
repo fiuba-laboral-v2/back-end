@@ -11,7 +11,7 @@ export = {
   down: async (queryInterface: QueryInterface) => {
     return queryInterface.addConstraint(
       "CareersApplicants",
-      [ "careerCode" ],
+      ["careerCode"],
       {
         type: "unique",
         name: "CareersApplicants_careerCode_key"

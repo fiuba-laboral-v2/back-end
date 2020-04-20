@@ -117,7 +117,7 @@ export const ApplicantRepository = {
     const applicant = await ApplicantRepository.findByUuid(uuid);
     const transaction = await Database.transaction();
     try {
-      await applicant.set(pick(props, [ "name", "surname", "description" ]));
+      await applicant.set(pick(props, ["name", "surname", "description"]));
 
       await SectionRepository.update(applicant, sections, transaction);
 

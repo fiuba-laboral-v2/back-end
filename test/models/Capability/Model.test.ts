@@ -41,8 +41,8 @@ describe("Applicant model", () => {
       })).uuid
     });
     const capability: Capability = new Capability({ description: "Python" });
-    applicant.capabilities = [ capability ];
-    capability.applicants = [ applicant ];
+    applicant.capabilities = [capability];
+    capability.applicants = [applicant];
 
     const savedCapability = await capability.save();
     const saverdApplicant = await applicant.save();
@@ -50,7 +50,7 @@ describe("Applicant model", () => {
     await ApplicantCapability.create({
       capabilityUuid: savedCapability.uuid, applicantUuid: saverdApplicant.uuid
     });
-    const result = await Capability.findByPk(savedCapability.uuid, { include: [ Applicant ] });
+    const result = await Capability.findByPk(savedCapability.uuid, { include: [Applicant] });
 
     expect(result.applicants[0].name).toEqual(applicant.name);
     expect(result).toEqual(expect.objectContaining({

@@ -29,8 +29,8 @@ describe("Company", () => {
               JRU5ErkJggg==`,
       companyId: 1
     });
-    company.phoneNumbers = [ phoneNumber ];
-    company.photos = [ photo ];
+    company.phoneNumbers = [phoneNumber];
+    company.photos = [photo];
     await company.save();
     expect(company.phoneNumbers).toHaveLength(1);
     expect(company.photos).toHaveLength(1);
