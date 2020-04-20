@@ -10,17 +10,17 @@ const query = gql`
 describe("getTranslations", () => {
   it("find translations given their path", async () => {
     const { data } = await executeQuery(query, {
-      paths: ["applicant.signUp.title", "companies"]
+      paths: [ "applicant.signUp.title", "companies" ]
     });
 
     expect(data).toEqual({
-      getTranslations: ["Crear tu cuenta", "Empresas"]
+      getTranslations: [ "Crear tu cuenta", "Empresas" ]
     });
   });
 
   it("return an error if a path doesn't exist", async () => {
     const { errors } = await executeQuery(query, {
-      paths: ["applicant.signUp.title", "notExistingPath"]
+      paths: [ "applicant.signUp.title", "notExistingPath" ]
     });
 
     expect(errors).toHaveLength(1);

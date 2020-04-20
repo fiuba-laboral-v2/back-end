@@ -71,7 +71,7 @@ const OfferMocks = {
   withNoCompanyId: () => OfferMocks.completeData(),
   withObligatoryData: (companyId: number) => OfferMocks.completeData(companyId),
   offerWithoutProperty: (companyId: number, property: string) =>
-    omit(OfferMocks.completeData(companyId), [property]),
+    omit(OfferMocks.completeData(companyId), [ property ]),
   offerWithNegativeNumberProperty: (
     companyId: number,
     property: TOfferNumbersProperties,

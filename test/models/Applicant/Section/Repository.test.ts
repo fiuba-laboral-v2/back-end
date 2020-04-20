@@ -40,7 +40,7 @@ describe("Section model", () => {
     };
 
     await SectionRepository.updateOrCreate(applicant, params);
-    const [section] = await applicant.getSections();
+    const [ section ] = await applicant.getSections();
 
     expect(section).toBeDefined();
     expect(section).toHaveProperty("uuid");
@@ -60,7 +60,7 @@ describe("Section model", () => {
     };
 
     await SectionRepository.updateOrCreate(applicant, params);
-    const [firstSection] = await applicant.getSections();
+    const [ firstSection ] = await applicant.getSections();
 
     const newParams = {
       uuid: firstSection.uuid,
@@ -70,7 +70,7 @@ describe("Section model", () => {
     };
 
     await SectionRepository.updateOrCreate(applicant, newParams);
-    const [section] = await applicant.getSections();
+    const [ section ] = await applicant.getSections();
 
     expect(section).toBeDefined();
     expect(section).toHaveProperty("uuid");

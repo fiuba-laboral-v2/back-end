@@ -73,7 +73,7 @@ describe("JobApplication", () => {
         expect(await jobApplication.getApplicant()).toMatchObject(
           pick(
             applicantMocks.applicantData([]),
-            ["name", "surname", "padron", "description"]
+            [ "name", "surname", "padron", "description" ]
           )
         );
       });

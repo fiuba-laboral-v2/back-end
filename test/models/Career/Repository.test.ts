@@ -54,7 +54,7 @@ describe("CareerRepository", () => {
     expect(expectedCareers).not.toBeNull();
     expect(expectedCareers).not.toBeUndefined();
     expect(expectedCareers?.length).toEqual(2);
-    expect(expectedCareers.map(({ code }) =>  code)).toEqual(
+    expect(expectedCareers.map(({ code }) => code)).toEqual(
       expect.arrayContaining([ career.code, secondaryCareer.code ])
     );
   });

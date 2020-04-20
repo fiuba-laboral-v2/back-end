@@ -29,7 +29,7 @@ describe("getOffers", () => {
   afterAll(() => Database.close());
 
   describe("when offers exists", () => {
-    const createOffers = async ()  => {
+    const createOffers = async () => {
       const { id } = await CompanyRepository.create(companyMockData);
       const career1 = await CareerRepository.create(careerMocks.careerData());
       const career2 = await CareerRepository.create(careerMocks.careerData());

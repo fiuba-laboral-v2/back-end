@@ -40,7 +40,7 @@ describe("ApplicantLinkRepository", () => {
     };
     await ApplicantLinkRepository.updateOrCreate(applicant, params);
 
-    const [link] = await applicant.getLinks();
+    const [ link ] = await applicant.getLinks();
 
     expect(link).toBeDefined();
     expect(link).toHaveProperty("uuid");
@@ -58,7 +58,7 @@ describe("ApplicantLinkRepository", () => {
     };
 
     await ApplicantLinkRepository.updateOrCreate(applicant, params);
-    const [firstLink] = await applicant.getLinks();
+    const [ firstLink ] = await applicant.getLinks();
 
     const newParams = {
       uuid: firstLink.uuid,
@@ -67,7 +67,7 @@ describe("ApplicantLinkRepository", () => {
     };
 
     await ApplicantLinkRepository.updateOrCreate(applicant, newParams);
-    const [link] = await applicant.getLinks();
+    const [ link ] = await applicant.getLinks();
 
     expect(link).toBeDefined();
     expect(link).toHaveProperty("uuid");

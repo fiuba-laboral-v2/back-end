@@ -41,8 +41,8 @@ describe("Applicant model", () => {
     });
     const capability: Capability = new Capability({ description: "Python" });
 
-    applicant.careers = [career];
-    applicant.capabilities = [capability];
+    applicant.careers = [ career ];
+    applicant.capabilities = [ capability ];
 
     expect(applicant.careers).toHaveLength(1);
     expect(applicant.capabilities).toHaveLength(1);
@@ -77,7 +77,7 @@ describe("Applicant model", () => {
     });
     const result = await Applicant.findOne({
       where: { name: "Bruno" },
-      include: [Career, Capability]
+      include: [ Career, Capability ]
     });
 
     expect(result.capabilities[0].uuid).toEqual(savedCapability.uuid);
@@ -111,7 +111,7 @@ describe("Applicant model", () => {
     const sectionParams = { title: random.words(), text: lorem.paragraphs() };
     await applicant.createSection(sectionParams);
 
-    const [section] = await applicant.getSections();
+    const [ section ] = await applicant.getSections();
     expect(section).toBeDefined();
     expect(section).toHaveProperty("uuid");
     expect(section).toMatchObject({

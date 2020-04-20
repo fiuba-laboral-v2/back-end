@@ -30,7 +30,7 @@ describe("OfferRepository", () => {
       const company = await CompanyRepository.create(companyMockData);
       const attributes = OfferMocks.withOneSection(company.id);
       const offer = await OfferRepository.create(attributes);
-      expect(offer).toEqual(expect.objectContaining(omit(attributes, ["sections"])));
+      expect(offer).toEqual(expect.objectContaining(omit(attributes, [ "sections" ])));
       const sections = await offer.getSections();
       expect(sections).toHaveLength(1);
       expect(sections[0]).toEqual(expect.objectContaining(attributes.sections[0]));
@@ -41,7 +41,7 @@ describe("OfferRepository", () => {
       const { code } = await CareerRepository.create(careerMocks.careerData());
       const attributes = OfferMocks.withOneCareer(company.id, code);
       const offer = await OfferRepository.create(attributes);
-      expect(offer).toEqual(expect.objectContaining(omit(attributes, ["careers"])));
+      expect(offer).toEqual(expect.objectContaining(omit(attributes, [ "careers" ])));
       const careers = await offer.getCareers();
       expect(careers).toHaveLength(1);
       expect(careers[0]).toEqual(expect.objectContaining(
@@ -55,7 +55,7 @@ describe("OfferRepository", () => {
       const attributes = OfferMocks.withOneCareerAndOneSection(company.id, code);
       const offer = await OfferRepository.create(attributes);
       expect(offer).toEqual(expect.objectContaining(
-        omit(attributes, ["sections", "careers"])
+        omit(attributes, [ "sections", "careers" ])
       ));
       const careers = await offer.getCareers();
       const sections = await offer.getSections();

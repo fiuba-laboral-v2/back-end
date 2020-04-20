@@ -76,7 +76,7 @@ describe("saveApplicant", () => {
   describe("when the input is valid", () => {
     it("creates a new applicant", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantData = applicantMocks.applicantData([career]);
+      const applicantData = applicantMocks.applicantData([ career ]);
 
       const { data, errors } = await executeMutation(queryWithAllData, {
         ...applicantData
@@ -100,17 +100,17 @@ describe("saveApplicant", () => {
 
     it("creates companyProfile with only obligatory data", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantData = applicantMocks.applicantData([career]);
+      const applicantData = applicantMocks.applicantData([ career ]);
       const { data, errors } = await executeMutation(
         queryWithOnlyObligatoryData,
         {
-          ...pick(applicantData, ["name", "surname", "padron", "credits", "careers", "user"])
+          ...pick(applicantData, [ "name", "surname", "padron", "credits", "careers", "user" ])
         }
       );
       expect(errors).toBeUndefined();
       expect(data).not.toBeUndefined();
       expect(data.saveApplicant).toMatchObject(
-        pick(applicantData, ["name", "surname", "padron", "credits"])
+        pick(applicantData, [ "name", "surname", "padron", "credits" ])
       );
       expect(data.saveApplicant).toHaveProperty("careers");
       expect(data.saveApplicant).not.toHaveProperty("capabilities");

@@ -18,7 +18,7 @@ export = {
       );
       await queryInterface.addConstraint(
         "Capabilities",
-        ["description"],
+        [ "description" ],
         {
           type: "unique",
           name: "Capabilities_description_key",

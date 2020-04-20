@@ -25,7 +25,7 @@ describe("ApplicantRepository", () => {
   describe("Create", () => {
     it("creates a new applicant", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantData = applicantMocks.applicantData([career]);
+      const applicantData = applicantMocks.applicantData([ career ]);
       const applicant = await ApplicantRepository.create(applicantData);
       const applicantCareers = await applicant.getCareers();
 
@@ -56,10 +56,10 @@ describe("ApplicantRepository", () => {
 
     it("should create two valid applicant in the same career", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
-      await ApplicantRepository.create(applicantMocks.applicantData([career]));
+      await ApplicantRepository.create(applicantMocks.applicantData([ career ]));
       await expect(
         ApplicantRepository.create({
-          ...applicantMocks.applicantData([career]),
+          ...applicantMocks.applicantData([ career ]),
           user: {
             email: "fds@gmail.com",
             password: "FDSFfdgfrt45"
@@ -83,7 +83,7 @@ describe("ApplicantRepository", () => {
     describe("Transactions", () => {
       it("should rollback transaction and throw error if name is large", async () => {
         const career = await CareerRepository.create(careerMocks.careerData());
-        const applicantData = applicantMocks.applicantData([career]);
+        const applicantData = applicantMocks.applicantData([ career ]);
         applicantData.name = "and the transaction will rolback because it is large";
         await expect(
           ApplicantRepository.create(applicantData)
@@ -95,7 +95,7 @@ describe("ApplicantRepository", () => {
   describe("Get", () => {
     it("can retreive an applicant by padron", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantData = applicantMocks.applicantData([career]);
+      const applicantData = applicantMocks.applicantData([ career ]);
       await ApplicantRepository.create(applicantData);
 
       const applicant = await ApplicantRepository.findByPadron(applicantData.padron);
@@ -128,7 +128,7 @@ describe("ApplicantRepository", () => {
 
     it("can retrieve an applicant by uuid", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantData = applicantMocks.applicantData([career]);
+      const applicantData = applicantMocks.applicantData([ career ]);
       const savedApplicant = await ApplicantRepository.create(applicantData);
 
       const applicant = await ApplicantRepository.findByUuid(savedApplicant.uuid);
@@ -170,7 +170,7 @@ describe("ApplicantRepository", () => {
   describe("Update", () => {
     const createApplicant = async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantData = applicantMocks.applicantData([career]);
+      const applicantData = applicantMocks.applicantData([ career ]);
       return ApplicantRepository.create(applicantData);
     };
 
@@ -182,7 +182,7 @@ describe("ApplicantRepository", () => {
         name: "newName",
         surname: "newSurname",
         description: "newDescription",
-        capabilities: ["CSS", "clojure"],
+        capabilities: [ "CSS", "clojure" ],
         careers: [
           {
             code: newCareer.code,
@@ -269,24 +269,24 @@ describe("ApplicantRepository", () => {
       const { uuid } = await createApplicant();
       const newProps: IApplicantEditable = {
         uuid,
-        capabilities: ["CSS", "clojure"]
+        capabilities: [ "CSS", "clojure" ]
       };
       const applicant = await ApplicantRepository.update(newProps);
       expect(
         (await applicant.getCapabilities()).map(capability => capability.description)
-      ).toEqual(expect.arrayContaining(["CSS", "clojure"]));
+      ).toEqual(expect.arrayContaining([ "CSS", "clojure" ]));
     });
 
     it("Should update by deleting all capabilities if none is provided", async () => {
       const { uuid } = await createApplicant();
       const newProps: IApplicantEditable = {
         uuid,
-        capabilities: ["CSS", "clojure"]
+        capabilities: [ "CSS", "clojure" ]
       };
       const applicant = await ApplicantRepository.update(newProps);
       expect(
         (await applicant.getCapabilities()).map(capability => capability.description)
-      ).toEqual(expect.arrayContaining(["CSS", "clojure"]));
+      ).toEqual(expect.arrayContaining([ "CSS", "clojure" ]));
 
       await ApplicantRepository.update({ uuid });
       expect((await applicant.getCapabilities()).length).toEqual(0);
@@ -319,22 +319,22 @@ describe("ApplicantRepository", () => {
 
       const props: IApplicantEditable = {
         uuid: applicant.uuid,
-        sections: [{
+        sections: [ {
           title: "myTitle",
           text: "some description",
           displayOrder: 1
-        }]
+        } ]
       };
 
       await ApplicantRepository.update(props);
 
       const newProps: IApplicantEditable = {
         uuid: applicant.uuid,
-        sections: [{
+        sections: [ {
           title: "new myTitle",
           text: "new some description",
           displayOrder: 2
-        }]
+        } ]
       };
       const updatedApplicant = await ApplicantRepository.update(newProps);
       expect(
@@ -378,20 +378,20 @@ describe("ApplicantRepository", () => {
 
       const props: IApplicantEditable = {
         uuid: applicant.uuid,
-        links: [{
+        links: [ {
           name: random.word(),
           url: internet.url()
-        }]
+        } ]
       };
 
       await ApplicantRepository.update(props);
 
       const newProps: IApplicantEditable = {
         uuid: applicant.uuid,
-        links: [{
+        links: [ {
           name: "new name",
           url: internet.url()
-        }]
+        } ]
       };
       const updatedApplicant = await ApplicantRepository.update(newProps);
       expect(
@@ -431,14 +431,14 @@ describe("ApplicantRepository", () => {
       const applicant = await createApplicant();
       const newProps: IApplicantEditable = {
         uuid: applicant.uuid,
-        capabilities: [(await applicant.getCapabilities())[0].description]
+        capabilities: [ (await applicant.getCapabilities())[0].description ]
       };
       await expect(ApplicantRepository.update(newProps)).resolves.not.toThrow();
     });
 
     it("Should update credits count of applicant careers", async () => {
       const applicant = await createApplicant();
-      const [career] = await applicant.getCareers();
+      const [ career ] = await applicant.getCareers();
       const newProps: IApplicantEditable = {
         uuid: applicant.uuid,
         careers: [
@@ -458,7 +458,7 @@ describe("ApplicantRepository", () => {
 
     it("Should update by deleting all applicant careers if none is provided", async () => {
       const applicant = await createApplicant();
-      const [career] = await applicant.getCareers();
+      const [ career ] = await applicant.getCareers();
       const newProps: IApplicantEditable = {
         uuid: applicant.uuid,
         careers: [
