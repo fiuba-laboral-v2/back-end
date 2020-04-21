@@ -71,7 +71,7 @@ export const defaultTranslations = {
     { key: "companies", value: "Empresas" },
     { key: "jobOffers", value: "Ofertas de trabajo" },
     { key: "title", value: "Crear tu cuenta" },
-    { key: "prompt", value: "Iniciar sesión" },
+    { key: "login", value: "Iniciar sesión" },
     { key: "logOut", value: "Cerrar sesión" }
   ],
   offerCareer: [

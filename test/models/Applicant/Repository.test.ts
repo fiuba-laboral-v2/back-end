@@ -274,6 +274,17 @@ describe("ApplicantRepository", () => {
       expect(
         (await applicant.getCapabilities()).map(capability => capability.description)
       ).toEqual(expect.arrayContaining(["CSS", "clojure"]));
+
+      const changeOneProps: IApplicantEditable = {
+        uuid,
+        capabilities: ["Python", "clojure"]
+      };
+
+      await ApplicantRepository.update(changeOneProps);
+      expect(
+        (await applicant.getCapabilities()).map(capability => capability.description)
+      ).toEqual(expect.arrayContaining(["Python", "clojure"]));
+
     });
 
     it("Should update by deleting all capabilities if none is provided", async () => {
@@ -293,13 +304,18 @@ describe("ApplicantRepository", () => {
 
     it("Should update by keeping only the new careers", async () => {
       const applicant = await createApplicant();
-      const newCareer = await CareerRepository.create(careerMocks.careerData());
+      const firstCareer = await CareerRepository.create(careerMocks.careerData());
+      const secondCareer = await CareerRepository.create(careerMocks.careerData());
       const newProps: IApplicantEditable = {
         uuid: applicant.uuid,
         careers: [
           {
-            code: newCareer.code,
+            code: firstCareer.code,
             creditsCount: 8
+          },
+          {
+            code: secondCareer.code,
+            creditsCount: 10
           }
         ]
       };
@@ -308,7 +324,29 @@ describe("ApplicantRepository", () => {
       expect(
         (await updatedApplicant.getCareers()).map(career => career.code)
       ).toEqual(expect.arrayContaining([
-        newCareer.code
+        firstCareer.code, secondCareer.code
+      ]));
+
+      const thirdCareer = await CareerRepository.create(careerMocks.careerData());
+      const updatedProps: IApplicantEditable = {
+        uuid: applicant.uuid,
+        careers: [
+          {
+            code: thirdCareer.code,
+            creditsCount: 8
+          },
+          {
+            code: secondCareer.code,
+            creditsCount: 10
+          }
+        ]
+      };
+
+      await ApplicantRepository.update(updatedProps);
+      expect(
+        (await updatedApplicant.getCareers()).map(career => career.code)
+      ).toEqual(expect.arrayContaining([
+        thirdCareer.code, secondCareer.code
       ]));
     });
 
@@ -317,22 +355,45 @@ describe("ApplicantRepository", () => {
 
       const props: IApplicantEditable = {
         uuid: applicant.uuid,
-        sections: [{
-          title: "myTitle",
-          text: "some description",
-          displayOrder: 1
-        }]
+        sections: [
+          {
+            title: "myTitle",
+            text: "some description",
+            displayOrder: 1
+          },
+          {
+            title: "second section",
+            text: "other description",
+            displayOrder: 2
+          }
+        ]
       };
 
       await ApplicantRepository.update(props);
 
+      const newSections = await applicant.getSections();
+
+      expect(
+        (newSections).map(section => section.title)
+      ).toEqual(expect.arrayContaining([
+        ...props.sections.map(section => section.title)
+      ]));
+
       const newProps: IApplicantEditable = {
         uuid: applicant.uuid,
-        sections: [{
-          title: "new myTitle",
-          text: "new some description",
-          displayOrder: 2
-        }]
+        sections: [
+          {
+            uuid: newSections.find(({ title }) => title === "second section").uuid,
+            title: "second section",
+            text: "new some description",
+            displayOrder: 2
+          },
+          {
+            title: "Third section",
+            text: "some other description",
+            displayOrder: 3
+          }
+        ]
       };
       const updatedApplicant = await ApplicantRepository.update(newProps);
       expect(
@@ -376,20 +437,38 @@ describe("ApplicantRepository", () => {
 
       const props: IApplicantEditable = {
         uuid: applicant.uuid,
-        links: [{
-          name: random.word(),
-          url: internet.url()
-        }]
+        links: [
+          {
+            name: random.word(),
+            url: internet.url()
+          },
+          {
+            name: "github",
+            url: "https://github.com"
+          }
+        ]
       };
 
       await ApplicantRepository.update(props);
 
+      expect(
+        (await applicant.getLinks()).map(link => link.name)
+      ).toEqual(expect.arrayContaining([
+        ...props.links.map(link => link.name)
+      ]));
+
       const newProps: IApplicantEditable = {
         uuid: applicant.uuid,
-        links: [{
-          name: "new name",
-          url: internet.url()
-        }]
+        links: [
+          {
+            name: "github",
+            url: "https://github.com"
+          },
+          {
+            name: "new name",
+            url: internet.url()
+          }
+        ]
       };
       const updatedApplicant = await ApplicantRepository.update(newProps);
       expect(
