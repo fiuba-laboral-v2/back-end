@@ -13,16 +13,19 @@ export const CareerApplicantRepository = {
     return careerApplicant;
   },
   create: async (
-    applicantCareer: IApplicantCareer,
+    applicantCareers: IApplicantCareer[],
     applicant: Applicant,
     transaction?: Transaction
   ) => {
-    return CareerApplicant.create(
+    return CareerApplicant.bulkCreate(
+      applicantCareers.map(applicantCareer => (
       {
         careerCode: applicantCareer.code,
         applicantUuid: applicant.uuid,
         creditsCount: applicantCareer.creditsCount
-      },
+      }
+      ))
+      ,
       { transaction }
     );
   },

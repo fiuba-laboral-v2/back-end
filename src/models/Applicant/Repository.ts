@@ -1,9 +1,6 @@
 import { Applicant, IApplicant, IApplicantCareer, IApplicantEditable } from "./index";
-import { Capability, CapabilityRepository } from "../Capability";
-import { ApplicantCapability } from "../ApplicantCapability";
 import { ApplicantNotFound } from "./Errors/ApplicantNotFound";
 import Database from "../../config/Database";
-import { Transaction } from "sequelize";
 import { CareerApplicantRepository } from "../CareerApplicant/Repository";
 import { ApplicantCapabilityRepository } from "../ApplicantCapability/Repository";
 import { SectionRepository } from "./Section/Repository";
@@ -23,11 +20,6 @@ export const ApplicantRepository = {
       user
     }: IApplicant
   ) => {
-    const capabilityModels: Capability[] = [];
-
-    for (const capability of capabilities) {
-      capabilityModels.push(await CapabilityRepository.findOrCreate(capability));
-    }
     const { uuid: userUuid } = await UserRepository.create(user);
     const applicant = new Applicant({
       name,
@@ -36,26 +28,20 @@ export const ApplicantRepository = {
       description,
       userUuid: userUuid
     });
-    return ApplicantRepository.save(applicant, applicantCareers, capabilityModels);
+    return ApplicantRepository.save(applicant, applicantCareers, capabilities);
   },
   save: async (
     applicant: Applicant,
     applicantCareers: IApplicantCareer[] = [],
-    capabilities: Capability[] = []
+    capabilities: string[] = []
   ) => {
     const transaction = await Database.transaction();
     try {
       await applicant.save({ transaction });
-      await ApplicantRepository.updateOrCreateCareersApplicants(
-        applicant,
-        applicantCareers,
-        transaction
-      );
-      await ApplicantRepository.updateOrCreateApplicantCapabilities(
-        applicant,
-        capabilities,
-        transaction
-      );
+
+      await CareerApplicantRepository.create(applicantCareers, applicant, transaction);
+      await ApplicantCapabilityRepository.update(capabilities, applicant, transaction);
+
       await transaction.commit();
       return applicant;
     } catch (error) {
@@ -74,34 +60,6 @@ export const ApplicantRepository = {
     const applicant = await Applicant.findOne({ where: { padron } });
     if (!applicant) throw new ApplicantNotFound(padron);
 
-    return applicant;
-  },
-  updateOrCreateApplicantCapabilities: async (
-    applicant: Applicant,
-    capabilities: Capability[],
-    transaction?: Transaction
-  ) => {
-    for (const capability of capabilities) {
-      if (await applicant.hasCapability(capability)) continue;
-      await ApplicantCapability.create(
-        { capabilityUuid: capability.uuid, applicantUuid: applicant.uuid },
-        { transaction }
-      );
-    }
-    return applicant;
-  },
-  updateOrCreateCareersApplicants: async (
-    applicant: Applicant,
-    applicantCareers: IApplicantCareer[],
-    transaction?: Transaction
-  ) => {
-    for (const applicantCareer of applicantCareers) {
-      await CareerApplicantRepository.create(
-        applicantCareer,
-        applicant,
-        transaction
-      );
-    }
     return applicant;
   },
   update: async (
