@@ -1,7 +1,7 @@
 import { ForeignKeyConstraintError, UniqueConstraintError, ValidationError } from "sequelize";
 import Database from "../../../src/config/Database";
 import { Company } from "../../../src/models/Company";
-import { ApplicantRepository } from "../../../src/models/Applicant";
+import { Applicant, ApplicantRepository } from "../../../src/models/Applicant";
 import { Offer } from "../../../src/models/Offer";
 import { JobApplication } from "../../../src/models/JobApplication";
 import { companyMockData } from "../Company/mocks";
@@ -16,6 +16,7 @@ describe("JobApplication", () => {
 
   beforeEach(async () => {
     await UserRepository.truncate();
+    await Applicant.truncate({ cascade: true });
     await Company.truncate({ cascade: true });
     await Offer.truncate({ cascade: true });
     company = await Company.create(companyMockData);

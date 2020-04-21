@@ -38,13 +38,17 @@ export const CareerApplicantRepository = {
       transaction
     });
 
-    for (const applicantCareer of applicantCareers) {
-      await CareerApplicantRepository.create(
-        applicantCareer,
-        applicant,
-        transaction
-      );
-    }
+    return CareerApplicant.bulkCreate(
+      applicantCareers.map(applicantCareer => (
+      {
+        careerCode: applicantCareer.code,
+        applicantUuid: applicant.uuid,
+        creditsCount: applicantCareer.creditsCount
+      }
+      ))
+      ,
+      { transaction }
+    );
   },
   truncate: async () =>
     CareerApplicant.truncate({ cascade: true })

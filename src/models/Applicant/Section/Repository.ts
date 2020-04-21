@@ -8,10 +8,11 @@ import { Transaction } from "sequelize";
 
 export const SectionRepository = {
   update: async (sections: TSection[], applicant: Applicant, transaction?: Transaction) => {
-    const sectionsUuid: string[] = [];
-    for (const section of sections) {
-      sectionsUuid.push(await SectionRepository.updateOrCreate(section, applicant, transaction));
-    }
+    const sectionsUuid = await Promise.all(sections.map(
+      async section =>
+        (await SectionRepository.updateOrCreate(section, applicant, transaction)).uuid
+    ));
+
     return Section.destroy({
       where: {
         applicantUuid: applicant.uuid,
@@ -26,14 +27,14 @@ export const SectionRepository = {
   },
   updateOrCreate: async (section: TSection, applicant: Applicant, transaction?: Transaction) => {
     if (section.uuid && (await applicant.hasSection(section.uuid))) {
-      await Section.update(
+      const [, result] = await Section.update(
         omit(section, ["uuid"]),
-        { where: { uuid: section.uuid }, transaction }
+        { where: { uuid: section.uuid }, transaction, returning: true }
       );
-      return section.uuid;
+      const [updatedSection] = result;
+      return updatedSection;
     } else {
-      const newSection = await applicant.createSection(section, { transaction });
-      return newSection.uuid;
+      return applicant.createSection(section, { transaction });
     }
   }
 };
