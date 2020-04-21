@@ -26,11 +26,11 @@ export const ApplicantLinkRepository = {
   },
   updateOrCreate: async (link: TLink, applicant: Applicant, transaction?: Transaction) => {
     if (link.uuid && (await applicant.hasLink(link.uuid))) {
-      const [, result] = await ApplicantLink.update(
+      const [, [updatedApplicantLink]] = await ApplicantLink.update(
         omit(link, ["uuid"]),
         { where: { uuid: link.uuid }, transaction, returning: true }
       );
-      const [updatedApplicantLink] = result;
+
       return updatedApplicantLink;
     }
     return await applicant.createLink(link, { transaction });
