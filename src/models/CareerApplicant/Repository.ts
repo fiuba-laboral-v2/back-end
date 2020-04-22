@@ -12,7 +12,7 @@ export const CareerApplicantRepository = {
 
     return careerApplicant;
   },
-  create: async (
+  bulkCreate: async (
     applicantCareers: IApplicantCareer[],
     applicant: Applicant,
     transaction?: Transaction
@@ -42,14 +42,13 @@ export const CareerApplicantRepository = {
     });
 
     return CareerApplicant.bulkCreate(
-      applicantCareers.map(applicantCareer => (
-      {
-        careerCode: applicantCareer.code,
-        applicantUuid: applicant.uuid,
-        creditsCount: applicantCareer.creditsCount
-      }
-      ))
-      ,
+      applicantCareers.map(applicantCareer =>
+        ({
+          careerCode: applicantCareer.code,
+          applicantUuid: applicant.uuid,
+          creditsCount: applicantCareer.creditsCount
+        })
+      ),
       { transaction }
     );
   },

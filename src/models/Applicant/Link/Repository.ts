@@ -7,10 +7,9 @@ import { Transaction } from "sequelize";
 
 export const ApplicantLinkRepository = {
   update: async (links: TLink[], applicant: Applicant, transaction?: Transaction) => {
-    const linkUuids = await Promise.all(links.map(
-      async link =>
-        (await ApplicantLinkRepository.updateOrCreate(link, applicant, transaction)).uuid
-    ));
+    const linkUuids: string[] =
+      (await ApplicantLinkRepository.bulkUpsert(links, applicant, transaction))
+        .map(({ uuid }) => (uuid));
 
     return ApplicantLink.destroy({
       where: {
@@ -24,15 +23,15 @@ export const ApplicantLinkRepository = {
       transaction
     });
   },
-  updateOrCreate: async (link: TLink, applicant: Applicant, transaction?: Transaction) => {
-    if (link.uuid && (await applicant.hasLink(link.uuid))) {
-      const [, [updatedApplicantLink]] = await ApplicantLink.update(
-        omit(link, ["uuid"]),
-        { where: { uuid: link.uuid }, transaction, returning: true }
-      );
-
-      return updatedApplicantLink;
-    }
-    return await applicant.createLink(link, { transaction });
+  bulkUpsert: (links: TLink[], applicant: Applicant, transaction?: Transaction) => {
+    return ApplicantLink.bulkCreate(
+      links.map(link => ({ ...link, applicantUuid: applicant.uuid })),
+      {
+        transaction,
+        validate: true,
+        returning: true,
+        updateOnDuplicate: ["name", "url"]
+      }
+    );
   }
 };

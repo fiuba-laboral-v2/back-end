@@ -1,4 +1,4 @@
-import { Applicant, IApplicant, IApplicantCareer, IApplicantEditable } from "./index";
+import { Applicant, IApplicant, IApplicantEditable } from "./index";
 import { ApplicantNotFound } from "./Errors/ApplicantNotFound";
 import Database from "../../config/Database";
 import { CareerApplicantRepository } from "../CareerApplicant/Repository";
@@ -22,24 +22,14 @@ export const ApplicantRepository = {
   ) => {
     const { uuid: userUuid } = await UserRepository.create(user);
     const applicant = new Applicant({
-      name,
-      surname,
-      padron,
-      description,
-      userUuid: userUuid
+      name, surname, padron, description, userUuid: userUuid
     });
-    return ApplicantRepository.save(applicant, applicantCareers, capabilities);
-  },
-  save: async (
-    applicant: Applicant,
-    applicantCareers: IApplicantCareer[] = [],
-    capabilities: string[] = []
-  ) => {
+
     const transaction = await Database.transaction();
     try {
       await applicant.save({ transaction });
 
-      await CareerApplicantRepository.create(applicantCareers, applicant, transaction);
+      await CareerApplicantRepository.bulkCreate(applicantCareers, applicant, transaction);
       await ApplicantCapabilityRepository.update(capabilities, applicant, transaction);
 
       await transaction.commit();
