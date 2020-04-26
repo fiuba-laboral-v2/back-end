@@ -109,7 +109,7 @@ describe("Section model", () => {
       {
         title: "third section",
         text: "something",
-        displayOrder: 3
+        displayOrder: 2
       }
     ];
 

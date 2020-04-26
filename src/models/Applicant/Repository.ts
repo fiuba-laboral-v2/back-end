@@ -61,7 +61,7 @@ export const ApplicantRepository = {
       careers = [],
       ...props
     }: IApplicantEditable
-  ) => {
+  ): Promise<Applicant> => {
     const applicant = await ApplicantRepository.findByUuid(uuid);
     const transaction = await Database.transaction();
     try {
