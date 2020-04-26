@@ -1,5 +1,6 @@
 import { gql } from "apollo-server";
 import { executeQuery } from "../../ApolloTestClient";
+import { MissingTranslationError } from "../../../../src/models/Translation/Errors";
 
 const query = gql`
   query getTranslations($translationGroup: String!) {
@@ -24,12 +25,10 @@ describe("getTranslations", () => {
     });
   });
 
-  it("return an error if a translationGroup doesn't exist", async () => {
-    const { errors } = await executeQuery(query, {
-      translationGroup: "falalala"
-    });
+  it("should return an error if a translationGroup doesn't exist", async () => {
+    const { errors } = await executeQuery(query, { translationGroup: "falalala" });
 
     expect(errors).toHaveLength(1);
-    expect(errors![0].message).toMatch(/Missing translation:/);
+    expect(errors![0].extensions.data).toEqual({ errorType: MissingTranslationError.name });
   });
 });

@@ -5,11 +5,10 @@ import Database from "../../../../src/config/Database";
 import { CareerRepository } from "../../../../src/models/Career";
 import { ApplicantRepository } from "../../../../src/models/Applicant";
 import { Career } from "../../../../src/models/Career";
-import { Applicant } from "../../../../src/models/Applicant";
+import { ApplicantNotFound } from "../../../../src/models/Applicant/Errors/ApplicantNotFound";
 
 import { applicantMocks } from "../../../models/Applicant/mocks";
 import { careerMocks } from "../../../models/Career/mocks";
-import { ApolloError } from "apollo-server";
 
 import { random } from "faker";
 import { UserRepository } from "../../../../src/models/User/Repository";
@@ -48,7 +47,7 @@ describe("getApplicantByPadron", () => {
   });
 
   describe("when the applicant exists", () => {
-    it("fetchs the applicant", async () => {
+    it("fetches the applicant", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
       const applicantData = applicantMocks.applicantData([career]);
       const applicant = await ApplicantRepository.create(applicantData);
@@ -76,13 +75,11 @@ describe("getApplicantByPadron", () => {
   });
 
   describe("when the applicant doesn't exists", () => {
-    it("fetchs the applicant", async () => {
+    it("fetches the applicant", async () => {
       const uuid = random.uuid();
-      const response = await executeQuery(GET_APPLICANT, { uuid });
+      const { errors } = await executeQuery(GET_APPLICANT, { uuid });
 
-      expect(response.errors[0]).toEqual(
-        new ApolloError(`Applicant with uuid: ${uuid} does not exist`)
-      );
+      expect(errors[0].extensions.data).toEqual({ errorType: ApplicantNotFound.name });
     });
   });
 });

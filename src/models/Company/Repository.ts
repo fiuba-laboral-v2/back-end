@@ -52,7 +52,7 @@ export const CompanyRepository = {
       return company;
     } catch (error) {
       await transaction.rollback();
-      throw new Error(error);
+      throw error;
     }
   },
   findById: async (id: number) => {

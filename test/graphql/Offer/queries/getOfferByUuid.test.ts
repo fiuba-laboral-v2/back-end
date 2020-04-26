@@ -1,4 +1,4 @@
-import { gql, ApolloError } from "apollo-server";
+import { gql } from "apollo-server";
 import { executeQuery, testCurrentUserEmail } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
@@ -8,7 +8,9 @@ import { OfferRepository } from "../../../../src/models/Offer";
 import { JobApplicationRepository } from "../../../../src/models/JobApplication";
 import { ApplicantRepository } from "../../../../src/models/Applicant";
 import { UserRepository } from "../../../../src/models/User";
+
 import { OfferNotFound } from "../../../../src/models/Offer/Errors";
+import { AuthenticationError, ApplicantRequiredError } from "../../../../src/graphql/Errors";
 
 import { careerMocks } from "../../../models/Career/mocks";
 import { companyMockData } from "../../../models/Company/mocks";
@@ -180,7 +182,7 @@ describe("getOfferByUuid", () => {
         GET_OFFER_BY_UUID,
         { uuid: randomUuid }
       );
-      expect(errors[0]).toEqual(new ApolloError(OfferNotFound.buildMessage(randomUuid)));
+      expect(errors[0].extensions.data).toEqual({ errorType: OfferNotFound.name });
     });
 
     it("should return an error if the current user is not an applicant", async () => {
@@ -190,7 +192,7 @@ describe("getOfferByUuid", () => {
         GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
         { uuid: uuid }
       );
-      expect(errors[0].message).toEqual("You are not an applicant");
+      expect(errors[0].extensions.data).toEqual({ errorType: ApplicantRequiredError.name });
     });
 
     it("should return an error if there is no current user", async () => {
@@ -200,7 +202,7 @@ describe("getOfferByUuid", () => {
         { uuid: uuid },
         { loggedIn: false }
       );
-      expect(errors[0].message).toEqual("You are not authenticated");
+      expect(errors[0].extensions.data).toEqual({ errorType: AuthenticationError.name });
     });
   });
 });

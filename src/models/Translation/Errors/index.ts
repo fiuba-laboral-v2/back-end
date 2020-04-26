@@ -1,0 +1,1 @@
+export { MissingTranslationError } from "./MissingTranslationError";

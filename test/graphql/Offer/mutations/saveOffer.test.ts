@@ -1,4 +1,5 @@
 import { gql } from "apollo-server";
+import { ForeignKeyConstraintError } from "sequelize";
 import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
@@ -124,6 +125,24 @@ describe("saveOffer", () => {
         OfferMocks.withNoCompanyId()
       );
       expect(errors).not.toBeUndefined();
+    });
+
+    it("should throw an error if company id that not exist", async () => {
+      const notExistingCompanyId = 9999;
+      const offerAttributes = OfferMocks.completeData(notExistingCompanyId);
+      const { errors } = await executeMutation(
+        SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
+        offerAttributes
+      );
+      expect(errors[0].extensions.data).toEqual(
+        {
+          errorType: ForeignKeyConstraintError.name,
+          parameters: {
+            table: "Offers",
+            columns: []
+          }
+        }
+      );
     });
   });
 });

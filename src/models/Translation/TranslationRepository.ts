@@ -1,4 +1,5 @@
 import { defaultTranslations } from "./defaultTranslations";
+import { MissingTranslationError } from "./Errors";
 import get from "lodash/get";
 
 export const TranslationRepository = {
@@ -8,7 +9,7 @@ export const TranslationRepository = {
    */
   translate: (translationGroup: string) => {
     const translation = get(defaultTranslations, translationGroup);
-    if (translation === undefined) throw new Error(`Missing translation: ${translationGroup}`);
+    if (translation === undefined) throw new MissingTranslationError(translationGroup);
     return translation;
   }
 };

@@ -4,6 +4,7 @@ import Database from "../../../../src/config/Database";
 import { UserRepository } from "../../../../src/models/User/Repository";
 import { JWT } from "../../../../src/JWT";
 import { BadCredentials } from "../../../../src/graphql/User/Errors";
+import { UserNotFound } from "../../../../src/models/User/Errors";
 
 const LOGIN = gql`
   mutation ($email: String!, $password: String!) {
@@ -23,23 +24,21 @@ describe("User login query", () => {
   });
 
   it("should return error if user is not registered", async () => {
-    const response = await executeMutation(LOGIN, {
+    const { errors } = await executeMutation(LOGIN, {
       email: "asd@asd.com",
       password: "AValidPassword000"
     });
-    expect(response.errors[0].message).toEqual(
-      `User with email: asd@asd.com does not exist`
-    );
+    expect(errors[0].extensions.data).toEqual({ errorType: UserNotFound.name });
   });
 
   it("checks for password match", async () => {
     const email = "asd@asd.com";
     await UserRepository.create({ email: email, password: "AValidPassword1" });
-    const response = await executeMutation(LOGIN, {
+    const { errors } = await executeMutation(LOGIN, {
       email: email,
       password: "AValidPassword2"
     });
-    expect(response.errors[0].message).toEqual(BadCredentials.buildMessage());
+    expect(errors[0].extensions.data).toEqual({ errorType: BadCredentials.name });
   });
 
   it("returns a token", async () => {

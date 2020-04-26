@@ -1,4 +1,5 @@
 import { ApolloServer as Server } from "apollo-server-express";
+import { apolloErrorConverter } from "./FormatErrors";
 import Schema from "./graphql/Schema";
 import depthLimit from "graphql-depth-limit";
 import { ExpressContext } from "apollo-server-express/dist/ApolloServer";
@@ -16,6 +17,7 @@ export interface IApolloServerContext {
 export const ApolloServer = new Server({
   schema: Schema,
   validationRules: [depthLimit(1000)],
+  formatError: apolloErrorConverter(),
   context: (expressContext: ExpressContext) => {
     const token = expressContext.req.headers.authorization || "";
     const apolloServerContext: IApolloServerContext = {

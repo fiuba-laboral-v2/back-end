@@ -60,7 +60,7 @@ export const ApplicantRepository = {
       return applicant;
     } catch (error) {
       await transaction.rollback();
-      throw new Error(error);
+      throw error;
     }
   },
   findAll: async () => Applicant.findAll(),
@@ -131,7 +131,7 @@ export const ApplicantRepository = {
       return applicant.save();
     } catch (error) {
       await transaction.rollback();
-      throw new Error(error);
+      throw error;
     }
   },
   truncate: async () => {

@@ -1,4 +1,5 @@
 import { createTestClient } from "apollo-server-testing";
+import { apolloErrorConverter } from "../../src/FormatErrors";
 import { IApolloServerContext } from "../../src/server";
 import { DocumentNode } from "graphql";
 import { ApolloServer as Server } from "apollo-server-express/dist/ApolloServer";
@@ -9,6 +10,7 @@ export const testCurrentUserUuid = "5bca6c9d-8367-4500-be05-0db55066b2a1";
 
 const LoggedInTestClient = createTestClient(new Server({
   schema: Schema,
+  formatError: apolloErrorConverter({ logger: false }),
   context: () => {
     const apolloServerContext: IApolloServerContext = {
       currentUser: {
@@ -21,7 +23,8 @@ const LoggedInTestClient = createTestClient(new Server({
 }));
 
 const LoggedOutTestClient = createTestClient(new Server({
-  schema: Schema
+  schema: Schema,
+  formatError: apolloErrorConverter({ logger: false })
 }));
 
 const client = (loggedIn: boolean) => loggedIn ? LoggedInTestClient : LoggedOutTestClient;

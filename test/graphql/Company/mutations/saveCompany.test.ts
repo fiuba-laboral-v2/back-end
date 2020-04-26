@@ -1,6 +1,7 @@
 import { gql } from "apollo-server";
 import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
+import { UniqueConstraintError } from "sequelize";
 import { ICompany } from "../../../../src/models/Company";
 import { CompanyRepository } from "../../../../src/models/Company";
 import {
@@ -13,7 +14,7 @@ import {
   photos
 } from "../../../models/Company/mocks";
 
-const queryWithAllData = gql`
+const SAVE_COMPANY_WITH_COMPLETE_DATA = gql`
   mutation (
     $cuit: String!, $companyName: String!, $slogan: String, $description: String,
     $logo: String, $website: String, $email: String, $phoneNumbers: [Int], $photos: [String]) {
@@ -34,7 +35,7 @@ const queryWithAllData = gql`
   }
 `;
 
-const queryWithOnlyObligatoryData = gql`
+const SAVE_COMPANY_WITH_MINIMUM_DATA = gql`
   mutation ($cuit: String!, $companyName: String!) {
     saveCompany(cuit: $cuit, companyName: $companyName) {
       cuit
@@ -58,19 +59,20 @@ describe("saveCompany", () => {
     await Database.close();
   });
 
-  describe("saveCompany", () => {
-    const companyData: ICompany = {
-      ...companyMockData,
-      ...{ photos: photos, phoneNumbers: phoneNumbers }
-    };
+  const companyData: ICompany = {
+    ...companyMockData,
+    ...{ photos: photos, phoneNumbers: phoneNumbers }
+  };
 
-    const companyDataWithMinimumData = {
-      cuit: "30711819017",
-      companyName: "devartis"
-    };
+  const companyDataWithMinimumData = {
+    cuit: "30711819017",
+    companyName: "devartis"
+  };
+
+  describe("When the creation succeeds", () => {
 
     it("create company", async () => {
-      const response = await executeMutation(queryWithAllData, companyData);
+      const response = await executeMutation(SAVE_COMPANY_WITH_COMPLETE_DATA, companyData);
       expect(response.errors).toBeUndefined();
       expect(response.data).not.toBeUndefined();
       expect(response.data).toEqual({ saveCompany: companyData });
@@ -78,11 +80,33 @@ describe("saveCompany", () => {
 
     it("creates company with only obligatory data", async () => {
       const response = await executeMutation(
-        queryWithOnlyObligatoryData, companyDataWithMinimumData
+        SAVE_COMPANY_WITH_MINIMUM_DATA, companyDataWithMinimumData
       );
       expect(response.errors).toBeUndefined();
       expect(response.data).not.toBeUndefined();
       expect(response.data).toEqual({ saveCompany: companyDataWithMinimumData });
+    });
+  });
+
+  describe("when the creation errors", () => {
+    it("should throw an error if the company with its cuit already exist", async () => {
+      await executeMutation(
+        SAVE_COMPANY_WITH_MINIMUM_DATA,
+        companyDataWithMinimumData
+      );
+      const { errors } = await executeMutation(
+        SAVE_COMPANY_WITH_MINIMUM_DATA,
+        companyDataWithMinimumData
+      );
+      expect(errors[0].extensions.data).toEqual(
+        {
+          errorType: UniqueConstraintError.name,
+          parameters: {
+            table: "Companies",
+            columns: ["cuit"]
+          }
+        }
+      );
     });
   });
 });

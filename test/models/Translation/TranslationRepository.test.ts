@@ -1,4 +1,5 @@
 import { TranslationRepository } from "../../../src/models/Translation";
+import { MissingTranslationError } from "../../../src/models/Translation/Errors";
 
 describe("TranslationRepository", () => {
   it("get an array with the key - values of the path", () => {
@@ -12,9 +13,9 @@ describe("TranslationRepository", () => {
 
   it("throw an error if the path is incorrect", () => {
     const path = "something.that.does_not_exist";
-    expect(() => {
-      TranslationRepository.translate(path);
-    }).toThrow(`Missing translation: ${path}`);
+    expect(
+      () => TranslationRepository.translate(path)
+    ).toThrow(MissingTranslationError.buildMessage(path));
   });
 
 });
