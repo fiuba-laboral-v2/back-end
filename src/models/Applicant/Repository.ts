@@ -23,11 +23,10 @@ export const ApplicantRepository = {
     const transaction = await Database.transaction();
     try {
       const { uuid: userUuid } = await UserRepository.create(user, transaction);
-      const applicant = new Applicant({
-        name, surname, padron, description, userUuid: userUuid
-      });
-
-      await applicant.save({ transaction });
+      const applicant = await Applicant.create(
+        { name, surname, padron, description, userUuid: userUuid },
+        { transaction }
+      );
 
       await CareerApplicantRepository.bulkCreate(applicantCareers, applicant, transaction);
       await ApplicantCapabilityRepository.update(capabilities, applicant, transaction);
