@@ -14,6 +14,7 @@ export interface IApplicant {
   careers: IApplicantCareer[];
   capabilities?: string[];
   sections?: TSection[];
+  links?: TLink[];
   user: IUser;
 }
 

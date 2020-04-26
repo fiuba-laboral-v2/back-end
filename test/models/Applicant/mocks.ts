@@ -1,11 +1,13 @@
 import { ApplicantRepository, IApplicant, TSection } from "../../../src/models/Applicant";
 import { Career } from "../../../src/models/Career";
+import { TLink } from "../../../src/models/Applicant/Link/Interface";
 
 const applicantMocks = {
   applicantData: (
     careers: Career[],
     capabilitiesDescriptions: string[] = [],
-    sections: TSection[] = []
+    sections: TSection[] = [],
+    links: TLink[] = []
   ): IApplicant => ({
     name: "Sebastián Ezequiel",
     surname: "Blanco",
@@ -14,6 +16,7 @@ const applicantMocks = {
     careers: careers.map(({ code, credits }) => ({ code, creditsCount: credits - 1 })),
     capabilities: capabilitiesDescriptions.length === 0 ? ["Python"] : capabilitiesDescriptions,
     sections,
+    links,
     user: {
       email: "hello@gmail.com",
       password: "SecurePasword1010"

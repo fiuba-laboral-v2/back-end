@@ -38,7 +38,7 @@ describe("ApplicantLinkRepository", () => {
       name: random.word(),
       url: internet.url()
     };
-    await ApplicantLinkRepository.updateOrCreate(applicant, params);
+    await ApplicantLinkRepository.update([params], applicant);
 
     const [link] = await applicant.getLinks();
 
@@ -57,7 +57,7 @@ describe("ApplicantLinkRepository", () => {
       url: internet.url()
     };
 
-    await ApplicantLinkRepository.updateOrCreate(applicant, params);
+    await ApplicantLinkRepository.update([params], applicant);
     const [firstLink] = await applicant.getLinks();
 
     const newParams = {
@@ -66,7 +66,7 @@ describe("ApplicantLinkRepository", () => {
       url: internet.url()
     };
 
-    await ApplicantLinkRepository.updateOrCreate(applicant, newParams);
+    await ApplicantLinkRepository.update([newParams], applicant);
     const [link] = await applicant.getLinks();
 
     expect(link).toBeDefined();
