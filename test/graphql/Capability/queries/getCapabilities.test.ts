@@ -26,12 +26,14 @@ describe("getCapabilities", () => {
       )
     );
     const { data: { getCapabilities } } = await executeQuery(GET_CAPABILITIES);
-    expect(getCapabilities).toMatchObject(
-      [
-        { description: "java", uuid: java.uuid },
-        { description: "python", uuid: python.uuid },
-        { description: "ruby", uuid: ruby.uuid }
-      ]
+    expect(getCapabilities).toEqual(
+      expect.arrayContaining(
+        [
+          { description: "java", uuid: java.uuid },
+          { description: "python", uuid: python.uuid },
+          { description: "ruby", uuid: ruby.uuid }
+        ]
+      )
     );
   });
 });
