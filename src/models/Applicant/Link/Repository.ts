@@ -2,7 +2,7 @@ import { TLink } from "./Interface";
 import { Applicant } from "../Model";
 import { ApplicantLink } from ".";
 import { Op } from "sequelize";
-import { omit, isEmpty } from "lodash";
+import { isEmpty } from "lodash";
 import { Transaction } from "sequelize";
 
 export const ApplicantLinkRepository = {
