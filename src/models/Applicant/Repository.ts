@@ -20,13 +20,13 @@ export const ApplicantRepository = {
       user
     }: IApplicant
   ) => {
-    const { uuid: userUuid } = await UserRepository.create(user);
-    const applicant = new Applicant({
-      name, surname, padron, description, userUuid: userUuid
-    });
-
     const transaction = await Database.transaction();
     try {
+      const { uuid: userUuid } = await UserRepository.create(user, transaction);
+      const applicant = new Applicant({
+        name, surname, padron, description, userUuid: userUuid
+      });
+
       await applicant.save({ transaction });
 
       await CareerApplicantRepository.bulkCreate(applicantCareers, applicant, transaction);
@@ -61,7 +61,7 @@ export const ApplicantRepository = {
       careers = [],
       ...props
     }: IApplicantEditable
-  ): Promise<Applicant> => {
+  ) => {
     const applicant = await ApplicantRepository.findByUuid(uuid);
     const transaction = await Database.transaction();
     try {
@@ -75,8 +75,10 @@ export const ApplicantRepository = {
 
       await ApplicantCapabilityRepository.update(newCapabilities, applicant, transaction);
 
+      await applicant.save({ transaction });
+
       await transaction.commit();
-      return applicant.save();
+      return applicant;
     } catch (error) {
       await transaction.rollback();
       throw new Error(error);

@@ -12,9 +12,6 @@ export const SectionRepository = {
       transaction
     });
 
-    return SectionRepository.bulkUpsert(sections, applicant, transaction);
-  },
-  bulkUpsert: (sections: TSection[], applicant: Applicant, transaction?: Transaction) => {
     return Section.bulkCreate(
       sections.map(section => ({ ...section, applicantUuid: applicant.uuid })),
       {

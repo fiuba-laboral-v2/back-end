@@ -1,7 +1,7 @@
 import { ForeignKeyConstraintError, UniqueConstraintError, ValidationError } from "sequelize";
 import Database from "../../../src/config/Database";
 import { Company } from "../../../src/models/Company";
-import { Applicant, ApplicantRepository } from "../../../src/models/Applicant";
+import { ApplicantRepository } from "../../../src/models/Applicant";
 import { Offer } from "../../../src/models/Offer";
 import { JobApplication } from "../../../src/models/JobApplication";
 import { companyMockData } from "../Company/mocks";
