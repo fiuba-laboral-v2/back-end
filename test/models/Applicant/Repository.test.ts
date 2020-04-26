@@ -534,5 +534,46 @@ describe("ApplicantRepository", () => {
 
       expect((await applicant.getCareers()).length).toEqual(0);
     });
+
+    describe("with wrong parameters", () => {
+      it("Should not update if two sections have the same displayOrder", async () => {
+        const sections = [
+          {
+            title: "myTitle",
+            text: "some description",
+            displayOrder: 1
+          },
+          {
+            title: "new myTitle",
+            text: "new some description",
+            displayOrder: 2
+          }
+        ];
+        const applicant = await createApplicant({ sections });
+
+        const newProps: IApplicantEditable = {
+          uuid: applicant.uuid,
+          sections: [
+            {
+              title: "myTitle",
+              text: "some description",
+              displayOrder: 2
+            },
+            {
+              title: "new myTitle",
+              text: "new some description",
+              displayOrder: 2
+            }
+          ]
+        };
+        await expect(ApplicantRepository.update(newProps)).rejects.toThrow();
+
+        expect(
+          (await applicant.getSections()).map(section => section.title)
+        ).toEqual(expect.arrayContaining([
+          ...sections.map(section => section.title)
+        ]));
+      });
+    });
   });
 });

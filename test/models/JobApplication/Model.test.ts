@@ -16,7 +16,6 @@ describe("JobApplication", () => {
 
   beforeEach(async () => {
     await UserRepository.truncate();
-    await Applicant.truncate({ cascade: true });
     await Company.truncate({ cascade: true });
     await Offer.truncate({ cascade: true });
     company = await Company.create(companyMockData);
