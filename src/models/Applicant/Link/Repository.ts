@@ -6,32 +6,32 @@ import { omit, isEmpty } from "lodash";
 import { Transaction } from "sequelize";
 
 export const ApplicantLinkRepository = {
-  update: async (applicant: Applicant, links: TLink[], transaction?: Transaction) => {
-    const linksUuid: string[] = [];
-    for (const link of links) {
-      linksUuid.push(await ApplicantLinkRepository.updateOrCreate(applicant, link, transaction));
-    }
+  update: async (links: TLink[], applicant: Applicant, transaction?: Transaction) => {
+    const linkUuids: string[] =
+      (await ApplicantLinkRepository.bulkUpsert(links, applicant, transaction))
+        .map(({ uuid }) => (uuid));
+
     return ApplicantLink.destroy({
       where: {
         applicantUuid: applicant.uuid,
-        ...(!isEmpty(linksUuid) && {
+        ...(!isEmpty(linkUuids) && {
           [Op.not]: {
-            uuid: linksUuid
+            uuid: linkUuids
           }
         })
       },
       transaction
     });
   },
-  updateOrCreate: async (applicant: Applicant, link: TLink, transaction?: Transaction) => {
-    if (link.uuid && (await applicant.hasLink(link.uuid))) {
-      await ApplicantLink.update(
-        omit(link, ["uuid"]),
-        { where: { uuid: link.uuid }, transaction }
-      );
-      return link.uuid;
-    }
-    const newLink = await applicant.createLink(link, { transaction });
-    return newLink.uuid;
+  bulkUpsert: (links: TLink[], applicant: Applicant, transaction?: Transaction) => {
+    return ApplicantLink.bulkCreate(
+      links.map(link => ({ ...link, applicantUuid: applicant.uuid })),
+      {
+        transaction,
+        validate: true,
+        returning: true,
+        updateOnDuplicate: ["name", "url"]
+      }
+    );
   }
 };

@@ -167,10 +167,18 @@ describe("ApplicantRepository", () => {
   describe("Update", () => {
     beforeEach(() => CapabilityRepository.truncate());
 
-    const createApplicant = async () => {
+    const createApplicant = async ({
+      capabilities = [], sections = [], links = []
+    } = {
+      capabilities: [], sections: [], links: []
+    }) => {
       const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantData = applicantMocks.applicantData([career]);
-      return ApplicantRepository.create(applicantData);
+      const applicantData = applicantMocks.applicantData([career], capabilities);
+      const applicant = await ApplicantRepository.create(applicantData);
+
+      return ApplicantRepository.update({
+        ...applicantData, uuid: applicant.uuid, sections, links
+      });
     };
 
     it("Should update all props", async () => {
@@ -265,41 +273,49 @@ describe("ApplicantRepository", () => {
     });
 
     it("Should update by adding new capabilities", async () => {
-      const { uuid } = await createApplicant();
-      const newProps: IApplicantEditable = {
-        uuid,
-        capabilities: ["CSS", "clojure"]
-      };
-      const applicant = await ApplicantRepository.update(newProps);
+      const applicant = await createApplicant({ capabilities: ["CSS", "clojure"] });
+
       expect(
         (await applicant.getCapabilities()).map(capability => capability.description)
       ).toEqual(expect.arrayContaining(["CSS", "clojure"]));
+
+      const changeOneProps: IApplicantEditable = {
+        uuid: applicant.uuid,
+        capabilities: ["Python", "clojure"]
+      };
+
+      await ApplicantRepository.update(changeOneProps);
+      expect(
+        (await applicant.getCapabilities()).map(capability => capability.description)
+      ).toEqual(expect.arrayContaining(["Python", "clojure"]));
+
     });
 
     it("Should update by deleting all capabilities if none is provided", async () => {
-      const { uuid } = await createApplicant();
-      const newProps: IApplicantEditable = {
-        uuid,
-        capabilities: ["CSS", "clojure"]
-      };
-      const applicant = await ApplicantRepository.update(newProps);
+      const applicant = await createApplicant({ capabilities: ["CSS", "clojure"] });
+
       expect(
         (await applicant.getCapabilities()).map(capability => capability.description)
       ).toEqual(expect.arrayContaining(["CSS", "clojure"]));
 
-      await ApplicantRepository.update({ uuid });
+      await ApplicantRepository.update({ uuid: applicant.uuid });
       expect((await applicant.getCapabilities()).length).toEqual(0);
     });
 
     it("Should update by keeping only the new careers", async () => {
       const applicant = await createApplicant();
-      const newCareer = await CareerRepository.create(careerMocks.careerData());
+      const firstCareer = await CareerRepository.create(careerMocks.careerData());
+      const secondCareer = await CareerRepository.create(careerMocks.careerData());
       const newProps: IApplicantEditable = {
         uuid: applicant.uuid,
         careers: [
           {
-            code: newCareer.code,
+            code: firstCareer.code,
             creditsCount: 8
+          },
+          {
+            code: secondCareer.code,
+            creditsCount: 10
           }
         ]
       };
@@ -308,31 +324,70 @@ describe("ApplicantRepository", () => {
       expect(
         (await updatedApplicant.getCareers()).map(career => career.code)
       ).toEqual(expect.arrayContaining([
-        newCareer.code
+        firstCareer.code, secondCareer.code
+      ]));
+
+      const thirdCareer = await CareerRepository.create(careerMocks.careerData());
+      const updatedProps: IApplicantEditable = {
+        uuid: applicant.uuid,
+        careers: [
+          {
+            code: thirdCareer.code,
+            creditsCount: 8
+          },
+          {
+            code: secondCareer.code,
+            creditsCount: 10
+          }
+        ]
+      };
+
+      await ApplicantRepository.update(updatedProps);
+      expect(
+        (await updatedApplicant.getCareers()).map(career => career.code)
+      ).toEqual(expect.arrayContaining([
+        thirdCareer.code, secondCareer.code
       ]));
     });
 
     it("should update by keeping only the new sections", async () => {
-      const applicant = await createApplicant();
-
-      const props: IApplicantEditable = {
-        uuid: applicant.uuid,
-        sections: [{
+      const sections = [
+        {
           title: "myTitle",
           text: "some description",
           displayOrder: 1
-        }]
-      };
+        },
+        {
+          title: "second section",
+          text: "other description",
+          displayOrder: 2
+        }
+      ];
+      const applicant = await createApplicant({ sections });
 
-      await ApplicantRepository.update(props);
+      const newSections = await applicant.getSections();
+
+      expect(
+        (newSections).map(section => section.title)
+      ).toEqual(expect.arrayContaining([
+        ...sections.map(section => section.title)
+      ]));
 
       const newProps: IApplicantEditable = {
         uuid: applicant.uuid,
-        sections: [{
-          title: "new myTitle",
-          text: "new some description",
-          displayOrder: 2
-        }]
+        sections: [
+          {
+            uuid: newSections.find(({ title }) => title === "second section").uuid,
+            title: "second section",
+            text: "new some description",
+            displayOrder: 2
+          },
+          {
+            title: "Third section",
+            text: "some other description",
+            displayOrder: 3
+          }
+        ]
       };
       const updatedApplicant = await ApplicantRepository.update(newProps);
       expect(
@@ -343,10 +398,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("should update deleting all sections if none is provided", async () => {
-      const applicant = await createApplicant();
-
-      const props: IApplicantEditable = {
-        uuid: applicant.uuid,
+      const applicant = await createApplicant({
         sections: [
           {
             title: "myTitle",
@@ -359,9 +411,7 @@ describe("ApplicantRepository", () => {
             displayOrder: 2
           }
         ]
-      };
-
-      await ApplicantRepository.update(props);
+      });
 
       const newProps: IApplicantEditable = {
         uuid: applicant.uuid,
@@ -372,24 +422,36 @@ describe("ApplicantRepository", () => {
     });
 
     it("Should update by keeping only the new links", async () => {
-      const applicant = await createApplicant();
-
-      const props: IApplicantEditable = {
-        uuid: applicant.uuid,
-        links: [{
+      const links = [
+        {
           name: random.word(),
           url: internet.url()
-        }]
-      };
+        },
+        {
+          name: "github",
+          url: "https://github.com"
+        }
+      ];
+      const applicant = await createApplicant({ links });
 
-      await ApplicantRepository.update(props);
+      expect(
+        (await applicant.getLinks()).map(link => link.name)
+      ).toEqual(expect.arrayContaining([
+        ...links.map(link => link.name)
+      ]));
 
       const newProps: IApplicantEditable = {
         uuid: applicant.uuid,
-        links: [{
-          name: "new name",
-          url: internet.url()
-        }]
+        links: [
+          {
+            name: "github",
+            url: "https://github.com"
+          },
+          {
+            name: "new name",
+            url: internet.url()
+          }
+        ]
       };
       const updatedApplicant = await ApplicantRepository.update(newProps);
       expect(
@@ -400,10 +462,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("should update deleting all links if none is provided", async () => {
-      const applicant = await createApplicant();
-
-      const props: IApplicantEditable = {
-        uuid: applicant.uuid,
+      const applicant = await createApplicant({
         links: [
           {
             name: random.word(),
@@ -414,9 +473,7 @@ describe("ApplicantRepository", () => {
             url: internet.url()
           }
         ]
-      };
-
-      await ApplicantRepository.update(props);
+      });
 
       const newProps: IApplicantEditable = {
         uuid: applicant.uuid
@@ -476,6 +533,47 @@ describe("ApplicantRepository", () => {
       await ApplicantRepository.update({ uuid: applicant.uuid });
 
       expect((await applicant.getCareers()).length).toEqual(0);
+    });
+
+    describe("with wrong parameters", () => {
+      it("Should not update if two sections have the same displayOrder", async () => {
+        const sections = [
+          {
+            title: "myTitle",
+            text: "some description",
+            displayOrder: 1
+          },
+          {
+            title: "new myTitle",
+            text: "new some description",
+            displayOrder: 2
+          }
+        ];
+        const applicant = await createApplicant({ sections });
+
+        const newProps: IApplicantEditable = {
+          uuid: applicant.uuid,
+          sections: [
+            {
+              title: "myTitle",
+              text: "some description",
+              displayOrder: 2
+            },
+            {
+              title: "new myTitle",
+              text: "new some description",
+              displayOrder: 2
+            }
+          ]
+        };
+        await expect(ApplicantRepository.update(newProps)).rejects.toThrow();
+
+        expect(
+          (await applicant.getSections()).map(section => section.title)
+        ).toEqual(expect.arrayContaining([
+          ...sections.map(section => section.title)
+        ]));
+      });
     });
   });
 });

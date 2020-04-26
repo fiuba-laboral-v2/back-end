@@ -1,9 +1,6 @@
-import { Applicant, IApplicant, IApplicantCareer, IApplicantEditable } from "./index";
-import { Capability, CapabilityRepository } from "../Capability";
-import { ApplicantCapability } from "../ApplicantCapability";
+import { Applicant, IApplicant, IApplicantEditable } from "./index";
 import { ApplicantNotFound } from "./Errors/ApplicantNotFound";
 import Database from "../../config/Database";
-import { Transaction } from "sequelize";
 import { CareerApplicantRepository } from "../CareerApplicant/Repository";
 import { ApplicantCapabilityRepository } from "../ApplicantCapability/Repository";
 import { SectionRepository } from "./Section/Repository";
@@ -23,39 +20,17 @@ export const ApplicantRepository = {
       user
     }: IApplicant
   ) => {
-    const capabilityModels: Capability[] = [];
-
-    for (const capability of capabilities) {
-      capabilityModels.push(await CapabilityRepository.findOrCreate(capability));
-    }
-    const { uuid: userUuid } = await UserRepository.create(user);
-    const applicant = new Applicant({
-      name,
-      surname,
-      padron,
-      description,
-      userUuid: userUuid
-    });
-    return ApplicantRepository.save(applicant, applicantCareers, capabilityModels);
-  },
-  save: async (
-    applicant: Applicant,
-    applicantCareers: IApplicantCareer[] = [],
-    capabilities: Capability[] = []
-  ) => {
     const transaction = await Database.transaction();
     try {
-      await applicant.save({ transaction });
-      await ApplicantRepository.updateOrCreateCareersApplicants(
-        applicant,
-        applicantCareers,
-        transaction
+      const { uuid: userUuid } = await UserRepository.create(user, transaction);
+      const applicant = await Applicant.create(
+        { name, surname, padron, description, userUuid: userUuid },
+        { transaction }
       );
-      await ApplicantRepository.updateOrCreateApplicantCapabilities(
-        applicant,
-        capabilities,
-        transaction
-      );
+
+      await CareerApplicantRepository.bulkCreate(applicantCareers, applicant, transaction);
+      await ApplicantCapabilityRepository.update(capabilities, applicant, transaction);
+
       await transaction.commit();
       return applicant;
     } catch (error) {
@@ -76,34 +51,6 @@ export const ApplicantRepository = {
 
     return applicant;
   },
-  updateOrCreateApplicantCapabilities: async (
-    applicant: Applicant,
-    capabilities: Capability[],
-    transaction?: Transaction
-  ) => {
-    for (const capability of capabilities) {
-      if (await applicant.hasCapability(capability)) continue;
-      await ApplicantCapability.create(
-        { capabilityUuid: capability.uuid, applicantUuid: applicant.uuid },
-        { transaction }
-      );
-    }
-    return applicant;
-  },
-  updateOrCreateCareersApplicants: async (
-    applicant: Applicant,
-    applicantCareers: IApplicantCareer[],
-    transaction?: Transaction
-  ) => {
-    for (const applicantCareer of applicantCareers) {
-      await CareerApplicantRepository.create(
-        applicant,
-        applicantCareer,
-        transaction
-      );
-    }
-    return applicant;
-  },
   update: async (
     {
       uuid,
@@ -119,16 +66,18 @@ export const ApplicantRepository = {
     try {
       await applicant.set(pick(props, ["name", "surname", "description"]));
 
-      await SectionRepository.update(applicant, sections, transaction);
+      await SectionRepository.update(sections, applicant, transaction);
 
-      await ApplicantLinkRepository.update(applicant, links, transaction);
+      await ApplicantLinkRepository.update(links, applicant, transaction);
 
-      await CareerApplicantRepository.update(applicant, careers, transaction);
+      await CareerApplicantRepository.update(careers, applicant, transaction);
 
-      await ApplicantCapabilityRepository.update(applicant, newCapabilities, transaction);
+      await ApplicantCapabilityRepository.update(newCapabilities, applicant, transaction);
+
+      await applicant.save({ transaction });
 
       await transaction.commit();
-      return applicant.save();
+      return applicant;
     } catch (error) {
       await transaction.rollback();
       throw new Error(error);

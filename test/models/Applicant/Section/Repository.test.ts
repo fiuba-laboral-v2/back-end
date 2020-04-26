@@ -33,43 +33,43 @@ describe("Section model", () => {
   });
 
   it("creates a valid section with a title and a text", async () => {
-    const params = {
+    const sectionData = {
       title: random.words(),
       text: lorem.paragraphs(),
       displayOrder: 1
     };
 
-    await SectionRepository.updateOrCreate(applicant, params);
+    await SectionRepository.update([sectionData], applicant);
     const [section] = await applicant.getSections();
 
     expect(section).toBeDefined();
     expect(section).toHaveProperty("uuid");
     expect(section).toHaveProperty("applicantUuid");
     expect(section).toMatchObject({
-      title: params.title,
-      text: params.text,
+      title: sectionData.title,
+      text: sectionData.text,
       displayOrder: 1
     });
   });
 
   it("updates a valid section", async () => {
-    const params = {
+    const params = [{
       title: random.words(),
       text: lorem.paragraphs(),
       displayOrder: 1
-    };
+    }];
 
-    await SectionRepository.updateOrCreate(applicant, params);
+    await SectionRepository.update(params, applicant);
     const [firstSection] = await applicant.getSections();
 
-    const newParams = {
+    const newParams = [{
       uuid: firstSection.uuid,
       title: "New title",
       text: "New Text",
       displayOrder: 1
-    };
+    }];
 
-    await SectionRepository.updateOrCreate(applicant, newParams);
+    await SectionRepository.update(newParams, applicant);
     const [section] = await applicant.getSections();
 
     expect(section).toBeDefined();
@@ -80,5 +80,42 @@ describe("Section model", () => {
       text: "New Text",
       displayOrder: 1
     });
+  });
+
+  it("updates only the sections given and deleting the rest of applicant sections", async () => {
+    const params = [
+      {
+        title: random.words(),
+        text: lorem.paragraphs(),
+        displayOrder: 1
+      },
+      {
+        title: random.words(),
+        text: lorem.paragraphs(),
+        displayOrder: 2
+      }
+    ];
+
+    await SectionRepository.update(params, applicant);
+    const [firstSection, secondSection] = await applicant.getSections();
+
+    const newParams = [
+      {
+        uuid: firstSection.uuid,
+        title: "New title",
+        text: "New Text",
+        displayOrder: 1
+      },
+      {
+        title: "third section",
+        text: "something",
+        displayOrder: 2
+      }
+    ];
+
+    await SectionRepository.update(newParams, applicant);
+    const sections = await applicant.getSections();
+
+    expect(sections.map(({ title }) => title)).toEqual(["New title", "third section"]);
   });
 });

@@ -12,23 +12,26 @@ export const CareerApplicantRepository = {
 
     return careerApplicant;
   },
-  create: async (
+  bulkCreate: async (
+    applicantCareers: IApplicantCareer[],
     applicant: Applicant,
-    applicantCareer: IApplicantCareer,
     transaction?: Transaction
   ) => {
-    return CareerApplicant.create(
+    return CareerApplicant.bulkCreate(
+      applicantCareers.map(applicantCareer => (
       {
         careerCode: applicantCareer.code,
         applicantUuid: applicant.uuid,
         creditsCount: applicantCareer.creditsCount
-      },
+      }
+      ))
+      ,
       { transaction }
     );
   },
   update: async (
-    applicant: Applicant,
     applicantCareers: IApplicantCareer[],
+    applicant: Applicant,
     transaction?: Transaction
   ) => {
     await CareerApplicant.destroy({
@@ -38,13 +41,16 @@ export const CareerApplicantRepository = {
       transaction
     });
 
-    for (const applicantCareer of applicantCareers) {
-      await CareerApplicantRepository.create(
-        applicant,
-        applicantCareer,
-        transaction
-      );
-    }
+    return CareerApplicant.bulkCreate(
+      applicantCareers.map(applicantCareer =>
+        ({
+          careerCode: applicantCareer.code,
+          applicantUuid: applicant.uuid,
+          creditsCount: applicantCareer.creditsCount
+        })
+      ),
+      { transaction }
+    );
   },
   truncate: async () =>
     CareerApplicant.truncate({ cascade: true })
