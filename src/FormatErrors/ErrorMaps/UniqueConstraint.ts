@@ -1,12 +1,12 @@
 import { UniqueConstraintError } from "sequelize";
 import { IMapItem } from "./IMapItem";
 
-interface IUniqueConstraintError {
+interface IUniqueConstraintErrorParameters {
   table: string;
   columns: string[];
 }
 
-const mapItem: IMapItem<IUniqueConstraintError> = {
+const mapItem: IMapItem<IUniqueConstraintErrorParameters> = {
   message: "UniqueConstraintError",
   data: (error: UniqueConstraintError) => ({
     errorType: error.constructor.name,

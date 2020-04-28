@@ -2,12 +2,12 @@ import { ForeignKeyConstraintError } from "sequelize";
 
 import { IMapItem } from "./IMapItem";
 
-interface IForeignKeyConstraintError {
+interface IForeignKeyConstraintErrorParameters {
   table: string;
   columns: string[];
 }
 
-const mapItem: IMapItem<IForeignKeyConstraintError> = {
+const mapItem: IMapItem<IForeignKeyConstraintErrorParameters> = {
   message: "SequelizeForeignKeyConstraintError",
   data: (error: ForeignKeyConstraintError) => ({
     errorType: error.constructor.name,
