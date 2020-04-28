@@ -17,6 +17,6 @@ const mapItem: IMapItem<IUniqueConstraintError> = {
   })
 };
 
-export const uniqueConstraintErrorMapError = {
+export const uniqueConstraint = {
   SequelizeUniqueConstraintError: mapItem
 };

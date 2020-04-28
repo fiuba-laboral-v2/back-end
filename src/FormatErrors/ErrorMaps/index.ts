@@ -1,8 +1,8 @@
-import { uniqueConstraintErrorMapError } from "./UniqueConstraintErrorMapError";
-import { foreignKeyConstraintErrorMapError } from "./ForeignKeyConstraintErrorMapError";
+import { uniqueConstraint } from "./UniqueConstraint";
+import { foreignKeyConstraint } from "./ForeignKeyConstraint";
 export { IMapItem } from "./IMapItem";
 
 export const errorMap = [
-  uniqueConstraintErrorMapError,
-  foreignKeyConstraintErrorMapError
+  uniqueConstraint,
+  foreignKeyConstraint
 ];

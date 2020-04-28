@@ -18,6 +18,6 @@ const mapItem: IMapItem<IForeignKeyConstraintError> = {
   })
 };
 
-export const foreignKeyConstraintErrorMapError = {
+export const foreignKeyConstraint = {
   SequelizeForeignKeyConstraintError: mapItem
 };
