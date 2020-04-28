@@ -8,7 +8,7 @@ interface IForeignKeyConstraintErrorParameters {
 }
 
 const mapItem: IMapItem<IForeignKeyConstraintErrorParameters> = {
-  message: "SequelizeForeignKeyConstraintError",
+  message: "ForeignKeyConstraintError",
   data: (error: ForeignKeyConstraintError) => ({
     errorType: error.constructor.name,
     parameters: {
