@@ -6,16 +6,16 @@ const constraintTranslator = {
   Offers_companyId_fkey: "CompanyDoesNotExistError",
   CompanyPhotos_companyId_fkey: "CompanyDoesNotExistError",
   CompanyPhoneNumbers_companyId_fkey: "CompanyDoesNotExistError",
-  OffersSections_offerUuid_fkey: "OfferDoesNotExist",
-  OffersCareers_offerUuid_fkey: "OfferDoesNotExist",
-  OffersCareers_careerCode_fkey: "CareerDoesNotExist",
-  JobApplications_offerUuid_fkey: "OfferDoesNotExist",
-  JobApplications_applicantUuid_fkey: "ApplicantDoesNotExist",
-  ApplicantsLinks_applicantUuid_fkey: "ApplicantDoesNotExist",
-  ApplicantsCapabilities_applicantUuid_fkey: "ApplicantDoesNotExist",
-  CareersApplicants_applicantUuid_fkey: "ApplicantDoesNotExist",
-  CareersApplicants_careerCode_fkey: "CareerDoesNotExist",
-  ApplicantsCapabilities_capabilityUuid_fkey: "CapabilitiesDoesNotExist"
+  OffersSections_offerUuid_fkey: "OfferDoesNotExistError",
+  OffersCareers_offerUuid_fkey: "OfferDoesNotExistError",
+  OffersCareers_careerCode_fkey: "CareerDoesNotExistError",
+  JobApplications_offerUuid_fkey: "OfferDoesNotExistError",
+  JobApplications_applicantUuid_fkey: "ApplicantDoesNotExistError",
+  ApplicantsLinks_applicantUuid_fkey: "ApplicantDoesNotExistError",
+  ApplicantsCapabilities_applicantUuid_fkey: "ApplicantDoesNotExistError",
+  CareersApplicants_applicantUuid_fkey: "ApplicantDoesNotExistError",
+  CareersApplicants_careerCode_fkey: "CareerDoesNotExistError",
+  ApplicantsCapabilities_capabilityUuid_fkey: "CapabilitiesDoesNotExistError"
 };
 
 const mapItem: IMapItem = {
