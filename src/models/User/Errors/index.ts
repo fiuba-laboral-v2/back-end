@@ -1,3 +1,3 @@
-import { UserNotFound } from "./UserNotFound";
+import { UserNotFoundError } from "./UserNotFoundError";
 
-export { UserNotFound };
+export { UserNotFoundError };

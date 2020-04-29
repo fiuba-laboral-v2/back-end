@@ -1,6 +1,6 @@
 import Database from "../../../src/config/Database";
 import { UserRepository } from "../../../src/models/User/Repository";
-import { UserNotFound } from "../../../src/models/User";
+import { UserNotFoundError } from "../../../src/models/User";
 
 describe("UserRepository", () => {
   beforeAll(() => Database.setConnection());
@@ -52,6 +52,6 @@ describe("UserRepository", () => {
     await UserRepository.create({ email: "www@www.com", password: "AValidPassword012" });
     await expect(
       UserRepository.findByEmail("yyy@yyy.com")
-    ).rejects.toThrow(UserNotFound);
+    ).rejects.toThrow(UserNotFoundError);
   });
 });

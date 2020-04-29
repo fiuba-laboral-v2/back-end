@@ -1,1 +1,1 @@
-export { BadCredentials } from "./BadCredentials";
+export { BadCredentialsError } from "./BadCredentialsError";
