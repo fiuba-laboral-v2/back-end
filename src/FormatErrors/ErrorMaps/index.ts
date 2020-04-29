@@ -1,8 +1,8 @@
-import { uniqueConstraint } from "./UniqueConstraint";
-import { foreignKeyConstraint } from "./ForeignKeyConstraint";
+import { uniqueConstraintErrorMapItem } from "./UniqueConstraint";
+import { foreignKeyConstraintErrorMapItem } from "./ForeignKeyConstraint";
 export { IMapItem } from "./IMapItem";
 
 export const ErrorMap = [
-  { SequelizeUniqueConstraintError: uniqueConstraint },
-  { SequelizeForeignKeyConstraintError: foreignKeyConstraint }
+  { SequelizeUniqueConstraintError: uniqueConstraintErrorMapItem },
+  { SequelizeForeignKeyConstraintError: foreignKeyConstraintErrorMapItem }
 ];

@@ -13,7 +13,7 @@ const constraintTranslator = {
   Careers_code_key: "CareerAlreadyExistsError"
 };
 
-export const uniqueConstraint: IMapItem = {
+export const uniqueConstraintErrorMapItem: IMapItem = {
   message: "UniqueConstraintError",
   data: (error: ConstraintError) => ({
     errorType: constraintTranslator[error.original.constraint]

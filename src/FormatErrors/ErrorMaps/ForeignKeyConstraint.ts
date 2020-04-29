@@ -18,7 +18,7 @@ const constraintTranslator = {
   ApplicantsCapabilities_capabilityUuid_fkey: "CapabilitiesDoesNotExistError"
 };
 
-export const foreignKeyConstraint: IMapItem = {
+export const foreignKeyConstraintErrorMapItem: IMapItem = {
   message: "ForeignKeyConstraintError",
   data: (error: ForeignKeyConstraintError) => ({
     errorType: constraintTranslator[error.index]
