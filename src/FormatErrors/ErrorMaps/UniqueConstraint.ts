@@ -1,6 +1,6 @@
 import { IMapItem } from "./IMapItem";
 
-class ConstrainError extends Error {
+class ConstraintError extends Error {
   public original: {
     constraint: string;
   };
@@ -13,13 +13,9 @@ const constraintTranslator = {
   Careers_code_key: "CareerAlreadyExistsError"
 };
 
-const mapItem: IMapItem = {
+export const uniqueConstraint: IMapItem = {
   message: "UniqueConstraintError",
-  data: (error: ConstrainError) => ({
+  data: (error: ConstraintError) => ({
     errorType: constraintTranslator[error.original.constraint]
   })
-};
-
-export const uniqueConstraint = {
-  SequelizeUniqueConstraintError: mapItem
 };

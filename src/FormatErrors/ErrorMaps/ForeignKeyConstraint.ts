@@ -18,13 +18,9 @@ const constraintTranslator = {
   ApplicantsCapabilities_capabilityUuid_fkey: "CapabilitiesDoesNotExistError"
 };
 
-const mapItem: IMapItem = {
+export const foreignKeyConstraint: IMapItem = {
   message: "ForeignKeyConstraintError",
   data: (error: ForeignKeyConstraintError) => ({
     errorType: constraintTranslator[error.index]
   })
-};
-
-export const foreignKeyConstraint = {
-  SequelizeForeignKeyConstraintError: mapItem
 };
