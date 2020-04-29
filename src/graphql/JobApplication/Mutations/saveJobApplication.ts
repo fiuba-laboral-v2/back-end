@@ -4,7 +4,7 @@ import { JobApplicationRepository } from "../../../models/JobApplication";
 import { OfferRepository } from "../../../models/Offer";
 import { UserRepository } from "../../../models/User";
 import { IApolloServerContext } from "../../../server";
-import { AuthenticationError, ApplicantRequiredError } from "../../Errors";
+import { AuthenticationError, Unauthorized } from "../../Errors";
 
 export const saveJobApplication = {
   type: GraphQLJobApplication,
@@ -22,7 +22,7 @@ export const saveJobApplication = {
 
     const user = await UserRepository.findByEmail(currentUser?.email);
     const applicant = await user.getApplicant();
-    if (!applicant) throw new ApplicantRequiredError();
+    if (!applicant) throw new Unauthorized();
 
     const offer = await OfferRepository.findByUuid(offerUuid);
     await JobApplicationRepository.apply(applicant, offer);

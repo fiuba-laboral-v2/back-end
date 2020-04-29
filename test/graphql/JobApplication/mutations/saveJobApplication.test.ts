@@ -7,7 +7,7 @@ import { ApplicantRepository } from "../../../../src/models/Applicant";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { OfferRepository } from "../../../../src/models/Offer";
 
-import { AuthenticationError, ApplicantRequiredError } from "../../../../src/graphql/Errors";
+import { AuthenticationError, Unauthorized } from "../../../../src/graphql/Errors";
 
 import { OfferMocks } from "../../../models/Offer/mocks";
 import { companyMockData } from "../../../models/Company/mocks";
@@ -87,7 +87,7 @@ describe("saveJobApplication", () => {
       const { id: companyId } = await CompanyRepository.create(companyMockData);
       const offer = await OfferRepository.create(OfferMocks.completeData(companyId));
       const { errors } = await executeMutation(SAVE_JOB_APPLICATION, { offerUuid: offer.uuid });
-      expect(errors[0].extensions.data).toEqual({ errorType: ApplicantRequiredError.name });
+      expect(errors[0].extensions.data).toEqual({ errorType: Unauthorized.name });
     });
 
     it("should return an error if the application already exist", async () => {

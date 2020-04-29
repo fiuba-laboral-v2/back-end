@@ -1,2 +1,2 @@
 export { AuthenticationError } from "./AuthenticationError";
-export { ApplicantRequiredError } from "./ApplicantRequiredError";
+export { Unauthorized } from "./Unauthorized";
