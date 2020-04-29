@@ -1,9 +1,12 @@
-export interface IData<T> {
+export interface IData {
   errorType: string;
-  parameters?: T;
 }
 
-export interface IMapItem<T = {}> {
+export interface IMapItem {
   message: string;
-  data: (error: Error) => IData<T>;
+  data: (error: Error) => IData;
+}
+
+export interface IErrorMap {
+  [key: string]: IMapItem;
 }
