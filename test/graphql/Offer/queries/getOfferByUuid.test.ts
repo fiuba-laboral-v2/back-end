@@ -10,7 +10,7 @@ import { ApplicantRepository } from "../../../../src/models/Applicant";
 import { UserRepository } from "../../../../src/models/User";
 
 import { OfferNotFound } from "../../../../src/models/Offer/Errors";
-import { AuthenticationError, Unauthorized } from "../../../../src/graphql/Errors";
+import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
 
 import { careerMocks } from "../../../models/Career/mocks";
 import { companyMockData } from "../../../models/Company/mocks";
@@ -192,7 +192,7 @@ describe("getOfferByUuid", () => {
         GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
         { uuid: uuid }
       );
-      expect(errors[0].extensions.data).toEqual({ errorType: Unauthorized.name });
+      expect(errors[0].extensions.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("should return an error if there is no current user", async () => {

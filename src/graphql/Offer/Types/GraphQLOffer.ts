@@ -7,7 +7,7 @@ import { GraphQLCompany } from "../../Company/Types/GraphQLCompany";
 import { Offer } from "../../../models/Offer";
 import { UserRepository } from "../../../models/User";
 import { JobApplicationRepository } from "../../../models/JobApplication";
-import { AuthenticationError, Unauthorized } from "../../Errors";
+import { AuthenticationError, UnauthorizedError } from "../../Errors";
 
 const GraphQLOffer = new GraphQLObjectType({
   name: "Offer",
@@ -52,7 +52,7 @@ const GraphQLOffer = new GraphQLObjectType({
 
         const user = await UserRepository.findByEmail(currentUser.email);
         const applicant = await user.getApplicant();
-        if (!applicant) throw new Unauthorized();
+        if (!applicant) throw new UnauthorizedError();
 
         return JobApplicationRepository.hasApplied(applicant, offer);
       }
