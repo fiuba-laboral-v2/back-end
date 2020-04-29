@@ -1,4 +1,4 @@
-import { IMapItem } from "./index";
+import { IMapItem } from "./IMapItem";
 
 export const generic: IMapItem = {
   message: "Something has gone horribly wrong",
