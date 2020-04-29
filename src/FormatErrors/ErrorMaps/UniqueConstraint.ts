@@ -1,6 +1,6 @@
 import { IMapItem } from "./IMapItem";
 
-class ConstraintError extends Error {
+class UniqueConstraintError extends Error {
   public original: {
     constraint: string;
   };
@@ -15,7 +15,7 @@ const constraintTranslator = {
 
 export const uniqueConstraintErrorMapItem: IMapItem = {
   message: "UniqueConstraintError",
-  data: (error: ConstraintError) => ({
+  data: (error: UniqueConstraintError) => ({
     errorType: constraintTranslator[error.original.constraint]
   })
 };
