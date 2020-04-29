@@ -1,7 +1,6 @@
 import { gql } from "apollo-server";
 import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
-import { UniqueConstraintError } from "sequelize";
 import { ICompany } from "../../../../src/models/Company";
 import { CompanyRepository } from "../../../../src/models/Company";
 import {
@@ -99,13 +98,7 @@ describe("saveCompany", () => {
         companyDataWithMinimumData
       );
       expect(errors[0].extensions.data).toEqual(
-        {
-          errorType: UniqueConstraintError.name,
-          parameters: {
-            table: "Companies",
-            columns: ["cuit"]
-          }
-        }
+        { errorType: "CompanyCuitAlreadyExistsError" }
       );
     });
   });

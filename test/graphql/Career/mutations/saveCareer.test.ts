@@ -1,7 +1,6 @@
 import { gql, ApolloError } from "apollo-server";
 import { executeMutation, executeQuery } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
-import { UniqueConstraintError } from "sequelize";
 import { Career } from "../../../../src/models/Career";
 import { careerMocks } from "../../../models/Career/mocks";
 
@@ -50,13 +49,7 @@ describe("saveCareer", () => {
       await executeQuery(SAVE_CAREER, params);
       const { errors } = await executeMutation(SAVE_CAREER, params);
       expect(errors[0].extensions.data).toEqual(
-        {
-          errorType: UniqueConstraintError.name,
-          parameters: {
-            table: "Careers",
-            columns: ["code"]
-          }
-        }
+        { errorType: "CareerAlreadyExistsError" }
       );
     });
   });

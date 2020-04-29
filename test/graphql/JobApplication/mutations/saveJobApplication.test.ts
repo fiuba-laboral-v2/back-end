@@ -8,7 +8,6 @@ import { CompanyRepository } from "../../../../src/models/Company";
 import { OfferRepository } from "../../../../src/models/Offer";
 
 import { AuthenticationError, ApplicantRequiredError } from "../../../../src/graphql/Errors";
-import { UniqueConstraintError } from "sequelize";
 
 import { OfferMocks } from "../../../models/Offer/mocks";
 import { companyMockData } from "../../../models/Company/mocks";
@@ -99,14 +98,16 @@ describe("saveJobApplication", () => {
       const { errors } = await executeMutation(SAVE_JOB_APPLICATION, { offerUuid: offer.uuid });
 
       expect(errors[0].extensions.data).toMatchObject(
-        {
-          errorType: UniqueConstraintError.name,
-          parameters: {
-            table: "JobApplications",
-            columns: expect.arrayContaining(["offerUuid", "applicantUuid"])
-          }
-        }
+        { errorType: "JobApplicationAlreadyExistsError" }
       );
+    });
+
+    it("should return an error if the offer does not exist", async () => {
+      await ApplicantRepository.create(applicantData);
+      const { errors } = await executeMutation(SAVE_JOB_APPLICATION, {
+        offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
+      });
+      expect(errors[0].extensions.data).toMatchObject({ errorType: "OfferNotFound" });
     });
   });
 });

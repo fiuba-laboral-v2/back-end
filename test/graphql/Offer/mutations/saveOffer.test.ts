@@ -1,5 +1,4 @@
 import { gql } from "apollo-server";
-import { ForeignKeyConstraintError } from "sequelize";
 import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
@@ -135,13 +134,7 @@ describe("saveOffer", () => {
         offerAttributes
       );
       expect(errors[0].extensions.data).toEqual(
-        {
-          errorType: ForeignKeyConstraintError.name,
-          parameters: {
-            table: "Offers",
-            columns: []
-          }
-        }
+        { errorType: "CompanyDoesNotExistError" }
       );
     });
   });

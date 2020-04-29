@@ -1,7 +1,6 @@
 import { gql } from "apollo-server";
 import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
-import { UniqueConstraintError } from "sequelize";
 
 import { Career, CareerRepository } from "../../../../src/models/Career";
 
@@ -10,7 +9,6 @@ import { careerMocks } from "../../../models/Career/mocks";
 
 import { pick } from "lodash";
 import { UserRepository } from "../../../../src/models/User/Repository";
-import { ApplicantRepository } from "../../../../src/models/Applicant";
 
 const queryWithAllData = gql`
   mutation SaveApplicant(
@@ -133,13 +131,7 @@ describe("saveApplicant", () => {
       await UserRepository.create(applicantData.user);
       const { errors } = await executeMutation(queryWithOnlyObligatoryData, applicantData);
       expect(errors[0].extensions.data).toEqual(
-        {
-          errorType: UniqueConstraintError.name,
-          parameters: {
-            table: "Users",
-            columns: ["email"]
-          }
-        }
+        { errorType: "UserEmailAlreadyExistsError" }
       );
     });
   });
