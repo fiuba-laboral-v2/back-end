@@ -4,7 +4,7 @@ import { JobApplicationRepository } from "../../../models/JobApplication";
 import { OfferRepository } from "../../../models/Offer";
 import { UserRepository } from "../../../models/User";
 import { IApolloServerContext } from "../../../server";
-import { AuthenticationError, ForbiddenError } from "apollo-server-errors";
+import { AuthenticationError, UnauthorizedError } from "../../Errors";
 
 export const saveJobApplication = {
   type: GraphQLJobApplication,
@@ -18,11 +18,11 @@ export const saveJobApplication = {
     { offerUuid }: { offerUuid: string; },
     { currentUser }: IApolloServerContext
   ) => {
-    if (!currentUser) throw new AuthenticationError("You are not authenticated");
+    if (!currentUser) throw new AuthenticationError();
 
     const user = await UserRepository.findByEmail(currentUser?.email);
     const applicant = await user.getApplicant();
-    if (!applicant) throw new ForbiddenError("You are not an applicant");
+    if (!applicant) throw new UnauthorizedError();
 
     const offer = await OfferRepository.findByUuid(offerUuid);
     await JobApplicationRepository.apply(applicant, offer);

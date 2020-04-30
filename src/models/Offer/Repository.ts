@@ -26,9 +26,9 @@ export const OfferRepository = {
       )));
       await transaction.commit();
       return offer;
-    } catch (e) {
+    } catch (error) {
       await transaction.rollback();
-      throw new Error(e);
+      throw error;
     }
   },
   findByUuid: async (uuid: string) => {

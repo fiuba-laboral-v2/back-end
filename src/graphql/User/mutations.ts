@@ -2,7 +2,7 @@ import { nonNull, String } from "../fieldTypes";
 import { IUser } from "../../models/User";
 import { UserRepository } from "../../models/User/Repository";
 import { JWT } from "../../JWT";
-import { BadCredentials } from "./Errors";
+import { BadCredentialsError } from "./Errors";
 
 export const userMutations = {
   login: {
@@ -18,7 +18,7 @@ export const userMutations = {
     resolve: async (_: undefined, { email, password }: IUser) => {
       const user = await UserRepository.findByEmail(email);
       const valid = await user.passwordMatches(password);
-      if (!valid) throw new BadCredentials();
+      if (!valid) throw new BadCredentialsError();
 
       return JWT.createToken(user);
     }

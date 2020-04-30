@@ -18,7 +18,7 @@ env:
 before_script:
   - yarn db:create && yarn db:migrate
 script:
-  - yarn lint && yarn test
+  - yarn lint && yarn build && yarn test
 after_success: yarn coverage
 deploy:
   - provider: script

@@ -125,5 +125,17 @@ describe("saveOffer", () => {
       );
       expect(errors).not.toBeUndefined();
     });
+
+    it("should throw an error if company id that not exist", async () => {
+      const notExistingCompanyId = 9999;
+      const offerAttributes = OfferMocks.completeData(notExistingCompanyId);
+      const { errors } = await executeMutation(
+        SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
+        offerAttributes
+      );
+      expect(errors[0].extensions.data).toEqual(
+        { errorType: "CompanyDoesNotExistError" }
+      );
+    });
   });
 });

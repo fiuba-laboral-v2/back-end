@@ -35,7 +35,7 @@ export const CareerRepository = {
       return carrerDestroyed;
     } catch (error) {
       await transaction.rollback();
-      throw new Error(error);
+      throw error;
     }
   },
   truncate: async () =>

@@ -38,11 +38,19 @@ describe("saveCareer", () => {
     });
   });
 
-  it("throws Career Not found if the code doesn't exists", async () => {
-    const response = await executeMutation(SAVE_CAREER, { code: "3" , credits: 250 });
+  describe("Errors", () => {
+    it("should throw an if the description is not provided", async () => {
+      const { errors } = await executeMutation(SAVE_CAREER, { code: "3" , credits: 250 });
+      expect(errors[0].constructor.name).toEqual(ApolloError.name);
+    });
 
-    expect(response.errors[0]).toEqual(
-      new ApolloError(`Variable "$description" of required type "String!" was not provided.`)
-    );
+    it("should throw an if career already exist", async () => {
+      const params = careerMocks.careerData();
+      await executeQuery(SAVE_CAREER, params);
+      const { errors } = await executeMutation(SAVE_CAREER, params);
+      expect(errors[0].extensions.data).toEqual(
+        { errorType: "CareerAlreadyExistsError" }
+      );
+    });
   });
 });

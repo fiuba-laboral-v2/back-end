@@ -1,9 +1,9 @@
-export class BadCredentials extends Error {
+export class BadCredentialsError extends Error {
   public static buildMessage() {
     return "Las credenciales son erróneas";
   }
 
   constructor() {
-    super(BadCredentials.buildMessage());
+    super(BadCredentialsError.buildMessage());
   }
 }

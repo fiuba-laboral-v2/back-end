@@ -123,4 +123,16 @@ describe("saveApplicant", () => {
       });
     });
   });
+
+  describe("Errors", () => {
+    it("should throw and error if the user exists", async () => {
+      const career = await CareerRepository.create(careerMocks.careerData());
+      const applicantData = applicantMocks.applicantData([career]);
+      await UserRepository.create(applicantData.user);
+      const { errors } = await executeMutation(queryWithOnlyObligatoryData, applicantData);
+      expect(errors[0].extensions.data).toEqual(
+        { errorType: "UserEmailAlreadyExistsError" }
+      );
+    });
+  });
 });

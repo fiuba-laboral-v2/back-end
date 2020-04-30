@@ -7,6 +7,8 @@ import { ApplicantRepository } from "../../../../src/models/Applicant";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { OfferRepository } from "../../../../src/models/Offer";
 
+import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
+
 import { OfferMocks } from "../../../models/Offer/mocks";
 import { companyMockData } from "../../../models/Company/mocks";
 import { applicantMocks } from "../../../models/Applicant/mocks";
@@ -66,9 +68,7 @@ describe("saveJobApplication", () => {
   describe("Errors", () => {
     it("should return an error if no offerUuid is provided", async () => {
       const { errors } = await executeMutation(SAVE_JOB_APPLICATION);
-      expect(errors[0]).toEqual(
-        new ApolloError(`Variable "$offerUuid" of required type "String!" was not provided.`)
-      );
+      expect(errors[0].constructor.name).toEqual(ApolloError.name);
     });
 
     it("should return an error if there is no current user", async () => {
@@ -79,7 +79,7 @@ describe("saveJobApplication", () => {
         { offerUuid: offer.uuid },
         { loggedIn: false }
       );
-      expect(errors[0].message).toEqual("You are not authenticated");
+      expect(errors[0].extensions.data).toEqual({ errorType: AuthenticationError.name });
     });
 
     it("should return an error if current user is not an applicant", async () => {
@@ -87,7 +87,27 @@ describe("saveJobApplication", () => {
       const { id: companyId } = await CompanyRepository.create(companyMockData);
       const offer = await OfferRepository.create(OfferMocks.completeData(companyId));
       const { errors } = await executeMutation(SAVE_JOB_APPLICATION, { offerUuid: offer.uuid });
-      expect(errors[0].message).toEqual("You are not an applicant");
+      expect(errors[0].extensions.data).toEqual({ errorType: UnauthorizedError.name });
+    });
+
+    it("should return an error if the application already exist", async () => {
+      await ApplicantRepository.create(applicantData);
+      const company = await CompanyRepository.create(companyMockData);
+      const offer = await OfferRepository.create(OfferMocks.completeData(company.id));
+      await executeMutation(SAVE_JOB_APPLICATION, { offerUuid: offer.uuid });
+      const { errors } = await executeMutation(SAVE_JOB_APPLICATION, { offerUuid: offer.uuid });
+
+      expect(errors[0].extensions.data).toMatchObject(
+        { errorType: "JobApplicationAlreadyExistsError" }
+      );
+    });
+
+    it("should return an error if the offer does not exist", async () => {
+      await ApplicantRepository.create(applicantData);
+      const { errors } = await executeMutation(SAVE_JOB_APPLICATION, {
+        offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
+      });
+      expect(errors[0].extensions.data).toMatchObject({ errorType: "OfferNotFound" });
     });
   });
 });
