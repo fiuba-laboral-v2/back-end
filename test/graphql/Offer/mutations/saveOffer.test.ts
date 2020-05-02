@@ -10,12 +10,12 @@ import { OfferMocks } from "../../../models/Offer/mocks";
 
 const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
     mutation saveOffer(
-        $companyId: Int!, $title: String!, $description: String!, $hoursPerDay: Int!,
+        $companyUuid: String!, $title: String!, $description: String!, $hoursPerDay: Int!,
         $minimumSalary: Int!, $maximumSalary: Int!, $sections: [OfferSectionInput],
         $careers: [OfferCareerInput]
     ) {
         saveOffer(
-            companyId: $companyId, title: $title, description: $description,
+            companyUuid: $companyUuid, title: $title, description: $description,
             hoursPerDay: $hoursPerDay, minimumSalary: $minimumSalary, maximumSalary: $maximumSalary,
             sections: $sections, careers: $careers
         ) {
@@ -37,7 +37,7 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
                 credits
             }
             company {
-              id
+              uuid
               cuit
               companyName
               slogan
@@ -54,11 +54,11 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
 
 const SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA = gql`
     mutation saveOffer(
-        $companyId: Int!, $title: String!, $description: String!, $hoursPerDay: Int!,
+        $companyUuid: String!, $title: String!, $description: String!, $hoursPerDay: Int!,
         $minimumSalary: Int!, $maximumSalary: Int!
     ) {
         saveOffer(
-            companyId: $companyId, title: $title, description: $description,
+            companyUuid: $companyUuid, title: $title, description: $description,
             hoursPerDay: $hoursPerDay, minimumSalary: $minimumSalary, maximumSalary: $maximumSalary
         ) {
             uuid
@@ -84,8 +84,8 @@ describe("saveOffer", () => {
 
   describe("when the input values are valid", () => {
     it("should create a new offer with only obligatory data", async () => {
-      const { id } = await CompanyRepository.create(companyMockData);
-      const offerAttributes = OfferMocks.completeData(id);
+      const { uuid } = await CompanyRepository.create(companyMockData);
+      const offerAttributes = OfferMocks.completeData(uuid);
       const { data: { saveOffer }, errors } = await executeMutation(
         SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
         offerAttributes
@@ -105,8 +105,8 @@ describe("saveOffer", () => {
 
     it("should create a new offer with one section and one career", async () => {
       const { code } = await CareerRepository.create(careerMocks.careerData());
-      const { id } = await CompanyRepository.create(companyMockData);
-      const offerAttributes = OfferMocks.withOneCareerAndOneSection(id, code);
+      const { uuid } = await CompanyRepository.create(companyMockData);
+      const offerAttributes = OfferMocks.withOneCareerAndOneSection(uuid, code);
       const { data: { saveOffer }, errors } = await executeMutation(
         SAVE_OFFER_WITH_COMPLETE_DATA,
         offerAttributes
@@ -118,7 +118,7 @@ describe("saveOffer", () => {
   });
 
   describe("when the input values are invalid", () => {
-    it("should throw an error if no company id is provided", async () => {
+    it("should throw an error if no company uuid is provided", async () => {
       const { errors } = await executeMutation(
         SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
         OfferMocks.withNoCompanyId()
@@ -126,9 +126,9 @@ describe("saveOffer", () => {
       expect(errors).not.toBeUndefined();
     });
 
-    it("should throw an error if company id that not exist", async () => {
-      const notExistingCompanyId = 9999;
-      const offerAttributes = OfferMocks.completeData(notExistingCompanyId);
+    it("should throw an error if company uuid that not exist", async () => {
+      const notExistingCompanyUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+      const offerAttributes = OfferMocks.completeData(notExistingCompanyUuid);
       const { errors } = await executeMutation(
         SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
         offerAttributes

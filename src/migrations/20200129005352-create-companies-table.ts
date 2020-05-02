@@ -1,13 +1,14 @@
-import { DATE, INTEGER, QueryInterface, STRING, TEXT } from "sequelize";
+import { UUID, DATE, STRING, TEXT, QueryInterface } from "sequelize";
+import uuid from "uuid/v4";
 
 export = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.createTable("Companies", {
-      id: {
+      uuid: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: INTEGER
+        type: UUID,
+        defaultValue: uuid()
       },
       cuit: {
         allowNull: false,

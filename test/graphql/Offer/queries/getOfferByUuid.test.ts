@@ -77,7 +77,7 @@ describe("getOfferByUuid", () => {
     const company = await CompanyRepository.create(companyMockData);
     const career = await CareerRepository.create(careerMocks.careerData());
     const offer = await OfferRepository.create(
-      OfferMocks.withOneCareerAndOneSection(company.id, career.code)
+      OfferMocks.withOneCareerAndOneSection(company.uuid, career.code)
     );
     return { offer, career, company };
   };

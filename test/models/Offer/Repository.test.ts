@@ -20,15 +20,15 @@ describe("OfferRepository", () => {
 
   describe("Create", () => {
     it("should create a new offer", async () => {
-      const company = await CompanyRepository.create(companyMockData);
-      const offerProps = OfferMocks.withObligatoryData(company.id);
+      const { uuid } = await CompanyRepository.create(companyMockData);
+      const offerProps = OfferMocks.withObligatoryData(uuid);
       const offer = await OfferRepository.create(offerProps);
       expect(offer).toEqual(expect.objectContaining(offerProps));
     });
 
     it("should create a new offer with one section", async () => {
-      const company = await CompanyRepository.create(companyMockData);
-      const attributes = OfferMocks.withOneSection(company.id);
+      const { uuid } = await CompanyRepository.create(companyMockData);
+      const attributes = OfferMocks.withOneSection(uuid);
       const offer = await OfferRepository.create(attributes);
       expect(offer).toEqual(expect.objectContaining(omit(attributes, ["sections"])));
       const sections = await offer.getSections();
@@ -37,9 +37,9 @@ describe("OfferRepository", () => {
     });
 
     it("should create a new offer with one career", async () => {
-      const company = await CompanyRepository.create(companyMockData);
+      const { uuid } = await CompanyRepository.create(companyMockData);
       const { code } = await CareerRepository.create(careerMocks.careerData());
-      const attributes = OfferMocks.withOneCareer(company.id, code);
+      const attributes = OfferMocks.withOneCareer(uuid, code);
       const offer = await OfferRepository.create(attributes);
       expect(offer).toEqual(expect.objectContaining(omit(attributes, ["careers"])));
       const careers = await offer.getCareers();
@@ -50,9 +50,9 @@ describe("OfferRepository", () => {
     });
 
     it("should create a new offer with one career and one section", async () => {
-      const company = await CompanyRepository.create(companyMockData);
+      const { uuid } = await CompanyRepository.create(companyMockData);
       const { code } = await CareerRepository.create(careerMocks.careerData());
-      const attributes = OfferMocks.withOneCareerAndOneSection(company.id, code);
+      const attributes = OfferMocks.withOneCareerAndOneSection(uuid, code);
       const offer = await OfferRepository.create(attributes);
       expect(offer).toEqual(expect.objectContaining(
         omit(attributes, ["sections", "careers"])
@@ -75,18 +75,18 @@ describe("OfferRepository", () => {
       });
 
       it("should throw error if section is invalid and not create the offer", async () => {
-        const company = await CompanyRepository.create(companyMockData);
+        const { uuid } = await CompanyRepository.create(companyMockData);
         await expect(
-          OfferRepository.create(OfferMocks.withSectionWithNoTitle(company.id))
+          OfferRepository.create(OfferMocks.withSectionWithNoTitle(uuid))
         ).rejects.toThrow();
         expect(await OfferSection.findAll()).toHaveLength(0);
         expect(await Offer.findAll()).toHaveLength(0);
       });
 
       it("should throw error if career is invalid and not create the offer", async () => {
-        const company = await CompanyRepository.create(companyMockData);
+        const { uuid } = await CompanyRepository.create(companyMockData);
         await expect(
-          OfferRepository.create(OfferMocks.withOneCareerWithNullCareerCode(company.id))
+          OfferRepository.create(OfferMocks.withOneCareerWithNullCareerCode(uuid))
         ).rejects.toThrow();
         expect(await OfferSection.findAll()).toHaveLength(0);
         expect(await OfferCareer.findAll()).toHaveLength(0);
@@ -97,10 +97,10 @@ describe("OfferRepository", () => {
 
   describe("Get", () => {
     it("should get the only offer by uuid", async () => {
-      const company = await CompanyRepository.create(companyMockData);
-      const offerProps = OfferMocks.withObligatoryData(company.id);
-      const { uuid } = await OfferRepository.create(offerProps);
-      const offer = await OfferRepository.findByUuid(uuid);
+      const { uuid: companyUuid } = await CompanyRepository.create(companyMockData);
+      const offerProps = OfferMocks.withObligatoryData(companyUuid);
+      const { uuid: offerUuid } = await OfferRepository.create(offerProps);
+      const offer = await OfferRepository.findByUuid(offerUuid);
       expect(offer).toEqual(expect.objectContaining(offerProps));
     });
 
@@ -113,8 +113,8 @@ describe("OfferRepository", () => {
 
   describe("Delete", () => {
     it("should delete all offers if all companies are deleted", async () => {
-      const company = await CompanyRepository.create(companyMockData);
-      const offer = await OfferRepository.create(OfferMocks.withObligatoryData(company.id));
+      const { uuid } = await CompanyRepository.create(companyMockData);
+      const offer = await OfferRepository.create(OfferMocks.withObligatoryData(uuid));
       await CompanyRepository.truncate();
       await expect(OfferRepository.findByUuid(offer.uuid)).rejects.toThrow(OfferNotFound);
     });

@@ -1,44 +1,38 @@
 import Database from "../../../src/config/Database";
-import { CompanyPhoto } from "../../../src/models/CompanyPhoto";
+import { CompanyPhotoRepository, CompanyPhoto } from "../../../src/models/CompanyPhoto";
 
 describe("CompanyPhoto", () => {
-  beforeAll(async () => {
-    await Database.setConnection();
-  });
+  beforeAll(() => Database.setConnection());
 
-  beforeEach(async () => {
-    await CompanyPhoto.destroy({ truncate: true });
-  });
+  beforeEach(() => CompanyPhotoRepository.truncate());
 
-  afterAll(async () => {
-    await Database.close();
-  });
+  afterAll(() => Database.close());
 
   it("create a valid CompanyPhoto", async () => {
-    const companyPhoto: CompanyPhoto = new CompanyPhoto({
+    const companyPhoto = new CompanyPhoto({
       photo: `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNby
             blAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5E
             rkJggg==`,
-      companyId: 0
+      companyUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
     });
     expect(companyPhoto).not.toBeNull();
     expect(companyPhoto).not.toBeUndefined();
   });
 
   it("should throw and error if photo is null", async () => {
-    const companyPhoto: CompanyPhoto = new CompanyPhoto({
+    const companyPhoto = new CompanyPhoto({
       photo: null,
-      companyId: 0
+      companyUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
     });
     await expect(companyPhoto.save()).rejects.toThrow();
   });
 
-  it("should throw and error if companyId is null", async () => {
+  it("should throw and error if companyUuid is null", async () => {
     const companyPhoto: CompanyPhoto = new CompanyPhoto({
       photo: `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNby
             blAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5E
             rkJggg==`,
-      companyId: null
+      companyUuid: null
     });
     await expect(companyPhoto.save()).rejects.toThrow();
   });

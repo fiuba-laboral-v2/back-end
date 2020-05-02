@@ -17,8 +17,8 @@ describe("OfferCareer", () => {
   afterAll(() => Database.close());
 
   const createOffer = async () => {
-    const company = await new Company(companyMockData).save();
-    return new Offer(OfferMocks.withObligatoryData(company.id)).save();
+    const { uuid } = await new Company(companyMockData).save();
+    return new Offer(OfferMocks.withObligatoryData(uuid)).save();
   };
 
   const createOfferCareer = async () => {

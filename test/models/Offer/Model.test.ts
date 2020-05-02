@@ -20,20 +20,20 @@ describe("Offer", () => {
 
   const offerWithoutProperty = async (property: string) => {
     const company = await new Company(companyMockData).save();
-    return new Offer(OfferMocks.offerWithoutProperty(company.id, property));
+    return new Offer(OfferMocks.offerWithoutProperty(company.uuid, property));
   };
 
   const offerWithNegativeNumberProperty = async (
     property: TOfferNumbersProperties,
     value: number
   ) => {
-    const company = await new Company(companyMockData).save();
-    return new Offer(OfferMocks.offerWithNegativeNumberProperty(company.id, property, value));
+    const { uuid } = await new Company(companyMockData).save();
+    return new Offer(OfferMocks.offerWithNegativeNumberProperty(uuid, property, value));
   };
 
   it("should create a valid offer", async () => {
     const company = await new Company(companyMockData).save();
-    const offerAttributes = OfferMocks.withObligatoryData(company.id);
+    const offerAttributes = OfferMocks.withObligatoryData(company.uuid);
     const offer = new Offer(offerAttributes);
     await offer.save();
     expect(offer.uuid).not.toBeUndefined();
@@ -88,9 +88,9 @@ describe("Offer", () => {
   });
 
   it("should throw error if minimumSalary if bigger than maximumSalary", async () => {
-    const company = await new Company(companyMockData).save();
+    const { uuid } = await new Company(companyMockData).save();
     const offer = new Offer(
-      await OfferMocks.offerWithSpecificSalaryRange(company.id, 100, 50)
+      await OfferMocks.offerWithSpecificSalaryRange(uuid, 100, 50)
     );
     await expect(offer.save()).rejects.toThrow(SalaryRangeError.buildMessage());
   });

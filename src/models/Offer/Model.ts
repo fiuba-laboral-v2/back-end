@@ -36,9 +36,9 @@ export class Offer extends Model<Offer> {
   @ForeignKey(() => Company)
   @Column({
     allowNull: false,
-    type: DataType.INTEGER
+    type: DataType.UUID
   })
-  public companyId: number;
+  public companyUuid: string;
 
   @BelongsTo(() => Company)
   public company: Company;

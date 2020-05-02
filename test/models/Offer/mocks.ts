@@ -8,13 +8,13 @@ export type TOfferNumbersProperties = "hoursPerDay" | "minimumSalary" | "maximum
 
 const OfferMocks = {
   completeData: (
-    companyId?: number,
+    companyUuid?: string,
     sections?: IOfferSection[],
     careers?: IOfferCareer[]
   ): IOffer => {
     const minimumSalary = faker.random.number();
     const data = {
-      companyId: companyId,
+      companyUuid: companyUuid,
       title: faker.name.title(),
       description: faker.lorem.sentence(),
       hoursPerDay: faker.random.number(),
@@ -28,14 +28,14 @@ const OfferMocks = {
     return data;
   },
   withOneSectionButNullCompanyId: () => OfferMocks.withOneSection(null),
-  withSectionWithNoTitle: (companyId: number) => {
-    const data = OfferMocks.withOneSection(companyId);
+  withSectionWithNoTitle: (companyUuid: string) => {
+    const data = OfferMocks.withOneSection(companyUuid);
     delete data.sections[0].title;
     return data;
   },
-  withOneSection: (companyId: number) => (
+  withOneSection: (companyUuid: string) => (
     OfferMocks.completeData(
-      companyId,
+      companyUuid,
       [
         {
           title: faker.random.words(),
@@ -45,15 +45,15 @@ const OfferMocks = {
       ]
     )
   ),
-  withOneCareer: (companyId: number, careerCode: string) => (
-    OfferMocks.completeData(companyId, undefined, [{ careerCode: careerCode }])
+  withOneCareer: (companyUuid: string, careerCode: string) => (
+    OfferMocks.completeData(companyUuid, undefined, [{ careerCode: careerCode }])
   ),
-  withOneCareerWithNullCareerCode: (companyId: number) => (
-    OfferMocks.completeData(companyId, undefined, [{ careerCode: null }])
+  withOneCareerWithNullCareerCode: (companyUuid: string) => (
+    OfferMocks.completeData(companyUuid, undefined, [{ careerCode: null }])
   ),
-  withOneCareerAndOneSection: (companyId: number, careerCode: string) => (
+  withOneCareerAndOneSection: (companyUuid: string, careerCode: string) => (
     OfferMocks.completeData(
-      companyId,
+      companyUuid,
       [
         {
           title: faker.random.words(),
@@ -69,23 +69,23 @@ const OfferMocks = {
     )
   ),
   withNoCompanyId: () => OfferMocks.completeData(),
-  withObligatoryData: (companyId: number) => OfferMocks.completeData(companyId),
-  offerWithoutProperty: (companyId: number, property: string) =>
-    omit(OfferMocks.completeData(companyId), [property]),
+  withObligatoryData: (companyUuid: string) => OfferMocks.completeData(companyUuid),
+  offerWithoutProperty: (companyUuid: string, property: string) =>
+    omit(OfferMocks.completeData(companyUuid), [property]),
   offerWithNegativeNumberProperty: (
-    companyId: number,
+    companyUuid: string,
     property: TOfferNumbersProperties,
     value: number) => {
-    const data = OfferMocks.completeData(companyId);
+    const data = OfferMocks.completeData(companyUuid);
     data[property] = value;
     return data;
   },
   offerWithSpecificSalaryRange: (
-    companyId: number,
+    companyUuid: string,
     minimumSalary: number,
     maximumSalary: number
   ) => {
-    const data = OfferMocks.completeData(companyId);
+    const data = OfferMocks.completeData(companyUuid);
     data.minimumSalary = minimumSalary;
     data.maximumSalary = maximumSalary;
     return data;

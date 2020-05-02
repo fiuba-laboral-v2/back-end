@@ -25,7 +25,7 @@ describe("JobApplication", () => {
 
   const offerData = () =>
     ({
-      companyId: company.id,
+      companyUuid: company.uuid,
       title: "Java developer senior",
       description: "some description",
       hoursPerDay: 8,

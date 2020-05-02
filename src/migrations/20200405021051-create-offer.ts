@@ -12,11 +12,11 @@ export = {
           type: UUID,
           defaultValue: uuid()
         },
-        companyId: {
+        companyUuid: {
           allowNull: false,
-          references: { model: "Companies", key: "id" },
+          references: { model: "Companies", key: "uuid" },
           onDelete: "CASCADE",
-          type: INTEGER
+          type: UUID
         },
         title: {
           allowNull: false,

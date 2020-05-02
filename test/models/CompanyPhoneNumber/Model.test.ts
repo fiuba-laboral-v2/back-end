@@ -1,22 +1,19 @@
 import Database from "../../../src/config/Database";
-import { CompanyPhoneNumber } from "../../../src/models/CompanyPhoneNumber";
+import {
+  CompanyPhoneNumberRepository,
+  CompanyPhoneNumber
+} from "../../../src/models/CompanyPhoneNumber";
 
-beforeAll(async () => {
-  await Database.setConnection();
-});
+beforeAll(() => Database.setConnection());
 
-beforeEach(async () => {
-  await CompanyPhoneNumber.destroy({ truncate: true });
-});
+beforeEach(() => CompanyPhoneNumberRepository.truncate());
 
-afterAll(async () => {
-  await Database.close();
-});
+afterAll(() => Database.close());
 
 test("create a valid CompanyPhoneNumber", async () => {
   const companyPhoneNumber: CompanyPhoneNumber = new CompanyPhoneNumber({
     phoneNumber: 43076555,
-    companyId: 0
+    companyUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
   });
   expect(companyPhoneNumber).not.toBeNull();
   expect(companyPhoneNumber).not.toBeUndefined();
@@ -25,15 +22,15 @@ test("create a valid CompanyPhoneNumber", async () => {
 test("throw and error if phoneNumber is null", async () => {
   const companyPhoneNumber: CompanyPhoneNumber = new CompanyPhoneNumber({
     phoneNumber: null,
-    companyId: 0
+    companyUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
   });
   await expect(companyPhoneNumber.save()).rejects.toThrow();
 });
 
-test("throw and error if companyId is null", async () => {
+test("throw and error if companyUuid is null", async () => {
   const companyPhoneNumber: CompanyPhoneNumber = new CompanyPhoneNumber({
     phoneNumber: 43076555,
-    companyId: null
+    companyUuid: null
   });
   await expect(companyPhoneNumber.save()).rejects.toThrow();
 });

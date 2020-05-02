@@ -64,14 +64,12 @@ describe("CompanyRepository", () => {
     await expect(CompanyRepository.save(company)).rejects.toThrow();
   });
 
-  it("retrieve by id", async () => {
-    const company: Company = await CompanyRepository.create(
-      companyCompleteData
-    );
-    const expectedCompany = await CompanyRepository.findById(company.id);
+  it("retrieve by uuid", async () => {
+    const company = await CompanyRepository.create(companyCompleteData);
+    const expectedCompany = await CompanyRepository.findByUuid(company.uuid);
     expect(expectedCompany).not.toBeNull();
     expect(expectedCompany).not.toBeUndefined();
-    expect(expectedCompany.id).toEqual(company.id);
+    expect(expectedCompany.uuid).toEqual(company.uuid);
     expect(
       (await expectedCompany.getPhotos())
     ).toHaveLength(
@@ -92,7 +90,7 @@ describe("CompanyRepository", () => {
     expect(expectedCompanies).not.toBeNull();
     expect(expectedCompanies).not.toBeUndefined();
     expect(expectedCompanies!.length).toEqual(1);
-    expect(expectedCompanies[0].id).toEqual(company.id);
+    expect(expectedCompanies[0].uuid).toEqual(company.uuid);
   });
 
   it("should rollback transaction and throw error if photo is null", async () => {
@@ -123,12 +121,9 @@ describe("CompanyRepository", () => {
   });
 
   it("deletes a company", async () => {
-    const company: Company = await CompanyRepository.create(
-      companyCompleteData
-    );
-    const id: number = company.id;
-    expect(await CompanyRepository.findById(id)).not.toBeNull();
+    const { uuid } = await CompanyRepository.create(companyCompleteData);
+    expect(await CompanyRepository.findByUuid(uuid)).not.toBeNull();
     await CompanyRepository.truncate();
-    await expect(CompanyRepository.findById(id)).rejects.toThrow();
+    await expect(CompanyRepository.findByUuid(uuid)).rejects.toThrow();
   });
 });

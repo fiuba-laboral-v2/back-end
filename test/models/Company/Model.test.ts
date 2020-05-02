@@ -19,22 +19,23 @@ describe("Company", () => {
 
   it("create a valid company", async () => {
     const company: Company = new Company(companyMockData);
+    const uuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
     const phoneNumber: CompanyPhoneNumber = new CompanyPhoneNumber({
       phoneNumber: 43076555,
-      companyId: 1
+      companyUuid: uuid
     });
     const photo: CompanyPhoto = new CompanyPhoto({
       photo: `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACN
               byblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAAB
               JRU5ErkJggg==`,
-      companyId: 1
+      companyUuid: uuid
     });
     company.phoneNumbers = [phoneNumber];
     company.photos = [photo];
     await company.save();
     expect(company.phoneNumbers).toHaveLength(1);
     expect(company.photos).toHaveLength(1);
-    expect(company.id).toBeGreaterThan(0);
+    expect(company.uuid).not.toBeUndefined();
     expect(company).toEqual(expect.objectContaining({
       cuit: companyMockData.cuit,
       companyName: companyMockData.companyName,

@@ -1,20 +1,21 @@
-import { DATE, INTEGER, QueryInterface } from "sequelize";
+import { UUID, DATE, INTEGER, QueryInterface } from "sequelize";
+import uuid from "uuid/v4";
 
 export = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.createTable("CompanyPhoneNumbers", {
-      id: {
+      uuid: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: INTEGER
+        type: UUID,
+        defaultValue: uuid()
       },
       phoneNumber: {
         type: INTEGER
       },
-      companyId: {
-        type: INTEGER,
-        references: { model: "Companies", key: "id" }
+      companyUuid: {
+        type: UUID,
+        references: { model: "Companies", key: "uuid" }
       },
       createdAt: {
         allowNull: false,

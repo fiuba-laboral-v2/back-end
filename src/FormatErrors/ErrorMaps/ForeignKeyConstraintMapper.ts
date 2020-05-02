@@ -3,9 +3,9 @@ import { IMapItem } from "./IMapItem";
 
 const constraintTranslator = {
   Applicants_userUuid_fkey: "UserDoesNotExistError",
-  Offers_companyId_fkey: "CompanyDoesNotExistError",
-  CompanyPhotos_companyId_fkey: "CompanyDoesNotExistError",
-  CompanyPhoneNumbers_companyId_fkey: "CompanyDoesNotExistError",
+  Offers_companyUuid_fkey: "CompanyDoesNotExistError",
+  CompanyPhotos_companyUuid_fkey: "CompanyDoesNotExistError",
+  CompanyPhoneNumbers_companyUuid_fkey: "CompanyDoesNotExistError",
   OffersSections_offerUuid_fkey: "OfferDoesNotExistError",
   OffersCareers_offerUuid_fkey: "OfferDoesNotExistError",
   OffersCareers_careerCode_fkey: "CareerDoesNotExistError",
@@ -21,6 +21,6 @@ const constraintTranslator = {
 export const foreignKeyConstraintErrorMapper: IMapItem = {
   message: "ForeignKeyConstraintError",
   data: (error: ForeignKeyConstraintError) => ({
-    errorType: constraintTranslator[error.index]
+    errorType: constraintTranslator[error.index] || error.index
   })
 };

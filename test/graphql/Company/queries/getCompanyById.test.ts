@@ -5,8 +5,8 @@ import { companyMockData, phoneNumbers, photos } from "../../../models/Company/m
 import Database from "../../../../src/config/Database";
 
 const query = gql`
-  query ($id: ID!) {
-    getCompanyById(id: $id) {
+  query ($uuid: ID!) {
+    getCompanyByUuid(uuid: $uuid) {
         cuit
         companyName
         slogan
@@ -20,7 +20,7 @@ const query = gql`
   }
 `;
 
-describe("getCompanyById", () => {
+describe("getCompanyByUuid", () => {
   const companyCompleteData = {
     ...companyMockData,
     ...{ photos: photos, phoneNumbers: phoneNumbers }
@@ -37,21 +37,21 @@ describe("getCompanyById", () => {
     await Database.close();
   });
 
-  it("finds a company given its id", async () => {
+  it("finds a company given its uuid", async () => {
     const company: Company = await CompanyRepository.create(
       companyCompleteData
     );
-    const response = await executeQuery(query, { id: company.id });
+    const response = await executeQuery(query, { uuid: company.uuid });
     expect(response.errors).toBeUndefined();
     expect(response.data).not.toBeUndefined();
     expect(response.data).toEqual({
-      getCompanyById: companyCompleteData
+      getCompanyByUuid: companyCompleteData
     });
   });
 
   it("returns error if the Company does not exists", async () => {
-    const notExistentId = 9999;
-    const response = await executeQuery(query, { id: notExistentId });
+    const notExistentUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+    const response = await executeQuery(query, { uuid: notExistentUuid });
     expect(response.errors).not.toBeUndefined();
   });
 
@@ -59,9 +59,9 @@ describe("getCompanyById", () => {
     const company: Company = await CompanyRepository.create(
       companyMockData
     );
-    const response = await executeQuery(query, { id: company.id });
+    const response = await executeQuery(query, { uuid: company.uuid });
     expect(response.errors).toBeUndefined();
     expect(response.data).not.toBeUndefined();
-    expect(response.data.getCompanyById.photos).toHaveLength(0);
+    expect(response.data.getCompanyByUuid.photos).toHaveLength(0);
   });
 });

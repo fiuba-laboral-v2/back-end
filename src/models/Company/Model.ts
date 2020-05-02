@@ -15,6 +15,14 @@ import { HasManyGetAssociationsMixin } from "sequelize";
 
 @Table
 export class Company extends Model<Company> {
+  @Column({
+    allowNull: false,
+    primaryKey: true,
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4
+  })
+  public uuid: string;
+
   @AllowNull(false)
   @Is("cuit", validateCuit)
   @Column(DataType.STRING)
