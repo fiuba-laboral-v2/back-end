@@ -1,8 +1,8 @@
-import { DATE, INTEGER, QueryInterface, STRING } from "sequelize";
+import { DATE, INTEGER, QueryInterface, STRING, TEXT } from "sequelize";
 
 export = {
   up: (queryInterface: QueryInterface) => {
-    return queryInterface.createTable("CompanyProfiles", {
+    return queryInterface.createTable("Companies", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -11,38 +11,39 @@ export = {
       },
       cuit: {
         allowNull: false,
-        type: STRING
+        type: STRING,
+        unique: true
       },
       companyName: {
         allowNull: false,
         type: STRING
       },
-
       slogan: {
         type: STRING
       },
-
       description: {
         type: STRING
       },
-
       logo: {
+        type: TEXT
+      },
+      website: {
         type: STRING
       },
-
+      email: {
+        type: STRING
+      },
       createdAt: {
         allowNull: false,
         type: DATE
       },
-
       updatedAt: {
         allowNull: false,
         type: DATE
       }
     });
   },
-
   down: (queryInterface: QueryInterface) => {
-    return queryInterface.dropTable("CompanyProfiles");
+    return queryInterface.dropTable("Companies");
   }
 };

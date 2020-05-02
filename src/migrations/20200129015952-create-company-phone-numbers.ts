@@ -1,36 +1,32 @@
-import { DATE, INTEGER, STRING, QueryInterface } from "sequelize";
+import { DATE, INTEGER, QueryInterface } from "sequelize";
 
 export = {
   up: (queryInterface: QueryInterface) => {
-    return queryInterface.createTable("CompanyProfilePhotos", {
+    return queryInterface.createTable("CompanyPhoneNumbers", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: INTEGER
       },
-
-      photo: {
-        type: STRING
-      },
-
-      companyProfileId: {
+      phoneNumber: {
         type: INTEGER
       },
-
+      companyId: {
+        type: INTEGER,
+        references: { model: "Companies", key: "id" }
+      },
       createdAt: {
         allowNull: false,
         type: DATE
       },
-
       updatedAt: {
         allowNull: false,
         type: DATE
       }
     });
   },
-
   down: (queryInterface: QueryInterface) => {
-    return queryInterface.dropTable("CompanyProfilePhotos");
+    return queryInterface.dropTable("CompanyPhoneNumbers");
   }
 };
