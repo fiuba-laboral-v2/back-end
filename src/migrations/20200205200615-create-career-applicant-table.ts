@@ -47,13 +47,6 @@ export = {
     });
   },
   down: (queryInterface: QueryInterface) => {
-    return queryInterface.sequelize.transaction(async transaction => {
-      await queryInterface.removeConstraint(
-        "CareersApplicants",
-        "CareersApplicants_careerCode_applicantUuid_key",
-        { transaction }
-      );
-      return queryInterface.dropTable("CareerApplicants");
-    });
+    return queryInterface.dropTable("CareersApplicants");
   }
 };

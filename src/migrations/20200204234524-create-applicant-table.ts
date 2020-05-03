@@ -46,6 +46,6 @@ export = {
   },
 
   down: (queryInterface: QueryInterface) => {
-    return queryInterface.dropTable("Applicants", { cascade: true });
+    return queryInterface.dropTable("Applicants");
   }
 };

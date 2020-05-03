@@ -42,6 +42,6 @@ export = {
     });
   },
   down: (queryInterface: QueryInterface) => {
-    return queryInterface.dropTable("Careers", { cascade: true });
+    return queryInterface.dropTable("Careers");
   }
 };
