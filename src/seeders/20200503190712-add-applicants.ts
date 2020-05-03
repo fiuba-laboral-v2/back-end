@@ -14,11 +14,11 @@ export = {
             name: "Sebastian",
             surname: "Blanco",
             padron: 98539,
-            description: `Me considero una persona a la que le gusta tomar
-                          riesgos y también tener cierto control sobre la situación.
-                          Por eso tengo como objetivos ser un desarrollador de software
-                          y también formar parte de la gestión de proyectos, ya que
-                          me interesa el balance de esos aspectos.`,
+            description: "Me considero una persona a la que le gusta tomar " +
+                          "riesgos y también tener cierto control sobre la situación." +
+                          "Por eso tengo como objetivos ser un desarrollador de software y" +
+                          "también formar parte de la gestión de proyectos, ya " +
+                          "que me interesa el balance de esos aspectos.",
             createdAt: new Date(),
             updatedAt: new Date()
           }
@@ -32,13 +32,12 @@ export = {
             uuid: "ca2c5210-cb79-4026-9a26-1eb7a4159e71",
             applicantUuid: uuids.sebastian.applicant,
             title: "Experiencia Laboral",
-            text: `Trabajo junto al equipo de Keepcon como desarrollador full
-                   stack. Por ejemplo, estoy trabajando en la integración de
-                   LinkedIn a la herramienta.
-                   Trabajo en Rails con un frontend en Backbone.js, y en un motor
-                   de procesamiento de datos de redes sociales en Apache Storm (Java).
-                   Respecto del uso base de datos, trabajo con PostgreSQL y Cassandra
-                   indexada con Elasticsearch.`,
+            text: "Trabajo junto al equipo de Keepcon como desarrollador full stack." +
+                  "Por ejemplo, estoy trabajando en la integración de LinkedIn a" +
+                  " la herramienta.\nTrabajo en Rails con un frontend en Backbone.js," +
+                  "y en un motor de procesamiento de datos de redes sociales en" +
+                  "Apache Storm (Java). Respecto del uso base de datos, trabajo " +
+                  "con PostgreSQL y Cassandra indexada con Elasticsearch.",
             displayOrder: 1,
             createdAt: new Date(),
             updatedAt: new Date()
