@@ -1,33 +1,52 @@
-import { QueryInterface } from "sequelize";
+import { INTEGER, QueryInterface } from "sequelize";
 import { DataType } from "sequelize-typescript";
 
 export = {
   up: (queryInterface: QueryInterface) => {
-    return queryInterface.createTable("CareersApplicants", {
-      careerCode: {
-        allowNull: false,
-        primaryKey: true,
-        type: DataType.INTEGER,
-        references: { model: "Careers", key: "code" }
-      },
-      applicantUuid: {
-        allowNull: false,
-        primaryKey: true,
-        type: DataType.UUID,
-        references: { model: "Applicants", key: "uuid" }
-      },
-      createdAt: {
-        allowNull: false,
-        type: DataType.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: DataType.DATE
-      }
+    return queryInterface.sequelize.transaction(async transaction => {
+      await queryInterface.createTable(
+        "CareersApplicants",
+        {
+          careerCode: {
+            allowNull: false,
+            type: DataType.STRING,
+            references: { model: "Careers", key: "code" },
+            onDelete: "CASCADE"
+          },
+          applicantUuid: {
+            allowNull: false,
+            type: DataType.UUID,
+            references: { model: "Applicants", key: "uuid" },
+            onDelete: "CASCADE"
+          },
+          creditsCount: {
+            allowNull: false,
+            defaultValue: 0,
+            type: INTEGER
+          },
+          createdAt: {
+            allowNull: false,
+            type: DataType.DATE
+          },
+          updatedAt: {
+            allowNull: false,
+            type: DataType.DATE
+          }
+        },
+        { transaction }
+        );
+      await queryInterface.addConstraint(
+        "CareersApplicants",
+        ["careerCode", "applicantUuid"],
+        {
+          type: "primary key",
+          name: "CareersApplicants_careerCode_applicantUuid_key",
+          transaction
+        }
+      );
     });
   },
-
   down: (queryInterface: QueryInterface) => {
-    return queryInterface.dropTable("CareerApplicants");
+    return queryInterface.dropTable("CareersApplicants");
   }
 };
