@@ -7,7 +7,6 @@ export = {
       "Offers",
       [
         {
-          uuid: "b2ab4f75-cea2-4026-b623-830f41d1803c",
           companyUuid: uuids.companies.devartis,
           title: "Desarrollador Java semi senior",
           description: "Que sepa Java",
