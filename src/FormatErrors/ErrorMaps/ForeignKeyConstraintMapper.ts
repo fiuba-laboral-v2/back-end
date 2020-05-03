@@ -21,6 +21,6 @@ const constraintTranslator = {
 export const foreignKeyConstraintErrorMapper: IMapItem = {
   message: "ForeignKeyConstraintError",
   data: (error: ForeignKeyConstraintError) => ({
-    errorType: constraintTranslator[error.index] || error.index
+    errorType: constraintTranslator[error.index]
   })
 };
