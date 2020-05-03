@@ -30,11 +30,11 @@ describe("getOffers", () => {
 
   describe("when offers exists", () => {
     const createOffers = async () => {
-      const { id } = await CompanyRepository.create(companyMockData);
+      const { uuid } = await CompanyRepository.create(companyMockData);
       const career1 = await CareerRepository.create(careerMocks.careerData());
       const career2 = await CareerRepository.create(careerMocks.careerData());
-      const offerAttributes1 = OfferMocks.withOneCareer(id, career1.code);
-      const offerAttributes2 = OfferMocks.withOneCareer(id, career2.code);
+      const offerAttributes1 = OfferMocks.withOneCareer(uuid, career1.code);
+      const offerAttributes2 = OfferMocks.withOneCareer(uuid, career2.code);
       const offer1 = await OfferRepository.create(offerAttributes1);
       const offer2 = await OfferRepository.create(offerAttributes2);
       return { offer1, offer2 };

@@ -46,7 +46,7 @@ describe("saveJobApplication", () => {
     it("should create a new job application", async () => {
       const applicant = await ApplicantRepository.create(applicantData);
       const company = await CompanyRepository.create(companyMockData);
-      const offer = await OfferRepository.create(OfferMocks.completeData(company.id));
+      const offer = await OfferRepository.create(OfferMocks.completeData(company.uuid));
       const {
         data: { saveJobApplication },
         errors
@@ -73,7 +73,7 @@ describe("saveJobApplication", () => {
 
     it("should return an error if there is no current user", async () => {
       const company = await CompanyRepository.create(companyMockData);
-      const offer = await OfferRepository.create(OfferMocks.completeData(company.id));
+      const offer = await OfferRepository.create(OfferMocks.completeData(company.uuid));
       const { errors } = await executeMutation(
         SAVE_JOB_APPLICATION,
         { offerUuid: offer.uuid },
@@ -84,8 +84,8 @@ describe("saveJobApplication", () => {
 
     it("should return an error if current user is not an applicant", async () => {
       await UserRepository.create({ email: testCurrentUserEmail, password: "SomeCoolSecret123" });
-      const { id: companyId } = await CompanyRepository.create(companyMockData);
-      const offer = await OfferRepository.create(OfferMocks.completeData(companyId));
+      const { uuid: companyUuid } = await CompanyRepository.create(companyMockData);
+      const offer = await OfferRepository.create(OfferMocks.completeData(companyUuid));
       const { errors } = await executeMutation(SAVE_JOB_APPLICATION, { offerUuid: offer.uuid });
       expect(errors[0].extensions.data).toEqual({ errorType: UnauthorizedError.name });
     });
@@ -93,7 +93,7 @@ describe("saveJobApplication", () => {
     it("should return an error if the application already exist", async () => {
       await ApplicantRepository.create(applicantData);
       const company = await CompanyRepository.create(companyMockData);
-      const offer = await OfferRepository.create(OfferMocks.completeData(company.id));
+      const offer = await OfferRepository.create(OfferMocks.completeData(company.uuid));
       await executeMutation(SAVE_JOB_APPLICATION, { offerUuid: offer.uuid });
       const { errors } = await executeMutation(SAVE_JOB_APPLICATION, { offerUuid: offer.uuid });
 

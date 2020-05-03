@@ -2,7 +2,7 @@ import { IOfferSection } from "./OfferSection/Interface";
 import { IOfferCareer } from "./OfferCareer/Interface";
 
 export interface IOffer {
-  companyId: number;
+  companyUuid: string;
   title: string;
   description: string;
   hoursPerDay: number;

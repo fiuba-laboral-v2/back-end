@@ -3,14 +3,14 @@ import { ID, nonNull, List } from "../fieldTypes";
 import { CompanyRepository } from "../../models/Company";
 
 const companyQueries = {
-  getCompanyById: {
+  getCompanyByUuid: {
     type: GraphQLCompany,
     args: {
-      id: {
+      uuid: {
         type: nonNull(ID)
       }
     },
-    resolve: (_: undefined, { id }: { id: number }) => CompanyRepository.findById(id)
+    resolve: (_: undefined, { uuid }: { uuid: string }) => CompanyRepository.findByUuid(uuid)
   },
   getCompanies: {
     type: List(GraphQLCompany),

@@ -5,7 +5,7 @@ import { Company } from "../../../models/Company";
 const GraphQLCompany = new GraphQLObjectType({
   name: "Company",
   fields: () => ({
-    id: {
+    uuid: {
       type: ID
     },
     cuit: {

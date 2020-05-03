@@ -41,11 +41,11 @@ export const CompanyRepository = {
     try {
       await company.save({ transaction: transaction });
       for (const phoneNumber of phoneNumbers) {
-        phoneNumber.companyId = company.id;
+        phoneNumber.companyUuid = company.uuid;
         await phoneNumber.save({ transaction: transaction });
       }
       for (const photo of photos) {
-        photo.companyId = company.id;
+        photo.companyUuid = company.uuid;
         await photo.save({ transaction: transaction });
       }
       await transaction.commit();
@@ -55,9 +55,9 @@ export const CompanyRepository = {
       throw error;
     }
   },
-  findById: async (id: number) => {
-    const company = await Company.findByPk(id);
-    if (!company) throw new CompanyNotFoundError(id);
+  findByUuid: async (uuid: string) => {
+    const company = await Company.findByPk(uuid);
+    if (!company) throw new CompanyNotFoundError(uuid);
 
     return company;
   },

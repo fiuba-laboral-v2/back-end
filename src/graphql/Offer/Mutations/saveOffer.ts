@@ -7,8 +7,8 @@ import { Int, List, nonNull, String } from "../../fieldTypes";
 const saveOffer = {
   type: GraphQLOffer,
   args: {
-    companyId: {
-      type: nonNull(Int)
+    companyUuid: {
+      type: nonNull(String)
     },
     title: {
       type: nonNull(String)

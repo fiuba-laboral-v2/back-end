@@ -21,8 +21,8 @@ describe("OfferSection", () => {
   });
 
   const createOffer = async () => {
-    const company = await new Company(companyMockData).save();
-    return new Offer(OfferMocks.withObligatoryData(company.id)).save();
+    const { uuid } = await new Company(companyMockData).save();
+    return new Offer(OfferMocks.withObligatoryData(uuid)).save();
   };
 
   const sectionAttributes = (offerUuid: string) =>
