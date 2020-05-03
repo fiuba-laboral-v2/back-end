@@ -1,4 +1,5 @@
 import { QueryInterface } from "sequelize";
+import { hashSync } from "bcrypt";
 import { uuids } from "./constants/uuids";
 
 export = {
@@ -9,7 +10,7 @@ export = {
         {
           uuid: uuids.sebastian.user,
           email: "seblanco@fi.uba.ar",
-          password: "SecurePassword1010",
+          password: hashSync("SecurePassword1010", 10),
           createdAt: new Date(),
           updatedAt: new Date()
         }
