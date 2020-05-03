@@ -1,5 +1,6 @@
 import { QueryInterface } from "sequelize";
-import { uuids } from "./constants/uuids-constants";
+import { uuids } from "./constants/uuids";
+import { careerCodes } from "./constants/careerCodes";
 
 export = {
   up: (queryInterface: QueryInterface) => {
@@ -61,7 +62,7 @@ export = {
         "CareersApplicants",
         [
           {
-            careerCode: "10",
+            careerCode: careerCodes.IngenieriaInformatica,
             applicantUuid: uuids.sebastian.applicant,
             creditsCount: 216,
             createdAt: new Date(),

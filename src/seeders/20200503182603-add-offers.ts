@@ -1,5 +1,5 @@
 import { QueryInterface } from "sequelize";
-import { uuids } from "./constants/uuids-constants";
+import { uuids } from "./constants/uuids";
 
 export = {
   up: (queryInterface: QueryInterface) => {

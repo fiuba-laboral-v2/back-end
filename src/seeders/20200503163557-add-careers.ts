@@ -1,4 +1,5 @@
 import { QueryInterface } from "sequelize";
+import { careerCodes } from "./constants/careerCodes";
 
 export = {
   up: (queryInterface: QueryInterface) => {
@@ -6,91 +7,91 @@ export = {
       "Careers",
       [
         {
-          code: "1",
+          code: careerCodes.IngenieriaCivil,
           description: "Ingeniería Civil",
           credits: 240,
           createdAt: new Date(),
           updatedAt: new Date()
         },
         {
-          code: "2",
+          code: careerCodes.IngenieriaIndustrial,
           description: "Ingeniería Industrial",
           credits: 283,
           createdAt: new Date(),
           updatedAt: new Date()
         },
         {
-          code: "3",
+          code: careerCodes.IngenieriaNavalYMecanica,
           description: "Ingeniería Naval y Mecánica",
           credits: 264,
           createdAt: new Date(),
           updatedAt: new Date()
         },
         {
-          code: "4",
+          code: careerCodes.Agrimensura,
           description: "Agrimensura",
           credits: 0,
           createdAt: new Date(),
           updatedAt: new Date()
         },
         {
-          code: "5",
+          code: careerCodes.IngenieriaMecanica,
           description: "Ingeniería Mecánica",
           credits: 260,
           createdAt: new Date(),
           updatedAt: new Date()
         },
         {
-          code: "6",
+          code: careerCodes.IngenieriaElectricista,
           description: "Ingeniería Electricista",
           credits: 280,
           createdAt: new Date(),
           updatedAt: new Date()
         },
         {
-          code: "7",
+          code: careerCodes.IngenieriaElectronica,
           description: "Ingeniería Electrónica",
           credits: 278,
           createdAt: new Date(),
           updatedAt: new Date()
         },
         {
-          code: "8",
+          code: careerCodes.IngenieriaQuimica,
           description: "Ingeniería Química",
           credits: 252,
           createdAt: new Date(),
           updatedAt: new Date()
         },
         {
-          code: "9",
-          description: "Licenciatura en Análisis de Sistemas ",
+          code: careerCodes.LicenciaturaEnAnalisisDeSistemas,
+          description: "Licenciatura en Análisis de Sistemas",
           credits: 176,
           createdAt: new Date(),
           updatedAt: new Date()
         },
         {
-          code: "10",
+          code: careerCodes.IngenieriaInformatica,
           description: "Ingeniería Informática",
           credits: 248,
           createdAt: new Date(),
           updatedAt: new Date()
         },
         {
-          code: "11",
+          code: careerCodes.IngenieriaAlimentos,
           description: "Ingeniería Alimentos",
           credits: 144,
           createdAt: new Date(),
           updatedAt: new Date()
         },
         {
-          code: "12",
+          code: careerCodes.IngenieriaAgrimensura,
           description: "Ingeniería Agrimensura",
           credits: 246,
           createdAt: new Date(),
           updatedAt: new Date()
         },
         {
-          code: "13",
+          code: careerCodes.IngenieriaEnPetroleo,
           description: "Ingeniería en Petróleo",
           credits: 246,
           createdAt: new Date(),
