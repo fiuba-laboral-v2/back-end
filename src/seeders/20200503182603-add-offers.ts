@@ -2,8 +2,8 @@ import { QueryInterface } from "sequelize";
 import { uuids } from "./constants/uuids-constants";
 
 export = {
-  up: async (queryInterface: QueryInterface) => {
-    await queryInterface.bulkInsert(
+  up: (queryInterface: QueryInterface) => {
+    return queryInterface.bulkInsert(
       "Offers",
       [
         {

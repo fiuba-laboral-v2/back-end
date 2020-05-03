@@ -2,7 +2,7 @@ import { QueryInterface } from "sequelize";
 import { uuids } from "./constants/uuids-constants";
 
 export = {
-  up: async (queryInterface: QueryInterface) => {
+  up: (queryInterface: QueryInterface) => {
     return queryInterface.sequelize.transaction(async transaction => {
       await queryInterface.bulkInsert(
         "Companies",
