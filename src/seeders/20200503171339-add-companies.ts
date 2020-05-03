@@ -44,8 +44,8 @@ export = {
           },
           {
             uuid: "19566569-41ed-4246-93cc-8563358d9a7a",
-            photo: `https://www.filepicker.io/api/file/9PbWZ8ZVTTiFogUOEebI/
-                    convert?w=1049&h=381&fit=scale`,
+            photo: "https://www.filepicker.io/api/file/9PbWZ8ZVTTiFogUOEebI/" +
+              "convert?w=1049&h=381&fit=scale",
             companyUuid: uuids.companies.devartis,
             createdAt: new Date(),
             updatedAt: new Date()
