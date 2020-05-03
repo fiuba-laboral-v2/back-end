@@ -15,7 +15,8 @@ export = {
       },
       companyUuid: {
         type: UUID,
-        references: { model: "Companies", key: "uuid" }
+        references: { model: "Companies", key: "uuid" },
+        onDelete: "CASCADE"
       },
       createdAt: {
         allowNull: false,
