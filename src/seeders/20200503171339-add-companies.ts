@@ -1,14 +1,14 @@
 import { QueryInterface } from "sequelize";
+import { uuids } from "./constants/uuids-constants";
 
 export = {
   up: async (queryInterface: QueryInterface) => {
-    const devartisUuid = "7f03fcfa-93a9-476b-881a-b81a7ea9dbd3";
     return queryInterface.sequelize.transaction(async transaction => {
       await queryInterface.bulkInsert(
         "Companies",
         [
           {
-            uuid: devartisUuid,
+            uuid: uuids.companies.devartis,
             cuit: "30701307115",
             companyName: "Devartis",
             // tslint:disable-next-line:max-line-length
@@ -31,14 +31,14 @@ export = {
           {
             uuid: "f0647ecc-be43-451c-a8e8-007b9f2e8af2",
             photo: "https://miro.medium.com/max/11520/1*Om-snCmpOoI5vehnF6FBlw.jpeg",
-            companyUuid: devartisUuid,
+            companyUuid: uuids.companies.devartis,
             createdAt: new Date(),
             updatedAt: new Date()
           },
           {
             uuid: "b928f0e6-92de-4bbf-93fe-1468f37a836d",
             photo: "https://pbs.twimg.com/media/EK_OWQEWwAIwDXr.jpg",
-            companyUuid: devartisUuid,
+            companyUuid: uuids.companies.devartis,
             createdAt: new Date(),
             updatedAt: new Date()
           },
@@ -46,14 +46,14 @@ export = {
             uuid: "19566569-41ed-4246-93cc-8563358d9a7a",
             photo: `https://www.filepicker.io/api/file/9PbWZ8ZVTTiFogUOEebI/
                     convert?w=1049&h=381&fit=scale`,
-            companyUuid: devartisUuid,
+            companyUuid: uuids.companies.devartis,
             createdAt: new Date(),
             updatedAt: new Date()
           },
           {
             uuid: "00054373-eb83-49ca-9957-e472979294bb",
             photo: "https://pbs.twimg.com/media/EK_OVsXXYAE-Y-p.jpg",
-            companyUuid: devartisUuid,
+            companyUuid: uuids.companies.devartis,
             createdAt: new Date(),
             updatedAt: new Date()
           }
@@ -66,7 +66,7 @@ export = {
           {
             uuid: "b904528f-be23-4eeb-9bff-748399eaf889",
             phoneNumber: 1148567112,
-            companyUuid: devartisUuid,
+            companyUuid: uuids.companies.devartis,
             createdAt: new Date(),
             updatedAt: new Date()
           }
