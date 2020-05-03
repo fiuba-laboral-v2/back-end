@@ -8,13 +8,15 @@ export = {
         allowNull: false,
         primaryKey: true,
         type: DataType.UUID,
-        references: { model: "Applicants", key: "uuid" }
+        references: { model: "Applicants", key: "uuid" },
+        onDelete: "CASCADE"
       },
       capabilityUuid: {
         allowNull: false,
         primaryKey: true,
         type: DataType.UUID,
-        references: { model: "Capabilities", key: "uuid" }
+        references: { model: "Capabilities", key: "uuid" },
+        onDelete: "CASCADE"
       },
       createdAt: {
         allowNull: false,

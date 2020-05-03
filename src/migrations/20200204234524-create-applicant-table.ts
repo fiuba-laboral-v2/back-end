@@ -1,4 +1,4 @@
-import { QueryInterface } from "sequelize";
+import { QueryInterface, UUID } from "sequelize";
 import { DataType } from "sequelize-typescript";
 
 import uuid from "uuid/v4";
@@ -11,6 +11,12 @@ export = {
         primaryKey: true,
         type: DataType.UUID,
         defaultValue: uuid()
+      },
+      userUuid: {
+        allowNull: false,
+        references: { model: "Users", key: "uuid" },
+        onDelete: "CASCADE",
+        type: UUID
       },
       name: {
         allowNull: false,
@@ -25,12 +31,8 @@ export = {
         type: DataType.INTEGER
       },
       description: {
-        allowNull: false,
+        allowNull: true,
         type: DataType.TEXT
-      },
-      credits: {
-        allowNull: false,
-        type: DataType.INTEGER
       },
       createdAt: {
         allowNull: false,

@@ -46,7 +46,7 @@ describe("saveCareer", () => {
 
     it("should throw an if career already exist", async () => {
       const params = careerMocks.careerData();
-      await executeQuery(SAVE_CAREER, params);
+      const { errors: error1 } = await executeQuery(SAVE_CAREER, params);
       const { errors } = await executeMutation(SAVE_CAREER, params);
       expect(errors[0].extensions.data).toEqual(
         { errorType: "CareerAlreadyExistsError" }
