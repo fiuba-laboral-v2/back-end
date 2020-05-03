@@ -47,7 +47,12 @@ export = {
 
   down: (queryInterface: QueryInterface) => {
     return queryInterface.sequelize.transaction(async transaction => {
-      await queryInterface.dropTable("Capabilities", { transaction });
+      await queryInterface.removeConstraint(
+        "Capabilities",
+        "Capabilities_description_key",
+        { transaction }
+      );
+      await queryInterface.dropTable("Capabilities", { cascade: true, transaction });
       await queryInterface.sequelize.query("DROP EXTENSION citext", { transaction });
     });
   }

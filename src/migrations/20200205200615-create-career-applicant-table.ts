@@ -10,7 +10,8 @@ export = {
           careerCode: {
             allowNull: false,
             type: DataType.STRING,
-            references: { model: "Careers", key: "code" }
+            references: { model: "Careers", key: "code" },
+            onDelete: "CASCADE"
           },
           applicantUuid: {
             allowNull: false,
@@ -46,6 +47,13 @@ export = {
     });
   },
   down: (queryInterface: QueryInterface) => {
-    return queryInterface.dropTable("CareerApplicants");
+    return queryInterface.sequelize.transaction(async transaction => {
+      await queryInterface.removeConstraint(
+        "CareersApplicants",
+        "CareersApplicants_careerCode_applicantUuid_key",
+        { transaction }
+      );
+      return queryInterface.dropTable("CareerApplicants");
+    });
   }
 };
