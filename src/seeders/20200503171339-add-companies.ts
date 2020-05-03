@@ -64,7 +64,6 @@ export = {
         "CompanyPhoneNumbers",
         [
           {
-            uuid: "b904528f-be23-4eeb-9bff-748399eaf889",
             phoneNumber: 1148567112,
             companyUuid: uuids.companies.devartis,
             createdAt: new Date(),
