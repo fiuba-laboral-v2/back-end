@@ -3,7 +3,7 @@ import { QueryInterface } from "sequelize";
 export = {
   up: async (queryInterface: QueryInterface) => {
     const devartisUuid = "7f03fcfa-93a9-476b-881a-b81a7ea9dbd3";
-    try {
+    return queryInterface.sequelize.transaction(async transaction => {
       await queryInterface.bulkInsert(
         "Companies",
         [
@@ -22,7 +22,8 @@ export = {
             createdAt: new Date(),
             updatedAt: new Date()
           }
-        ]
+        ],
+        { transaction }
       );
       await queryInterface.bulkInsert(
         "CompanyPhotos",
@@ -56,7 +57,8 @@ export = {
             createdAt: new Date(),
             updatedAt: new Date()
           }
-        ]
+        ],
+        { transaction }
       );
       await queryInterface.bulkInsert(
         "CompanyPhoneNumbers",
@@ -68,12 +70,10 @@ export = {
             createdAt: new Date(),
             updatedAt: new Date()
           }
-        ]
+        ],
+        { transaction }
       );
-    } catch (e) {
-      // tslint:disable-next-line:no-console
-      console.log(e);
-    }
+    });
   },
   down: (queryInterface: QueryInterface) => {
     return queryInterface.sequelize.transaction(async transaction => {

@@ -12,6 +12,7 @@ data
 build
 dist
 dist_migrations
+dist_seeders
 
 # deploy
 deploy_key
