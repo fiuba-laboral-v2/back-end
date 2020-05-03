@@ -28,7 +28,6 @@ export = {
       }
     });
   },
-
   down: (queryInterface: QueryInterface) => {
     return queryInterface.dropTable("ApplicantCapabilities");
   }
