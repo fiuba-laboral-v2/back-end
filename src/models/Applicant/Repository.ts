@@ -56,8 +56,7 @@ export const ApplicantRepository = {
       sections = [],
       links = [],
       capabilities: newCapabilities = [],
-      careers = [],
-      ...props
+      careers = []
     }: IApplicantEditable
   ) => {
     const applicant = await ApplicantRepository.findByUuid(uuid);

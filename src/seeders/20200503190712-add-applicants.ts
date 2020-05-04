@@ -11,8 +11,6 @@ export = {
           {
             uuid: uuids.sebastian.applicant,
             userUuid: uuids.sebastian.user,
-            name: "Sebastian",
-            surname: "Blanco",
             padron: 98539,
             description: "Me considero una persona a la que le gusta tomar " +
                           "riesgos y también tener cierto control sobre la situación." +
