@@ -194,8 +194,10 @@ describe("ApplicantRepository", () => {
       const newCareer = await CareerRepository.create(careerMocks.careerData());
       const newProps: IApplicantEditable = {
         uuid,
-        name: "newName",
-        surname: "newSurname",
+        user: {
+          name: "newName",
+          surname: "newSurname"
+        },
         description: "newDescription",
         capabilities: ["CSS", "clojure"],
         careers: [
@@ -233,8 +235,8 @@ describe("ApplicantRepository", () => {
       });
 
       expect(user).toMatchObject({
-        name: newProps.name,
-        surname: newProps.surname
+        name: newProps.user.name,
+        surname: newProps.user.surname
       });
 
       expect(
@@ -251,20 +253,27 @@ describe("ApplicantRepository", () => {
       const { uuid } = await createApplicant();
       const newProps: IApplicantEditable = {
         uuid,
-        name: "newName"
+        user: {
+          name: "newName"
+        }
       };
       const applicant = await ApplicantRepository.update(newProps);
       const user = await applicant.getUser();
 
-      expect(user).toMatchObject({ name: newProps.name });
+      expect(user).toMatchObject({ name: newProps.user.name });
     });
 
     it("Should update surname", async () => {
       const { uuid } = await createApplicant();
-      const newProps: IApplicantEditable = { uuid, surname: "newSurname" };
+      const newProps: IApplicantEditable = {
+        uuid,
+        user: {
+          surname: "newSurname"
+        }
+      };
       const applicant = await ApplicantRepository.update(newProps);
       const user = await applicant.getUser();
-      expect(user).toMatchObject({ surname: newProps.surname });
+      expect(user).toMatchObject({ surname: newProps.user.surname });
     });
 
     it("Should update description", async () => {

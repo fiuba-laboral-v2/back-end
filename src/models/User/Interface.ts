@@ -8,5 +8,4 @@ export interface IUser {
 export interface IUserEditable {
   name?: string;
   surname?: string;
-  password?: string;
 }

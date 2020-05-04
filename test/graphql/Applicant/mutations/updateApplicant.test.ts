@@ -12,44 +12,44 @@ import { careerMocks } from "../../../models/Career/mocks";
 import { UserRepository } from "../../../../src/models/User/Repository";
 
 const UPDATE_APPLICANT = gql`
-    mutation updateApplicant(
-        $uuid: ID!, $padron: Int, $name: String, $surname: String, $description: String,
-        $careers: [CareerCredits], $capabilities: [String], $sections: [SectionInput],
-        $links: [LinkInput]
+  mutation updateApplicant(
+    $uuid: ID!, $padron: Int, $user: UserUpdateInput, $description: String,
+    $careers: [CareerCredits], $capabilities: [String], $sections: [SectionInput],
+    $links: [LinkInput]
+  ) {
+    updateApplicant(
+      uuid: $uuid, padron: $padron, user: $user, description: $description,
+      careers: $careers, capabilities: $capabilities, sections: $sections, links: $links
     ) {
-        updateApplicant(
-            uuid: $uuid, padron: $padron, name: $name, surname: $surname description: $description,
-            careers: $careers, capabilities: $capabilities, sections: $sections, links: $links
-        ) {
-            user {
-              email
-              name
-              surname
-            }
-            padron
-            description
-            capabilities {
-              description
-            }
-            careers {
-              code
-              description
-              credits
-              creditsCount
-            }
-            sections {
-              uuid
-              title
-              text
-              displayOrder
-            }
-            links {
-              uuid
-              name
-              url
-            }
-        }
+      user {
+        email
+        name
+        surname
+      }
+      padron
+      description
+      capabilities {
+        description
+      }
+      careers {
+        code
+        description
+        credits
+        creditsCount
+      }
+      sections {
+        uuid
+        title
+        text
+        displayOrder
+      }
+      links {
+        uuid
+        name
+        url
+      }
     }
+  }
 `;
 
 describe("updateApplicant", () => {
@@ -77,9 +77,11 @@ describe("updateApplicant", () => {
     const newCareer = await CareerRepository.create(careerMocks.careerData());
     const dataToUpdate = {
       uuid: applicant.uuid,
+      user: {
+        name: "newName",
+        surname: "newSurname"
+      },
       padron: applicant.padron,
-      name: "newName",
-      surname: "newSurname",
       description: "newDescription",
       capabilities: ["CSS", "clojure"],
       careers: [
@@ -112,8 +114,8 @@ describe("updateApplicant", () => {
       padron: dataToUpdate.padron,
       user: {
         email: user.email,
-        name: dataToUpdate.name,
-        surname: dataToUpdate.surname
+        name: dataToUpdate.user.name,
+        surname: dataToUpdate.user.surname
       },
       description: dataToUpdate.description
     });

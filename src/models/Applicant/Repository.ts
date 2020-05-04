@@ -6,7 +6,6 @@ import { ApplicantCapabilityRepository } from "../ApplicantCapability/Repository
 import { SectionRepository } from "./Section/Repository";
 import { ApplicantLinkRepository } from "./Link";
 import { UserRepository } from "../User/Repository";
-import pick from "lodash/pick";
 
 export const ApplicantRepository = {
   create: async (
@@ -51,6 +50,8 @@ export const ApplicantRepository = {
   },
   update: async (
     {
+      user: userAttributes = {},
+      description,
       uuid,
       sections = [],
       links = [],
@@ -63,9 +64,9 @@ export const ApplicantRepository = {
     const user = await applicant.getUser();
     const transaction = await Database.transaction();
     try {
-      await applicant.set(pick(props, ["description"]));
+      await applicant.set({ description });
 
-      await UserRepository.update(user, pick(props, ["name", "surname"]), transaction);
+      await UserRepository.update(user, userAttributes, transaction);
 
       await SectionRepository.update(sections, applicant, transaction);
 

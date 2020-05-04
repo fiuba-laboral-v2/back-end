@@ -1,5 +1,5 @@
 import { TLink } from "./Link/Interface";
-import { IUser } from "../User";
+import { IUser, IUserEditable } from "../User";
 
 export interface IApplicantCareer {
   code: string;
@@ -18,9 +18,8 @@ export interface IApplicant {
 
 export interface IApplicantEditable {
   uuid: string;
+  user?: IUserEditable;
   padron?: number;
-  name?: string;
-  surname?: string;
   description?: string;
   careers?: IApplicantCareer[];
   capabilities?: string[];
