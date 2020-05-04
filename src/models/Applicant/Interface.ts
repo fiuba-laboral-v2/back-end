@@ -7,8 +7,6 @@ export interface IApplicantCareer {
 }
 
 export interface IApplicant {
-  name: string;
-  surname: string;
   padron: number;
   description?: string;
   careers: IApplicantCareer[];

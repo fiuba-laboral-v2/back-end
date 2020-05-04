@@ -2,26 +2,23 @@ import { gql } from "apollo-server";
 import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
+import { UserRepository } from "../../../../src/models/User/Repository";
 import { Career, CareerRepository } from "../../../../src/models/Career";
 
 import { applicantMocks } from "../../../models/Applicant/mocks";
 import { careerMocks } from "../../../models/Career/mocks";
 
 import { pick } from "lodash";
-import { UserRepository } from "../../../../src/models/User/Repository";
 
 const queryWithAllData = gql`
   mutation SaveApplicant(
-    $name: String!, $surname: String!, $padron: Int!, $user: UserInput!,
-    $careers: [CareerCredits]!, $description: String, $capabilities: [String]
+      $padron: Int!, $user: UserInput!, $careers: [CareerCredits]!,
+      $description: String, $capabilities: [String]
     ) {
     saveApplicant(
-      name: $name, surname: $surname, padron: $padron,
-      description: $description, careers: $careers, capabilities: $capabilities,
-      user: $user
+        user: $user, padron: $padron, description: $description,
+        careers: $careers, capabilities: $capabilities
     ) {
-      name
-      surname
       padron
       description
       capabilities {
@@ -34,20 +31,24 @@ const queryWithAllData = gql`
         credits
         creditsCount
       }
+      user {
+        email
+        name
+        surname
+      }
     }
   }
 `;
 
 const queryWithOnlyObligatoryData = gql`
-  mutation SaveApplicant (
-    $name: String!, $surname: String!, $padron: Int!,
-    $careers: [CareerCredits]!, $user: UserInput!
+  mutation SaveApplicant ($padron: Int!, $careers: [CareerCredits]!, $user: UserInput!
   ) {
-    saveApplicant(
-        name: $name, surname: $surname, padron: $padron, careers: $careers, user: $user
-    ) {
-      name
-      surname
+    saveApplicant(padron: $padron, careers: $careers, user: $user) {
+      user {
+        email
+        name
+        surname
+      }
       padron
       careers {
         code
@@ -78,14 +79,14 @@ describe("saveApplicant", () => {
       const career = await CareerRepository.create(careerMocks.careerData());
       const applicantData = applicantMocks.applicantData([career]);
 
-      const { data, errors } = await executeMutation(queryWithAllData, {
-        ...applicantData
-      });
+      const { data, errors } = await executeMutation(queryWithAllData, applicantData);
       expect(errors).toBeUndefined();
-      expect(data).not.toBeUndefined();
       expect(data.saveApplicant).toMatchObject({
-        name: applicantData.name,
-        surname: applicantData.surname,
+        user: {
+          email: applicantData.user.email,
+          name: applicantData.user.name,
+          surname: applicantData.user.surname
+        },
         description: applicantData.description,
         padron: applicantData.padron
       });
@@ -103,9 +104,7 @@ describe("saveApplicant", () => {
       const applicantData = applicantMocks.applicantData([career]);
       const { data, errors } = await executeMutation(
         queryWithOnlyObligatoryData,
-        {
-          ...pick(applicantData, ["name", "surname", "padron", "credits", "careers", "user"])
-        }
+        { ...pick(applicantData, ["padron", "credits", "careers", "user"]) }
       );
       expect(errors).toBeUndefined();
       expect(data).not.toBeUndefined();

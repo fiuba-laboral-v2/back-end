@@ -11,8 +11,6 @@ import pick from "lodash/pick";
 export const ApplicantRepository = {
   create: async (
     {
-      name,
-      surname,
       padron,
       description,
       careers: applicantCareers = [],
@@ -24,7 +22,7 @@ export const ApplicantRepository = {
     try {
       const { uuid: userUuid } = await UserRepository.create(user, transaction);
       const applicant = await Applicant.create(
-        { name, surname, padron, description, userUuid: userUuid },
+        { padron, description, userUuid: userUuid },
         { transaction }
       );
 
@@ -62,9 +60,12 @@ export const ApplicantRepository = {
     }: IApplicantEditable
   ) => {
     const applicant = await ApplicantRepository.findByUuid(uuid);
+    const user = await applicant.getUser();
     const transaction = await Database.transaction();
     try {
-      await applicant.set(pick(props, ["name", "surname", "description"]));
+      await applicant.set(pick(props, ["description"]));
+
+      await UserRepository.update(user, pick(props, ["name", "surname"]), transaction);
 
       await SectionRepository.update(sections, applicant, transaction);
 

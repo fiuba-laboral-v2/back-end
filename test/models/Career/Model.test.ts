@@ -1,7 +1,5 @@
 import Database from "../../../src/config/Database";
-import { Applicant } from "../../../src/models/Applicant";
 import { Career } from "../../../src/models/Career";
-import { CareerApplicant } from "../../../src/models/CareerApplicant";
 import { careerMocks } from "./mocks";
 import { NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
 import { UserRepository } from "../../../src/models/User/Repository";
@@ -29,43 +27,6 @@ describe("Career model", () => {
 
     expect(career).not.toBeNull();
     expect(career).not.toBeUndefined();
-  });
-
-  it("Persist the many to many relation between Career and Applicant", async () => {
-    const applicant: Applicant = new Applicant({
-      name: "Bruno",
-      surname: "Diaz",
-      padron: 1,
-      description: "Batman",
-      userUuid: (await UserRepository.create({
-        email: "sblanco@yahoo.com",
-        password: "fdmgkfHGH4353"
-      })).uuid
-    });
-    const career: Career = new Career({ ...careerMocks.careerData() });
-    applicant.careers = [career];
-    career.applicants = [applicant];
-
-    const savedCareer = await career.save();
-    const saverdApplicant = await applicant.save();
-
-    await CareerApplicant.create({
-      careerCode: savedCareer.code, applicantUuid: saverdApplicant.uuid, creditsCount: 100
-    });
-    const result = await Career.findByPk(career.code, { include: [Applicant] });
-
-    expect(result.applicants[0]).toMatchObject({
-      name: applicant.name,
-      CareerApplicant: {
-        applicantUuid: applicant.uuid,
-        careerCode: career.code,
-        creditsCount: 100
-      }
-    });
-    expect(result).toMatchObject({
-      code: career.code,
-      description: career.description
-    });
   });
 
   it("should throw an error if credits is 0", async () => {

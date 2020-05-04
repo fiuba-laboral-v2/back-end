@@ -82,6 +82,25 @@ describe("getOfferByUuid", () => {
     return { offer, career, company };
   };
 
+  const userAttributes = {
+    email: testCurrentUserEmail,
+    password: "AValidPassword2",
+    name: "name",
+    surname: "surname"
+  };
+
+  const createApplicant = () => {
+    return ApplicantRepository.create(
+      applicantMocks.applicantData(
+        [],
+        [],
+        [],
+        [],
+        userAttributes
+      )
+    );
+  };
+
   describe("when and offer exists", () => {
     it("should find an offer by uuid", async () => {
       const { offer, career, company } = await createOffer();
@@ -131,12 +150,7 @@ describe("getOfferByUuid", () => {
 
     it("should find an offer with hasApplied in true", async () => {
       const { offer } = await createOffer();
-      const applicant = await ApplicantRepository.create(
-        {
-          ...applicantMocks.applicantData([]),
-          user: { email: testCurrentUserEmail, password: "AValidPassword2" }
-        }
-      );
+      const applicant = await createApplicant();
       await JobApplicationRepository.apply(applicant, offer);
       const { data: { getOfferByUuid }, errors } = await executeQuery(
         GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
@@ -154,12 +168,7 @@ describe("getOfferByUuid", () => {
 
     it("should find an offer with hasApplied in false", async () => {
       const { offer: { uuid } } = await createOffer();
-      await ApplicantRepository.create(
-        {
-          ...applicantMocks.applicantData([]),
-          user: { email: testCurrentUserEmail, password: "AValidPassword2" }
-        }
-      );
+      await createApplicant();
       const { data: { getOfferByUuid }, errors } = await executeQuery(
         GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
         { uuid: uuid }
@@ -187,7 +196,7 @@ describe("getOfferByUuid", () => {
 
     it("should return an error if the current user is not an applicant", async () => {
       const { offer: { uuid } } = await createOffer();
-      await UserRepository.create({ email: testCurrentUserEmail, password: "AValidPassword2" });
+      await UserRepository.create(userAttributes);
       const { errors } = await executeQuery(
         GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
         { uuid: uuid }

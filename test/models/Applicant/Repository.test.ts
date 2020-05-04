@@ -1,6 +1,7 @@
 import Database from "../../../src/config/Database";
 import { CareerRepository } from "../../../src/models/Career";
-import { ApplicantRepository, Errors, IApplicantEditable } from "../../../src/models/Applicant";
+import { ApplicantRepository, IApplicantEditable } from "../../../src/models/Applicant";
+import { ApplicantNotFound } from "../../../src/models/Applicant/Errors/ApplicantNotFound";
 import { CareerApplicantRepository } from "../../../src/models/CareerApplicant/Repository";
 import { CapabilityRepository } from "../../../src/models/Capability";
 import { internet, random } from "faker";
@@ -20,7 +21,7 @@ describe("ApplicantRepository", () => {
   afterAll(() => Database.close());
 
   describe("Create", () => {
-    it("creates a new applicant", async () => {
+    it("should create a new applicant", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
       const applicantData = applicantMocks.applicantData([career]);
       const applicant = await ApplicantRepository.create(applicantData);
@@ -28,8 +29,6 @@ describe("ApplicantRepository", () => {
 
       expect(applicant).toEqual(expect.objectContaining({
         uuid: applicant.uuid,
-        name: applicantData.name,
-        surname: applicantData.surname,
         padron: applicantData.padron,
         description: applicantData.description
       }));
@@ -43,7 +42,6 @@ describe("ApplicantRepository", () => {
           creditsCount: applicantData.careers[0].creditsCount
         }
       });
-      expect((await applicant.getCareers())[0].description).toEqual(career.description);
       expect(
         (await applicant.getCapabilities())[0].description.toLowerCase()
       ).toEqual(
@@ -58,30 +56,45 @@ describe("ApplicantRepository", () => {
         ApplicantRepository.create({
           ...applicantMocks.applicantData([career]),
           user: {
-            email: "fds@gmail.com",
-            password: "FDSFfdgfrt45"
+            email: "anotherUser@gmail.com",
+            password: "FDSFfdgfrt45",
+            name: "another name",
+            surname: "another surname"
           }
         })
-      ).resolves.not.toThrow(Errors.ApplicantNotFound);
+      ).resolves.not.toThrow(ApplicantNotFound);
     });
 
-    it("can create an applicant without a career and without capabilities", async () => {
+    it("should create an applicant without a career and without capabilities", async () => {
       const applicantData = applicantMocks.applicantData([]);
       const savedApplicant = await ApplicantRepository.create({
         ...applicantData,
         capabilities: []
       });
-
       const applicant = await ApplicantRepository.findByUuid(savedApplicant.uuid);
+      expect((await applicant.getCareers())).toHaveLength(0);
+      expect((await applicant.getCapabilities())).toHaveLength(0);
+    });
 
-      expect(applicant).not.toBeNull();
+    it("should create an applicant with capabilities", async () => {
+      const applicantData = applicantMocks.applicantData([], ["Python"]);
+      const applicant = await ApplicantRepository.create(applicantData);
+      const [capability] = await applicant.getCapabilities();
+      expect(capability.description).toEqual("Python");
+    });
+
+    it("should create applicant with a valid section with a title and a text", async () => {
+      const applicant = await ApplicantRepository.create(applicantMocks.applicantData([]));
+      await applicant.createSection({ title: "title", text: "text" });
+      const [section] = await applicant.getSections();
+      expect(section).toEqual(expect.objectContaining({ title: "title", text: "text" }));
     });
 
     describe("Transactions", () => {
-      it("should rollback transaction and throw error if name is large", async () => {
+      it("should rollback transaction and throw error if padron is null", async () => {
         const career = await CareerRepository.create(careerMocks.careerData());
         const applicantData = applicantMocks.applicantData([career]);
-        applicantData.name = "and the transaction will rolback because it is large";
+        applicantData.padron = null;
         await expect(
           ApplicantRepository.create(applicantData)
         ).rejects.toThrow();
@@ -90,7 +103,7 @@ describe("ApplicantRepository", () => {
   });
 
   describe("Get", () => {
-    it("can retreive an applicant by padron", async () => {
+    it("should retrieve applicant by padron", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
       const applicantData = applicantMocks.applicantData([career]);
       await ApplicantRepository.create(applicantData);
@@ -99,8 +112,6 @@ describe("ApplicantRepository", () => {
 
       expect(applicant).toEqual(expect.objectContaining({
         uuid: applicant.uuid,
-        name: applicantData.name,
-        surname: applicantData.surname,
         padron: applicantData.padron,
         description: applicantData.description
       }));
@@ -123,17 +134,14 @@ describe("ApplicantRepository", () => {
       );
     });
 
-    it("can retrieve an applicant by uuid", async () => {
+    it("should retrieve applicant by uuid", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
       const applicantData = applicantMocks.applicantData([career]);
-      const savedApplicant = await ApplicantRepository.create(applicantData);
-
-      const applicant = await ApplicantRepository.findByUuid(savedApplicant.uuid);
+      const { uuid } = await ApplicantRepository.create(applicantData);
+      const applicant = await ApplicantRepository.findByUuid(uuid);
 
       expect(applicant).toEqual(expect.objectContaining({
         uuid: applicant.uuid,
-        name: applicantData.name,
-        surname: applicantData.surname,
         padron: applicantData.padron,
         description: applicantData.description
       }));
@@ -156,28 +164,28 @@ describe("ApplicantRepository", () => {
       );
     });
 
-    it("should throw ApplicantNotFound if the aplicant doesn't exists", async () => {
-      const applicantData = applicantMocks.applicantData([]);
-
-      await expect(ApplicantRepository.findByPadron(applicantData.padron))
-        .rejects.toThrow(Errors.ApplicantNotFound);
+    it("should throw ApplicantNotFound if the applicant doesn't exists", async () => {
+      const { padron } = applicantMocks.applicantData([]);
+      await expect(ApplicantRepository.findByPadron(padron)).rejects.toThrow(ApplicantNotFound);
     });
   });
 
   describe("Update", () => {
-    beforeEach(() => CapabilityRepository.truncate());
-
-    const createApplicant = async ({
-      capabilities = [], sections = [], links = []
-    } = {
-      capabilities: [], sections: [], links: []
-    }) => {
+    const createApplicant = async (
+      {
+        capabilities = [],
+        sections = [],
+        links = []
+      } = { capabilities: [], sections: [], links: [] }
+    ) => {
       const career = await CareerRepository.create(careerMocks.careerData());
       const applicantData = applicantMocks.applicantData([career], capabilities);
       const applicant = await ApplicantRepository.create(applicantData);
-
       return ApplicantRepository.update({
-        ...applicantData, uuid: applicant.uuid, sections, links
+        ...applicantData,
+        uuid: applicant.uuid,
+        sections,
+        links
       });
     };
 
@@ -211,6 +219,7 @@ describe("ApplicantRepository", () => {
         ]
       };
       const applicant = await ApplicantRepository.update(newProps);
+      const user = await applicant.getUser();
       const capabilitiesDescription = [
         ...newProps.capabilities,
         ...(await applicant.getCapabilities()).map(capability => capability.description)
@@ -220,9 +229,12 @@ describe("ApplicantRepository", () => {
         newCareer.code
       ];
       expect(applicant).toMatchObject({
-        name: newProps.name,
-        surname: newProps.surname,
         description: newProps.description
+      });
+
+      expect(user).toMatchObject({
+        name: newProps.name,
+        surname: newProps.surname
       });
 
       expect(
@@ -242,22 +254,17 @@ describe("ApplicantRepository", () => {
         name: "newName"
       };
       const applicant = await ApplicantRepository.update(newProps);
+      const user = await applicant.getUser();
 
-      expect(applicant).toMatchObject({
-        name: newProps.name
-      });
+      expect(user).toMatchObject({ name: newProps.name });
     });
 
     it("Should update surname", async () => {
       const { uuid } = await createApplicant();
-      const newProps: IApplicantEditable = {
-        uuid,
-        surname: "newSurname"
-      };
+      const newProps: IApplicantEditable = { uuid, surname: "newSurname" };
       const applicant = await ApplicantRepository.update(newProps);
-      expect(applicant).toMatchObject({
-        surname: newProps.surname
-      });
+      const user = await applicant.getUser();
+      expect(user).toMatchObject({ surname: newProps.surname });
     });
 
     it("Should update description", async () => {

@@ -8,12 +8,6 @@ import { GraphQLUserInput } from "../../User/Types/GraphQLUserInput";
 const saveApplicant = {
   type: GraphQLApplicant,
   args: {
-    name: {
-      type: nonNull(String)
-    },
-    surname: {
-      type: nonNull(String)
-    },
     padron: {
       type: nonNull(Int)
     },

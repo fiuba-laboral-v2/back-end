@@ -1,74 +1,24 @@
+import { ValidationError } from "sequelize";
 import Database from "../../../src/config/Database";
-import { Applicant } from "../../../src/models/Applicant";
 import { Capability } from "../../../src/models/Capability";
-import { ApplicantCapability } from "../../../src/models/ApplicantCapability";
-import { UniqueConstraintError } from "sequelize";
-import { UserRepository } from "../../../src/models/User/Repository";
 
-describe("Applicant model", () => {
-  beforeAll(async () => {
-    await Database.setConnection();
-  });
+describe("Capability", () => {
+  beforeAll(() => Database.setConnection());
 
-  beforeEach(async () => {
-    await Capability.truncate({ cascade: true });
-    await UserRepository.truncate();
-  });
-
-  afterAll(async () => {
-    await Database.close();
-  });
+  afterAll(() => Database.close());
 
   it("create a valid capability", async () => {
-    const capability: Capability = new Capability({ description: "Python" });
-
-    await capability.save();
-
-    expect(capability).not.toBeNull();
-    expect(capability).not.toBeUndefined();
+    const capability = new Capability({ description: "Python" });
+    await expect(capability.validate()).resolves.not.toThrow();
   });
 
-  it("persist the many to many relation between Capability and Applicant", async () => {
-    const applicant: Applicant = new Applicant({
-      name: "Bruno",
-      surname: "Diaz",
-      padron: 1,
-      description: "Batman",
-      credits: 150,
-      userUuid: (await UserRepository.create({
-        email: "sblanco@yahoo.com",
-        password: "fdmgkfHGH4353"
-      })).uuid
-    });
-    const capability: Capability = new Capability({ description: "Python" });
-    applicant.capabilities = [capability];
-    capability.applicants = [applicant];
-
-    const savedCapability = await capability.save();
-    const saverdApplicant = await applicant.save();
-
-    await ApplicantCapability.create({
-      capabilityUuid: savedCapability.uuid, applicantUuid: saverdApplicant.uuid
-    });
-    const result = await Capability.findByPk(savedCapability.uuid, { include: [Applicant] });
-
-    expect(result.applicants[0].name).toEqual(applicant.name);
-    expect(result).toEqual(expect.objectContaining({
-      uuid: savedCapability.uuid,
-      description: savedCapability.description
-    }));
+  it("should throw an error if no description is provided", async () => {
+    const capability = new Capability();
+    await expect(capability.validate()).rejects.toThrow(ValidationError);
   });
 
-  it("should throw an error if description is null", async () => {
-    const capability: Capability = new Capability();
-
-    await expect(capability.save()).rejects.toThrow();
-  });
-
-  it("should throw an error if adding existing case-insensitive description", async () => {
-    await new Capability({ description: "Python" }).save();
-    await expect(
-      new Capability({ description: "PYTHON" }).save()
-    ).rejects.toThrow(UniqueConstraintError);
+  it("should throw an error if description is nill", async () => {
+    const capability = new Capability({ description: null });
+    await expect(capability.validate()).rejects.toThrow(ValidationError);
   });
 });

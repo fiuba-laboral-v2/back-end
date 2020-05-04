@@ -18,14 +18,6 @@ export = {
         onDelete: "CASCADE",
         type: UUID
       },
-      name: {
-        allowNull: false,
-        type: DataType.TEXT
-      },
-      surname: {
-        allowNull: false,
-        type: DataType.TEXT
-      },
       padron: {
         allowNull: false,
         type: DataType.INTEGER
@@ -44,7 +36,6 @@ export = {
       }
     });
   },
-
   down: (queryInterface: QueryInterface) => {
     return queryInterface.dropTable("Applicants");
   }

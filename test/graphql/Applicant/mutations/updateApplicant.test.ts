@@ -21,8 +21,11 @@ const UPDATE_APPLICANT = gql`
             uuid: $uuid, padron: $padron, name: $name, surname: $surname description: $description,
             careers: $careers, capabilities: $capabilities, sections: $sections, links: $links
         ) {
-            name
-            surname
+            user {
+              email
+              name
+              surname
+            }
             padron
             description
             capabilities {
@@ -68,8 +71,9 @@ describe("updateApplicant", () => {
     await Database.close();
   });
 
-  it("update all possible data deleting all previous values", async () => {
+  it("should update all possible data deleting all previous values", async () => {
     const applicant = await createApplicant();
+    const user = await applicant.getUser();
     const newCareer = await CareerRepository.create(careerMocks.careerData());
     const dataToUpdate = {
       uuid: applicant.uuid,
@@ -106,8 +110,11 @@ describe("updateApplicant", () => {
     expect(errors).toBeUndefined();
     expect(updateApplicant).toMatchObject({
       padron: dataToUpdate.padron,
-      name: dataToUpdate.name,
-      surname: dataToUpdate.surname,
+      user: {
+        email: user.email,
+        name: dataToUpdate.name,
+        surname: dataToUpdate.surname
+      },
       description: dataToUpdate.description
     });
     expect(

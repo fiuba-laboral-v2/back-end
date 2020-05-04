@@ -9,6 +9,12 @@ export const GraphQLUserInput = new GraphQLInputObjectType({
     },
     password: {
       type: nonNull(String)
+    },
+    name: {
+      type: nonNull(String)
+    },
+    surname: {
+      type: nonNull(String)
     }
   })
 });
