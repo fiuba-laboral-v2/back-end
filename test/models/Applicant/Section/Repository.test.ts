@@ -68,7 +68,7 @@ describe("Section model", () => {
     }
   );
 
-  it("should update if the display order is the same", async () => {
+  it("should update the sections if the display order is the same", async () => {
     const params = {
       title: "title",
       text: "text",
