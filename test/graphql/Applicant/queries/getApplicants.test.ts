@@ -104,41 +104,39 @@ describe("getApplicants", () => {
       );
       const { data, errors } = await executeQuery(GET_APPLICANTS);
       expect(errors).toBeUndefined();
-      expect(data.getApplicants).toEqual(
-        expect.arrayContaining(
-          await Promise.all(
-            applicants.map(async applicant => {
-              const user = await applicant.getUser();
-              const capabilities = await applicant.getCapabilities();
-              const careerApplicants = await applicant.getCareersApplicants();
-              return {
-                uuid: applicant.uuid,
-                user: {
-                  email: user.email,
-                  name: user.name,
-                  surname: user.surname
-                },
-                padron: applicant.padron,
-                description: applicant.description,
-                careers: await Promise.all(
-                  careerApplicants.map(async careerApplicant => {
-                    const { code, description, credits } = await careerApplicant.getCareer();
-                    return {
-                      code,
-                      description,
-                      creditsCount: careerApplicant.creditsCount,
-                      credits
-                    };
-                  })
-                ),
-                capabilities: capabilities.map(({ uuid, description }) => ({ uuid, description })),
-                links: [],
-                sections: []
-              };
-            })
-          )
-        )
+
+      const expectedApplicants = await Promise.all(
+        applicants.map(async applicant => {
+          const user = await applicant.getUser();
+          const capabilities = await applicant.getCapabilities();
+          const careerApplicants = await applicant.getCareersApplicants();
+          return {
+            uuid: applicant.uuid,
+            user: {
+              email: user.email,
+              name: user.name,
+              surname: user.surname
+            },
+            padron: applicant.padron,
+            description: applicant.description,
+            careers: await Promise.all(
+              careerApplicants.map(async careerApplicant => {
+                const { code, description, credits } = await careerApplicant.getCareer();
+                return {
+                  code,
+                  description,
+                  creditsCount: careerApplicant.creditsCount,
+                  credits
+                };
+              })
+            ),
+            capabilities: capabilities.map(({ uuid, description }) => ({ uuid, description })),
+            links: [],
+            sections: []
+          };
+        })
       );
+      expect(data.getApplicants).toEqual(expect.arrayContaining(expectedApplicants));
     });
   });
 
