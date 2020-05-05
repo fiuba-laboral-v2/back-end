@@ -25,7 +25,7 @@ export = {
             type: STRING
           },
           description: {
-            type: STRING
+            type: TEXT
           },
           logo: {
             type: TEXT

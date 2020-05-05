@@ -1,3 +1,4 @@
+import faker from "faker";
 import { Company, CompanyRepository } from "../../../src/models/Company";
 import { CompanyPhoneNumber } from "../../../src/models/CompanyPhoneNumber";
 import { CompanyPhoto } from "../../../src/models/CompanyPhoto";
@@ -46,6 +47,16 @@ describe("CompanyRepository", () => {
     expect((await company.getPhotos())).toHaveLength(
       companyCompleteData.photos.length
     );
+  });
+
+  it("should create a valid company with a large description", async () => {
+    await expect(
+      CompanyRepository.create({
+        cuit: "30711819017",
+        companyName: "devartis",
+        description: faker.lorem.paragraph(7)
+      })
+    ).resolves.not.toThrow();
   });
 
   it("should throw an error if cuit is null", async () => {
