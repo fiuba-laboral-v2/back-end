@@ -9,6 +9,12 @@ const GraphQLUser = new GraphQLObjectType({
     },
     email: {
       type: nonNull(String)
+    },
+    name: {
+      type: nonNull(String)
+    },
+    surname: {
+      type: nonNull(String)
     }
   })
 });

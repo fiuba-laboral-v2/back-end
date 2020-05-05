@@ -1,9 +1,11 @@
 import { GraphQLUser } from "./GraphQLUser";
-import { GraphQLUserInput } from "./GraphQLUserInput";
+import { GraphQLUserCreateInput } from "./GraphQLUserCreateInput";
+import { GraphQLUserUpdateInput } from "./GraphQLUserUpdateInput";
 
 const userTypes = [
   GraphQLUser,
-  GraphQLUserInput
+  GraphQLUserCreateInput,
+  GraphQLUserUpdateInput
 ];
 
 export { userTypes };

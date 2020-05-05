@@ -1,32 +1,30 @@
-
 import Database from "../../../../src/config/Database";
 import { Applicant } from "../../../../src/models/Applicant";
-import { ApplicantLinkRepository } from "../../../../src/models/Applicant/Link";
+import { ApplicantLinkRepository, ApplicantLink } from "../../../../src/models/Applicant/Link";
 import { random, internet } from "faker";
 import { UserRepository } from "../../../../src/models/User/Repository";
 
 describe("ApplicantLinkRepository", () => {
   let applicant: Applicant;
 
-  beforeAll(async () => {
-    await Database.setConnection();
-  });
+  beforeAll(async () => Database.setConnection());
 
   beforeEach(async () => {
     await UserRepository.truncate();
-    const myApplicant = new Applicant({
+    const { uuid: userUuid } = await UserRepository.create({
+      email: "sblanco@yahoo.com",
+      password: "fdmgkfHGH4353",
       name: "Bruno",
-      surname: "Diaz",
-      padron: 1,
-      description: "Batman",
-      credits: 150,
-      userUuid: (await UserRepository.create({
-        email: "sblanco@yahoo.com",
-        password: "fdmgkfHGH4353"
-      })).uuid
+      surname: "Diaz"
     });
-    applicant = await myApplicant.save();
+    applicant = await Applicant.create({
+      userUuid: userUuid,
+      padron: 1,
+      description: "Batman"
+    });
   });
+
+  beforeEach(() => ApplicantLink.truncate({ cascade: true }));
 
   afterAll(async () => {
     await UserRepository.truncate();
@@ -42,36 +40,32 @@ describe("ApplicantLinkRepository", () => {
 
     const [link] = await applicant.getLinks();
 
-    expect(link).toBeDefined();
     expect(link).toHaveProperty("applicantUuid");
     expect(link).toMatchObject({
+      applicantUuid: applicant.uuid,
       name: params.name,
       url: params.url
     });
   });
 
-  it("updates a valid link", async () => {
+  it("should update a valid link", async () => {
     const params = {
-      name: random.word(),
-      url: "some.url"
+      name: "Google",
+      url: "www.google.com"
     };
 
     await ApplicantLinkRepository.update([params], applicant);
 
     const newParams = {
-      name: params.name,
-      url: "other.url"
+      name: "LinkedIn",
+      url: "www.linkedin.com"
     };
 
     await ApplicantLinkRepository.update([newParams], applicant);
     const [link] = await applicant.getLinks();
 
-    expect(link).toBeDefined();
     expect(link).toHaveProperty("applicantUuid");
-    expect(link).toMatchObject({
-      name: params.name,
-      url: "other.url"
-    });
+    expect(link).toMatchObject(newParams);
   });
 
   it("thows an error if an applicantUuid has duplicated links name", async () => {

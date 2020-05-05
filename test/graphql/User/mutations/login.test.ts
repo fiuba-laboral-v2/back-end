@@ -12,38 +12,21 @@ const LOGIN = gql`
   }
 `;
 
-describe("User login query", () => {
-  beforeAll(async () => {
-    await Database.setConnection();
-  });
+describe("login", () => {
+  beforeAll(() => Database.setConnection());
 
   beforeEach(() => UserRepository.truncate());
 
-  afterAll(async () => {
-    await Database.close();
-  });
+  afterAll(() => Database.close());
 
-  it("should return error if user is not registered", async () => {
-    const { errors } = await executeMutation(LOGIN, {
-      email: "asd@asd.com",
-      password: "AValidPassword000"
-    });
-    expect(errors[0].extensions.data).toEqual({ errorType: UserNotFoundError.name });
-  });
-
-  it("checks for password match", async () => {
+  it("should return a token", async () => {
     const email = "asd@asd.com";
-    await UserRepository.create({ email: email, password: "AValidPassword1" });
-    const { errors } = await executeMutation(LOGIN, {
+    const user = await UserRepository.create({
       email: email,
-      password: "AValidPassword2"
+      password: "AValidPassword3",
+      name: "name",
+      surname: "surname"
     });
-    expect(errors[0].extensions.data).toEqual({ errorType: BadCredentialsError.name });
-  });
-
-  it("returns a token", async () => {
-    const email = "asd@asd.com";
-    const user = await UserRepository.create({ email: email, password: "AValidPassword3" });
     const response = await executeMutation(LOGIN, {
       email: email,
       password: "AValidPassword3"
@@ -54,5 +37,28 @@ describe("User login query", () => {
       email: email,
       uuid: user.uuid
     });
+  });
+
+  it("should return error if user is not registered", async () => {
+    const { errors } = await executeMutation(LOGIN, {
+      email: "asd@asd.com",
+      password: "AValidPassword000"
+    });
+    expect(errors[0].extensions.data).toEqual({ errorType: UserNotFoundError.name });
+  });
+
+  it("should return and error if the password does not match", async () => {
+    const email = "asd@asd.com";
+    await UserRepository.create({
+      email: email,
+      password: "AValidPassword1",
+      name: "name",
+      surname: "surname"
+    });
+    const { errors } = await executeMutation(LOGIN, {
+      email: email,
+      password: "AValidPassword2"
+    });
+    expect(errors[0].extensions.data).toEqual({ errorType: BadCredentialsError.name });
   });
 });

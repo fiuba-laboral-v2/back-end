@@ -12,40 +12,44 @@ import { careerMocks } from "../../../models/Career/mocks";
 import { UserRepository } from "../../../../src/models/User/Repository";
 
 const UPDATE_APPLICANT = gql`
-    mutation updateApplicant(
-        $uuid: ID!, $padron: Int, $name: String, $surname: String, $description: String,
-        $careers: [CareerCredits], $capabilities: [String], $sections: [SectionInput],
-        $links: [LinkInput]
+  mutation updateApplicant(
+    $uuid: ID!, $padron: Int, $user: UserUpdateInput, $description: String,
+    $careers: [CareerCredits], $capabilities: [String], $sections: [SectionInput],
+    $links: [LinkInput]
+  ) {
+    updateApplicant(
+      uuid: $uuid, padron: $padron, user: $user, description: $description,
+      careers: $careers, capabilities: $capabilities, sections: $sections, links: $links
     ) {
-        updateApplicant(
-            uuid: $uuid, padron: $padron, name: $name, surname: $surname description: $description,
-            careers: $careers, capabilities: $capabilities, sections: $sections, links: $links
-        ) {
-            name
-            surname
-            padron
-            description
-            capabilities {
-              description
-            }
-            careers {
-              code
-              description
-              credits
-              creditsCount
-            }
-            sections {
-              uuid
-              title
-              text
-              displayOrder
-            }
-            links {
-              name
-              url
-            }
-        }
+      user {
+        uuid
+        email
+        name
+        surname
+      }
+      padron
+      description
+      capabilities {
+        description
+      }
+      careers {
+        code
+        description
+        credits
+        creditsCount
+      }
+      sections {
+        uuid
+        title
+        text
+        displayOrder
+      }
+      links {
+        name
+        url
+      }
     }
+  }
 `;
 
 describe("updateApplicant", () => {
@@ -63,18 +67,19 @@ describe("updateApplicant", () => {
 
   beforeEach(() => UserRepository.truncate());
 
-  afterAll(async () => {
-    await Database.close();
-  });
+  afterAll(() => Database.close());
 
-  it("update all possible data deleting all previous values", async () => {
+  it("should update all possible data deleting all previous values", async () => {
     const applicant = await createApplicant();
+    const user = await applicant.getUser();
     const newCareer = await CareerRepository.create(careerMocks.careerData());
     const dataToUpdate = {
       uuid: applicant.uuid,
+      user: {
+        name: "newName",
+        surname: "newSurname"
+      },
       padron: applicant.padron,
-      name: "newName",
-      surname: "newSurname",
       description: "newDescription",
       capabilities: ["CSS", "clojure"],
       careers: [
@@ -105,8 +110,12 @@ describe("updateApplicant", () => {
     expect(errors).toBeUndefined();
     expect(updateApplicant).toMatchObject({
       padron: dataToUpdate.padron,
-      name: dataToUpdate.name,
-      surname: dataToUpdate.surname,
+      user: {
+        uuid: user.uuid,
+        email: user.email,
+        name: dataToUpdate.user.name,
+        surname: dataToUpdate.user.surname
+      },
       description: dataToUpdate.description
     });
     expect(

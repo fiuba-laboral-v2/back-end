@@ -12,9 +12,10 @@ import {
 import {
   HasManyCreateAssociationMixin,
   HasManyGetAssociationsMixin,
+  HasOneGetAssociationMixin,
   HasManyHasAssociationMixin
 } from "sequelize";
-import { validateIntegerInRange, validateName } from "validations-fiuba-laboral-v2";
+import { validateIntegerInRange } from "validations-fiuba-laboral-v2";
 import { JobApplication } from "../JobApplication";
 import { Career } from "../Career/Model";
 import { CareerApplicant } from "../CareerApplicant/Model";
@@ -33,20 +34,6 @@ export class Applicant extends Model<Applicant> {
     defaultValue: DataType.UUIDV4
   })
   public uuid: string;
-
-  @Is(validateName)
-  @Column({
-    allowNull: false,
-    type: DataType.TEXT
-  })
-  public name: string;
-
-  @Is(validateName)
-  @Column({
-    allowNull: false,
-    type: DataType.TEXT
-  })
-  public surname: string;
 
   @Is("padron", validateIntegerInRange({ min: { value: 0, include: false } }))
   @Column({
@@ -91,6 +78,7 @@ export class Applicant extends Model<Applicant> {
 
   public getCareers: HasManyGetAssociationsMixin<Career>;
   public hasCareer: HasManyHasAssociationMixin<Career, string>;
+  public getUser: HasOneGetAssociationMixin<User>;
 
   public getCapabilities: HasManyGetAssociationsMixin<Capability>;
   public getCareersApplicants: HasManyGetAssociationsMixin<CareerApplicant>;
