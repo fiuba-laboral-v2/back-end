@@ -12,9 +12,8 @@ export const UserRepository = {
 
     return user;
   },
-  update: async (user: User, newAttributes: IUserEditable, transaction?: Transaction) => {
-    await user.set(newAttributes);
-    return user.save({ transaction });
+  update: (user: User, newAttributes: IUserEditable, transaction?: Transaction) => {
+    return user.update(newAttributes, { transaction });
   },
   truncate: () => User.truncate({ cascade: true })
 };
