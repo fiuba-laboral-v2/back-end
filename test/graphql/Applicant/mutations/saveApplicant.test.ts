@@ -21,6 +21,7 @@ const queryWithAllData = gql`
     ) {
       uuid
       user {
+        uuid
         email
         name
         surname
@@ -47,6 +48,7 @@ const queryWithOnlyObligatoryData = gql`
     saveApplicant(padron: $padron, careers: $careers, user: $user) {
       uuid
       user {
+        uuid
         email
         name
         surname
@@ -72,9 +74,7 @@ describe("saveApplicant", () => {
 
   beforeEach(() => UserRepository.truncate());
 
-  afterAll(async () => {
-    await Database.close();
-  });
+  afterAll(() => Database.close());
 
   describe("when the input is valid", () => {
     it("creates a new applicant", async () => {
@@ -83,6 +83,7 @@ describe("saveApplicant", () => {
 
       const { data, errors } = await executeMutation(queryWithAllData, applicantData);
       expect(errors).toBeUndefined();
+      expect(data.saveApplicant.user).toHaveProperty("uuid");
       expect(data.saveApplicant).toMatchObject({
         user: {
           email: applicantData.user.email,
@@ -109,9 +110,16 @@ describe("saveApplicant", () => {
         { ...pick(applicantData, ["padron", "credits", "careers", "user"]) }
       );
       expect(errors).toBeUndefined();
-      expect(data).not.toBeUndefined();
+      expect(data.saveApplicant.user).toHaveProperty("uuid");
       expect(data.saveApplicant).toMatchObject(
-        pick(applicantData, ["name", "surname", "padron", "credits"])
+        {
+          user: {
+            email: applicantData.user.email,
+            name: applicantData.user.name,
+            surname: applicantData.user.surname
+          },
+          padron: applicantData.padron
+        }
       );
       expect(data.saveApplicant).toHaveProperty("careers");
       expect(data.saveApplicant).not.toHaveProperty("capabilities");
