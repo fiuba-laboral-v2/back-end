@@ -7,30 +7,19 @@ import { Transaction } from "sequelize";
 
 export const ApplicantLinkRepository = {
   update: async (links: TLink[], applicant: Applicant, transaction?: Transaction) => {
-    const linkUuids: string[] =
-      (await ApplicantLinkRepository.bulkUpsert(links, applicant, transaction))
-        .map(({ uuid }) => (uuid));
-
-    return ApplicantLink.destroy({
+    await ApplicantLink.destroy({
       where: {
-        applicantUuid: applicant.uuid,
-        ...(!isEmpty(linkUuids) && {
-          [Op.not]: {
-            uuid: linkUuids
-          }
-        })
+        applicantUuid: applicant.uuid
       },
       transaction
     });
-  },
-  bulkUpsert: (links: TLink[], applicant: Applicant, transaction?: Transaction) => {
+
     return ApplicantLink.bulkCreate(
       links.map(link => ({ ...link, applicantUuid: applicant.uuid })),
       {
         transaction,
         validate: true,
-        returning: true,
-        updateOnDuplicate: ["name", "url"]
+        returning: true
       }
     );
   }

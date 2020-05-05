@@ -77,4 +77,26 @@ describe("ApplicantLinkRepository", () => {
       url: newParams.url
     });
   });
+
+  it("thows an error if an applicantUuid has duplicated links name", async () => {
+    const params = {
+      name: random.word(),
+      url: "some.url"
+    };
+
+    await expect(
+      ApplicantLinkRepository.update([params, { ...params, url: "other.url" }], applicant)
+    ).rejects.toThrow();
+  });
+
+  it("thows an error if an applicantUuid has duplicated links url", async () => {
+    const params = {
+      name: "name",
+      url: internet.url()
+    };
+
+    await expect(
+      ApplicantLinkRepository.update([params, { ...params, url: "otherName" }], applicant)
+    ).rejects.toThrow();
+  });
 });
