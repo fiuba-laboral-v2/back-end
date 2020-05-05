@@ -36,7 +36,7 @@ export class Company extends Model<Company> {
   @Column(DataType.STRING)
   public slogan: string;
 
-  @Column(DataType.STRING)
+  @Column(DataType.TEXT)
   public description: string;
 
   @Column(DataType.TEXT)
