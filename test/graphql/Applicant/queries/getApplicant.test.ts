@@ -2,9 +2,8 @@ import { gql } from "apollo-server";
 import { executeQuery } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
-import { CareerRepository } from "../../../../src/models/Career";
 import { ApplicantRepository } from "../../../../src/models/Applicant";
-import { Career } from "../../../../src/models/Career";
+import { CareerRepository } from "../../../../src/models/Career";
 import { ApplicantNotFound } from "../../../../src/models/Applicant/Errors/ApplicantNotFound";
 
 import { applicantMocks } from "../../../models/Applicant/mocks";
@@ -16,8 +15,11 @@ import { UserRepository } from "../../../../src/models/User/Repository";
 const GET_APPLICANT = gql`
   query GetApplicant($uuid: ID!) {
     getApplicant(uuid: $uuid) {
-      name
-      surname
+      user {
+        email
+        name
+        surname
+      }
       padron
       description
       capabilities {
@@ -34,17 +36,16 @@ const GET_APPLICANT = gql`
   }
 `;
 
-describe("getApplicantByPadron", () => {
+describe("getApplicant", () => {
 
-  beforeAll(async () => {
-    await Database.setConnection();
-    await Career.truncate({ cascade: true });
+  beforeAll(() => Database.setConnection());
+
+  beforeEach(async () => {
+    await CareerRepository.truncate();
     await UserRepository.truncate();
   });
 
-  afterAll(async () => {
-    await Database.close();
-  });
+  afterAll(() => Database.close());
 
   describe("when the applicant exists", () => {
     it("fetches the applicant", async () => {
@@ -56,10 +57,12 @@ describe("getApplicantByPadron", () => {
         GET_APPLICANT, { uuid: applicant.uuid }
       );
       expect(errors).toBeUndefined();
-      expect(data).not.toBeUndefined();
       expect(data.getApplicant).toMatchObject({
-        name: applicantData.name,
-        surname: applicantData.surname,
+        user: {
+          email: applicantData.user.email,
+          name: applicantData.user.name,
+          surname: applicantData.user.surname
+        },
         description: applicantData.description,
         padron: applicantData.padron
       });
@@ -75,7 +78,7 @@ describe("getApplicantByPadron", () => {
   });
 
   describe("when the applicant doesn't exists", () => {
-    it("fetches the applicant", async () => {
+    it("should return ad error if the applicant does not exist", async () => {
       const uuid = random.uuid();
       const { errors } = await executeQuery(GET_APPLICANT, { uuid });
 

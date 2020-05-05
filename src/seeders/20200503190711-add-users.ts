@@ -11,6 +11,8 @@ export = {
           uuid: uuids.sebastian.user,
           email: "seblanco@fi.uba.ar",
           password: hashSync("SecurePassword1010", 10),
+          name: "Sebastián",
+          surname: "Blanco",
           createdAt: new Date(),
           updatedAt: new Date()
         }

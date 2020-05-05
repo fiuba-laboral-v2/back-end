@@ -1,5 +1,6 @@
 import { GraphQLObjectType } from "graphql";
 import { ID, Int, nonNull, String, List } from "../../fieldTypes";
+import { GraphQLUser } from "../../User/Types/GraphQLUser";
 import { GraphQLCapability } from "../../Capability/Types/Capability";
 import { GraphQLApplicantCareer } from "./ApplicantCareers";
 import { GraphQLSection } from "./Section";
@@ -13,11 +14,9 @@ const GraphQLApplicant = new GraphQLObjectType({
     uuid: {
       type: nonNull(ID)
     },
-    name: {
-      type: nonNull(String)
-    },
-    surname: {
-      type: nonNull(String)
+    user: {
+      type: nonNull(GraphQLUser),
+      resolve: (applicant: Applicant) => applicant.getUser()
     },
     padron: {
       type: nonNull(Int)

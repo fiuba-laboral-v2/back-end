@@ -5,31 +5,38 @@ import { UserRepository } from "../../../../src/models/User/Repository";
 import { AuthenticationError } from "../../../../src/graphql/Errors";
 
 const ME = gql`
-    query {
-        me {
-            email
-        }
+  query {
+    me {
+      email
+      name
+      surname
     }
+  }
 `;
 
 describe("Current User query", () => {
-  beforeAll(async () => {
-    await Database.setConnection();
-  });
+  beforeAll(() => Database.setConnection());
 
-  beforeEach(async () => {
-    await UserRepository.truncate();
-  });
+  beforeEach(() => UserRepository.truncate());
 
-  afterAll(async () => {
-    await Database.close();
-  });
+  afterAll(() => Database.close());
 
   it("returns current user if it's set in context", async () => {
-    await UserRepository.create({ email: testCurrentUserEmail, password: "SomeCoolSecret123" });
-    const response = await executeQuery(ME);
-    expect(response.errors).toBeUndefined();
-    expect(response.data).toEqual({ me: { email: testCurrentUserEmail } });
+    await UserRepository.create({
+      email: testCurrentUserEmail,
+      password: "SomeCoolSecret123",
+      name: "name",
+      surname: "surname"
+    });
+    const { data, errors } = await executeQuery(ME);
+    expect(errors).toBeUndefined();
+    expect(data.me).toEqual(
+      {
+        email: testCurrentUserEmail,
+        name: "name",
+        surname: "surname"
+      }
+    );
   });
 
   it("returns error if the current user is not set in context", async () => {

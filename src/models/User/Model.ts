@@ -12,7 +12,7 @@ import {
 import { compare, hashSync } from "bcrypt";
 import { HasOneGetAssociationMixin } from "sequelize";
 import { Applicant } from "../Applicant/Model";
-import { validateEmail, validatePassword } from "validations-fiuba-laboral-v2";
+import { validateEmail, validateName, validatePassword } from "validations-fiuba-laboral-v2";
 
 @Table
 export class User extends Model<User> {
@@ -40,6 +40,20 @@ export class User extends Model<User> {
   @AllowNull(false)
   @Column(DataType.STRING)
   public password: string;
+
+  @Is(validateName)
+  @Column({
+    allowNull: false,
+    type: DataType.TEXT
+  })
+  public name: string;
+
+  @Is(validateName)
+  @Column({
+    allowNull: false,
+    type: DataType.TEXT
+  })
+  public surname: string;
 
   @HasOne(() => Applicant, "userUuid")
   public applicant: Applicant;

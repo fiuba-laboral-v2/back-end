@@ -39,7 +39,12 @@ describe("saveJobApplication", () => {
 
   const applicantData = {
     ...applicantMocks.applicantData([]),
-    user: { email: testCurrentUserEmail, password: "AValidPassword000" }
+    user: {
+      email: testCurrentUserEmail,
+      password: "AValidPassword000",
+      name: "name",
+      surname: "surname"
+    }
   };
 
   describe("when the input is valid", () => {
@@ -83,7 +88,14 @@ describe("saveJobApplication", () => {
     });
 
     it("should return an error if current user is not an applicant", async () => {
-      await UserRepository.create({ email: testCurrentUserEmail, password: "SomeCoolSecret123" });
+      await UserRepository.create(
+        {
+          email: testCurrentUserEmail,
+          password: "SomeCoolSecret123",
+          name: "name",
+          surname: "surname"
+        }
+      );
       const { uuid: companyUuid } = await CompanyRepository.create(companyMockData);
       const offer = await OfferRepository.create(OfferMocks.completeData(companyUuid));
       const { errors } = await executeMutation(SAVE_JOB_APPLICATION, { offerUuid: offer.uuid });
