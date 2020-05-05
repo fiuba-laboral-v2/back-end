@@ -1,4 +1,5 @@
 export interface IUser {
+  uuid?: string;
   name: string;
   surname: string;
   email: string;
@@ -6,6 +7,7 @@ export interface IUser {
 }
 
 export interface IUserEditable {
+  uuid?: string;
   name?: string;
   surname?: string;
 }
