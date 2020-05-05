@@ -86,7 +86,7 @@ describe("ApplicantLinkRepository", () => {
     };
 
     await expect(
-      ApplicantLinkRepository.update([params, { ...params, url: "otherName" }], applicant)
-    ).rejects.toThrow("aggregate error");
+      ApplicantLinkRepository.update([params, { ...params, name: "other" }], applicant)
+    ).rejects.toThrow("Validation error");
   });
 });
