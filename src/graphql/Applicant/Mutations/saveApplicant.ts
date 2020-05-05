@@ -3,7 +3,7 @@ import { GraphQLApplicant } from "../Types/Applicant";
 import { GraphQLCareerCredits } from "../Types/CareerCredits";
 
 import { IApplicant, ApplicantRepository } from "../../../models/Applicant";
-import { GraphQLUserInput } from "../../User/Types/GraphQLUserInput";
+import { GraphQLUserCreateInput } from "../../User/Types/GraphQLUserCreateInput";
 
 const saveApplicant = {
   type: GraphQLApplicant,
@@ -21,7 +21,7 @@ const saveApplicant = {
       type: List(String)
     },
     user: {
-      type: nonNull(GraphQLUserInput)
+      type: nonNull(GraphQLUserCreateInput)
     }
   },
   resolve: (_: undefined, props: IApplicant) => ApplicantRepository.create(props)
