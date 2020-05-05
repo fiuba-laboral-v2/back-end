@@ -19,6 +19,12 @@ const queryWithAllData = gql`
         user: $user, padron: $padron, description: $description,
         careers: $careers, capabilities: $capabilities
     ) {
+      uuid
+      user {
+        email
+        name
+        surname
+      }
       padron
       description
       capabilities {
@@ -31,11 +37,6 @@ const queryWithAllData = gql`
         credits
         creditsCount
       }
-      user {
-        email
-        name
-        surname
-      }
     }
   }
 `;
@@ -44,6 +45,7 @@ const queryWithOnlyObligatoryData = gql`
   mutation SaveApplicant ($padron: Int!, $careers: [CareerCredits]!, $user: UserInput!
   ) {
     saveApplicant(padron: $padron, careers: $careers, user: $user) {
+      uuid
       user {
         email
         name
