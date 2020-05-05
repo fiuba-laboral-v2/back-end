@@ -16,7 +16,7 @@ const GraphQLApplicant = new GraphQLObjectType({
     },
     user: {
       type: nonNull(GraphQLUser),
-      resolve: async (applicant: Applicant) => applicant.getUser()
+      resolve: (applicant: Applicant) => applicant.getUser()
     },
     padron: {
       type: nonNull(Int)
