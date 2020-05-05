@@ -41,7 +41,6 @@ describe("ApplicantLink model", () => {
     await applicantLink.save();
 
     expect(applicantLink).toBeDefined();
-    expect(applicantLink).toHaveProperty("uuid");
     expect(applicantLink).toMatchObject({
       name: params.name,
       url: params.url

@@ -41,7 +41,6 @@ const UPDATE_APPLICANT = gql`
               displayOrder
             }
             links {
-              uuid
               name
               url
             }

@@ -1,23 +1,36 @@
 import { TLink } from "./Interface";
 import { Applicant } from "../Model";
 import { ApplicantLink } from ".";
+import { Op } from "sequelize";
+import { isEmpty } from "lodash";
 import { Transaction } from "sequelize";
 
 export const ApplicantLinkRepository = {
   update: async (links: TLink[], applicant: Applicant, transaction?: Transaction) => {
-    await ApplicantLink.destroy({
+    const linkNames: string[] =
+      (await ApplicantLinkRepository.bulkUpsert(links, applicant, transaction))
+        .map(({ name }) => (name));
+
+    return ApplicantLink.destroy({
       where: {
-        applicantUuid: applicant.uuid
+        applicantUuid: applicant.uuid,
+        ...(!isEmpty(linkNames) && {
+          [Op.not]: {
+            name: linkNames
+          }
+        })
       },
       transaction
     });
-
+  },
+  bulkUpsert: (links: TLink[], applicant: Applicant, transaction?: Transaction) => {
     return ApplicantLink.bulkCreate(
       links.map(link => ({ ...link, applicantUuid: applicant.uuid })),
       {
         transaction,
         validate: true,
-        returning: true
+        returning: true,
+        updateOnDuplicate: ["url"]
       }
     );
   }

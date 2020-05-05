@@ -43,7 +43,6 @@ describe("ApplicantLinkRepository", () => {
     const [link] = await applicant.getLinks();
 
     expect(link).toBeDefined();
-    expect(link).toHaveProperty("uuid");
     expect(link).toHaveProperty("applicantUuid");
     expect(link).toMatchObject({
       name: params.name,
@@ -54,27 +53,24 @@ describe("ApplicantLinkRepository", () => {
   it("updates a valid link", async () => {
     const params = {
       name: random.word(),
-      url: internet.url()
+      url: "some.url"
     };
 
     await ApplicantLinkRepository.update([params], applicant);
-    const [firstLink] = await applicant.getLinks();
 
     const newParams = {
-      uuid: firstLink.uuid,
-      name: "cachito",
-      url: internet.url()
+      name: params.name,
+      url: "other.url"
     };
 
     await ApplicantLinkRepository.update([newParams], applicant);
     const [link] = await applicant.getLinks();
 
     expect(link).toBeDefined();
-    expect(link).toHaveProperty("uuid");
     expect(link).toHaveProperty("applicantUuid");
     expect(link).toMatchObject({
-      name: "cachito",
-      url: newParams.url
+      name: params.name,
+      url: "other.url"
     });
   });
 

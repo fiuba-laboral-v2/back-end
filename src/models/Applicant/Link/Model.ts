@@ -1,18 +1,20 @@
-import { BelongsTo, Column, DataType, ForeignKey, Is, Model, Table } from "sequelize-typescript";
+import {
+  BelongsTo,
+  Column,
+  DataType,
+  ForeignKey,
+  Is,
+  Model,
+  Table,
+  PrimaryKey
+} from "sequelize-typescript";
 import { Applicant } from "../Model";
 import { validateURL } from "validations-fiuba-laboral-v2";
 
 @Table({ tableName: "ApplicantsLinks" })
 export class ApplicantLink extends Model<ApplicantLink> {
-  @Column({
-    allowNull: false,
-    primaryKey: true,
-    type: DataType.UUID,
-    defaultValue: DataType.UUIDV4
-  })
-  public uuid: string;
-
   @ForeignKey(() => Applicant)
+  @PrimaryKey
   @Column({
     allowNull: false,
     type: DataType.UUID
@@ -22,6 +24,7 @@ export class ApplicantLink extends Model<ApplicantLink> {
   @BelongsTo(() => Applicant)
   public applicant: Applicant;
 
+  @PrimaryKey
   @Column({
     allowNull: false,
     type: DataType.STRING
