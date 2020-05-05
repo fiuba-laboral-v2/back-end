@@ -76,7 +76,7 @@ describe("ApplicantLinkRepository", () => {
 
     await expect(
       ApplicantLinkRepository.update([params, { ...params, url: "other.url" }], applicant)
-    ).rejects.toThrow();
+    ).rejects.toThrow("ON CONFLICT DO UPDATE command cannot affect row a second time");
   });
 
   it("thows an error if an applicantUuid has duplicated links url", async () => {
@@ -87,6 +87,6 @@ describe("ApplicantLinkRepository", () => {
 
     await expect(
       ApplicantLinkRepository.update([params, { ...params, url: "otherName" }], applicant)
-    ).rejects.toThrow();
+    ).rejects.toThrow("aggregate error");
   });
 });
