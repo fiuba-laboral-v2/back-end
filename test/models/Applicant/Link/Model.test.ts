@@ -37,7 +37,6 @@ describe("ApplicantLink", () => {
     };
     const applicantLink = await ApplicantLink.create(params);
 
-    expect(applicantLink).toHaveProperty("uuid");
     expect(applicantLink).toMatchObject({
       name: params.name,
       url: params.url

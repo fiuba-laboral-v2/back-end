@@ -7,16 +7,16 @@ import { Transaction } from "sequelize";
 
 export const ApplicantLinkRepository = {
   update: async (links: TLink[], applicant: Applicant, transaction?: Transaction) => {
-    const linkUuids: string[] =
+    const linkNames: string[] =
       (await ApplicantLinkRepository.bulkUpsert(links, applicant, transaction))
-        .map(({ uuid }) => (uuid));
+        .map(({ name }) => (name));
 
     return ApplicantLink.destroy({
       where: {
         applicantUuid: applicant.uuid,
-        ...(!isEmpty(linkUuids) && {
+        ...(!isEmpty(linkNames) && {
           [Op.not]: {
-            uuid: linkUuids
+            name: linkNames
           }
         })
       },
@@ -30,7 +30,7 @@ export const ApplicantLinkRepository = {
         transaction,
         validate: true,
         returning: true,
-        updateOnDuplicate: ["name", "url"]
+        updateOnDuplicate: ["url"]
       }
     );
   }

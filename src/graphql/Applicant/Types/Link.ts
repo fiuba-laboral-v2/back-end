@@ -1,12 +1,9 @@
 import { GraphQLInputObjectType, GraphQLObjectType } from "graphql";
-import { nonNull, String, ID } from "../../fieldTypes";
+import { nonNull, String } from "../../fieldTypes";
 
 const GraphQLLinkInput = new GraphQLInputObjectType({
   name: "LinkInput",
   fields: () => ({
-    uuid: {
-      type: ID
-    },
     name: {
       type: nonNull(String)
     },
@@ -19,9 +16,6 @@ const GraphQLLinkInput = new GraphQLInputObjectType({
 const GraphQLLink = new GraphQLObjectType({
   name: "Link",
   fields: () => ({
-    uuid: {
-      type: nonNull(ID)
-    },
     name: {
       type: nonNull(String)
     },

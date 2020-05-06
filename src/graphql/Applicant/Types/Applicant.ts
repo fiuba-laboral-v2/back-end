@@ -46,7 +46,7 @@ const GraphQLApplicant = new GraphQLObjectType({
     links: {
       type: nonNull(List(GraphQLLink)),
       resolve: async (applicant: Applicant) =>
-        (await applicant.getLinks()).map(({ uuid, name, url }) => ({ uuid, name, url }))
+        (await applicant.getLinks()).map(({ name, url }) => ({ name, url }))
     }
   })
 });
