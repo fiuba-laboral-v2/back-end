@@ -1,8 +1,23 @@
+import { UniqueConstraintError, DatabaseError } from "sequelize";
 import Database from "../../../../src/config/Database";
 import { Applicant } from "../../../../src/models/Applicant";
 import { ApplicantLinkRepository, ApplicantLink } from "../../../../src/models/Applicant/Link";
-import { random, internet } from "faker";
+import { random, internet, name } from "faker";
 import { UserRepository } from "../../../../src/models/User/Repository";
+
+const createApplicant = async () => {
+  const { uuid: userUuid } = await UserRepository.create({
+    email: internet.email(),
+    password: "SavePassword123",
+    name: name.firstName(),
+    surname: name.lastName()
+  });
+  return Applicant.create({
+    userUuid: userUuid,
+    padron: 1,
+    description: random.words()
+  });
+};
 
 describe("ApplicantLinkRepository", () => {
   let applicant: Applicant;
@@ -11,17 +26,7 @@ describe("ApplicantLinkRepository", () => {
 
   beforeEach(async () => {
     await UserRepository.truncate();
-    const { uuid: userUuid } = await UserRepository.create({
-      email: "sblanco@yahoo.com",
-      password: "fdmgkfHGH4353",
-      name: "Bruno",
-      surname: "Diaz"
-    });
-    applicant = await Applicant.create({
-      userUuid: userUuid,
-      padron: 1,
-      description: "Batman"
-    });
+    applicant = await createApplicant();
   });
 
   beforeEach(() => ApplicantLink.truncate({ cascade: true }));
@@ -68,25 +73,61 @@ describe("ApplicantLinkRepository", () => {
     expect(link).toMatchObject(newParams);
   });
 
-  it("thows an error if an applicantUuid has duplicated links name", async () => {
+  it("should allow 2 different applicants to have the same url", async () => {
+    const secondApplicant = await createApplicant();
     const params = {
-      name: random.word(),
-      url: "some.url"
+      name: "Google",
+      url: "www.google.com"
     };
 
-    await expect(
-      ApplicantLinkRepository.update([params, { ...params, url: "other.url" }], applicant)
-    ).rejects.toThrow("ON CONFLICT DO UPDATE command cannot affect row a second time");
+    await ApplicantLinkRepository.update([params], applicant);
+    await ApplicantLinkRepository.update([params], secondApplicant);
+
+    const [link] = await applicant.getLinks();
+    const [secondlink] = await secondApplicant.getLinks();
+
+    expect({ name: link.name, url: link.url })
+      .toMatchObject({ name: secondlink.name, url: secondlink.url });
+  });
+
+  it("thows an error if an applicantUuid has duplicated links name", async () => {
+    const oneName = random.word();
+
+    const matcher = await expect(
+      ApplicantLinkRepository.update(
+        [{ name: oneName, url: "some.url" }, { name: oneName, url: "other.url" }],
+        applicant
+      ));
+
+    matcher.rejects.toThrow(DatabaseError);
+    matcher.rejects.toThrow("ON CONFLICT DO UPDATE command cannot affect row a second time");
   });
 
   it("thows an error if an applicantUuid has duplicated links url", async () => {
-    const params = {
-      name: "name",
-      url: internet.url()
-    };
+    const url = internet.url();
 
-    await expect(
-      ApplicantLinkRepository.update([params, { ...params, name: "other" }], applicant)
-    ).rejects.toThrow("Validation error");
+    const matcher = await expect(
+      ApplicantLinkRepository.update(
+        [{ name: "name", url }, { name: "other", url }],
+        applicant
+      )
+    );
+
+    matcher.rejects.toThrow(UniqueConstraintError);
+    matcher.rejects.toThrow("Validation error");
+  });
+
+  it("thows an error if the url is longer than 256 characters", async () => {
+    const url = "a".repeat(300);
+
+    try {
+      await ApplicantLinkRepository.update(
+        [{ name: "name", url }],
+        applicant
+      );
+    } catch (e) {
+      expect(e.message).toEqual("aggregate error");
+      expect(e[0].message).toEqual("Validation error: La URL es inválida");
+    }
   });
 });

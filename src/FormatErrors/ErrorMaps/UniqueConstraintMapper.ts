@@ -11,7 +11,8 @@ const constraintTranslator = {
   Companies_cuit_key: "CompanyCuitAlreadyExistsError",
   JobApplications_applicantUuid_offerUuid_key: "JobApplicationAlreadyExistsError",
   Careers_code_key: "CareerAlreadyExistsError",
-  CareersApplicants_careerCode_applicantUuid_key: "CareerAlreadyExistsError"
+  CareersApplicants_careerCode_applicantUuid_key: "CareerAlreadyExistsError",
+  ApplicantsLinks_applicantUuid_url_key: "LinkAlreadyExistsError"
 };
 
 export const uniqueConstraintErrorMapper: IMapItem = {
