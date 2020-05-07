@@ -3,20 +3,14 @@ import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 import { ICompany } from "../../../../src/models/Company";
 import { CompanyRepository } from "../../../../src/models/Company";
-import {
-  CompanyPhoneNumberRepository
-} from "../../../../src/models/CompanyPhoneNumber";
+import { CompanyPhoneNumberRepository } from "../../../../src/models/CompanyPhoneNumber";
 import { CompanyPhotoRepository } from "../../../../src/models/CompanyPhoto";
-import {
-  companyMockData,
-  phoneNumbers,
-  photos
-} from "../../../models/Company/mocks";
+import { companyMockData, phoneNumbers, photos } from "../../../models/Company/mocks";
 
 const SAVE_COMPANY_WITH_COMPLETE_DATA = gql`
   mutation (
     $cuit: String!, $companyName: String!, $slogan: String, $description: String,
-    $logo: String, $website: String, $email: String, $phoneNumbers: [Int], $photos: [String]) {
+    $logo: String, $website: String, $email: String, $phoneNumbers: [String], $photos: [String]) {
     saveCompany(
         cuit: $cuit, companyName: $companyName, slogan: $slogan, description: $description,
         logo: $logo, website: $website, email: $email, phoneNumbers: $phoneNumbers,
@@ -74,7 +68,14 @@ describe("saveCompany", () => {
       const response = await executeMutation(SAVE_COMPANY_WITH_COMPLETE_DATA, companyData);
       expect(response.errors).toBeUndefined();
       expect(response.data).not.toBeUndefined();
-      expect(response.data).toEqual({ saveCompany: companyData });
+      expect(response.data).toEqual(
+        {
+          saveCompany: {
+            ...companyData,
+            phoneNumbers: expect.arrayContaining(companyData.phoneNumbers)
+          }
+        }
+      );
     });
 
     it("creates company with only obligatory data", async () => {

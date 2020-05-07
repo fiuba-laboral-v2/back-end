@@ -93,28 +93,28 @@ describe("ApplicantLinkRepository", () => {
   it("thows an error if an applicantUuid has duplicated links name", async () => {
     const oneName = random.word();
 
-    const matcher = await expect(
+    const matcher = expect(
       ApplicantLinkRepository.update(
         [{ name: oneName, url: "some.url" }, { name: oneName, url: "other.url" }],
         applicant
       ));
 
-    matcher.rejects.toThrow(DatabaseError);
-    matcher.rejects.toThrow("ON CONFLICT DO UPDATE command cannot affect row a second time");
+    await matcher.rejects.toThrow(DatabaseError);
+    await matcher.rejects.toThrow("ON CONFLICT DO UPDATE command cannot affect row a second time");
   });
 
   it("thows an error if an applicantUuid has duplicated links url", async () => {
     const url = internet.url();
 
-    const matcher = await expect(
+    const matcher = expect(
       ApplicantLinkRepository.update(
         [{ name: "name", url }, { name: "other", url }],
         applicant
       )
     );
 
-    matcher.rejects.toThrow(UniqueConstraintError);
-    matcher.rejects.toThrow("Validation error");
+    await matcher.rejects.toThrow(UniqueConstraintError);
+    await matcher.rejects.toThrow("Validation error");
   });
 
   it("thows an error if the url is longer than 256 characters", async () => {

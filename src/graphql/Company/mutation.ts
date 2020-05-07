@@ -1,5 +1,5 @@
 import { GraphQLCompany } from "./Types/GraphQLCompany";
-import { Int, List, nonNull, String } from "../fieldTypes";
+import { List, nonNull, String } from "../fieldTypes";
 import { ICompany, CompanyRepository } from "../../models/Company";
 
 const companyMutations = {
@@ -28,7 +28,7 @@ const companyMutations = {
         type: String
       },
       phoneNumbers: {
-        type: List(Int)
+        type: List(String)
       },
       photos: {
         type: List(String)

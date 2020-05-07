@@ -16,10 +16,10 @@ const photos = [
 ];
 
 const phoneNumbers = [
-  parseInt(faker.phone.phoneNumber("0165#######"), 10),
-  parseInt(faker.phone.phoneNumber("0165#######"), 10),
-  parseInt(faker.phone.phoneNumber("0165#######"), 10),
-  parseInt(faker.phone.phoneNumber("0165#######"), 10)
+  faker.phone.phoneNumber("0165#######"),
+  faker.phone.phoneNumber("0165#######"),
+  faker.phone.phoneNumber("0165#######"),
+  faker.phone.phoneNumber("0165#######")
 ];
 
 export { companyMockData, phoneNumbers, photos };

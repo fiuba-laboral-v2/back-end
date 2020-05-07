@@ -1,31 +1,42 @@
-import { UUID, DATE, INTEGER, QueryInterface } from "sequelize";
-import uuid from "uuid/v4";
+import { QueryInterface } from "sequelize";
+import { DataType } from "sequelize-typescript";
 
 export = {
   up: (queryInterface: QueryInterface) => {
-    return queryInterface.createTable("CompanyPhoneNumbers", {
-      uuid: {
-        allowNull: false,
-        primaryKey: true,
-        type: UUID,
-        defaultValue: uuid()
-      },
-      phoneNumber: {
-        type: INTEGER
-      },
-      companyUuid: {
-        type: UUID,
-        references: { model: "Companies", key: "uuid" },
-        onDelete: "CASCADE"
-      },
-      createdAt: {
-        allowNull: false,
-        type: DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: DATE
-      }
+    return queryInterface.sequelize.transaction(async transaction => {
+      await queryInterface.createTable(
+        "CompanyPhoneNumbers",
+        {
+          phoneNumber: {
+            allowNull: false,
+            type: DataType.STRING
+          },
+          companyUuid: {
+            allowNull: false,
+            type: DataType.UUID,
+            references: { model: "Companies", key: "uuid" },
+            onDelete: "CASCADE"
+          },
+          createdAt: {
+            allowNull: false,
+            type: DataType.DATE
+          },
+          updatedAt: {
+            allowNull: false,
+            type: DataType.DATE
+          }
+        },
+        { transaction }
+      );
+      await queryInterface.addConstraint(
+        "CompanyPhoneNumbers",
+        ["phoneNumber", "companyUuid"],
+        {
+          type: "primary key",
+          name: "companyUuid_phoneNumber_companyUuid_key",
+          transaction
+        }
+      );
     });
   },
   down: (queryInterface: QueryInterface) => {
