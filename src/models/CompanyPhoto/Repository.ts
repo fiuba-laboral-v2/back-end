@@ -1,12 +1,17 @@
+import { Transaction } from "sequelize";
 import { CompanyPhoto } from "./index";
+import { Company } from "../Company";
 
 export const CompanyPhotoRepository = {
-  build: (photos: string[] = []) => {
-    const companyPhotos: CompanyPhoto[] = [];
-    for (const photo of photos) {
-      companyPhotos.push(new CompanyPhoto({ photo: photo }));
-    }
-    return companyPhotos;
+  bulkCreate: (photos: string[] = [], company: Company, transaction?: Transaction) => {
+    return CompanyPhoto.bulkCreate(
+      photos.map(photo => ({ photo, companyUuid: company.uuid })),
+      {
+        transaction,
+        validate: true,
+        returning: true
+      }
+    );
   },
   truncate: async () => {
     return CompanyPhoto.destroy({ truncate: true });

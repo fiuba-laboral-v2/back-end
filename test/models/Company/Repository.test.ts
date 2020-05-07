@@ -1,7 +1,5 @@
 import faker from "faker";
 import { Company, CompanyRepository } from "../../../src/models/Company";
-import { CompanyPhoneNumber } from "../../../src/models/CompanyPhoneNumber";
-import { CompanyPhoto } from "../../../src/models/CompanyPhoto";
 import { companyMockData, phoneNumbers, photos } from "./mocks";
 import Database from "../../../src/config/Database";
 
@@ -60,19 +58,15 @@ describe("CompanyRepository", () => {
   });
 
   it("should throw an error if cuit is null", async () => {
-    const company: Company = new Company({
-      cuit: null,
-      companyName: "devartis"
-    });
-    await expect(CompanyRepository.save(company)).rejects.toThrow();
+    await expect(
+      CompanyRepository.create({ cuit: null, companyName: "devartis" })
+    ).rejects.toThrow();
   });
 
-  it("should throw an error if cuit is null", async () => {
-    const company: Company = new Company({
-      cuit: "30711819017",
-      companyName: null
-    });
-    await expect(CompanyRepository.save(company)).rejects.toThrow();
+  it("should throw an error if companyName is null", async () => {
+    await expect(
+      CompanyRepository.create({ cuit: "30711819017", companyName: null })
+    ).rejects.toThrow();
   });
 
   it("retrieve by uuid", async () => {
@@ -105,11 +99,9 @@ describe("CompanyRepository", () => {
   });
 
   it("should rollback transaction and throw error if photo is null", async () => {
-    const company: Company = new Company(companyDataWithMinimumData);
-    const photo: CompanyPhoto = new CompanyPhoto({ photo: null });
-    await expect(CompanyRepository.save(
-      company, [], [photo]
-    )).rejects.toThrow();
+    await expect(
+      CompanyRepository.create({ ...companyDataWithMinimumData, photos: null })
+    ).rejects.toThrow();
 
     const expectedCompanies = await CompanyRepository.findAll();
     expect(expectedCompanies).not.toBeNull();
@@ -118,13 +110,9 @@ describe("CompanyRepository", () => {
   });
 
   it("should rollback transaction and throw error if phoneNumber is null", async () => {
-    const company: Company = new Company(companyDataWithMinimumData);
-    const phoneNumber: CompanyPhoneNumber = new CompanyPhoneNumber(
-      { phoneNumber: null }
-    );
-    await expect(CompanyRepository.save(
-      company, [phoneNumber]
-    )).rejects.toThrow();
+    await expect(
+      CompanyRepository.create({ ...companyDataWithMinimumData, phoneNumbers: null })
+    ).rejects.toThrow();
     const expectedCompanies = await CompanyRepository.findAll();
     expect(expectedCompanies).not.toBeNull();
     expect(expectedCompanies).not.toBeUndefined();

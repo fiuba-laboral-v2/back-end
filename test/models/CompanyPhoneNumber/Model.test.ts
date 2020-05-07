@@ -1,36 +1,76 @@
+import { ValidationError } from "sequelize";
 import Database from "../../../src/config/Database";
-import {
-  CompanyPhoneNumberRepository,
-  CompanyPhoneNumber
-} from "../../../src/models/CompanyPhoneNumber";
+import { CompanyPhoneNumber } from "../../../src/models/CompanyPhoneNumber";
 
-beforeAll(() => Database.setConnection());
+describe("companyPhoneNumber", () => {
+  beforeAll(() => Database.setConnection());
 
-beforeEach(() => CompanyPhoneNumberRepository.truncate());
+  afterAll(() => Database.close());
 
-afterAll(() => Database.close());
-
-test("create a valid CompanyPhoneNumber", async () => {
-  const companyPhoneNumber: CompanyPhoneNumber = new CompanyPhoneNumber({
-    phoneNumber: 43076555,
-    companyUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
+  it("creates a valid CompanyPhoneNumber", async () => {
+    const companyPhoneNumber = new CompanyPhoneNumber({
+      phoneNumber: "43076555",
+      companyUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
+    });
+    await expect(companyPhoneNumber.validate()).resolves.not.toThrow();
   });
-  expect(companyPhoneNumber).not.toBeNull();
-  expect(companyPhoneNumber).not.toBeUndefined();
-});
 
-test("throw and error if phoneNumber is null", async () => {
-  const companyPhoneNumber: CompanyPhoneNumber = new CompanyPhoneNumber({
-    phoneNumber: null,
-    companyUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
+  it("throws an error if phoneNumber is null", async () => {
+    const companyPhoneNumber = new CompanyPhoneNumber({
+      phoneNumber: null,
+      companyUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
+    });
+    const matcher = expect(companyPhoneNumber.validate());
+    await matcher.rejects.toThrow(ValidationError);
+    await matcher.rejects.toThrow(
+      "notNull Violation: CompanyPhoneNumber.phoneNumber cannot be null"
+    );
   });
-  await expect(companyPhoneNumber.save()).rejects.toThrow();
-});
 
-test("throw and error if companyUuid is null", async () => {
-  const companyPhoneNumber: CompanyPhoneNumber = new CompanyPhoneNumber({
-    phoneNumber: 43076555,
-    companyUuid: null
+  it("throws an error if companyUuid is null", async () => {
+    const companyPhoneNumber = new CompanyPhoneNumber({
+      phoneNumber: "43076555",
+      companyUuid: null
+    });
+    const matcher = expect(companyPhoneNumber.validate());
+    await matcher.rejects.toThrow(ValidationError);
+    await matcher.rejects.toThrow(
+      "notNull Violation: CompanyPhoneNumber.companyUuid cannot be null"
+    );
   });
-  await expect(companyPhoneNumber.save()).rejects.toThrow();
+
+  it("throws an error if no companyUuid is provided", async () => {
+    const companyPhoneNumber = new CompanyPhoneNumber({ phoneNumber: "43076555" });
+    const matcher = expect(companyPhoneNumber.validate());
+    await matcher.rejects.toThrow(ValidationError);
+    await matcher.rejects.toThrow(
+      "notNull Violation: CompanyPhoneNumber.companyUuid cannot be null"
+    );
+  });
+
+  it("throws an error if no phoneNumber is provided", async () => {
+    const companyPhoneNumber = new CompanyPhoneNumber({
+      companyUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
+    });
+    const matcher = expect(companyPhoneNumber.validate());
+    await matcher.rejects.toThrow(ValidationError);
+    await matcher.rejects.toThrow(
+      "notNull Violation: CompanyPhoneNumber.phoneNumber cannot be null"
+    );
+  });
+
+  it("throws an error if phoneNumber and companyUuid are null", async () => {
+    const companyPhoneNumber = new CompanyPhoneNumber({
+      phoneNumber: null,
+      companyUuid: null
+    });
+    const matcher = expect(companyPhoneNumber.validate());
+    await matcher.rejects.toThrow(ValidationError);
+    await matcher.rejects.toThrow(
+      "notNull Violation: CompanyPhoneNumber.phoneNumber cannot be null"
+    );
+    await matcher.rejects.toThrow(
+      "notNull Violation: CompanyPhoneNumber.companyUuid cannot be null"
+    );
+  });
 });

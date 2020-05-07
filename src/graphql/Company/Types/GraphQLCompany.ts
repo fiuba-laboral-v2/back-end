@@ -1,5 +1,5 @@
 import { GraphQLObjectType } from "graphql";
-import { ID, Int, nonNull, String, List } from "../../fieldTypes";
+import { ID, nonNull, String, List } from "../../fieldTypes";
 import { Company } from "../../../models/Company";
 
 const GraphQLCompany = new GraphQLObjectType({
@@ -30,7 +30,7 @@ const GraphQLCompany = new GraphQLObjectType({
       type: String
     },
     phoneNumbers: {
-      type: List(Int),
+      type: List(String),
       resolve: async (company: Company) =>
         (await company.getPhoneNumbers()).map(({ phoneNumber }) => phoneNumber)
     },

@@ -93,7 +93,7 @@ describe("ApplicantLinkRepository", () => {
   it("thows an error if an applicantUuid has duplicated links name", async () => {
     const oneName = random.word();
 
-    const matcher = await expect(
+    const matcher = expect(
       ApplicantLinkRepository.update(
         [{ name: oneName, url: "some.url" }, { name: oneName, url: "other.url" }],
         applicant
@@ -106,7 +106,7 @@ describe("ApplicantLinkRepository", () => {
   it("thows an error if an applicantUuid has duplicated links url", async () => {
     const url = internet.url();
 
-    const matcher = await expect(
+    const matcher = expect(
       ApplicantLinkRepository.update(
         [{ name: "name", url }, { name: "other", url }],
         applicant

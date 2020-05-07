@@ -1,13 +1,21 @@
+import { Transaction } from "sequelize";
 import { CompanyPhoneNumber } from "./index";
+import { Company } from "../Company";
 
 export const CompanyPhoneNumberRepository = {
-  build: (phoneNumbers: number[] = []) => {
-    const companyPhoneNumbers: CompanyPhoneNumber[] = [];
-    for (const phoneNumber of phoneNumbers) {
-      companyPhoneNumbers.push(new CompanyPhoneNumber({ phoneNumber: phoneNumber }));
-    }
-    return companyPhoneNumbers;
+  create: (phoneNumber: string, company: Company) =>
+    CompanyPhoneNumber.create({ phoneNumber: phoneNumber, companyUuid: company.uuid }),
+  bulkCreate: (phoneNumbers: string[] = [], company: Company, transaction?: Transaction) => {
+    return CompanyPhoneNumber.bulkCreate(
+      phoneNumbers.map(phoneNumber => ({ phoneNumber, companyUuid: company.uuid })),
+      {
+        transaction,
+        validate: true,
+        returning: true
+      }
+    );
   },
+  findAll: () => CompanyPhoneNumber.findAll(),
   truncate: async () => {
     return CompanyPhoneNumber.destroy({ truncate: true });
   }

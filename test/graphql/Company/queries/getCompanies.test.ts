@@ -1,6 +1,6 @@
 import { gql } from "apollo-server";
 import { executeQuery } from "../../ApolloTestClient";
-import { Company, CompanyRepository } from "../../../../src/models/Company";
+import { CompanyRepository } from "../../../../src/models/Company";
 import Database from "../../../../src/config/Database";
 
 const query = gql`
@@ -12,26 +12,22 @@ const query = gql`
   }
 `;
 
-beforeAll(async () => {
-  await Database.setConnection();
-});
+describe("getCompanies", () => {
+  beforeAll(() => Database.setConnection());
 
-beforeEach(async () => {
-  await CompanyRepository.truncate();
-});
+  beforeEach(() => CompanyRepository.truncate());
 
-afterAll(async () => {
-  await Database.close();
-});
+  afterAll(() => Database.close());
 
-test("returns all companies", async () => {
-  const companyParams = { cuit: "30711819017", companyName: "devartis" };
-  await CompanyRepository.save(new Company(companyParams));
-  const response = await executeQuery(query);
+  it("returns all companies", async () => {
+    const companyParams = { cuit: "30711819017", companyName: "devartis" };
+    await CompanyRepository.create(companyParams);
+    const response = await executeQuery(query);
 
-  expect(response.errors).toBeUndefined();
-  expect(response.data).not.toBeUndefined();
-  expect(response.data).toEqual({
-    getCompanies: [companyParams]
+    expect(response.errors).toBeUndefined();
+    expect(response.data).not.toBeUndefined();
+    expect(response.data).toEqual({
+      getCompanies: [companyParams]
+    });
   });
 });
