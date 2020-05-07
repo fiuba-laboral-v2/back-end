@@ -10,8 +10,7 @@ export const CompanyPhoneNumberRepository = {
       phoneNumbers.map(phoneNumber => ({ phoneNumber, companyUuid: company.uuid })),
       {
         transaction,
-        validate: true,
-        returning: true
+        validate: true
       }
     );
   },

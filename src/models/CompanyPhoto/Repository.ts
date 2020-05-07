@@ -8,8 +8,7 @@ export const CompanyPhotoRepository = {
       photos.map(photo => ({ photo, companyUuid: company.uuid })),
       {
         transaction,
-        validate: true,
-        returning: true
+        validate: true
       }
     );
   },
