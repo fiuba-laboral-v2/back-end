@@ -25,27 +25,22 @@ describe("getCompanyByUuid", () => {
     ...companyMockData,
     ...{ photos: photos, phoneNumbers: phoneNumbers }
   };
-  beforeAll(async () => {
-    await Database.setConnection();
-  });
+  beforeAll(() => Database.setConnection());
 
-  beforeEach(async () => {
-    await CompanyRepository.truncate();
-  });
+  beforeEach(() => CompanyRepository.truncate());
 
-  afterAll(async () => {
-    await Database.close();
-  });
+  afterAll(() => Database.close());
 
   it("finds a company given its uuid", async () => {
-    const company: Company = await CompanyRepository.create(
-      companyCompleteData
-    );
+    const company: Company = await CompanyRepository.create(companyCompleteData);
     const response = await executeQuery(query, { uuid: company.uuid });
     expect(response.errors).toBeUndefined();
     expect(response.data).not.toBeUndefined();
     expect(response.data).toEqual({
-      getCompanyByUuid: companyCompleteData
+      getCompanyByUuid: {
+        ...companyCompleteData,
+        phoneNumbers: expect.arrayContaining(companyCompleteData.phoneNumbers)
+      }
     });
   });
 
@@ -56,9 +51,7 @@ describe("getCompanyByUuid", () => {
   });
 
   it("find a company with photos with an empty array", async () => {
-    const company: Company = await CompanyRepository.create(
-      companyMockData
-    );
+    const company: Company = await CompanyRepository.create(companyMockData);
     const response = await executeQuery(query, { uuid: company.uuid });
     expect(response.errors).toBeUndefined();
     expect(response.data).not.toBeUndefined();

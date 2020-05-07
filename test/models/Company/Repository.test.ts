@@ -1,3 +1,4 @@
+import { ValidationError } from "sequelize";
 import faker from "faker";
 import { Company, CompanyRepository } from "../../../src/models/Company";
 import { companyMockData, phoneNumbers, photos } from "./mocks";
@@ -60,13 +61,13 @@ describe("CompanyRepository", () => {
   it("should throw an error if cuit is null", async () => {
     await expect(
       CompanyRepository.create({ cuit: null, companyName: "devartis" })
-    ).rejects.toThrow();
+    ).rejects.toThrow(ValidationError);
   });
 
   it("should throw an error if companyName is null", async () => {
     await expect(
       CompanyRepository.create({ cuit: "30711819017", companyName: null })
-    ).rejects.toThrow();
+    ).rejects.toThrow(ValidationError);
   });
 
   it("retrieve by uuid", async () => {
@@ -98,10 +99,10 @@ describe("CompanyRepository", () => {
     expect(expectedCompanies[0].uuid).toEqual(company.uuid);
   });
 
-  it("should rollback transaction and throw error if photo is null", async () => {
+  it("should rollback transaction and throw error if photos is null", async () => {
     await expect(
-      CompanyRepository.create({ ...companyDataWithMinimumData, photos: null })
-    ).rejects.toThrow();
+      CompanyRepository.create({ ...companyDataWithMinimumData, photos: [null] })
+    ).rejects.toThrow("aggregate error");
 
     const expectedCompanies = await CompanyRepository.findAll();
     expect(expectedCompanies).not.toBeNull();
@@ -111,8 +112,8 @@ describe("CompanyRepository", () => {
 
   it("should rollback transaction and throw error if phoneNumber is null", async () => {
     await expect(
-      CompanyRepository.create({ ...companyDataWithMinimumData, phoneNumbers: null })
-    ).rejects.toThrow();
+      CompanyRepository.create({ ...companyDataWithMinimumData, phoneNumbers: [null] })
+    ).rejects.toThrow("aggregate error");
     const expectedCompanies = await CompanyRepository.findAll();
     expect(expectedCompanies).not.toBeNull();
     expect(expectedCompanies).not.toBeUndefined();

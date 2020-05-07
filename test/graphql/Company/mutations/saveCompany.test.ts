@@ -68,7 +68,14 @@ describe("saveCompany", () => {
       const response = await executeMutation(SAVE_COMPANY_WITH_COMPLETE_DATA, companyData);
       expect(response.errors).toBeUndefined();
       expect(response.data).not.toBeUndefined();
-      expect(response.data).toEqual({ saveCompany: companyData });
+      expect(response.data).toEqual(
+        {
+          saveCompany: {
+            ...companyData,
+            phoneNumbers: expect.arrayContaining(companyData.phoneNumbers)
+          }
+        }
+      );
     });
 
     it("creates company with only obligatory data", async () => {
