@@ -1,4 +1,4 @@
-import { DatabaseError, ForeignKeyConstraintError } from "sequelize";
+import { DatabaseError, ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
 import Database from "../../../src/config/Database";
 import faker from "faker";
 import { CompanyRepository, Company } from "../../../src/models/Company";
@@ -10,6 +10,31 @@ describe("CompanyPhoneNumberRepository", () => {
   beforeEach(() => CompanyRepository.truncate());
 
   afterAll(() => Database.close());
+
+  it("creates several phoneNumbers for the same company", async () => {
+    const phoneNumbers = ["44444444", "55555555", "66666666"];
+    const company = await CompanyRepository.create({ cuit: "30711819017", companyName: "name" });
+    await expect(
+      CompanyPhoneNumberRepository.bulkCreate(phoneNumbers, company)
+    ).resolves.not.toThrow();
+  });
+
+  it("throws an error if a phone number is repeated in a bulk create", async () => {
+    const phoneNumbers = ["44444444", "44444444", "66666666"];
+    const company = await CompanyRepository.create({ cuit: "30711819017", companyName: "name" });
+    await expect(
+      CompanyPhoneNumberRepository.bulkCreate(phoneNumbers, company)
+    ).rejects.toThrow(UniqueConstraintError);
+  });
+
+  it("throws an error if a company has already the same phoneNumber", async () => {
+    const phoneNumber = "44444444";
+    const company = await CompanyRepository.create({ cuit: "30711819017", companyName: "name" });
+    await CompanyPhoneNumberRepository.create(phoneNumber, company);
+    const matcher = expect(CompanyPhoneNumberRepository.create(phoneNumber, company));
+    await matcher.rejects.toThrow(UniqueConstraintError);
+    await matcher.rejects.toThrow("Validation error");
+  });
 
   it("throws an error if phoneNumber is very large", async () => {
     const company = await CompanyRepository.create({ cuit: "30711819017", companyName: "name" });
