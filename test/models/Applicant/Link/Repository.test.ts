@@ -99,8 +99,8 @@ describe("ApplicantLinkRepository", () => {
         applicant
       ));
 
-    matcher.rejects.toThrow(DatabaseError);
-    matcher.rejects.toThrow("ON CONFLICT DO UPDATE command cannot affect row a second time");
+    await matcher.rejects.toThrow(DatabaseError);
+    await matcher.rejects.toThrow("ON CONFLICT DO UPDATE command cannot affect row a second time");
   });
 
   it("thows an error if an applicantUuid has duplicated links url", async () => {
@@ -113,8 +113,8 @@ describe("ApplicantLinkRepository", () => {
       )
     );
 
-    matcher.rejects.toThrow(UniqueConstraintError);
-    matcher.rejects.toThrow("Validation error");
+    await matcher.rejects.toThrow(UniqueConstraintError);
+    await matcher.rejects.toThrow("Validation error");
   });
 
   it("thows an error if the url is longer than 256 characters", async () => {
