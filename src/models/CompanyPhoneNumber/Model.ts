@@ -1,5 +1,4 @@
 import {
-  AllowNull,
   BelongsTo,
   Column,
   DataType,
@@ -11,7 +10,6 @@ import { Company } from "../Company";
 
 @Table
 export default class CompanyPhoneNumber extends Model<CompanyPhoneNumber> {
-  @AllowNull(false)
   @Column({
     primaryKey: true,
     allowNull: false,
