@@ -1,11 +1,10 @@
 import { gql } from "apollo-server";
 import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
-import { ICompany } from "../../../../src/models/Company";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { CompanyPhoneNumberRepository } from "../../../../src/models/CompanyPhoneNumber";
 import { CompanyPhotoRepository } from "../../../../src/models/CompanyPhoto";
-import { companyMockData, phoneNumbers, photos } from "../../../models/Company/mocks";
+import { companyMocks } from "../../../models/Company/mocks";
 
 const SAVE_COMPANY_WITH_COMPLETE_DATA = gql`
   mutation (
@@ -52,10 +51,7 @@ describe("saveCompany", () => {
     await Database.close();
   });
 
-  const companyData: ICompany = {
-    ...companyMockData,
-    ...{ photos: photos, phoneNumbers: phoneNumbers }
-  };
+  const companyData = companyMocks.completeData();
 
   const companyDataWithMinimumData = {
     cuit: "30711819017",

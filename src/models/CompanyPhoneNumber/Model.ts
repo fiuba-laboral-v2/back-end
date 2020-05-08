@@ -4,12 +4,15 @@ import {
   DataType,
   ForeignKey,
   Model,
-  Table
+  Table,
+  Is
 } from "sequelize-typescript";
+import { validatePhoneNumber } from "validations-fiuba-laboral-v2";
 import { Company } from "../Company";
 
 @Table
 export default class CompanyPhoneNumber extends Model<CompanyPhoneNumber> {
+  @Is("phoneNumber", (phoneNumber: string) => validatePhoneNumber({ phoneNumber }))
   @Column({
     primaryKey: true,
     allowNull: false,

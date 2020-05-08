@@ -1,6 +1,7 @@
 import { ValidationError } from "sequelize";
 import Database from "../../../src/config/Database";
 import { CompanyPhoneNumber } from "../../../src/models/CompanyPhoneNumber";
+import { PhoneNumberWithLettersError, InvalidPhoneNumberError } from "validations-fiuba-laboral-v2";
 
 describe("companyPhoneNumber", () => {
   beforeAll(() => Database.setConnection());
@@ -9,7 +10,7 @@ describe("companyPhoneNumber", () => {
 
   it("creates a valid CompanyPhoneNumber", async () => {
     const companyPhoneNumber = new CompanyPhoneNumber({
-      phoneNumber: "43076555",
+      phoneNumber: "1143076555",
       companyUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
     });
     await expect(companyPhoneNumber.validate()).resolves.not.toThrow();
@@ -29,7 +30,7 @@ describe("companyPhoneNumber", () => {
 
   it("throws an error if companyUuid is null", async () => {
     const companyPhoneNumber = new CompanyPhoneNumber({
-      phoneNumber: "43076555",
+      phoneNumber: "1143076555",
       companyUuid: null
     });
     const matcher = expect(companyPhoneNumber.validate());
@@ -72,5 +73,25 @@ describe("companyPhoneNumber", () => {
     await matcher.rejects.toThrow(
       "notNull Violation: CompanyPhoneNumber.companyUuid cannot be null"
     );
+  });
+
+  it("throws an error if phoneNumber has letters", async () => {
+    const companyPhoneNumber = new CompanyPhoneNumber({
+      phoneNumber: "letters",
+      companyUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
+    });
+    const matcher = expect(companyPhoneNumber.validate());
+    await matcher.rejects.toThrow(ValidationError);
+    await matcher.rejects.toThrow(PhoneNumberWithLettersError.buildMessage());
+  });
+
+  it("throws an error if phoneNumber is an empty string", async () => {
+    const companyPhoneNumber = new CompanyPhoneNumber({
+      phoneNumber: "",
+      companyUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
+    });
+    const matcher = expect(companyPhoneNumber.validate());
+    await matcher.rejects.toThrow(ValidationError);
+    await matcher.rejects.toThrow(InvalidPhoneNumberError.buildMessage(""));
   });
 });
