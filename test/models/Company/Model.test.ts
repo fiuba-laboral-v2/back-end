@@ -10,17 +10,9 @@ import {
 } from "validations-fiuba-laboral-v2";
 
 describe("Company", () => {
-  beforeAll(async () => {
-    await Database.setConnection();
-  });
+  beforeAll(() => Database.setConnection());
 
-  beforeEach(async () => {
-    await Company.truncate({ cascade: true });
-  });
-
-  afterAll(async () => {
-    await Database.close();
-  });
+  afterAll(() => Database.close());
 
   it("create a valid company", async () => {
     const companyAttributes = companyMocks.companyData();
@@ -54,12 +46,12 @@ describe("Company", () => {
 
   it("throws an error if cuit has invalid format", async () => {
     const company = new Company({ cuit: "30711819018", companyName: "devartis" });
-    await expect(company.save()).rejects.toThrow(InvalidCuitError.buildMessage());
+    await expect(company.validate()).rejects.toThrow(InvalidCuitError.buildMessage());
   });
 
   it("throws an error if cuit has less than eleven digits", async () => {
     const company = new Company({ cuit: "30", companyName: "devartis" });
-    await expect(company.save()).rejects.toThrow(WrongLengthCuitError.buildMessage());
+    await expect(company.validate()).rejects.toThrow(WrongLengthCuitError.buildMessage());
   });
 
   it("throws an error if cuit has more than eleven digits", async () => {
