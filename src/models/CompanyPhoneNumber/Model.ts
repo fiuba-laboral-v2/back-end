@@ -12,7 +12,7 @@ import { Company } from "../Company";
 
 @Table
 export default class CompanyPhoneNumber extends Model<CompanyPhoneNumber> {
-  @Is("phoneNumber", (phoneNumber: string) => validatePhoneNumber({ phoneNumber }))
+  @Is(validatePhoneNumber)
   @Column({
     primaryKey: true,
     allowNull: false,
