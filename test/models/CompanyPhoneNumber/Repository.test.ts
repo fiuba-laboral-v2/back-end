@@ -39,7 +39,7 @@ describe("CompanyPhoneNumberRepository", () => {
     await matcher.rejects.toThrow("Validation error");
   });
 
-  it("throws an databse contraint error if phoneNumber is very large", async () => {
+  it("throws a database constraint error if phoneNumber is very large", async () => {
     const company = await CompanyRepository.create({ cuit: "30711819017", companyName: "name" });
     const phoneNumber = new CompanyPhoneNumber({
       companyUuid: company.uuid,
