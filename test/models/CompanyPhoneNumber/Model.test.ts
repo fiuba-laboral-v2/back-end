@@ -92,6 +92,6 @@ describe("companyPhoneNumber", () => {
     });
     const matcher = expect(companyPhoneNumber.validate());
     await matcher.rejects.toThrow(ValidationError);
-    await matcher.rejects.toThrow(InvalidPhoneNumberError.buildMessage(""));
+    await matcher.rejects.toThrow(InvalidPhoneNumberError.buildMessage());
   });
 });
