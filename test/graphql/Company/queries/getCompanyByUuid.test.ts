@@ -1,7 +1,7 @@
 import { gql } from "apollo-server";
 import { executeQuery } from "../../ApolloTestClient";
 import { Company, CompanyRepository } from "../../../../src/models/Company";
-import { companyMockData, phoneNumbers, photos } from "../../../models/Company/mocks";
+import { companyMocks } from "../../../models/Company/mocks";
 import Database from "../../../../src/config/Database";
 
 const query = gql`
@@ -21,10 +21,7 @@ const query = gql`
 `;
 
 describe("getCompanyByUuid", () => {
-  const companyCompleteData = {
-    ...companyMockData,
-    ...{ photos: photos, phoneNumbers: phoneNumbers }
-  };
+  const companyCompleteData = companyMocks.completeData();
   beforeAll(() => Database.setConnection());
 
   beforeEach(() => CompanyRepository.truncate());
@@ -51,7 +48,7 @@ describe("getCompanyByUuid", () => {
   });
 
   it("find a company with photos with an empty array", async () => {
-    const company: Company = await CompanyRepository.create(companyMockData);
+    const company: Company = await CompanyRepository.create(companyMocks.companyData());
     const response = await executeQuery(query, { uuid: company.uuid });
     expect(response.errors).toBeUndefined();
     expect(response.data).not.toBeUndefined();

@@ -5,7 +5,13 @@ import { CompanyNotFoundError } from "./Errors/CompanyNotFoundError";
 import Database from "../../config/Database";
 
 export const CompanyRepository = {
-  create: async ({ phoneNumbers, photos, ...companyAttributes }: ICompany) => {
+  create: async (
+    {
+      phoneNumbers = [],
+      photos = [],
+      ...companyAttributes
+    }: ICompany
+  ) => {
     const transaction = await Database.transaction();
     try {
       const company = await Company.create(companyAttributes, { transaction: transaction });

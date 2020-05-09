@@ -13,7 +13,7 @@ import { OfferNotFound } from "../../../../src/models/Offer/Errors";
 import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
 
 import { careerMocks } from "../../../models/Career/mocks";
-import { companyMockData } from "../../../models/Company/mocks";
+import { companyMocks } from "../../../models/Company/mocks";
 import { OfferMocks } from "../../../models/Offer/mocks";
 import { applicantMocks } from "../../../models/Applicant/mocks";
 
@@ -74,7 +74,7 @@ describe("getOfferByUuid", () => {
   afterAll(() => Database.close());
 
   const createOffer = async () => {
-    const company = await CompanyRepository.create(companyMockData);
+    const company = await CompanyRepository.create(companyMocks.companyData());
     const career = await CareerRepository.create(careerMocks.careerData());
     const offer = await OfferRepository.create(
       OfferMocks.withOneCareerAndOneSection(company.uuid, career.code)

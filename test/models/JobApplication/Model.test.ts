@@ -4,7 +4,7 @@ import { Company } from "../../../src/models/Company";
 import { ApplicantRepository } from "../../../src/models/Applicant";
 import { Offer } from "../../../src/models/Offer";
 import { JobApplication } from "../../../src/models/JobApplication";
-import { companyMockData } from "../Company/mocks";
+import { companyMocks } from "../Company/mocks";
 import { applicantMocks } from "../Applicant/mocks";
 import { UserRepository } from "../../../src/models/User/Repository";
 import { pick } from "lodash";
@@ -18,7 +18,7 @@ describe("JobApplication", () => {
     await UserRepository.truncate();
     await Company.truncate({ cascade: true });
     await Offer.truncate({ cascade: true });
-    company = await Company.create(companyMockData);
+    company = await Company.create(companyMocks.companyData());
   });
 
   afterAll(() => Database.close());
