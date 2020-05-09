@@ -1,8 +1,7 @@
 import { ValidationError, UniqueConstraintError } from "sequelize";
-import { PhoneNumberWithLettersError, InvalidPhoneNumberError } from "validations-fiuba-laboral-v2";
+import { PhoneNumberWithLettersError } from "validations-fiuba-laboral-v2";
 import BulkRecordError from "sequelize/lib/errors/bulk-record-error";
 import { AggregateError } from "bluebird";
-import faker from "faker";
 import { Company, CompanyRepository } from "../../../src/models/Company";
 import { companyMocks } from "./mocks";
 import Database from "../../../src/config/Database";
@@ -58,7 +57,7 @@ describe("CompanyRepository", () => {
       CompanyRepository.create({
         cuit: "30711819017",
         companyName: "devartis",
-        description: faker.lorem.paragraph(7)
+        description: "word".repeat(300)
       })
     ).resolves.not.toThrow();
   });

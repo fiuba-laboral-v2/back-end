@@ -1,6 +1,5 @@
 import { DatabaseError, ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
 import Database from "../../../src/config/Database";
-import faker from "faker";
 import { CompanyRepository, Company } from "../../../src/models/Company";
 import {
   CompanyPhoneNumber,
@@ -43,7 +42,7 @@ describe("CompanyPhoneNumberRepository", () => {
     const company = await CompanyRepository.create({ cuit: "30711819017", companyName: "name" });
     const phoneNumber = new CompanyPhoneNumber({
       companyUuid: company.uuid,
-      phoneNumber: faker.lorem.paragraph(1000)
+      phoneNumber: "0".repeat(300)
     });
     const matcher = expect(phoneNumber.save({ validate: false }));
     await matcher.rejects.toThrow(DatabaseError);
