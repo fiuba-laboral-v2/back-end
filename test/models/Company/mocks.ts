@@ -16,7 +16,10 @@ export const companyMocks = {
     ({
       ...companyMocks.companyData(),
       phoneNumbers: ["1143076222", "1159821999", "1143336666", "1143337777"],
-      photos: [faker.image.dataUri(), faker.image.dataUri()]
+      photos: [
+        "https://miro.medium.com/max/11520/1*Om-snCmpOoI5vehnF6FBlw.jpeg",
+        "https://pbs.twimg.com/media/EK_OWQEWwAIwDXr.jpg"
+      ]
     }),
   completeDataWithLogoWithMoreThan255Characters: (): ICompany =>
     ({
