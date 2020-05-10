@@ -33,9 +33,9 @@ describe("CompanyPhoneNumberRepository", () => {
     const phoneNumber = "1144444444";
     const company = await CompanyRepository.create({ cuit: "30711819017", companyName: "name" });
     await CompanyPhoneNumberRepository.create(phoneNumber, company);
-    const matcher = expect(CompanyPhoneNumberRepository.create(phoneNumber, company));
-    await matcher.rejects.toThrow(UniqueConstraintError);
-    await matcher.rejects.toThrow("Validation error");
+    await expect(CompanyPhoneNumberRepository.create(
+      phoneNumber, company)
+    ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
   });
 
   it("throws a database constraint error if phoneNumber is very large", async () => {
@@ -44,20 +44,21 @@ describe("CompanyPhoneNumberRepository", () => {
       companyUuid: company.uuid,
       phoneNumber: "0".repeat(300)
     });
-    const matcher = expect(phoneNumber.save({ validate: false }));
-    await matcher.rejects.toThrow(DatabaseError);
-    await matcher.rejects.toThrow("value too long for type character varying(255)");
+    await expect(
+      phoneNumber.save({ validate: false })
+    ).rejects.toThrowErrorWithMessage(
+      DatabaseError, "value too long for type character varying(255)"
+    );
   });
 
   it("throws an error if company does not exist", async () => {
     const notSavedCompany = new Company({
       uuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
     });
-    const matcher = expect(
+    await expect(
       CompanyPhoneNumberRepository.create("1144444444", notSavedCompany)
-    );
-    await matcher.rejects.toThrow(ForeignKeyConstraintError);
-    await matcher.rejects.toThrow(
+    ).rejects.toThrowErrorWithMessage(
+      ForeignKeyConstraintError,
       "insert or update on table \"CompanyPhoneNumbers\" violates foreign " +
       "key constraint \"CompanyPhoneNumbers_companyUuid_fkey\""
     );

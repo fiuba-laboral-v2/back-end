@@ -24,24 +24,31 @@ describe("Company", () => {
 
   it("throws an error if cuit is null", async () => {
     const company = new Company({ cuit: null, companyName: "devartis" });
-    const matcher = expect(company.validate());
-    await matcher.rejects.toThrow(ValidationError);
-    await matcher.rejects.toThrow("notNull Violation: Company.cuit cannot be null");
+    await expect(
+      company.validate()
+    ).rejects.toThrowErrorWithMessage(
+      ValidationError, "notNull Violation: Company.cuit cannot be null"
+    );
   });
 
   it("throws an error if companyName is null", async () => {
     const company: Company = new Company({ cuit: "30711819017", companyName: null });
-    const matcher = expect(company.validate());
-    await matcher.rejects.toThrow(ValidationError);
-    await matcher.rejects.toThrow("notNull Violation: Company.companyName cannot be null");
+    await expect(
+      company.validate()
+    ).rejects.toThrowErrorWithMessage(
+      ValidationError, "notNull Violation: Company.companyName cannot be null"
+    );
   });
 
   it("throws an error if companyName and cuit is null", async () => {
     const company: Company = new Company({ cuit: null, companyName: null });
-    const matcher = expect(company.validate());
-    await matcher.rejects.toThrow(ValidationError);
-    await matcher.rejects.toThrow("notNull Violation: Company.cuit cannot be null");
-    await matcher.rejects.toThrow("notNull Violation: Company.companyName cannot be null");
+    await expect(
+      company.validate()
+    ).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      "notNull Violation: Company.cuit cannot be null,\n" +
+      "notNull Violation: Company.companyName cannot be null"
+    );
   });
 
   it("throws an error if cuit has invalid format", async () => {
@@ -71,8 +78,11 @@ describe("Company", () => {
 
   it("should throw an error if name has digits and cuit has more than eleven digits", async () => {
     const company = new Company({ cuit: "3057341761199", companyName: "Google34" });
-    const matcher = expect(company.validate());
-    await matcher.rejects.toThrow(NameWithDigitsError.buildMessage());
-    await matcher.rejects.toThrow(WrongLengthCuitError.buildMessage());
+    await expect(
+      company.validate()
+    ).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      [NameWithDigitsError.buildMessage(), WrongLengthCuitError.buildMessage()]
+    );
   });
 });

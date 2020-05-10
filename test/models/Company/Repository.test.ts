@@ -114,19 +114,17 @@ describe("CompanyRepository", () => {
   });
 
   it("throws an error if phoneNumbers are invalid", async () => {
-    try {
-      await CompanyRepository.create(
+    await expect(
+      CompanyRepository.create(
         {
           ...companyDataWithMinimumData,
           phoneNumbers: ["InvalidPhoneNumber1", "InvalidPhoneNumber2"]
         }
-      );
-    } catch (aggregateError) {
-      expect(aggregateError).toBeAggregateErrorIncluding([
-        { errorClass: ValidationError, message: PhoneNumberWithLettersError.buildMessage() },
-        { errorClass: ValidationError, message: PhoneNumberWithLettersError.buildMessage() }
-      ]);
-    }
+      )
+    ).rejects.toThrowBulkRecordErrorIncluding([
+      { errorClass: ValidationError, message: PhoneNumberWithLettersError.buildMessage() },
+      { errorClass: ValidationError, message: PhoneNumberWithLettersError.buildMessage() }
+    ]);
   });
 
   it("throws an error if phoneNumbers are duplicated", async () => {
@@ -136,7 +134,7 @@ describe("CompanyRepository", () => {
           phoneNumbers: ["1159821066", "1159821066"]
         }
       )
-    ).rejects.toThrow(UniqueConstraintError);
+    ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
   });
 
   it("deletes a company", async () => {

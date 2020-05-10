@@ -1,4 +1,5 @@
 import { IExpected } from "../config/customMatchers/toBeAggregateErrorIncluding";
+import { Constructable } from "../config/customMatchers/toThrowErrorWithMessage";
 
 export {};
 
@@ -9,6 +10,8 @@ declare global {
       toBeAggregateError(): R;
       toBeAggregateErrorIncluding(expected: IExpected[]): R;
       toBeBulkRecordError(): R;
+      toThrowBulkRecordErrorIncluding(expected: IExpected[]): R;
+      toThrowErrorWithMessage(type: Constructable, message: string | string[]): R;
     }
   }
 }
