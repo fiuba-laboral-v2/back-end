@@ -8,4 +8,4 @@ const permissions = merge(
   userPermissions
 );
 
-export default shield(permissions);
+export default shield(permissions, { debug: process.env.NODE_ENV !== "production" });
