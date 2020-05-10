@@ -1,4 +1,4 @@
-import { QueryInterface, UUID } from "sequelize";
+import { QueryInterface, UUID, DATE } from "sequelize";
 
 export = {
   up: (queryInterface: QueryInterface) =>
@@ -17,6 +17,14 @@ export = {
             references: { model: "Users", key: "uuid" },
             onDelete: "CASCADE",
             type: UUID
+          },
+          createdAt: {
+            allowNull: false,
+            type: DATE
+          },
+          updatedAt: {
+            allowNull: false,
+            type: DATE
           }
         },
         { transaction }
