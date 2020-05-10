@@ -5,9 +5,10 @@ import depthLimit from "graphql-depth-limit";
 import { ExpressContext } from "apollo-server-express/dist/ApolloServer";
 import { JWT } from "./JWT";
 
-interface ICurrentUser {
+export interface ICurrentUser {
   uuid: string;
   email: string;
+  applicantUuid?: string;
 }
 
 export interface IApolloServerContext {

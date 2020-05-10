@@ -7,6 +7,7 @@ import jwt from "express-jwt";
 export interface IPayload {
   uuid: string;
   email: string;
+  applicantUuid?: string;
 }
 
 let JWT_SECRET: string;
@@ -18,10 +19,12 @@ if (["test", "development", "test_travis"].includes(Environment.NODE_ENV)) {
 }
 
 export const JWT = {
-  createToken: (user: User) => {
+  createToken: async (user: User) => {
+    const applicant = await user.getApplicant();
     const payload: IPayload = {
       uuid: user.uuid,
-      email: user.email
+      email: user.email,
+      ...(applicant && { applicantUuid: applicant.uuid })
     };
 
     return sign(
@@ -35,7 +38,8 @@ export const JWT = {
       const payload = verify(token, JWT_SECRET) as IPayload;
       return {
         uuid: payload.uuid,
-        email: payload.email
+        email: payload.email,
+        ...(payload.applicantUuid && { applicantUuid: payload.applicantUuid })
       };
     } catch (e) {
       return;

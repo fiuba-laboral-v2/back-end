@@ -1,5 +1,5 @@
 import { gql } from "apollo-server";
-import { executeQuery, testCurrentUserEmail } from "../../ApolloTestClient";
+import { executeQuery, testCurrentUserEmail, client } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
 import { CareerRepository } from "../../../../src/models/Career";
@@ -16,6 +16,7 @@ import { careerMocks } from "../../../models/Career/mocks";
 import { companyMocks } from "../../../models/Company/mocks";
 import { OfferMocks } from "../../../models/Offer/mocks";
 import { applicantMocks } from "../../../models/Applicant/mocks";
+import { userFactory } from "../../../mocks/user";
 
 const GET_OFFER_BY_UUID = gql`
   query ($uuid: ID!) {
@@ -149,19 +150,25 @@ describe("getOfferByUuid", () => {
     });
 
     it("should find an offer with hasApplied in true", async () => {
-      const { offer } = await createOffer();
-      const applicant = await createApplicant();
-      await JobApplicationRepository.apply(applicant, offer);
-      const { data: { getOfferByUuid }, errors } = await executeQuery(
-        GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
-        { uuid: offer.uuid }
+      const applicant = await userFactory.applicantUser();
+      const user = await applicant.getUser();
+      const apolloClient = client.loggedIn(
+        { uuid: user.uuid, email: user.email, applicantUuid: applicant.uuid }
       );
+
+      const { offer } = await createOffer();
+      await JobApplicationRepository.apply(applicant, offer);
+
+      const { data: { getOfferByUuid }, errors } = await apolloClient.query({
+        query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
+        variables: { uuid: offer.uuid }
+      });
+
       expect(errors).toBeUndefined();
       expect(getOfferByUuid).toMatchObject(
         {
           uuid: offer.uuid,
           hasApplied: true
-
         }
       );
     });
@@ -178,7 +185,6 @@ describe("getOfferByUuid", () => {
         {
           uuid: uuid,
           hasApplied: false
-
         }
       );
     });
@@ -195,12 +201,17 @@ describe("getOfferByUuid", () => {
     });
 
     it("should return an error if the current user is not an applicant", async () => {
-      const { offer: { uuid } } = await createOffer();
-      await UserRepository.create(userAttributes);
-      const { errors } = await executeQuery(
-        GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
-        { uuid: uuid }
+      const user = await userFactory.user();
+      const apolloClient = client.loggedIn(
+        { uuid: user.uuid, email: user.email }
       );
+      const { offer: { uuid } } = await createOffer();
+
+      const { errors } = await apolloClient.query({
+        query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
+        variables: { uuid: uuid }
+      });
+
       expect(errors[0].extensions.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
