@@ -83,8 +83,8 @@ describe("saveApplicant", () => {
 
       const { data, errors } = await executeMutation(queryWithAllData, applicantData);
       expect(errors).toBeUndefined();
-      expect(data.saveApplicant.user).toHaveProperty("uuid");
-      expect(data.saveApplicant).toMatchObject({
+      expect(data!.saveApplicant.user).toHaveProperty("uuid");
+      expect(data!.saveApplicant).toMatchObject({
         user: {
           email: applicantData.user.email,
           name: applicantData.user.name,
@@ -93,8 +93,8 @@ describe("saveApplicant", () => {
         description: applicantData.description,
         padron: applicantData.padron
       });
-      expect(data.saveApplicant).toHaveProperty("capabilities");
-      expect(data.saveApplicant.careers[0]).toMatchObject({
+      expect(data!.saveApplicant).toHaveProperty("capabilities");
+      expect(data!.saveApplicant.careers[0]).toMatchObject({
         code: career.code,
         credits: career.credits,
         description: career.description,
@@ -110,8 +110,8 @@ describe("saveApplicant", () => {
         { ...pick(applicantData, ["padron", "credits", "careers", "user"]) }
       );
       expect(errors).toBeUndefined();
-      expect(data.saveApplicant.user).toHaveProperty("uuid");
-      expect(data.saveApplicant).toMatchObject(
+      expect(data!.saveApplicant.user).toHaveProperty("uuid");
+      expect(data!.saveApplicant).toMatchObject(
         {
           user: {
             email: applicantData.user.email,
@@ -121,10 +121,10 @@ describe("saveApplicant", () => {
           padron: applicantData.padron
         }
       );
-      expect(data.saveApplicant).toHaveProperty("careers");
-      expect(data.saveApplicant).not.toHaveProperty("capabilities");
-      expect(data.saveApplicant).not.toHaveProperty("description");
-      expect(data.saveApplicant.careers[0]).toMatchObject({
+      expect(data!.saveApplicant).toHaveProperty("careers");
+      expect(data!.saveApplicant).not.toHaveProperty("capabilities");
+      expect(data!.saveApplicant).not.toHaveProperty("description");
+      expect(data!.saveApplicant.careers[0]).toMatchObject({
         code: career.code,
         credits: career.credits,
         description: career.description,
@@ -139,7 +139,7 @@ describe("saveApplicant", () => {
       const applicantData = applicantMocks.applicantData([career]);
       await UserRepository.create(applicantData.user);
       const { errors } = await executeMutation(queryWithOnlyObligatoryData, applicantData);
-      expect(errors[0].extensions.data).toEqual(
+      expect(errors![0].extensions!.data).toEqual(
         { errorType: "UserEmailAlreadyExistsError" }
       );
     });

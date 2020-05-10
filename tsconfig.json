@@ -23,6 +23,8 @@
   "exclude": [
     "node_modules",
     "dist",
+    "dist_seeders",
+    "dist_migrations",
     "build",
     "coverage",
     "test",

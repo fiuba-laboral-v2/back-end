@@ -31,10 +31,10 @@ describe("getCareerByCode", () => {
   it("gets a career using the code", async () => {
     const career = await CareerRepository.create(careerMocks.careerData());
 
-    const response = await executeQuery(GET_CAREER_BY_CODE, { code: career.code });
-    expect(response.errors).toBeUndefined();
-    expect(response.data).not.toBeUndefined();
-    expect(response.data.getCareerByCode).toMatchObject({
+    const { data, errors } = await executeQuery(GET_CAREER_BY_CODE, { code: career.code });
+    expect(errors).toBeUndefined();
+    expect(data).not.toBeUndefined();
+    expect(data!.getCareerByCode).toMatchObject({
       code: career.code,
       credits: career.credits,
       description: career.description
@@ -43,7 +43,7 @@ describe("getCareerByCode", () => {
 
   it("throws Career Not found if the code doesn't exists", async () => {
     const { errors } = await executeQuery(GET_CAREER_BY_CODE, { code: "3" });
-    expect(errors[0].extensions.data).toEqual(
+    expect(errors![0].extensions!.data).toEqual(
       {
         errorType: CareersNotFound.name
       }

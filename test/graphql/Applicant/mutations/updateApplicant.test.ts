@@ -104,11 +104,11 @@ describe("updateApplicant", () => {
     };
 
     const {
-      data: { updateApplicant }, errors
+      data, errors
     } = await executeMutation(UPDATE_APPLICANT, dataToUpdate);
 
     expect(errors).toBeUndefined();
-    expect(updateApplicant).toMatchObject({
+    expect(data!.updateApplicant).toMatchObject({
       padron: dataToUpdate.padron,
       user: {
         uuid: user.uuid,
@@ -119,21 +119,21 @@ describe("updateApplicant", () => {
       description: dataToUpdate.description
     });
     expect(
-      updateApplicant.capabilities.map(c => c.description)
+      data!.updateApplicant.capabilities.map(c => c.description)
     ).toEqual(expect.arrayContaining(
       [
         ...dataToUpdate.capabilities
       ]
     ));
     expect(
-      updateApplicant.careers.map(c => c.code)
+      data!.updateApplicant.careers.map(c => c.code)
     ).toEqual(expect.arrayContaining(
       [
         ...dataToUpdate.careers.map(c => c.code)
       ]
     ));
     expect(
-      updateApplicant.sections.map(({ title, text, displayOrder }) =>
+      data!.updateApplicant.sections.map(({ title, text, displayOrder }) =>
         ({ title, text, displayOrder })
       )
     ).toEqual(expect.arrayContaining(
@@ -143,7 +143,7 @@ describe("updateApplicant", () => {
       ]
     ));
     expect(
-      updateApplicant.links.map(({ name, url }) => ({ name, url })
+      data!.updateApplicant.links.map(({ name, url }) => ({ name, url })
       )
     ).toEqual(expect.arrayContaining(
       [

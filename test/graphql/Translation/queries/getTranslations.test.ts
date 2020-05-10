@@ -17,6 +17,7 @@ describe("getTranslations", () => {
       translationGroup: "applicantProfileDetail"
     });
 
+    expect(errors).toBeUndefined();
     expect(data).toEqual({
       getTranslations: [
         { key: "padron", value: "Padron" },
@@ -29,6 +30,6 @@ describe("getTranslations", () => {
     const { errors } = await executeQuery(query, { translationGroup: "falalala" });
 
     expect(errors).toHaveLength(1);
-    expect(errors![0].extensions.data).toEqual({ errorType: MissingTranslationError.name });
+    expect(errors![0].extensions!.data).toEqual({ errorType: MissingTranslationError.name });
   });
 });

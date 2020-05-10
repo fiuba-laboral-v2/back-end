@@ -13,5 +13,6 @@ module.exports = {
   },
   watchPathIgnorePatterns: [
     "/node_modules/"
-  ]
+  ],
+  setupFilesAfterEnv: ["./test/config/jest.setup.ts"]
 };

@@ -36,7 +36,7 @@ describe("getCompanyByUuid", () => {
     expect(response.data).toEqual({
       getCompanyByUuid: {
         ...companyCompleteData,
-        phoneNumbers: expect.arrayContaining(companyCompleteData.phoneNumbers)
+        phoneNumbers: expect.arrayContaining(companyCompleteData.phoneNumbers!)
       }
     });
   });
@@ -49,9 +49,9 @@ describe("getCompanyByUuid", () => {
 
   it("find a company with photos with an empty array", async () => {
     const company: Company = await CompanyRepository.create(companyMocks.companyData());
-    const response = await executeQuery(query, { uuid: company.uuid });
-    expect(response.errors).toBeUndefined();
-    expect(response.data).not.toBeUndefined();
-    expect(response.data.getCompanyByUuid.photos).toHaveLength(0);
+    const { data, errors } = await executeQuery(query, { uuid: company.uuid });
+    expect(errors).toBeUndefined();
+    expect(data).not.toBeUndefined();
+    expect(data!.getCompanyByUuid.photos).toHaveLength(0);
   });
 });

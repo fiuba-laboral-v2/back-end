@@ -30,9 +30,9 @@ describe("getCareers", () => {
   it("gets all careers using the code", async () => {
     const career = await CareerRepository.create(careerMocks.careerData());
 
-    const response = await executeQuery(GET_CAREERS);
-    expect(response.errors).toBeUndefined();
-    expect(response.data.getCareers).toMatchObject(
+    const { data, errors } = await executeQuery(GET_CAREERS);
+    expect(errors).toBeUndefined();
+    expect(data!.getCareers).toMatchObject(
       [
         {
           code: career.code,
