@@ -68,7 +68,7 @@ describe("saveCompany", () => {
         {
           saveCompany: {
             ...companyData,
-            phoneNumbers: expect.arrayContaining(companyData.phoneNumbers)
+            phoneNumbers: expect.arrayContaining(companyData.phoneNumbers!)
           }
         }
       );
@@ -94,7 +94,7 @@ describe("saveCompany", () => {
         SAVE_COMPANY_WITH_MINIMUM_DATA,
         companyDataWithMinimumData
       );
-      expect(errors[0].extensions.data).toEqual(
+      expect(errors![0].extensions!.data).toEqual(
         { errorType: "CompanyCuitAlreadyExistsError" }
       );
     });

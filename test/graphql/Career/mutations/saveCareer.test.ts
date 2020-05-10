@@ -27,11 +27,11 @@ describe("saveCareer", () => {
 
   it("creates the career model", async () => {
     const params = careerMocks.careerData();
-    const response = await executeQuery(SAVE_CAREER, params);
+    const { data, errors } = await executeQuery(SAVE_CAREER, params);
 
-    expect(response.errors).toBeUndefined();
-    expect(response.data).not.toBeUndefined();
-    expect(response.data.saveCareer).toMatchObject({
+    expect(errors).toBeUndefined();
+    expect(data).not.toBeUndefined();
+    expect(data!.saveCareer).toMatchObject({
       code: params.code,
       credits: params.credits,
       description: params.description
@@ -41,14 +41,14 @@ describe("saveCareer", () => {
   describe("Errors", () => {
     it("should throw an if the description is not provided", async () => {
       const { errors } = await executeMutation(SAVE_CAREER, { code: "3" , credits: 250 });
-      expect(errors[0].constructor.name).toEqual(ApolloError.name);
+      expect(errors![0].constructor.name).toEqual(ApolloError.name);
     });
 
     it("should throw an if career already exist", async () => {
       const params = careerMocks.careerData();
       await executeQuery(SAVE_CAREER, params);
       const { errors } = await executeMutation(SAVE_CAREER, params);
-      expect(errors[0].extensions.data).toEqual(
+      expect(errors![0].extensions!.data).toEqual(
         { errorType: "CareerAlreadyExistsError" }
       );
     });

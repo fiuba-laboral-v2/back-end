@@ -57,7 +57,7 @@ describe("getApplicant", () => {
         GET_APPLICANT, { uuid: applicant.uuid }
       );
       expect(errors).toBeUndefined();
-      expect(data.getApplicant).toMatchObject({
+      expect(data!.getApplicant).toMatchObject({
         user: {
           email: applicantData.user.email,
           name: applicantData.user.name,
@@ -66,9 +66,9 @@ describe("getApplicant", () => {
         description: applicantData.description,
         padron: applicantData.padron
       });
-      expect(data.getApplicant).toHaveProperty("capabilities");
-      expect(data.getApplicant).toHaveProperty("careers");
-      expect(data.getApplicant.careers[0]).toMatchObject({
+      expect(data!.getApplicant).toHaveProperty("capabilities");
+      expect(data!.getApplicant).toHaveProperty("careers");
+      expect(data!.getApplicant.careers[0]).toMatchObject({
         code: career.code,
         credits: career.credits,
         description: career.description,
@@ -82,7 +82,7 @@ describe("getApplicant", () => {
       const uuid = random.uuid();
       const { errors } = await executeQuery(GET_APPLICANT, { uuid });
 
-      expect(errors[0].extensions.data).toEqual({ errorType: ApplicantNotFound.name });
+      expect(errors![0].extensions!.data).toEqual({ errorType: ApplicantNotFound.name });
     });
   });
 });

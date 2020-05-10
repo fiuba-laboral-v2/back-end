@@ -4,6 +4,8 @@ import { ApplicantRepository, IApplicantEditable } from "../../../src/models/App
 import { ApplicantNotFound } from "../../../src/models/Applicant/Errors/ApplicantNotFound";
 import { CareerApplicantRepository } from "../../../src/models/CareerApplicant/Repository";
 import { CapabilityRepository } from "../../../src/models/Capability";
+import { TSection } from "../../../src/models/Applicant/Interface";
+import { TLink } from "../../../src/models/Applicant/Link/Interface";
 import { internet, random } from "faker";
 import { careerMocks } from "../Career/mocks";
 import { applicantMocks } from "./mocks";
@@ -45,7 +47,7 @@ describe("ApplicantRepository", () => {
       expect(
         (await applicant.getCapabilities())[0].description.toLowerCase()
       ).toEqual(
-        applicantData.capabilities[0].toLowerCase()
+        applicantData.capabilities![0].toLowerCase()
       );
     });
 
@@ -91,10 +93,10 @@ describe("ApplicantRepository", () => {
     });
 
     describe("Transactions", () => {
-      it("should rollback transaction and throw error if padron is null", async () => {
+      it("should rollback transaction and throw error if no padron is given", async () => {
         const career = await CareerRepository.create(careerMocks.careerData());
         const applicantData = applicantMocks.applicantData([career]);
-        applicantData.padron = null;
+        delete applicantData.padron;
         await expect(
           ApplicantRepository.create(applicantData)
         ).rejects.toThrow();
@@ -130,7 +132,7 @@ describe("ApplicantRepository", () => {
       expect(
         (await applicant.getCapabilities())[0].description.toLowerCase()
       ).toEqual(
-        applicantData.capabilities[0].toLowerCase()
+        applicantData.capabilities![0].toLowerCase()
       );
     });
 
@@ -160,7 +162,7 @@ describe("ApplicantRepository", () => {
       expect(
         (await applicant.getCapabilities())[0].description.toLowerCase()
       ).toEqual(
-        applicantData.capabilities[0].toLowerCase()
+        applicantData.capabilities![0].toLowerCase()
       );
     });
 
@@ -176,7 +178,14 @@ describe("ApplicantRepository", () => {
         capabilities = [],
         sections = [],
         links = []
-      } = { capabilities: [], sections: [], links: [] }
+      }: {
+        capabilities?: string[],
+        sections?: TSection[],
+        links?: TLink[] } = {
+          capabilities: [],
+          sections: [],
+          links: []
+        }
     ) => {
       const career = await CareerRepository.create(careerMocks.careerData());
       const applicantData = applicantMocks.applicantData([career], capabilities);
@@ -223,7 +232,7 @@ describe("ApplicantRepository", () => {
       const applicant = await ApplicantRepository.update(newProps);
       const user = await applicant.getUser();
       const capabilitiesDescription = [
-        ...newProps.capabilities,
+        ...newProps.capabilities!,
         ...(await applicant.getCapabilities()).map(capability => capability.description)
       ];
       const careersCodes = [
@@ -235,8 +244,8 @@ describe("ApplicantRepository", () => {
       });
 
       expect(user).toMatchObject({
-        name: newProps.user.name,
-        surname: newProps.user.surname
+        name: newProps.user!.name,
+        surname: newProps.user!.surname
       });
 
       expect(
@@ -260,7 +269,7 @@ describe("ApplicantRepository", () => {
       const applicant = await ApplicantRepository.update(newProps);
       const user = await applicant.getUser();
 
-      expect(user).toMatchObject({ name: newProps.user.name });
+      expect(user).toMatchObject({ name: newProps.user!.name });
     });
 
     it("Should update surname", async () => {
@@ -273,7 +282,7 @@ describe("ApplicantRepository", () => {
       };
       const applicant = await ApplicantRepository.update(newProps);
       const user = await applicant.getUser();
-      expect(user).toMatchObject({ surname: newProps.user.surname });
+      expect(user).toMatchObject({ surname: newProps.user!.surname });
     });
 
     it("Should update description", async () => {
@@ -393,7 +402,7 @@ describe("ApplicantRepository", () => {
         uuid: applicant.uuid,
         sections: [
           {
-            uuid: newSections.find(({ title }) => title === "second section").uuid,
+            uuid: newSections.find(({ title }) => title === "second section")!.uuid,
             title: "second section",
             text: "new some description",
             displayOrder: 2
@@ -409,7 +418,7 @@ describe("ApplicantRepository", () => {
       expect(
         (await updatedApplicant.getSections()).map(section => section.title)
       ).toEqual(expect.arrayContaining([
-        ...newProps.sections.map(section => section.title)
+        ...newProps.sections!.map(section => section.title)
       ]));
     });
 
@@ -473,7 +482,7 @@ describe("ApplicantRepository", () => {
       expect(
         (await updatedApplicant.getLinks()).map(link => link.name)
       ).toEqual(expect.arrayContaining([
-        ...newProps.links.map(link => link.name)
+        ...newProps.links!.map(link => link.name)
       ]));
     });
 
@@ -524,7 +533,7 @@ describe("ApplicantRepository", () => {
       const careerApplicant = await CareerApplicantRepository.findByApplicantAndCareer(
         applicant.uuid, career.code
       );
-      expect(careerApplicant.creditsCount).toEqual(newProps.careers[0].creditsCount);
+      expect(careerApplicant.creditsCount).toEqual(newProps.careers![0].creditsCount);
     });
 
     it("Should update by deleting all applicant careers if none is provided", async () => {
@@ -544,7 +553,7 @@ describe("ApplicantRepository", () => {
       const careerApplicant = await CareerApplicantRepository.findByApplicantAndCareer(
         applicant.uuid, career.code
       );
-      expect(careerApplicant.creditsCount).toEqual(newProps.careers[0].creditsCount);
+      expect(careerApplicant.creditsCount).toEqual(newProps.careers![0].creditsCount);
 
       await ApplicantRepository.update({ uuid: applicant.uuid });
 

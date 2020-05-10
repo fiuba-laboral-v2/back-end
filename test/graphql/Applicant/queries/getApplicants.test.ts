@@ -64,7 +64,7 @@ describe("getApplicants", () => {
       expect(errors).toBeUndefined();
       const [career] = await applicant.getCareers();
       const capabilities = await applicant.getCapabilities();
-      expect(data.getApplicants[0]).toMatchObject({
+      expect(data!.getApplicants[0]).toMatchObject({
         user: {
           email: applicantData.user.email,
           name: applicantData.user.name,
@@ -136,7 +136,7 @@ describe("getApplicants", () => {
           };
         })
       );
-      expect(data.getApplicants).toEqual(expect.arrayContaining(expectedApplicants));
+      expect(data!.getApplicants).toEqual(expect.arrayContaining(expectedApplicants));
     });
   });
 
@@ -144,7 +144,7 @@ describe("getApplicants", () => {
     it("should fetch an empty array of applicants", async () => {
       const { data, errors } = await executeQuery(GET_APPLICANTS);
       expect(errors).toBeUndefined();
-      expect(data.getApplicants).toEqual([]);
+      expect(data!.getApplicants).toEqual([]);
     });
   });
 });
