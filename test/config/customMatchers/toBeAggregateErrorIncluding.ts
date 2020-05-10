@@ -8,7 +8,13 @@ export interface IExpected {
   message: string;
 }
 
-const buildResponse = (aggregateError: AggregateError, expected: IExpected[], pass: boolean) => {
+interface IBuildMessageParameters {
+  aggregateError: AggregateError;
+  expected: IExpected[];
+  pass: boolean;
+}
+
+const buildResponse = ({ aggregateError, expected, pass }: IBuildMessageParameters) => {
   return {
     pass,
     message: () => {
@@ -29,10 +35,10 @@ export const toBeAggregateErrorIncluding = (received, expected: IExpected[]) => 
   const isBulkError = toBeBulkRecordError(aggregateError);
   if (!isBulkError.pass) return isAggregateError;
 
-  let aggregateErrorIncludes = buildResponse(aggregateError, expected, false);
+  let aggregateErrorIncludes = buildResponse({ aggregateError, expected, pass: false });
   if (aggregateError.length !== expected.length) return aggregateErrorIncludes;
 
-  aggregateErrorIncludes = buildResponse(aggregateError, expected, true);
+  aggregateErrorIncludes = buildResponse({ aggregateError, expected, pass: true });
   const errors = aggregateError.map((bulkError: BulkRecordError) => bulkError.errors);
   errors.forEach(error => {
     const includesMatch = expected.filter(({ errorClass, message }) =>
@@ -40,7 +46,7 @@ export const toBeAggregateErrorIncluding = (received, expected: IExpected[]) => 
     ).length;
     if (includesMatch > 0) return;
 
-    aggregateErrorIncludes = buildResponse(aggregateError, expected, false);
+    aggregateErrorIncludes = buildResponse({ aggregateError, expected, pass: false });
   });
   return aggregateErrorIncludes;
 };
