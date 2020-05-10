@@ -1,5 +1,4 @@
 import { IExpected } from "../config/customMatchers/toBeAggregateErrorIncluding";
-import { Constructable } from "../config/customMatchers/toThrowErrorWithMessage";
 
 export {};
 

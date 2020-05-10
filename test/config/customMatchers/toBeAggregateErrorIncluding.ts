@@ -2,9 +2,10 @@ import BulkRecordError from "sequelize/lib/errors/bulk-record-error";
 import { AggregateError } from "bluebird";
 import { toBeAggregateError } from "./toBeAggregateError";
 import { toBeBulkRecordError } from "./toBeBulkRecordError";
+import { Constructable } from "../../types/Constructable";
 
 export interface IExpected {
-  errorClass: any;
+  errorClass: Constructable;
   message: string;
 }
 

@@ -1,4 +1,4 @@
-export type Constructable = new (...args: any[]) => any;
+import { Constructable } from "../../types/Constructable";
 
 const failMessage = (received, type: Constructable, message: string | string[]) =>
   ({
