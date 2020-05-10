@@ -69,8 +69,7 @@ describe("CompanyRepository", () => {
   });
 
   it("should throw an error if cuit is null", async () => {
-    const companyAttributes: ICompany = { cuit: "30711819017", companyName: "devartis" };
-    delete companyAttributes.cuit;
+    const companyAttributes: any = { cuit: null, companyName: "devartis" };
     await expect(
       CompanyRepository.create(companyAttributes)
     ).rejects.toThrow(ValidationError);
