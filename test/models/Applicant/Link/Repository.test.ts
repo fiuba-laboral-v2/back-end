@@ -117,7 +117,7 @@ describe("ApplicantLinkRepository", () => {
     await matcher.rejects.toThrow("Validation error");
   });
 
-  it("thows an error if the url is longer than 256 characters", async () => {
+  it("throws an error if the url is longer than 256 characters", async () => {
     const url = "a".repeat(300);
 
     try {

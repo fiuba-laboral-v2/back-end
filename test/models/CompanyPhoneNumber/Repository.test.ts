@@ -1,8 +1,10 @@
 import { DatabaseError, ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
 import Database from "../../../src/config/Database";
-import faker from "faker";
 import { CompanyRepository, Company } from "../../../src/models/Company";
-import { CompanyPhoneNumberRepository } from "../../../src/models/CompanyPhoneNumber";
+import {
+  CompanyPhoneNumber,
+  CompanyPhoneNumberRepository
+} from "../../../src/models/CompanyPhoneNumber";
 
 describe("CompanyPhoneNumberRepository", () => {
   beforeAll(() => Database.setConnection());
@@ -12,7 +14,7 @@ describe("CompanyPhoneNumberRepository", () => {
   afterAll(() => Database.close());
 
   it("creates several phoneNumbers for the same company", async () => {
-    const phoneNumbers = ["44444444", "55555555", "66666666"];
+    const phoneNumbers = ["1144444444", "1155555555", "1166666666"];
     const company = await CompanyRepository.create({ cuit: "30711819017", companyName: "name" });
     await expect(
       CompanyPhoneNumberRepository.bulkCreate(phoneNumbers, company)
@@ -20,7 +22,7 @@ describe("CompanyPhoneNumberRepository", () => {
   });
 
   it("throws an error if a phone number is repeated in a bulk create", async () => {
-    const phoneNumbers = ["44444444", "44444444", "66666666"];
+    const phoneNumbers = ["1144444444", "1144444444", "1166666666"];
     const company = await CompanyRepository.create({ cuit: "30711819017", companyName: "name" });
     await expect(
       CompanyPhoneNumberRepository.bulkCreate(phoneNumbers, company)
@@ -28,7 +30,7 @@ describe("CompanyPhoneNumberRepository", () => {
   });
 
   it("throws an error if a company has already the same phoneNumber", async () => {
-    const phoneNumber = "44444444";
+    const phoneNumber = "1144444444";
     const company = await CompanyRepository.create({ cuit: "30711819017", companyName: "name" });
     await CompanyPhoneNumberRepository.create(phoneNumber, company);
     const matcher = expect(CompanyPhoneNumberRepository.create(phoneNumber, company));
@@ -36,11 +38,13 @@ describe("CompanyPhoneNumberRepository", () => {
     await matcher.rejects.toThrow("Validation error");
   });
 
-  it("throws an error if phoneNumber is very large", async () => {
+  it("throws a database constraint error if phoneNumber is very large", async () => {
     const company = await CompanyRepository.create({ cuit: "30711819017", companyName: "name" });
-    const matcher = expect(
-      CompanyPhoneNumberRepository.create(faker.lorem.paragraph(7), company)
-    );
+    const phoneNumber = new CompanyPhoneNumber({
+      companyUuid: company.uuid,
+      phoneNumber: "0".repeat(300)
+    });
+    const matcher = expect(phoneNumber.save({ validate: false }));
     await matcher.rejects.toThrow(DatabaseError);
     await matcher.rejects.toThrow("value too long for type character varying(255)");
   });
@@ -50,7 +54,7 @@ describe("CompanyPhoneNumberRepository", () => {
       uuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
     });
     const matcher = expect(
-      CompanyPhoneNumberRepository.create("44444444", notSavedCompany)
+      CompanyPhoneNumberRepository.create("1144444444", notSavedCompany)
     );
     await matcher.rejects.toThrow(ForeignKeyConstraintError);
     await matcher.rejects.toThrow(
@@ -63,7 +67,7 @@ describe("CompanyPhoneNumberRepository", () => {
     const company = await CompanyRepository.create({ cuit: "30711819017", companyName: "name" });
     await CompanyRepository.create({ cuit: "30701307115", companyName: "name" });
     await CompanyRepository.create({ cuit: "30703088534", companyName: "name" });
-    await CompanyPhoneNumberRepository.create("44444444", company);
+    await CompanyPhoneNumberRepository.create("1144444444", company);
     expect(await CompanyPhoneNumberRepository.findAll()).toHaveLength(1);
     await company.destroy();
     expect(await CompanyPhoneNumberRepository.findAll()).toHaveLength(0);
@@ -78,7 +82,7 @@ describe("CompanyPhoneNumberRepository", () => {
       cuit: "30701307115",
       companyName: "name"
     });
-    await CompanyPhoneNumberRepository.create("44444444", company);
+    await CompanyPhoneNumberRepository.create("(011) 44444444", company);
     expect(await CompanyPhoneNumberRepository.findAll()).toHaveLength(1);
     await anotherCompany.destroy();
     expect(await CompanyPhoneNumberRepository.findAll()).toHaveLength(1);

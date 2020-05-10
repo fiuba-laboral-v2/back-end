@@ -5,7 +5,7 @@ import Database from "../../../../src/config/Database";
 import { CareerRepository } from "../../../../src/models/Career";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { careerMocks } from "../../../models/Career/mocks";
-import { companyMockData } from "../../../models/Company/mocks";
+import { companyMocks } from "../../../models/Company/mocks";
 import { OfferMocks } from "../../../models/Offer/mocks";
 
 const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
@@ -84,7 +84,7 @@ describe("saveOffer", () => {
 
   describe("when the input values are valid", () => {
     it("should create a new offer with only obligatory data", async () => {
-      const { uuid } = await CompanyRepository.create(companyMockData);
+      const { uuid } = await CompanyRepository.create(companyMocks.companyData());
       const offerAttributes = OfferMocks.completeData(uuid);
       const { data: { saveOffer }, errors } = await executeMutation(
         SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
@@ -105,7 +105,7 @@ describe("saveOffer", () => {
 
     it("should create a new offer with one section and one career", async () => {
       const { code } = await CareerRepository.create(careerMocks.careerData());
-      const { uuid } = await CompanyRepository.create(companyMockData);
+      const { uuid } = await CompanyRepository.create(companyMocks.companyData());
       const offerAttributes = OfferMocks.withOneCareerAndOneSection(uuid, code);
       const { data: { saveOffer }, errors } = await executeMutation(
         SAVE_OFFER_WITH_COMPLETE_DATA,
