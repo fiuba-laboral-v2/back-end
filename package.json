@@ -88,6 +88,7 @@
     "unstash": "git stash pop",
     "check-unstaged": "bash scripts/check_unstaged.sh",
     "build": "tsc --project .",
+    "build-test": "tsc --project test",
     "build-migrations": "yarn clean:compiled-migrations && tsc -p src/migrations",
     "build-seeders": "yarn clean:compiled-seeders && tsc -p src/seeders",
     "clean": "rm -rf dist",

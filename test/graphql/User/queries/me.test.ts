@@ -30,7 +30,7 @@ describe("Current User query", () => {
     });
     const { data, errors } = await executeQuery(ME);
     expect(errors).toBeUndefined();
-    expect(data.me).toEqual(
+    expect(data!.me).toEqual(
       {
         email: testCurrentUserEmail,
         name: "name",
@@ -41,6 +41,6 @@ describe("Current User query", () => {
 
   it("returns error if the current user is not set in context", async () => {
     const { errors } = await executeQuery(ME, { }, { loggedIn: false });
-    expect(errors[0].extensions.data).toEqual({ errorType: AuthenticationError.name });
+    expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
   });
 });

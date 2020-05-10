@@ -129,7 +129,7 @@ describe("Section model", () => {
     ];
 
     await SectionRepository.update(params, applicant);
-    const [firstSection, secondSection] = await applicant.getSections();
+    const [firstSection] = await applicant.getSections();
 
     const newParams = [
       {

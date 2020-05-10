@@ -33,7 +33,7 @@ describe("OfferRepository", () => {
       expect(offer).toEqual(expect.objectContaining(omit(attributes, ["sections"])));
       const sections = await offer.getSections();
       expect(sections).toHaveLength(1);
-      expect(sections[0]).toEqual(expect.objectContaining(attributes.sections[0]));
+      expect(sections[0]).toEqual(expect.objectContaining(attributes.sections![0]));
     });
 
     it("should create a new offer with one career", async () => {
@@ -45,7 +45,7 @@ describe("OfferRepository", () => {
       const careers = await offer.getCareers();
       expect(careers).toHaveLength(1);
       expect(careers[0]).toEqual(expect.objectContaining(
-        { code: attributes.careers[0].careerCode }
+        { code: attributes.careers![0].careerCode }
       ));
     });
 
@@ -61,9 +61,9 @@ describe("OfferRepository", () => {
       const sections = await offer.getSections();
       expect(careers).toHaveLength(1);
       expect(sections).toHaveLength(1);
-      expect(sections[0]).toEqual(expect.objectContaining(attributes.sections[0]));
+      expect(sections[0]).toEqual(expect.objectContaining(attributes.sections![0]));
       expect(careers[0]).toEqual(expect.objectContaining(
-        { code: attributes.careers[0].careerCode }
+        { code: attributes.careers![0].careerCode }
       ));
     });
 

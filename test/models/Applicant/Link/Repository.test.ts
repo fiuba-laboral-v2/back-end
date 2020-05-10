@@ -1,4 +1,4 @@
-import { UniqueConstraintError, DatabaseError } from "sequelize";
+import { UniqueConstraintError, DatabaseError, ValidationError } from "sequelize";
 import Database from "../../../../src/config/Database";
 import { Applicant } from "../../../../src/models/Applicant";
 import { ApplicantLinkRepository, ApplicantLink } from "../../../../src/models/Applicant/Link";
@@ -93,41 +93,39 @@ describe("ApplicantLinkRepository", () => {
   it("thows an error if an applicantUuid has duplicated links name", async () => {
     const oneName = random.word();
 
-    const matcher = expect(
+    await expect(
       ApplicantLinkRepository.update(
         [{ name: oneName, url: "some.url" }, { name: oneName, url: "other.url" }],
         applicant
-      ));
-
-    await matcher.rejects.toThrow(DatabaseError);
-    await matcher.rejects.toThrow("ON CONFLICT DO UPDATE command cannot affect row a second time");
+      )
+    ).rejects.toThrowErrorWithMessage(
+      DatabaseError,
+      "ON CONFLICT DO UPDATE command cannot affect row a second time"
+    );
   });
 
   it("thows an error if an applicantUuid has duplicated links url", async () => {
     const url = internet.url();
 
-    const matcher = expect(
+    await expect(
       ApplicantLinkRepository.update(
         [{ name: "name", url }, { name: "other", url }],
         applicant
       )
+    ).rejects.toThrowErrorWithMessage(
+      UniqueConstraintError,
+      "Validation error"
     );
-
-    await matcher.rejects.toThrow(UniqueConstraintError);
-    await matcher.rejects.toThrow("Validation error");
   });
 
   it("throws an error if the url is longer than 256 characters", async () => {
-    const url = "a".repeat(300);
-
-    try {
-      await ApplicantLinkRepository.update(
-        [{ name: "name", url }],
+    await expect(
+      ApplicantLinkRepository.update(
+        [{ name: "name", url: "a".repeat(300) }],
         applicant
-      );
-    } catch (e) {
-      expect(e.message).toEqual("aggregate error");
-      expect(e[0].message).toEqual("Validation error: La URL es inválida");
-    }
+      )
+    ).rejects.toThrowBulkRecordErrorIncluding(
+      [{ errorClass: ValidationError, message: "Validation error: La URL es inválida" }]
+    );
   });
 });

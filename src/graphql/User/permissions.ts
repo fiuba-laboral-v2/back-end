@@ -1,4 +1,3 @@
-// import { and } from "graphql-shield";
 import { isAuthenticated } from "../rules";
 
 export const userPermissions = {

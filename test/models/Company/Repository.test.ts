@@ -1,8 +1,6 @@
 import { ValidationError, UniqueConstraintError } from "sequelize";
 import { PhoneNumberWithLettersError } from "validations-fiuba-laboral-v2";
-import BulkRecordError from "sequelize/lib/errors/bulk-record-error";
-import { AggregateError } from "bluebird";
-import { Company, CompanyRepository } from "../../../src/models/Company";
+import { Company, CompanyRepository, ICompany } from "../../../src/models/Company";
 import { companyMocks } from "./mocks";
 import Database from "../../../src/config/Database";
 
@@ -38,10 +36,10 @@ describe("CompanyRepository", () => {
       email: companyCompleteData.email
     }));
     expect((await company.getPhoneNumbers())).toHaveLength(
-      companyCompleteData.phoneNumbers.length
+      companyCompleteData.phoneNumbers!.length
     );
     expect((await company.getPhotos())).toHaveLength(
-      companyCompleteData.photos.length
+      companyCompleteData.photos!.length
     );
   });
 
@@ -71,14 +69,17 @@ describe("CompanyRepository", () => {
   });
 
   it("should throw an error if cuit is null", async () => {
+    const companyAttributes: any = { cuit: null, companyName: "devartis" };
     await expect(
-      CompanyRepository.create({ cuit: null, companyName: "devartis" })
+      CompanyRepository.create(companyAttributes)
     ).rejects.toThrow(ValidationError);
   });
 
   it("should throw an error if companyName is null", async () => {
+    const companyAttributes: ICompany = { cuit: "30711819017", companyName: "devartis" };
+    delete companyAttributes.companyName;
     await expect(
-      CompanyRepository.create({ cuit: "30711819017", companyName: null })
+      CompanyRepository.create(companyAttributes)
     ).rejects.toThrow(ValidationError);
   });
 
@@ -111,41 +112,18 @@ describe("CompanyRepository", () => {
     expect(expectedCompanies[0].uuid).toEqual(company.uuid);
   });
 
-  it("should rollback transaction and throw error if photos is null", async () => {
-    try {
-      await CompanyRepository.create({ ...companyDataWithMinimumData, photos: [null] });
-    } catch (aggregateError) {
-      expect(aggregateError).toBeInstanceOf(AggregateError);
-      expect(aggregateError).toHaveLength(1);
-      const bulkError = aggregateError[0];
-      expect(bulkError).toBeInstanceOf(BulkRecordError);
-      const validationError = bulkError.errors;
-      expect(validationError).toBeInstanceOf(ValidationError);
-      expect(
-        validationError.message
-      ).toEqual("notNull Violation: CompanyPhoto.photo cannot be null");
-    }
-  });
-
   it("throws an error if phoneNumbers are invalid", async () => {
-    try {
-      await CompanyRepository.create(
+    await expect(
+      CompanyRepository.create(
         {
           ...companyDataWithMinimumData,
           phoneNumbers: ["InvalidPhoneNumber1", "InvalidPhoneNumber2"]
         }
-      );
-    } catch (aggregateError) {
-      expect(aggregateError).toBeInstanceOf(AggregateError);
-      expect(aggregateError).toHaveLength(2);
-      aggregateError.map(bulkError => expect(bulkError).toBeInstanceOf(BulkRecordError));
-      aggregateError.map(({ errors: validationError }) =>
-        expect(validationError).toBeInstanceOf(ValidationError)
-      );
-      aggregateError.map(({ errors: validationError }) =>
-        expect(validationError.message).toContain(PhoneNumberWithLettersError.buildMessage())
-      );
-    }
+      )
+    ).rejects.toThrowBulkRecordErrorIncluding([
+      { errorClass: ValidationError, message: PhoneNumberWithLettersError.buildMessage() },
+      { errorClass: ValidationError, message: PhoneNumberWithLettersError.buildMessage() }
+    ]);
   });
 
   it("throws an error if phoneNumbers are duplicated", async () => {
@@ -155,7 +133,7 @@ describe("CompanyRepository", () => {
           phoneNumbers: ["1159821066", "1159821066"]
         }
       )
-    ).rejects.toThrow(UniqueConstraintError);
+    ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
   });
 
   it("deletes a company", async () => {

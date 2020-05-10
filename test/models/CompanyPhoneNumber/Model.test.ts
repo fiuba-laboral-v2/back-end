@@ -21,9 +21,10 @@ describe("companyPhoneNumber", () => {
       phoneNumber: null,
       companyUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
     });
-    const matcher = expect(companyPhoneNumber.validate());
-    await matcher.rejects.toThrow(ValidationError);
-    await matcher.rejects.toThrow(
+    await expect(
+      companyPhoneNumber.validate()
+    ).rejects.toThrowErrorWithMessage(
+      ValidationError,
       "notNull Violation: CompanyPhoneNumber.phoneNumber cannot be null"
     );
   });
@@ -33,18 +34,20 @@ describe("companyPhoneNumber", () => {
       phoneNumber: "1143076555",
       companyUuid: null
     });
-    const matcher = expect(companyPhoneNumber.validate());
-    await matcher.rejects.toThrow(ValidationError);
-    await matcher.rejects.toThrow(
+    await expect(
+      companyPhoneNumber.validate()
+    ).rejects.toThrowErrorWithMessage(
+      ValidationError,
       "notNull Violation: CompanyPhoneNumber.companyUuid cannot be null"
     );
   });
 
   it("throws an error if no companyUuid is provided", async () => {
     const companyPhoneNumber = new CompanyPhoneNumber({ phoneNumber: "43076555" });
-    const matcher = expect(companyPhoneNumber.validate());
-    await matcher.rejects.toThrow(ValidationError);
-    await matcher.rejects.toThrow(
+    await expect(
+      companyPhoneNumber.validate()
+    ).rejects.toThrowErrorWithMessage(
+      ValidationError,
       "notNull Violation: CompanyPhoneNumber.companyUuid cannot be null"
     );
   });
@@ -53,9 +56,10 @@ describe("companyPhoneNumber", () => {
     const companyPhoneNumber = new CompanyPhoneNumber({
       companyUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
     });
-    const matcher = expect(companyPhoneNumber.validate());
-    await matcher.rejects.toThrow(ValidationError);
-    await matcher.rejects.toThrow(
+    await expect(
+      companyPhoneNumber.validate()
+    ).rejects.toThrowErrorWithMessage(
+      ValidationError,
       "notNull Violation: CompanyPhoneNumber.phoneNumber cannot be null"
     );
   });
@@ -65,13 +69,14 @@ describe("companyPhoneNumber", () => {
       phoneNumber: null,
       companyUuid: null
     });
-    const matcher = expect(companyPhoneNumber.validate());
-    await matcher.rejects.toThrow(ValidationError);
-    await matcher.rejects.toThrow(
-      "notNull Violation: CompanyPhoneNumber.phoneNumber cannot be null"
-    );
-    await matcher.rejects.toThrow(
-      "notNull Violation: CompanyPhoneNumber.companyUuid cannot be null"
+    await expect(
+      companyPhoneNumber.validate()
+    ).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      [
+        "notNull Violation: CompanyPhoneNumber.phoneNumber cannot be null",
+        "notNull Violation: CompanyPhoneNumber.companyUuid cannot be null"
+      ]
     );
   });
 
@@ -80,9 +85,12 @@ describe("companyPhoneNumber", () => {
       phoneNumber: "letters",
       companyUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
     });
-    const matcher = expect(companyPhoneNumber.validate());
-    await matcher.rejects.toThrow(ValidationError);
-    await matcher.rejects.toThrow(PhoneNumberWithLettersError.buildMessage());
+    await expect(
+      companyPhoneNumber.validate()
+    ).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      PhoneNumberWithLettersError.buildMessage()
+    );
   });
 
   it("throws an error if phoneNumber is an empty string", async () => {
@@ -90,8 +98,11 @@ describe("companyPhoneNumber", () => {
       phoneNumber: "",
       companyUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
     });
-    const matcher = expect(companyPhoneNumber.validate());
-    await matcher.rejects.toThrow(ValidationError);
-    await matcher.rejects.toThrow(InvalidPhoneNumberError.buildMessage());
+    await expect(
+      companyPhoneNumber.validate()
+    ).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      InvalidPhoneNumberError.buildMessage()
+    );
   });
 });
