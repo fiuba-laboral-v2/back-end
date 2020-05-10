@@ -10,6 +10,6 @@
     "../dist_migrations",
     "../build",
     "../coverage",
-    "jest.config.js"
+    "../jest.config.js"
   ]
 }

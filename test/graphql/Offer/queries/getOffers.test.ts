@@ -42,14 +42,14 @@ describe("getOffers", () => {
 
     it("should return two offers if two offers were created", async () => {
       await createOffers();
-      const { data , errors } = await executeQuery(GET_OFFERS);
+      const { data, errors } = await executeQuery(GET_OFFERS);
       expect(errors).toBeUndefined();
       expect(data!.getOffers).toHaveLength(2);
     });
 
     it("should return two offers with there own uuid", async () => {
       const { offer1, offer2 } = await createOffers();
-      const { data , errors } = await executeQuery(GET_OFFERS);
+      const { data, errors } = await executeQuery(GET_OFFERS);
       expect(errors).toBeUndefined();
       expect(data!.getOffers).toMatchObject(
         [
@@ -62,7 +62,7 @@ describe("getOffers", () => {
 
   describe("when no offers exists", () => {
     it("should return no offers when no offers were created", async () => {
-      const { data , errors } = await executeQuery(GET_OFFERS);
+      const { data, errors } = await executeQuery(GET_OFFERS);
       expect(errors).toBeUndefined();
       expect(data!.getOffers).toHaveLength(0);
     });

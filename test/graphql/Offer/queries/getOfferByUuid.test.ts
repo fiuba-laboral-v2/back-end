@@ -104,7 +104,7 @@ describe("getOfferByUuid", () => {
   describe("when and offer exists", () => {
     it("should find an offer by uuid", async () => {
       const { offer, career, company } = await createOffer();
-      const { data , errors } = await executeQuery(
+      const { data, errors } = await executeQuery(
         GET_OFFER_BY_UUID,
         { uuid: offer.uuid }
       );
@@ -152,7 +152,7 @@ describe("getOfferByUuid", () => {
       const { offer } = await createOffer();
       const applicant = await createApplicant();
       await JobApplicationRepository.apply(applicant, offer);
-      const { data , errors } = await executeQuery(
+      const { data, errors } = await executeQuery(
         GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
         { uuid: offer.uuid }
       );
@@ -169,7 +169,7 @@ describe("getOfferByUuid", () => {
     it("should find an offer with hasApplied in false", async () => {
       const { offer: { uuid } } = await createOffer();
       await createApplicant();
-      const { data , errors } = await executeQuery(
+      const { data, errors } = await executeQuery(
         GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
         { uuid: uuid }
       );

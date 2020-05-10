@@ -86,7 +86,7 @@ describe("saveOffer", () => {
     it("should create a new offer with only obligatory data", async () => {
       const { uuid } = await CompanyRepository.create(companyMocks.companyData());
       const offerAttributes = OfferMocks.completeData(uuid);
-      const { data , errors } = await executeMutation(
+      const { data, errors } = await executeMutation(
         SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
         offerAttributes
       );
@@ -107,7 +107,7 @@ describe("saveOffer", () => {
       const { code } = await CareerRepository.create(careerMocks.careerData());
       const { uuid } = await CompanyRepository.create(companyMocks.companyData());
       const offerAttributes = OfferMocks.withOneCareerAndOneSection(uuid, code);
-      const { data , errors } = await executeMutation(
+      const { data, errors } = await executeMutation(
         SAVE_OFFER_WITH_COMPLETE_DATA,
         offerAttributes
       );
