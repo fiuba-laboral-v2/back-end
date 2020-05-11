@@ -1,34 +1,49 @@
 import { gql } from "apollo-server";
 import { executeQuery } from "../../ApolloTestClient";
 import { Company, CompanyRepository } from "../../../../src/models/Company";
-import { companyMockData, phoneNumbers, photos } from "../../../models/Company/mocks";
+import {
+  companyMockData,
+  companyMockDataWithoutUser,
+  phoneNumbers,
+  photos
+} from "../../../models/Company/mocks";
 import Database from "../../../../src/config/Database";
+import { UserRepository } from "../../../../src/models/User";
+import { UserMocks } from "../../../models/User/mocks";
 
 const query = gql`
   query ($uuid: ID!) {
     getCompanyByUuid(uuid: $uuid) {
-        cuit
-        companyName
-        slogan
-        description
-        logo
-        website
-        email
-        phoneNumbers
-        photos
+      cuit
+      companyName
+      slogan
+      description
+      logo
+      website
+      email
+      phoneNumbers
+      photos
     }
   }
 `;
 
+const companyCompleteDataWithoutUser = {
+  ...companyMockDataWithoutUser,
+  photos: photos,
+  phoneNumbers: phoneNumbers
+};
+
+const companyCompleteData = {
+  ...companyCompleteDataWithoutUser,
+  user: UserMocks.userAttributes
+};
+
 describe("getCompanyByUuid", () => {
-  const companyCompleteData = {
-    ...companyMockData,
-    ...{ photos: photos, phoneNumbers: phoneNumbers }
-  };
   beforeAll(() => Database.setConnection());
-
-  beforeEach(() => CompanyRepository.truncate());
-
+  beforeEach(() => Promise.all([
+    CompanyRepository.truncate(),
+    UserRepository.truncate()
+  ]));
   afterAll(() => Database.close());
 
   it("finds a company given its uuid", async () => {
@@ -38,7 +53,7 @@ describe("getCompanyByUuid", () => {
     expect(response.data).not.toBeUndefined();
     expect(response.data).toEqual({
       getCompanyByUuid: {
-        ...companyCompleteData,
+        ...companyCompleteDataWithoutUser,
         phoneNumbers: expect.arrayContaining(companyCompleteData.phoneNumbers)
       }
     });

@@ -1,6 +1,7 @@
 import { List, nonNull, String } from "../../fieldTypes";
 import { CompanyRepository, ICompany } from "../../../models/Company";
 import { GraphQLCompany } from "../Types/GraphQLCompany";
+import { GraphQLUserCreateInput } from "../../User/Types/GraphQLUserCreateInput";
 
 export const createCompany = {
   type: GraphQLCompany,
@@ -31,6 +32,9 @@ export const createCompany = {
     },
     photos: {
       type: List(String)
+    },
+    user: {
+      type: nonNull(GraphQLUserCreateInput)
     }
   },
   resolve: (_: undefined, args: ICompany) => CompanyRepository.create(args)

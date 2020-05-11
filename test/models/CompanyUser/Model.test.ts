@@ -1,7 +1,7 @@
 import Database from "../../../src/config/Database";
 import { CompanyUser } from "../../../src/models/CompanyUser";
-import { CompanyRepository } from "../../../src/models/Company";
-import { UserRepository } from "../../../src/models/User";
+import { Company, CompanyRepository } from "../../../src/models/Company";
+import { User, UserRepository } from "../../../src/models/User";
 import { companyMockData } from "../Company/mocks";
 import { UserMocks } from "../User/mocks";
 
@@ -48,8 +48,8 @@ describe("CompanyUser", () => {
   );
 
   it("successfully creates when both foreign keys are valid", async () => {
-    const { uuid: companyUuid } = await CompanyRepository.create(companyMockData);
-    const { uuid: userUuid } = await UserRepository.create(UserMocks.userAttributes);
+    const { uuid: companyUuid } = await Company.create(companyMockData);
+    const { uuid: userUuid } = await User.create(UserMocks.userAttributes);
     const companyUser = await CompanyUser.create({ companyUuid, userUuid });
     expect(companyUser.companyUuid).toEqual(companyUuid);
     expect(companyUser.userUuid).toEqual(userUuid);

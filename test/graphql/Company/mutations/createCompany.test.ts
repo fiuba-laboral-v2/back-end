@@ -1,20 +1,22 @@
 import { gql } from "apollo-server";
 import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
-import { ICompany } from "../../../../src/models/Company";
-import { CompanyRepository } from "../../../../src/models/Company";
+import { CompanyRepository, ICompany } from "../../../../src/models/Company";
 import { CompanyPhoneNumberRepository } from "../../../../src/models/CompanyPhoneNumber";
 import { CompanyPhotoRepository } from "../../../../src/models/CompanyPhoto";
-import { companyMockData, phoneNumbers, photos } from "../../../models/Company/mocks";
+import { companyMockDataWithoutUser, phoneNumbers, photos } from "../../../models/Company/mocks";
+import { UserRepository } from "../../../../src/models/User";
+import { UserMocks } from "../../../models/User/mocks";
 
 const SAVE_COMPANY_WITH_COMPLETE_DATA = gql`
   mutation (
     $cuit: String!, $companyName: String!, $slogan: String, $description: String,
-    $logo: String, $website: String, $email: String, $phoneNumbers: [String], $photos: [String]) {
+    $logo: String, $website: String, $email: String, $phoneNumbers: [String],
+    $photos: [String], $user: UserInput!) {
     createCompany(
-        cuit: $cuit, companyName: $companyName, slogan: $slogan, description: $description,
-        logo: $logo, website: $website, email: $email, phoneNumbers: $phoneNumbers,
-        photos: $photos) {
+      cuit: $cuit, companyName: $companyName, slogan: $slogan, description: $description,
+      logo: $logo, website: $website, email: $email, phoneNumbers: $phoneNumbers,
+      photos: $photos, user: $user) {
       cuit
       companyName
       slogan
@@ -29,41 +31,46 @@ const SAVE_COMPANY_WITH_COMPLETE_DATA = gql`
 `;
 
 const SAVE_COMPANY_WITH_MINIMUM_DATA = gql`
-  mutation ($cuit: String!, $companyName: String!) {
-    createCompany(cuit: $cuit, companyName: $companyName) {
+  mutation ($cuit: String!, $companyName: String!, $user: UserInput!) {
+    createCompany(cuit: $cuit, companyName: $companyName, user: $user) {
       cuit
       companyName
     }
   }
 `;
 
+const companyDataWithoutUser = {
+  ...companyMockDataWithoutUser,
+  photos: photos,
+  phoneNumbers: phoneNumbers
+};
+
+const companyData: ICompany = {
+  ...companyDataWithoutUser,
+  user: UserMocks.userAttributes
+};
+
+const companyDataWithMinimumDataWithoutUser = {
+  cuit: "30711819017",
+  companyName: "devartis"
+};
+
+const companyDataWithMinimumData = {
+  ...companyDataWithMinimumDataWithoutUser,
+  user: UserMocks.userAttributes
+};
+
 describe("createCompany", () => {
-  beforeAll(async () => {
-    await Database.setConnection();
-  });
-
-  beforeEach(async () => {
-    await CompanyRepository.truncate();
-    await CompanyPhoneNumberRepository.truncate();
-    await CompanyPhotoRepository.truncate();
-  });
-
-  afterAll(async () => {
-    await Database.close();
-  });
-
-  const companyData: ICompany = {
-    ...companyMockData,
-    ...{ photos: photos, phoneNumbers: phoneNumbers }
-  };
-
-  const companyDataWithMinimumData = {
-    cuit: "30711819017",
-    companyName: "devartis"
-  };
+  beforeAll(() => Database.setConnection());
+  beforeEach(() => Promise.all([
+    CompanyRepository.truncate(),
+    CompanyPhoneNumberRepository.truncate(),
+    CompanyPhotoRepository.truncate(),
+    UserRepository.truncate()
+  ]));
+  afterAll(() => Database.close());
 
   describe("When the creation succeeds", () => {
-
     it("create company", async () => {
       const response = await executeMutation(SAVE_COMPANY_WITH_COMPLETE_DATA, companyData);
       expect(response.errors).toBeUndefined();
@@ -71,7 +78,7 @@ describe("createCompany", () => {
       expect(response.data).toEqual(
         {
           createCompany: {
-            ...companyData,
+            ...companyDataWithoutUser,
             phoneNumbers: expect.arrayContaining(companyData.phoneNumbers)
           }
         }
@@ -84,7 +91,7 @@ describe("createCompany", () => {
       );
       expect(response.errors).toBeUndefined();
       expect(response.data).not.toBeUndefined();
-      expect(response.data).toEqual({ createCompany: companyDataWithMinimumData });
+      expect(response.data).toEqual({ createCompany: companyDataWithMinimumDataWithoutUser });
     });
   });
 
@@ -96,7 +103,10 @@ describe("createCompany", () => {
       );
       const { errors } = await executeMutation(
         SAVE_COMPANY_WITH_MINIMUM_DATA,
-        companyDataWithMinimumData
+        {
+          ...companyDataWithMinimumData,
+          user: { ...UserMocks.userAttributes, email: "qwe@qwe.qwe" }
+        }
       );
       expect(errors[0].extensions.data).toEqual(
         { errorType: "CompanyCuitAlreadyExistsError" }

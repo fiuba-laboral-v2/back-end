@@ -2,6 +2,7 @@ import { gql } from "apollo-server";
 import { executeQuery } from "../../ApolloTestClient";
 import { CompanyRepository } from "../../../../src/models/Company";
 import Database from "../../../../src/config/Database";
+import { UserMocks } from "../../../models/User/mocks";
 
 const query = gql`
   query {
@@ -21,7 +22,7 @@ describe("getCompanies", () => {
 
   it("returns all companies", async () => {
     const companyParams = { cuit: "30711819017", companyName: "devartis" };
-    await CompanyRepository.create(companyParams);
+    await CompanyRepository.create({ ...companyParams, user: UserMocks.userAttributes });
     const response = await executeQuery(query);
 
     expect(response.errors).toBeUndefined();

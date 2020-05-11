@@ -3,29 +3,27 @@ import faker from "faker";
 import { Company, CompanyRepository } from "../../../src/models/Company";
 import { companyMockData, phoneNumbers, photos } from "./mocks";
 import Database from "../../../src/config/Database";
+import { UserMocks } from "../User/mocks";
+import { UserRepository } from "../../../src/models/User";
+
+const companyCompleteData = {
+  ...companyMockData,
+  photos: photos,
+  phoneNumbers: phoneNumbers
+};
+
+const companyDataWithMinimumData = {
+  cuit: "30711819017",
+  companyName: "devartis"
+};
 
 describe("CompanyRepository", () => {
-  const companyCompleteData = {
-    ...companyMockData,
-    ...{ photos: photos, phoneNumbers: phoneNumbers }
-  };
-
-  const companyDataWithMinimumData = {
-    cuit: "30711819017",
-    companyName: "devartis"
-  };
-
-  beforeAll(async () => {
-    await Database.setConnection();
-  });
-
-  beforeEach(async () => {
-    await CompanyRepository.truncate();
-  });
-
-  afterAll(async () => {
-    await Database.close();
-  });
+  beforeAll(() => Database.setConnection());
+  beforeEach(() => Promise.all([
+    CompanyRepository.truncate(),
+    UserRepository.truncate()
+  ]));
+  afterAll(() => Database.close());
 
   it("create a new company", async () => {
     const company: Company = await CompanyRepository.create(
@@ -53,20 +51,29 @@ describe("CompanyRepository", () => {
       CompanyRepository.create({
         cuit: "30711819017",
         companyName: "devartis",
-        description: faker.lorem.paragraph(7)
+        description: faker.lorem.paragraph(7),
+        user: UserMocks.userAttributes
       })
     ).resolves.not.toThrow();
   });
 
   it("should throw an error if cuit is null", async () => {
     await expect(
-      CompanyRepository.create({ cuit: null, companyName: "devartis" })
+      CompanyRepository.create({
+        cuit: null,
+        companyName: "devartis",
+        user: UserMocks.userAttributes
+      })
     ).rejects.toThrow(ValidationError);
   });
 
   it("should throw an error if companyName is null", async () => {
     await expect(
-      CompanyRepository.create({ cuit: "30711819017", companyName: null })
+      CompanyRepository.create({
+        cuit: "30711819017",
+        companyName: null,
+        user: UserMocks.userAttributes
+      })
     ).rejects.toThrow(ValidationError);
   });
 
@@ -101,7 +108,11 @@ describe("CompanyRepository", () => {
 
   it("should rollback transaction and throw error if photos is null", async () => {
     await expect(
-      CompanyRepository.create({ ...companyDataWithMinimumData, photos: [null] })
+      CompanyRepository.create({
+        ...companyDataWithMinimumData,
+        photos: [null],
+        user: UserMocks.userAttributes
+      })
     ).rejects.toThrow("aggregate error");
 
     const expectedCompanies = await CompanyRepository.findAll();
@@ -112,7 +123,11 @@ describe("CompanyRepository", () => {
 
   it("should rollback transaction and throw error if phoneNumber is null", async () => {
     await expect(
-      CompanyRepository.create({ ...companyDataWithMinimumData, phoneNumbers: [null] })
+      CompanyRepository.create({
+        ...companyDataWithMinimumData,
+        phoneNumbers: [null],
+        user: UserMocks.userAttributes
+      })
     ).rejects.toThrow("aggregate error");
     const expectedCompanies = await CompanyRepository.findAll();
     expect(expectedCompanies).not.toBeNull();

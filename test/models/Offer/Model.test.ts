@@ -2,7 +2,7 @@ import { NumberIsTooSmallError, SalaryRangeError } from "validations-fiuba-labor
 import Database from "../../../src/config/Database";
 import { Offer } from "../../../src/models/Offer";
 import { Company } from "../../../src/models/Company";
-import { companyMockData } from "../Company/mocks";
+import { companyMockData, companyMockDataWithoutUser } from "../Company/mocks";
 import { OfferMocks, TOfferNumbersProperties } from "./mocks";
 
 describe("Offer", () => {
@@ -38,7 +38,7 @@ describe("Offer", () => {
     await offer.save();
     expect(offer.uuid).not.toBeUndefined();
     expect(offer).toEqual(expect.objectContaining(offerAttributes));
-    expect(await offer.getCompany()).toEqual(expect.objectContaining(companyMockData));
+    expect(await offer.getCompany()).toEqual(expect.objectContaining(companyMockDataWithoutUser));
     expect(await company.getOffers()).toMatchObject([offerAttributes]);
   });
 
