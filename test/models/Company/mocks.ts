@@ -10,6 +10,14 @@ const additionalData = {
 };
 
 export const companyMocks = {
+  minimumDataWithoutUser: () => ({
+    cuit: "30711819017",
+    companyName: "devartis"
+  }),
+  minimumData: () => ({
+    ...companyMocks.minimumDataWithoutUser(),
+    user: UserMocks.userAttributes
+  }),
   companyDataWithoutUser: () => ({
     cuit: "30711819017",
     companyName: "Mercado Libre",
@@ -25,8 +33,8 @@ export const companyMocks = {
     email: "jobs@mercadolibre.com"
   }),
   companyData: (): ICompany => ({
-    user: UserMocks.userAttributes,
-    ...companyMocks.companyDataWithoutUser()
+    ...companyMocks.companyDataWithoutUser(),
+    user: UserMocks.userAttributes
   }),
   completeDataWithoutUser: () => ({
     ...companyMocks.companyDataWithoutUser(),

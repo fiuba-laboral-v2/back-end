@@ -1,7 +1,7 @@
 import { gql } from "apollo-server";
 import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
-import { CompanyRepository, ICompany } from "../../../../src/models/Company";
+import { CompanyRepository } from "../../../../src/models/Company";
 import { CompanyPhoneNumberRepository } from "../../../../src/models/CompanyPhoneNumber";
 import { CompanyPhotoRepository } from "../../../../src/models/CompanyPhoto";
 import { UserRepository } from "../../../../src/models/User";
@@ -39,21 +39,6 @@ const SAVE_COMPANY_WITH_MINIMUM_DATA = gql`
   }
 `;
 
-const companyData: ICompany = {
-  ...companyMocks.completeDataWithoutUser(),
-  user: UserMocks.userAttributes
-};
-
-const companyDataWithMinimumDataWithoutUser = {
-  cuit: "30711819017",
-  companyName: "devartis"
-};
-
-const companyDataWithMinimumData = {
-  ...companyDataWithMinimumDataWithoutUser,
-  user: UserMocks.userAttributes
-};
-
 describe("createCompany", () => {
   beforeAll(() => Database.setConnection());
   beforeEach(() => Promise.all([
@@ -66,14 +51,17 @@ describe("createCompany", () => {
 
   describe("When the creation succeeds", () => {
     it("create company", async () => {
-      const response = await executeMutation(SAVE_COMPANY_WITH_COMPLETE_DATA, companyData);
+      const response = await executeMutation(
+        SAVE_COMPANY_WITH_COMPLETE_DATA,
+        companyMocks.completeData()
+      );
       expect(response.errors).toBeUndefined();
       expect(response.data).not.toBeUndefined();
       expect(response.data).toEqual(
         {
           createCompany: {
             ...companyMocks.completeDataWithoutUser(),
-            phoneNumbers: expect.arrayContaining(companyData.phoneNumbers!)
+            phoneNumbers: expect.arrayContaining(companyMocks.completeData().phoneNumbers)
           }
         }
       );
@@ -81,11 +69,11 @@ describe("createCompany", () => {
 
     it("creates company with only obligatory data", async () => {
       const response = await executeMutation(
-        SAVE_COMPANY_WITH_MINIMUM_DATA, companyDataWithMinimumData
+        SAVE_COMPANY_WITH_MINIMUM_DATA, companyMocks.minimumData()
       );
       expect(response.errors).toBeUndefined();
       expect(response.data).not.toBeUndefined();
-      expect(response.data).toEqual({ createCompany: companyDataWithMinimumDataWithoutUser });
+      expect(response.data).toEqual({ createCompany: companyMocks.minimumDataWithoutUser() });
     });
   });
 
@@ -93,12 +81,12 @@ describe("createCompany", () => {
     it("should throw an error if the company with its cuit already exist", async () => {
       await executeMutation(
         SAVE_COMPANY_WITH_MINIMUM_DATA,
-        companyDataWithMinimumData
+        companyMocks.minimumData()
       );
       const { errors } = await executeMutation(
         SAVE_COMPANY_WITH_MINIMUM_DATA,
         {
-          ...companyDataWithMinimumData,
+          ...companyMocks.minimumData(),
           user: { ...UserMocks.userAttributes, email: "qwe@qwe.qwe" }
         }
       );
