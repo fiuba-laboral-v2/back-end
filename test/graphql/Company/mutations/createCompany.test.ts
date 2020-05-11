@@ -11,7 +11,7 @@ const SAVE_COMPANY_WITH_COMPLETE_DATA = gql`
   mutation (
     $cuit: String!, $companyName: String!, $slogan: String, $description: String,
     $logo: String, $website: String, $email: String, $phoneNumbers: [String], $photos: [String]) {
-    saveCompany(
+    createCompany(
         cuit: $cuit, companyName: $companyName, slogan: $slogan, description: $description,
         logo: $logo, website: $website, email: $email, phoneNumbers: $phoneNumbers,
         photos: $photos) {
@@ -30,14 +30,14 @@ const SAVE_COMPANY_WITH_COMPLETE_DATA = gql`
 
 const SAVE_COMPANY_WITH_MINIMUM_DATA = gql`
   mutation ($cuit: String!, $companyName: String!) {
-    saveCompany(cuit: $cuit, companyName: $companyName) {
+    createCompany(cuit: $cuit, companyName: $companyName) {
       cuit
       companyName
     }
   }
 `;
 
-describe("saveCompany", () => {
+describe("createCompany", () => {
   beforeAll(async () => {
     await Database.setConnection();
   });
@@ -70,7 +70,7 @@ describe("saveCompany", () => {
       expect(response.data).not.toBeUndefined();
       expect(response.data).toEqual(
         {
-          saveCompany: {
+          createCompany: {
             ...companyData,
             phoneNumbers: expect.arrayContaining(companyData.phoneNumbers)
           }
@@ -84,7 +84,7 @@ describe("saveCompany", () => {
       );
       expect(response.errors).toBeUndefined();
       expect(response.data).not.toBeUndefined();
-      expect(response.data).toEqual({ saveCompany: companyDataWithMinimumData });
+      expect(response.data).toEqual({ createCompany: companyDataWithMinimumData });
     });
   });
 

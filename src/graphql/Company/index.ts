@@ -1,5 +1,3 @@
-import { companyTypes } from "./Types/";
-import companyMutations from "./mutation";
-import companyQueries from "./queries";
-
-export { companyMutations, companyTypes, companyQueries };
+export { companyTypes } from "./Types";
+export { companyQueries } from "./Queries";
+export { companyMutations } from "./Mutations";
