@@ -7,6 +7,7 @@ export = {
       "Offers",
       [
         {
+          uuid: uuids.offers.java_semi_senior,
           companyUuid: uuids.companies.devartis,
           title: "Desarrollador Java semi senior",
           description: "Que sepa Java",

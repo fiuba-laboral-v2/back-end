@@ -2,6 +2,9 @@ export const uuids = {
   companies: {
     devartis: "7f03fcfa-93a9-476b-881a-b81a7ea9dbd3"
   },
+  offers: {
+    java_semi_senior: "7f03fcfa-93a9-476b-881a-b81a7ea9dbd6"
+  },
   sebastian: {
     applicant: "238a8b4b-430d-4a4d-b91e-a95a393d1279",
     user: "22ae51ae-6eb7-4bd0-8824-9a469f681bb3"

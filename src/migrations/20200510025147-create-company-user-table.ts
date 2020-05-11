@@ -33,7 +33,7 @@ export = {
         "CompanyUsers",
         ["companyUuid", "userUuid"],
         {
-          type: "unique",
+          type: "primary key",
           name: "CompanyUsers_companyUuid_userUuid_key",
           transaction
         }
