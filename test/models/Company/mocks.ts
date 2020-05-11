@@ -2,7 +2,7 @@ import faker from "faker";
 import { UserMocks } from "../User/mocks";
 
 export const companyMockDataWithoutUser = {
-  cuit: faker.random.arrayElement(["30711819017", "30701307115", "30703088534"]),
+  cuit: "30711819017",
   companyName: faker.name.firstName(),
   slogan: faker.company.catchPhrase(),
   description: faker.lorem.sentence(),
