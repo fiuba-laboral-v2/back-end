@@ -1,5 +1,4 @@
-import { INTEGER, QueryInterface } from "sequelize";
-import { DataType } from "sequelize-typescript";
+import { DATE, INTEGER, QueryInterface, STRING, UUID } from "sequelize";
 
 export = {
   up: (queryInterface: QueryInterface) => {
@@ -9,13 +8,13 @@ export = {
         {
           careerCode: {
             allowNull: false,
-            type: DataType.STRING,
+            type: STRING,
             references: { model: "Careers", key: "code" },
             onDelete: "CASCADE"
           },
           applicantUuid: {
             allowNull: false,
-            type: DataType.UUID,
+            type: UUID,
             references: { model: "Applicants", key: "uuid" },
             onDelete: "CASCADE"
           },
@@ -26,11 +25,11 @@ export = {
           },
           createdAt: {
             allowNull: false,
-            type: DataType.DATE
+            type: DATE
           },
           updatedAt: {
             allowNull: false,
-            type: DataType.DATE
+            type: DATE
           }
         },
         { transaction }

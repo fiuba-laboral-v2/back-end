@@ -1,4 +1,4 @@
-import { QueryInterface, UUID, DATE } from "sequelize";
+import { DATE, QueryInterface, UUID } from "sequelize";
 
 export = {
   up: (queryInterface: QueryInterface) =>

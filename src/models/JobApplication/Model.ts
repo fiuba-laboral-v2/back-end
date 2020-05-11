@@ -1,5 +1,5 @@
-import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
-import { HasOneGetAssociationMixin } from "sequelize";
+import { BelongsTo, Column, ForeignKey, Model, Table } from "sequelize-typescript";
+import { HasOneGetAssociationMixin, UUID } from "sequelize";
 
 import { Offer } from "../Offer/Model";
 import { Applicant } from "../Applicant/Model";
@@ -10,7 +10,7 @@ export class JobApplication extends Model<JobApplication> {
   @Column({
     allowNull: false,
     primaryKey: true,
-    type: DataType.UUID
+    type: UUID
   })
   public offerUuid: string;
 
@@ -21,7 +21,7 @@ export class JobApplication extends Model<JobApplication> {
   @Column({
     allowNull: false,
     primaryKey: true,
-    type: DataType.UUID
+    type: UUID
   })
   public applicantUuid: string;
 

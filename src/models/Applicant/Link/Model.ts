@@ -1,15 +1,7 @@
-import {
-  BelongsTo,
-  Column,
-  DataType,
-  ForeignKey,
-  Is,
-  Model,
-  Table,
-  PrimaryKey
-} from "sequelize-typescript";
+import { BelongsTo, Column, ForeignKey, Is, Model, PrimaryKey, Table } from "sequelize-typescript";
 import { Applicant } from "../Model";
 import { validateURL } from "validations-fiuba-laboral-v2";
+import { STRING, UUID } from "sequelize";
 
 @Table({ tableName: "ApplicantsLinks" })
 export class ApplicantLink extends Model<ApplicantLink> {
@@ -17,7 +9,7 @@ export class ApplicantLink extends Model<ApplicantLink> {
   @PrimaryKey
   @Column({
     allowNull: false,
-    type: DataType.UUID
+    type: UUID
   })
   public applicantUuid: string;
 
@@ -27,14 +19,14 @@ export class ApplicantLink extends Model<ApplicantLink> {
   @PrimaryKey
   @Column({
     allowNull: false,
-    type: DataType.STRING
+    type: STRING
   })
   public name: string;
 
   @Is(validateURL)
   @Column({
     allowNull: false,
-    type: DataType.STRING
+    type: STRING
   })
   public url: string;
 }

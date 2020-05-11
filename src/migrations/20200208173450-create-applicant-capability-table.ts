@@ -1,5 +1,4 @@
-import { QueryInterface } from "sequelize";
-import { DataType } from "sequelize-typescript";
+import { DATE, QueryInterface, UUID } from "sequelize";
 
 export = {
   up: (queryInterface: QueryInterface) => {
@@ -7,24 +6,24 @@ export = {
       applicantUuid: {
         allowNull: false,
         primaryKey: true,
-        type: DataType.UUID,
+        type: UUID,
         references: { model: "Applicants", key: "uuid" },
         onDelete: "CASCADE"
       },
       capabilityUuid: {
         allowNull: false,
         primaryKey: true,
-        type: DataType.UUID,
+        type: UUID,
         references: { model: "Capabilities", key: "uuid" },
         onDelete: "CASCADE"
       },
       createdAt: {
         allowNull: false,
-        type: DataType.DATE
+        type: DATE
       },
       updatedAt: {
         allowNull: false,
-        type: DataType.DATE
+        type: DATE
       }
     });
   },

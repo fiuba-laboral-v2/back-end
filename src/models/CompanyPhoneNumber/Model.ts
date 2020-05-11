@@ -1,14 +1,7 @@
-import {
-  BelongsTo,
-  Column,
-  DataType,
-  ForeignKey,
-  Model,
-  Table,
-  Is
-} from "sequelize-typescript";
+import { BelongsTo, Column, ForeignKey, Is, Model, Table } from "sequelize-typescript";
 import { validatePhoneNumber } from "validations-fiuba-laboral-v2";
 import { Company } from "../Company";
+import { STRING, UUID } from "sequelize";
 
 @Table
 export default class CompanyPhoneNumber extends Model<CompanyPhoneNumber> {
@@ -16,7 +9,7 @@ export default class CompanyPhoneNumber extends Model<CompanyPhoneNumber> {
   @Column({
     primaryKey: true,
     allowNull: false,
-    type: DataType.STRING
+    type: STRING
   })
   public phoneNumber: number;
 
@@ -24,7 +17,7 @@ export default class CompanyPhoneNumber extends Model<CompanyPhoneNumber> {
   @Column({
     primaryKey: true,
     allowNull: false,
-    type: DataType.UUID
+    type: UUID
   })
   public companyUuid: string;
 

@@ -2,15 +2,14 @@ import {
   AllowNull,
   BeforeCreate,
   Column,
-  DataType,
+  HasOne,
   Is,
   Model,
   Table,
-  Unique,
-  HasOne
+  Unique
 } from "sequelize-typescript";
 import { compare, hashSync } from "bcrypt";
-import { HasOneGetAssociationMixin } from "sequelize";
+import { HasOneGetAssociationMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
 import { Applicant } from "../Applicant/Model";
 import { validateEmail, validateName, validatePassword } from "validations-fiuba-laboral-v2";
 
@@ -26,32 +25,32 @@ export class User extends Model<User> {
   @Column({
     allowNull: false,
     primaryKey: true,
-    type: DataType.UUID,
-    defaultValue: DataType.UUIDV4
+    type: UUID,
+    defaultValue: UUIDV4
   })
   public uuid: string;
 
   @Is(validateEmail)
   @Unique
   @AllowNull(false)
-  @Column(DataType.STRING)
+  @Column(STRING)
   public email: string;
 
   @AllowNull(false)
-  @Column(DataType.STRING)
+  @Column(STRING)
   public password: string;
 
   @Is(validateName)
   @Column({
     allowNull: false,
-    type: DataType.TEXT
+    type: TEXT
   })
   public name: string;
 
   @Is(validateName)
   @Column({
     allowNull: false,
-    type: DataType.TEXT
+    type: TEXT
   })
   public surname: string;
 

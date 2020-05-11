@@ -1,5 +1,4 @@
-import { QueryInterface } from "sequelize";
-import { DataType } from "sequelize-typescript";
+import { CITEXT, DATE, QueryInterface, UUID } from "sequelize";
 
 export = {
   up: (queryInterface: QueryInterface) => {
@@ -14,19 +13,19 @@ export = {
           uuid: {
             allowNull: false,
             primaryKey: true,
-            type: DataType.UUID
+            type: UUID
           },
           description: {
             allowNull: false,
-            type: DataType.CITEXT
+            type: CITEXT
           },
           createdAt: {
             allowNull: false,
-            type: DataType.DATE
+            type: DATE
           },
           updatedAt: {
             allowNull: false,
-            type: DataType.DATE
+            type: DATE
           }
         },
         { transaction }

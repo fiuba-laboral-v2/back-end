@@ -1,5 +1,4 @@
-import { DATE, UUID, QueryInterface, STRING } from "sequelize";
-import { DataType } from "sequelize-typescript";
+import { DATE, QueryInterface, STRING, TEXT, UUID } from "sequelize";
 
 export = {
   up: (queryInterface: QueryInterface) => {
@@ -20,11 +19,11 @@ export = {
       },
       name: {
         allowNull: false,
-        type: DataType.TEXT
+        type: TEXT
       },
       surname: {
         allowNull: false,
-        type: DataType.TEXT
+        type: TEXT
       },
       createdAt: {
         allowNull: false,
