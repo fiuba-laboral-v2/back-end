@@ -10,8 +10,10 @@ describe("CompanyUser", () => {
   it("needs to reference a company and a user", () =>
     expect((new CompanyUser()).validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
-      "notNull Violation: CompanyUser.companyUuid cannot be null,\n" +
-      "notNull Violation: CompanyUser.userUuid cannot be null"
+      [
+        "notNull Violation: CompanyUser.companyUuid cannot be null",
+        "notNull Violation: CompanyUser.userUuid cannot be null"
+      ]
     )
   );
 
