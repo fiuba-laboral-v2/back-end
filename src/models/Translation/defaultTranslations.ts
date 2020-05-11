@@ -1,4 +1,8 @@
 export const defaultTranslations = {
+  register: [
+    { key: "registerAsCompany", value: "Registrarme como empresa" },
+    { key: "registerAsApplicant", value: "Registrarme como alumno" }
+  ],
   applicantList: [
     { key: "title", value: "Postulantes" }
   ],
