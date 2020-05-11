@@ -2,8 +2,6 @@ import { gql } from "apollo-server";
 import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 import { CompanyRepository } from "../../../../src/models/Company";
-import { CompanyPhoneNumberRepository } from "../../../../src/models/CompanyPhoneNumber";
-import { CompanyPhotoRepository } from "../../../../src/models/CompanyPhoto";
 import { UserRepository } from "../../../../src/models/User";
 import { UserMocks } from "../../../models/User/mocks";
 import { companyMocks } from "../../../models/Company/mocks";
@@ -43,8 +41,6 @@ describe("createCompany", () => {
   beforeAll(() => Database.setConnection());
   beforeEach(() => Promise.all([
     CompanyRepository.truncate(),
-    CompanyPhoneNumberRepository.truncate(),
-    CompanyPhotoRepository.truncate(),
     UserRepository.truncate()
   ]));
   afterAll(() => Database.close());
