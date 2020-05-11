@@ -1,3 +1,5 @@
+import { IUser } from "../User";
+
 export interface ICompany {
   cuit: string;
   companyName: string;
@@ -8,4 +10,5 @@ export interface ICompany {
   email?: string;
   phoneNumbers?: string[];
   photos?: string[];
+  user: IUser;
 }

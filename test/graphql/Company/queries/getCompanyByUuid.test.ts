@@ -3,42 +3,38 @@ import { executeQuery } from "../../ApolloTestClient";
 import { Company, CompanyRepository } from "../../../../src/models/Company";
 import { companyMocks } from "../../../models/Company/mocks";
 import Database from "../../../../src/config/Database";
+import { UserRepository } from "../../../../src/models/User";
 
 const query = gql`
   query ($uuid: ID!) {
     getCompanyByUuid(uuid: $uuid) {
-        cuit
-        companyName
-        slogan
-        description
-        logo
-        website
-        email
-        phoneNumbers
-        photos
+      cuit
+      companyName
+      slogan
+      description
+      logo
+      website
+      email
+      phoneNumbers
+      photos
     }
   }
 `;
 
 describe("getCompanyByUuid", () => {
-  const companyCompleteData = companyMocks.completeData();
   beforeAll(() => Database.setConnection());
-
-  beforeEach(() => CompanyRepository.truncate());
-
+  beforeEach(() => Promise.all([
+    CompanyRepository.truncate(),
+    UserRepository.truncate()
+  ]));
   afterAll(() => Database.close());
 
   it("finds a company given its uuid", async () => {
-    const company: Company = await CompanyRepository.create(companyCompleteData);
+    const company: Company = await CompanyRepository.create(companyMocks.completeData());
     const response = await executeQuery(query, { uuid: company.uuid });
     expect(response.errors).toBeUndefined();
     expect(response.data).not.toBeUndefined();
-    expect(response.data).toEqual({
-      getCompanyByUuid: {
-        ...companyCompleteData,
-        phoneNumbers: expect.arrayContaining(companyCompleteData.phoneNumbers!)
-      }
-    });
+    expect(response.data).toEqual({ getCompanyByUuid: companyMocks.completeDataWithoutUser() });
   });
 
   it("returns error if the Company does not exists", async () => {

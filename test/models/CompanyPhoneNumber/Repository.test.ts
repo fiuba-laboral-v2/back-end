@@ -1,21 +1,25 @@
 import { DatabaseError, ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
 import Database from "../../../src/config/Database";
-import { CompanyRepository, Company } from "../../../src/models/Company";
+import { Company, CompanyRepository } from "../../../src/models/Company";
 import {
   CompanyPhoneNumber,
   CompanyPhoneNumberRepository
 } from "../../../src/models/CompanyPhoneNumber";
+import { UserRepository } from "../../../src/models/User";
+import { UserMocks } from "../User/mocks";
+import { companyMocks } from "../Company/mocks";
 
 describe("CompanyPhoneNumberRepository", () => {
   beforeAll(() => Database.setConnection());
-
-  beforeEach(() => CompanyRepository.truncate());
-
+  beforeEach(() => Promise.all([
+    CompanyRepository.truncate(),
+    UserRepository.truncate()
+  ]));
   afterAll(() => Database.close());
 
   it("creates several phoneNumbers for the same company", async () => {
     const phoneNumbers = ["1144444444", "1155555555", "1166666666"];
-    const company = await CompanyRepository.create({ cuit: "30711819017", companyName: "name" });
+    const company = await CompanyRepository.create(companyMocks.companyData());
     await expect(
       CompanyPhoneNumberRepository.bulkCreate(phoneNumbers, company)
     ).resolves.not.toThrow();
@@ -23,7 +27,7 @@ describe("CompanyPhoneNumberRepository", () => {
 
   it("throws an error if a phone number is repeated in a bulk create", async () => {
     const phoneNumbers = ["1144444444", "1144444444", "1166666666"];
-    const company = await CompanyRepository.create({ cuit: "30711819017", companyName: "name" });
+    const company = await CompanyRepository.create(companyMocks.companyData());
     await expect(
       CompanyPhoneNumberRepository.bulkCreate(phoneNumbers, company)
     ).rejects.toThrow(UniqueConstraintError);
@@ -31,7 +35,7 @@ describe("CompanyPhoneNumberRepository", () => {
 
   it("throws an error if a company has already the same phoneNumber", async () => {
     const phoneNumber = "1144444444";
-    const company = await CompanyRepository.create({ cuit: "30711819017", companyName: "name" });
+    const company = await CompanyRepository.create(companyMocks.companyData());
     await CompanyPhoneNumberRepository.create(phoneNumber, company);
     await expect(CompanyPhoneNumberRepository.create(
       phoneNumber, company)
@@ -39,7 +43,7 @@ describe("CompanyPhoneNumberRepository", () => {
   });
 
   it("throws a database constraint error if phoneNumber is very large", async () => {
-    const company = await CompanyRepository.create({ cuit: "30711819017", companyName: "name" });
+    const company = await CompanyRepository.create(companyMocks.companyData());
     const phoneNumber = new CompanyPhoneNumber({
       companyUuid: company.uuid,
       phoneNumber: "0".repeat(300)
@@ -65,9 +69,20 @@ describe("CompanyPhoneNumberRepository", () => {
   });
 
   it("truncates phoneNumber by cascade when we remove its company", async () => {
-    const company = await CompanyRepository.create({ cuit: "30711819017", companyName: "name" });
-    await CompanyRepository.create({ cuit: "30701307115", companyName: "name" });
-    await CompanyRepository.create({ cuit: "30703088534", companyName: "name" });
+    const company = await CompanyRepository.create({
+      ...companyMocks.companyData(),
+      cuit: "30711819017"
+    });
+    await CompanyRepository.create({
+      ...companyMocks.companyData(),
+      user: { ...UserMocks.userAttributes, email: "asd@asd.asd" },
+      cuit: "30701307115"
+    });
+    await CompanyRepository.create({
+      ...companyMocks.companyData(),
+      user: { ...UserMocks.userAttributes, email: "qwe@qwe.qwe" },
+      cuit: "30703088534"
+    });
     await CompanyPhoneNumberRepository.create("1144444444", company);
     expect(await CompanyPhoneNumberRepository.findAll()).toHaveLength(1);
     await company.destroy();
@@ -75,13 +90,11 @@ describe("CompanyPhoneNumberRepository", () => {
   });
 
   it("does not truncate phoneNumber by cascade when we remove another company", async () => {
-    const company = await CompanyRepository.create({
-      cuit: "30711819017",
-      companyName: "name"
-    });
+    const company = await CompanyRepository.create(companyMocks.companyData());
     const anotherCompany = await CompanyRepository.create({
-      cuit: "30701307115",
-      companyName: "name"
+      ...companyMocks.companyData(),
+      user: { ...UserMocks.userAttributes, email: "qwe@qwe.qwe" },
+      cuit: "23390691939"
     });
     await CompanyPhoneNumberRepository.create("(011) 44444444", company);
     expect(await CompanyPhoneNumberRepository.findAll()).toHaveLength(1);

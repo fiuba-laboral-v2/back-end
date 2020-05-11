@@ -1,5 +1,4 @@
-import { QueryInterface } from "sequelize";
-import { DataType } from "sequelize-typescript";
+import { DATE, INTEGER, QueryInterface, STRING, TEXT } from "sequelize";
 
 export = {
   up: (queryInterface: QueryInterface) => {
@@ -9,23 +8,23 @@ export = {
         {
           code: {
             allowNull: false,
-            type: DataType.STRING
+            type: STRING
           },
           description: {
             allowNull: false,
-            type: DataType.TEXT
+            type: TEXT
           },
           credits: {
             allowNull: false,
-            type: DataType.INTEGER
+            type: INTEGER
           },
           createdAt: {
             allowNull: false,
-            type: DataType.DATE
+            type: DATE
           },
           updatedAt: {
             allowNull: false,
-            type: DataType.DATE
+            type: DATE
           }
         },
         { transaction }

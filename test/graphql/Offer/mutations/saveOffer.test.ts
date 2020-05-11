@@ -7,6 +7,7 @@ import { CompanyRepository } from "../../../../src/models/Company";
 import { careerMocks } from "../../../models/Career/mocks";
 import { companyMocks } from "../../../models/Company/mocks";
 import { OfferMocks } from "../../../models/Offer/mocks";
+import { UserRepository } from "../../../../src/models/User";
 
 const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
     mutation saveOffer(
@@ -72,14 +73,12 @@ const SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA = gql`
 `;
 
 describe("saveOffer", () => {
-
   beforeAll(() => Database.setConnection());
-
-  beforeEach(async () => {
-    await CompanyRepository.truncate();
-    await CareerRepository.truncate();
-  });
-
+  beforeEach(() => Promise.all([
+    CompanyRepository.truncate(),
+    CareerRepository.truncate(),
+    UserRepository.truncate()
+  ]));
   afterAll(() => Database.close());
 
   describe("when the input values are valid", () => {

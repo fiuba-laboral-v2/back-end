@@ -2,14 +2,20 @@ import {
   BelongsTo,
   BelongsToMany,
   Column,
-  DataType,
   ForeignKey,
   HasMany,
   Is,
   Model,
   Table
 } from "sequelize-typescript";
-import { HasManyGetAssociationsMixin, HasOneGetAssociationMixin } from "sequelize";
+import {
+  HasManyGetAssociationsMixin,
+  HasOneGetAssociationMixin,
+  INTEGER,
+  TEXT,
+  UUID,
+  UUIDV4
+} from "sequelize";
 import { Company } from "../Company";
 import { OfferSection } from "./OfferSection";
 import { OfferCareer } from "./OfferCareer";
@@ -28,15 +34,15 @@ export class Offer extends Model<Offer> {
   @Column({
     allowNull: false,
     primaryKey: true,
-    type: DataType.UUID,
-    defaultValue: DataType.UUIDV4
+    type: UUID,
+    defaultValue: UUIDV4
   })
   public uuid: string;
 
   @ForeignKey(() => Company)
   @Column({
     allowNull: false,
-    type: DataType.UUID
+    type: UUID
   })
   public companyUuid: string;
 
@@ -45,34 +51,34 @@ export class Offer extends Model<Offer> {
 
   @Column({
     allowNull: false,
-    type: DataType.TEXT
+    type: TEXT
   })
   public title: string;
 
   @Column({
     allowNull: false,
-    type: DataType.TEXT
+    type: TEXT
   })
   public description: string;
 
   @Is("hoursPerDay", validateIntegerInRange({ min: { value: 0, include: false } }))
   @Column({
     allowNull: false,
-    type: DataType.INTEGER
+    type: INTEGER
   })
   public hoursPerDay: number;
 
   @Is("minimumSalary", validateIntegerInRange({ min: { value: 0, include: false } }))
   @Column({
     allowNull: false,
-    type: DataType.INTEGER
+    type: INTEGER
   })
   public minimumSalary: number;
 
   @Is("maximumSalary", validateIntegerInRange({ min: { value: 0, include: false } }))
   @Column({
     allowNull: false,
-    type: DataType.INTEGER
+    type: INTEGER
   })
   public maximumSalary: number;
 

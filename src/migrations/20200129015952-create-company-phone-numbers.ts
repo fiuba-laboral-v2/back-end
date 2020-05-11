@@ -1,5 +1,4 @@
-import { QueryInterface } from "sequelize";
-import { DataType } from "sequelize-typescript";
+import { DATE, QueryInterface, STRING, UUID } from "sequelize";
 
 export = {
   up: (queryInterface: QueryInterface) => {
@@ -9,21 +8,21 @@ export = {
         {
           phoneNumber: {
             allowNull: false,
-            type: DataType.STRING
+            type: STRING
           },
           companyUuid: {
             allowNull: false,
-            type: DataType.UUID,
+            type: UUID,
             references: { model: "Companies", key: "uuid" },
             onDelete: "CASCADE"
           },
           createdAt: {
             allowNull: false,
-            type: DataType.DATE
+            type: DATE
           },
           updatedAt: {
             allowNull: false,
-            type: DataType.DATE
+            type: DATE
           }
         },
         { transaction }

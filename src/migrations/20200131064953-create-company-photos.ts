@@ -1,5 +1,4 @@
 import { UUID, DATE, TEXT, QueryInterface } from "sequelize";
-import uuid from "uuid/v4";
 
 export = {
   up: (queryInterface: QueryInterface) => {
@@ -7,8 +6,7 @@ export = {
       uuid: {
         allowNull: false,
         primaryKey: true,
-        type: UUID,
-        defaultValue: uuid()
+        type: UUID
       },
       photo: {
         type: TEXT

@@ -1,6 +1,7 @@
-import { Column, DataType, Model, Table, ForeignKey, BelongsTo } from "sequelize-typescript";
+import { BelongsTo, Column, ForeignKey, Model, Table } from "sequelize-typescript";
 import { Offer } from "../Model";
 import { Career } from "../../Career/Model";
+import { INTEGER, UUID } from "sequelize";
 
 @Table({ tableName: "OffersCareers" })
 export class OfferCareer extends Model<OfferCareer> {
@@ -8,7 +9,7 @@ export class OfferCareer extends Model<OfferCareer> {
   @Column({
     allowNull: false,
     primaryKey: true,
-    type: DataType.INTEGER
+    type: INTEGER
   })
   public careerCode: string;
 
@@ -19,7 +20,7 @@ export class OfferCareer extends Model<OfferCareer> {
   @Column({
     allowNull: false,
     primaryKey: true,
-    type: DataType.UUID
+    type: UUID
   })
   public offerUuid: string;
 

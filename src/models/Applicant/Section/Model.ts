@@ -1,27 +1,21 @@
-import {
-  Column,
-  DataType,
-  Model,
-  Table,
-  ForeignKey,
-  BelongsTo,
-} from "sequelize-typescript";
+import { BelongsTo, Column, ForeignKey, Model, Table } from "sequelize-typescript";
 import { Applicant } from "../Model";
+import { INTEGER, TEXT, UUID, UUIDV4 } from "sequelize";
 
 @Table({ tableName: "Sections" })
 export class Section extends Model<Section> {
   @Column({
     allowNull: false,
     primaryKey: true,
-    type: DataType.UUID,
-    defaultValue: DataType.UUIDV4
+    type: UUID,
+    defaultValue: UUIDV4
   })
   public uuid: string;
 
   @ForeignKey(() => Applicant)
   @Column({
     allowNull: false,
-    type: DataType.UUID
+    type: UUID
   })
   public applicantUuid: string;
 
@@ -30,20 +24,20 @@ export class Section extends Model<Section> {
 
   @Column({
     allowNull: false,
-    type: DataType.TEXT
+    type: TEXT
   })
   public title: string;
 
   @Column({
     allowNull: false,
-    type: DataType.TEXT
+    type: TEXT
   })
   public text: string;
 
   @Column({
     allowNull: false,
     autoIncrement: true,
-    type: DataType.INTEGER
+    type: INTEGER
   })
   public displayOrder: number;
 }

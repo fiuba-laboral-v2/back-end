@@ -1,7 +1,4 @@
-import { QueryInterface, UUID } from "sequelize";
-import { DataType } from "sequelize-typescript";
-
-import uuid from "uuid/v4";
+import { DATE, INTEGER, QueryInterface, TEXT, UUID } from "sequelize";
 
 export = {
   up: (queryInterface: QueryInterface) => {
@@ -9,8 +6,7 @@ export = {
       uuid: {
         allowNull: false,
         primaryKey: true,
-        type: DataType.UUID,
-        defaultValue: uuid()
+        type: UUID
       },
       userUuid: {
         allowNull: false,
@@ -20,19 +16,19 @@ export = {
       },
       padron: {
         allowNull: false,
-        type: DataType.INTEGER
+        type: INTEGER
       },
       description: {
         allowNull: true,
-        type: DataType.TEXT
+        type: TEXT
       },
       createdAt: {
         allowNull: false,
-        type: DataType.DATE
+        type: DATE
       },
       updatedAt: {
         allowNull: false,
-        type: DataType.DATE
+        type: DATE
       }
     });
   },

@@ -1,31 +1,24 @@
-import {
-  AllowNull,
-  BelongsTo,
-  Column,
-  DataType,
-  ForeignKey,
-  Model,
-  Table
-} from "sequelize-typescript";
+import { AllowNull, BelongsTo, Column, ForeignKey, Model, Table } from "sequelize-typescript";
 import { Company } from "../Company";
+import { TEXT, UUID, UUIDV4 } from "sequelize";
 
 @Table
 export default class CompanyPhoto extends Model<CompanyPhoto> {
   @Column({
     allowNull: false,
     primaryKey: true,
-    type: DataType.UUID,
-    defaultValue: DataType.UUIDV4
+    type: UUID,
+    defaultValue: UUIDV4
   })
   public uuid: string;
 
   @AllowNull(false)
-  @Column(DataType.TEXT)
+  @Column(TEXT)
   public photo: string;
 
   @ForeignKey(() => Company)
   @AllowNull(false)
-  @Column(DataType.UUID)
+  @Column(UUID)
   public companyUuid: string;
 
   @BelongsTo(() => Company)
