@@ -8,12 +8,6 @@ import { UserRepository } from "../../../src/models/User";
 
 const companyCompleteData = companyMocks.completeData();
 
-const companyDataWithMinimumData = {
-  cuit: "30711819017",
-  companyName: "devartis",
-  user: UserMocks.userAttributes
-};
-
 describe("CompanyRepository", () => {
   beforeAll(() => Database.setConnection());
   beforeEach(() => Promise.all([
@@ -126,7 +120,7 @@ describe("CompanyRepository", () => {
     await expect(
       CompanyRepository.create(
         {
-          ...companyDataWithMinimumData,
+          ...companyMocks.minimumData(),
           phoneNumbers: ["InvalidPhoneNumber1", "InvalidPhoneNumber2"]
         }
       )
@@ -139,7 +133,8 @@ describe("CompanyRepository", () => {
   it("throws an error if phoneNumbers are duplicated", async () => {
     await expect(
       CompanyRepository.create(
-        { ...companyDataWithMinimumData,
+        {
+          ...companyMocks.minimumData(),
           phoneNumbers: ["1159821066", "1159821066"]
         }
       )
