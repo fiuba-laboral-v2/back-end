@@ -1,6 +1,5 @@
 import { QueryInterface } from "sequelize";
 import { DataType } from "sequelize-typescript";
-import uuid from "uuid/v4";
 
 export = {
   up: (queryInterface: QueryInterface) => {
@@ -15,8 +14,7 @@ export = {
           uuid: {
             allowNull: false,
             primaryKey: true,
-            type: DataType.UUID,
-            defaultValue: uuid()
+            type: DataType.UUID
           },
           description: {
             allowNull: false,

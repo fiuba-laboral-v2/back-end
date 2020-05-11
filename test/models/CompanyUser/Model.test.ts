@@ -1,57 +1,42 @@
 import Database from "../../../src/config/Database";
 import { CompanyUser } from "../../../src/models/CompanyUser";
-import { Company, CompanyRepository } from "../../../src/models/Company";
-import { User, UserRepository } from "../../../src/models/User";
-import { UserMocks } from "../User/mocks";
-import { companyMocks } from "../Company/mocks";
-
-const nonExistentUuid = "7f03fcfa-93a9-476b-881a-b81a7ea9dbd3";
+import { ValidationError } from "sequelize";
+import uuid from "uuid/v4";
 
 describe("CompanyUser", () => {
   beforeAll(() => Database.setConnection());
-  beforeEach(() => Promise.all([
-    CompanyRepository.truncate(),
-    UserRepository.truncate()
-  ]));
   afterAll(() => Database.close());
 
-  it("needs to reference a company", () =>
-    expect(CompanyUser.create()).rejects.toThrow(
-      "null value in column \"companyUuid\" violates not-null constraint"
+  it("needs to reference a company and a user", () =>
+    expect((new CompanyUser()).validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      "notNull Violation: CompanyUser.companyUuid cannot be null,\n" +
+      "notNull Violation: CompanyUser.userUuid cannot be null"
+    )
+  );
+
+  it("needs to reference a company", async () =>
+    expect((new CompanyUser({
+      userUuid: uuid()
+    })).validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      "notNull Violation: CompanyUser.companyUuid cannot be null"
     )
   );
 
   it("needs to reference a user", async () =>
-    await expect(CompanyUser.create({
-      companyUuid: (await CompanyRepository.create(companyMocks.companyData())).uuid
-    })).rejects.toThrow(
-      "null value in column \"userUuid\" violates not-null constraint"
+    expect((new CompanyUser({
+      companyUuid: uuid()
+    })).validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      "notNull Violation: CompanyUser.userUuid cannot be null"
     )
   );
 
-  it("needs to reference an existing company", async () =>
-    await expect(CompanyUser.create({
-      companyUuid: nonExistentUuid,
-      userUuid: (await UserRepository.create(UserMocks.userAttributes)).uuid
-    })).rejects.toThrow(
-      "violates foreign key constraint \"CompanyUsers_companyUuid_fkey\""
-    )
+  it("is valid when both references are present", () =>
+    expect((new CompanyUser({
+      companyUuid: uuid(),
+      userUuid: uuid()
+    })).validate()).resolves.not.toThrow()
   );
-
-  it("needs to reference an existing user", async () =>
-    await expect(CompanyUser.create({
-      companyUuid: (await CompanyRepository.create(companyMocks.companyData())).uuid,
-      userUuid: nonExistentUuid
-    })).rejects.toThrow(
-      "violates foreign key constraint \"CompanyUsers_userUuid_fkey\""
-    )
-  );
-
-  it("successfully creates when both foreign keys are valid", async () => {
-    const { uuid: companyUuid } = await Company.create(companyMocks.companyData());
-    const { uuid: userUuid } = await User.create(UserMocks.userAttributes);
-    const companyUser = await CompanyUser.create({ companyUuid, userUuid });
-    expect(companyUser.companyUuid).toEqual(companyUuid);
-    expect(companyUser.userUuid).toEqual(userUuid);
-  });
 });

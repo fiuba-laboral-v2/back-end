@@ -1,16 +1,13 @@
 import { QueryInterface, UUID } from "sequelize";
 import { DataType } from "sequelize-typescript";
 
-import uuid from "uuid/v4";
-
 export = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.createTable("Applicants", {
       uuid: {
         allowNull: false,
         primaryKey: true,
-        type: DataType.UUID,
-        defaultValue: uuid()
+        type: DataType.UUID
       },
       userUuid: {
         allowNull: false,
