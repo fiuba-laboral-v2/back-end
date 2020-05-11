@@ -34,12 +34,7 @@ describe("getCompanyByUuid", () => {
     const response = await executeQuery(query, { uuid: company.uuid });
     expect(response.errors).toBeUndefined();
     expect(response.data).not.toBeUndefined();
-    expect(response.data).toEqual({
-      getCompanyByUuid: {
-        ...companyMocks.completeDataWithoutUser(),
-        phoneNumbers: expect.arrayContaining(companyMocks.completeData().phoneNumbers)
-      }
-    });
+    expect(response.data).toEqual({ getCompanyByUuid: companyMocks.completeDataWithoutUser() });
   });
 
   it("returns error if the Company does not exists", async () => {
