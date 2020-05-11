@@ -7,7 +7,7 @@ import { CompanyRepository } from "../../../../src/models/Company";
 import { OfferRepository } from "../../../../src/models/Offer";
 
 import { careerMocks } from "../../../models/Career/mocks";
-import { companyMockData } from "../../../models/Company/mocks";
+import { companyMocks } from "../../../models/Company/mocks";
 import { OfferMocks } from "../../../models/Offer/mocks";
 import { UserRepository } from "../../../../src/models/User";
 
@@ -30,7 +30,7 @@ describe("getOffers", () => {
 
   describe("when offers exists", () => {
     const createOffers = async () => {
-      const { uuid } = await CompanyRepository.create(companyMockData);
+      const { uuid } = await CompanyRepository.create(companyMocks.companyData());
       const career1 = await CareerRepository.create(careerMocks.careerData());
       const career2 = await CareerRepository.create(careerMocks.careerData());
       const offerAttributes1 = OfferMocks.withOneCareer(uuid, career1.code);
@@ -42,16 +42,16 @@ describe("getOffers", () => {
 
     it("should return two offers if two offers were created", async () => {
       await createOffers();
-      const { data: { getOffers }, errors } = await executeQuery(GET_OFFERS);
+      const { data, errors } = await executeQuery(GET_OFFERS);
       expect(errors).toBeUndefined();
-      expect(getOffers).toHaveLength(2);
+      expect(data!.getOffers).toHaveLength(2);
     });
 
     it("should return two offers with there own uuid", async () => {
       const { offer1, offer2 } = await createOffers();
-      const { data: { getOffers }, errors } = await executeQuery(GET_OFFERS);
+      const { data, errors } = await executeQuery(GET_OFFERS);
       expect(errors).toBeUndefined();
-      expect(getOffers).toMatchObject(
+      expect(data!.getOffers).toMatchObject(
         [
           { uuid: offer1.uuid },
           { uuid: offer2.uuid }
@@ -62,9 +62,9 @@ describe("getOffers", () => {
 
   describe("when no offers exists", () => {
     it("should return no offers when no offers were created", async () => {
-      const { data: { getOffers }, errors } = await executeQuery(GET_OFFERS);
+      const { data, errors } = await executeQuery(GET_OFFERS);
       expect(errors).toBeUndefined();
-      expect(getOffers).toHaveLength(0);
+      expect(data!.getOffers).toHaveLength(0);
     });
   });
 });

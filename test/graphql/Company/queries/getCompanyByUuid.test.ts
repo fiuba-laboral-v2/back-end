@@ -1,15 +1,9 @@
 import { gql } from "apollo-server";
 import { executeQuery } from "../../ApolloTestClient";
 import { Company, CompanyRepository } from "../../../../src/models/Company";
-import {
-  companyMockData,
-  companyMockDataWithoutUser,
-  phoneNumbers,
-  photos
-} from "../../../models/Company/mocks";
+import { companyMocks } from "../../../models/Company/mocks";
 import Database from "../../../../src/config/Database";
 import { UserRepository } from "../../../../src/models/User";
-import { UserMocks } from "../../../models/User/mocks";
 
 const query = gql`
   query ($uuid: ID!) {
@@ -27,17 +21,6 @@ const query = gql`
   }
 `;
 
-const companyCompleteDataWithoutUser = {
-  ...companyMockDataWithoutUser,
-  photos: photos,
-  phoneNumbers: phoneNumbers
-};
-
-const companyCompleteData = {
-  ...companyCompleteDataWithoutUser,
-  user: UserMocks.userAttributes
-};
-
 describe("getCompanyByUuid", () => {
   beforeAll(() => Database.setConnection());
   beforeEach(() => Promise.all([
@@ -47,14 +30,14 @@ describe("getCompanyByUuid", () => {
   afterAll(() => Database.close());
 
   it("finds a company given its uuid", async () => {
-    const company: Company = await CompanyRepository.create(companyCompleteData);
+    const company: Company = await CompanyRepository.create(companyMocks.completeData());
     const response = await executeQuery(query, { uuid: company.uuid });
     expect(response.errors).toBeUndefined();
     expect(response.data).not.toBeUndefined();
     expect(response.data).toEqual({
       getCompanyByUuid: {
-        ...companyCompleteDataWithoutUser,
-        phoneNumbers: expect.arrayContaining(companyCompleteData.phoneNumbers)
+        ...companyMocks.completeDataWithoutUser(),
+        phoneNumbers: expect.arrayContaining(companyMocks.completeData().phoneNumbers)
       }
     });
   });
@@ -66,10 +49,10 @@ describe("getCompanyByUuid", () => {
   });
 
   it("find a company with photos with an empty array", async () => {
-    const company: Company = await CompanyRepository.create(companyMockData);
-    const response = await executeQuery(query, { uuid: company.uuid });
-    expect(response.errors).toBeUndefined();
-    expect(response.data).not.toBeUndefined();
-    expect(response.data.getCompanyByUuid.photos).toHaveLength(0);
+    const company: Company = await CompanyRepository.create(companyMocks.companyData());
+    const { data, errors } = await executeQuery(query, { uuid: company.uuid });
+    expect(errors).toBeUndefined();
+    expect(data).not.toBeUndefined();
+    expect(data!.getCompanyByUuid.photos).toHaveLength(0);
   });
 });

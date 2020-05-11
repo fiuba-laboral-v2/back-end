@@ -5,7 +5,7 @@ import Database from "../../../../src/config/Database";
 import { CareerRepository } from "../../../../src/models/Career";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { careerMocks } from "../../../models/Career/mocks";
-import { companyMockData } from "../../../models/Company/mocks";
+import { companyMocks } from "../../../models/Company/mocks";
 import { OfferMocks } from "../../../models/Offer/mocks";
 import { UserRepository } from "../../../../src/models/User";
 
@@ -83,15 +83,15 @@ describe("saveOffer", () => {
 
   describe("when the input values are valid", () => {
     it("should create a new offer with only obligatory data", async () => {
-      const { uuid } = await CompanyRepository.create(companyMockData);
+      const { uuid } = await CompanyRepository.create(companyMocks.companyData());
       const offerAttributes = OfferMocks.completeData(uuid);
-      const { data: { saveOffer }, errors } = await executeMutation(
+      const { data, errors } = await executeMutation(
         SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
         offerAttributes
       );
       expect(errors).toBeUndefined();
-      expect(saveOffer).toHaveProperty("uuid");
-      expect(saveOffer).toMatchObject(
+      expect(data!.saveOffer).toHaveProperty("uuid");
+      expect(data!.saveOffer).toMatchObject(
         {
           title: offerAttributes.title,
           description: offerAttributes.description,
@@ -104,15 +104,15 @@ describe("saveOffer", () => {
 
     it("should create a new offer with one section and one career", async () => {
       const { code } = await CareerRepository.create(careerMocks.careerData());
-      const { uuid } = await CompanyRepository.create(companyMockData);
+      const { uuid } = await CompanyRepository.create(companyMocks.companyData());
       const offerAttributes = OfferMocks.withOneCareerAndOneSection(uuid, code);
-      const { data: { saveOffer }, errors } = await executeMutation(
+      const { data, errors } = await executeMutation(
         SAVE_OFFER_WITH_COMPLETE_DATA,
         offerAttributes
       );
       expect(errors).toBeUndefined();
-      expect(saveOffer.sections).toHaveLength(1);
-      expect(saveOffer.careers).toHaveLength(1);
+      expect(data!.saveOffer.sections).toHaveLength(1);
+      expect(data!.saveOffer.careers).toHaveLength(1);
     });
   });
 
@@ -132,7 +132,7 @@ describe("saveOffer", () => {
         SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
         offerAttributes
       );
-      expect(errors[0].extensions.data).toEqual(
+      expect(errors![0].extensions!.data).toEqual(
         { errorType: "CompanyDoesNotExistError" }
       );
     });

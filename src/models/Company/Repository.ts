@@ -9,8 +9,8 @@ import { CompanyUserRepository } from "../CompanyUser/Repository";
 export const CompanyRepository = {
   create: async (
     {
-      phoneNumbers,
-      photos,
+      phoneNumbers= [],
+      photos= [],
       user: userAttributes,
       ...companyAttributes
     }: ICompany

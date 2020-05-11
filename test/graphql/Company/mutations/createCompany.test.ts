@@ -4,9 +4,9 @@ import Database from "../../../../src/config/Database";
 import { CompanyRepository, ICompany } from "../../../../src/models/Company";
 import { CompanyPhoneNumberRepository } from "../../../../src/models/CompanyPhoneNumber";
 import { CompanyPhotoRepository } from "../../../../src/models/CompanyPhoto";
-import { companyMockDataWithoutUser, phoneNumbers, photos } from "../../../models/Company/mocks";
 import { UserRepository } from "../../../../src/models/User";
 import { UserMocks } from "../../../models/User/mocks";
+import { companyMocks } from "../../../models/Company/mocks";
 
 const SAVE_COMPANY_WITH_COMPLETE_DATA = gql`
   mutation (
@@ -39,14 +39,8 @@ const SAVE_COMPANY_WITH_MINIMUM_DATA = gql`
   }
 `;
 
-const companyDataWithoutUser = {
-  ...companyMockDataWithoutUser,
-  photos: photos,
-  phoneNumbers: phoneNumbers
-};
-
 const companyData: ICompany = {
-  ...companyDataWithoutUser,
+  ...companyMocks.completeDataWithoutUser(),
   user: UserMocks.userAttributes
 };
 
@@ -78,8 +72,8 @@ describe("createCompany", () => {
       expect(response.data).toEqual(
         {
           createCompany: {
-            ...companyDataWithoutUser,
-            phoneNumbers: expect.arrayContaining(companyData.phoneNumbers)
+            ...companyMocks.completeDataWithoutUser(),
+            phoneNumbers: expect.arrayContaining(companyData.phoneNumbers!)
           }
         }
       );
@@ -108,7 +102,7 @@ describe("createCompany", () => {
           user: { ...UserMocks.userAttributes, email: "qwe@qwe.qwe" }
         }
       );
-      expect(errors[0].extensions.data).toEqual(
+      expect(errors![0].extensions!.data).toEqual(
         { errorType: "CompanyCuitAlreadyExistsError" }
       );
     });

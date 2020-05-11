@@ -13,7 +13,7 @@ import { OfferNotFound } from "../../../../src/models/Offer/Errors";
 import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
 
 import { careerMocks } from "../../../models/Career/mocks";
-import { companyMockData } from "../../../models/Company/mocks";
+import { companyMocks } from "../../../models/Company/mocks";
 import { OfferMocks } from "../../../models/Offer/mocks";
 import { applicantMocks } from "../../../models/Applicant/mocks";
 
@@ -72,7 +72,7 @@ describe("getOfferByUuid", () => {
   afterAll(() => Database.close());
 
   const createOffer = async () => {
-    const company = await CompanyRepository.create(companyMockData);
+    const company = await CompanyRepository.create(companyMocks.companyData());
     const career = await CareerRepository.create(careerMocks.careerData());
     const offer = await OfferRepository.create(
       OfferMocks.withOneCareerAndOneSection(company.uuid, career.code)
@@ -102,12 +102,12 @@ describe("getOfferByUuid", () => {
   describe("when and offer exists", () => {
     it("should find an offer by uuid", async () => {
       const { offer, career, company } = await createOffer();
-      const { data: { getOfferByUuid }, errors } = await executeQuery(
+      const { data, errors } = await executeQuery(
         GET_OFFER_BY_UUID,
         { uuid: offer.uuid }
       );
       expect(errors).toBeUndefined();
-      expect(getOfferByUuid).toMatchObject(
+      expect(data!.getOfferByUuid).toMatchObject(
         {
           uuid: offer.uuid,
           title: offer.title,
@@ -123,7 +123,7 @@ describe("getOfferByUuid", () => {
               credits: career.credits
             }
           ],
-          sections: await offer.getSections().map(section => (
+          sections: (await offer.getSections()).map(section => (
             {
               uuid: section.uuid,
               title: section.title,
@@ -150,12 +150,12 @@ describe("getOfferByUuid", () => {
       const { offer } = await createOffer();
       const applicant = await createApplicant();
       await JobApplicationRepository.apply(applicant, offer);
-      const { data: { getOfferByUuid }, errors } = await executeQuery(
+      const { data, errors } = await executeQuery(
         GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
         { uuid: offer.uuid }
       );
       expect(errors).toBeUndefined();
-      expect(getOfferByUuid).toMatchObject(
+      expect(data!.getOfferByUuid).toMatchObject(
         {
           uuid: offer.uuid,
           hasApplied: true
@@ -167,12 +167,12 @@ describe("getOfferByUuid", () => {
     it("should find an offer with hasApplied in false", async () => {
       const { offer: { uuid } } = await createOffer();
       await createApplicant();
-      const { data: { getOfferByUuid }, errors } = await executeQuery(
+      const { data, errors } = await executeQuery(
         GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
         { uuid: uuid }
       );
       expect(errors).toBeUndefined();
-      expect(getOfferByUuid).toMatchObject(
+      expect(data!.getOfferByUuid).toMatchObject(
         {
           uuid: uuid,
           hasApplied: false
@@ -189,7 +189,7 @@ describe("getOfferByUuid", () => {
         GET_OFFER_BY_UUID,
         { uuid: randomUuid }
       );
-      expect(errors[0].extensions.data).toEqual({ errorType: OfferNotFound.name });
+      expect(errors![0].extensions!.data).toEqual({ errorType: OfferNotFound.name });
     });
 
     it("should return an error if the current user is not an applicant", async () => {
@@ -199,7 +199,7 @@ describe("getOfferByUuid", () => {
         GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
         { uuid: uuid }
       );
-      expect(errors[0].extensions.data).toEqual({ errorType: UnauthorizedError.name });
+      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("should return an error if there is no current user", async () => {
@@ -209,7 +209,7 @@ describe("getOfferByUuid", () => {
         { uuid: uuid },
         { loggedIn: false }
       );
-      expect(errors[0].extensions.data).toEqual({ errorType: AuthenticationError.name });
+      expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
     });
   });
 });

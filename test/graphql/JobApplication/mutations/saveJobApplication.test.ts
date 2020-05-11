@@ -10,7 +10,7 @@ import { OfferRepository } from "../../../../src/models/Offer";
 import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
 
 import { OfferMocks } from "../../../models/Offer/mocks";
-import { companyMockData } from "../../../models/Company/mocks";
+import { companyMocks } from "../../../models/Company/mocks";
 import { applicantMocks } from "../../../models/Applicant/mocks";
 
 const SAVE_JOB_APPLICATION = gql`
@@ -47,14 +47,14 @@ describe("saveJobApplication", () => {
   describe("when the input is valid", () => {
     it("should create a new job application", async () => {
       const applicant = await ApplicantRepository.create(applicantData);
-      const company = await CompanyRepository.create(companyMockData);
+      const company = await CompanyRepository.create(companyMocks.companyData());
       const offer = await OfferRepository.create(OfferMocks.completeData(company.uuid));
       const {
-        data: { saveJobApplication },
+        data ,
         errors
       } = await executeMutation(SAVE_JOB_APPLICATION, { offerUuid: offer.uuid });
       expect(errors).toBeUndefined();
-      expect(saveJobApplication).toMatchObject(
+      expect(data!.saveJobApplication).toMatchObject(
         {
           offer: {
             uuid: offer.uuid
@@ -70,18 +70,18 @@ describe("saveJobApplication", () => {
   describe("Errors", () => {
     it("should return an error if no offerUuid is provided", async () => {
       const { errors } = await executeMutation(SAVE_JOB_APPLICATION);
-      expect(errors[0].constructor.name).toEqual(ApolloError.name);
+      expect(errors![0].constructor.name).toEqual(ApolloError.name);
     });
 
     it("should return an error if there is no current user", async () => {
-      const company = await CompanyRepository.create(companyMockData);
+      const company = await CompanyRepository.create(companyMocks.companyData());
       const offer = await OfferRepository.create(OfferMocks.completeData(company.uuid));
       const { errors } = await executeMutation(
         SAVE_JOB_APPLICATION,
         { offerUuid: offer.uuid },
         { loggedIn: false }
       );
-      expect(errors[0].extensions.data).toEqual({ errorType: AuthenticationError.name });
+      expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
     });
 
     it("should return an error if current user is not an applicant", async () => {
@@ -93,20 +93,20 @@ describe("saveJobApplication", () => {
           surname: "surname"
         }
       );
-      const { uuid: companyUuid } = await CompanyRepository.create(companyMockData);
+      const { uuid: companyUuid } = await CompanyRepository.create(companyMocks.companyData());
       const offer = await OfferRepository.create(OfferMocks.completeData(companyUuid));
       const { errors } = await executeMutation(SAVE_JOB_APPLICATION, { offerUuid: offer.uuid });
-      expect(errors[0].extensions.data).toEqual({ errorType: UnauthorizedError.name });
+      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("should return an error if the application already exist", async () => {
       await ApplicantRepository.create(applicantData);
-      const company = await CompanyRepository.create(companyMockData);
+      const company = await CompanyRepository.create(companyMocks.companyData());
       const offer = await OfferRepository.create(OfferMocks.completeData(company.uuid));
       await executeMutation(SAVE_JOB_APPLICATION, { offerUuid: offer.uuid });
       const { errors } = await executeMutation(SAVE_JOB_APPLICATION, { offerUuid: offer.uuid });
 
-      expect(errors[0].extensions.data).toMatchObject(
+      expect(errors![0].extensions!.data).toMatchObject(
         { errorType: "JobApplicationAlreadyExistsError" }
       );
     });
@@ -116,7 +116,7 @@ describe("saveJobApplication", () => {
       const { errors } = await executeMutation(SAVE_JOB_APPLICATION, {
         offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
       });
-      expect(errors[0].extensions.data).toMatchObject({ errorType: "OfferNotFound" });
+      expect(errors![0].extensions!.data).toMatchObject({ errorType: "OfferNotFound" });
     });
   });
 });

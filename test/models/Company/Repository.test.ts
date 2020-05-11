@@ -1,20 +1,17 @@
-import { ValidationError } from "sequelize";
-import faker from "faker";
+import { UniqueConstraintError, ValidationError } from "sequelize";
+import { PhoneNumberWithLettersError } from "validations-fiuba-laboral-v2";
 import { Company, CompanyRepository } from "../../../src/models/Company";
-import { companyMockData, phoneNumbers, photos } from "./mocks";
+import { companyMocks } from "./mocks";
 import Database from "../../../src/config/Database";
 import { UserMocks } from "../User/mocks";
 import { UserRepository } from "../../../src/models/User";
 
-const companyCompleteData = {
-  ...companyMockData,
-  photos: photos,
-  phoneNumbers: phoneNumbers
-};
+const companyCompleteData = companyMocks.completeData();
 
 const companyDataWithMinimumData = {
   cuit: "30711819017",
-  companyName: "devartis"
+  companyName: "devartis",
+  user: UserMocks.userAttributes
 };
 
 describe("CompanyRepository", () => {
@@ -25,10 +22,8 @@ describe("CompanyRepository", () => {
   ]));
   afterAll(() => Database.close());
 
-  it("create a new company", async () => {
-    const company: Company = await CompanyRepository.create(
-      companyCompleteData
-    );
+  it("creates a new company", async () => {
+    const company: Company = await CompanyRepository.create(companyCompleteData);
     expect(company).toEqual(expect.objectContaining({
       cuit: companyCompleteData.cuit,
       companyName: companyCompleteData.companyName,
@@ -39,11 +34,18 @@ describe("CompanyRepository", () => {
       email: companyCompleteData.email
     }));
     expect((await company.getPhoneNumbers())).toHaveLength(
-      companyCompleteData.phoneNumbers.length
+      companyCompleteData.phoneNumbers!.length
     );
     expect((await company.getPhotos())).toHaveLength(
-      companyCompleteData.photos.length
+      companyCompleteData.photos!.length
     );
+  });
+
+  it("creates a valid company with a logo with more than 255 characters", async () => {
+    const company = await CompanyRepository.create(
+      companyMocks.completeDataWithLogoWithMoreThan255Characters()
+    );
+    expect(company.logo).not.toBeUndefined();
   });
 
   it("should create a valid company with a large description", async () => {
@@ -51,16 +53,30 @@ describe("CompanyRepository", () => {
       CompanyRepository.create({
         cuit: "30711819017",
         companyName: "devartis",
-        description: faker.lorem.paragraph(7),
+        description: "word".repeat(300),
         user: UserMocks.userAttributes
       })
     ).resolves.not.toThrow();
   });
 
+  it("throws an error if new company has an already existing cuit", async () => {
+    const cuit = "30711819017";
+    await CompanyRepository.create({
+      cuit: cuit, companyName: "Devartis SA",
+      user: UserMocks.userAttributes
+    });
+    await expect(
+      CompanyRepository.create({
+        cuit: cuit, companyName: "Devartis Clone SA",
+        user: { ...UserMocks.userAttributes, email: "qwe@qwe.qwe" }
+      })
+    ).rejects.toThrow(UniqueConstraintError);
+  });
+
   it("should throw an error if cuit is null", async () => {
     await expect(
       CompanyRepository.create({
-        cuit: null,
+        cuit: null as any,
         companyName: "devartis",
         user: UserMocks.userAttributes
       })
@@ -71,7 +87,7 @@ describe("CompanyRepository", () => {
     await expect(
       CompanyRepository.create({
         cuit: "30711819017",
-        companyName: null,
+        companyName: null as any,
         user: UserMocks.userAttributes
       })
     ).rejects.toThrow(ValidationError);
@@ -106,33 +122,28 @@ describe("CompanyRepository", () => {
     expect(expectedCompanies[0].uuid).toEqual(company.uuid);
   });
 
-  it("should rollback transaction and throw error if photos is null", async () => {
+  it("throws an error if phoneNumbers are invalid", async () => {
     await expect(
-      CompanyRepository.create({
-        ...companyDataWithMinimumData,
-        photos: [null],
-        user: UserMocks.userAttributes
-      })
-    ).rejects.toThrow("aggregate error");
-
-    const expectedCompanies = await CompanyRepository.findAll();
-    expect(expectedCompanies).not.toBeNull();
-    expect(expectedCompanies).not.toBeUndefined();
-    expect(expectedCompanies!.length).toEqual(0);
+      CompanyRepository.create(
+        {
+          ...companyDataWithMinimumData,
+          phoneNumbers: ["InvalidPhoneNumber1", "InvalidPhoneNumber2"]
+        }
+      )
+    ).rejects.toThrowBulkRecordErrorIncluding([
+      { errorClass: ValidationError, message: PhoneNumberWithLettersError.buildMessage() },
+      { errorClass: ValidationError, message: PhoneNumberWithLettersError.buildMessage() }
+    ]);
   });
 
-  it("should rollback transaction and throw error if phoneNumber is null", async () => {
+  it("throws an error if phoneNumbers are duplicated", async () => {
     await expect(
-      CompanyRepository.create({
-        ...companyDataWithMinimumData,
-        phoneNumbers: [null],
-        user: UserMocks.userAttributes
-      })
-    ).rejects.toThrow("aggregate error");
-    const expectedCompanies = await CompanyRepository.findAll();
-    expect(expectedCompanies).not.toBeNull();
-    expect(expectedCompanies).not.toBeUndefined();
-    expect(expectedCompanies!.length).toEqual(0);
+      CompanyRepository.create(
+        { ...companyDataWithMinimumData,
+          phoneNumbers: ["1159821066", "1159821066"]
+        }
+      )
+    ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
   });
 
   it("deletes a company", async () => {

@@ -4,7 +4,7 @@ import { Offer } from "../../../../src/models/Offer";
 import { Company } from "../../../../src/models/Company";
 import { OfferSection } from "../../../../src/models/Offer/OfferSection";
 import { OfferMocks } from "../mocks";
-import { companyMockData } from "../../Company/mocks";
+import { companyMocks } from "../../Company/mocks";
 
 describe("OfferSection", () => {
 
@@ -21,7 +21,7 @@ describe("OfferSection", () => {
   });
 
   const createOffer = async () => {
-    const { uuid } = await new Company(companyMockData).save();
+    const { uuid } = await new Company(companyMocks.companyData()).save();
     return new Offer(OfferMocks.withObligatoryData(uuid)).save();
   };
 

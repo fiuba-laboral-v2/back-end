@@ -25,8 +25,8 @@ describe("getCapabilities", () => {
         CapabilityRepository.create({ description: description })
       )
     );
-    const { data: { getCapabilities } } = await executeQuery(GET_CAPABILITIES);
-    expect(getCapabilities).toEqual(
+    const { data } = await executeQuery(GET_CAPABILITIES);
+    expect(data!.getCapabilities).toEqual(
       expect.arrayContaining(
         [
           { description: "java", uuid: java.uuid },

@@ -2,8 +2,8 @@ import Database from "../../../src/config/Database";
 import { CompanyUser } from "../../../src/models/CompanyUser";
 import { Company, CompanyRepository } from "../../../src/models/Company";
 import { User, UserRepository } from "../../../src/models/User";
-import { companyMockData } from "../Company/mocks";
 import { UserMocks } from "../User/mocks";
+import { companyMocks } from "../Company/mocks";
 
 const nonExistentUuid = "7f03fcfa-93a9-476b-881a-b81a7ea9dbd3";
 
@@ -23,7 +23,7 @@ describe("CompanyUser", () => {
 
   it("needs to reference a user", async () =>
     await expect(CompanyUser.create({
-      companyUuid: (await CompanyRepository.create(companyMockData)).uuid
+      companyUuid: (await CompanyRepository.create(companyMocks.companyData())).uuid
     })).rejects.toThrow(
       "null value in column \"userUuid\" violates not-null constraint"
     )
@@ -40,7 +40,7 @@ describe("CompanyUser", () => {
 
   it("needs to reference an existing user", async () =>
     await expect(CompanyUser.create({
-      companyUuid: (await CompanyRepository.create(companyMockData)).uuid,
+      companyUuid: (await CompanyRepository.create(companyMocks.companyData())).uuid,
       userUuid: nonExistentUuid
     })).rejects.toThrow(
       "violates foreign key constraint \"CompanyUsers_userUuid_fkey\""
@@ -48,7 +48,7 @@ describe("CompanyUser", () => {
   );
 
   it("successfully creates when both foreign keys are valid", async () => {
-    const { uuid: companyUuid } = await Company.create(companyMockData);
+    const { uuid: companyUuid } = await Company.create(companyMocks.companyData());
     const { uuid: userUuid } = await User.create(UserMocks.userAttributes);
     const companyUser = await CompanyUser.create({ companyUuid, userUuid });
     expect(companyUser.companyUuid).toEqual(companyUuid);

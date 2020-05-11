@@ -3,7 +3,11 @@ import uuid from "uuid/v4";
 import Database from "../../../src/config/Database";
 import { User } from "../../../src/models/User";
 import { UserRepository } from "../../../src/models/User/Repository";
-import { PasswordWithoutDigitsError, InvalidEmailError } from "validations-fiuba-laboral-v2";
+import {
+  NameWithDigitsError,
+  PasswordWithoutDigitsError,
+  InvalidEmailError
+} from "validations-fiuba-laboral-v2";
 
 describe("User", () => {
   beforeAll(() => Database.setConnection());
@@ -39,10 +43,10 @@ describe("User", () => {
         name: 1,
         surname: "surname"
       });
-      await expect(user.validate()).rejects.toThrow("El nombre no debe contener numeros");
+      await expect(user.validate()).rejects.toThrow(NameWithDigitsError.buildMessage());
     });
 
-    it("should throw an error if surname has a digit", async () => {
+    it("throws an error if surname has a digit", async () => {
       const user = new User({
         uuid: uuid(),
         email: "asd@qwe.com",
@@ -50,7 +54,7 @@ describe("User", () => {
         name: "name",
         surname: 22
       });
-      await expect(user.validate()).rejects.toThrow("El nombre no debe contener numeros");
+      await expect(user.validate()).rejects.toThrow(NameWithDigitsError.buildMessage());
     });
 
     it("should throw an error if name is null", async () => {

@@ -27,12 +27,12 @@ describe("login", () => {
       name: "name",
       surname: "surname"
     });
-    const response = await executeMutation(LOGIN, {
+    const { data, errors } = await executeMutation(LOGIN, {
       email: email,
       password: "AValidPassword3"
     });
-    expect(response.errors).toBeUndefined();
-    const token: string = response.data.login;
+    expect(errors).toBeUndefined();
+    const token: string = data!.login;
     expect(JWT.decodeToken(token)).toEqual({
       email: email,
       uuid: user.uuid
@@ -44,7 +44,7 @@ describe("login", () => {
       email: "asd@asd.com",
       password: "AValidPassword000"
     });
-    expect(errors[0].extensions.data).toEqual({ errorType: UserNotFoundError.name });
+    expect(errors![0].extensions!.data).toEqual({ errorType: UserNotFoundError.name });
   });
 
   it("should return and error if the password does not match", async () => {
@@ -59,6 +59,6 @@ describe("login", () => {
       email: email,
       password: "AValidPassword2"
     });
-    expect(errors[0].extensions.data).toEqual({ errorType: BadCredentialsError.name });
+    expect(errors![0].extensions!.data).toEqual({ errorType: BadCredentialsError.name });
   });
 });

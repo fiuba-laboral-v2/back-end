@@ -3,7 +3,7 @@ import { ApplicantRepository } from "../../../src/models/Applicant";
 import { Company } from "../../../src/models/Company";
 import { Offer } from "../../../src/models/Offer";
 import { JobApplicationRepository } from "../../../src/models/JobApplication";
-import { companyMockData } from "../Company/mocks";
+import { companyMocks } from "../Company/mocks";
 import { applicantMocks } from "../Applicant/mocks";
 import { OfferMocks } from "../Offer/mocks";
 import { UserRepository } from "../../../src/models/User/Repository";
@@ -21,7 +21,7 @@ describe("JobApplicationRepository", () => {
 
   describe("Apply", () => {
     it("should apply to a new jobApplication", async () => {
-      const { uuid: companyUuid } = await Company.create(companyMockData);
+      const { uuid: companyUuid } = await Company.create(companyMocks.companyData());
       const offer = await Offer.create(OfferMocks.completeData(companyUuid));
       const applicant = await ApplicantRepository.create(applicantMocks.applicantData([]));
       const jobApplication = await JobApplicationRepository.apply(applicant, offer);
@@ -35,7 +35,7 @@ describe("JobApplicationRepository", () => {
 
     describe("hasApplied", () => {
       const createOffer = async () => {
-        const { uuid: companyUuid } = await Company.create(companyMockData);
+        const { uuid: companyUuid } = await Company.create(companyMocks.companyData());
         return Offer.create(OfferMocks.completeData(companyUuid));
       };
 

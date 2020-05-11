@@ -2,7 +2,7 @@ import { NumberIsTooSmallError, SalaryRangeError } from "validations-fiuba-labor
 import Database from "../../../src/config/Database";
 import { Offer } from "../../../src/models/Offer";
 import { Company } from "../../../src/models/Company";
-import { companyMockData, companyMockDataWithoutUser } from "../Company/mocks";
+import { companyMocks } from "../Company/mocks";
 import { OfferMocks, TOfferNumbersProperties } from "./mocks";
 
 describe("Offer", () => {
@@ -19,7 +19,7 @@ describe("Offer", () => {
   });
 
   const offerWithoutProperty = async (property: string) => {
-    const company = await new Company(companyMockData).save();
+    const company = await new Company(companyMocks.companyData()).save();
     return new Offer(OfferMocks.offerWithoutProperty(company.uuid, property));
   };
 
@@ -27,18 +27,21 @@ describe("Offer", () => {
     property: TOfferNumbersProperties,
     value: number
   ) => {
-    const { uuid } = await new Company(companyMockData).save();
+    const { uuid } = await new Company(companyMocks.companyData()).save();
     return new Offer(OfferMocks.offerWithNegativeNumberProperty(uuid, property, value));
   };
 
   it("should create a valid offer", async () => {
-    const company = await new Company(companyMockData).save();
+    const companyAttributes = companyMocks.companyData();
+    const company = await new Company(companyAttributes).save();
     const offerAttributes = OfferMocks.withObligatoryData(company.uuid);
     const offer = new Offer(offerAttributes);
     await offer.save();
     expect(offer.uuid).not.toBeUndefined();
     expect(offer).toEqual(expect.objectContaining(offerAttributes));
-    expect(await offer.getCompany()).toEqual(expect.objectContaining(companyMockDataWithoutUser));
+    expect(await offer.getCompany()).toEqual(
+      expect.objectContaining(companyMocks.companyDataWithoutUser())
+    );
     expect(await company.getOffers()).toMatchObject([offerAttributes]);
   });
 
@@ -88,7 +91,7 @@ describe("Offer", () => {
   });
 
   it("should throw error if minimumSalary if bigger than maximumSalary", async () => {
-    const { uuid } = await new Company(companyMockData).save();
+    const { uuid } = await new Company(companyMocks.companyData()).save();
     const offer = new Offer(
       await OfferMocks.offerWithSpecificSalaryRange(uuid, 100, 50)
     );

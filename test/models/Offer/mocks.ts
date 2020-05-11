@@ -8,16 +8,16 @@ export type TOfferNumbersProperties = "hoursPerDay" | "minimumSalary" | "maximum
 
 const OfferMocks = {
   completeData: (
-    companyUuid?: string,
+    companyUuid: string,
     sections?: IOfferSection[],
     careers?: IOfferCareer[]
   ): IOffer => {
-    const minimumSalary = faker.random.number();
+    const minimumSalary: number = faker.random.number();
     const data = {
-      companyUuid: companyUuid,
-      title: faker.name.title(),
-      description: faker.lorem.sentence(),
-      hoursPerDay: faker.random.number(),
+      companyUuid: companyUuid || "",
+      title: faker.name.title() as string,
+      description: faker.lorem.sentence() as string,
+      hoursPerDay: faker.random.number() as number,
       minimumSalary: minimumSalary,
       maximumSalary: minimumSalary + 1000,
       sections: sections,
@@ -27,10 +27,14 @@ const OfferMocks = {
     if (!careers) delete data.careers;
     return data;
   },
-  withOneSectionButNullCompanyId: () => OfferMocks.withOneSection(null),
+  withOneSectionButNullCompanyId: () => {
+    const attributes = OfferMocks.withOneSection("null");
+    delete attributes.companyUuid;
+    return attributes;
+  },
   withSectionWithNoTitle: (companyUuid: string) => {
     const data = OfferMocks.withOneSection(companyUuid);
-    delete data.sections[0].title;
+    delete data.sections![0].title;
     return data;
   },
   withOneSection: (companyUuid: string) => (
@@ -48,9 +52,11 @@ const OfferMocks = {
   withOneCareer: (companyUuid: string, careerCode: string) => (
     OfferMocks.completeData(companyUuid, undefined, [{ careerCode: careerCode }])
   ),
-  withOneCareerWithNullCareerCode: (companyUuid: string) => (
-    OfferMocks.completeData(companyUuid, undefined, [{ careerCode: null }])
-  ),
+  withOneCareerWithNullCareerCode: (companyUuid: string) => {
+    const careerAttributes = { careerCode: "null" };
+    delete careerAttributes.careerCode;
+    return OfferMocks.completeData(companyUuid, undefined, [careerAttributes]);
+  },
   withOneCareerAndOneSection: (companyUuid: string, careerCode: string) => (
     OfferMocks.completeData(
       companyUuid,
@@ -68,7 +74,14 @@ const OfferMocks = {
       ]
     )
   ),
-  withNoCompanyId: () => OfferMocks.completeData(),
+  withNoCompanyId: () =>
+    ({
+      title: "title",
+      description: "description",
+      hoursPerDay: 8,
+      minimumSalary: 100,
+      maximumSalary: 200
+    }),
   withObligatoryData: (companyUuid: string) => OfferMocks.completeData(companyUuid),
   offerWithoutProperty: (companyUuid: string, property: string) =>
     omit(OfferMocks.completeData(companyUuid), [property]),
