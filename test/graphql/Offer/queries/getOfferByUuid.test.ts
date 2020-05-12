@@ -150,20 +150,22 @@ describe("getOfferByUuid", () => {
     it("should find an offer with hasApplied in true", async () => {
       const applicant = await userFactory.applicantUser();
       const user = await applicant.getUser();
-      const apolloClient = client.loggedIn(
-        { uuid: user.uuid, email: user.email, applicantUuid: applicant.uuid }
-      );
+      const apolloClient = client.loggedIn({
+        uuid: user.uuid,
+        email: user.email,
+        applicantUuid: applicant.uuid
+      });
 
       const { offer } = await createOffer();
-      await JobApplicationRepository.apply(applicant, offer);
+      await JobApplicationRepository.apply(applicant.uuid, offer);
 
-      const { data: { getOfferByUuid }, errors } = await apolloClient.query({
+      const { data, errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
         variables: { uuid: offer.uuid }
       });
 
       expect(errors).toBeUndefined();
-      expect(getOfferByUuid).toMatchObject(
+      expect(data!.getOfferByUuid).toMatchObject(
         {
           uuid: offer.uuid,
           hasApplied: true
@@ -200,9 +202,10 @@ describe("getOfferByUuid", () => {
 
     it("should return an error if the current user is not an applicant", async () => {
       const user = await userFactory.user();
-      const apolloClient = client.loggedIn(
-        { uuid: user.uuid, email: user.email }
-      );
+      const apolloClient = client.loggedIn({
+        uuid: user.uuid,
+        email: user.email
+      });
       const { offer: { uuid } } = await createOffer();
 
       const { errors } = await apolloClient.query({
@@ -210,7 +213,7 @@ describe("getOfferByUuid", () => {
         variables: { uuid: uuid }
       });
 
-      expect(errors[0].extensions.data).toEqual({ errorType: UnauthorizedError.name });
+      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("should return an error if there is no current user", async () => {

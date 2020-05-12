@@ -1,5 +1,5 @@
 import { ApolloError, gql } from "apollo-server";
-import { executeMutation, testCurrentUserEmail } from "../../ApolloTestClient";
+import { executeMutation, testCurrentUserEmail, client } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
 import { UserRepository } from "../../../../src/models/User";
@@ -12,6 +12,7 @@ import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/
 import { OfferMocks } from "../../../models/Offer/mocks";
 import { companyMocks } from "../../../models/Company/mocks";
 import { applicantMocks } from "../../../models/Applicant/mocks";
+import { userFactory } from "../../../mocks/user";
 
 const SAVE_JOB_APPLICATION = gql`
   mutation saveJobApplication($offerUuid: String!) {
@@ -19,9 +20,7 @@ const SAVE_JOB_APPLICATION = gql`
         offer {
           uuid
         }
-        applicant {
-          uuid
-        }
+        applicantUuid
     }
   }
 `;
@@ -46,22 +45,29 @@ describe("saveJobApplication", () => {
 
   describe("when the input is valid", () => {
     it("should create a new job application", async () => {
-      const applicant = await ApplicantRepository.create(applicantData);
+      const applicant = await userFactory.applicantUser();
+      const user = await applicant.getUser();
+      const apolloClient = client.loggedIn({
+        uuid: user.uuid,
+        email: user.email,
+        applicantUuid: applicant.uuid
+      });
+
       const company = await CompanyRepository.create(companyMocks.companyData());
       const offer = await OfferRepository.create(OfferMocks.completeData(company.uuid));
-      const {
-        data ,
-        errors
-      } = await executeMutation(SAVE_JOB_APPLICATION, { offerUuid: offer.uuid });
+
+      const { data, errors } = await apolloClient.mutate({
+        mutation: SAVE_JOB_APPLICATION,
+        variables: { offerUuid: offer.uuid }
+      });
+
       expect(errors).toBeUndefined();
       expect(data!.saveJobApplication).toMatchObject(
         {
           offer: {
             uuid: offer.uuid
           },
-          applicant: {
-            uuid: applicant.uuid
-          }
+          applicantUuid: applicant.uuid
         }
       );
     });
@@ -85,26 +91,40 @@ describe("saveJobApplication", () => {
     });
 
     it("should return an error if current user is not an applicant", async () => {
-      await UserRepository.create(
-        {
-          email: testCurrentUserEmail,
-          password: "SomeCoolSecret123",
-          name: "name",
-          surname: "surname"
-        }
-      );
+      const user = await userFactory.user();
+      const apolloClient = client.loggedIn({
+        uuid: user.uuid,
+        email: user.email
+      });
+
       const { uuid: companyUuid } = await CompanyRepository.create(companyMocks.companyData());
       const offer = await OfferRepository.create(OfferMocks.completeData(companyUuid));
-      const { errors } = await executeMutation(SAVE_JOB_APPLICATION, { offerUuid: offer.uuid });
+      const { errors } = await apolloClient.mutate({
+        mutation: SAVE_JOB_APPLICATION,
+        variables: { offerUuid: offer.uuid }
+      });
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("should return an error if the application already exist", async () => {
-      await ApplicantRepository.create(applicantData);
+      const applicant = await userFactory.applicantUser();
+      const user = await applicant.getUser();
+      const apolloClient = client.loggedIn({
+        uuid: user.uuid,
+        email: user.email,
+        applicantUuid: applicant.uuid
+      });
+
       const company = await CompanyRepository.create(companyMocks.companyData());
       const offer = await OfferRepository.create(OfferMocks.completeData(company.uuid));
-      await executeMutation(SAVE_JOB_APPLICATION, { offerUuid: offer.uuid });
-      const { errors } = await executeMutation(SAVE_JOB_APPLICATION, { offerUuid: offer.uuid });
+      await apolloClient.mutate({
+        mutation: SAVE_JOB_APPLICATION,
+        variables: { offerUuid: offer.uuid }
+      });
+      const { errors } = await apolloClient.mutate({
+        mutation: SAVE_JOB_APPLICATION,
+        variables: { offerUuid: offer.uuid }
+      });
 
       expect(errors![0].extensions!.data).toMatchObject(
         { errorType: "JobApplicationAlreadyExistsError" }

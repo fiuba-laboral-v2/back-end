@@ -2,9 +2,7 @@ import { nonNull, String } from "../../fieldTypes";
 import { GraphQLJobApplication } from "../Types/GraphQLJobApplication";
 import { JobApplicationRepository } from "../../../models/JobApplication";
 import { OfferRepository } from "../../../models/Offer";
-import { UserRepository } from "../../../models/User";
-import { IApolloServerContext } from "../../../server";
-import { UnauthorizedError } from "../../Errors";
+import { IApplicantUser } from "../../../server";
 
 export const saveJobApplication = {
   type: GraphQLJobApplication,
@@ -16,14 +14,10 @@ export const saveJobApplication = {
   resolve: async (
     _: undefined,
     { offerUuid }: { offerUuid: string; },
-    { currentUser }: IApolloServerContext
+    { currentUser }: { currentUser: IApplicantUser }
   ) => {
-    const user = await UserRepository.findByEmail(currentUser!.email);
-    const applicant = await user.getApplicant();
-    if (!applicant) throw new UnauthorizedError();
-
     const offer = await OfferRepository.findByUuid(offerUuid);
-    await JobApplicationRepository.apply(applicant, offer);
-    return { applicant, offer };
+    await JobApplicationRepository.apply(currentUser.applicantUuid, offer);
+    return { applicantUuid: currentUser.applicantUuid, offer };
   }
 };

@@ -1,13 +1,12 @@
 import { GraphQLObjectType } from "graphql";
-import { nonNull } from "../../fieldTypes";
-import { GraphQLApplicant } from "../../Applicant/Types/Applicant";
+import { nonNull, String } from "../../fieldTypes";
 import { GraphQLOffer } from "../../Offer/Types/GraphQLOffer";
 
 const GraphQLJobApplication = new GraphQLObjectType({
   name: "JobApplication",
   fields: () => ({
-    applicant: {
-      type: nonNull(GraphQLApplicant)
+    applicantUuid: {
+      type: nonNull(String)
     },
     offer: {
       type: nonNull(GraphQLOffer)

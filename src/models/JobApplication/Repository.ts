@@ -3,11 +3,11 @@ import { Applicant } from "../Applicant";
 import { JobApplication } from "./Model";
 
 export const JobApplicationRepository = {
-  apply: async (applicant: Applicant, offer: Offer) =>
+  apply: async (applicantUuid: string, offer: Offer) =>
     JobApplication.create(
       {
         offerUuid: offer.uuid,
-        applicantUuid: applicant.uuid
+        applicantUuid
       }
     ),
   hasApplied: async (applicant: Applicant, offer: Offer) => {

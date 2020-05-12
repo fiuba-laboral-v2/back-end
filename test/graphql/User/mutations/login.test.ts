@@ -1,5 +1,5 @@
 import { gql } from "apollo-server";
-import { executeMutation } from "../../ApolloTestClient";
+import { executeMutation, client } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 import { UserRepository } from "../../../../src/models/User/Repository";
 import { JWT } from "../../../../src/JWT";
@@ -27,9 +27,12 @@ describe("login", () => {
       name: "name",
       surname: "surname"
     });
-    const { data, errors } = await executeMutation(LOGIN, {
-      email: email,
-      password: "AValidPassword3"
+    const { data, errors } = await client.loggedOut.mutate({
+      mutation: LOGIN,
+      variables: {
+        email: email,
+        password: "AValidPassword3"
+      }
     });
     expect(errors).toBeUndefined();
     const token: string = data!.login;

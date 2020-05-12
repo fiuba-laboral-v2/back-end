@@ -1,5 +1,5 @@
 import { and } from "graphql-shield";
-import { isAuthenticated, isAuthorized } from "../rules";
+import { isAuthenticated, isApplicant } from "../rules";
 
 export const offerPermissions = {
   Query: {
@@ -10,6 +10,6 @@ export const offerPermissions = {
     saveOffer: isAuthenticated
   },
   Offer: {
-    hasApplied: and(isAuthenticated, isAuthorized)
+    hasApplied: and(isAuthenticated, isApplicant)
   }
 };

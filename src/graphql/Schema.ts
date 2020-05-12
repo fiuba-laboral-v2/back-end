@@ -3,7 +3,7 @@ import { applyMiddleware } from "graphql-middleware";
 import queries from "./queries";
 import mutations from "./mutations";
 import types from "./types";
-import permissions from "./permissions";
+import { permissionShield } from "./permissionShield";
 
 const Schema: GraphQLSchema = new GraphQLSchema({
   query: new GraphQLObjectType({
@@ -17,6 +17,4 @@ const Schema: GraphQLSchema = new GraphQLSchema({
   types: types
 });
 
-const { schema } = applyMiddleware(Schema, permissions);
-
-export default schema;
+export const { schema } = applyMiddleware(Schema, permissionShield);
