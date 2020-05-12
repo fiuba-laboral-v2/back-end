@@ -37,6 +37,21 @@ export const defaultTranslations = {
     { key: "career", value: "Carrera" },
     { key: "credits", value: "Créditos aprobados" }
   ],
+  companySignUp: [
+    { key: "title", value: "Crear tu cuenta" },
+    { key: "email", value: "Email" },
+    { key: "password", value: "Contraseña" },
+    { key: "passwordConfirm", value: "Confirmar contraseña" },
+    { key: "name", value: "Nombre" },
+    { key: "surname", value: "Apellido" },
+    { key: "cuit", value: "Cuit" },
+    { key: "companyName", value: "Nombre de la empresa" },
+    { key: "slogan", value: "Slogan" },
+    { key: "description", value: "Descripción" },
+    { key: "logo", value: "Logo" },
+    { key: "website", value: "Sitio" },
+    { key: "submit", value: "Guardar" }
+  ],
   companiesList: [
     { key: "title", value: "Empresas" }
   ],
