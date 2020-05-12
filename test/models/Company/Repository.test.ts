@@ -1,28 +1,20 @@
-import { ValidationError, UniqueConstraintError } from "sequelize";
+import { UniqueConstraintError, ValidationError } from "sequelize";
 import { PhoneNumberWithLettersError } from "validations-fiuba-laboral-v2";
-import { Company, CompanyRepository, ICompany } from "../../../src/models/Company";
+import { Company, CompanyRepository } from "../../../src/models/Company";
 import { companyMocks } from "./mocks";
 import Database from "../../../src/config/Database";
+import { UserMocks } from "../User/mocks";
+import { UserRepository } from "../../../src/models/User";
+
+const companyCompleteData = companyMocks.completeData();
 
 describe("CompanyRepository", () => {
-  const companyCompleteData = companyMocks.completeData();
-
-  const companyDataWithMinimumData = {
-    cuit: "30711819017",
-    companyName: "devartis"
-  };
-
-  beforeAll(async () => {
-    await Database.setConnection();
-  });
-
-  beforeEach(async () => {
-    await CompanyRepository.truncate();
-  });
-
-  afterAll(async () => {
-    await Database.close();
-  });
+  beforeAll(() => Database.setConnection());
+  beforeEach(() => Promise.all([
+    CompanyRepository.truncate(),
+    UserRepository.truncate()
+  ]));
+  afterAll(() => Database.close());
 
   it("creates a new company", async () => {
     const company: Company = await CompanyRepository.create(companyCompleteData);
@@ -55,31 +47,43 @@ describe("CompanyRepository", () => {
       CompanyRepository.create({
         cuit: "30711819017",
         companyName: "devartis",
-        description: "word".repeat(300)
+        description: "word".repeat(300),
+        user: UserMocks.userAttributes
       })
     ).resolves.not.toThrow();
   });
 
   it("throws an error if new company has an already existing cuit", async () => {
     const cuit = "30711819017";
-    await CompanyRepository.create({ cuit: cuit, companyName: "Devartis SA" });
+    await CompanyRepository.create({
+      cuit: cuit, companyName: "Devartis SA",
+      user: UserMocks.userAttributes
+    });
     await expect(
-      CompanyRepository.create({ cuit: cuit, companyName: "Devartis Clone SA" })
+      CompanyRepository.create({
+        cuit: cuit, companyName: "Devartis Clone SA",
+        user: { ...UserMocks.userAttributes, email: "qwe@qwe.qwe" }
+      })
     ).rejects.toThrow(UniqueConstraintError);
   });
 
   it("should throw an error if cuit is null", async () => {
-    const companyAttributes: any = { cuit: null, companyName: "devartis" };
     await expect(
-      CompanyRepository.create(companyAttributes)
+      CompanyRepository.create({
+        cuit: null as any,
+        companyName: "devartis",
+        user: UserMocks.userAttributes
+      })
     ).rejects.toThrow(ValidationError);
   });
 
   it("should throw an error if companyName is null", async () => {
-    const companyAttributes: ICompany = { cuit: "30711819017", companyName: "devartis" };
-    delete companyAttributes.companyName;
     await expect(
-      CompanyRepository.create(companyAttributes)
+      CompanyRepository.create({
+        cuit: "30711819017",
+        companyName: null as any,
+        user: UserMocks.userAttributes
+      })
     ).rejects.toThrow(ValidationError);
   });
 
@@ -116,7 +120,7 @@ describe("CompanyRepository", () => {
     await expect(
       CompanyRepository.create(
         {
-          ...companyDataWithMinimumData,
+          ...companyMocks.minimumData(),
           phoneNumbers: ["InvalidPhoneNumber1", "InvalidPhoneNumber2"]
         }
       )
@@ -129,7 +133,8 @@ describe("CompanyRepository", () => {
   it("throws an error if phoneNumbers are duplicated", async () => {
     await expect(
       CompanyRepository.create(
-        { ...companyDataWithMinimumData,
+        {
+          ...companyMocks.minimumData(),
           phoneNumbers: ["1159821066", "1159821066"]
         }
       )

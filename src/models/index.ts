@@ -13,6 +13,7 @@ import { Offer } from "./Offer";
 import { OfferSection } from "./Offer/OfferSection";
 import { OfferCareer } from "./Offer/OfferCareer";
 import { User } from "./User";
+import { CompanyUser } from "./CompanyUser";
 
 const models = [
   Applicant,
@@ -26,6 +27,7 @@ const models = [
   Company,
   CompanyPhoneNumber,
   CompanyPhoto,
+  CompanyUser,
   Offer,
   OfferSection,
   OfferCareer,

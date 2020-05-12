@@ -1,0 +1,1 @@
+export { CompanyUser } from "./Model";

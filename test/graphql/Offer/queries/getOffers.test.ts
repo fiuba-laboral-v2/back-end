@@ -9,6 +9,7 @@ import { OfferRepository } from "../../../../src/models/Offer";
 import { careerMocks } from "../../../models/Career/mocks";
 import { companyMocks } from "../../../models/Company/mocks";
 import { OfferMocks } from "../../../models/Offer/mocks";
+import { UserRepository } from "../../../../src/models/User";
 
 const GET_OFFERS = gql`
   query {
@@ -20,12 +21,11 @@ const GET_OFFERS = gql`
 
 describe("getOffers", () => {
   beforeAll(() => Database.setConnection());
-
-  beforeEach(async () => {
-    await CompanyRepository.truncate();
-    await CareerRepository.truncate();
-  });
-
+  beforeEach(() => Promise.all([
+    CompanyRepository.truncate(),
+    CareerRepository.truncate(),
+    UserRepository.truncate()
+  ]));
   afterAll(() => Database.close());
 
   describe("when offers exists", () => {

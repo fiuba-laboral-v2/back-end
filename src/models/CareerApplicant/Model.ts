@@ -1,15 +1,7 @@
-import {
-  BelongsTo,
-  Column,
-  DataType,
-  ForeignKey,
-  Model,
-  PrimaryKey,
-  Table
-} from "sequelize-typescript";
+import { BelongsTo, Column, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript";
 import { Applicant } from "../Applicant/Model";
 import { Career } from "../Career/Model";
-import { HasOneGetAssociationMixin } from "sequelize";
+import { HasOneGetAssociationMixin, INTEGER } from "sequelize";
 import { validateIntegerInRange } from "validations-fiuba-laboral-v2";
 
 @Table({
@@ -47,7 +39,7 @@ export class CareerApplicant extends Model<CareerApplicant> {
 
   @Column({
     allowNull: false,
-    type: DataType.INTEGER
+    type: INTEGER
   })
   public creditsCount: number;
 

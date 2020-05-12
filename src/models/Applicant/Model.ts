@@ -2,7 +2,6 @@ import {
   BelongsTo,
   BelongsToMany,
   Column,
-  DataType,
   ForeignKey,
   HasMany,
   Is,
@@ -12,8 +11,12 @@ import {
 import {
   HasManyCreateAssociationMixin,
   HasManyGetAssociationsMixin,
+  HasManyHasAssociationMixin,
   HasOneGetAssociationMixin,
-  HasManyHasAssociationMixin
+  INTEGER,
+  TEXT,
+  UUID,
+  UUIDV4
 } from "sequelize";
 import { validateIntegerInRange } from "validations-fiuba-laboral-v2";
 import { JobApplication } from "../JobApplication";
@@ -30,28 +33,28 @@ export class Applicant extends Model<Applicant> {
   @Column({
     allowNull: false,
     primaryKey: true,
-    type: DataType.UUID,
-    defaultValue: DataType.UUIDV4
+    type: UUID,
+    defaultValue: UUIDV4
   })
   public uuid: string;
 
   @Is("padron", validateIntegerInRange({ min: { value: 0, include: false } }))
   @Column({
     allowNull: false,
-    type: DataType.INTEGER
+    type: INTEGER
   })
   public padron: number;
 
   @Column({
     allowNull: true,
-    type: DataType.TEXT
+    type: TEXT
   })
   public description: string;
 
   @ForeignKey(() => User)
   @Column({
     allowNull: false,
-    type: DataType.UUID
+    type: UUID
   })
   public userUuid: string;
 

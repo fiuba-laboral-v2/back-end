@@ -1,6 +1,4 @@
-import { DATE, UUID, QueryInterface, STRING } from "sequelize";
-import uuid from "uuid/v4";
-import { DataType } from "sequelize-typescript";
+import { DATE, QueryInterface, STRING, TEXT, UUID } from "sequelize";
 
 export = {
   up: (queryInterface: QueryInterface) => {
@@ -8,8 +6,7 @@ export = {
       uuid: {
         allowNull: false,
         primaryKey: true,
-        type: UUID,
-        defaultValue: uuid()
+        type: UUID
       },
       email: {
         allowNull: false,
@@ -22,11 +19,11 @@ export = {
       },
       name: {
         allowNull: false,
-        type: DataType.TEXT
+        type: TEXT
       },
       surname: {
         allowNull: false,
-        type: DataType.TEXT
+        type: TEXT
       },
       createdAt: {
         allowNull: false,

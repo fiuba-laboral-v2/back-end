@@ -39,7 +39,9 @@ describe("Offer", () => {
     await offer.save();
     expect(offer.uuid).not.toBeUndefined();
     expect(offer).toEqual(expect.objectContaining(offerAttributes));
-    expect(await offer.getCompany()).toEqual(expect.objectContaining(companyAttributes));
+    expect(await offer.getCompany()).toEqual(
+      expect.objectContaining(companyMocks.companyDataWithoutUser())
+    );
     expect(await company.getOffers()).toMatchObject([offerAttributes]);
   });
 

@@ -1,51 +1,43 @@
-import {
-  AllowNull,
-  Column,
-  DataType,
-  HasMany,
-  Model,
-  Table,
-  Is
-} from "sequelize-typescript";
+import { AllowNull, Column, HasMany, Is, Model, Table } from "sequelize-typescript";
 import { CompanyPhoneNumber } from "../CompanyPhoneNumber";
 import { CompanyPhoto } from "../CompanyPhoto";
 import { Offer } from "../Offer/Model";
 import { validateCuit, validateName } from "validations-fiuba-laboral-v2";
-import { HasManyGetAssociationsMixin } from "sequelize";
+import { HasManyGetAssociationsMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
 
 @Table
 export class Company extends Model<Company> {
   @Column({
     allowNull: false,
     primaryKey: true,
-    type: DataType.UUID,
-    defaultValue: DataType.UUIDV4
+    type: UUID,
+    defaultValue: UUIDV4
   })
   public uuid: string;
 
   @AllowNull(false)
   @Is("cuit", validateCuit)
-  @Column(DataType.STRING)
+  @Column(STRING)
   public cuit: string;
 
   @AllowNull(false)
   @Is("name", validateName)
-  @Column(DataType.STRING)
+  @Column(STRING)
   public companyName: string;
 
-  @Column(DataType.STRING)
+  @Column(STRING)
   public slogan: string;
 
-  @Column(DataType.TEXT)
+  @Column(TEXT)
   public description: string;
 
-  @Column(DataType.TEXT)
+  @Column(TEXT)
   public logo: string;
 
-  @Column(DataType.STRING)
+  @Column(STRING)
   public website: string;
 
-  @Column(DataType.STRING)
+  @Column(STRING)
   public email: string;
 
   @HasMany(() => CompanyPhoneNumber)

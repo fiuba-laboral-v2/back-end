@@ -65,13 +65,11 @@ const GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION = gql`
 
 describe("getOfferByUuid", () => {
   beforeAll(() => Database.setConnection());
-
-  beforeEach(async () => {
-    await CompanyRepository.truncate();
-    await CareerRepository.truncate();
-    await UserRepository.truncate();
-  });
-
+  beforeEach(() => Promise.all([
+    CompanyRepository.truncate(),
+    CareerRepository.truncate(),
+    UserRepository.truncate()
+  ]));
   afterAll(() => Database.close());
 
   const createOffer = async () => {

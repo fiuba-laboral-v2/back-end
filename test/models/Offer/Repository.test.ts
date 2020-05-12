@@ -10,13 +10,15 @@ import { companyMocks } from "../Company/mocks";
 import { OfferMocks } from "./mocks";
 import { careerMocks } from "../Career/mocks";
 import { omit } from "lodash";
+import { UserRepository } from "../../../src/models/User";
 
 describe("OfferRepository", () => {
-  beforeAll(async () => await Database.setConnection());
-
-  beforeEach(async () => await CompanyRepository.truncate());
-
-  afterAll(async () => await Database.close());
+  beforeAll(() => Database.setConnection());
+  beforeEach(() => Promise.all([
+    CompanyRepository.truncate(),
+    UserRepository.truncate()
+  ]));
+  afterAll(() => Database.close());
 
   describe("Create", () => {
     it("should create a new offer", async () => {

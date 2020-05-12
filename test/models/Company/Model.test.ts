@@ -15,11 +15,10 @@ describe("Company", () => {
   afterAll(() => Database.close());
 
   it("create a valid company", async () => {
-    const companyAttributes = companyMocks.companyData();
-    const company = new Company(companyAttributes);
+    const company = new Company(companyMocks.companyData());
     await expect(company.validate()).resolves.not.toThrow();
     expect(company.uuid).not.toBeUndefined();
-    expect(company).toEqual(expect.objectContaining(companyAttributes));
+    expect(company).toEqual(expect.objectContaining(companyMocks.companyDataWithoutUser()));
   });
 
   it("throws an error if cuit is null", async () => {

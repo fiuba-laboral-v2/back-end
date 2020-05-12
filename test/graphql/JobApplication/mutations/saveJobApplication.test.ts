@@ -27,14 +27,11 @@ const SAVE_JOB_APPLICATION = gql`
 `;
 
 describe("saveJobApplication", () => {
-
   beforeAll(() => Database.setConnection());
-
-  beforeEach(async () => {
-    await UserRepository.truncate();
-    await CompanyRepository.truncate();
-  });
-
+  beforeEach(() => Promise.all([
+    UserRepository.truncate(),
+    CompanyRepository.truncate()
+  ]));
   afterAll(() => Database.close());
 
   const applicantData = {

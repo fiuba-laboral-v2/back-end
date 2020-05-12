@@ -1,21 +1,22 @@
-import { Column, DataType, Model, Table, BelongsToMany } from "sequelize-typescript";
+import { BelongsToMany, Column, Model, Table } from "sequelize-typescript";
 import { Applicant } from "../Applicant/Model";
 import { ApplicantCapability } from "../ApplicantCapability/Model";
+import { CITEXT, UUID, UUIDV4 } from "sequelize";
 
 @Table({ tableName: "Capabilities" })
 export class Capability extends Model<Capability> {
   @Column({
     allowNull: false,
     primaryKey: true,
-    type: DataType.UUID,
-    defaultValue: DataType.UUIDV4
+    type: UUID,
+    defaultValue: UUIDV4
   })
   public uuid: string;
 
   @Column({
     allowNull: false,
     unique: true,
-    type: DataType.CITEXT
+    type: CITEXT
   })
   public description: string;
 
