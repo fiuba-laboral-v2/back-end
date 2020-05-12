@@ -34,6 +34,7 @@ export class Company extends Model<Company> {
   @Column(TEXT)
   public logo: string;
 
+  // @Is(validateURL)
   @Column(STRING)
   public website: string;
 
