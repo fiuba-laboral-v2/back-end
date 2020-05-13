@@ -4,7 +4,7 @@ import { GraphQLOfferSectionInput } from "../Types/GraphQLOfferSection";
 import { IOffer, OfferRepository } from "../../../models/Offer";
 import { Int, List, nonNull, String } from "../../fieldTypes";
 
-const saveOffer = {
+const createOffer = {
   type: GraphQLOffer,
   args: {
     companyUuid: {
@@ -35,4 +35,4 @@ const saveOffer = {
   resolve: (_: undefined, props: IOffer) => OfferRepository.create(props)
 };
 
-export { saveOffer };
+export { createOffer };

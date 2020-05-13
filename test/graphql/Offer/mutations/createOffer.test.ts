@@ -10,12 +10,12 @@ import { OfferMocks } from "../../../models/Offer/mocks";
 import { UserRepository } from "../../../../src/models/User";
 
 const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
-    mutation saveOffer(
+    mutation createOffer(
         $companyUuid: String!, $title: String!, $description: String!, $hoursPerDay: Int!,
         $minimumSalary: Int!, $maximumSalary: Int!, $sections: [OfferSectionInput],
         $careers: [OfferCareerInput]
     ) {
-        saveOffer(
+        createOffer(
             companyUuid: $companyUuid, title: $title, description: $description,
             hoursPerDay: $hoursPerDay, minimumSalary: $minimumSalary, maximumSalary: $maximumSalary,
             sections: $sections, careers: $careers
@@ -54,11 +54,11 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
 `;
 
 const SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA = gql`
-    mutation saveOffer(
+    mutation createOffer(
         $companyUuid: String!, $title: String!, $description: String!, $hoursPerDay: Int!,
         $minimumSalary: Int!, $maximumSalary: Int!
     ) {
-        saveOffer(
+        createOffer(
             companyUuid: $companyUuid, title: $title, description: $description,
             hoursPerDay: $hoursPerDay, minimumSalary: $minimumSalary, maximumSalary: $maximumSalary
         ) {
@@ -72,7 +72,7 @@ const SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA = gql`
     }
 `;
 
-describe("saveOffer", () => {
+describe("createOffer", () => {
   beforeAll(() => Database.setConnection());
   beforeEach(() => Promise.all([
     CompanyRepository.truncate(),
@@ -90,8 +90,8 @@ describe("saveOffer", () => {
         offerAttributes
       );
       expect(errors).toBeUndefined();
-      expect(data!.saveOffer).toHaveProperty("uuid");
-      expect(data!.saveOffer).toMatchObject(
+      expect(data!.createOffer).toHaveProperty("uuid");
+      expect(data!.createOffer).toMatchObject(
         {
           title: offerAttributes.title,
           description: offerAttributes.description,
@@ -111,8 +111,8 @@ describe("saveOffer", () => {
         offerAttributes
       );
       expect(errors).toBeUndefined();
-      expect(data!.saveOffer.sections).toHaveLength(1);
-      expect(data!.saveOffer.careers).toHaveLength(1);
+      expect(data!.createOffer.sections).toHaveLength(1);
+      expect(data!.createOffer.careers).toHaveLength(1);
     });
   });
 
