@@ -37,6 +37,15 @@ export const defaultTranslations = {
     { key: "career", value: "Carrera" },
     { key: "credits", value: "Créditos aprobados" }
   ],
+  createOffer: [
+    { key: "formTitle", value: "Publicar oferta" },
+    { key: "offerTitle", value: "Título" },
+    { key: "description", value: "Descripción" },
+    { key: "hoursPerDay", value: "Horas por día" },
+    { key: "minimumSalary", value: "Salario mínimo" },
+    { key: "maximumSalary", value: "Salario máximo" },
+    { key: "submit", value: "Publicar" }
+  ],
   companySignUp: [
     { key: "title", value: "Crear tu cuenta" },
     { key: "email", value: "Email" },
