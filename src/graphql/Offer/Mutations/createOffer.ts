@@ -4,7 +4,7 @@ import { GraphQLOfferSectionInput } from "../Types/GraphQLOfferSection";
 import { IOffer, OfferRepository } from "../../../models/Offer";
 import { Int, List, nonNull, String } from "../../fieldTypes";
 
-const saveOffer = {
+const createOffer = {
   type: GraphQLOffer,
   args: {
     companyUuid: {
@@ -14,16 +14,16 @@ const saveOffer = {
       type: nonNull(String)
     },
     description: {
-      type: String
+      type: nonNull(String)
     },
     hoursPerDay: {
-      type: Int
+      type: nonNull(Int)
     },
     minimumSalary: {
-      type: Int
+      type: nonNull(Int)
     },
     maximumSalary: {
-      type: Int
+      type: nonNull(Int)
     },
     sections: {
       type: List(GraphQLOfferSectionInput)
@@ -35,4 +35,4 @@ const saveOffer = {
   resolve: (_: undefined, props: IOffer) => OfferRepository.create(props)
 };
 
-export { saveOffer };
+export { createOffer };
