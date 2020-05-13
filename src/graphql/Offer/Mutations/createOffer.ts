@@ -14,16 +14,16 @@ const createOffer = {
       type: nonNull(String)
     },
     description: {
-      type: String
+      type: nonNull(String)
     },
     hoursPerDay: {
-      type: Int
+      type: nonNull(Int)
     },
     minimumSalary: {
-      type: Int
+      type: nonNull(Int)
     },
     maximumSalary: {
-      type: Int
+      type: nonNull(Int)
     },
     sections: {
       type: List(GraphQLOfferSectionInput)
