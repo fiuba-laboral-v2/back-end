@@ -3,6 +3,7 @@ import { executeQuery } from "../../ApolloTestClient";
 import { CompanyRepository } from "../../../../src/models/Company";
 import Database from "../../../../src/config/Database";
 import { UserMocks } from "../../../models/User/mocks";
+import { UserRepository } from "../../../../src/models/User";
 
 const query = gql`
   query {
@@ -15,9 +16,10 @@ const query = gql`
 
 describe("getCompanies", () => {
   beforeAll(() => Database.setConnection());
-
-  beforeEach(() => CompanyRepository.truncate());
-
+  beforeEach(() => Promise.all([
+    CompanyRepository.truncate(),
+    UserRepository.truncate()
+  ]));
   afterAll(() => Database.close());
 
   it("returns all companies", async () => {
