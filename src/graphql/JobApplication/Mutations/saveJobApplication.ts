@@ -2,7 +2,7 @@ import { nonNull, String } from "../../fieldTypes";
 import { GraphQLJobApplication } from "../Types/GraphQLJobApplication";
 import { JobApplicationRepository } from "../../../models/JobApplication";
 import { OfferRepository } from "../../../models/Offer";
-import { IApplicantUser } from "../../../server";
+import { IApplicantUser } from "../../../graphqlContext";
 
 export const saveJobApplication = {
   type: GraphQLJobApplication,

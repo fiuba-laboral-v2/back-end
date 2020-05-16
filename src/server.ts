@@ -4,35 +4,7 @@ import { schema } from "./graphql/Schema";
 import depthLimit from "graphql-depth-limit";
 import { ExpressContext } from "apollo-server-express/dist/ApolloServer";
 import { JWT } from "./JWT";
-
-interface IUser {
-  uuid: string;
-  email: string;
-  companyUuid?: undefined;
-  applicantUuid?: undefined;
-}
-
-export interface IApplicantUser {
-  uuid: string;
-  email: string;
-  applicantUuid: string;
-  companyUuid?: undefined;
-}
-
-export interface ICompanyUser {
-  uuid: string;
-  email: string;
-  companyUuid: string;
-  applicantUuid?: undefined;
-}
-
-export type ICurrentUser = IApplicantUser | ICompanyUser | IUser;
-
-export type IApolloServerContext = {
-  currentUser: ICurrentUser;
-};
-
-export type Context = IApolloServerContext | object;
+import { Context } from "./graphqlContext";
 
 export const ApolloServer = new Server({
   schema,
