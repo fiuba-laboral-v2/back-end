@@ -54,6 +54,7 @@ export const defaultTranslations = {
     { key: "name", value: "Nombre" },
     { key: "surname", value: "Apellido" },
     { key: "cuit", value: "Cuit" },
+    { key: "companyEmail", value: "Email de la empresa" },
     { key: "companyName", value: "Nombre de la empresa" },
     { key: "slogan", value: "Slogan" },
     { key: "description", value: "Descripción" },
