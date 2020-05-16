@@ -5,7 +5,7 @@ import { UserRepository } from "../../models/User/Repository";
 export const userQueries = {
   me: {
     type: GraphQLUser,
-    resolve: async (_: undefined, __: object, { currentUser }: IApolloServerContext) =>
+    resolve: (_: undefined, __: object, { currentUser }: IApolloServerContext) =>
       UserRepository.findByEmail(currentUser!.email)
   }
 };
