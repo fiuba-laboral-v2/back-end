@@ -148,7 +148,7 @@ describe("getOfferByUuid", () => {
     });
 
     it("should find an offer with hasApplied in true", async () => {
-      const applicant = await userFactory.applicantUser();
+      const applicant = await userFactory.applicant();
       const user = await applicant.getUser();
       const apolloClient = client.loggedIn({
         uuid: user.uuid,

@@ -1,7 +1,7 @@
-import { isAuthenticated } from "../rules";
+import { isUser } from "../rules";
 
 export const userPermissions = {
   Query: {
-    me: isAuthenticated
+    me: isUser
   }
 };

@@ -11,7 +11,7 @@ export const userFactory = {
       surname: name.lastName()
     }
   ),
-  applicantUser: () => {
+  applicant: () => {
     return ApplicantRepository.create(
       {
         padron: random.number(),
