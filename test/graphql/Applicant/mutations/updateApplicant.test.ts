@@ -1,15 +1,15 @@
 import { gql } from "apollo-server";
-import { executeMutation } from "../../ApolloTestClient";
+import { client } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
 import { CareerRepository } from "../../../../src/models/Career";
 import { Career } from "../../../../src/models/Career";
-import { ApplicantRepository } from "../../../../src/models/Applicant";
 
-import { applicantMocks } from "../../../models/Applicant/mocks";
 import { careerMocks } from "../../../models/Career/mocks";
+import { loginFactory } from "../../../mocks/login";
 
 import { UserRepository } from "../../../../src/models/User/Repository";
+import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
 
 const UPDATE_APPLICANT = gql`
   mutation updateApplicant(
@@ -53,25 +53,20 @@ const UPDATE_APPLICANT = gql`
 `;
 
 describe("updateApplicant", () => {
-  const createApplicant = async () => {
-    const career = await CareerRepository.create(careerMocks.careerData());
-    const applicantData = applicantMocks.applicantData([career]);
-    return ApplicantRepository.create(applicantData);
-  };
-
   beforeAll(async () => {
     await Database.setConnection();
     await Career.truncate({ cascade: true });
     await UserRepository.truncate();
   });
 
-  beforeEach(() => UserRepository.truncate());
-
-  afterAll(() => Database.close());
+  afterAll(async () => {
+    await Career.truncate({ cascade: true });
+    await UserRepository.truncate();
+    Database.close();
+  });
 
   it("should update all possible data deleting all previous values", async () => {
-    const applicant = await createApplicant();
-    const user = await applicant.getUser();
+    const { applicant, user, apolloClient } = await loginFactory.applicant();
     const newCareer = await CareerRepository.create(careerMocks.careerData());
     const dataToUpdate = {
       uuid: applicant.uuid,
@@ -105,7 +100,10 @@ describe("updateApplicant", () => {
 
     const {
       data, errors
-    } = await executeMutation(UPDATE_APPLICANT, dataToUpdate);
+    } = await apolloClient.mutate({
+      mutation: UPDATE_APPLICANT,
+      variables: dataToUpdate
+    });
 
     expect(errors).toBeUndefined();
     expect(data!.updateApplicant).toMatchObject({
@@ -150,5 +148,53 @@ describe("updateApplicant", () => {
         ...dataToUpdate.links.map(({ name, url }) => ({ name, url }))
       ]
     ));
+  });
+
+  describe("Errors", () => {
+    it("should return an error if there is no current user", async () => {
+      const apolloClient = client.loggedOut;
+
+      const dataToUpdate = {
+        uuid: "4d4473fb-ba85-40dc-81c5-12d1814c98fa",
+        user: {
+          name: "newName",
+          surname: "newSurname"
+        },
+        padron: 1500,
+        description: "newDescription",
+        capabilities: ["CSS", "clojure"]
+      };
+
+      const {
+       errors
+      } = await apolloClient.mutate({
+        mutation: UPDATE_APPLICANT,
+        variables: dataToUpdate
+      });
+
+      expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
+    });
+
+    it("should return an error if current user is not an applicant", async () => {
+      const { apolloClient } = await loginFactory.user();
+
+      const dataToUpdate = {
+        uuid: "4d4473fb-ba85-40dc-81c5-12d1814c98fa",
+        user: {
+          name: "newName",
+          surname: "newSurname"
+        },
+        padron: 1500,
+        description: "newDescription",
+        capabilities: ["CSS", "clojure"]
+      };
+
+      const { errors } = await apolloClient.mutate({
+        mutation: UPDATE_APPLICANT,
+        variables: dataToUpdate
+      });
+
+      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+    });
   });
 });

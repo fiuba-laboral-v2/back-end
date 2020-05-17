@@ -1,5 +1,4 @@
-import { applicantTypes } from "./Types";
-import { applicantMutations } from "./Mutations";
-import { applicantQueries } from "./Queries";
-
-export { applicantTypes, applicantMutations, applicantQueries };
+export { applicantTypes } from "./Types";
+export { applicantMutations } from "./Mutations";
+export { applicantQueries } from "./Queries";
+export { applicantPermissions } from "./permissons";
