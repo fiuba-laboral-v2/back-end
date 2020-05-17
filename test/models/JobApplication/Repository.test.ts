@@ -24,7 +24,7 @@ describe("JobApplicationRepository", () => {
       const { uuid: companyUuid } = await Company.create(companyMocks.companyData());
       const offer = await Offer.create(OfferMocks.completeData(companyUuid));
       const applicant = await ApplicantRepository.create(applicantMocks.applicantData([]));
-      const jobApplication = await JobApplicationRepository.apply(applicant, offer);
+      const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
       expect(jobApplication).toMatchObject(
         {
           offerUuid: offer.uuid,
@@ -42,7 +42,7 @@ describe("JobApplicationRepository", () => {
       it("should return true if applicant applied for offer", async () => {
         const offer = await createOffer();
         const applicant = await ApplicantRepository.create(applicantMocks.applicantData([]));
-        await JobApplicationRepository.apply(applicant, offer);
+        await JobApplicationRepository.apply(applicant.uuid, offer);
         expect(await JobApplicationRepository.hasApplied(applicant, offer)).toBe(true);
       });
 

@@ -1,5 +1,5 @@
 import { GraphQLObjectType } from "graphql";
-import { IApolloServerContext } from "../../../server";
+import { IApolloServerContext } from "../../../graphqlContext";
 import { ID, Int, List, nonNull, String, Boolean } from "../../fieldTypes";
 import { GraphQLOfferSection } from "./GraphQLOfferSection";
 import { GraphQLCareer } from "../../Career/Types/Career";
@@ -7,7 +7,6 @@ import { GraphQLCompany } from "../../Company/Types/GraphQLCompany";
 import { Offer } from "../../../models/Offer";
 import { UserRepository } from "../../../models/User";
 import { JobApplicationRepository } from "../../../models/JobApplication";
-import { AuthenticationError, UnauthorizedError } from "../../Errors";
 
 const GraphQLOffer = new GraphQLObjectType({
   name: "Offer",
@@ -48,11 +47,8 @@ const GraphQLOffer = new GraphQLObjectType({
     hasApplied: {
       type: nonNull(Boolean),
       resolve: async (offer: Offer, _, { currentUser }: IApolloServerContext) => {
-        if (!currentUser) throw new AuthenticationError();
-
         const user = await UserRepository.findByEmail(currentUser.email);
         const applicant = await user.getApplicant();
-        if (!applicant) throw new UnauthorizedError();
 
         return JobApplicationRepository.hasApplied(applicant, offer);
       }

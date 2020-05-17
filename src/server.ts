@@ -1,27 +1,19 @@
 import { ApolloServer as Server } from "apollo-server-express";
 import { apolloErrorConverter } from "./FormatErrors";
-import Schema from "./graphql/Schema";
+import { schema } from "./graphql/Schema";
 import depthLimit from "graphql-depth-limit";
 import { ExpressContext } from "apollo-server-express/dist/ApolloServer";
 import { JWT } from "./JWT";
-
-interface ICurrentUser {
-  uuid: string;
-  email: string;
-}
-
-export interface IApolloServerContext {
-  currentUser?: ICurrentUser;
-}
+import { Context } from "./graphqlContext";
 
 export const ApolloServer = new Server({
-  schema: Schema,
+  schema,
   validationRules: [depthLimit(1000)],
   formatError: apolloErrorConverter(),
   context: (expressContext: ExpressContext) => {
     const token = expressContext.req.headers.authorization || "";
-    const apolloServerContext: IApolloServerContext = {
-      currentUser: JWT.extractTokenPayload(token)
+    const apolloServerContext: Context = {
+      ...(token && { currentUser: JWT.extractTokenPayload(token) })
     };
     return apolloServerContext;
   }

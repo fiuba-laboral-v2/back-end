@@ -3,11 +3,7 @@ import { Environment } from "./config/Environment";
 import { sign, verify } from "jsonwebtoken";
 import { Application } from "express";
 import jwt from "express-jwt";
-
-export interface IPayload {
-  uuid: string;
-  email: string;
-}
+import { ICurrentUser } from "./graphqlContext";
 
 let JWT_SECRET: string;
 if (["test", "development", "test_travis"].includes(Environment.NODE_ENV)) {
@@ -18,10 +14,12 @@ if (["test", "development", "test_travis"].includes(Environment.NODE_ENV)) {
 }
 
 export const JWT = {
-  createToken: (user: User) => {
-    const payload: IPayload = {
+  createToken: async (user: User) => {
+    const applicant = await user.getApplicant();
+    const payload: ICurrentUser = {
       uuid: user.uuid,
-      email: user.email
+      email: user.email,
+      ...(applicant && { applicantUuid: applicant.uuid })
     };
 
     return sign(
@@ -30,12 +28,13 @@ export const JWT = {
       { expiresIn: "2d" }
     );
   },
-  decodeToken: (token: string): IPayload | undefined => {
+  decodeToken: (token: string): ICurrentUser | undefined => {
     try {
-      const payload = verify(token, JWT_SECRET) as IPayload;
+      const payload = verify(token, JWT_SECRET) as ICurrentUser;
       return {
         uuid: payload.uuid,
-        email: payload.email
+        email: payload.email,
+        ...(payload.applicantUuid && { applicantUuid: payload.applicantUuid })
       };
     } catch (e) {
       return;
@@ -49,5 +48,5 @@ export const JWT = {
       })
     );
   },
-  extractTokenPayload: (token: string): IPayload | undefined => JWT.decodeToken(token)
+  extractTokenPayload: (token: string): ICurrentUser | undefined => JWT.decodeToken(token)
 };
