@@ -15,9 +15,7 @@ import { loginFactory } from "../../../mocks/login";
 const SAVE_JOB_APPLICATION = gql`
   mutation saveJobApplication($offerUuid: String!) {
     saveJobApplication(offerUuid: $offerUuid) {
-        offer {
-          uuid
-        }
+        offerUuid
         applicantUuid
     }
   }
@@ -56,9 +54,7 @@ describe("saveJobApplication", () => {
       expect(errors).toBeUndefined();
       expect(data!.saveJobApplication).toMatchObject(
         {
-          offer: {
-            uuid: offer.uuid
-          },
+          offerUuid: offer.uuid,
           applicantUuid: applicant.uuid
         }
       );

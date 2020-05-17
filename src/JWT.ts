@@ -3,7 +3,7 @@ import { Environment } from "./config/Environment";
 import { sign, verify } from "jsonwebtoken";
 import { Application } from "express";
 import jwt from "express-jwt";
-import { ICurrentUser } from "./server";
+import { ICurrentUser } from "./graphqlContext";
 
 let JWT_SECRET: string;
 if (["test", "development", "test_travis"].includes(Environment.NODE_ENV)) {

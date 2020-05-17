@@ -1,6 +1,6 @@
 import { rule, chain } from "graphql-shield";
 import { AuthenticationError, UnauthorizedError } from "./Errors";
-import { IApolloServerContext } from "src/server";
+import { IApolloServerContext } from "../graphqlContext";
 
 const isUser = rule({ cache: "contextual" })
   ((parent, args, context: IApolloServerContext) => {
