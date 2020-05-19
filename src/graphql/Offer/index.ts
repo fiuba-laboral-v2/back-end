@@ -1,5 +1,4 @@
-import { offerTypes } from "./Types";
-import { offerMutations } from "./Mutations";
-import { offerQueries } from "./Queries";
-
-export { offerMutations, offerQueries, offerTypes };
+export { offerTypes } from "./Types";
+export { offerMutations } from "./Mutations";
+export { offerQueries } from "./Queries";
+export { offerPermissions } from "./permissions";

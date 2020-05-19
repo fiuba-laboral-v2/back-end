@@ -102,7 +102,7 @@ describe("saveApplicant", () => {
       });
     });
 
-    it("creates companyProfile with only obligatory data", async () => {
+    it("creates applicant with only obligatory data", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
       const applicantData = applicantMocks.applicantData([career]);
       const { data, errors } = await executeMutation(
