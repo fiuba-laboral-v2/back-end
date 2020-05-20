@@ -47,7 +47,6 @@ export const defaultTranslations = {
     { key: "submit", value: "Publicar" }
   ],
   CompanyLogoInput: [
-    { key: "altImageText", value: "Logo de la empresa" },
     { key: "uploadLogo", value: "Subir logo" }
   ],
   companySignUp: [
