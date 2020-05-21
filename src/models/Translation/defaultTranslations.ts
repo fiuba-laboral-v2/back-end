@@ -46,6 +46,9 @@ export const defaultTranslations = {
     { key: "maximumSalary", value: "Salario máximo" },
     { key: "submit", value: "Publicar" }
   ],
+  CompanyLogoInput: [
+    { key: "uploadLogo", value: "Subir logo" }
+  ],
   companySignUp: [
     { key: "title", value: "Crear tu cuenta" },
     { key: "email", value: "Email" },
