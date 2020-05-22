@@ -6,12 +6,15 @@ import {
   Is,
   Model,
   Table,
-  Unique
+  Unique,
+  HasMany
 } from "sequelize-typescript";
 import { compare, hashSync } from "bcrypt";
 import { HasOneGetAssociationMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
 import { Applicant } from "../Applicant/Model";
+import { CompanyUser } from "../CompanyUser/Model";
 import { validateEmail, validateName, validatePassword } from "validations-fiuba-laboral-v2";
+import { Company } from "../Company";
 
 @Table
 export class User extends Model<User> {
@@ -57,7 +60,16 @@ export class User extends Model<User> {
   @HasOne(() => Applicant, "userUuid")
   public applicant: Applicant;
 
+  @HasOne(() => CompanyUser)
+  public companyUser: CompanyUser;
+
   public getApplicant: HasOneGetAssociationMixin<Applicant>;
+  public getCompanyUser: HasOneGetAssociationMixin<CompanyUser>;
+
+  public async getCompany() {
+    const { companyUuid } = await this.getCompanyUser();
+    return Company.findByPk(companyUuid);
+  }
 
   public setPassword(password: string) {
     validatePassword(password);
