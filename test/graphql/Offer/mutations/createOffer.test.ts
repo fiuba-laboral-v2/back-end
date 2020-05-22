@@ -1,12 +1,12 @@
 import { gql } from "apollo-server";
-import { executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
+
+import { careerMocks } from "../../../models/Career/mocks";
+import { OfferMocks } from "../../../models/Offer/mocks";
+import { loginFactory } from "../../../mocks/login";
 
 import { CareerRepository } from "../../../../src/models/Career";
 import { CompanyRepository } from "../../../../src/models/Company";
-import { careerMocks } from "../../../models/Career/mocks";
-import { companyMocks } from "../../../models/Company/mocks";
-import { OfferMocks } from "../../../models/Offer/mocks";
 import { UserRepository } from "../../../../src/models/User";
 
 const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
@@ -73,22 +73,34 @@ const SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA = gql`
 `;
 
 describe("createOffer", () => {
-  beforeAll(() => Database.setConnection());
-  beforeEach(() => Promise.all([
-    CompanyRepository.truncate(),
-    CareerRepository.truncate(),
-    UserRepository.truncate()
-  ]));
-  afterAll(() => Database.close());
+  beforeAll(() => {
+    Database.setConnection();
+    return Promise.all([
+      CompanyRepository.truncate(),
+      CareerRepository.truncate(),
+      UserRepository.truncate()
+    ]);
+  });
+
+  afterAll(async () => {
+    await Promise.all([
+      CompanyRepository.truncate(),
+      CareerRepository.truncate(),
+      UserRepository.truncate()
+    ]);
+    Database.close();
+  });
 
   describe("when the input values are valid", () => {
     it("should create a new offer with only obligatory data", async () => {
-      const { uuid } = await CompanyRepository.create(companyMocks.companyData());
-      const offerAttributes = OfferMocks.completeData(uuid);
-      const { data, errors } = await executeMutation(
-        SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
-        offerAttributes
-      );
+      const { company, apolloClient } = await loginFactory.company();
+
+      const offerAttributes = OfferMocks.completeData(company.uuid);
+      const { data, errors } = await apolloClient.mutate({
+        mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
+        variables: offerAttributes
+      });
+
       expect(errors).toBeUndefined();
       expect(data!.createOffer).toHaveProperty("uuid");
       expect(data!.createOffer).toMatchObject(
@@ -103,13 +115,15 @@ describe("createOffer", () => {
     });
 
     it("should create a new offer with one section and one career", async () => {
+      const { company, apolloClient } = await loginFactory.company();
       const { code } = await CareerRepository.create(careerMocks.careerData());
-      const { uuid } = await CompanyRepository.create(companyMocks.companyData());
-      const offerAttributes = OfferMocks.withOneCareerAndOneSection(uuid, code);
-      const { data, errors } = await executeMutation(
-        SAVE_OFFER_WITH_COMPLETE_DATA,
-        offerAttributes
-      );
+
+      const offerAttributes = OfferMocks.withOneCareerAndOneSection(company.uuid, code);
+      const { data, errors } = await apolloClient.mutate({
+        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
+        variables: offerAttributes
+      });
+
       expect(errors).toBeUndefined();
       expect(data!.createOffer.sections).toHaveLength(1);
       expect(data!.createOffer.careers).toHaveLength(1);
@@ -118,20 +132,23 @@ describe("createOffer", () => {
 
   describe("when the input values are invalid", () => {
     it("should throw an error if no company uuid is provided", async () => {
-      const { errors } = await executeMutation(
-        SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
-        OfferMocks.withNoCompanyId()
-      );
+      const { apolloClient } = await loginFactory.company();
+      const { errors } = await apolloClient.mutate({
+        mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
+        variables: OfferMocks.withNoCompanyId()
+      });
       expect(errors).not.toBeUndefined();
     });
 
-    it("should throw an error if company uuid that not exist", async () => {
+    it("should throw an error if company uuid doesn't exist", async () => {
+      const { apolloClient } = await loginFactory.company();
       const notExistingCompanyUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       const offerAttributes = OfferMocks.completeData(notExistingCompanyUuid);
-      const { errors } = await executeMutation(
-        SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
-        offerAttributes
-      );
+      const { errors } = await apolloClient.mutate({
+        mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
+        variables: offerAttributes
+      });
+
       expect(errors![0].extensions!.data).toEqual(
         { errorType: "CompanyDoesNotExistError" }
       );

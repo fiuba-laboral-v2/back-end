@@ -16,10 +16,14 @@ if (["test", "development", "test_travis"].includes(Environment.NODE_ENV)) {
 export const JWT = {
   createToken: async (user: User) => {
     const applicant = await user.getApplicant();
-    const payload: ICurrentUser = {
+    const companyUser = await user.getCompanyUser();
+    const isApplicant = applicant?.uuid && !companyUser?.companyUuid;
+    const isCompany = !applicant?.uuid && companyUser?.companyUuid;
+    const payload = {
       uuid: user.uuid,
       email: user.email,
-      ...(applicant && { applicantUuid: applicant.uuid })
+      ...(isApplicant && { applicantUuid: applicant.uuid }),
+      ...(isCompany && { companyUuid: companyUser.companyUuid })
     };
 
     return sign(

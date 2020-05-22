@@ -67,8 +67,9 @@ export class User extends Model<User> {
   public getCompanyUser: HasOneGetAssociationMixin<CompanyUser>;
 
   public async getCompany() {
-    const { companyUuid } = await this.getCompanyUser();
-    return Company.findByPk(companyUuid);
+    const companyUser = await this.getCompanyUser();
+    if (companyUser !== undefined) return Company.findByPk(companyUser.companyUuid);
+    return;
   }
 
   public setPassword(password: string) {

@@ -21,5 +21,16 @@ export const loginFactory = {
     });
 
     return { user, applicant, apolloClient };
+  },
+  company: async () => {
+    const company = await userFactory.company();
+    const [user] = await company.getUsers();
+    const apolloClient = client.loggedIn({
+      uuid: user.uuid,
+      email: user.email,
+      companyUuid: company.uuid
+    });
+
+    return { user, company, apolloClient };
   }
 };
