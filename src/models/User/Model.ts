@@ -7,7 +7,6 @@ import {
   Model,
   Table,
   Unique,
-  HasMany
 } from "sequelize-typescript";
 import { compare, hashSync } from "bcrypt";
 import { HasOneGetAssociationMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
