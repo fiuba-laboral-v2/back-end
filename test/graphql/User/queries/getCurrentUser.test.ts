@@ -3,9 +3,9 @@ import { executeQuery, testCurrentUserEmail } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 import { UserRepository } from "../../../../src/models/User";
 
-const ME = gql`
+const GET_CURRENT_USER = gql`
   query {
-    me {
+    getCurrentUser {
       email
       name
       surname
@@ -30,9 +30,9 @@ describe("Current User query", () => {
       name: "name",
       surname: "surname"
     });
-    const { data, errors } = await executeQuery(ME);
+    const { data, errors } = await executeQuery(GET_CURRENT_USER);
     expect(errors).toBeUndefined();
-    expect(data!.me).toEqual(
+    expect(data!.getCurrentUser).toEqual(
       {
         email: testCurrentUserEmail,
         name: "name",
@@ -47,8 +47,8 @@ describe("Current User query", () => {
   });
 
   it("returns null if the current user is not set in context", async () => {
-    const { data, errors } = await executeQuery(ME, {}, { loggedIn: false });
+    const { data, errors } = await executeQuery(GET_CURRENT_USER, {}, { loggedIn: false });
     expect(errors).toBeUndefined();
-    expect(data?.me).toBeNull();
+    expect(data?.getCurrentUser).toBeNull();
   });
 });
