@@ -1,7 +1,9 @@
 import { GraphQLObjectType } from "graphql";
 import { ID, nonNull, String } from "../../fieldTypes";
+import { User } from "../../../models/User";
+import { GraphQLApplicant } from "../../Applicant/Types/Applicant";
 
-const GraphQLUser = new GraphQLObjectType({
+const GraphQLUser = new GraphQLObjectType<User>({
   name: "User",
   fields: () => ({
     uuid: {
@@ -15,6 +17,10 @@ const GraphQLUser = new GraphQLObjectType({
     },
     surname: {
       type: nonNull(String)
+    },
+    applicant: {
+      type: GraphQLApplicant,
+      resolve: user => user.getApplicant()
     }
   })
 });

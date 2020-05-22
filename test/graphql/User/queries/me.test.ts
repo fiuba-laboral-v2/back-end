@@ -1,8 +1,7 @@
 import { gql } from "apollo-server";
 import { executeQuery, testCurrentUserEmail } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
-import { UserRepository } from "../../../../src/models/User/Repository";
-import { AuthenticationError } from "../../../../src/graphql/Errors";
+import { UserRepository } from "../../../../src/models/User";
 
 const ME = gql`
   query {
@@ -10,6 +9,9 @@ const ME = gql`
       email
       name
       surname
+      applicant {
+        padron
+      }
     }
   }
 `;
@@ -34,13 +36,19 @@ describe("Current User query", () => {
       {
         email: testCurrentUserEmail,
         name: "name",
-        surname: "surname"
+        surname: "surname",
+        applicant: null
       }
     );
   });
 
-  it("returns error if the current user is not set in context", async () => {
-    const { errors } = await executeQuery(ME, { }, { loggedIn: false });
-    expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
+  it("returns current user applicant if it's set", async () => {
+    // TODO: quiero colgarme de lo que esta en el pr de manu
+  });
+
+  it("returns null if the current user is not set in context", async () => {
+    const { data, errors } = await executeQuery(ME, {}, { loggedIn: false });
+    expect(errors).toBeUndefined();
+    expect(data?.me).toBeNull();
   });
 });
