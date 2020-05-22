@@ -8,7 +8,7 @@ import { GraphQLLink } from "./Link";
 import { Applicant } from "../../../models/Applicant";
 import { CareerApplicantSerializer } from "../../../models/CareerApplicant";
 
-const GraphQLApplicant = new GraphQLObjectType({
+const GraphQLApplicant = new GraphQLObjectType<Applicant>({
   name: "Applicant",
   fields: () => ({
     uuid: {
@@ -16,7 +16,7 @@ const GraphQLApplicant = new GraphQLObjectType({
     },
     user: {
       type: nonNull(GraphQLUser),
-      resolve: (applicant: Applicant) => applicant.getUser()
+      resolve: applicant => applicant.getUser()
     },
     padron: {
       type: nonNull(Int)
@@ -26,26 +26,26 @@ const GraphQLApplicant = new GraphQLObjectType({
     },
     careers: {
       type: nonNull(List(GraphQLApplicantCareer)),
-      resolve: async (applicant: Applicant) =>
+      resolve: async applicant =>
         Promise.all((await applicant.getCareersApplicants()).map(careerApplicant =>
           CareerApplicantSerializer.serialize(careerApplicant)
         ))
     },
     capabilities: {
       type: nonNull(List(GraphQLCapability)),
-      resolve: async (applicant: Applicant) =>
+      resolve: async applicant =>
         (await applicant.getCapabilities()).map(({ uuid, description }) => ({ uuid, description }))
     },
     sections: {
       type: nonNull(List(GraphQLSection)),
-      resolve: async (applicant: Applicant) =>
+      resolve: async applicant =>
         (await applicant.getSections()).map(({ uuid, title, text, displayOrder }) =>
           ({ uuid, title, text, displayOrder })
         )
     },
     links: {
       type: nonNull(List(GraphQLLink)),
-      resolve: async (applicant: Applicant) =>
+      resolve: async applicant =>
         (await applicant.getLinks()).map(({ name, url }) => ({ name, url }))
     }
   })
