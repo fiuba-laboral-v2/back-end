@@ -18,9 +18,7 @@ describe("JobApplicationRepository", () => {
     company = await Company.create(companyMocks.companyData());
   });
 
-  beforeEach(async () => {
-    await ApplicantRepository.truncate();
-  });
+  beforeEach(() => ApplicantRepository.truncate());
 
   afterAll(async () => {
     await CompanyRepository.truncate();
