@@ -26,6 +26,18 @@ export = {
         { transaction }
       );
       await queryInterface.bulkInsert(
+        "CompanyUsers",
+        [
+          {
+            companyUuid: uuids.companies.devartis,
+            userUuid: uuids.manuel.user,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          }
+        ],
+        { transaction }
+      );
+      await queryInterface.bulkInsert(
         "CompanyPhotos",
         [
           {
