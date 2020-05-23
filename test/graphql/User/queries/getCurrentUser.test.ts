@@ -2,6 +2,7 @@ import { gql } from "apollo-server";
 import { executeQuery, testCurrentUserEmail } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 import { UserRepository } from "../../../../src/models/User";
+import { testClientFactory } from "../../../mocks/testClientFactory";
 
 const GET_CURRENT_USER = gql`
   query {
@@ -43,7 +44,19 @@ describe("Current User query", () => {
   });
 
   it("returns current user applicant if it's set", async () => {
-    // TODO: quiero colgarme de lo que esta en el pr de manu
+    const { applicant, user, apolloClient } = await testClientFactory.applicant();
+    const { data, errors } = await apolloClient.query({ query: GET_CURRENT_USER });
+    expect(errors).toBeUndefined();
+    expect(data?.getCurrentUser).toEqual(
+      {
+        email: user.email,
+        name: user.name,
+        surname: user.surname,
+        applicant: {
+          padron: applicant.padron
+        }
+      }
+    );
   });
 
   it("returns null if the current user is not set in context", async () => {
