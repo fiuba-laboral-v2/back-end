@@ -1,24 +1,22 @@
 import Database from "../../../src/config/Database";
 import { ApplicantRepository } from "../../../src/models/Applicant";
 import { Company, CompanyRepository } from "../../../src/models/Company";
-import { Offer, OfferRepository } from "../../../src/models/Offer";
+import { Offer } from "../../../src/models/Offer";
 import { JobApplicationRepository } from "../../../src/models/JobApplication";
 import { companyMocks } from "../Company/mocks";
 import { applicantMocks } from "../Applicant/mocks";
 import { OfferMocks } from "../Offer/mocks";
-import { UserRepository } from "../../../src/models/User/Repository";
 
 describe("JobApplicationRepository", () => {
   let company: Company;
 
   beforeAll(async () => {
-    await Database.setConnection();
+    Database.setConnection();
     company = await Company.create(companyMocks.companyData());
   });
 
   beforeEach(async () => {
-    await OfferRepository.truncate();
-    await UserRepository.truncate();
+    await ApplicantRepository.truncate();
   });
 
   afterAll(async () => {

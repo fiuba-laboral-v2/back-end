@@ -5,6 +5,6 @@ import { ICompanyUser } from "../../../graphqlContext";
 
 export const getJobApplicationsByCompany = {
   type: List(GraphQLJobApplication),
-  resolve: async (_: undefined, __: undefined, { currentUser }: { currentUser: ICompanyUser }) =>
+  resolve: (_: undefined, __: undefined, { currentUser }: { currentUser: ICompanyUser }) =>
     JobApplicationRepository.findByCompanyUuid(currentUser.companyUuid)
 };
