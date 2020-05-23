@@ -42,8 +42,6 @@ describe("getJobApplicationsByCompany", () => {
     applicant = await ApplicantRepository.create(applicantMocks.applicantData([]));
   });
 
-  beforeEach(() => JobApplicationRepository.truncate());
-
   afterAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
