@@ -15,6 +15,15 @@ export = {
           surname: "Blanco",
           createdAt: new Date(),
           updatedAt: new Date()
+        },
+        {
+          uuid: uuids.manuel.user,
+          email: "mllauro@devartis.com",
+          password: hashSync("SecurePassword1010", 10),
+          name: "Manuel",
+          surname: "Llauró",
+          createdAt: new Date(),
+          updatedAt: new Date()
         }
       ]
     );
