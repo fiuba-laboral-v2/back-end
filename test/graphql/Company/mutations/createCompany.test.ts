@@ -57,7 +57,9 @@ describe("createCompany", () => {
         {
           createCompany: {
             ...companyMocks.completeDataWithoutUser(),
-            phoneNumbers: expect.arrayContaining(companyMocks.completeData().phoneNumbers)
+            phoneNumbers: expect.arrayContaining(
+              companyMocks.completeDataWithoutUser().phoneNumbers
+            )
           }
         }
       );

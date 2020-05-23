@@ -37,7 +37,7 @@ describe("getCompanyByUuid", () => {
     expect(response.data).toEqual({
       getCompanyByUuid: {
         ...companyMocks.completeDataWithoutUser(),
-        phoneNumbers: expect.arrayContaining(companyMocks.completeData().phoneNumbers)
+        phoneNumbers: expect.arrayContaining(companyMocks.completeDataWithoutUser().phoneNumbers)
       }
     });
   });
