@@ -21,11 +21,7 @@ describe("login", () => {
     await CompanyRepository.truncate();
   });
 
-  afterAll(async () => {
-    await Database.close();
-    await UserRepository.truncate();
-    await CompanyRepository.truncate();
-  });
+  afterAll(() => Database.close());
 
   it("should return a token", async () => {
     const password = "AValidPassword3";
