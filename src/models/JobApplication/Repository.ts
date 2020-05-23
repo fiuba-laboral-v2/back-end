@@ -1,7 +1,6 @@
-import { Offer } from "../Offer";
+import { Offer } from "../Offer/Model";
 import { Applicant } from "../Applicant";
 import { JobApplication } from "./Model";
-import { Company } from "../Company";
 
 export const JobApplicationRepository = {
   apply: async (applicantUuid: string, offer: Offer) =>
@@ -22,8 +21,8 @@ export const JobApplicationRepository = {
     );
     return jobApplication != null;
   },
-  findByCompany: async (company: Company) => {
-    const offers = await company.getOffers();
+  findByCompanyUuid: async (companyUuid: string) => {
+    const offers = await Offer.findAll({ where: { companyUuid } });
     return JobApplication.findAll({
       where: {
         offerUuid: offers.map(({ uuid }) => uuid)

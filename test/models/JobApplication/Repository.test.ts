@@ -79,7 +79,7 @@ describe("JobApplicationRepository", () => {
       it ("returns the only application for my company", async () => {
         const offer = await Offer.create(OfferMocks.completeData(company4.uuid));
         await JobApplicationRepository.apply(applicant4.uuid, offer);
-        const jobApplications = await JobApplicationRepository.findByCompany(company4);
+        const jobApplications = await JobApplicationRepository.findByCompanyUuid(company4.uuid);
         expect(jobApplications.length).toEqual(1);
         expect(jobApplications).toMatchObject([
           {
@@ -90,7 +90,7 @@ describe("JobApplicationRepository", () => {
       });
 
       it ("returns no job applications if my company has any", async () => {
-        const jobApplications = await JobApplicationRepository.findByCompany(company5);
+        const jobApplications = await JobApplicationRepository.findByCompanyUuid(company5.uuid);
         expect(jobApplications.length).toEqual(0);
       });
 
@@ -102,7 +102,7 @@ describe("JobApplicationRepository", () => {
         await JobApplicationRepository.apply(applicant5.uuid, myOffer1);
         await JobApplicationRepository.apply(applicant5.uuid, myOffer2);
         await JobApplicationRepository.apply(applicant5.uuid, notMyOffer);
-        const jobApplications = await JobApplicationRepository.findByCompany(company6);
+        const jobApplications = await JobApplicationRepository.findByCompanyUuid(company6.uuid);
         expect(jobApplications.length).toEqual(2);
         expect(jobApplications).toMatchObject([
           {
