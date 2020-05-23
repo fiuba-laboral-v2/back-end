@@ -2,8 +2,8 @@ import { gql } from "apollo-server";
 import { executeMutation, client } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 import { UserRepository } from "../../../../src/models/User/Repository";
-import { ApplicantRepository } from "../../../../src/models/Applicant/Repository";
 import { CompanyRepository } from "../../../../src/models/Company";
+import { userFactory } from "../../../mocks/user";
 import { JWT } from "../../../../src/JWT";
 import { BadCredentialsError } from "../../../../src/graphql/User/Errors";
 import { UserNotFoundError } from "../../../../src/models/User/Errors";
@@ -15,87 +15,65 @@ const LOGIN = gql`
 `;
 
 describe("login", () => {
-  beforeAll(() => Database.setConnection());
+  beforeAll(async () => {
+    Database.setConnection();
+    await UserRepository.truncate();
+    await CompanyRepository.truncate();
+  });
 
-  beforeEach(() => Promise.all([
-    UserRepository.truncate(),
-    CompanyRepository.truncate()
-  ]));
-
-  afterAll(() => Database.close());
+  afterAll(async () => {
+    await Database.close();
+    await UserRepository.truncate();
+    await CompanyRepository.truncate();
+  });
 
   it("should return a token", async () => {
-    const email = "asd@asd.com";
-    const user = await UserRepository.create({
-      email: email,
-      password: "AValidPassword3",
-      name: "name",
-      surname: "surname"
-    });
+    const password = "AValidPassword3";
+    const user = await userFactory.user(password);
     const { data, errors } = await client.loggedOut.mutate({
       mutation: LOGIN,
       variables: {
-        email: email,
-        password: "AValidPassword3"
+        email: user.email,
+        password
       }
     });
     expect(errors).toBeUndefined();
     const token: string = data!.login;
     expect(JWT.decodeToken(token)).toEqual({
-      email: email,
+      email: user.email,
       uuid: user.uuid
     });
   });
 
   it("return a token for an applicant user", async () => {
-    const email = "asd@asd.com";
     const password = "AValidPassword3";
-    const applicant = await ApplicantRepository.create({
-      user: {
-        email,
-        password,
-        name: "name",
-        surname: "surname"
-      },
-      padron: 98549,
-      careers: []
-    });
+    const applicant = await userFactory.applicant(password);
     const user = await applicant.getUser();
     const { data, errors } = await client.loggedOut.mutate({
       mutation: LOGIN,
-      variables: { email, password }
+      variables: { email: user.email, password }
     });
     expect(errors).toBeUndefined();
     const token: string = data!.login;
     expect(JWT.decodeToken(token)).toEqual({
-      email: email,
+      email: user.email,
       uuid: user.uuid,
       applicantUuid: applicant.uuid
     });
   });
 
   it("return a token for an company user", async () => {
-    const email = "asd@asd.com";
     const password = "AValidPassword3";
-    const company = await CompanyRepository.create({
-      user: {
-        email,
-        password,
-        name: "name",
-        surname: "surname"
-      },
-      cuit: "30711819017",
-      companyName: "Devartis"
-    });
-    const user = await UserRepository.findByEmail(email);
+    const company = await userFactory.company(password);
+    const [user] = await company.getUsers();
     const { data, errors } = await client.loggedOut.mutate({
       mutation: LOGIN,
-      variables: { email, password }
+      variables: { email: user.email, password }
     });
     expect(errors).toBeUndefined();
     const token: string = data!.login;
     expect(JWT.decodeToken(token)).toEqual({
-      email: email,
+      email: user.email,
       uuid: user.uuid,
       companyUuid: company.uuid
     });
