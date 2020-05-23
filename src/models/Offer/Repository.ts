@@ -37,5 +37,6 @@ export const OfferRepository = {
 
     return offer;
   },
-  findAll: () => Offer.findAll()
+  findAll: () => Offer.findAll(),
+  truncate: () => Offer.truncate({ cascade: true })
 };
