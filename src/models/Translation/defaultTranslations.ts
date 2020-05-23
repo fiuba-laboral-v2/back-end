@@ -113,7 +113,9 @@ export const defaultTranslations = {
     { key: "careersTitle", value: "Carreras" }
   ],
   offerDetail: [
-    { key: "apply", value: "Postularme" }
+    { key: "apply", value: "Postularme" },
+    { key: "applySuccess", value: "Postulación exitosa!" },
+    { key: "alreadyApplied", value: "Ya te postulaste" }
   ],
   offerSalary: [
     { key: "salaryFrom", value: "Desde" },

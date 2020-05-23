@@ -39,4 +39,16 @@ describe("CompanyRepository", () => {
     expect(companyUser.companyUuid).toEqual(company.uuid);
     expect(companyUser.userUuid).toEqual(user.uuid);
   });
+
+  it("generates a valid association", async () => {
+    const company = await Company.create(companyMocks.companyData());
+    const user = await User.create(UserMocks.userAttributes);
+
+    await CompanyUserRepository.create(company, user);
+
+    const userCompany = await user.getCompany();
+    const [companyUser] = await company.getUsers();
+    expect(userCompany!.uuid).toEqual(company.uuid);
+    expect(companyUser!.uuid).toEqual(user.uuid);
+  });
 });

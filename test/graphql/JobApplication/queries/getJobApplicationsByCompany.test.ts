@@ -3,6 +3,7 @@ import { client } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
 import { UserRepository } from "../../../../src/models/User";
+import { ApplicantRepository } from "../../../../src/models/Applicant";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { OfferRepository } from "../../../../src/models/Offer";
 import { JobApplicationRepository } from "../../../../src/models/JobApplication";
@@ -10,8 +11,8 @@ import { JobApplicationRepository } from "../../../../src/models/JobApplication"
 import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
 
 import { OfferMocks } from "../../../models/Offer/mocks";
-import { companyMocks } from "../../../models/Company/mocks";
-import { loginFactory } from "../../../mocks/login";
+import { applicantMocks } from "../../../models/Applicant/mocks";
+import { testClientFactory } from "../../../mocks/testClientFactory";
 
 const GET_JOB_APPLICATIONS_BY_COMPANY = gql`
     query getJobApplicationsByCompany {
@@ -32,28 +33,26 @@ const GET_JOB_APPLICATIONS_BY_COMPANY = gql`
 `;
 
 describe("getJobApplicationsByCompany", () => {
-  let company;
+  let applicant;
+
   beforeAll(async () => {
     Database.setConnection();
-    await Promise.all([
-      UserRepository.truncate(),
-      CompanyRepository.truncate()
-    ]);
-
-    company = await CompanyRepository.create(companyMocks.companyData());
+    await UserRepository.truncate();
+    await CompanyRepository.truncate();
+    applicant = await ApplicantRepository.create(applicantMocks.applicantData([]));
   });
 
+  beforeEach(() => JobApplicationRepository.truncate());
+
   afterAll(async () => {
-    await Promise.all([
-      UserRepository.truncate(),
-      CompanyRepository.truncate()
-    ]);
-    Database.close();
+    await UserRepository.truncate();
+    await CompanyRepository.truncate();
+    await Database.close();
   });
 
   describe("when the input is valid", () => {
     it("returns all my company jobApplications", async () => {
-      const { applicant, apolloClient } = await loginFactory.applicant();
+      const { company, apolloClient } = await testClientFactory.company();
       const offer = await OfferRepository.create(OfferMocks.completeData(company.uuid));
       await JobApplicationRepository.apply(applicant.uuid, offer);
 
@@ -94,7 +93,7 @@ describe("getJobApplicationsByCompany", () => {
     });
 
     it("should return an error if current user is not a companyUser", async () => {
-      const { apolloClient } = await loginFactory.user();
+      const { apolloClient } = await testClientFactory.user();
       const { errors } = await apolloClient.query({
         query: GET_JOB_APPLICATIONS_BY_COMPANY
       });

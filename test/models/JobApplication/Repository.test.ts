@@ -75,6 +75,41 @@ describe("JobApplicationRepository", () => {
         const jobApplications = await JobApplicationRepository.findByCompanyUuid(company.uuid);
         expect(jobApplications.length).toEqual(0);
       });
+
+      it ("returns only the job applications for my company", async () => {
+        const anotherCompany = await CompanyRepository.create(
+          {
+            user: {
+              email: "email@email.com",
+              password: "verySecurePassword101",
+              name: "name",
+              surname: "surname"
+            },
+            cuit: "30701307115",
+            companyName: "companyName"
+          }
+        );
+        const myOffer1 = await Offer.create(OfferMocks.completeData(company.uuid));
+        const myOffer2 = await Offer.create(OfferMocks.completeData(company.uuid));
+        const notMyOffer = await Offer.create(OfferMocks.completeData(anotherCompany.uuid));
+        const applicant = await ApplicantRepository.create(applicantMocks.applicantData([]));
+
+        await JobApplicationRepository.apply(applicant.uuid, myOffer1);
+        await JobApplicationRepository.apply(applicant.uuid, myOffer2);
+        await JobApplicationRepository.apply(applicant.uuid, notMyOffer);
+        const jobApplications = await JobApplicationRepository.findByCompanyUuid(company.uuid);
+        expect(jobApplications.length).toEqual(2);
+        expect(jobApplications).toMatchObject([
+          {
+            offerUuid: myOffer1.uuid,
+            applicantUuid: applicant.uuid
+          },
+          {
+            offerUuid: myOffer2.uuid,
+            applicantUuid: applicant.uuid
+          }
+        ]);
+      });
     });
   });
 });

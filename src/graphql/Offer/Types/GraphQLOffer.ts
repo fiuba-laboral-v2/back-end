@@ -8,7 +8,7 @@ import { Offer } from "../../../models/Offer";
 import { UserRepository } from "../../../models/User";
 import { JobApplicationRepository } from "../../../models/JobApplication";
 
-const GraphQLOffer = new GraphQLObjectType({
+const GraphQLOffer = new GraphQLObjectType<Offer, IApolloServerContext>({
   name: "Offer",
   fields: () => ({
     uuid: {
@@ -34,19 +34,19 @@ const GraphQLOffer = new GraphQLObjectType({
     },
     sections: {
       type: List(GraphQLOfferSection),
-      resolve: (offer: Offer) => offer.getSections()
+      resolve: offer => offer.getSections()
     },
     careers: {
       type: List(GraphQLCareer),
-      resolve: (offer: Offer) => offer.getCareers()
+      resolve: offer => offer.getCareers()
     },
     company: {
       type: GraphQLCompany,
-      resolve: (offer: Offer) => offer.getCompany()
+      resolve: offer => offer.getCompany()
     },
     hasApplied: {
       type: nonNull(Boolean),
-      resolve: async (offer: Offer, _, { currentUser }: IApolloServerContext) => {
+      resolve: async (offer, _, { currentUser }) => {
         const user = await UserRepository.findByEmail(currentUser.email);
         const applicant = await user.getApplicant();
 

@@ -23,13 +23,13 @@ export const JobApplicationRepository = {
     return jobApplication != null;
   },
   findByCompanyUuid: async (companyUuid: string) => {
-    // const company = await CompanyRepository.findByUuid(companyUuid);
-    const company = (await CompanyRepository.findAll())[0];
+    const company = await CompanyRepository.findByUuid(companyUuid);
     const offers = await company.getOffers();
     return JobApplication.findAll({
       where: {
         offerUuid: offers.map(({ uuid }) => uuid)
       }
     });
-  }
+  },
+  truncate: () => JobApplication.truncate()
 };

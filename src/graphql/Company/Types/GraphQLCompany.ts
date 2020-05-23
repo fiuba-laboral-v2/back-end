@@ -2,7 +2,7 @@ import { GraphQLObjectType } from "graphql";
 import { ID, nonNull, String, List } from "../../fieldTypes";
 import { Company } from "../../../models/Company";
 
-const GraphQLCompany = new GraphQLObjectType({
+const GraphQLCompany = new GraphQLObjectType<Company>({
   name: "Company",
   fields: () => ({
     uuid: {
@@ -31,12 +31,12 @@ const GraphQLCompany = new GraphQLObjectType({
     },
     phoneNumbers: {
       type: List(String),
-      resolve: async (company: Company) =>
+      resolve: async company =>
         (await company.getPhoneNumbers()).map(({ phoneNumber }) => phoneNumber)
     },
     photos: {
       type: List(String),
-      resolve: async (company: Company) =>
+      resolve: async company =>
         (await company.getPhotos()).map(({ photo }) => photo)
     }
   })
