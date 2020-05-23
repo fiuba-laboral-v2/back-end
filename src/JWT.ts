@@ -38,7 +38,8 @@ export const JWT = {
       return {
         uuid: payload.uuid,
         email: payload.email,
-        ...(payload.applicantUuid && { applicantUuid: payload.applicantUuid })
+        ...(payload.applicantUuid && { applicantUuid: payload.applicantUuid }),
+        ...(payload.companyUuid && { applicantUuid: payload.companyUuid })
       };
     } catch (e) {
       return;
