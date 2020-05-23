@@ -4,27 +4,27 @@ import { ApplicantRepository } from "../../src/models/Applicant";
 import { CompanyRepository } from "../../src/models/Company";
 
 export const userFactory = {
-  user: () =>
+  user: (password?: string) =>
     UserRepository.create({
       email: internet.email(),
-      password: "AValidPassword123",
+      password: password || "AValidPassword123",
       name: name.firstName(),
       surname: name.lastName()
     }
   ),
-  applicant: () =>
+  applicant: (password?: string) =>
     ApplicantRepository.create({
       padron: random.number(),
       description: random.words(),
       careers: [],
       user: {
         email: internet.email(),
-        password: "AValidPassword123",
+        password: password || "AValidPassword123",
         name: name.firstName(),
         surname: name.lastName()
       }
     }),
-  company: () =>
+  company: (password?: string) =>
     CompanyRepository.create({
       cuit: cuitGenerator(),
       companyName: company.companyName(),
@@ -34,7 +34,7 @@ export const userFactory = {
       email: internet.email(),
       user: {
         email: internet.email(),
-        password: "AValidPassword123",
+        password: password || "AValidPassword123",
         name: name.firstName(),
         surname: name.lastName()
       }
