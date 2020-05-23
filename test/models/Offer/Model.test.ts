@@ -6,17 +6,9 @@ import { companyMocks } from "../Company/mocks";
 import { OfferMocks, TOfferNumbersProperties } from "./mocks";
 
 describe("Offer", () => {
-  beforeAll(async () => {
-    await Database.setConnection();
-  });
-
-  beforeEach(async () => {
-    await Company.truncate({ cascade: true });
-  });
-
-  afterAll(async () => {
-    await Database.close();
-  });
+  beforeAll(() => Database.setConnection());
+  beforeEach(() => Company.truncate({ cascade: true }));
+  afterAll(() => Database.close());
 
   const offerWithoutProperty = async (property: string) => {
     const company = await new Company(companyMocks.companyData()).save();

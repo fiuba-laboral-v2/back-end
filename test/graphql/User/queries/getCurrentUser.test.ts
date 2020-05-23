@@ -1,5 +1,5 @@
 import { gql } from "apollo-server";
-import { executeQuery, testCurrentUserEmail } from "../../ApolloTestClient";
+import { client } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 import { UserRepository } from "../../../../src/models/User";
 import { testClientFactory } from "../../../mocks/testClientFactory";
@@ -18,26 +18,21 @@ const GET_CURRENT_USER = gql`
 `;
 
 describe("Current User query", () => {
-  beforeAll(() => Database.setConnection());
-
-  beforeEach(() => UserRepository.truncate());
-
+  beforeAll(() => {
+    Database.setConnection();
+    return UserRepository.truncate();
+  });
   afterAll(() => Database.close());
 
   it("returns current user if it's set in context", async () => {
-    await UserRepository.create({
-      email: testCurrentUserEmail,
-      password: "SomeCoolSecret123",
-      name: "name",
-      surname: "surname"
-    });
-    const { data, errors } = await executeQuery(GET_CURRENT_USER);
+    const { user, apolloClient } = await testClientFactory.user();
+    const { data, errors } = await apolloClient.query({ query: GET_CURRENT_USER });
     expect(errors).toBeUndefined();
-    expect(data!.getCurrentUser).toEqual(
+    expect(data?.getCurrentUser).toEqual(
       {
-        email: testCurrentUserEmail,
-        name: "name",
-        surname: "surname",
+        email: user.email,
+        name: user.name,
+        surname: user.surname,
         applicant: null
       }
     );
@@ -60,7 +55,7 @@ describe("Current User query", () => {
   });
 
   it("returns null if the current user is not set in context", async () => {
-    const { data, errors } = await executeQuery(GET_CURRENT_USER, {}, { loggedIn: false });
+    const { data, errors } = await client.loggedOut.query({ query: GET_CURRENT_USER });
     expect(errors).toBeUndefined();
     expect(data?.getCurrentUser).toBeNull();
   });

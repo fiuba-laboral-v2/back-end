@@ -19,7 +19,7 @@ const GET_CAREERS = gql`
 describe("getCareers", () => {
 
   beforeAll(async () => {
-    await Database.setConnection();
+    Database.setConnection();
     await Career.truncate({ cascade: true });
   });
 

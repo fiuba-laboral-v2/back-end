@@ -67,7 +67,7 @@ const queryWithOnlyObligatoryData = gql`
 describe("saveApplicant", () => {
 
   beforeAll(async () => {
-    await Database.setConnection();
+    Database.setConnection();
     await Career.truncate({ cascade: true });
     await UserRepository.truncate();
   });
