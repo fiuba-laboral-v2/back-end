@@ -3,6 +3,7 @@ import { ApplicantRepository } from "../../../src/models/Applicant";
 import { Company, CompanyRepository } from "../../../src/models/Company";
 import { Offer } from "../../../src/models/Offer";
 import { JobApplicationRepository } from "../../../src/models/JobApplication";
+import { UserRepository } from "../../../src/models/User";
 import { companyMocks } from "../Company/mocks";
 import { applicantMocks } from "../Applicant/mocks";
 import { OfferMocks } from "../Offer/mocks";
@@ -12,6 +13,8 @@ describe("JobApplicationRepository", () => {
 
   beforeAll(async () => {
     Database.setConnection();
+    await CompanyRepository.truncate();
+    await UserRepository.truncate();
     company = await Company.create(companyMocks.companyData());
   });
 
@@ -21,6 +24,7 @@ describe("JobApplicationRepository", () => {
 
   afterAll(async () => {
     await CompanyRepository.truncate();
+    await UserRepository.truncate();
     await Database.close();
   });
 

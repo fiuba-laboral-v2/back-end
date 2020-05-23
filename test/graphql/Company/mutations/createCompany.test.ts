@@ -53,7 +53,14 @@ describe("createCompany", () => {
       );
       expect(response.errors).toBeUndefined();
       expect(response.data).not.toBeUndefined();
-      expect(response.data).toEqual({ createCompany: companyMocks.completeDataWithoutUser() });
+      expect(response.data).toEqual(
+        {
+          createCompany: {
+            ...companyMocks.completeDataWithoutUser(),
+            phoneNumbers: expect.arrayContaining(companyMocks.completeData().phoneNumbers)
+          }
+        }
+      );
     });
 
     it("creates company with only obligatory data", async () => {
