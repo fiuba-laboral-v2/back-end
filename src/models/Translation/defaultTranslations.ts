@@ -104,6 +104,7 @@ export const defaultTranslations = {
     { key: "applicants", value: "Postulantes" },
     { key: "companies", value: "Empresas" },
     { key: "jobOffers", value: "Ofertas de trabajo" },
+    { key: "jobApplications", value: "Postulaciones" },
     { key: "signUp", value: "Crear tu cuenta" },
     { key: "logIn", value: "Iniciar sesión" },
     { key: "logOut", value: "Cerrar sesión" }

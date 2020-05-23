@@ -1,4 +1,4 @@
-import { Offer } from "../Offer";
+import { Offer } from "../Offer/Model";
 import { Applicant } from "../Applicant";
 import { JobApplication } from "./Model";
 
@@ -20,5 +20,14 @@ export const JobApplicationRepository = {
       }
     );
     return jobApplication != null;
-  }
+  },
+  findByCompanyUuid: async (companyUuid: string) => {
+    const offers = await Offer.findAll({ where: { companyUuid } });
+    return JobApplication.findAll({
+      where: {
+        offerUuid: offers.map(({ uuid }) => uuid)
+      }
+    });
+  },
+  truncate: () => JobApplication.truncate()
 };
