@@ -56,12 +56,12 @@ describe("JobApplicationRepository", () => {
       });
     });
 
-    describe("findByCompanyUuid", () => {
+    describe("findByCompany", () => {
       it ("returns the only application for my company", async () => {
         const offer = await Offer.create(OfferMocks.completeData(company.uuid));
         const applicant = await ApplicantRepository.create(applicantMocks.applicantData([]));
         await JobApplicationRepository.apply(applicant.uuid, offer);
-        const jobApplications = await JobApplicationRepository.findByCompanyUuid(company.uuid);
+        const jobApplications = await JobApplicationRepository.findByCompany(company);
         expect(jobApplications.length).toEqual(1);
         expect(jobApplications).toMatchObject([
           {
@@ -74,7 +74,7 @@ describe("JobApplicationRepository", () => {
       it ("returns no job applications if my company has any", async () => {
         await Offer.create(OfferMocks.completeData(company.uuid));
         await ApplicantRepository.create(applicantMocks.applicantData([]));
-        const jobApplications = await JobApplicationRepository.findByCompanyUuid(company.uuid);
+        const jobApplications = await JobApplicationRepository.findByCompany(company);
         expect(jobApplications.length).toEqual(0);
       });
 
@@ -99,7 +99,7 @@ describe("JobApplicationRepository", () => {
         await JobApplicationRepository.apply(applicant.uuid, myOffer1);
         await JobApplicationRepository.apply(applicant.uuid, myOffer2);
         await JobApplicationRepository.apply(applicant.uuid, notMyOffer);
-        const jobApplications = await JobApplicationRepository.findByCompanyUuid(company.uuid);
+        const jobApplications = await JobApplicationRepository.findByCompany(company);
         expect(jobApplications.length).toEqual(2);
         expect(jobApplications).toMatchObject([
           {
