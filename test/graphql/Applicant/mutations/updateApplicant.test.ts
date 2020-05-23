@@ -6,7 +6,7 @@ import { CareerRepository } from "../../../../src/models/Career";
 import { Career } from "../../../../src/models/Career";
 
 import { careerMocks } from "../../../models/Career/mocks";
-import { loginFactory } from "../../../mocks/login";
+import { testClientFactory } from "../../../mocks/testClientFactory";
 
 import { UserRepository } from "../../../../src/models/User/Repository";
 import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
@@ -66,7 +66,7 @@ describe("updateApplicant", () => {
   });
 
   it("should update all possible data deleting all previous values", async () => {
-    const { applicant, user, apolloClient } = await loginFactory.applicant();
+    const { applicant, user, apolloClient } = await testClientFactory.applicant();
     const newCareer = await CareerRepository.create(careerMocks.careerData());
     const dataToUpdate = {
       uuid: applicant.uuid,
@@ -176,7 +176,7 @@ describe("updateApplicant", () => {
     });
 
     it("should return an error if current user is not an applicant", async () => {
-      const { apolloClient } = await loginFactory.user();
+      const { apolloClient } = await testClientFactory.user();
 
       const dataToUpdate = {
         uuid: "4d4473fb-ba85-40dc-81c5-12d1814c98fa",

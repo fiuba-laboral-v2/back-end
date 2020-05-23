@@ -1,4 +1,4 @@
 export { offerTypes } from "./Types";
 export { offerMutations } from "./Mutations";
 export { offerQueries } from "./Queries";
-export { offerPermissions } from "./permissions";
+export { offerPermissions } from "./Permissions";
