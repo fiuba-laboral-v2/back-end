@@ -1,9 +1,11 @@
-import { AllowNull, Column, HasMany, Is, Model, Table } from "sequelize-typescript";
+import { AllowNull, Column, HasMany, Is, Model, Table, BelongsToMany } from "sequelize-typescript";
 import { CompanyPhoneNumber } from "../CompanyPhoneNumber";
 import { CompanyPhoto } from "../CompanyPhoto";
 import { Offer } from "../Offer/Model";
 import { validateCuit, validateName } from "validations-fiuba-laboral-v2";
 import { HasManyGetAssociationsMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
+import { User } from "../User/Model";
+import { CompanyUser } from "../CompanyUser/Model";
 
 @Table
 export class Company extends Model<Company> {
@@ -50,7 +52,11 @@ export class Company extends Model<Company> {
   @HasMany(() => Offer)
   public offers: Offer[];
 
+  @BelongsToMany(() => User, () => CompanyUser)
+  public users: User[];
+
   public getPhoneNumbers!: HasManyGetAssociationsMixin<CompanyPhoneNumber>;
   public getPhotos!: HasManyGetAssociationsMixin<CompanyPhoto>;
   public getOffers!: HasManyGetAssociationsMixin<Offer>;
+  public getUsers: HasManyGetAssociationsMixin<User>;
 }

@@ -10,7 +10,7 @@ import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/
 
 import { OfferMocks } from "../../../models/Offer/mocks";
 import { companyMocks } from "../../../models/Company/mocks";
-import { loginFactory } from "../../../mocks/login";
+import { testClientFactory } from "../../../mocks/testClientFactory";
 
 const SAVE_JOB_APPLICATION = gql`
   mutation saveJobApplication($offerUuid: String!) {
@@ -43,7 +43,7 @@ describe("saveJobApplication", () => {
 
   describe("when the input is valid", () => {
     it("should create a new job application", async () => {
-      const { applicant, apolloClient } = await loginFactory.applicant();
+      const { applicant, apolloClient } = await testClientFactory.applicant();
       const offer = await OfferRepository.create(OfferMocks.completeData(company.uuid));
 
       const { data, errors } = await apolloClient.mutate({
@@ -63,7 +63,7 @@ describe("saveJobApplication", () => {
 
   describe("Errors", () => {
     it("should return an error if no offerUuid is provided", async () => {
-      const { apolloClient } = await loginFactory.user();
+      const { apolloClient } = await testClientFactory.user();
       const { errors } = await apolloClient.mutate({ mutation: SAVE_JOB_APPLICATION });
       expect(errors![0].constructor.name).toEqual(ApolloError.name);
     });
@@ -80,7 +80,7 @@ describe("saveJobApplication", () => {
     });
 
     it("should return an error if current user is not an applicant", async () => {
-      const { apolloClient } = await loginFactory.user();
+      const { apolloClient } = await testClientFactory.user();
       const offer = await OfferRepository.create(OfferMocks.completeData(company.uuid));
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
@@ -91,7 +91,7 @@ describe("saveJobApplication", () => {
     });
 
     it("should return an error if the application already exist", async () => {
-      const { apolloClient } = await loginFactory.applicant();
+      const { apolloClient } = await testClientFactory.applicant();
 
       const offer = await OfferRepository.create(OfferMocks.completeData(company.uuid));
       await apolloClient.mutate({
@@ -109,7 +109,7 @@ describe("saveJobApplication", () => {
     });
 
     it("should return an error if the offer does not exist", async () => {
-      const { apolloClient } = await loginFactory.applicant();
+      const { apolloClient } = await testClientFactory.applicant();
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
         variables: { offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da" }

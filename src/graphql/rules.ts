@@ -14,6 +14,13 @@ const userHasApplicant = rule({ cache: "contextual" })
     return true;
   });
 
-const isApplicant = chain(isUser, userHasApplicant);
+const userHasCompany = rule({ cache: "contextual" })
+  (async (parent, args, context: IApolloServerContext) => {
+    if (!context.currentUser.companyUuid) throw new UnauthorizedError();
+    return true;
+  });
 
-export { isUser, isApplicant };
+const isApplicant = chain(isUser, userHasApplicant);
+const isCompanyUser = chain(isUser, userHasCompany);
+
+export { isUser, isApplicant, isCompanyUser };
