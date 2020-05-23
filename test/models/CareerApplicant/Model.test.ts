@@ -10,11 +10,9 @@ const createCareer = async () => await new Career({
 }).save();
 
 describe("CareerApplicant", () => {
-  beforeAll(async () => await Database.setConnection());
-
-  afterEach(async () => await Career.truncate({ cascade: true }));
-
-  afterAll(async () => await Database.close());
+  beforeAll(() => Database.setConnection());
+  afterEach(() => Career.truncate({ cascade: true }));
+  afterAll(() => Database.close());
 
   it("should throw an error if creditsCount is negative", async () => {
     const careerApplicant = new CareerApplicant({

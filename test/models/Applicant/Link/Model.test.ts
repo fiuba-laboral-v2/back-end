@@ -8,7 +8,7 @@ describe("ApplicantLink", () => {
   let applicant: Applicant;
 
   beforeAll(async () => {
-    await Database.setConnection();
+    Database.setConnection();
     await UserRepository.truncate();
     await ApplicantLink.truncate({ cascade: true });
     const { uuid: userUuid } = await UserRepository.create({

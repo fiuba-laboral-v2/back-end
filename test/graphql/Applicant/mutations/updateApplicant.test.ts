@@ -54,7 +54,7 @@ const UPDATE_APPLICANT = gql`
 
 describe("updateApplicant", () => {
   beforeAll(async () => {
-    await Database.setConnection();
+    Database.setConnection();
     await Career.truncate({ cascade: true });
     await UserRepository.truncate();
   });
