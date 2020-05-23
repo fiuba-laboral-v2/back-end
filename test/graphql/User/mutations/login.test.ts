@@ -45,7 +45,7 @@ describe("login", () => {
     });
   });
 
-  it("return a token for an applicant user", async () => {
+  it("returns a token for an applicant user", async () => {
     const password = "AValidPassword3";
     const applicant = await userFactory.applicant(password);
     const user = await applicant.getUser();
@@ -62,7 +62,7 @@ describe("login", () => {
     });
   });
 
-  it("return a token for an company user", async () => {
+  it("returns a token for an company user", async () => {
     const password = "AValidPassword3";
     const company = await userFactory.company(password);
     const [user] = await company.getUsers();
