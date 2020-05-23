@@ -3,7 +3,7 @@ import Database from "../../../../src/config/Database";
 
 import { careerMocks } from "../../../models/Career/mocks";
 import { OfferMocks } from "../../../models/Offer/mocks";
-import { loginFactory } from "../../../mocks/login";
+import { testClientFactory } from "../../../mocks/testClientFactory";
 
 import { CareerRepository } from "../../../../src/models/Career";
 import { CompanyRepository } from "../../../../src/models/Company";
@@ -93,7 +93,7 @@ describe("createOffer", () => {
 
   describe("when the input values are valid", () => {
     it("should create a new offer with only obligatory data", async () => {
-      const { company, apolloClient } = await loginFactory.company();
+      const { company, apolloClient } = await testClientFactory.company();
 
       const offerAttributes = OfferMocks.completeData(company.uuid);
       const { data, errors } = await apolloClient.mutate({
@@ -115,7 +115,7 @@ describe("createOffer", () => {
     });
 
     it("should create a new offer with one section and one career", async () => {
-      const { company, apolloClient } = await loginFactory.company();
+      const { company, apolloClient } = await testClientFactory.company();
       const { code } = await CareerRepository.create(careerMocks.careerData());
 
       const offerAttributes = OfferMocks.withOneCareerAndOneSection(company.uuid, code);
@@ -132,7 +132,7 @@ describe("createOffer", () => {
 
   describe("when the input values are invalid", () => {
     it("should throw an error if no company uuid is provided", async () => {
-      const { apolloClient } = await loginFactory.company();
+      const { apolloClient } = await testClientFactory.company();
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
         variables: OfferMocks.withNoCompanyId()
@@ -141,7 +141,7 @@ describe("createOffer", () => {
     });
 
     it("should throw an error if company uuid doesn't exist", async () => {
-      const { apolloClient } = await loginFactory.company();
+      const { apolloClient } = await testClientFactory.company();
       const notExistingCompanyUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       const offerAttributes = OfferMocks.completeData(notExistingCompanyUuid);
       const { errors } = await apolloClient.mutate({

@@ -1,7 +1,7 @@
 import { client } from "../graphql/ApolloTestClient";
 import { userFactory } from "./user";
 
-export const loginFactory = {
+export const testClientFactory = {
   user: async () => {
     const user = await userFactory.user();
     const apolloClient = client.loggedIn({

@@ -21,6 +21,6 @@ const userHasCompany = rule({ cache: "contextual" })
   });
 
 const isApplicant = chain(isUser, userHasApplicant);
-const isCompany = chain(isUser, userHasCompany);
+const isCompanyUser = chain(isUser, userHasCompany);
 
-export { isUser, isApplicant, isCompany };
+export { isUser, isApplicant, isCompanyUser };

@@ -18,12 +18,12 @@ export const JWT = {
     const applicant = await user.getApplicant();
     const companyUser = await user.getCompanyUser();
     const isApplicant = applicant?.uuid && !companyUser?.companyUuid;
-    const isCompany = !applicant?.uuid && companyUser?.companyUuid;
+    const isCompanyUser = !applicant?.uuid && companyUser?.companyUuid;
     const payload = {
       uuid: user.uuid,
       email: user.email,
       ...(isApplicant && { applicantUuid: applicant.uuid }),
-      ...(isCompany && { companyUuid: companyUser.companyUuid })
+      ...(isCompanyUser && { companyUuid: companyUser.companyUuid })
     };
 
     return sign(
