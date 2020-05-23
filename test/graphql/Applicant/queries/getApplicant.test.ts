@@ -8,6 +8,7 @@ import { ApplicantNotFound } from "../../../../src/models/Applicant/Errors/Appli
 
 import { applicantMocks } from "../../../models/Applicant/mocks";
 import { careerMocks } from "../../../models/Career/mocks";
+import { testClientFactory } from "../../../mocks/testClientFactory";
 
 import { random } from "faker";
 import { UserRepository } from "../../../../src/models/User/Repository";
@@ -50,21 +51,23 @@ describe("getApplicant", () => {
   describe("when the applicant exists", () => {
     it("fetches the applicant", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantData = applicantMocks.applicantData([career]);
-      const applicant = await ApplicantRepository.create(applicantData);
+      const applicantCareer = [{ code: career.code, creditsCount: 150 }]
+      const { user, applicant, apolloClient } = await testClientFactory.applicant({ careers: applicantCareer });
 
-      const { data, errors } = await executeQuery(
-        GET_APPLICANT, { uuid: applicant.uuid }
-      );
+      const { data, errors } = await apolloClient.mutate({
+        mutation: GET_APPLICANT,
+        variables: { uuid: applicant.uuid }
+      });
+
       expect(errors).toBeUndefined();
       expect(data!.getApplicant).toMatchObject({
         user: {
-          email: applicantData.user.email,
-          name: applicantData.user.name,
-          surname: applicantData.user.surname
+          email: user.email,
+          name: user.name,
+          surname: user.surname
         },
-        description: applicantData.description,
-        padron: applicantData.padron
+        description: applicant.description,
+        padron: applicant.padron
       });
       expect(data!.getApplicant).toHaveProperty("capabilities");
       expect(data!.getApplicant).toHaveProperty("careers");
@@ -72,7 +75,7 @@ describe("getApplicant", () => {
         code: career.code,
         credits: career.credits,
         description: career.description,
-        creditsCount: applicantData.careers[0].creditsCount
+        creditsCount: applicantCareer[0].creditsCount
       });
     });
   });
