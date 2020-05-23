@@ -1,9 +1,10 @@
 import { GraphQLObjectType } from "graphql";
 import { nonNull, String } from "../../fieldTypes";
+import { JobApplication } from "../../../models/JobApplication/Model";
 import { GraphQLApplicant } from "../../Applicant/Types/Applicant";
 import { GraphQLOffer } from "../../Offer/Types/GraphQLOffer";
 
-const GraphQLJobApplication = new GraphQLObjectType({
+const GraphQLJobApplication = new GraphQLObjectType<JobApplication>({
   name: "JobApplication",
   fields: () => ({
     applicantUuid: {
@@ -13,10 +14,12 @@ const GraphQLJobApplication = new GraphQLObjectType({
       type: nonNull(String)
     },
     applicant: {
-      type: nonNull(GraphQLApplicant)
+      type: nonNull(GraphQLApplicant),
+      resolve: jobApplication => jobApplication.getApplicant()
     },
     offer: {
-      type: nonNull(GraphQLOffer)
+      type: nonNull(GraphQLOffer),
+      resolve: jobApplication => jobApplication.getOffer()
     }
   })
 });
