@@ -17,7 +17,7 @@ const SAVE_CAREER = gql`
 describe("saveCareer", () => {
 
   beforeAll(async () => {
-    await Database.setConnection();
+    Database.setConnection();
     await Career.truncate({ cascade: true });
   });
 

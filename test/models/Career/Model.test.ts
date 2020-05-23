@@ -6,12 +6,9 @@ import { UserRepository } from "../../../src/models/User/Repository";
 
 describe("Career model", () => {
   const careerData = careerMocks.careerData();
-  beforeAll(async () => {
-    await Database.setConnection();
-  });
 
+  beforeAll(() => Database.setConnection());
   beforeEach(() => UserRepository.truncate());
-
   afterAll(async () => {
     await Database.close();
   });

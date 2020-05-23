@@ -8,7 +8,7 @@ describe("Section model", () => {
   let applicant: Applicant;
 
   beforeAll(async () => {
-    await Database.setConnection();
+    Database.setConnection();
     await UserRepository.truncate();
     applicant = await ApplicantRepository.create({
       user: {

@@ -1,4 +1,4 @@
-import { random, lorem } from "faker";
+import { lorem, random } from "faker";
 import Database from "../../../../src/config/Database";
 import { Offer } from "../../../../src/models/Offer";
 import { Company } from "../../../../src/models/Company";
@@ -7,18 +7,9 @@ import { OfferMocks } from "../mocks";
 import { companyMocks } from "../../Company/mocks";
 
 describe("OfferSection", () => {
-
-  beforeAll(async () => {
-    await Database.setConnection();
-  });
-
-  beforeEach(async () => {
-    await Company.truncate({ cascade: true });
-  });
-
-  afterAll(async () => {
-    await Database.close();
-  });
+  beforeAll(() => Database.setConnection());
+  beforeEach(() => Company.truncate({ cascade: true }));
+  afterAll(() => Database.close());
 
   const createOffer = async () => {
     const { uuid } = await new Company(companyMocks.companyData()).save();
