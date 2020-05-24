@@ -5,11 +5,13 @@ import { Environment } from "../config/Environment";
 import { jobApplicationPermissions } from "./JobApplication";
 import { offerPermissions } from "./Offer";
 import { applicantPermissions } from "./Applicant";
+import { capabilitiesPermissions } from "./Capability";
 
 const permissions = merge(
   offerPermissions,
   jobApplicationPermissions,
-  applicantPermissions
+  applicantPermissions,
+  capabilitiesPermissions
 );
 
 export const permissionShield = shield(
