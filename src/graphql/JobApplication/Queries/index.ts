@@ -1,5 +1,5 @@
-import { getJobApplicationsByCompany } from "./getJobApplicationsByCompany";
+import { getMyLatestJobApplications } from "./getMyLatestJobApplications";
 
 export const jobApplicationQueries = {
-  getJobApplicationsByCompany
+  getMyLatestJobApplications
 };
