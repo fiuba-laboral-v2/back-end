@@ -32,7 +32,7 @@ export const userFactory = {
   company: (password?: string) =>
     CompanyRepository.create({
       cuit: cuitGenerator(),
-      companyName: company.companyName(),
+      companyName: "Cachito y Asociados",
       slogan: company.catchPhrase(),
       description: lorem.paragraph(),
       website: internet.url(),
