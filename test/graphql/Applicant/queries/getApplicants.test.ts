@@ -59,7 +59,7 @@ describe("getApplicants", () => {
       CareerRepository.truncate(),
       UserRepository.truncate()
     ]);
-    Database.close();
+    return Database.close();
   });
 
   describe("when no applicant exists", () => {
