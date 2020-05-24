@@ -1,5 +1,4 @@
-import { internet, name, random, company, lorem } from "faker";
-import { validateName } from "validations-fiuba-laboral-v2";
+import { internet, random, company, lorem } from "faker";
 
 import { UserRepository } from "../../src/models/User";
 import { ApplicantRepository } from "../../src/models/Applicant";
