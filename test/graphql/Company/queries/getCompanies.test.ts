@@ -1,11 +1,13 @@
 import { gql } from "apollo-server";
-import { executeQuery } from "../../ApolloTestClient";
+import { client } from "../../ApolloTestClient";
 import { CompanyRepository } from "../../../../src/models/Company";
 import Database from "../../../../src/config/Database";
-import { UserMocks } from "../../../models/User/mocks";
 import { UserRepository } from "../../../../src/models/User";
+import { testClientFactory } from "../../../mocks/testClientFactory";
 
-const query = gql`
+import { AuthenticationError } from "../../../../src/graphql/Errors";
+
+const GET_COMPANIES = gql`
   query {
     getCompanies {
       cuit
@@ -15,22 +17,40 @@ const query = gql`
 `;
 
 describe("getCompanies", () => {
-  beforeAll(() => Database.setConnection());
-  beforeEach(() => Promise.all([
-    CompanyRepository.truncate(),
-    UserRepository.truncate()
-  ]));
-  afterAll(() => Database.close());
+  beforeAll(() => {
+    Database.setConnection();
+    return Promise.all([
+      CompanyRepository.truncate(),
+      UserRepository.truncate()
+    ]);
+  });
+
+  afterAll(async () => {
+    await Promise.all([
+      CompanyRepository.truncate(),
+      UserRepository.truncate()
+    ]);
+    return Database.close();
+  });
 
   it("returns all companies", async () => {
-    const companyParams = { cuit: "30711819017", companyName: "devartis" };
-    await CompanyRepository.create({ ...companyParams, user: UserMocks.userAttributes });
-    const response = await executeQuery(query);
+    const { company, apolloClient } = await testClientFactory.company();
+    const response = await apolloClient.query({ query: GET_COMPANIES });
 
     expect(response.errors).toBeUndefined();
     expect(response.data).not.toBeUndefined();
-    expect(response.data).toEqual({
-      getCompanies: [companyParams]
+    expect(response.data!.getCompanies).toEqual([{
+      cuit: company.cuit,
+      companyName: company.companyName
+    }]);
+  });
+
+  describe("Errors", () => {
+    it("returns an error if there is no current user", async () => {
+      const apolloClient = client.loggedOut;
+
+      const { errors } = await apolloClient.query({ query: GET_COMPANIES });
+      expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
     });
   });
 });

@@ -1,5 +1,6 @@
+import { internet, random, company, lorem } from "faker";
+
 import { UserRepository } from "../../src/models/User";
-import { internet, name, random, company, lorem } from "faker";
 import { ApplicantRepository } from "../../src/models/Applicant";
 import { CompanyRepository } from "../../src/models/Company";
 import { IApplicantProps } from "./interfaces";
@@ -9,8 +10,8 @@ export const userFactory = {
     UserRepository.create({
       email: internet.email(),
       password: password || "AValidPassword123",
-      name: name.firstName(),
-      surname: name.lastName()
+      name: "Bruno",
+      surname: "Diaz"
     }
   ),
   applicant: ({
@@ -24,14 +25,14 @@ export const userFactory = {
       user: {
         email: internet.email(),
         password: password || "AValidPassword123",
-        name: name.firstName(),
-        surname: name.lastName()
+        name: "Bruno",
+        surname: "Diaz"
       }
     }),
   company: (password?: string) =>
     CompanyRepository.create({
       cuit: cuitGenerator(),
-      companyName: company.companyName(),
+      companyName: "Cachito y Asociados",
       slogan: company.catchPhrase(),
       description: lorem.paragraph(),
       website: internet.url(),
@@ -39,8 +40,8 @@ export const userFactory = {
       user: {
         email: internet.email(),
         password: password || "AValidPassword123",
-        name: name.firstName(),
-        surname: name.lastName()
+        name: "Bruno",
+        surname: "Diaz"
       }
     })
 };

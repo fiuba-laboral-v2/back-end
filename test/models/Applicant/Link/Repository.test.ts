@@ -2,15 +2,15 @@ import { UniqueConstraintError, DatabaseError, ValidationError } from "sequelize
 import Database from "../../../../src/config/Database";
 import { Applicant } from "../../../../src/models/Applicant";
 import { ApplicantLinkRepository, ApplicantLink } from "../../../../src/models/Applicant/Link";
-import { random, internet, name } from "faker";
+import { random, internet } from "faker";
 import { UserRepository } from "../../../../src/models/User/Repository";
 
 const createApplicant = async () => {
   const { uuid: userUuid } = await UserRepository.create({
     email: internet.email(),
     password: "SavePassword123",
-    name: name.firstName(),
-    surname: name.lastName()
+    name: "Bruno",
+    surname: "Diaz"
   });
   return Applicant.create({
     userUuid: userUuid,

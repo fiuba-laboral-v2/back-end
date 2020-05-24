@@ -94,7 +94,7 @@ describe("createOffer", () => {
       CareerRepository.truncate(),
       UserRepository.truncate()
     ]);
-    Database.close();
+    return Database.close();
   });
 
   describe("when the input values are valid", () => {
