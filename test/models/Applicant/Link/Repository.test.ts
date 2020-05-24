@@ -9,8 +9,8 @@ const createApplicant = async () => {
   const { uuid: userUuid } = await UserRepository.create({
     email: internet.email(),
     password: "SavePassword123",
-    name: name.firstName(),
-    surname: name.lastName()
+    name: "Bruno",
+    surname: "Diaz"
   });
   return Applicant.create({
     userUuid: userUuid,

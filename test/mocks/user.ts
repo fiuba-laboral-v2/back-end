@@ -11,8 +11,8 @@ export const userFactory = {
     UserRepository.create({
       email: internet.email(),
       password: password || "AValidPassword123",
-      name: getValidFirstName(),
-      surname: getValidLastName()
+      name: "Bruno",
+      surname: "Diaz"
     }
   ),
   applicant: ({
@@ -26,8 +26,8 @@ export const userFactory = {
       user: {
         email: internet.email(),
         password: password || "AValidPassword123",
-        name: getValidFirstName(),
-        surname: getValidLastName()
+        name: "Bruno",
+        surname: "Diaz"
       }
     }),
   company: (password?: string) =>
@@ -41,8 +41,8 @@ export const userFactory = {
       user: {
         email: internet.email(),
         password: password || "AValidPassword123",
-        name: getValidFirstName(),
-        surname: getValidLastName()
+        name: "Bruno",
+        surname: "Diaz"
       }
     })
 };
@@ -60,29 +60,4 @@ const cuitGenerator = () => {
   if (last === 10) last = 9;
   const cuit = [...numbers, last];
   return cuit.join("");
-};
-
-const nameValidator = (myName: string) => {
-  try {
-    validateName(myName);
-    return myName;
-  } catch {
-    return null;
-  }
-};
-
-const getValidFirstName = () => {
-  let selectedName: string | null = null;
-  while (!selectedName) {
-    selectedName = nameValidator(name.firstName());
-  }
-  return selectedName;
-};
-
-const getValidLastName = () => {
-  let selectedName: string | null = null;
-  while (!selectedName) {
-    selectedName = nameValidator(name.lastName());
-  }
-  return selectedName;
 };
