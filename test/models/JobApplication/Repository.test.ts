@@ -75,11 +75,13 @@ describe("JobApplicationRepository", () => {
       });
     });
 
-    describe("findByCompany", () => {
+    describe("findLatestByCompanyUuid", () => {
       it ("returns the only application for my company", async () => {
         const offer = await Offer.create(OfferMocks.completeData(company4.uuid));
         await JobApplicationRepository.apply(applicant4.uuid, offer);
-        const jobApplications = await JobApplicationRepository.findByCompanyUuid(company4.uuid);
+        const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid(
+          company4.uuid
+        );
         expect(jobApplications.length).toEqual(1);
         expect(jobApplications).toMatchObject([
           {
@@ -90,11 +92,13 @@ describe("JobApplicationRepository", () => {
       });
 
       it ("returns no job applications if my company has any", async () => {
-        const jobApplications = await JobApplicationRepository.findByCompanyUuid(company5.uuid);
+        const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid(
+          company5.uuid
+        );
         expect(jobApplications.length).toEqual(0);
       });
 
-      it ("returns only the job applications for my company", async () => {
+      it ("returns the latest the job applications for my company in reverse order", async () => {
         const myOffer1 = await Offer.create(OfferMocks.completeData(company6.uuid));
         const myOffer2 = await Offer.create(OfferMocks.completeData(company6.uuid));
         const notMyOffer = await Offer.create(OfferMocks.completeData(company7.uuid));
@@ -102,15 +106,17 @@ describe("JobApplicationRepository", () => {
         await JobApplicationRepository.apply(applicant5.uuid, myOffer1);
         await JobApplicationRepository.apply(applicant5.uuid, myOffer2);
         await JobApplicationRepository.apply(applicant5.uuid, notMyOffer);
-        const jobApplications = await JobApplicationRepository.findByCompanyUuid(company6.uuid);
+        const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid(
+          company6.uuid
+        );
         expect(jobApplications.length).toEqual(2);
         expect(jobApplications).toMatchObject([
           {
-            offerUuid: myOffer1.uuid,
+            offerUuid: myOffer2.uuid,
             applicantUuid: applicant5.uuid
           },
           {
-            offerUuid: myOffer2.uuid,
+            offerUuid: myOffer1.uuid,
             applicantUuid: applicant5.uuid
           }
         ]);

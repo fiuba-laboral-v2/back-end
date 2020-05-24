@@ -1,6 +1,7 @@
 import { Offer } from "../Offer/Model";
 import { Applicant } from "../Applicant";
 import { JobApplication } from "./Model";
+import { sortBy } from "lodash";
 
 export const JobApplicationRepository = {
   apply: async (applicantUuid: string, offer: Offer) =>
@@ -21,13 +22,14 @@ export const JobApplicationRepository = {
     );
     return jobApplication != null;
   },
-  findByCompanyUuid: async (companyUuid: string) => {
+  findLatestByCompanyUuid: async (companyUuid: string) => {
     const offers = await Offer.findAll({ where: { companyUuid } });
-    return JobApplication.findAll({
+    const jobApplications = await JobApplication.findAll({
       where: {
         offerUuid: offers.map(({ uuid }) => uuid)
       }
     });
+    return sortBy(jobApplications, ["createdAt"]).reverse();
   },
   truncate: () => JobApplication.truncate()
 };
