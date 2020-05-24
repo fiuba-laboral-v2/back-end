@@ -21,12 +21,13 @@ export const JobApplicationRepository = {
     );
     return jobApplication != null;
   },
-  findByCompanyUuid: async (companyUuid: string) => {
+  findLatestByCompanyUuid: async (companyUuid: string) => {
     const offers = await Offer.findAll({ where: { companyUuid } });
     return JobApplication.findAll({
       where: {
         offerUuid: offers.map(({ uuid }) => uuid)
-      }
+      },
+      order: [["createdAt", "DESC"]]
     });
   },
   truncate: () => JobApplication.truncate()

@@ -5,6 +5,6 @@ export const jobApplicationPermissions = {
     saveJobApplication: isApplicant
   },
   Query: {
-    getJobApplicationsByCompany: isCompanyUser
+    getMyLatestJobApplications: isCompanyUser
   }
 };

@@ -14,9 +14,10 @@ import { OfferMocks } from "../../../models/Offer/mocks";
 import { applicantMocks } from "../../../models/Applicant/mocks";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
-const GET_JOB_APPLICATIONS_BY_COMPANY = gql`
-    query getJobApplicationsByCompany {
-        getJobApplicationsByCompany {
+const GET_MY_LATEST_JOB_APPLICATIONS = gql`
+    query getMyLatestJobApplications {
+        getMyLatestJobApplications {
+            createdAt
             offer {
                 uuid
                 title
@@ -32,7 +33,7 @@ const GET_JOB_APPLICATIONS_BY_COMPANY = gql`
     }
 `;
 
-describe("getJobApplicationsByCompany", () => {
+describe("getMyLatestJobApplications", () => {
   let applicant;
 
   beforeAll(async () => {
@@ -52,17 +53,18 @@ describe("getJobApplicationsByCompany", () => {
     it("returns all my company jobApplications", async () => {
       const { company, apolloClient } = await testClientFactory.company();
       const offer = await OfferRepository.create(OfferMocks.completeData(company.uuid));
-      await JobApplicationRepository.apply(applicant.uuid, offer);
+      const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
 
       const { data, errors } = await apolloClient.query({
-        query: GET_JOB_APPLICATIONS_BY_COMPANY
+        query: GET_MY_LATEST_JOB_APPLICATIONS
       });
 
       const user = await applicant.getUser();
       expect(errors).toBeUndefined();
-      expect(data!.getJobApplicationsByCompany).toMatchObject(
+      expect(data!.getMyLatestJobApplications).toMatchObject(
         [
           {
+            createdAt: jobApplication.createdAt.getTime().toString(),
             offer: {
               uuid: offer.uuid,
               title: offer.title
@@ -84,7 +86,7 @@ describe("getJobApplicationsByCompany", () => {
     it("should return an error if there is no current user", async () => {
       const apolloClient = client.loggedOut;
       const { errors } = await apolloClient.query({
-        query: GET_JOB_APPLICATIONS_BY_COMPANY
+        query: GET_MY_LATEST_JOB_APPLICATIONS
       });
 
       expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
@@ -93,7 +95,7 @@ describe("getJobApplicationsByCompany", () => {
     it("should return an error if current user is not a companyUser", async () => {
       const { apolloClient } = await testClientFactory.user();
       const { errors } = await apolloClient.query({
-        query: GET_JOB_APPLICATIONS_BY_COMPANY
+        query: GET_MY_LATEST_JOB_APPLICATIONS
       });
 
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });

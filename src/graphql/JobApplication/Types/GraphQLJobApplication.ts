@@ -20,6 +20,9 @@ const GraphQLJobApplication = new GraphQLObjectType<JobApplication>({
     offer: {
       type: nonNull(GraphQLOffer),
       resolve: jobApplication => jobApplication.getOffer()
+    },
+    createdAt: {
+      type: nonNull(String)
     }
   })
 });
