@@ -16,7 +16,7 @@ const userHasApplicant = rule({ cache: "contextual" })
 
 const userHasCompany = rule({ cache: "contextual" })
   (async (parent, args, context: IApolloServerContext) => {
-    if (context.currentUser.companyUuid === undefined) throw new UnauthorizedError();
+    if (!context.currentUser.companyUuid) throw new UnauthorizedError();
     return true;
   });
 
