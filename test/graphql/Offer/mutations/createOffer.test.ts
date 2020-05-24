@@ -11,12 +11,12 @@ import { UserRepository } from "../../../../src/models/User";
 
 const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
     mutation createOffer(
-        $companyUuid: String!, $title: String!, $description: String!, $hoursPerDay: Int!,
+        $title: String!, $description: String!, $hoursPerDay: Int!,
         $minimumSalary: Int!, $maximumSalary: Int!, $sections: [OfferSectionInput],
         $careers: [OfferCareerInput]
     ) {
         createOffer(
-            companyUuid: $companyUuid, title: $title, description: $description,
+            title: $title, description: $description,
             hoursPerDay: $hoursPerDay, minimumSalary: $minimumSalary, maximumSalary: $maximumSalary,
             sections: $sections, careers: $careers
         ) {
@@ -55,12 +55,18 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
 
 const SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA = gql`
     mutation createOffer(
-        $companyUuid: String!, $title: String!, $description: String!, $hoursPerDay: Int!,
-        $minimumSalary: Int!, $maximumSalary: Int!
+        $title: String!,
+        $description: String!,
+        $hoursPerDay: Int!,
+        $minimumSalary: Int!,
+        $maximumSalary: Int!
     ) {
         createOffer(
-            companyUuid: $companyUuid, title: $title, description: $description,
-            hoursPerDay: $hoursPerDay, minimumSalary: $minimumSalary, maximumSalary: $maximumSalary
+            title: $title,
+            description: $description,
+            hoursPerDay: $hoursPerDay,
+            minimumSalary: $minimumSalary,
+            maximumSalary: $maximumSalary
         ) {
             uuid
             title
@@ -95,21 +101,21 @@ describe("createOffer", () => {
     it("should create a new offer with only obligatory data", async () => {
       const { company, apolloClient } = await testClientFactory.company();
 
-      const offerAttributes = OfferMocks.completeData(company.uuid);
+      const { companyUuid, ...createOfferAttributes } = OfferMocks.completeData(company.uuid);
       const { data, errors } = await apolloClient.mutate({
         mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
-        variables: offerAttributes
+        variables: createOfferAttributes
       });
 
       expect(errors).toBeUndefined();
       expect(data!.createOffer).toHaveProperty("uuid");
       expect(data!.createOffer).toMatchObject(
         {
-          title: offerAttributes.title,
-          description: offerAttributes.description,
-          hoursPerDay: offerAttributes.hoursPerDay,
-          minimumSalary: offerAttributes.minimumSalary,
-          maximumSalary: offerAttributes.maximumSalary
+          title: createOfferAttributes.title,
+          description: createOfferAttributes.description,
+          hoursPerDay: createOfferAttributes.hoursPerDay,
+          minimumSalary: createOfferAttributes.minimumSalary,
+          maximumSalary: createOfferAttributes.maximumSalary
         }
       );
     });
@@ -118,10 +124,13 @@ describe("createOffer", () => {
       const { company, apolloClient } = await testClientFactory.company();
       const { code } = await CareerRepository.create(careerMocks.careerData());
 
-      const offerAttributes = OfferMocks.withOneCareerAndOneSection(company.uuid, code);
+      const { companyUuid, ...createOfferAttributes } = OfferMocks.withOneCareerAndOneSection(
+        company.uuid,
+        code
+      );
       const { data, errors } = await apolloClient.mutate({
         mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
-        variables: offerAttributes
+        variables: createOfferAttributes
       });
 
       expect(errors).toBeUndefined();
@@ -131,27 +140,18 @@ describe("createOffer", () => {
   });
 
   describe("when the input values are invalid", () => {
-    it("should throw an error if no company uuid is provided", async () => {
+    it("should throw an error if no title is provided", async () => {
       const { apolloClient } = await testClientFactory.company();
+      const {
+        companyUuid,
+        title,
+        ...createOfferAttributesWithNoTitle
+      } = OfferMocks.completeData("");
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
-        variables: OfferMocks.withNoCompanyId()
+        variables: createOfferAttributesWithNoTitle
       });
       expect(errors).not.toBeUndefined();
-    });
-
-    it("should throw an error if company uuid doesn't exist", async () => {
-      const { apolloClient } = await testClientFactory.company();
-      const notExistingCompanyUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
-      const offerAttributes = OfferMocks.completeData(notExistingCompanyUuid);
-      const { errors } = await apolloClient.mutate({
-        mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
-        variables: offerAttributes
-      });
-
-      expect(errors![0].extensions!.data).toEqual(
-        { errorType: "CompanyDoesNotExistError" }
-      );
     });
   });
 });
