@@ -17,6 +17,7 @@ import { testClientFactory } from "../../../mocks/testClientFactory";
 const GET_JOB_APPLICATIONS_BY_COMPANY = gql`
     query getJobApplicationsByCompany {
         getJobApplicationsByCompany {
+            createdAt
             offer {
                 uuid
                 title
@@ -52,7 +53,7 @@ describe("getJobApplicationsByCompany", () => {
     it("returns all my company jobApplications", async () => {
       const { company, apolloClient } = await testClientFactory.company();
       const offer = await OfferRepository.create(OfferMocks.completeData(company.uuid));
-      await JobApplicationRepository.apply(applicant.uuid, offer);
+      const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
 
       const { data, errors } = await apolloClient.query({
         query: GET_JOB_APPLICATIONS_BY_COMPANY
@@ -63,6 +64,7 @@ describe("getJobApplicationsByCompany", () => {
       expect(data!.getJobApplicationsByCompany).toMatchObject(
         [
           {
+            createdAt: jobApplication.createdAt.getTime().toString(),
             offer: {
               uuid: offer.uuid,
               title: offer.title
