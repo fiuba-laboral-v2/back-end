@@ -98,7 +98,7 @@ describe("JobApplicationRepository", () => {
         expect(jobApplications.length).toEqual(0);
       });
 
-      it ("returns the latest the job applications for my company in reverse order", async () => {
+      it ("returns the latest job applications first for my company", async () => {
         const myOffer1 = await Offer.create(OfferMocks.completeData(company6.uuid));
         const myOffer2 = await Offer.create(OfferMocks.completeData(company6.uuid));
         const notMyOffer = await Offer.create(OfferMocks.completeData(company7.uuid));
