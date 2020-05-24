@@ -1,12 +1,12 @@
 import { gql } from "apollo-server";
-import { executeQuery } from "../../ApolloTestClient";
+import { client } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
+import { AuthenticationError } from "../../../../src/graphql/Errors";
+
 import { CareerRepository } from "../../../../src/models/Career";
-import { ApplicantRepository } from "../../../../src/models/Applicant";
 import { UserRepository } from "../../../../src/models/User/Repository";
 
-import { applicantMocks } from "../../../models/Applicant/mocks";
 import { careerMocks } from "../../../models/Career/mocks";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 import { userFactory } from "../../../mocks/user";
@@ -103,23 +103,6 @@ describe("getApplicants", () => {
       });
       const applicants = [firstApplicant, secondApplicant];
 
-      // const career = await CareerRepository.create(careerMocks.careerData());
-      // const applicantData = applicantMocks.applicantData([career], ["Go"]);
-      // const applicantsData = [
-      //   applicantData,
-      //   {
-      //     ...applicantData,
-      //     user: {
-      //       email: "another_user@hotmail.com",
-      //       password: "dsfsGRDFGFD45354",
-      //       name: "anotherName",
-      //       surname: "anotherSurname"
-      //     }
-      //   }
-      // ];
-      // const applicants = await Promise.all(
-      //   applicantsData.map(attributes => ApplicantRepository.create(attributes))
-      // );
       const { data, errors } = await apolloClient.query({ query: GET_APPLICANTS });
       expect(errors).toBeUndefined();
 
@@ -160,9 +143,19 @@ describe("getApplicants", () => {
 
   describe("when no applicant exists", () => {
     it("should fetch an empty array of applicants", async () => {
-      const { data, errors } = await executeQuery(GET_APPLICANTS);
+      const { apolloClient } = await testClientFactory.user();
+      const { data, errors } = await apolloClient.query({ query: GET_APPLICANTS });
       expect(errors).toBeUndefined();
       expect(data!.getApplicants).toEqual([]);
+    });
+  });
+
+  describe("Errors", () => {
+    it("should return an error if there is no current user", async () => {
+      const apolloClient = client.loggedOut;
+
+      const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
+      expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
     });
   });
 });
