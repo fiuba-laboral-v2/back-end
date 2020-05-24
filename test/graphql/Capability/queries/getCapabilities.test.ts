@@ -24,7 +24,7 @@ describe("getCapabilities", () => {
 
   afterAll(async () => {
     await CapabilityRepository.truncate();
-    Database.close();
+    return Database.close();
   });
 
   it("brings all capabilities in the database", async () => {
