@@ -105,7 +105,7 @@ describe("getApplicant", () => {
   });
 
   describe("Errors", () => {
-    it("should return an error if there is no current user", async () => {
+    it("returns an error if there is no current user", async () => {
       const apolloClient = client.loggedOut;
       const uuid = random.uuid();
       const { errors } = await apolloClient.query({
