@@ -53,16 +53,20 @@ const UPDATE_APPLICANT = gql`
 `;
 
 describe("updateApplicant", () => {
-  beforeAll(async () => {
+  beforeAll(() => {
     Database.setConnection();
-    await Career.truncate({ cascade: true });
-    await UserRepository.truncate();
+    return Promise.all([
+      Career.truncate({ cascade: true }),
+      UserRepository.truncate()
+    ]);
   });
 
   afterAll(async () => {
-    await Career.truncate({ cascade: true });
-    await UserRepository.truncate();
-    Database.close();
+    await Promise.all([
+      Career.truncate({ cascade: true }),
+      UserRepository.truncate()
+    ]);
+    return Database.close();
   });
 
   it("should update all possible data deleting all previous values", async () => {

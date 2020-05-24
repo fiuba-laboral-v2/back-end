@@ -89,7 +89,7 @@ describe("getOfferByUuid", () => {
   };
 
   describe("when and offer exists", () => {
-    it("should find an offer by uuid", async () => {
+    it("finds an offer by uuid", async () => {
       const { company, apolloClient } = await testClientFactory.company();
       const { offer, career } = await createOffer(company);
       const { data, errors } = await apolloClient.query({
@@ -136,7 +136,7 @@ describe("getOfferByUuid", () => {
       );
     });
 
-    it("should find an offer with hasApplied in true", async () => {
+    it("finds an offer with hasApplied in true", async () => {
       const { applicant, apolloClient } = await testClientFactory.applicant();
       const company = await userFactory.company();
       const { offer } = await createOffer(company);
@@ -156,7 +156,7 @@ describe("getOfferByUuid", () => {
       );
     });
 
-    it("should find an offer with hasApplied in false", async () => {
+    it("finds an offer with hasApplied in false", async () => {
       const { apolloClient } = await testClientFactory.applicant();
       const company = await userFactory.company();
       const { offer: { uuid } } = await createOffer(company);
@@ -175,7 +175,7 @@ describe("getOfferByUuid", () => {
   });
 
   describe("when no offer exists", () => {
-    it("should throw and error if no offer exist", async () => {
+    it("throws and error if no offer exist", async () => {
       const { apolloClient } = await testClientFactory.applicant();
       const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       const { errors } = await apolloClient.query({
@@ -185,7 +185,7 @@ describe("getOfferByUuid", () => {
       expect(errors![0].extensions!.data).toEqual({ errorType: OfferNotFound.name });
     });
 
-    it("should return an error if the current user is not an applicant", async () => {
+    it("returns an error if the current user is not an applicant", async () => {
       const user = await userFactory.user();
       const apolloClient = client.loggedIn({
         uuid: user.uuid,
@@ -202,7 +202,7 @@ describe("getOfferByUuid", () => {
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
-    it("should return an error if there is no current user", async () => {
+    it("returns an error if there is no current user", async () => {
       const apolloClient = client.loggedOut;
       const company = await userFactory.company();
 

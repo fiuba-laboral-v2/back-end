@@ -54,14 +54,14 @@ describe("getOffers", () => {
 
     beforeAll(() => createOffers());
 
-    it("should return two offers if two offers were created", async () => {
+    it("returns two offers if two offers were created", async () => {
       const { apolloClient } = await testClientFactory.user();
       const { data, errors } = await apolloClient.query({ query: GET_OFFERS });
       expect(errors).toBeUndefined();
       expect(data!.getOffers).toHaveLength(2);
     });
 
-    it("should return two offers with there own uuid", async () => {
+    it("returns two offers with there own uuid", async () => {
       const { apolloClient } = await testClientFactory.user();
       const { data, errors } = await apolloClient.query({ query: GET_OFFERS });
       expect(errors).toBeUndefined();
@@ -81,7 +81,7 @@ describe("getOffers", () => {
       UserRepository.truncate()
     ]));
 
-    it("should return no offers when no offers were created", async () => {
+    it("returns no offers when no offers were created", async () => {
       const { apolloClient } = await testClientFactory.user();
       const { data, errors } = await apolloClient.query({ query: GET_OFFERS });
 

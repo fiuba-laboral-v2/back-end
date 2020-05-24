@@ -30,7 +30,7 @@ describe("getCompanies", () => {
       CompanyRepository.truncate(),
       UserRepository.truncate()
     ]);
-    Database.close();
+    return Database.close();
   });
 
   it("returns all companies", async () => {

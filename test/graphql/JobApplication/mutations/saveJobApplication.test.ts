@@ -38,7 +38,7 @@ describe("saveJobApplication", () => {
       UserRepository.truncate(),
       CompanyRepository.truncate()
     ]);
-    Database.close();
+    return Database.close();
   });
 
   describe("when the input is valid", () => {
