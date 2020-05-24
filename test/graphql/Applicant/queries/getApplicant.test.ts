@@ -64,8 +64,8 @@ describe("getApplicant", () => {
         apolloClient
       } = await testClientFactory.applicant({ careers: applicantCareer });
 
-      const { data, errors } = await apolloClient.mutate({
-        mutation: GET_APPLICANT,
+      const { data, errors } = await apolloClient.query({
+        query: GET_APPLICANT,
         variables: { uuid: applicant.uuid }
       });
 
