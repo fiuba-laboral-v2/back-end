@@ -4,10 +4,12 @@ import Database from "../../../../src/config/Database";
 
 import { CareerRepository } from "../../../../src/models/Career";
 import { ApplicantRepository } from "../../../../src/models/Applicant";
+import { UserRepository } from "../../../../src/models/User/Repository";
 
 import { applicantMocks } from "../../../models/Applicant/mocks";
 import { careerMocks } from "../../../models/Career/mocks";
-import { UserRepository } from "../../../../src/models/User/Repository";
+import { testClientFactory } from "../../../mocks/testClientFactory";
+import { userFactory } from "../../../mocks/user";
 
 const GET_APPLICANTS = gql`
     query getApplicants {
@@ -55,29 +57,33 @@ describe("getApplicants", () => {
 
   describe("when applicants exists", () => {
     it("should fetch the existing applicant", async () => {
-      const applicantData = applicantMocks.applicantData([
-        await CareerRepository.create(careerMocks.careerData())
-      ]);
-      const applicant = await ApplicantRepository.create(applicantData);
-      const { data, errors } = await executeQuery(GET_APPLICANTS);
+      const newCareer = await CareerRepository.create(careerMocks.careerData());
+      const applicantCareer = [{ code: newCareer.code, creditsCount: 150 }];
+      const {
+        user,
+        applicant,
+        apolloClient
+      } = await testClientFactory.applicant({ careers: applicantCareer });
+
+      const { data, errors } = await apolloClient.query({ query: GET_APPLICANTS });
 
       expect(errors).toBeUndefined();
       const [career] = await applicant.getCareers();
       const capabilities = await applicant.getCapabilities();
       expect(data!.getApplicants[0]).toMatchObject({
         user: {
-          email: applicantData.user.email,
-          name: applicantData.user.name,
-          surname: applicantData.user.surname
+          email: user.email,
+          name: user.name,
+          surname: user.surname
         },
-        padron: applicantData.padron,
-        description: applicantData.description,
+        padron: applicant.padron,
+        description: applicant.description,
         capabilities: capabilities.map(({ uuid, description }) => ({ uuid, description })),
         careers: [{
           code: career.code,
           description: career.description,
           credits: career.credits,
-          creditsCount: applicantData.careers[0].creditsCount
+          creditsCount: applicantCareer[0].creditsCount
         }],
         sections: [],
         links: []
@@ -85,24 +91,36 @@ describe("getApplicants", () => {
     });
 
     it("should fetch all the applicants", async () => {
-      const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantData = applicantMocks.applicantData([career], ["Go"]);
-      const applicantsData = [
-        applicantData,
-        {
-          ...applicantData,
-          user: {
-            email: "another_user@hotmail.com",
-            password: "dsfsGRDFGFD45354",
-            name: "anotherName",
-            surname: "anotherSurname"
-          }
-        }
-      ];
-      const applicants = await Promise.all(
-        applicantsData.map(attributes => ApplicantRepository.create(attributes))
-      );
-      const { data, errors } = await executeQuery(GET_APPLICANTS);
+      const newCareer = await CareerRepository.create(careerMocks.careerData());
+      const applicantCareer = [{ code: newCareer.code, creditsCount: 150 }];
+      const {
+        applicant: firstApplicant,
+        apolloClient
+      } = await testClientFactory.applicant({ careers: applicantCareer, capabilities: ["Go"] });
+      const secondApplicant = await userFactory.applicant({
+        careers: applicantCareer,
+        capabilities: ["Go"]
+      });
+      const applicants = [firstApplicant, secondApplicant];
+
+      // const career = await CareerRepository.create(careerMocks.careerData());
+      // const applicantData = applicantMocks.applicantData([career], ["Go"]);
+      // const applicantsData = [
+      //   applicantData,
+      //   {
+      //     ...applicantData,
+      //     user: {
+      //       email: "another_user@hotmail.com",
+      //       password: "dsfsGRDFGFD45354",
+      //       name: "anotherName",
+      //       surname: "anotherSurname"
+      //     }
+      //   }
+      // ];
+      // const applicants = await Promise.all(
+      //   applicantsData.map(attributes => ApplicantRepository.create(attributes))
+      // );
+      const { data, errors } = await apolloClient.query({ query: GET_APPLICANTS });
       expect(errors).toBeUndefined();
 
       const expectedApplicants = await Promise.all(

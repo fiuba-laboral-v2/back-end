@@ -9,6 +9,9 @@ export const uuids = {
     applicant: "238a8b4b-430d-4a4d-b91e-a95a393d1279",
     user: "22ae51ae-6eb7-4bd0-8824-9a469f681bb3"
   },
+  manuel: {
+    user: "84dce80c-8f97-4537-a4c8-2bc8b4b717b4"
+  },
   capabilities: {
     node: "9a44d145-ad02-4052-ab17-d9f2f863a4c0",
     RoR: "c2156144-6aa3-46bf-a48a-12da69d94878",

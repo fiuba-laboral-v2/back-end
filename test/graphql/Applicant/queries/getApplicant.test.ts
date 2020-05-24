@@ -1,12 +1,11 @@
 import { gql } from "apollo-server";
-import { executeQuery } from "../../ApolloTestClient";
+import { client } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
-import { ApplicantRepository } from "../../../../src/models/Applicant";
 import { CareerRepository } from "../../../../src/models/Career";
 import { ApplicantNotFound } from "../../../../src/models/Applicant/Errors/ApplicantNotFound";
+import { AuthenticationError } from "../../../../src/graphql/Errors";
 
-import { applicantMocks } from "../../../models/Applicant/mocks";
 import { careerMocks } from "../../../models/Career/mocks";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
@@ -39,20 +38,31 @@ const GET_APPLICANT = gql`
 
 describe("getApplicant", () => {
 
-  beforeAll(() => Database.setConnection());
-
-  beforeEach(async () => {
-    await CareerRepository.truncate();
-    await UserRepository.truncate();
+  beforeAll(() => {
+    Database.setConnection();
+    return Promise.all([
+      CareerRepository.truncate(),
+      UserRepository.truncate()
+    ]);
   });
 
-  afterAll(() => Database.close());
+  afterAll(async () => {
+    await Promise.all([
+      CareerRepository.truncate(),
+      UserRepository.truncate()
+    ]);
+    Database.close();
+  });
 
   describe("when the applicant exists", () => {
     it("fetches the applicant", async () => {
       const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantCareer = [{ code: career.code, creditsCount: 150 }]
-      const { user, applicant, apolloClient } = await testClientFactory.applicant({ careers: applicantCareer });
+      const applicantCareer = [{ code: career.code, creditsCount: 150 }];
+      const {
+        user,
+        applicant,
+        apolloClient
+      } = await testClientFactory.applicant({ careers: applicantCareer });
 
       const { data, errors } = await apolloClient.mutate({
         mutation: GET_APPLICANT,
@@ -82,10 +92,27 @@ describe("getApplicant", () => {
 
   describe("when the applicant doesn't exists", () => {
     it("should return ad error if the applicant does not exist", async () => {
+      const { apolloClient } = await testClientFactory.user();
+
       const uuid = random.uuid();
-      const { errors } = await executeQuery(GET_APPLICANT, { uuid });
+      const { errors } = await apolloClient.query({
+        query: GET_APPLICANT,
+        variables: { uuid }
+      });
 
       expect(errors![0].extensions!.data).toEqual({ errorType: ApplicantNotFound.name });
+    });
+  });
+
+  describe("Errors", () => {
+    it("should return an error if there is no current user", async () => {
+      const apolloClient = client.loggedOut;
+      const uuid = random.uuid();
+      const { errors } = await apolloClient.query({
+        query: GET_APPLICANT,
+        variables: { uuid: uuid }
+      });
+      expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
     });
   });
 });

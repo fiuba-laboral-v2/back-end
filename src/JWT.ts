@@ -35,11 +35,15 @@ export const JWT = {
   decodeToken: (token: string): ICurrentUser | undefined => {
     try {
       const payload = verify(token, JWT_SECRET) as ICurrentUser;
-      return {
+      const user = {
         uuid: payload.uuid,
-        email: payload.email,
-        ...(payload.applicantUuid && { applicantUuid: payload.applicantUuid })
+        email: payload.email
       };
+      const applicantUuid = !payload.companyUuid && payload.applicantUuid;
+      const companyUuid = !payload.applicantUuid && payload.companyUuid;
+      if (companyUuid) return { ...user, companyUuid };
+      if (applicantUuid) return { ...user, applicantUuid };
+      return user;
     } catch (e) {
       return;
     }

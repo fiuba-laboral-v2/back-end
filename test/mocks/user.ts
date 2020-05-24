@@ -2,30 +2,33 @@ import { UserRepository } from "../../src/models/User";
 import { internet, name, random, company, lorem } from "faker";
 import { ApplicantRepository } from "../../src/models/Applicant";
 import { CompanyRepository } from "../../src/models/Company";
-import { ApplicantProps } from "./interfaces";
+import { IApplicantProps } from "./interfaces";
 
 export const userFactory = {
-  user: () =>
+  user: (password?: string) =>
     UserRepository.create({
       email: internet.email(),
-      password: "AValidPassword123",
+      password: password || "AValidPassword123",
       name: name.firstName(),
       surname: name.lastName()
     }
   ),
-  applicant: ({careers}: ApplicantProps) =>
+  applicant: ({
+    careers, password, capabilities
+  }: IApplicantProps = { careers: [], capabilities: [], password: null }) =>
     ApplicantRepository.create({
       padron: random.number(),
       description: random.words(),
       careers: careers || [],
+      capabilities: capabilities || [],
       user: {
         email: internet.email(),
-        password: "AValidPassword123",
+        password: password || "AValidPassword123",
         name: name.firstName(),
         surname: name.lastName()
       }
     }),
-  company: () =>
+  company: (password?: string) =>
     CompanyRepository.create({
       cuit: cuitGenerator(),
       companyName: company.companyName(),
@@ -35,7 +38,7 @@ export const userFactory = {
       email: internet.email(),
       user: {
         email: internet.email(),
-        password: "AValidPassword123",
+        password: password || "AValidPassword123",
         name: name.firstName(),
         surname: name.lastName()
       }

@@ -54,7 +54,7 @@ describe("JobApplication", () => {
 
     it("should create four valid jobApplications for for the same offer", async () => {
       const offer = await Offer.create(offerData());
-      const applicants = await applicantMocks.createFourApplicantsWithMinimumData();
+      const applicants = await applicantMocks.createFiveApplicantsWithMinimumData();
       const jobApplications = applicants.map(({ uuid }) =>
         new JobApplication({
           offerUuid: offer.uuid,

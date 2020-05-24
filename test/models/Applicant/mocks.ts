@@ -24,7 +24,7 @@ const applicantMocks = {
       surname: "Blanco"
     }
   }),
-  createFourApplicantsWithMinimumData: () => (
+  createFiveApplicantsWithMinimumData: () => (
     Promise.all(
       [
         {
@@ -65,6 +65,16 @@ const applicantMocks = {
             password: "ASDqwegregrdfg234",
             name: "Mariano",
             surname: "Beiro"
+          }
+        },
+        {
+          padron: 99990,
+          careers: [],
+          user: {
+            email: "eclapton@fi.uba.ar",
+            password: "ASDqwegregrdfg234",
+            name: "Eric",
+            surname: "Clapton"
           }
         }
       ].map(data => ApplicantRepository.create(data))

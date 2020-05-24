@@ -13,6 +13,11 @@ const GET_CURRENT_USER = gql`
       applicant {
         padron
       }
+      company {
+        uuid
+        cuit
+        companyName
+      }
     }
   }
 `;
@@ -33,7 +38,8 @@ describe("Current User query", () => {
         email: user.email,
         name: user.name,
         surname: user.surname,
-        applicant: null
+        applicant: null,
+        company: null
       }
     );
   });
@@ -49,6 +55,26 @@ describe("Current User query", () => {
         surname: user.surname,
         applicant: {
           padron: applicant.padron
+        },
+        company: null
+      }
+    );
+  });
+
+  it("returns current company user if it's set", async () => {
+    const { company, user, apolloClient } = await testClientFactory.company();
+    const { data, errors } = await apolloClient.query({ query: GET_CURRENT_USER });
+    expect(errors).toBeUndefined();
+    expect(data?.getCurrentUser).toEqual(
+      {
+        email: user.email,
+        name: user.name,
+        surname: user.surname,
+        applicant: null,
+        company: {
+          uuid: company.uuid,
+          cuit: company.cuit,
+          companyName: company.companyName
         }
       }
     );
