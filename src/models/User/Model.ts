@@ -67,7 +67,7 @@ export class User extends Model<User> {
 
   public async getCompany() {
     const companyUser = await this.getCompanyUser();
-    if (companyUser !== undefined) return Company.findByPk(companyUser.companyUuid);
+    if (companyUser) return Company.findByPk(companyUser.companyUuid);
     return;
   }
 
