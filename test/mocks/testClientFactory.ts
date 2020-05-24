@@ -1,5 +1,6 @@
 import { client } from "../graphql/ApolloTestClient";
 import { userFactory } from "./user";
+import { IApplicantProps } from "./interfaces";
 
 export const testClientFactory = {
   user: async () => {
@@ -11,8 +12,10 @@ export const testClientFactory = {
 
     return { user, apolloClient };
   },
-  applicant: async () => {
-    const applicant = await userFactory.applicant();
+  applicant: async ({
+    careers, password, capabilities
+  }: IApplicantProps = { careers: [], capabilities: [], password: null }) => {
+    const applicant = await userFactory.applicant({ careers, password });
     const user = await applicant.getUser();
     const apolloClient = client.loggedIn({
       uuid: user.uuid,

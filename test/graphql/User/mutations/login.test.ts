@@ -43,7 +43,7 @@ describe("login", () => {
 
   it("returns a token for an applicant user", async () => {
     const password = "AValidPassword3";
-    const applicant = await userFactory.applicant(password);
+    const applicant = await userFactory.applicant({ password });
     const user = await applicant.getUser();
     const { data, errors } = await client.loggedOut.mutate({
       mutation: LOGIN,

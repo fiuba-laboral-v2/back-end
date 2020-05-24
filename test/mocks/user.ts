@@ -2,6 +2,7 @@ import { UserRepository } from "../../src/models/User";
 import { internet, name, random, company, lorem } from "faker";
 import { ApplicantRepository } from "../../src/models/Applicant";
 import { CompanyRepository } from "../../src/models/Company";
+import { IApplicantProps } from "./interfaces";
 
 export const userFactory = {
   user: (password?: string) =>
@@ -12,11 +13,14 @@ export const userFactory = {
       surname: name.lastName()
     }
   ),
-  applicant: (password?: string) =>
+  applicant: ({
+    careers, password, capabilities
+  }: IApplicantProps = { careers: [], capabilities: [], password: null }) =>
     ApplicantRepository.create({
       padron: random.number(),
       description: random.words(),
-      careers: [],
+      careers: careers || [],
+      capabilities: capabilities || [],
       user: {
         email: internet.email(),
         password: password || "AValidPassword123",
