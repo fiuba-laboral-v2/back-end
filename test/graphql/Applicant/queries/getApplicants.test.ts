@@ -63,7 +63,7 @@ describe("getApplicants", () => {
   });
 
   describe("when no applicant exists", () => {
-    it("should fetch an empty array of applicants", async () => {
+    it("fetches an empty array of applicants", async () => {
       const { apolloClient } = await testClientFactory.user();
       const { data, errors } = await apolloClient.query({ query: GET_APPLICANTS });
       expect(errors).toBeUndefined();
@@ -72,7 +72,7 @@ describe("getApplicants", () => {
   });
 
   describe("when applicants exists", () => {
-    it("should fetch the existing applicant", async () => {
+    it("fetches the existing applicant", async () => {
       const newCareer = await CareerRepository.create(careerMocks.careerData());
       const applicantCareer = [{ code: newCareer.code, creditsCount: 150 }];
       const {
@@ -106,7 +106,7 @@ describe("getApplicants", () => {
       });
     });
 
-    it("should fetch all the applicants", async () => {
+    it("fetches all the applicants", async () => {
       const newCareer = await CareerRepository.create(careerMocks.careerData());
       const applicantCareer = [{ code: newCareer.code, creditsCount: 150 }];
       const {
