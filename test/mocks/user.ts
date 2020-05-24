@@ -1,5 +1,7 @@
-import { UserRepository } from "../../src/models/User";
 import { internet, name, random, company, lorem } from "faker";
+import { validateName } from "validations-fiuba-laboral-v2";
+
+import { UserRepository } from "../../src/models/User";
 import { ApplicantRepository } from "../../src/models/Applicant";
 import { CompanyRepository } from "../../src/models/Company";
 import { IApplicantProps } from "./interfaces";
@@ -9,8 +11,8 @@ export const userFactory = {
     UserRepository.create({
       email: internet.email(),
       password: password || "AValidPassword123",
-      name: name.firstName(),
-      surname: name.lastName()
+      name: getValidFirstName(),
+      surname: getValidLastName()
     }
   ),
   applicant: ({
@@ -24,8 +26,8 @@ export const userFactory = {
       user: {
         email: internet.email(),
         password: password || "AValidPassword123",
-        name: name.firstName(),
-        surname: name.lastName()
+        name: getValidFirstName(),
+        surname: getValidLastName()
       }
     }),
   company: (password?: string) =>
@@ -39,8 +41,8 @@ export const userFactory = {
       user: {
         email: internet.email(),
         password: password || "AValidPassword123",
-        name: name.firstName(),
-        surname: name.lastName()
+        name: getValidFirstName(),
+        surname: getValidLastName()
       }
     })
 };
@@ -58,4 +60,29 @@ const cuitGenerator = () => {
   if (last === 10) last = 9;
   const cuit = [...numbers, last];
   return cuit.join("");
+};
+
+const nameValidator = (myName: string) => {
+  try {
+    validateName(myName);
+    return myName;
+  } catch {
+    return null;
+  }
+};
+
+const getValidFirstName = () => {
+  let selectedName: string | null = null;
+  while (!selectedName) {
+    selectedName = nameValidator(name.firstName());
+  }
+  return selectedName;
+};
+
+const getValidLastName = () => {
+  let selectedName: string | null = null;
+  while (!selectedName) {
+    selectedName = nameValidator(name.lastName());
+  }
+  return selectedName;
 };

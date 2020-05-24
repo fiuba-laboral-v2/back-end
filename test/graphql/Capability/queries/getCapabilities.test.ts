@@ -17,11 +17,15 @@ const GET_CAPABILITIES = gql`
 `;
 
 describe("getCapabilities", () => {
-  beforeAll(() => Database.setConnection());
+  beforeAll(() => {
+    Database.setConnection();
+    return CapabilityRepository.truncate();
+  });
 
-  beforeEach(() => CapabilityRepository.truncate());
-
-  afterAll(() => Database.close());
+  afterAll(async () => {
+    await CapabilityRepository.truncate();
+    Database.close();
+  });
 
   it("brings all capabilities in the database", async () => {
     const { apolloClient } = await testClientFactory.user();
