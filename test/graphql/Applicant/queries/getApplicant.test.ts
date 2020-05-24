@@ -51,7 +51,7 @@ describe("getApplicant", () => {
       CareerRepository.truncate(),
       UserRepository.truncate()
     ]);
-    Database.close();
+    return Database.close();
   });
 
   describe("when the applicant exists", () => {
@@ -64,8 +64,8 @@ describe("getApplicant", () => {
         apolloClient
       } = await testClientFactory.applicant({ careers: applicantCareer });
 
-      const { data, errors } = await apolloClient.mutate({
-        mutation: GET_APPLICANT,
+      const { data, errors } = await apolloClient.query({
+        query: GET_APPLICANT,
         variables: { uuid: applicant.uuid }
       });
 
@@ -105,7 +105,7 @@ describe("getApplicant", () => {
   });
 
   describe("Errors", () => {
-    it("should return an error if there is no current user", async () => {
+    it("returns an error if there is no current user", async () => {
       const apolloClient = client.loggedOut;
       const uuid = random.uuid();
       const { errors } = await apolloClient.query({

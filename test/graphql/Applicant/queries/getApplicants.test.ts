@@ -46,17 +46,33 @@ const GET_APPLICANTS = gql`
 
 describe("getApplicants", () => {
 
-  beforeAll(() => Database.setConnection());
-
-  beforeEach(async () => {
-    await CareerRepository.truncate();
-    await UserRepository.truncate();
+  beforeAll(() => {
+    Database.setConnection();
+    return Promise.all([
+      CareerRepository.truncate(),
+      UserRepository.truncate()
+    ]);
   });
 
-  afterAll(() => Database.close());
+  afterAll(async () => {
+    await Promise.all([
+      CareerRepository.truncate(),
+      UserRepository.truncate()
+    ]);
+    return Database.close();
+  });
+
+  describe("when no applicant exists", () => {
+    it("fetches an empty array of applicants", async () => {
+      const { apolloClient } = await testClientFactory.user();
+      const { data, errors } = await apolloClient.query({ query: GET_APPLICANTS });
+      expect(errors).toBeUndefined();
+      expect(data!.getApplicants).toEqual([]);
+    });
+  });
 
   describe("when applicants exists", () => {
-    it("should fetch the existing applicant", async () => {
+    it("fetches the existing applicant", async () => {
       const newCareer = await CareerRepository.create(careerMocks.careerData());
       const applicantCareer = [{ code: newCareer.code, creditsCount: 150 }];
       const {
@@ -90,7 +106,7 @@ describe("getApplicants", () => {
       });
     });
 
-    it("should fetch all the applicants", async () => {
+    it("fetches all the applicants", async () => {
       const newCareer = await CareerRepository.create(careerMocks.careerData());
       const applicantCareer = [{ code: newCareer.code, creditsCount: 150 }];
       const {
@@ -141,17 +157,8 @@ describe("getApplicants", () => {
     });
   });
 
-  describe("when no applicant exists", () => {
-    it("should fetch an empty array of applicants", async () => {
-      const { apolloClient } = await testClientFactory.user();
-      const { data, errors } = await apolloClient.query({ query: GET_APPLICANTS });
-      expect(errors).toBeUndefined();
-      expect(data!.getApplicants).toEqual([]);
-    });
-  });
-
   describe("Errors", () => {
-    it("should return an error if there is no current user", async () => {
+    it("returns an error if there is no current user", async () => {
       const apolloClient = client.loggedOut;
 
       const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
