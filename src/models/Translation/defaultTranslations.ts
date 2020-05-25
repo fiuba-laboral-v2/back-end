@@ -65,9 +65,6 @@ export const defaultTranslations = {
   companiesList: [
     { key: "title", value: "Empresas" }
   ],
-  companyListItem: [
-    { key: "view", value: "Ver" }
-  ],
   companyProfileTitle: [
     { key: "title", value: "Perfil de mi empresa" },
     { key: "subtitle", value: "Así se va a mostrar a los postulantes" }
