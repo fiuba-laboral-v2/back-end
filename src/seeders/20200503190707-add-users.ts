@@ -24,6 +24,15 @@ export = {
           surname: "Llauró",
           createdAt: new Date(),
           updatedAt: new Date()
+        },
+        {
+          uuid: uuids.aldana.user,
+          email: "arastrelli@fi.uba.ar",
+          password: "$2b$10$Mql5/mLtH.lJy0CxfjfozOuVWkztx4X3LAWh.WL5vXMv9pktoXDyW",
+          name: "Aldana",
+          surname: "Rastrelli",
+          createdAt: new Date(),
+          updatedAt: new Date()
         }
       ]
     );

@@ -9,6 +9,10 @@ export const uuids = {
     applicant: "238a8b4b-430d-4a4d-b91e-a95a393d1279",
     user: "22ae51ae-6eb7-4bd0-8824-9a469f681bb3"
   },
+  aldana: {
+    applicant: "cf6f22c2-b1c9-4bf9-8717-7705e4c651e6",
+    user: "c2be9676-9a5b-445e-9999-07b4da818581"
+  },
   manuel: {
     user: "84dce80c-8f97-4537-a4c8-2bc8b4b717b4"
   },
