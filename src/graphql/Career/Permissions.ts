@@ -2,8 +2,7 @@ import { isUser } from "../rules";
 
 export const careersPermissions = {
   Query: {
-    getCareerByCode: isUser,
-    getCareers: isUser
+    getCareerByCode: isUser
   }
   // Mutation: {
   //   saveCareer: isAdmin
