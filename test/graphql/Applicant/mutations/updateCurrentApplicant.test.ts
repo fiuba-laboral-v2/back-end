@@ -13,13 +13,22 @@ import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/
 
 const UPDATE_CURRENT_APPLICANT = gql`
   mutation updateCurrentApplicant(
-    $padron: Int, $user: UserUpdateInput, $description: String,
-    $careers: [CareerCredits], $capabilities: [String], $sections: [SectionInput],
+    $padron: Int,
+    $user: UserUpdateInput,
+    $description: String,
+    $careers: [CareerCredits],
+    $capabilities: [String],
+    $sections: [SectionInput],
     $links: [LinkInput]
   ) {
     updateCurrentApplicant(
-      padron: $padron, user: $user, description: $description,
-      careers: $careers, capabilities: $capabilities, sections: $sections, links: $links
+      padron: $padron,
+      user: $user,
+      description: $description,
+      careers: $careers,
+      capabilities: $capabilities,
+      sections: $sections,
+      links: $links
     ) {
       user {
         uuid
