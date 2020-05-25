@@ -109,7 +109,8 @@ export const defaultTranslations = {
     { key: "signUp", value: "Crear tu cuenta" },
     { key: "logIn", value: "Iniciar sesión" },
     { key: "logOut", value: "Cerrar sesión" },
-    { key: "myProfile", value: "Mi perfil" }
+    { key: "myProfile", value: "Mi perfil" },
+    { key: "myCompanyProfile", value: "Mi empresa" }
   ],
   offerCareer: [
     { key: "careersTitle", value: "Carreras" }
