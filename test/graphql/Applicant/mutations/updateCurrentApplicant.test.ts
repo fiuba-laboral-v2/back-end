@@ -11,14 +11,14 @@ import { testClientFactory } from "../../../mocks/testClientFactory";
 import { UserRepository } from "../../../../src/models/User/Repository";
 import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
 
-const UPDATE_APPLICANT = gql`
-  mutation updateApplicant(
-    $uuid: ID!, $padron: Int, $user: UserUpdateInput, $description: String,
+const UPDATE_CURRENT_APPLICANT = gql`
+  mutation updateCurrentApplicant(
+    $padron: Int, $user: UserUpdateInput, $description: String,
     $careers: [CareerCredits], $capabilities: [String], $sections: [SectionInput],
     $links: [LinkInput]
   ) {
-    updateApplicant(
-      uuid: $uuid, padron: $padron, user: $user, description: $description,
+    updateCurrentApplicant(
+      padron: $padron, user: $user, description: $description,
       careers: $careers, capabilities: $capabilities, sections: $sections, links: $links
     ) {
       user {
@@ -52,7 +52,7 @@ const UPDATE_APPLICANT = gql`
   }
 `;
 
-describe("updateApplicant", () => {
+describe("updateCurrentApplicant", () => {
   beforeAll(() => {
     Database.setConnection();
     return Promise.all([
@@ -73,7 +73,6 @@ describe("updateApplicant", () => {
     const { applicant, user, apolloClient } = await testClientFactory.applicant();
     const newCareer = await CareerRepository.create(careerMocks.careerData());
     const dataToUpdate = {
-      uuid: applicant.uuid,
       user: {
         name: "newName",
         surname: "newSurname"
@@ -105,12 +104,12 @@ describe("updateApplicant", () => {
     const {
       data, errors
     } = await apolloClient.mutate({
-      mutation: UPDATE_APPLICANT,
+      mutation: UPDATE_CURRENT_APPLICANT,
       variables: dataToUpdate
     });
 
     expect(errors).toBeUndefined();
-    expect(data!.updateApplicant).toMatchObject({
+    expect(data!.updateCurrentApplicant).toMatchObject({
       padron: dataToUpdate.padron,
       user: {
         uuid: user.uuid,
@@ -121,21 +120,21 @@ describe("updateApplicant", () => {
       description: dataToUpdate.description
     });
     expect(
-      data!.updateApplicant.capabilities.map(c => c.description)
+      data!.updateCurrentApplicant.capabilities.map(c => c.description)
     ).toEqual(expect.arrayContaining(
       [
         ...dataToUpdate.capabilities
       ]
     ));
     expect(
-      data!.updateApplicant.careers.map(c => c.code)
+      data!.updateCurrentApplicant.careers.map(c => c.code)
     ).toEqual(expect.arrayContaining(
       [
         ...dataToUpdate.careers.map(c => c.code)
       ]
     ));
     expect(
-      data!.updateApplicant.sections.map(({ title, text, displayOrder }) =>
+      data!.updateCurrentApplicant.sections.map(({ title, text, displayOrder }) =>
         ({ title, text, displayOrder })
       )
     ).toEqual(expect.arrayContaining(
@@ -145,7 +144,7 @@ describe("updateApplicant", () => {
       ]
     ));
     expect(
-      data!.updateApplicant.links.map(({ name, url }) => ({ name, url })
+      data!.updateCurrentApplicant.links.map(({ name, url }) => ({ name, url })
       )
     ).toEqual(expect.arrayContaining(
       [
@@ -159,7 +158,6 @@ describe("updateApplicant", () => {
       const apolloClient = client.loggedOut;
 
       const dataToUpdate = {
-        uuid: "4d4473fb-ba85-40dc-81c5-12d1814c98fa",
         user: {
           name: "newName",
           surname: "newSurname"
@@ -172,7 +170,7 @@ describe("updateApplicant", () => {
       const {
        errors
       } = await apolloClient.mutate({
-        mutation: UPDATE_APPLICANT,
+        mutation: UPDATE_CURRENT_APPLICANT,
         variables: dataToUpdate
       });
 
@@ -183,7 +181,6 @@ describe("updateApplicant", () => {
       const { apolloClient } = await testClientFactory.user();
 
       const dataToUpdate = {
-        uuid: "4d4473fb-ba85-40dc-81c5-12d1814c98fa",
         user: {
           name: "newName",
           surname: "newSurname"
@@ -194,7 +191,7 @@ describe("updateApplicant", () => {
       };
 
       const { errors } = await apolloClient.mutate({
-        mutation: UPDATE_APPLICANT,
+        mutation: UPDATE_CURRENT_APPLICANT,
         variables: dataToUpdate
       });
 

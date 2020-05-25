@@ -6,11 +6,8 @@ export const defaultTranslations = {
   applicantList: [
     { key: "title", value: "Postulantes" }
   ],
-  applicantListItem: [
-    { key: "editButtonText", value: "Editar" },
-    { key: "viewButtonText", value: "Ver" }
-  ],
   applicantProfileDetail: [
+    { key: "edit", value: "Editar" },
     { key: "padron", value: "Padron" },
     { key: "capabilities", value: "Aptitudes" }
   ],
