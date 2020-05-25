@@ -1,9 +1,9 @@
 import { saveApplicant } from "./saveApplicant";
-import { updateApplicant } from "./updateApplicant";
+import { updateCurrentApplicant } from "./updateCurrentApplicant";
 
 const applicantMutations = {
   saveApplicant,
-  updateApplicant
+  updateCurrentApplicant
 };
 
 export { applicantMutations };

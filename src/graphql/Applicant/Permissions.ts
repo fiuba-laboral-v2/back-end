@@ -6,6 +6,6 @@ export const applicantPermissions = {
     getApplicants: isUser
   },
   Mutation: {
-    updateApplicant: isApplicant
+    updateCurrentApplicant: isApplicant
   }
 };

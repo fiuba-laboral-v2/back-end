@@ -1,18 +1,15 @@
-import { ID, Int, List, nonNull, String } from "../../fieldTypes";
+import { Int, List, String } from "../../fieldTypes";
 import { GraphQLApplicant } from "../Types/Applicant";
 import { GraphQLCareerCredits } from "../Types/CareerCredits";
 import { GraphQLSectionInput } from "../Types/Section";
 import { GraphQLUserUpdateInput } from "../../User/Types/GraphQLUserUpdateInput";
-
-import { IApplicantEditable, ApplicantRepository } from "../../../models/Applicant";
+import { ApplicantRepository, IApplicantEditable } from "../../../models/Applicant";
 import { GraphQLLinkInput } from "../Types/Link";
+import { IApplicantUser } from "../../../graphqlContext";
 
-const updateApplicant = {
+const updateCurrentApplicant = {
   type: GraphQLApplicant,
   args: {
-    uuid: {
-      type: nonNull(ID)
-    },
     user: {
       type: GraphQLUserUpdateInput
     },
@@ -35,7 +32,11 @@ const updateApplicant = {
       type: List(GraphQLLinkInput)
     }
   },
-  resolve: (_: undefined, props: IApplicantEditable) => ApplicantRepository.update(props)
+  resolve: async (
+    _: undefined,
+    props: IApplicantEditable,
+    { currentUser }: { currentUser: IApplicantUser }
+  ) => ApplicantRepository.update({ ...props, uuid: currentUser.applicantUuid })
 };
 
-export { updateApplicant };
+export { updateCurrentApplicant };

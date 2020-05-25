@@ -20,6 +20,7 @@ describe("getTranslations", () => {
     expect(errors).toBeUndefined();
     expect(data).toEqual({
       getTranslations: [
+        { key: "edit", value: "Editar" },
         { key: "padron", value: "Padron" },
         { key: "capabilities", value: "Aptitudes" }
       ]
