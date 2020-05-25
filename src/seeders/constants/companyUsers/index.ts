@@ -1,0 +1,1 @@
+export { manuel } from "./manuel";

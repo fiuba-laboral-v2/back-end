@@ -1,0 +1,1 @@
+export { devartis } from "./devartis";
