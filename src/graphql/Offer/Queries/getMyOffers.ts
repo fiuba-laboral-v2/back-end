@@ -8,9 +8,8 @@ const getMyOffers = {
   resolve: (
     _: undefined,
     __: undefined,
-    { currentUser }: { currentUser: ICompanyUser }) => OfferRepository.findAll({ where: {
-      companyUuid: currentUser.companyUuid
-    }})
+    { currentUser }: { currentUser: ICompanyUser }) =>
+      OfferRepository.findByCompanyUuid(currentUser.companyUuid)
 };
 
 export { getMyOffers };
