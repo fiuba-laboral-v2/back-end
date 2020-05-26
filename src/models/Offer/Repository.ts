@@ -3,6 +3,7 @@ import { Offer, IOffer } from "./";
 import { OfferSection, IOfferSection } from "./OfferSection";
 import { OfferCareer, IOfferCareer } from "./OfferCareer";
 import { OfferNotFound } from "./Errors";
+import { FindOptions } from "sequelize";
 
 export const OfferRepository = {
   create: (
@@ -37,6 +38,6 @@ export const OfferRepository = {
 
     return offer;
   },
-  findAll: () => Offer.findAll(),
+  findAll: (options?: FindOptions | undefined) => Offer.findAll(options),
   truncate: () => Offer.truncate({ cascade: true })
 };
