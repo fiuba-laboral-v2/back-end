@@ -1,7 +1,7 @@
 import Database from "../../config/Database";
-import { Offer, IOffer } from "./";
-import { OfferSection, IOfferSection } from "./OfferSection";
-import { OfferCareer, IOfferCareer } from "./OfferCareer";
+import { IOffer, Offer } from "./";
+import { IOfferSection, OfferSection } from "./OfferSection";
+import { IOfferCareer, OfferCareer } from "./OfferCareer";
 import { OfferNotFound } from "./Errors";
 
 export const OfferRepository = {
@@ -13,6 +13,14 @@ export const OfferRepository = {
     }: IOffer) => {
     const offer = new Offer(attributes);
     return OfferRepository.save(offer, sections, careers);
+  },
+  update: async (offer: IOffer & { uuid: string }) => {
+    const [, [updatedOffer]] = await Offer.update(offer, {
+      where: { uuid: offer.uuid },
+      returning: true
+    });
+    if (!updatedOffer) throw new OfferNotFound(offer.uuid);
+    return updatedOffer;
   },
   save: async (offer: Offer, sections: IOfferSection[], offersCareers: IOfferCareer[]) => {
     const transaction = await Database.transaction();

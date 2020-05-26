@@ -1,7 +1,9 @@
 import { createOffer } from "./createOffer";
+import { editOffer } from "./editOffer";
 
 const offerMutations = {
-  createOffer
+  createOffer,
+  editOffer
 };
 
 export { offerMutations };
