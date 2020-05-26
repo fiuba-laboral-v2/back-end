@@ -14,6 +14,15 @@ export const CompanyPhoneNumberRepository = {
       }
     );
   },
+  update: async (phoneNumbers: string[] = [], company: Company, transaction?: Transaction) => {
+    if (phoneNumbers.length === 0) return;
+
+    await CompanyPhoneNumber.destroy({
+      where: { companyUuid: company.uuid },
+      transaction
+    });
+    return CompanyPhoneNumberRepository.bulkCreate(phoneNumbers, company, transaction);
+  },
   findAll: () => CompanyPhoneNumber.findAll(),
   truncate: async () => {
     return CompanyPhoneNumber.destroy({ truncate: true });

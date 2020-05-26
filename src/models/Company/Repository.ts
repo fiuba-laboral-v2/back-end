@@ -1,4 +1,4 @@
-import { Company, ICompany } from "./index";
+import { Company, ICompany, ICompanyEditable } from "./index";
 import { CompanyPhotoRepository } from "../CompanyPhoto";
 import { CompanyPhoneNumberRepository } from "../CompanyPhoneNumber";
 import { CompanyNotFoundError } from "./Errors/CompanyNotFoundError";
@@ -22,6 +22,28 @@ export const CompanyRepository = {
       await CompanyUserRepository.create(company, user, transaction);
       await CompanyPhotoRepository.bulkCreate(photos, company, transaction);
       await CompanyPhoneNumberRepository.bulkCreate(phoneNumbers, company, transaction);
+      await transaction.commit();
+      return company;
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
+  },
+  update: async (
+    {
+      uuid,
+      phoneNumbers,
+      photos,
+      ...companyAttributes
+    }: ICompanyEditable
+  ) => {
+    const company = await CompanyRepository.findByUuid(uuid);
+    const transaction = await Database.transaction();
+    try {
+      await company.set(companyAttributes);
+      await CompanyPhotoRepository.update(photos, company, transaction);
+      await CompanyPhoneNumberRepository.update(phoneNumbers, company, transaction);
+      await company.save({ transaction });
       await transaction.commit();
       return company;
     } catch (error) {
