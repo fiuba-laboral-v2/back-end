@@ -106,6 +106,14 @@ describe("OfferRepository", () => {
       expect(offer).toEqual(expect.objectContaining(offerProps));
     });
 
+    it("should get the only offer by companyUuid", async () => {
+      const { uuid: companyUuid } = await CompanyRepository.create(companyMocks.companyData());
+      const offerProps = OfferMocks.withObligatoryData(companyUuid);
+      await OfferRepository.create(offerProps);
+      const [offer] = await OfferRepository.findByCompanyUuid(companyUuid);
+      expect(offer).toEqual(expect.objectContaining(offerProps));
+    });
+
     it("should throw an error if offer does not exists", async () => {
       await expect(
         OfferRepository.findByUuid("4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da")
