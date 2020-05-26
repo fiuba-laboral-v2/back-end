@@ -37,17 +37,13 @@ export const CompanyRepository = {
       ...companyAttributes
     }: ICompanyEditable
   ) => {
-    const company = await CompanyRepository.findByUuid(uuid);
-    const transaction = await Database.transaction();
-    try {
-      await company.set(companyAttributes);
-      await company.save({ transaction });
-      await transaction.commit();
-      return company;
-    } catch (error) {
-      await transaction.rollback();
-      throw error;
-    }
+    const [, [updatedCompany]] = await Company.update(companyAttributes, {
+      where: { uuid },
+      returning: true
+    });
+    if (!updatedCompany) throw new CompanyNotFoundError(uuid);
+
+    return updatedCompany;
   },
   findByUuid: async (uuid: string) => {
     const company = await Company.findByPk(uuid);
