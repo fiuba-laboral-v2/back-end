@@ -37,9 +37,5 @@ export const editOffer = {
     _: undefined,
     props: IOffer & { uuid: string },
     { currentUser }: { currentUser: ICompanyUser }
-  ) =>
-    OfferRepository.update({
-      companyUuid: currentUser.companyUuid,
-      ...props
-    })
+  ) => OfferRepository.update({ companyUuid: currentUser.companyUuid, ...props })
 };
