@@ -113,7 +113,8 @@ export const defaultTranslations = {
     { key: "logIn", value: "Iniciar sesión" },
     { key: "logOut", value: "Cerrar sesión" },
     { key: "myProfile", value: "Mi perfil" },
-    { key: "myCompanyProfile", value: "Mi empresa" }
+    { key: "myCompanyProfile", value: "Mi empresa" },
+    { key: "myOffers", value: "Mis Ofertas" }
   ],
   offerCareer: [
     { key: "careersTitle", value: "Carreras" }
@@ -123,6 +124,9 @@ export const defaultTranslations = {
     { key: "apply", value: "Postularme" },
     { key: "applySuccess", value: "Postulación exitosa!" },
     { key: "alreadyApplied", value: "Ya te postulaste" }
+  ],
+  MyOffers: [
+    { key: "title", value: "Mis Ofertas" }
   ],
   offerSalary: [
     { key: "salaryFrom", value: "Desde" },
