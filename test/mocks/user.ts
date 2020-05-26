@@ -46,7 +46,7 @@ export const userFactory = {
     })
 };
 
-const cuitGenerator = () => {
+export const cuitGenerator = () => {
   const middleNumbers = Array(8).fill(1).map(() => random.number({ max: 9 }));
   const numbers = [2, 0, ...middleNumbers];
   const multipliers = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];

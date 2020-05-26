@@ -1,4 +1,5 @@
 import { UserMocks } from "../User/mocks";
+import { cuitGenerator } from "../../mocks/user";
 import { CompanyRepository, ICompany } from "../../../src/models/Company";
 
 const additionalData = {
@@ -70,80 +71,214 @@ export const companyMocks = {
             EQEDEQH/xAAcAAEAAgMBAQEAAAAAAAAAAAAABgcCBAUDAQj/xAAaAQEAAgMBAAAA
             AAAAAAAAAAAABQYBAwQC/9oADAMBAAIQAxAAAAG5Q AgICAgICAgICAgICAgIA==`
     }),
-  createSevenCompaniesWithMinimumData: () => (
-    Promise.all(
-      [
-        {
-          cuit: "30711819017",
-          companyName: "Devartis",
-          user: {
-            email: "jjcale@fi.uba.ar",
-            password: "ASDqfdsfsdfwe234",
-            name: "John",
-            surname: "Cale"
-          }
-        },
-        {
-          cuit: "30703088534",
-          companyName: "Mercado Libre",
-          user: {
-            email: "freddieking@fi.uba.ar",
-            password: "ASDqfedsfswe234",
-            name: "Frederick",
-            surname: "King"
-          }
-        },
-        {
-          cuit: "30701307115",
-          companyName: "Despegar",
-          user: {
-            email: "aking@fi.uba.ar",
-            password: "ASDfewfewqwe234",
-            name: "Albert",
-            surname: "King"
-          }
-        },
-        {
-          cuit: "30715200941",
-          companyName: "Mule soft",
-          user: {
-            email: "rjohnson@fi.uba.ar",
-            password: "ASDqwegregrdfg234",
-            name: "Robert",
-            surname: "Johnson"
-          }
-        },
-        {
-          cuit: "30711696306",
-          companyName: "The Fork",
-          user: {
-            email: "jbonamassa@fi.uba.ar",
-            password: "ASDqwegregrdfg234",
-            name: "Joe",
-            surname: "Bonamassa"
-          }
-        },
-        {
-          cuit: "30712392513",
-          companyName: "Keepcon",
-          user: {
-            email: "bbking@fi.uba.ar",
-            password: "ASDqwegregrdfg234",
-            name: "Riley",
-            surname: "King"
-          }
-        },
-        {
-          cuit: "30711311773",
-          companyName: "SalesForce",
-          user: {
-            email: "buddyGuy@fi.uba.ar",
-            password: "ASDqwegregrdfg234",
-            name: "George",
-            surname: "Guy"
-          }
-        }
-      ].map(data => CompanyRepository.create(data))
+  nineteenCompaniesWithCompleteData: () => (
+    companyMocks.nineteenCompaniesWithMinimumData.map(data =>
+      ({
+        slogan: "Lo mejor está llegando",
+        description: "description",
+        logo: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAA AgICAgICAgICAgICAgIA==",
+        website: "https://jobs.mercadolibre.com/",
+        email: "jobs@mercadolibre.com",
+        ...data,
+        ...additionalData
+      })
     )
+  ),
+  nineteenCompaniesWithMinimumData: [
+    {
+      cuit: "30711819017",
+      companyName: "Devartis",
+      user: {
+        email: "jjcale@fi.uba.ar",
+        password: "ASDqfdsfsdfwe234",
+        name: "John",
+        surname: "Cale"
+      }
+    },
+    {
+      cuit: "30703088534",
+      companyName: "Mercado Libre",
+      user: {
+        email: "freddieking@fi.uba.ar",
+        password: "ASDqfedsfswe234",
+        name: "Frederick",
+        surname: "King"
+      }
+    },
+    {
+      cuit: "30701307115",
+      companyName: "Despegar",
+      user: {
+        email: "aking@fi.uba.ar",
+        password: "ASDfewfewqwe234",
+        name: "Albert",
+        surname: "King"
+      }
+    },
+    {
+      cuit: "30715200941",
+      companyName: "Mule soft",
+      user: {
+        email: "rjohnson@fi.uba.ar",
+        password: "ASDqwegregrdfg234",
+        name: "Robert",
+        surname: "Johnson"
+      }
+    },
+    {
+      cuit: "30711696306",
+      companyName: "The Fork",
+      user: {
+        email: "jbonamassa@fi.uba.ar",
+        password: "ASDqwegregrdfg234",
+        name: "Joe",
+        surname: "Bonamassa"
+      }
+    },
+    {
+      cuit: "30712392513",
+      companyName: "Keepcon",
+      user: {
+        email: "bbking@fi.uba.ar",
+        password: "ASDqwegregrdfg234",
+        name: "Riley",
+        surname: "King"
+      }
+    },
+    {
+      cuit: "30711311773",
+      companyName: "SalesForce",
+      user: {
+        email: "buddyGuy@fi.uba.ar",
+        password: "ASDqwegregrdfg234",
+        name: "George",
+        surname: "Guy"
+      }
+    },
+    {
+      cuit: cuitGenerator(),
+      companyName: "Carrefour",
+      user: {
+        email: "jlennom@fi.uba.ar",
+        password: "ASDqwegregrdfg234",
+        name: "John",
+        surname: "Lennon"
+      }
+    },
+    {
+      cuit: cuitGenerator(),
+      companyName: "Seru Giran",
+      user: {
+        email: "cgarcia@fi.uba.ar",
+        password: "ASDqwegregrdfg234",
+        name: "Charly",
+        surname: "Garcia"
+      }
+    },
+    {
+      cuit: cuitGenerator(),
+      companyName: "Sui Generis",
+      user: {
+        email: "nmestre@fi.uba.ar",
+        password: "ASDqwegregrdfg234",
+        name: "Carlos",
+        surname: "Mestre"
+      }
+    },
+    {
+      cuit: cuitGenerator(),
+      companyName: "Mycrosoft",
+      user: {
+        email: "bgates@fi.uba.ar",
+        password: "ASDqwegregrdfg234",
+        name: "Bill",
+        surname: "Gates"
+      }
+    },
+    {
+      cuit: cuitGenerator(),
+      companyName: "Apple",
+      user: {
+        email: "sjobs@fi.uba.ar",
+        password: "ASDqwegregrdfg234",
+        name: "Steve",
+        surname: "Jobs"
+      }
+    },
+    {
+      cuit: cuitGenerator(),
+      companyName: "IBM",
+      user: {
+        email: "jkelly@fi.uba.ar",
+        password: "ASDqwegregrdfg234",
+        name: "John",
+        surname: "Kelly"
+      }
+    },
+    {
+      cuit: cuitGenerator(),
+      companyName: "Zona props",
+      user: {
+        email: "eminujin@fi.uba.ar",
+        password: "ASDqwegregrdfg234",
+        name: "Edgardo",
+        surname: "Minujin"
+      }
+    },
+    {
+      cuit: cuitGenerator(),
+      companyName: "LinkedIn",
+      user: {
+        email: "jperez@fi.uba.ar",
+        password: "ASDqwegregrdfg234",
+        name: "Juan",
+        surname: "Perez"
+      }
+    },
+    {
+      cuit: cuitGenerator(),
+      companyName: "Media",
+      user: {
+        email: "cmagno@fi.uba.ar",
+        password: "ASDqwegregrdfg234",
+        name: "Carlo",
+        surname: "Magno"
+      }
+    },
+    {
+      cuit: cuitGenerator(),
+      companyName: "Argenprop",
+      user: {
+        email: "thanks@fi.uba.ar",
+        password: "ASDqwegregrdfg234",
+        name: "Tom",
+        surname: "Hanks"
+      }
+    },
+    {
+      cuit: cuitGenerator(),
+      companyName: "Pretty Woman",
+      user: {
+        email: "jroberts@fi.uba.ar",
+        password: "ASDqwegregrdfg234",
+        name: "Julia",
+        surname: "Roberts"
+      }
+    },
+    {
+      cuit: cuitGenerator(),
+      companyName: "Godfather",
+      user: {
+        email: "apaccino@fi.uba.ar",
+        password: "ASDqwegregrdfg234",
+        name: "Al",
+        surname: "Paccino"
+      }
+    }
+  ],
+  createNineteenCompaniesWithMinimumData: () => (
+    Promise.all(
+      companyMocks.nineteenCompaniesWithMinimumData.map(data => CompanyRepository.create(data)
+    ))
   )
 };
