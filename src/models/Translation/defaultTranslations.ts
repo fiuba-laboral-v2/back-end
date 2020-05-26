@@ -34,8 +34,9 @@ export const defaultTranslations = {
     { key: "career", value: "Carrera" },
     { key: "credits", value: "Créditos aprobados" }
   ],
-  createOffer: [
-    { key: "formTitle", value: "Publicar oferta" },
+  editOffer: [
+    { key: "create", value: "Publicar oferta" },
+    { key: "edit", value: "Editar tu oferta" },
     { key: "offerTitle", value: "Título" },
     { key: "description", value: "Descripción" },
     { key: "hoursPerDay", value: "Horas por día" },
@@ -108,10 +109,6 @@ export const defaultTranslations = {
   ],
   offerCareer: [
     { key: "careersTitle", value: "Carreras" }
-  ],
-  editOffer: [
-    { key: "formTitle", value: "Editar tu oferta" },
-    { key: "offerTitle", value: "Título" }
   ],
   offerDetail: [
     { key: "edit", value: "Editar" },
