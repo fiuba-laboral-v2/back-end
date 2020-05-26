@@ -34,7 +34,7 @@ describe("JobApplicationRepository", () => {
       company5,
       company6,
       company7
-    ] = await companyMocks.createSevenCompaniesWithMinimumData();
+    ] = await companyMocks.createNineteenCompaniesWithMinimumData();
     [
       applicant1,
       applicant2,

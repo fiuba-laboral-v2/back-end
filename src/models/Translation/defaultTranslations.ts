@@ -47,6 +47,21 @@ export const defaultTranslations = {
   CompanyLogoInput: [
     { key: "uploadLogo", value: "Subir logo" }
   ],
+  companyFields: [
+    { key: "cuit", value: "Cuit" },
+    { key: "email", value: "Email de la empresa" },
+    { key: "companyName", value: "Nombre de la empresa" },
+    { key: "slogan", value: "Slogan" },
+    { key: "description", value: "Descripción" },
+    { key: "website", value: "Sitio" }
+  ],
+  editableCompanyProfile: [
+    { key: "edit", value: "Editar" }
+  ],
+  editMyCompanyProfile: [
+    { key: "title", value: "Editar el perfil de tu empresa" },
+    { key: "submit", value: "Guardar" }
+  ],
   companySignUp: [
     { key: "title", value: "Crear tu cuenta" },
     { key: "email", value: "Email" },
@@ -54,13 +69,6 @@ export const defaultTranslations = {
     { key: "passwordConfirm", value: "Confirmar contraseña" },
     { key: "name", value: "Nombre" },
     { key: "surname", value: "Apellido" },
-    { key: "cuit", value: "Cuit" },
-    { key: "companyEmail", value: "Email de la empresa" },
-    { key: "companyName", value: "Nombre de la empresa" },
-    { key: "slogan", value: "Slogan" },
-    { key: "description", value: "Descripción" },
-    { key: "logo", value: "Logo" },
-    { key: "website", value: "Sitio" },
     { key: "submit", value: "Guardar" }
   ],
   companiesList: [

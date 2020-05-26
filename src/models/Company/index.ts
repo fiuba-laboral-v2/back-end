@@ -1,5 +1,5 @@
 import { Company } from "./Model";
 import { CompanyRepository } from "./Repository";
-import { ICompany } from "./Interface";
+import { ICompany, ICompanyEditable } from "./Interface";
 
-export { Company, CompanyRepository, ICompany };
+export { Company, CompanyRepository, ICompany, ICompanyEditable };

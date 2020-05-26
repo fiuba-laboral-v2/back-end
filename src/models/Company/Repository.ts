@@ -1,4 +1,4 @@
-import { Company, ICompany } from "./index";
+import { Company, ICompany, ICompanyEditable } from "./index";
 import { CompanyPhotoRepository } from "../CompanyPhoto";
 import { CompanyPhoneNumberRepository } from "../CompanyPhoneNumber";
 import { CompanyNotFoundError } from "./Errors/CompanyNotFoundError";
@@ -28,6 +28,22 @@ export const CompanyRepository = {
       await transaction.rollback();
       throw error;
     }
+  },
+  update: async (
+    {
+      uuid,
+      phoneNumbers,
+      photos,
+      ...companyAttributes
+    }: ICompanyEditable
+  ) => {
+    const [, [updatedCompany]] = await Company.update(companyAttributes, {
+      where: { uuid },
+      returning: true
+    });
+    if (!updatedCompany) throw new CompanyNotFoundError(uuid);
+
+    return updatedCompany;
   },
   findByUuid: async (uuid: string) => {
     const company = await Company.findByPk(uuid);
