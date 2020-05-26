@@ -3,11 +3,14 @@ import { GraphQLOfferCareerInput } from "../Types/GraphQLOfferCareer";
 import { GraphQLOfferSectionInput } from "../Types/GraphQLOfferSection";
 import { IOffer, OfferRepository } from "../../../models/Offer";
 import { ICompanyUser } from "../../../graphqlContext";
-import { Int, List, nonNull, String } from "../../fieldTypes";
+import { ID, Int, List, nonNull, String } from "../../fieldTypes";
 
-export const createOffer = {
+export const editOffer = {
   type: GraphQLOffer,
   args: {
+    uuid: {
+      type: nonNull(ID)
+    },
     title: {
       type: nonNull(String)
     },
@@ -30,6 +33,9 @@ export const createOffer = {
       type: List(GraphQLOfferCareerInput)
     }
   },
-  resolve: (_: undefined, props: IOffer, { currentUser }: { currentUser: ICompanyUser }) =>
-    OfferRepository.create({ companyUuid: currentUser.companyUuid, ...props })
+  resolve: async (
+    _: undefined,
+    props: IOffer & { uuid: string },
+    { currentUser }: { currentUser: ICompanyUser }
+  ) => OfferRepository.update({ companyUuid: currentUser.companyUuid, ...props })
 };

@@ -97,6 +97,25 @@ describe("OfferRepository", () => {
     });
   });
 
+  describe("Update", () => {
+    it("updates successfully", async () => {
+      const { uuid: companyUuid } = await CompanyRepository.create(companyMocks.companyData());
+      const attributes = OfferMocks.withObligatoryData(companyUuid);
+      const { uuid } = await OfferRepository.create(attributes);
+      const newSalary = attributes.minimumSalary + 100;
+      await OfferRepository.update({ ...attributes, minimumSalary: newSalary, uuid });
+      expect((await OfferRepository.findByUuid(uuid)).minimumSalary).toEqual(newSalary);
+    });
+
+    it("throws an error if the offer does not exist", async () => {
+      const attributes = OfferMocks.withObligatoryData("bda5f82a-d839-4af3-ae04-1b669d590a85");
+      await expect(OfferRepository.update({
+        ...attributes,
+        uuid: "1dd69a27-0f6c-4859-be9e-4de5adf22826"
+      })).rejects.toThrow(OfferNotFound);
+    });
+  });
+
   describe("Get", () => {
     it("should get the only offer by uuid", async () => {
       const { uuid: companyUuid } = await CompanyRepository.create(companyMocks.companyData());
