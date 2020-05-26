@@ -1,6 +1,7 @@
 export const uuids = {
   companies: {
-    devartis: "7f03fcfa-93a9-476b-881a-b81a7ea9dbd3"
+    devartis: "7f03fcfa-93a9-476b-881a-b81a7ea9dbd3",
+    mercadoLibre: "70ec7184-bb98-4fd8-93fa-477df4abc060"
   },
   offers: {
     java_semi_senior: "7f03fcfa-93a9-476b-881a-b81a7ea9dbd6"
@@ -15,6 +16,9 @@ export const uuids = {
   },
   manuel: {
     user: "84dce80c-8f97-4537-a4c8-2bc8b4b717b4"
+  },
+  mariano: {
+    user: "eaace362-436a-4baa-a2d9-faee82f11888"
   },
   capabilities: {
     node: "9a44d145-ad02-4052-ab17-d9f2f863a4c0",

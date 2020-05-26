@@ -1,12 +1,13 @@
 import { QueryInterface } from "sequelize";
-import { manuel } from "./constants/companyUsers";
+import { manuel, mariano } from "./constants/companyUsers";
 
 export = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.bulkInsert(
       "CompanyUsers",
       [
-        manuel.companyUser
+        manuel.companyUser,
+        mariano.companyUser
       ]
     );
   },

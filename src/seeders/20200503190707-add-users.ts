@@ -1,6 +1,6 @@
 import { QueryInterface } from "sequelize";
 import { aldana, sebastian } from "./constants/applicants";
-import { manuel } from "./constants/companyUsers";
+import { manuel, mariano } from "./constants/companyUsers";
 
 export = {
   up: (queryInterface: QueryInterface) => {
@@ -9,7 +9,8 @@ export = {
       [
         sebastian.user,
         manuel.user,
-        aldana.user
+        aldana.user,
+        mariano.user
       ]
     );
   },

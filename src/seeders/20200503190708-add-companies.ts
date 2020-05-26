@@ -1,5 +1,5 @@
 import { QueryInterface } from "sequelize";
-import { devartis } from "./constants/companies";
+import { devartis, mercadoLibre } from "./constants/companies";
 
 export = {
   up: (queryInterface: QueryInterface) => {
@@ -7,21 +7,24 @@ export = {
       await queryInterface.bulkInsert(
         "Companies",
         [
-          devartis.company
+          devartis.company,
+          mercadoLibre.company
         ],
         { transaction }
       );
       await queryInterface.bulkInsert(
         "CompanyPhotos",
         [
-          ...devartis.photos
+          ...devartis.photos,
+          ...mercadoLibre.photos
         ],
         { transaction }
       );
       await queryInterface.bulkInsert(
         "CompanyPhoneNumbers",
         [
-          ...devartis.phoneNumbers
+          ...devartis.phoneNumbers,
+          ...mercadoLibre.phoneNumbers
         ],
         { transaction }
       );
