@@ -158,8 +158,6 @@ describe("CompanyRepository", () => {
   });
 
   describe("Update", () => {
-    beforeEach(() => 0);
-
     it("updates only company attributes", async () => {
       const companyCompleteData = companyMocks.nineteenCompaniesWithCompleteData()[9];
       const { uuid } = await CompanyRepository.create(companyCompleteData);
