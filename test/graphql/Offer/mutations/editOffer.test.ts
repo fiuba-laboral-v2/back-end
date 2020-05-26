@@ -5,6 +5,7 @@ import { UserRepository } from "../../../../src/models/User";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 import { OfferRepository } from "../../../../src/models/Offer";
 import { OfferMocks } from "../../../models/Offer/mocks";
+import { client } from "../../ApolloTestClient";
 
 const EDIT_OFFER = gql`
     mutation editOffer(
@@ -75,5 +76,15 @@ describe("editOffer", () => {
       variables: { ...attributes, uuid: "ca2c5210-cb79-4026-9a26-1eb7a4159e71" }
     });
     expect(response.errors?.[0].extensions?.data.errorType).toEqual("UnauthorizedError");
+  });
+
+  it("throws an error when a user is not logged in", async () => {
+    const apolloClient = client.loggedOut;
+    const attributes = OfferMocks.withObligatoryData("ca2c5210-cb79-4026-9a26-1eb7a4159e72");
+    const response = await apolloClient.mutate({
+      mutation: EDIT_OFFER,
+      variables: { ...attributes, uuid: "ca2c5210-cb79-4026-9a26-1eb7a4159e71" }
+    });
+    expect(response.errors?.[0].extensions?.data.errorType).toEqual("AuthenticationError");
   });
 });
