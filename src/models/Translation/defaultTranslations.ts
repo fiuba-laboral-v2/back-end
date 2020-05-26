@@ -55,6 +55,9 @@ export const defaultTranslations = {
     { key: "website", value: "Sitio" }
   ],
   editableCompanyProfile: [
+    { key: "edit", value: "Editar" }
+  ],
+  myCompanyProfile: [
     { key: "title", value: "Editar el perfil de tu empresa" },
     { key: "submit", value: "Guardar" }
   ],
