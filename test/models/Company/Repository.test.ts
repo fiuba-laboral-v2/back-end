@@ -110,12 +110,14 @@ describe("CompanyRepository", () => {
   });
 
   it("retrieve all Companies", async () => {
+    await CompanyRepository.truncate();
+    await UserRepository.truncate();
     const companyCompleteData = companyMocks.nineteenCompaniesWithCompleteData()[5];
     const company = await CompanyRepository.create(companyCompleteData);
     const expectedCompanies = await CompanyRepository.findAll();
     expect(expectedCompanies).not.toBeNull();
     expect(expectedCompanies).not.toBeUndefined();
-    expect(expectedCompanies!.length).toEqual(6);
+    expect(expectedCompanies!.length).toEqual(1);
     const uuids = expectedCompanies.map(({ uuid }) => uuid);
     expect(uuids).toContain(company.uuid);
   });
