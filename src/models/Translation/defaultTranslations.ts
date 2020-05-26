@@ -109,6 +109,10 @@ export const defaultTranslations = {
   offerCareer: [
     { key: "careersTitle", value: "Carreras" }
   ],
+  editOffer: [
+    { key: "formTitle", value: "Editar tu oferta" },
+    { key: "offerTitle", value: "Título" }
+  ],
   offerDetail: [
     { key: "edit", value: "Editar" },
     { key: "apply", value: "Postularme" },
