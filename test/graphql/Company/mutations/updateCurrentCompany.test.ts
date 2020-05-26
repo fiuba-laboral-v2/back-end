@@ -37,8 +37,6 @@ const UPDATE_CURRENT_COMPANY = gql`
             logo
             website
             email
-            phoneNumbers
-            photos
         }
     }
 `;
@@ -66,12 +64,7 @@ describe("updateCurrentCompany", () => {
         description: "new description",
         logo: "",
         website: "http://www.new-site-com",
-        email: "old@devartis.com",
-        phoneNumbers: ["1159871234", "1160393692"],
-        photos: [
-          "data:image/jpeg;base64,/9j/4AAQSkZJRgABA AgICAgICAgICAgICAgIA==",
-          "data:image/jpeg;base64,/9j/4AAQSkZJRgABA AICAgICAgIA=="
-        ]
+        email: "old@devartis.com"
       };
       const { data, errors } = await apolloClient.mutate({
         mutation: UPDATE_CURRENT_COMPANY,

@@ -41,8 +41,6 @@ export const CompanyRepository = {
     const transaction = await Database.transaction();
     try {
       await company.set(companyAttributes);
-      await CompanyPhotoRepository.update(photos, company, transaction);
-      await CompanyPhoneNumberRepository.update(phoneNumbers, company, transaction);
       await company.save({ transaction });
       await transaction.commit();
       return company;

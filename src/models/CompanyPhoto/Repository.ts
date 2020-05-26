@@ -12,15 +12,6 @@ export const CompanyPhotoRepository = {
       }
     );
   },
-  update: async (photos: string[] = [], company: Company, transaction?: Transaction) => {
-    if (!photos || photos.length === 0) return;
-
-    await CompanyPhoto.destroy({
-      where: { companyUuid: company.uuid },
-      transaction
-    });
-    return CompanyPhotoRepository.bulkCreate(photos, company, transaction);
-  },
   truncate: async () => {
     return CompanyPhoto.destroy({ truncate: true });
   }
