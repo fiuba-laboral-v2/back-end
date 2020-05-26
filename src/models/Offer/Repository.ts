@@ -38,5 +38,7 @@ export const OfferRepository = {
     return offer;
   },
   findAll: () => Offer.findAll(),
+  findByCompanyUuid: (companyUuid: string) =>
+    Offer.findAll({ where: { companyUuid } }),
   truncate: () => Offer.truncate({ cascade: true })
 };

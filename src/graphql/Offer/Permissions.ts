@@ -5,6 +5,7 @@ export const offerPermissions = {
     createOffer: isCompanyUser
   },
   Query: {
+    getMyOffers: isCompanyUser,
     getOfferByUuid: isUser,
     getOffers: isUser
   },
