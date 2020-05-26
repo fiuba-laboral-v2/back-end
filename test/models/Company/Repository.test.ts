@@ -213,7 +213,7 @@ describe("CompanyRepository", () => {
       expect(phoneNumbers).toEqual(expect.arrayContaining(newPhoneNumbers));
     });
 
-    it("does not updatea any company phone number", async () => {
+    it("does not update company phone numbers when they are not given", async () => {
       const companyCompleteData = companyMocks.nineteenCompaniesWithCompleteData()[13];
       const initialPhoneNumbers = ["1159871234", "1160393692"];
       const { uuid } = await CompanyRepository.create(
@@ -266,7 +266,7 @@ describe("CompanyRepository", () => {
       expect(photos).toEqual(expect.arrayContaining(newPhotos));
     });
 
-    it("does not update any company photo", async () => {
+    it("does not update company photos when they are not given", async () => {
       const companyCompleteData = companyMocks.nineteenCompaniesWithCompleteData()[16];
       const initialPhotos = [
         "data:image/jpeg;base64,/9j/4AAQSkZJRgABA AgICAgICAgICAgICAgIA==",
