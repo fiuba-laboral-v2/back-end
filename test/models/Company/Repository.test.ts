@@ -44,7 +44,7 @@ describe("CompanyRepository", () => {
       ...companyCompleteData,
       logo: `data:image/jpeg;base64,/9j/${"4AAQSkZBAAD/4gKgUNDX1BS".repeat(200)}AgICAgIA==`
     });
-    expect(company.logo).not.toBeUndefined();
+    expect(company.logo.length).toEqual(4637);
   });
 
   it("should create a valid company with a large description", async () => {
