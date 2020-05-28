@@ -31,7 +31,12 @@ describe("JobApplication", () => {
         offerUuid: "f1e73c20-5992-47fc-82c9-8d87f94247ee",
         applicantUuid: null
       });
-      await expect(jobApplication.validate()).rejects.toThrow(ValidationError);
+      await expect(
+        jobApplication.validate()
+      ).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        "notNull Violation: JobApplication.applicantUuid cannot be null"
+      );
     });
   });
 });

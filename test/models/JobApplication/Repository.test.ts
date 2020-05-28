@@ -59,7 +59,11 @@ describe("JobApplicationRepository", () => {
       const notExistingApplicantUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       await expect(
         JobApplicationRepository.apply(notExistingApplicantUuid, offer)
-      ).rejects.toThrow(ForeignKeyConstraintError);
+      ).rejects.toThrowErrorWithMessage(
+        ForeignKeyConstraintError,
+        "insert or update on table \"JobApplications\" violates foreign key " +
+        "constraint \"JobApplications_applicantUuid_fkey\""
+      );
     });
 
     it("should throw an error if given offerUuid that does not exist", async () => {
@@ -68,7 +72,13 @@ describe("JobApplicationRepository", () => {
         offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
         applicantUuid
       });
-      await expect(jobApplication.save()).rejects.toThrow(ForeignKeyConstraintError);
+      await expect(
+        jobApplication.save()
+      ).rejects.toThrowErrorWithMessage(
+        ForeignKeyConstraintError,
+        "insert or update on table \"JobApplications\" violates foreign key " +
+        "constraint \"JobApplications_offerUuid_fkey\""
+      );
     });
 
     it("should throw an error if jobApplication already exists", async () => {
@@ -78,7 +88,7 @@ describe("JobApplicationRepository", () => {
       await JobApplicationRepository.apply(applicant.uuid, offer);
       await expect(
         JobApplicationRepository.apply(applicant.uuid, offer)
-      ).rejects.toThrow(UniqueConstraintError);
+      ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
     });
   });
 
