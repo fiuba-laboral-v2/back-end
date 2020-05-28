@@ -5,13 +5,13 @@ export type TCompanyGenerator = Generator<Promise<Company>, Promise<Company>, bo
 export type TCompanyDataGenerator = Generator<ICompany, ICompany, boolean>;
 
 export const CompanyGenerator = {
-  generateCompaniesWithMinimumData: function*(): TCompanyGenerator {
+  withMinimumData: function*(): TCompanyGenerator {
     for (const companyData of companiesWithMinimumData) {
       yield CompanyRepository.create(companyData);
     }
     throw new Error("There are no more companies to generate");
   },
-  completeDataGenerator: function*(): TCompanyDataGenerator {
+  completeData: function*(): TCompanyDataGenerator {
     for (const companyData of companiesWithMinimumData) {
       yield {
         ...companyData,

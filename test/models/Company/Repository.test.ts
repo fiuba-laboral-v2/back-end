@@ -13,7 +13,7 @@ describe("CompanyRepository", () => {
     Database.setConnection();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
-    companyDataGenerator = await CompanyGenerator.completeDataGenerator();
+    companyDataGenerator = await CompanyGenerator.completeData();
   });
 
   afterAll(() => Database.close());
