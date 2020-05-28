@@ -9,23 +9,23 @@ import { ApplicantGenerator, TApplicantGenerator } from "../../generators/Applic
 import { OfferMocks } from "../Offer/mocks";
 
 describe("JobApplicationRepository", () => {
-  let generateCompany: TCompanyGenerator;
-  let generateApplicant: TApplicantGenerator;
+  let companies: TCompanyGenerator;
+  let applicants: TApplicantGenerator;
 
   beforeAll(async () => {
     Database.setConnection();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
-    generateCompany = CompanyGenerator.withMinimumData();
-    generateApplicant = ApplicantGenerator.withMinimumData();
+    companies = CompanyGenerator.withMinimumData();
+    applicants = ApplicantGenerator.withMinimumData();
   });
 
   afterAll(() => Database.close());
 
   describe("Apply", () => {
     it("should apply to a new jobApplication", async () => {
-      const applicant = await generateApplicant.next().value;
-      const company = await generateCompany.next().value;
+      const applicant = await applicants.next().value;
+      const company = await companies.next().value;
       const offer = await Offer.create(OfferMocks.completeData(company.uuid));
       const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
       expect(jobApplication).toMatchObject(
@@ -37,11 +37,11 @@ describe("JobApplicationRepository", () => {
     });
 
     it("should create four valid jobApplications for for the same offer", async () => {
-      const applicant1 = await generateApplicant.next().value;
-      const applicant2 = await generateApplicant.next().value;
-      const applicant3 = await generateApplicant.next().value;
-      const applicant4 = await generateApplicant.next().value;
-      const company = await generateCompany.next().value;
+      const applicant1 = await applicants.next().value;
+      const applicant2 = await applicants.next().value;
+      const applicant3 = await applicants.next().value;
+      const applicant4 = await applicants.next().value;
+      const company = await companies.next().value;
       const offer = await Offer.create(OfferMocks.completeData(company.uuid));
       await expect(
         Promise.all([
@@ -54,7 +54,7 @@ describe("JobApplicationRepository", () => {
     });
 
     it("should throw an error if given applicantUuid that does not exist", async () => {
-      const company = await generateCompany.next().value;
+      const company = await companies.next().value;
       const offer = await Offer.create(OfferMocks.completeData(company.uuid));
       const notExistingApplicantUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       await expect(
@@ -67,7 +67,7 @@ describe("JobApplicationRepository", () => {
     });
 
     it("should throw an error if given offerUuid that does not exist", async () => {
-      const { uuid: applicantUuid } = await generateApplicant.next().value;
+      const { uuid: applicantUuid } = await applicants.next().value;
       const jobApplication = new JobApplication({
         offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
         applicantUuid
@@ -82,8 +82,8 @@ describe("JobApplicationRepository", () => {
     });
 
     it("should throw an error if jobApplication already exists", async () => {
-      const applicant = await generateApplicant.next().value;
-      const company = await generateCompany.next().value;
+      const applicant = await applicants.next().value;
+      const company = await companies.next().value;
       const offer = await Offer.create(OfferMocks.completeData(company.uuid));
       await JobApplicationRepository.apply(applicant.uuid, offer);
       await expect(
@@ -94,8 +94,8 @@ describe("JobApplicationRepository", () => {
 
   describe("Associations", () => {
     it("should get Applicant and offer from a jobApplication", async () => {
-      const applicant = await generateApplicant.next().value;
-      const company = await generateCompany.next().value;
+      const applicant = await applicants.next().value;
+      const company = await companies.next().value;
       const offerData = OfferMocks.completeData(company.uuid);
       const offer = await OfferRepository.create(offerData);
       const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
@@ -104,8 +104,8 @@ describe("JobApplicationRepository", () => {
     });
 
     it("should get all applicant's jobApplications", async () => {
-      const applicant = await generateApplicant.next().value;
-      const company = await generateCompany.next().value;
+      const applicant = await applicants.next().value;
+      const company = await companies.next().value;
       const offer = await OfferRepository.create(OfferMocks.completeData(company.uuid));
       const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
       expect(
@@ -118,16 +118,16 @@ describe("JobApplicationRepository", () => {
 
   describe("hasApplied", () => {
     it("should return true if applicant applied for offer", async () => {
-      const applicant = await generateApplicant.next().value;
-      const company = await generateCompany.next().value;
+      const applicant = await applicants.next().value;
+      const company = await companies.next().value;
       const offer = await Offer.create(OfferMocks.completeData(company.uuid));
       await JobApplicationRepository.apply(applicant.uuid, offer);
       expect(await JobApplicationRepository.hasApplied(applicant, offer)).toBe(true);
     });
 
     it("should return false if applicant has not applied to the offer", async () => {
-      const applicant = await generateApplicant.next().value;
-      const company = await generateCompany.next().value;
+      const applicant = await applicants.next().value;
+      const company = await companies.next().value;
       const offer = await Offer.create(OfferMocks.completeData(company.uuid));
       expect(await JobApplicationRepository.hasApplied(applicant, offer)).toBe(false);
     });
@@ -135,8 +135,8 @@ describe("JobApplicationRepository", () => {
 
   describe("findLatestByCompanyUuid", () => {
     it ("returns the only application for my company", async () => {
-      const applicant = await generateApplicant.next().value;
-      const company = await generateCompany.next().value;
+      const applicant = await applicants.next().value;
+      const company = await companies.next().value;
       const offer = await Offer.create(OfferMocks.completeData(company.uuid));
       await JobApplicationRepository.apply(applicant.uuid, offer);
       const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid(
@@ -152,7 +152,7 @@ describe("JobApplicationRepository", () => {
     });
 
     it ("returns no job applications if my company has any", async () => {
-      const company = await generateCompany.next().value;
+      const company = await companies.next().value;
       const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid(
         company.uuid
       );
@@ -160,9 +160,9 @@ describe("JobApplicationRepository", () => {
     });
 
     it ("returns the latest job applications first for my company", async () => {
-      const applicant = await generateApplicant.next().value;
-      const myCompany = await generateCompany.next().value;
-      const anotherCompany = await generateCompany.next().value;
+      const applicant = await applicants.next().value;
+      const myCompany = await companies.next().value;
+      const anotherCompany = await companies.next().value;
       const myOffer1 = await Offer.create(OfferMocks.completeData(myCompany.uuid));
       const myOffer2 = await Offer.create(OfferMocks.completeData(myCompany.uuid));
       const notMyOffer = await Offer.create(OfferMocks.completeData(anotherCompany.uuid));
@@ -189,8 +189,8 @@ describe("JobApplicationRepository", () => {
 
   describe("Delete cascade", () => {
     const createJobApplication = async () => {
-      const applicant = await generateApplicant.next().value;
-      const company = await generateCompany.next().value;
+      const applicant = await applicants.next().value;
+      const company = await companies.next().value;
       const offer = await Offer.create(OfferMocks.completeData(company.uuid));
       return JobApplicationRepository.apply(applicant.uuid, offer);
     };
