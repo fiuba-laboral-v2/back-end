@@ -3,24 +3,23 @@ import Database from "../../../src/config/Database";
 import { PhoneNumberWithLettersError, InvalidCuitError } from "validations-fiuba-laboral-v2";
 import { CompanyRepository } from "../../../src/models/Company";
 import { UserRepository } from "../../../src/models/User";
-import { companyMocks } from "./mocks";
+import { CompanyGenerator, TCompanyDataGenerator } from "../../generators/Company";
 import { UserMocks } from "../User/mocks";
 
 describe("CompanyRepository", () => {
+  let companyDataGenerator: TCompanyDataGenerator;
+
   beforeAll(async () => {
     Database.setConnection();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
+    companyDataGenerator = await CompanyGenerator.completeDataGenerator();
   });
 
-  afterAll(async () => {
-    await CompanyRepository.truncate();
-    await UserRepository.truncate();
-    await Database.close();
-  });
+  afterAll(() => Database.close());
 
   it("creates a new company", async () => {
-    const companyCompleteData = companyMocks.nineteenCompaniesWithCompleteData()[0];
+    const companyCompleteData = companyDataGenerator.next().value;
     const company = await CompanyRepository.create(companyCompleteData);
     expect(company).toEqual(expect.objectContaining({
       cuit: companyCompleteData.cuit,
@@ -40,25 +39,23 @@ describe("CompanyRepository", () => {
   });
 
   it("creates a valid company with a logo with more than 255 characters", async () => {
-    const companyCompleteData = companyMocks.nineteenCompaniesWithCompleteData()[1];
-    const company = await CompanyRepository.create(
-      {
-        ...companyCompleteData,
-        logo: companyMocks.completeDataWithLogoWithMoreThan255Characters().logo
-      }
-    );
+    const companyCompleteData = companyDataGenerator.next().value;
+    const company = await CompanyRepository.create({
+      ...companyCompleteData,
+      logo: `data:image/jpeg;base64,/9j/${"4AAQSkZBAAD/4gKgUNDX1BS".repeat(200)}AgICAgIA==`
+    });
     expect(company.logo).not.toBeUndefined();
   });
 
   it("should create a valid company with a large description", async () => {
-    const companyCompleteData = companyMocks.nineteenCompaniesWithCompleteData()[2];
+    const companyCompleteData = companyDataGenerator.next().value;
     await expect(
       CompanyRepository.create({ ...companyCompleteData, description: "word".repeat(300) })
     ).resolves.not.toThrow();
   });
 
   it("throws an error if new company has an already existing cuit", async () => {
-    const companyCompleteData = companyMocks.nineteenCompaniesWithCompleteData()[3];
+    const companyCompleteData = companyDataGenerator.next().value;
     const cuit = companyCompleteData.cuit;
     await CompanyRepository.create(companyCompleteData);
     await expect(
@@ -91,7 +88,7 @@ describe("CompanyRepository", () => {
   });
 
   it("retrieve by uuid", async () => {
-    const companyCompleteData = companyMocks.nineteenCompaniesWithCompleteData()[4];
+    const companyCompleteData = companyDataGenerator.next().value;
     const company = await CompanyRepository.create(companyCompleteData);
     const expectedCompany = await CompanyRepository.findByUuid(company.uuid);
     expect(expectedCompany).not.toBeNull();
@@ -112,7 +109,7 @@ describe("CompanyRepository", () => {
   it("retrieve all Companies", async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
-    const companyCompleteData = companyMocks.nineteenCompaniesWithCompleteData()[5];
+    const companyCompleteData = companyDataGenerator.next().value;
     const company = await CompanyRepository.create(companyCompleteData);
     const expectedCompanies = await CompanyRepository.findAll();
     expect(expectedCompanies).not.toBeNull();
@@ -123,7 +120,7 @@ describe("CompanyRepository", () => {
   });
 
   it("throws an error if phoneNumbers are invalid", async () => {
-    const companyCompleteData = companyMocks.nineteenCompaniesWithCompleteData()[6];
+    const companyCompleteData = companyDataGenerator.next().value;
     await expect(
       CompanyRepository.create(
         {
@@ -138,7 +135,7 @@ describe("CompanyRepository", () => {
   });
 
   it("throws an error if phoneNumbers are duplicated", async () => {
-    const companyCompleteData = companyMocks.nineteenCompaniesWithCompleteData()[7];
+    const companyCompleteData = companyDataGenerator.next().value;
     await expect(
       CompanyRepository.create(
         {
@@ -150,7 +147,7 @@ describe("CompanyRepository", () => {
   });
 
   it("deletes a company", async () => {
-    const companyCompleteData = companyMocks.nineteenCompaniesWithCompleteData()[8];
+    const companyCompleteData = companyDataGenerator.next().value;
     const { uuid } = await CompanyRepository.create(companyCompleteData);
     expect(await CompanyRepository.findByUuid(uuid)).not.toBeNull();
     await CompanyRepository.truncate();
@@ -159,7 +156,7 @@ describe("CompanyRepository", () => {
 
   describe("Update", () => {
     it("updates only company attributes", async () => {
-      const companyCompleteData = companyMocks.nineteenCompaniesWithCompleteData()[9];
+      const companyCompleteData = companyDataGenerator.next().value;
       const { uuid } = await CompanyRepository.create(companyCompleteData);
       const dataToUpdate = {
         cuit: "30711311773",
@@ -175,7 +172,7 @@ describe("CompanyRepository", () => {
     });
 
     it("throws an error if cuit is invalid", async () => {
-      const companyCompleteData = companyMocks.nineteenCompaniesWithCompleteData()[17];
+      const companyCompleteData = companyDataGenerator.next().value;
       const { uuid } = await CompanyRepository.create(companyCompleteData);
       await expect(
         CompanyRepository.update({ uuid, cuit: "invalidCuit" })

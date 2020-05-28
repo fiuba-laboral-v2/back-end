@@ -1,126 +1,212 @@
+import { ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
 import Database from "../../../src/config/Database";
-import { Applicant } from "../../../src/models/Applicant";
-import { Company, CompanyRepository } from "../../../src/models/Company";
-import { Offer } from "../../../src/models/Offer";
-import { JobApplicationRepository } from "../../../src/models/JobApplication";
+import { CompanyRepository } from "../../../src/models/Company";
+import { Offer, OfferRepository } from "../../../src/models/Offer";
+import { JobApplication, JobApplicationRepository } from "../../../src/models/JobApplication";
 import { UserRepository } from "../../../src/models/User";
-import { companyMocks } from "../Company/mocks";
-import { applicantMocks } from "../Applicant/mocks";
+import { CompanyGenerator, TCompanyGenerator } from "../../generators/Company";
+import { ApplicantGenerator, TApplicantGenerator } from "../../generators/Applicant";
 import { OfferMocks } from "../Offer/mocks";
 
 describe("JobApplicationRepository", () => {
-  let company1: Company;
-  let company2: Company;
-  let company3: Company;
-  let company4: Company;
-  let company5: Company;
-  let company6: Company;
-  let company7: Company;
-  let applicant1: Applicant;
-  let applicant2: Applicant;
-  let applicant3: Applicant;
-  let applicant4: Applicant;
-  let applicant5: Applicant;
+  let generateCompany: TCompanyGenerator;
+  let generateApplicant: TApplicantGenerator;
 
   beforeAll(async () => {
     Database.setConnection();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
-    [
-      company1,
-      company2,
-      company3,
-      company4,
-      company5,
-      company6,
-      company7
-    ] = await companyMocks.createNineteenCompaniesWithMinimumData();
-    [
-      applicant1,
-      applicant2,
-      applicant3,
-      applicant4,
-      applicant5
-    ] = await applicantMocks.createFiveApplicantsWithMinimumData();
+    generateCompany = CompanyGenerator.generateCompaniesWithMinimumData();
+    generateApplicant = ApplicantGenerator.generateApplicantsWithMinimumData();
   });
 
-  afterAll(async () => {
-    await CompanyRepository.truncate();
-    await UserRepository.truncate();
-    await Database.close();
-  });
+  afterAll(() => Database.close());
 
   describe("Apply", () => {
     it("should apply to a new jobApplication", async () => {
-      const offer = await Offer.create(OfferMocks.completeData(company1.uuid));
-      const jobApplication = await JobApplicationRepository.apply(applicant1.uuid, offer);
+      const applicant = await generateApplicant.next().value;
+      const company = await generateCompany.next().value;
+      const offer = await Offer.create(OfferMocks.completeData(company.uuid));
+      const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
       expect(jobApplication).toMatchObject(
         {
           offerUuid: offer.uuid,
-          applicantUuid: applicant1.uuid
+          applicantUuid: applicant.uuid
         }
       );
     });
 
-    describe("hasApplied", () => {
-      it("should return true if applicant applied for offer", async () => {
-        const offer = await Offer.create(OfferMocks.completeData(company2.uuid));
-        await JobApplicationRepository.apply(applicant2.uuid, offer);
-        expect(await JobApplicationRepository.hasApplied(applicant2, offer)).toBe(true);
-      });
-
-      it("should return false if applicant has not applied to the offer", async () => {
-        const offer = await Offer.create(OfferMocks.completeData(company3.uuid));
-        expect(await JobApplicationRepository.hasApplied(applicant3, offer)).toBe(false);
-      });
+    it("should create four valid jobApplications for for the same offer", async () => {
+      const applicant1 = await generateApplicant.next().value;
+      const applicant2 = await generateApplicant.next().value;
+      const applicant3 = await generateApplicant.next().value;
+      const applicant4 = await generateApplicant.next().value;
+      const company = await generateCompany.next().value;
+      const offer = await Offer.create(OfferMocks.completeData(company.uuid));
+      await expect(
+        Promise.all([
+          JobApplicationRepository.apply(applicant1.uuid, offer),
+          JobApplicationRepository.apply(applicant2.uuid, offer),
+          JobApplicationRepository.apply(applicant3.uuid, offer),
+          JobApplicationRepository.apply(applicant4.uuid, offer)
+        ])
+      ).resolves.not.toThrow();
     });
 
-    describe("findLatestByCompanyUuid", () => {
-      it ("returns the only application for my company", async () => {
-        const offer = await Offer.create(OfferMocks.completeData(company4.uuid));
-        await JobApplicationRepository.apply(applicant4.uuid, offer);
-        const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid(
-          company4.uuid
-        );
-        expect(jobApplications.length).toEqual(1);
-        expect(jobApplications).toMatchObject([
-          {
-            offerUuid: offer.uuid,
-            applicantUuid: applicant4.uuid
-          }
-        ]);
-      });
+    it("should throw an error if given applicantUuid that does not exist", async () => {
+      const company = await generateCompany.next().value;
+      const offer = await Offer.create(OfferMocks.completeData(company.uuid));
+      const notExistingApplicantUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+      await expect(
+        JobApplicationRepository.apply(notExistingApplicantUuid, offer)
+      ).rejects.toThrow(ForeignKeyConstraintError);
+    });
 
-      it ("returns no job applications if my company has any", async () => {
-        const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid(
-          company5.uuid
-        );
-        expect(jobApplications.length).toEqual(0);
+    it("should throw an error if given offerUuid that does not exist", async () => {
+      const { uuid: applicantUuid } = await generateApplicant.next().value;
+      const jobApplication = new JobApplication({
+        offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+        applicantUuid
       });
+      await expect(jobApplication.save()).rejects.toThrow(ForeignKeyConstraintError);
+    });
 
-      it ("returns the latest job applications first for my company", async () => {
-        const myOffer1 = await Offer.create(OfferMocks.completeData(company6.uuid));
-        const myOffer2 = await Offer.create(OfferMocks.completeData(company6.uuid));
-        const notMyOffer = await Offer.create(OfferMocks.completeData(company7.uuid));
+    it("should throw an error if jobApplication already exists", async () => {
+      const applicant = await generateApplicant.next().value;
+      const company = await generateCompany.next().value;
+      const offer = await Offer.create(OfferMocks.completeData(company.uuid));
+      await JobApplicationRepository.apply(applicant.uuid, offer);
+      await expect(
+        JobApplicationRepository.apply(applicant.uuid, offer)
+      ).rejects.toThrow(UniqueConstraintError);
+    });
+  });
 
-        await JobApplicationRepository.apply(applicant5.uuid, myOffer1);
-        await JobApplicationRepository.apply(applicant5.uuid, myOffer2);
-        await JobApplicationRepository.apply(applicant5.uuid, notMyOffer);
-        const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid(
-          company6.uuid
-        );
-        expect(jobApplications.length).toEqual(2);
-        expect(jobApplications).toMatchObject([
-          {
-            offerUuid: myOffer2.uuid,
-            applicantUuid: applicant5.uuid
-          },
-          {
-            offerUuid: myOffer1.uuid,
-            applicantUuid: applicant5.uuid
-          }
-        ]);
-      });
+  describe("Associations", () => {
+    it("should get Applicant and offer from a jobApplication", async () => {
+      const applicant = await generateApplicant.next().value;
+      const company = await generateCompany.next().value;
+      const offerData = OfferMocks.completeData(company.uuid);
+      const offer = await OfferRepository.create(offerData);
+      const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
+      expect((await jobApplication.getApplicant()).toJSON()).toMatchObject(applicant.toJSON());
+      expect(await jobApplication.getOffer()).toMatchObject(offerData);
+    });
+
+    it("should get all applicant's jobApplications", async () => {
+      const applicant = await generateApplicant.next().value;
+      const company = await generateCompany.next().value;
+      const offer = await OfferRepository.create(OfferMocks.completeData(company.uuid));
+      const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
+      expect(
+        (await applicant.getJobApplications()).map(aJobApplication => aJobApplication.toJSON())
+      ).toEqual(
+        expect.arrayContaining([jobApplication.toJSON()])
+      );
+    });
+  });
+
+  describe("hasApplied", () => {
+    it("should return true if applicant applied for offer", async () => {
+      const applicant = await generateApplicant.next().value;
+      const company = await generateCompany.next().value;
+      const offer = await Offer.create(OfferMocks.completeData(company.uuid));
+      await JobApplicationRepository.apply(applicant.uuid, offer);
+      expect(await JobApplicationRepository.hasApplied(applicant, offer)).toBe(true);
+    });
+
+    it("should return false if applicant has not applied to the offer", async () => {
+      const applicant = await generateApplicant.next().value;
+      const company = await generateCompany.next().value;
+      const offer = await Offer.create(OfferMocks.completeData(company.uuid));
+      expect(await JobApplicationRepository.hasApplied(applicant, offer)).toBe(false);
+    });
+  });
+
+  describe("findLatestByCompanyUuid", () => {
+    it ("returns the only application for my company", async () => {
+      const applicant = await generateApplicant.next().value;
+      const company = await generateCompany.next().value;
+      const offer = await Offer.create(OfferMocks.completeData(company.uuid));
+      await JobApplicationRepository.apply(applicant.uuid, offer);
+      const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid(
+        company.uuid
+      );
+      expect(jobApplications.length).toEqual(1);
+      expect(jobApplications).toMatchObject([
+        {
+          offerUuid: offer.uuid,
+          applicantUuid: applicant.uuid
+        }
+      ]);
+    });
+
+    it ("returns no job applications if my company has any", async () => {
+      const company = await generateCompany.next().value;
+      const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid(
+        company.uuid
+      );
+      expect(jobApplications.length).toEqual(0);
+    });
+
+    it ("returns the latest job applications first for my company", async () => {
+      const applicant = await generateApplicant.next().value;
+      const myCompany = await generateCompany.next().value;
+      const anotherCompany = await generateCompany.next().value;
+      const myOffer1 = await Offer.create(OfferMocks.completeData(myCompany.uuid));
+      const myOffer2 = await Offer.create(OfferMocks.completeData(myCompany.uuid));
+      const notMyOffer = await Offer.create(OfferMocks.completeData(anotherCompany.uuid));
+
+      await JobApplicationRepository.apply(applicant.uuid, myOffer1);
+      await JobApplicationRepository.apply(applicant.uuid, myOffer2);
+      await JobApplicationRepository.apply(applicant.uuid, notMyOffer);
+      const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid(
+        myCompany.uuid
+      );
+      expect(jobApplications.length).toEqual(2);
+      expect(jobApplications).toMatchObject([
+        {
+          offerUuid: myOffer2.uuid,
+          applicantUuid: applicant.uuid
+        },
+        {
+          offerUuid: myOffer1.uuid,
+          applicantUuid: applicant.uuid
+        }
+      ]);
+    });
+  });
+
+  describe("Delete cascade", () => {
+    const createJobApplication = async () => {
+      const applicant = await generateApplicant.next().value;
+      const company = await generateCompany.next().value;
+      const offer = await Offer.create(OfferMocks.completeData(company.uuid));
+      return JobApplicationRepository.apply(applicant.uuid, offer);
+    };
+
+    it("should delete all jobApplication if all offers are deleted", async () => {
+      await JobApplication.truncate();
+      await createJobApplication();
+      expect(await JobApplication.findAll()).toHaveLength(1);
+      await OfferRepository.truncate();
+      expect(await JobApplication.findAll()).toHaveLength(0);
+    });
+
+    it("should delete all jobApplication if all applicants are deleted", async () => {
+      await JobApplication.truncate();
+      await createJobApplication();
+      expect(await JobApplication.findAll()).toHaveLength(1);
+      await UserRepository.truncate();
+      expect(await JobApplication.findAll()).toHaveLength(0);
+    });
+
+    it("should delete all jobApplication if all companies are deleted", async () => {
+      await JobApplication.truncate();
+      await createJobApplication();
+      expect(await JobApplication.findAll()).toHaveLength(1);
+      await CompanyRepository.truncate();
+      expect(await JobApplication.findAll()).toHaveLength(0);
     });
   });
 });
