@@ -1,8 +1,9 @@
 import { companiesWithMinimumData } from "./companiesWithMinimumData";
 import { Company, CompanyRepository, ICompany } from "../../../src/models/Company";
+import { CustomGenerator } from "../types";
 
-export type TCompanyGenerator = Generator<Promise<Company>, Promise<Company>, boolean>;
-export type TCompanyDataGenerator = Generator<ICompany, ICompany, boolean>;
+export type TCompanyGenerator = CustomGenerator<Promise<Company>>;
+export type TCompanyDataGenerator = CustomGenerator<ICompany>;
 
 export const CompanyGenerator = {
   withMinimumData: function*(): TCompanyGenerator {

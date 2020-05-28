@@ -1,7 +1,8 @@
 import { applicantsWithMinimumData } from "./applicantsWithMinimumData";
 import { Applicant, ApplicantRepository } from "../../../src/models/Applicant";
+import { CustomGenerator } from "../types";
 
-export type TApplicantGenerator = Generator<Promise<Applicant>, Promise<Applicant>, boolean>;
+export type TApplicantGenerator = CustomGenerator<Promise<Applicant>>;
 
 export const ApplicantGenerator = {
   withMinimumData: function*(): TApplicantGenerator {
