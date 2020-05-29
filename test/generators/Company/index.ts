@@ -1,22 +1,24 @@
 import { withMinimumData } from "./withMinimumData";
 import { completeData } from "./completeData";
 import { Company, CompanyRepository, ICompany } from "../../../src/models/Company";
-import { CustomGenerator, IMaximum } from "../types";
+import { CustomGenerator } from "../types";
 
 export type TCompanyGenerator = CustomGenerator<Promise<Company>>;
 export type TCompanyDataGenerator = CustomGenerator<ICompany>;
 
 export const CompanyGenerator = {
-  withMinimumData: function*({ maximum = 20 }: IMaximum = { maximum: 20 }): TCompanyGenerator {
-    for (let index = 0; index < maximum; index++) {
+  withMinimumData: function*(): TCompanyGenerator {
+    let index = 0;
+    while (true) {
       yield CompanyRepository.create(withMinimumData(index));
+      index++;
     }
-    throw new Error("There are no more companies to generate");
   },
-  completeData: function*({ maximum = 20 }: IMaximum = { maximum: 20 }): TCompanyDataGenerator {
-    for (let index = 0; index < maximum; index++) {
+  completeData: function*(): TCompanyDataGenerator {
+    let index = 0;
+    while (true) {
       yield completeData(index);
+      index++;
     }
-    throw new Error("There are no more companies to generate");
   }
 };
