@@ -550,10 +550,10 @@ describe("ApplicantRepository", () => {
       };
       await ApplicantRepository.update(newProps);
 
-      const careerApplicant = await ApplicantCareersRepository.findByApplicantAndCareer(
+      const applicantCareer = await ApplicantCareersRepository.findByApplicantAndCareer(
         applicant.uuid, career.code
       );
-      expect(careerApplicant.creditsCount).toEqual(newProps.careers![0].creditsCount);
+      expect(applicantCareer.creditsCount).toEqual(newProps.careers![0].creditsCount);
 
       await ApplicantRepository.update({ uuid: applicant.uuid });
 
