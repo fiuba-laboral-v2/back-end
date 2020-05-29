@@ -1,6 +1,5 @@
 import { ValidationError } from "sequelize";
 import { Company } from "../../../src/models/Company";
-import { companyMocks } from "./mocks";
 import Database from "../../../src/config/Database";
 import {
   InvalidCuitError,
@@ -15,10 +14,19 @@ describe("Company", () => {
   afterAll(() => Database.close());
 
   it("create a valid company", async () => {
-    const company = new Company(companyMocks.companyData());
+    const companyData = {
+      cuit: "30711819017",
+      companyName: "companyName",
+      slogan: "slogan",
+      description: "description",
+      logo: "https://logo.png",
+      website: "https://website.com/",
+      email: "email@email.com"
+    };
+    const company = new Company(companyData);
     await expect(company.validate()).resolves.not.toThrow();
     expect(company.uuid).not.toBeUndefined();
-    expect(company).toEqual(expect.objectContaining(companyMocks.companyDataWithoutUser()));
+    expect(company).toEqual(expect.objectContaining(companyData));
   });
 
   it("throws an error if cuit is null", async () => {

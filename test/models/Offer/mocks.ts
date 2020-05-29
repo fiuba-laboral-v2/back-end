@@ -1,10 +1,7 @@
 import faker from "faker";
-import { omit } from "lodash";
 import { IOffer } from ".././../../src/models/Offer/Interface";
 import { IOfferSection } from ".././../../src/models/Offer/OfferSection/Interface";
 import { IOfferCareer } from ".././../../src/models/Offer/OfferCareer/Interface";
-
-export type TOfferNumbersProperties = "hoursPerDay" | "minimumSalary" | "maximumSalary";
 
 const OfferMocks = {
   completeData: (
@@ -74,35 +71,7 @@ const OfferMocks = {
       ]
     )
   ),
-  withNoCompanyId: () =>
-    ({
-      title: "title",
-      description: "description",
-      hoursPerDay: 8,
-      minimumSalary: 100,
-      maximumSalary: 200
-    }),
-  withObligatoryData: (companyUuid: string) => OfferMocks.completeData(companyUuid),
-  offerWithoutProperty: (companyUuid: string, property: string) =>
-    omit(OfferMocks.completeData(companyUuid), [property]),
-  offerWithNegativeNumberProperty: (
-    companyUuid: string,
-    property: TOfferNumbersProperties,
-    value: number) => {
-    const data = OfferMocks.completeData(companyUuid);
-    data[property] = value;
-    return data;
-  },
-  offerWithSpecificSalaryRange: (
-    companyUuid: string,
-    minimumSalary: number,
-    maximumSalary: number
-  ) => {
-    const data = OfferMocks.completeData(companyUuid);
-    data.minimumSalary = minimumSalary;
-    data.maximumSalary = maximumSalary;
-    return data;
-  }
+  withObligatoryData: (companyUuid: string) => OfferMocks.completeData(companyUuid)
 };
 
 export { OfferMocks };

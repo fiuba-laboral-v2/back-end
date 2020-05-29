@@ -66,12 +66,14 @@ describe("createCompany", () => {
     });
 
     it("creates company with only obligatory data", async () => {
+      const { user: userData, ...companyData } = companyMocks.minimumData();
       const response = await executeMutation(
-        SAVE_COMPANY_WITH_MINIMUM_DATA, companyMocks.minimumData()
+        SAVE_COMPANY_WITH_MINIMUM_DATA,
+        { user: userData, ...companyData }
       );
       expect(response.errors).toBeUndefined();
       expect(response.data).not.toBeUndefined();
-      expect(response.data).toEqual({ createCompany: companyMocks.minimumDataWithoutUser() });
+      expect(response.data).toEqual({ createCompany: companyData });
     });
   });
 

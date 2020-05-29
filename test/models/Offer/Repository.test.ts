@@ -6,30 +6,34 @@ import { OfferNotFound } from "../../../src/models/Offer/Errors";
 import { OfferSection } from "../../../src/models/Offer/OfferSection";
 import { OfferCareer } from "../../../src/models/Offer/OfferCareer";
 import { Offer } from "../../../src/models/Offer";
-import { companyMocks } from "../Company/mocks";
+import { CompanyGenerator, TCompanyGenerator } from "../../generators/Company";
 import { OfferMocks } from "./mocks";
 import { careerMocks } from "../Career/mocks";
 import { omit } from "lodash";
 import { UserRepository } from "../../../src/models/User";
 
 describe("OfferRepository", () => {
-  beforeAll(() => Database.setConnection());
-  beforeEach(() => Promise.all([
-    CompanyRepository.truncate(),
-    UserRepository.truncate()
-  ]));
+  let companies: TCompanyGenerator;
+
+  beforeAll(async () => {
+    Database.setConnection();
+    await CompanyRepository.truncate();
+    await UserRepository.truncate();
+    companies = CompanyGenerator.withMinimumData();
+  });
+
   afterAll(() => Database.close());
 
   describe("Create", () => {
     it("should create a new offer", async () => {
-      const { uuid } = await CompanyRepository.create(companyMocks.companyData());
+      const { uuid } = await companies.next().value;
       const offerProps = OfferMocks.withObligatoryData(uuid);
       const offer = await OfferRepository.create(offerProps);
       expect(offer).toEqual(expect.objectContaining(offerProps));
     });
 
     it("should create a new offer with one section", async () => {
-      const { uuid } = await CompanyRepository.create(companyMocks.companyData());
+      const { uuid } = await companies.next().value;
       const attributes = OfferMocks.withOneSection(uuid);
       const offer = await OfferRepository.create(attributes);
       expect(offer).toEqual(expect.objectContaining(omit(attributes, ["sections"])));
@@ -39,7 +43,7 @@ describe("OfferRepository", () => {
     });
 
     it("should create a new offer with one career", async () => {
-      const { uuid } = await CompanyRepository.create(companyMocks.companyData());
+      const { uuid } = await companies.next().value;
       const { code } = await CareerRepository.create(careerMocks.careerData());
       const attributes = OfferMocks.withOneCareer(uuid, code);
       const offer = await OfferRepository.create(attributes);
@@ -52,7 +56,7 @@ describe("OfferRepository", () => {
     });
 
     it("should create a new offer with one career and one section", async () => {
-      const { uuid } = await CompanyRepository.create(companyMocks.companyData());
+      const { uuid } = await companies.next().value;
       const { code } = await CareerRepository.create(careerMocks.careerData());
       const attributes = OfferMocks.withOneCareerAndOneSection(uuid, code);
       const offer = await OfferRepository.create(attributes);
@@ -72,12 +76,14 @@ describe("OfferRepository", () => {
     describe("Rollback Transaction", () => {
       it("should throw error if offer is invalid and not create the section", async () => {
         const attributes = OfferMocks.withOneSectionButNullCompanyId();
-        await expect(OfferRepository.create(attributes)).rejects.toThrow();
-        expect(await OfferSection.findAll()).toHaveLength(0);
+        await expect(
+          OfferRepository.create(attributes)
+        ).rejects.toThrow("notNull Violation: Offer.companyUuid cannot be null");
       });
 
       it("should throw error if section is invalid and not create the offer", async () => {
-        const { uuid } = await CompanyRepository.create(companyMocks.companyData());
+        await CompanyRepository.truncate();
+        const { uuid } = await companies.next().value;
         await expect(
           OfferRepository.create(OfferMocks.withSectionWithNoTitle(uuid))
         ).rejects.toThrow();
@@ -86,7 +92,8 @@ describe("OfferRepository", () => {
       });
 
       it("should throw error if career is invalid and not create the offer", async () => {
-        const { uuid } = await CompanyRepository.create(companyMocks.companyData());
+        await CompanyRepository.truncate();
+        const { uuid } = await companies.next().value;
         await expect(
           OfferRepository.create(OfferMocks.withOneCareerWithNullCareerCode(uuid))
         ).rejects.toThrow();
@@ -99,7 +106,7 @@ describe("OfferRepository", () => {
 
   describe("Update", () => {
     it("updates successfully", async () => {
-      const { uuid: companyUuid } = await CompanyRepository.create(companyMocks.companyData());
+      const { uuid: companyUuid } = await companies.next().value;
       const attributes = OfferMocks.withObligatoryData(companyUuid);
       const { uuid } = await OfferRepository.create(attributes);
       const newSalary = attributes.minimumSalary + 100;
@@ -118,7 +125,7 @@ describe("OfferRepository", () => {
 
   describe("Get", () => {
     it("should get the only offer by uuid", async () => {
-      const { uuid: companyUuid } = await CompanyRepository.create(companyMocks.companyData());
+      const { uuid: companyUuid } = await companies.next().value;
       const offerProps = OfferMocks.withObligatoryData(companyUuid);
       const { uuid: offerUuid } = await OfferRepository.create(offerProps);
       const offer = await OfferRepository.findByUuid(offerUuid);
@@ -126,7 +133,7 @@ describe("OfferRepository", () => {
     });
 
     it("should get the only offer by companyUuid", async () => {
-      const { uuid: companyUuid } = await CompanyRepository.create(companyMocks.companyData());
+      const { uuid: companyUuid } = await companies.next().value;
       const offerProps = OfferMocks.withObligatoryData(companyUuid);
       await OfferRepository.create(offerProps);
       const [offer] = await OfferRepository.findByCompanyUuid(companyUuid);
@@ -142,7 +149,7 @@ describe("OfferRepository", () => {
 
   describe("Delete", () => {
     it("should delete all offers if all companies are deleted", async () => {
-      const { uuid } = await CompanyRepository.create(companyMocks.companyData());
+      const { uuid } = await companies.next().value;
       const offer = await OfferRepository.create(OfferMocks.withObligatoryData(uuid));
       await CompanyRepository.truncate();
       await expect(OfferRepository.findByUuid(offer.uuid)).rejects.toThrow(OfferNotFound);

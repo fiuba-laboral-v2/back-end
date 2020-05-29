@@ -1,4 +1,5 @@
 import { internet, random, company, lorem } from "faker";
+import { cuitGenerator } from "../generators/Company/cuitGenerator";
 
 import { UserRepository } from "../../src/models/User";
 import { ApplicantRepository } from "../../src/models/Applicant";
@@ -44,19 +45,4 @@ export const userFactory = {
         surname: "Diaz"
       }
     })
-};
-
-export const cuitGenerator = () => {
-  const middleNumbers = Array(8).fill(1).map(() => random.number({ max: 9 }));
-  const numbers = [2, 0, ...middleNumbers];
-  const multipliers = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
-  let aux = 0;
-  multipliers.forEach((value, index) => aux += value * numbers[index]);
-
-  const resto: number = aux % 11;
-  let last = 11 - resto;
-  if (last === 11) last = 0;
-  if (last === 10) last = 9;
-  const cuit = [...numbers, last];
-  return cuit.join("");
 };
