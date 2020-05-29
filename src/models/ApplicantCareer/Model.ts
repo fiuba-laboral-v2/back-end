@@ -5,9 +5,9 @@ import { HasOneGetAssociationMixin, INTEGER } from "sequelize";
 import { validateIntegerInRange } from "validations-fiuba-laboral-v2";
 
 @Table({
-  tableName: "CareersApplicants",
+  tableName: "ApplicantCareers",
   validate: {
-    async validateCreditsCount(this: CareerApplicant) {
+    async validateCreditsCount(this: ApplicantCareer) {
       const validate = validateIntegerInRange({
         min: {
           value: 0,
@@ -22,7 +22,7 @@ import { validateIntegerInRange } from "validations-fiuba-laboral-v2";
     }
   }
 })
-export class CareerApplicant extends Model<CareerApplicant> {
+export class ApplicantCareer extends Model<ApplicantCareer> {
   public defaultScope: {
     exclude: ["createdAt", "updatedAt"]
   };

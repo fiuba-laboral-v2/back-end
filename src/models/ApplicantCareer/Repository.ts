@@ -1,23 +1,23 @@
 import { Applicant, IApplicantCareer } from "../Applicant";
-import { CareerApplicant } from "./Model";
-import { CareerApplicantNotFound } from "./Errors";
+import { ApplicantCareer } from "./Model";
+import { ApplicantCareerNotFound } from "./Errors";
 import { Transaction } from "sequelize";
 
-export const CareerApplicantRepository = {
+export const ApplicantCareersRepository = {
   findByApplicantAndCareer: async (applicantUuid: string, careerCode: string) => {
-    const careerApplicant = await CareerApplicant.findOne({
+    const applicantCareer = await ApplicantCareer.findOne({
       where: { applicantUuid: applicantUuid, careerCode: careerCode }
     });
-    if (!careerApplicant) throw new CareerApplicantNotFound(applicantUuid, careerCode);
+    if (!applicantCareer) throw new ApplicantCareerNotFound(applicantUuid, careerCode);
 
-    return careerApplicant;
+    return applicantCareer;
   },
   bulkCreate: async (
     applicantCareers: IApplicantCareer[],
     applicant: Applicant,
     transaction?: Transaction
   ) => {
-    return CareerApplicant.bulkCreate(
+    return ApplicantCareer.bulkCreate(
       applicantCareers.map(applicantCareer => (
       {
         careerCode: applicantCareer.code,
@@ -34,14 +34,14 @@ export const CareerApplicantRepository = {
     applicant: Applicant,
     transaction?: Transaction
   ) => {
-    await CareerApplicant.destroy({
+    await ApplicantCareer.destroy({
       where: {
         applicantUuid: applicant.uuid
       },
       transaction
     });
 
-    return CareerApplicant.bulkCreate(
+    return ApplicantCareer.bulkCreate(
       applicantCareers.map(applicantCareer =>
         ({
           careerCode: applicantCareer.code,
@@ -53,5 +53,5 @@ export const CareerApplicantRepository = {
     );
   },
   truncate: async () =>
-    CareerApplicant.truncate({ cascade: true })
+    ApplicantCareer.truncate({ cascade: true })
 };

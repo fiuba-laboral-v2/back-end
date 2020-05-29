@@ -2,7 +2,7 @@ import Database from "../../../src/config/Database";
 import { CareerRepository } from "../../../src/models/Career";
 import { ApplicantRepository, IApplicantEditable } from "../../../src/models/Applicant";
 import { ApplicantNotFound } from "../../../src/models/Applicant/Errors/ApplicantNotFound";
-import { CareerApplicantRepository } from "../../../src/models/CareerApplicant/Repository";
+import { ApplicantCareersRepository } from "../../../src/models/ApplicantCareer/Repository";
 import { CapabilityRepository } from "../../../src/models/Capability";
 import { TSection } from "../../../src/models/Applicant/Interface";
 import { TLink } from "../../../src/models/Applicant/Link/Interface";
@@ -27,18 +27,18 @@ describe("ApplicantRepository", () => {
       const career = await CareerRepository.create(careerMocks.careerData());
       const applicantData = applicantMocks.applicantData([career]);
       const applicant = await ApplicantRepository.create(applicantData);
-      const applicantCareers = await applicant.getCareers();
+      const [applicantCareer] = await applicant.getCareers();
 
       expect(applicant).toEqual(expect.objectContaining({
         uuid: applicant.uuid,
         padron: applicantData.padron,
         description: applicantData.description
       }));
-      expect(applicantCareers[0]).toMatchObject({
+      expect(applicantCareer).toMatchObject({
         code: career.code,
         description: career.description,
         credits: career.credits,
-        CareerApplicant: {
+        ApplicantCareer: {
           applicantUuid: applicant.uuid,
           careerCode: career.code,
           creditsCount: applicantData.careers[0].creditsCount
@@ -118,12 +118,12 @@ describe("ApplicantRepository", () => {
         description: applicantData.description
       }));
 
-      const applicantCareers = await applicant.getCareers();
-      expect(applicantCareers[0]).toMatchObject({
+      const [applicantCareer] = await applicant.getCareers();
+      expect(applicantCareer).toMatchObject({
         code: career.code,
         description: career.description,
         credits: career.credits,
-        CareerApplicant: {
+        ApplicantCareer: {
           applicantUuid: applicant.uuid,
           careerCode: career.code,
           creditsCount: applicantData.careers[0].creditsCount
@@ -148,12 +148,12 @@ describe("ApplicantRepository", () => {
         description: applicantData.description
       }));
 
-      const applicantCareers = await applicant.getCareers();
-      expect(applicantCareers[0]).toMatchObject({
+      const [applicantCareer] = await applicant.getCareers();
+      expect(applicantCareer).toMatchObject({
         code: career.code,
         description: career.description,
         credits: career.credits,
-        CareerApplicant: {
+        ApplicantCareer: {
           applicantUuid: applicant.uuid,
           careerCode: career.code,
           creditsCount: applicantData.careers[0].creditsCount
@@ -530,10 +530,10 @@ describe("ApplicantRepository", () => {
       };
       await ApplicantRepository.update(newProps);
 
-      const careerApplicant = await CareerApplicantRepository.findByApplicantAndCareer(
+      const applicantCareer = await ApplicantCareersRepository.findByApplicantAndCareer(
         applicant.uuid, career.code
       );
-      expect(careerApplicant.creditsCount).toEqual(newProps.careers![0].creditsCount);
+      expect(applicantCareer.creditsCount).toEqual(newProps.careers![0].creditsCount);
     });
 
     it("Should update by deleting all applicant careers if none is provided", async () => {
@@ -550,7 +550,7 @@ describe("ApplicantRepository", () => {
       };
       await ApplicantRepository.update(newProps);
 
-      const careerApplicant = await CareerApplicantRepository.findByApplicantAndCareer(
+      const careerApplicant = await ApplicantCareersRepository.findByApplicantAndCareer(
         applicant.uuid, career.code
       );
       expect(careerApplicant.creditsCount).toEqual(newProps.careers![0].creditsCount);

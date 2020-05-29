@@ -1,7 +1,7 @@
 import { Applicant, IApplicant, IApplicantEditable } from "./index";
 import { ApplicantNotFound } from "./Errors/ApplicantNotFound";
 import Database from "../../config/Database";
-import { CareerApplicantRepository } from "../CareerApplicant/Repository";
+import { ApplicantCareersRepository } from "../ApplicantCareer/Repository";
 import { ApplicantCapabilityRepository } from "../ApplicantCapability/Repository";
 import { SectionRepository } from "./Section/Repository";
 import { ApplicantLinkRepository } from "./Link";
@@ -25,7 +25,7 @@ export const ApplicantRepository = {
         { transaction }
       );
 
-      await CareerApplicantRepository.bulkCreate(applicantCareers, applicant, transaction);
+      await ApplicantCareersRepository.bulkCreate(applicantCareers, applicant, transaction);
       await ApplicantCapabilityRepository.update(capabilities, applicant, transaction);
 
       await transaction.commit();
@@ -71,7 +71,7 @@ export const ApplicantRepository = {
 
       await ApplicantLinkRepository.update(links, applicant, transaction);
 
-      await CareerApplicantRepository.update(careers, applicant, transaction);
+      await ApplicantCareersRepository.update(careers, applicant, transaction);
 
       await ApplicantCapabilityRepository.update(newCapabilities, applicant, transaction);
 
