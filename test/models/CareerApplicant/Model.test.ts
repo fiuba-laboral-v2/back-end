@@ -1,22 +1,26 @@
 import Database from "../../../src/config/Database";
-import { Career } from "../../../src/models/Career";
+import { Career, CareerRepository } from "../../../src/models/Career";
 import { ApplicantCareer } from "../../../src/models/ApplicantCareer";
 import { NumberIsTooLargeError, NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
 
-const createCareer = async () => await new Career({
-  code: "123123",
-  description: "Arquitectura",
-  credits: 123
-}).save();
-
 describe("ApplicantCareer", () => {
-  beforeAll(() => Database.setConnection());
-  afterEach(() => Career.truncate({ cascade: true }));
+  let career: Career;
+
+  beforeAll(async () => {
+    Database.setConnection();
+    await CareerRepository.truncate();
+    career = await Career.create({
+      code: "123123",
+      description: "Arquitectura",
+      credits: 123
+    });
+  });
+
   afterAll(() => Database.close());
 
   it("should throw an error if creditsCount is negative", async () => {
     const applicantCareer = new ApplicantCareer({
-      careerCode: (await createCareer()).code,
+      careerCode: career.code,
       applicantUuid: "sarasa",
       creditsCount: -12
     });
@@ -26,7 +30,6 @@ describe("ApplicantCareer", () => {
   });
 
   it("should throw an error if creditsCount is bigger than its careers credits", async () => {
-    const career = await createCareer();
     const applicantCareer = new ApplicantCareer({
       careerCode: career.code,
       applicantUuid: "sarasa",
@@ -38,7 +41,6 @@ describe("ApplicantCareer", () => {
   });
 
   it("should not throw an error if creditsCount is the same as its careers credits", async () => {
-    const career = await createCareer();
     const applicantCareer = new ApplicantCareer({
       careerCode: career.code,
       applicantUuid: "sarasa",
