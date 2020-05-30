@@ -3,7 +3,7 @@ import { client } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
 import { Career, CareerRepository } from "../../../../src/models/Career";
-import { careerMocks } from "../../../models/Career/mocks";
+import { CareerGenerator, TCareerDataGenerator } from "../../../generators/Career";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
 const GET_CAREERS = gql`
@@ -17,19 +17,19 @@ const GET_CAREERS = gql`
 `;
 
 describe("getCareers", () => {
+  let careersData: TCareerDataGenerator;
 
   beforeAll(async () => {
     Database.setConnection();
-    await Career.truncate({ cascade: true });
+    await CareerRepository.truncate();
+    careersData = CareerGenerator.data();
   });
 
-  afterAll(async () => {
-    await Database.close();
-  });
+  afterAll(() => Database.close());
 
   it("gets all careers using the code", async () => {
     const { apolloClient } = await testClientFactory.user();
-    const career = await CareerRepository.create(careerMocks.careerData());
+    const career = await CareerRepository.create(careersData.next().value);
 
     const { data, errors } = await apolloClient.query({ query: GET_CAREERS });
     expect(errors).toBeUndefined();
