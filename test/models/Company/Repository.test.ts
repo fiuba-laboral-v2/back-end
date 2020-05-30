@@ -164,7 +164,7 @@ describe("CompanyRepository", () => {
         slogan: "new slogan",
         description: "new description",
         logo: "",
-        website: "http://www.new-site-com",
+        website: "http://www.new-site.com",
         email: "old@devartis.com"
       };
       const company = await CompanyRepository.update({ uuid, ...dataToUpdate });
