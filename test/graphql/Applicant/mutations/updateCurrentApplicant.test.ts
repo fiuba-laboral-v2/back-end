@@ -3,9 +3,7 @@ import { client } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
 import { CareerRepository } from "../../../../src/models/Career";
-import { Career } from "../../../../src/models/Career";
-
-import { careerMocks } from "../../../models/Career/mocks";
+import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
 import { UserRepository } from "../../../../src/models/User/Repository";
@@ -62,25 +60,20 @@ const UPDATE_CURRENT_APPLICANT = gql`
 `;
 
 describe("updateCurrentApplicant", () => {
-  beforeAll(() => {
+  let careers: TCareerGenerator;
+
+  beforeAll(async () => {
     Database.setConnection();
-    return Promise.all([
-      Career.truncate({ cascade: true }),
-      UserRepository.truncate()
-    ]);
+    await CareerRepository.truncate();
+    await UserRepository.truncate();
+    careers = CareerGenerator.model();
   });
 
-  afterAll(async () => {
-    await Promise.all([
-      Career.truncate({ cascade: true }),
-      UserRepository.truncate()
-    ]);
-    return Database.close();
-  });
+  afterAll(() => Database.close());
 
   it("should update all possible data deleting all previous values", async () => {
     const { applicant, user, apolloClient } = await testClientFactory.applicant();
-    const newCareer = await CareerRepository.create(careerMocks.careerData());
+    const newCareer = await careers.next().value;
     const dataToUpdate = {
       user: {
         name: "newName",
