@@ -1,23 +1,27 @@
 import { gql } from "apollo-server";
-import { executeMutation } from "../../ApolloTestClient";
+import { client } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
 import { UserRepository } from "../../../../src/models/User/Repository";
 import { Career, CareerRepository } from "../../../../src/models/Career";
 
-import { applicantMocks } from "../../../models/Applicant/mocks";
-import { careerMocks } from "../../../models/Career/mocks";
+import { ApplicantGenerator, TApplicantDataGenerator } from "../../../generators/Applicant";
+import { CareerGenerator } from "../../../generators/Career";
 
-import { pick } from "lodash";
-
-const queryWithAllData = gql`
+const SAVE_APPLICANT_WITH_COMPLETE_DATA = gql`
   mutation SaveApplicant(
-      $padron: Int!, $user: UserInput!, $careers: [CareerCredits]!,
-      $description: String, $capabilities: [String]
+      $user: UserInput!,
+      $padron: Int!,
+      $careers: [CareerCredits]!,
+      $description: String,
+      $capabilities: [String]
     ) {
     saveApplicant(
-        user: $user, padron: $padron, description: $description,
-        careers: $careers, capabilities: $capabilities
+        user: $user,
+        padron: $padron,
+        description: $description,
+        careers: $careers,
+        capabilities: $capabilities
     ) {
       uuid
       user {
@@ -42,10 +46,17 @@ const queryWithAllData = gql`
   }
 `;
 
-const queryWithOnlyObligatoryData = gql`
-  mutation SaveApplicant ($padron: Int!, $careers: [CareerCredits]!, $user: UserInput!
+const SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA = gql`
+  mutation SaveApplicant (
+      $user: UserInput!,
+      $padron: Int!,
+      $careers: [CareerCredits]!
   ) {
-    saveApplicant(padron: $padron, careers: $careers, user: $user) {
+    saveApplicant(
+        user: $user,
+        padron: $padron,
+        careers: $careers
+    ) {
       uuid
       user {
         uuid
@@ -65,23 +76,30 @@ const queryWithOnlyObligatoryData = gql`
 `;
 
 describe("saveApplicant", () => {
+  let applicantsData: TApplicantDataGenerator;
+  let career: Career;
 
   beforeAll(async () => {
     Database.setConnection();
-    await Career.truncate({ cascade: true });
+    await CareerRepository.truncate();
     await UserRepository.truncate();
+    applicantsData = ApplicantGenerator.data.minimum();
+    career = await CareerGenerator().next().value;
   });
-
-  beforeEach(() => UserRepository.truncate());
 
   afterAll(() => Database.close());
 
   describe("when the input is valid", () => {
     it("creates a new applicant", async () => {
-      const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantData = applicantMocks.applicantData([career]);
+      const applicantData = applicantsData.next().value;
 
-      const { data, errors } = await executeMutation(queryWithAllData, applicantData);
+      const { data, errors } = await client.loggedOut.mutate({
+        mutation: SAVE_APPLICANT_WITH_COMPLETE_DATA,
+        variables: {
+          ...applicantData,
+          careers: [{ code: career.code, creditsCount: career.credits - 1 }]
+        }
+      });
       expect(errors).toBeUndefined();
       expect(data!.saveApplicant.user).toHaveProperty("uuid");
       expect(data!.saveApplicant).toMatchObject({
@@ -98,17 +116,19 @@ describe("saveApplicant", () => {
         code: career.code,
         credits: career.credits,
         description: career.description,
-        creditsCount: applicantData.careers[0].creditsCount
+        creditsCount: career.credits - 1
       });
     });
 
     it("creates applicant with only obligatory data", async () => {
-      const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantData = applicantMocks.applicantData([career]);
-      const { data, errors } = await executeMutation(
-        queryWithOnlyObligatoryData,
-        { ...pick(applicantData, ["padron", "credits", "careers", "user"]) }
-      );
+      const applicantData = applicantsData.next().value;
+      const { data, errors } = await client.loggedOut.mutate({
+        mutation: SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA,
+        variables: {
+          ...applicantData,
+          careers: [{ code: career.code, creditsCount: career.credits - 1 }]
+        }
+      });
       expect(errors).toBeUndefined();
       expect(data!.saveApplicant.user).toHaveProperty("uuid");
       expect(data!.saveApplicant).toMatchObject(
@@ -128,17 +148,19 @@ describe("saveApplicant", () => {
         code: career.code,
         credits: career.credits,
         description: career.description,
-        creditsCount: applicantData.careers[0].creditsCount
+        creditsCount: career.credits - 1
       });
     });
   });
 
   describe("Errors", () => {
     it("should throw and error if the user exists", async () => {
-      const career = await CareerRepository.create(careerMocks.careerData());
-      const applicantData = applicantMocks.applicantData([career]);
+      const applicantData = applicantsData.next().value;
       await UserRepository.create(applicantData.user);
-      const { errors } = await executeMutation(queryWithOnlyObligatoryData, applicantData);
+      const { errors } = await client.loggedOut.mutate({
+        mutation: SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA,
+        variables: applicantData
+      });
       expect(errors![0].extensions!.data).toEqual(
         { errorType: "UserEmailAlreadyExistsError" }
       );
