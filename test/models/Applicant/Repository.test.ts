@@ -20,7 +20,7 @@ describe("ApplicantRepository", () => {
     await CareerRepository.truncate();
     await CapabilityRepository.truncate();
     applicantsMinimumData = ApplicantGenerator.data.minimum();
-    careers = CareerGenerator();
+    careers = CareerGenerator.model();
   });
 
   afterAll(() => Database.close());
