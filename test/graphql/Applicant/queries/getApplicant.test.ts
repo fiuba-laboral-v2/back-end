@@ -6,7 +6,7 @@ import { CareerRepository } from "../../../../src/models/Career";
 import { ApplicantNotFound } from "../../../../src/models/Applicant/Errors/ApplicantNotFound";
 import { AuthenticationError } from "../../../../src/graphql/Errors";
 
-import { careerMocks } from "../../../models/Career/mocks";
+import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
 import { random } from "faker";
@@ -37,26 +37,20 @@ const GET_APPLICANT = gql`
 `;
 
 describe("getApplicant", () => {
+  let careers: TCareerGenerator;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     Database.setConnection();
-    return Promise.all([
-      CareerRepository.truncate(),
-      UserRepository.truncate()
-    ]);
+    await CareerRepository.truncate();
+    await UserRepository.truncate();
+    careers = CareerGenerator.model();
   });
 
-  afterAll(async () => {
-    await Promise.all([
-      CareerRepository.truncate(),
-      UserRepository.truncate()
-    ]);
-    return Database.close();
-  });
+  afterAll(() => Database.close());
 
   describe("when the applicant exists", () => {
     it("fetches the applicant", async () => {
-      const career = await CareerRepository.create(careerMocks.careerData());
+      const career = await careers.next().value;
       const applicantCareer = [{ code: career.code, creditsCount: 150 }];
       const {
         user,
