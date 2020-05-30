@@ -85,7 +85,7 @@ describe("getApplicant", () => {
   });
 
   describe("when the applicant doesn't exists", () => {
-    it("should return ad error if the applicant does not exist", async () => {
+    it("returns an error if the applicant does not exist", async () => {
       const { apolloClient } = await testClientFactory.user();
 
       const uuid = random.uuid();
