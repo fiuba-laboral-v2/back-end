@@ -5,7 +5,9 @@ import {
   InvalidCuitError,
   WrongLengthCuitError,
   EmptyNameError,
-  NameWithDigitsError
+  NameWithDigitsError,
+  InvalidURLError,
+  InvalidEmailError
 } from "validations-fiuba-laboral-v2";
 
 describe("Company", () => {
@@ -83,13 +85,42 @@ describe("Company", () => {
     await expect(company.validate()).rejects.toThrow(NameWithDigitsError.buildMessage());
   });
 
-  it("should throw an error if name has digits and cuit has more than eleven digits", async () => {
+  it("throws an error if name has digits and cuit has more than eleven digits", async () => {
     const company = new Company({ cuit: "3057341761199", companyName: "Google34" });
     await expect(
       company.validate()
     ).rejects.toThrowErrorWithMessage(
       ValidationError,
       [NameWithDigitsError.buildMessage(), WrongLengthCuitError.buildMessage()]
+    );
+  });
+
+  it("throws an error if url has invalid format", async () => {
+    const company = new Company({
+      cuit: "30711819017",
+      companyName: "Google34",
+      website: "badURL"
+    });
+    await expect(
+      company.validate()
+    ).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      InvalidURLError.buildMessage()
+    );
+  });
+
+  it("throws an error if email has invalid format", async () => {
+    const badEmail = "badEmail";
+    const company = new Company({
+      cuit: "30711819017",
+      companyName: "Google34",
+      email: badEmail
+    });
+    await expect(
+      company.validate()
+    ).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      InvalidEmailError.buildMessage(badEmail)
     );
   });
 });
