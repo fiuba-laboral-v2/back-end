@@ -23,12 +23,6 @@ describe("ApplicantRepository", () => {
     careers = CareerGenerator();
   });
 
-  beforeEach(async () => {
-    await UserRepository.truncate();
-    await CareerRepository.truncate();
-    await CapabilityRepository.truncate();
-  });
-
   afterAll(() => Database.close());
 
   describe("Create", () => {
