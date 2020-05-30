@@ -38,7 +38,8 @@ describe("ApplicantRepository", () => {
 
       expect(applicant).toEqual(expect.objectContaining({
         uuid: applicant.uuid,
-        padron: applicantData.padron
+        padron: applicantData.padron,
+        description: applicantData.description
       }));
       expect(applicantCareer).toMatchObject({
         code: career.code,
@@ -123,7 +124,8 @@ describe("ApplicantRepository", () => {
 
       expect(applicant).toEqual(expect.objectContaining({
         uuid: applicant.uuid,
-        padron: applicantData.padron
+        padron: applicantData.padron,
+        description: applicantData.description
       }));
 
       const [applicantCareer] = await applicant.getCareers();
@@ -155,7 +157,8 @@ describe("ApplicantRepository", () => {
 
       expect(applicant).toEqual(expect.objectContaining({
         uuid: applicant.uuid,
-        padron: applicantData.padron
+        padron: applicantData.padron,
+        description: applicantData.description
       }));
 
       const [applicantCareer] = await applicant.getCareers();
