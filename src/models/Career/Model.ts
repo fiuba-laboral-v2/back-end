@@ -1,6 +1,6 @@
 import { BelongsToMany, Column, HasMany, Is, Model, Table } from "sequelize-typescript";
 import { Applicant } from "../Applicant/Model";
-import { CareerApplicant } from "../CareerApplicant/Model";
+import { ApplicantCareer } from "../ApplicantCareer/Model";
 import { validateIntegerInRange } from "validations-fiuba-laboral-v2";
 import { INTEGER, STRING } from "sequelize";
 
@@ -26,9 +26,9 @@ export class Career extends Model<Career> {
   })
   public credits: number;
 
-  @BelongsToMany(() => Applicant, () => CareerApplicant)
+  @BelongsToMany(() => Applicant, () => ApplicantCareer)
   public applicants: Applicant[];
 
-  @HasMany(() => CareerApplicant)
-  public careersApplicants: CareerApplicant[];
+  @HasMany(() => ApplicantCareer)
+  public applicantCareers: ApplicantCareer[];
 }

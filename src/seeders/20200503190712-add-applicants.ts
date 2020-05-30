@@ -29,7 +29,7 @@ export = {
         { transaction }
       );
       await queryInterface.bulkInsert(
-        "CareersApplicants",
+        "ApplicantCareers",
         [
           ...sebastian.careers,
           ...aldana.careers
@@ -50,7 +50,7 @@ export = {
     return queryInterface.sequelize.transaction(async transaction => {
       await queryInterface.bulkDelete("Sections", {}, { transaction });
       await queryInterface.bulkDelete("ApplicantsCapabilities", {}, { transaction });
-      await queryInterface.bulkDelete("CareersApplicants", {}, { transaction });
+      await queryInterface.bulkDelete("ApplicantCareers", {}, { transaction });
       await queryInterface.bulkDelete("JobApplications", {}, { transaction });
       await queryInterface.bulkDelete("Applicants", {}, { transaction });
     });

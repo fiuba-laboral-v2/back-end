@@ -13,8 +13,8 @@ const constraintTranslator = {
   JobApplications_applicantUuid_fkey: "ApplicantDoesNotExistError",
   ApplicantsLinks_applicantUuid_fkey: "ApplicantDoesNotExistError",
   ApplicantsCapabilities_applicantUuid_fkey: "ApplicantDoesNotExistError",
-  CareersApplicants_applicantUuid_fkey: "ApplicantDoesNotExistError",
-  CareersApplicants_careerCode_fkey: "CareerDoesNotExistError",
+  ApplicantCareers_applicantUuid_fkey: "ApplicantDoesNotExistError",
+  ApplicantCareers_careerCode_fkey: "CareerDoesNotExistError",
   ApplicantsCapabilities_capabilityUuid_fkey: "CapabilitiesDoesNotExistError"
 };
 

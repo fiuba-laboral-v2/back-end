@@ -108,13 +108,16 @@ describe("getApplicants", () => {
 
     it("fetches all the applicants", async () => {
       const newCareer = await CareerRepository.create(careerMocks.careerData());
-      const applicantCareer = [{ code: newCareer.code, creditsCount: 150 }];
+      const applicantCareersData = [{ code: newCareer.code, creditsCount: 150 }];
       const {
         applicant: firstApplicant,
         apolloClient
-      } = await testClientFactory.applicant({ careers: applicantCareer, capabilities: ["Go"] });
+      } = await testClientFactory.applicant({
+        careers: applicantCareersData,
+        capabilities: ["Go"]
+      });
       const secondApplicant = await userFactory.applicant({
-        careers: applicantCareer,
+        careers: applicantCareersData,
         capabilities: ["Go"]
       });
       const applicants = [firstApplicant, secondApplicant];
@@ -126,7 +129,7 @@ describe("getApplicants", () => {
         applicants.map(async applicant => {
           const user = await applicant.getUser();
           const capabilities = await applicant.getCapabilities();
-          const careerApplicants = await applicant.getCareersApplicants();
+          const applicantCareers = await applicant.getApplicantCareers();
           return {
             uuid: applicant.uuid,
             user: {
@@ -137,12 +140,12 @@ describe("getApplicants", () => {
             padron: applicant.padron,
             description: applicant.description,
             careers: await Promise.all(
-              careerApplicants.map(async careerApplicant => {
-                const { code, description, credits } = await careerApplicant.getCareer();
+              applicantCareers.map(async applicantCareer => {
+                const { code, description, credits } = await applicantCareer.getCareer();
                 return {
                   code,
                   description,
-                  creditsCount: careerApplicant.creditsCount,
+                  creditsCount: applicantCareer.creditsCount,
                   credits
                 };
               })

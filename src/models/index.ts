@@ -3,7 +3,7 @@ import { Section } from "./Applicant/Section";
 import { ApplicantLink } from "./Applicant/Link";
 import { JobApplication } from "./JobApplication";
 import { Career } from "./Career";
-import { CareerApplicant } from "./CareerApplicant";
+import { ApplicantCareer } from "./ApplicantCareer";
 import { Capability } from "./Capability";
 import { ApplicantCapability } from "./ApplicantCapability";
 import { Company } from "./Company";
@@ -21,7 +21,7 @@ const models = [
   ApplicantLink,
   JobApplication,
   Career,
-  CareerApplicant,
+  ApplicantCareer,
   Capability,
   ApplicantCapability,
   Company,
