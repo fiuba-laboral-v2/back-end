@@ -4,7 +4,7 @@ export = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.sequelize.transaction(async transaction => {
       await queryInterface.createTable(
-        "CareersApplicants",
+        "ApplicantCareers",
         {
           careerCode: {
             allowNull: false,
@@ -35,17 +35,17 @@ export = {
         { transaction }
         );
       await queryInterface.addConstraint(
-        "CareersApplicants",
+        "ApplicantCareers",
         ["careerCode", "applicantUuid"],
         {
           type: "primary key",
-          name: "CareersApplicants_careerCode_applicantUuid_key",
+          name: "ApplicantCareers_careerCode_applicantUuid_key",
           transaction
         }
       );
     });
   },
   down: (queryInterface: QueryInterface) => {
-    return queryInterface.dropTable("CareersApplicants");
+    return queryInterface.dropTable("ApplicantCareers");
   }
 };
