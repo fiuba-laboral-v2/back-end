@@ -3,7 +3,7 @@ import { client } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
 import { UserRepository } from "../../../../src/models/User";
-import { ApplicantRepository } from "../../../../src/models/Applicant";
+import { Applicant } from "../../../../src/models/Applicant";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { OfferRepository } from "../../../../src/models/Offer";
 import { JobApplicationRepository } from "../../../../src/models/JobApplication";
@@ -11,7 +11,7 @@ import { JobApplicationRepository } from "../../../../src/models/JobApplication"
 import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
 
 import { OfferMocks } from "../../../models/Offer/mocks";
-import { applicantMocks } from "../../../models/Applicant/mocks";
+import { ApplicantGenerator } from "../../../generators/Applicant";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
 const GET_MY_LATEST_JOB_APPLICATIONS = gql`
@@ -34,13 +34,13 @@ const GET_MY_LATEST_JOB_APPLICATIONS = gql`
 `;
 
 describe("getMyLatestJobApplications", () => {
-  let applicant;
+  let applicant: Applicant;
 
   beforeAll(async () => {
     Database.setConnection();
     await UserRepository.truncate();
     await CompanyRepository.truncate();
-    applicant = await ApplicantRepository.create(applicantMocks.applicantData([]));
+    applicant = await ApplicantGenerator.withMinimumData().next().value;
   });
 
   afterAll(async () => {

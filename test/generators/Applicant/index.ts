@@ -1,8 +1,9 @@
 import { withMinimumData } from "./withMinimumData";
-import { Applicant, ApplicantRepository } from "../../../src/models/Applicant";
+import { IApplicant, Applicant, ApplicantRepository } from "../../../src/models/Applicant";
 import { CustomGenerator } from "../types";
 
 export type TApplicantGenerator = CustomGenerator<Promise<Applicant>>;
+export type TApplicantDataGenerator = CustomGenerator<IApplicant>;
 
 export const ApplicantGenerator = {
   withMinimumData: function*(): TApplicantGenerator {
@@ -10,6 +11,15 @@ export const ApplicantGenerator = {
     while (true) {
       yield ApplicantRepository.create(withMinimumData(index));
       index++;
+    }
+  },
+  data: {
+    minimum: function*(): TApplicantDataGenerator {
+      let index = 0;
+      while (true) {
+        yield withMinimumData(index);
+        index++;
+      }
     }
   }
 };
