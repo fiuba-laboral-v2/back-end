@@ -2,7 +2,7 @@ import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
-import { Career, CareerRepository } from "../../../../src/models/Career";
+import { CareerRepository } from "../../../../src/models/Career";
 import { CareerGenerator, TCareerDataGenerator } from "../../../generators/Career";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
