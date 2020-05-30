@@ -112,12 +112,12 @@ describe("saveApplicant", () => {
         padron: applicantData.padron
       });
       expect(data!.saveApplicant).toHaveProperty("capabilities");
-      expect(data!.saveApplicant.careers[0]).toMatchObject({
+      expect(data!.saveApplicant.careers).toMatchObject([{
         code: career.code,
         credits: career.credits,
         description: career.description,
         creditsCount: career.credits - 1
-      });
+      }]);
     });
 
     it("creates applicant with only obligatory data", async () => {
@@ -144,12 +144,12 @@ describe("saveApplicant", () => {
       expect(data!.saveApplicant).toHaveProperty("careers");
       expect(data!.saveApplicant).not.toHaveProperty("capabilities");
       expect(data!.saveApplicant).not.toHaveProperty("description");
-      expect(data!.saveApplicant.careers[0]).toMatchObject({
+      expect(data!.saveApplicant.careers).toMatchObject([{
         code: career.code,
         credits: career.credits,
         description: career.description,
         creditsCount: career.credits - 1
-      });
+      }]);
     });
   });
 
