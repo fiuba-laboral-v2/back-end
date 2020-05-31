@@ -43,11 +43,7 @@ describe("getMyLatestJobApplications", () => {
     applicant = await ApplicantGenerator.withMinimumData().next().value;
   });
 
-  afterAll(async () => {
-    await UserRepository.truncate();
-    await CompanyRepository.truncate();
-    await Database.close();
-  });
+  afterAll(() => Database.close());
 
   describe("when the input is valid", () => {
     it("returns all my company jobApplications", async () => {
