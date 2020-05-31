@@ -5,7 +5,7 @@ export type TCareerGenerator = CustomGenerator<Promise<Career>>;
 export type TCareerDataGenerator = CustomGenerator<ICareer>;
 
 export const CareerGenerator = {
-  model: function*(): TCareerGenerator {
+  instance: function*(): TCareerGenerator {
     let index = 0;
     while (true) {
       yield CareerRepository.create({

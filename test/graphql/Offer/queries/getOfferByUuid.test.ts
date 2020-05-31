@@ -69,7 +69,7 @@ describe("getOfferByUuid", () => {
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await UserRepository.truncate();
-    careers = CareerGenerator.model();
+    careers = CareerGenerator.instance();
   });
 
   afterAll(() => Database.close());
