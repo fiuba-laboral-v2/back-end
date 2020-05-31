@@ -96,8 +96,13 @@ describe("OfferRepository", () => {
       it("throws error if section has no title and not create the offer", async () => {
         await CompanyRepository.truncate();
         const { uuid: companyUuid } = await companies.next().value;
-        const attributes = offersData.next({ companyUuid, sections: [sectionData] }).value;
-        delete attributes.sections![0].title;
+        const attributes = offersData.next({
+          companyUuid,
+          sections: [{
+            ...sectionData,
+            title: null as any
+          }]
+        }).value;
         await expect(OfferRepository.create(attributes)).rejects.toThrow();
         expect(await OfferSection.findAll()).toHaveLength(0);
         expect(await Offer.findAll()).toHaveLength(0);
@@ -114,13 +119,25 @@ describe("OfferRepository", () => {
         expect(await Offer.findAll()).toHaveLength(0);
       });
 
-      it("should throw an error if adding and existing career to one offer", async () => {
+      it("throws an error if adding and existing career to one offer", async () => {
         const { uuid: companyUuid } = await companies.next().value;
         const { code } = await careersGenerator.next().value;
         const offerCareersData = [{ careerCode: code }, { careerCode: code }];
         const attributes = offersData.next({ companyUuid, careers: offerCareersData }).value;
         await expect(
           OfferRepository.create(attributes)
+        ).rejects.toThrowErrorWithMessage(
+          UniqueConstraintError,
+          "Validation error"
+        );
+      });
+
+      it("throws an error if two sections have the same display order", async () => {
+        const { uuid: companyUuid } = await companies.next().value;
+        const attributes = offersData.next({ companyUuid, sections: [sectionData] }).value;
+        const { uuid: offerUuid } = await OfferRepository.create(attributes);
+        await expect(
+          OfferSection.create({ offerUuid, ...sectionData })
         ).rejects.toThrowErrorWithMessage(
           UniqueConstraintError,
           "Validation error"
@@ -212,6 +229,34 @@ describe("OfferRepository", () => {
       expect(await OfferCareer.findAll()).toHaveLength(1);
       await CompanyRepository.truncate();
       expect(await OfferCareer.findAll()).toHaveLength(0);
+    });
+
+    describe("OfferSections", () => {
+      it("deletes all sections if all offers are deleted", async () => {
+        await CompanyRepository.truncate();
+        const { uuid: companyUuid } = await companies.next().value;
+        await OfferRepository.create(offersData.next({
+          companyUuid,
+          sections: [sectionData]
+        }).value);
+
+        expect(await OfferSection.findAll()).toHaveLength(1);
+        await OfferRepository.truncate();
+        expect(await OfferSection.findAll()).toHaveLength(0);
+      });
+
+      it("deletes all sections and offer if all companies are deleted", async () => {
+        await CompanyRepository.truncate();
+        const { uuid: companyUuid } = await companies.next().value;
+        await OfferRepository.create(offersData.next({
+          companyUuid,
+          sections: [sectionData]
+        }).value);
+
+        expect(await OfferSection.findAll()).toHaveLength(1);
+        await OfferRepository.truncate();
+        expect(await OfferSection.findAll()).toHaveLength(0);
+      });
     });
   });
 });

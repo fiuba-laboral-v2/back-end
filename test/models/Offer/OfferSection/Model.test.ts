@@ -1,102 +1,64 @@
-import { lorem, random } from "faker";
+import { ValidationError } from "sequelize";
 import Database from "../../../../src/config/Database";
-import { Offer } from "../../../../src/models/Offer";
-import { Company } from "../../../../src/models/Company";
 import { OfferSection } from "../../../../src/models/Offer/OfferSection";
-import { OfferMocks } from "../mocks";
-import { companyMocks } from "../../Company/mocks";
 
 describe("OfferSection", () => {
   beforeAll(() => Database.setConnection());
-  beforeEach(() => Company.truncate({ cascade: true }));
   afterAll(() => Database.close());
-
-  const createOffer = async () => {
-    const { uuid } = await new Company(companyMocks.companyData()).save();
-    return new Offer(OfferMocks.withObligatoryData(uuid)).save();
-  };
-
-  const sectionAttributes = (offerUuid: string) =>
-    ({
-      offerUuid: offerUuid,
-      title: random.words(),
-      text: lorem.paragraphs(),
-      displayOrder: 1
-    });
 
   describe("Valid create", () => {
     it("should create a valid section", async () => {
-      const offer = await createOffer();
-      const attributes = sectionAttributes(offer.uuid);
-      const section = new OfferSection(attributes);
+      const sectionAttributes = {
+        offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+        title: "title",
+        text: "text",
+        displayOrder: 1
+      };
+      const section = new OfferSection(sectionAttributes);
+      await expect(section.validate()).resolves.not.toThrow();
       expect(section).toHaveProperty("uuid");
-      expect(section).toMatchObject(attributes);
-    });
-
-    describe("Associations", () => {
-      it("should get all offer sections", async () => {
-        const offer = await createOffer();
-        const attributes = sectionAttributes(offer.uuid);
-        await new OfferSection(attributes).save();
-        expect(await offer.getSections()).toMatchObject([attributes]);
-      });
+      expect(section).toMatchObject(sectionAttributes);
     });
   });
 
   describe("Errors", () => {
-    it("should throw an error if no title is provided", async () => {
-      const offer = await createOffer();
-      const section = new OfferSection({ offerUuid: offer.uuid, text: lorem.paragraphs() });
+    it("throws an error if no title is provided", async () => {
+      const section = new OfferSection({
+        offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+        text: "text",
+        displayOrder: 1
+      });
 
-      await expect(section.save()).rejects.toThrow();
+      await expect(section.validate()).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        "notNull Violation: OfferSection.title cannot be null"
+      );
     });
 
     it("should throw an error if no text is provided", async () => {
-      const offer = await createOffer();
-      const section = new OfferSection({ offerUuid: offer.uuid, title: random.words() });
+      const section = new OfferSection({
+        offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+        title: "title",
+        displayOrder: 1
+      });
 
-      await expect(section.save()).rejects.toThrow();
+      await expect(section.validate()).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        "notNull Violation: OfferSection.text cannot be null"
+      );
     });
 
     it("should throw an error if no offerUuid is provided", async () => {
-      const section = new OfferSection({ title: random.words(), description: lorem.paragraphs() });
-
-      await expect(section.save()).rejects.toThrow();
-    });
-
-    it(
-      "should throw an error if two sections have the same display order for the same offer",
-      async () => {
-        const offer = await createOffer();
-        await new OfferSection(sectionAttributes(offer.uuid)).save();
-        const section = new OfferSection(sectionAttributes(offer.uuid));
-        await expect(section.save()).rejects.toThrow();
+      const section = new OfferSection({
+        title: "title",
+        text: "text",
+        displayOrder: 1
       });
-  });
 
-  describe("Delete cascade", () => {
-    it("should delete all offersSections if all offers are deleted", async () => {
-      const offer = await createOffer();
-      await new OfferSection(sectionAttributes(offer.uuid)).save();
-
-      expect(await OfferSection.findAll()).toHaveLength(1);
-      expect(await Offer.findAll()).toHaveLength(1);
-      await Offer.truncate({ cascade: true });
-      expect(await OfferSection.findAll()).toHaveLength(0);
-      expect(await Offer.findAll()).toHaveLength(0);
-    });
-
-    it("should delete all offersSections and offer if all companies are deleted", async () => {
-      const offer = await createOffer();
-      await new OfferSection(sectionAttributes(offer.uuid)).save();
-
-      expect(await Company.findAll()).toHaveLength(1);
-      expect(await OfferSection.findAll()).toHaveLength(1);
-      expect(await Offer.findAll()).toHaveLength(1);
-      await Company.truncate({ cascade: true });
-      expect(await Company.findAll()).toHaveLength(0);
-      expect(await OfferSection.findAll()).toHaveLength(0);
-      expect(await Offer.findAll()).toHaveLength(0);
+      await expect(section.validate()).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        "notNull Violation: OfferSection.offerUuid cannot be null"
+      );
     });
   });
 });
