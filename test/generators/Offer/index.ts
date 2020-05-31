@@ -2,10 +2,12 @@ import { withObligatoryData } from "./withObligatoryData";
 import { offerGenericGenerator } from "./offerGenericGenerator";
 import { IOffer, Offer, OfferRepository } from "../../../src/models/Offer";
 import { IOfferCareer } from "../../../src/models/Offer/OfferCareer";
+import { IOfferSection } from "../../../src/models/Offer/OfferSection";
 
-interface IOfferInput {
+export interface IOfferInput {
   companyUuid: string;
   careers?: IOfferCareer[];
+  sections?: IOfferSection[];
 }
 export type TCustomOfferGenerator<TData, TVariables> = Generator<TData, TData, TVariables>;
 export type TOfferGenerator = TCustomOfferGenerator<Promise<Offer>, IOfferInput>;
@@ -15,16 +17,8 @@ export const OfferGenerator = {
   instance: {
     withObligatoryData: async (): Promise<TOfferGenerator> => {
       const generator = offerGenericGenerator<Promise<Offer>, IOfferInput>(
-        (index, { companyUuid }) =>
-          OfferRepository.create(withObligatoryData({ index, companyUuid }))
-      );
-      await generator.next();
-      return generator;
-    },
-    withCareers: async (): Promise<TOfferGenerator> => {
-      const generator = offerGenericGenerator<Promise<Offer>, IOfferInput>(
-        (index, { companyUuid, careers }) =>
-          OfferRepository.create({ ...withObligatoryData({ index, companyUuid }), careers })
+        (index, variables) =>
+          OfferRepository.create(withObligatoryData({ index, ...variables }))
       );
       await generator.next();
       return generator;
@@ -33,8 +27,8 @@ export const OfferGenerator = {
   data: {
     withObligatoryData: (): TOfferDataGenerator => {
       const generator = offerGenericGenerator<IOffer, IOfferInput>(
-        (index, { companyUuid }) =>
-          withObligatoryData({ index, companyUuid })
+        (index, variables) =>
+          withObligatoryData({ index, ...variables })
       );
       generator.next();
       return generator;

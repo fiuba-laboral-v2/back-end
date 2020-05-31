@@ -33,7 +33,7 @@ describe("getMyOffers", () => {
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
     companies = CompanyGenerator.withMinimumData();
-    offers = await OfferGenerator.instance.withCareers();
+    offers = await OfferGenerator.instance.withObligatoryData();
   });
 
   afterAll(() => Database.close());
