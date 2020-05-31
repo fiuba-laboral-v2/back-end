@@ -3,9 +3,8 @@ import { client } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 
 import { CareerRepository } from "../../../../src/models/Career";
-import { Career } from "../../../../src/models/Career";
 import { CareersNotFound } from "../../../../src/models/Career/Errors/CareersNotFound";
-import { careerMocks } from "../../../models/Career/mocks";
+import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
 import { AuthenticationError } from "../../../../src/graphql/Errors";
@@ -21,18 +20,19 @@ const GET_CAREER_BY_CODE = gql`
 `;
 
 describe("getCareerByCode", () => {
+  let careers: TCareerGenerator;
+
   beforeAll(async () => {
     Database.setConnection();
-    await Career.truncate({ cascade: true });
+    await CareerRepository.truncate();
+    careers = CareerGenerator.model();
   });
 
-  afterAll(async () => {
-    await Database.close();
-  });
+  afterAll(() => Database.close());
 
   it("gets a career using the code", async () => {
     const { apolloClient } = await testClientFactory.user();
-    const career = await CareerRepository.create(careerMocks.careerData());
+    const career = await careers.next().value;
 
     const { data, errors } = await apolloClient.query({
       query: GET_CAREER_BY_CODE,
