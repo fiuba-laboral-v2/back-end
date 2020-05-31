@@ -7,7 +7,7 @@ export type TOfferGenerator = CustomOfferGenerator<Promise<Offer>>;
 export type TOfferDataGenerator = CustomOfferGenerator<IOffer>;
 
 export const OfferGenerator = {
-  model: {
+  instance: {
     withObligatoryData: async (): Promise<TOfferGenerator> => {
       const generator = function*(): TOfferGenerator {
         let index = 0;

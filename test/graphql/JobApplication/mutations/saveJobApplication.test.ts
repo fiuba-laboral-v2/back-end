@@ -29,7 +29,7 @@ describe("saveJobApplication", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     company = await CompanyRepository.create(companyMocks.companyData());
-    offers = await OfferGenerator.model.withObligatoryData();
+    offers = await OfferGenerator.instance.withObligatoryData();
   });
 
   afterAll(() => Database.close());

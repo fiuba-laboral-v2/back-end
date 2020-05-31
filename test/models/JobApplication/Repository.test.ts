@@ -19,7 +19,7 @@ describe("JobApplicationRepository", () => {
     await UserRepository.truncate();
     companies = CompanyGenerator.withMinimumData();
     applicants = ApplicantGenerator.withMinimumData();
-    offers = await OfferGenerator.model.withObligatoryData();
+    offers = await OfferGenerator.instance.withObligatoryData();
   });
 
   afterAll(() => Database.close());
