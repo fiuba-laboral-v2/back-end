@@ -7,8 +7,8 @@ import { OfferRepository } from "../../../../src/models/Offer";
 import { UserRepository } from "../../../../src/models/User";
 
 import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
-import { companyMocks } from "../../../models/Company/mocks";
-import { OfferMocks } from "../../../models/Offer/mocks";
+import { CompanyGenerator, TCompanyGenerator } from "../../../generators/Company";
+import { OfferGenerator, TOfferDataGenerator } from "../../../generators/Offer";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
 const GET_OFFERS = gql`
@@ -21,6 +21,8 @@ const GET_OFFERS = gql`
 
 describe("getOffers", () => {
   let careers: TCareerGenerator;
+  let companies: TCompanyGenerator;
+  let offersData: TOfferDataGenerator;
 
   beforeAll(async () => {
     Database.setConnection();
@@ -28,6 +30,8 @@ describe("getOffers", () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
+    companies = CompanyGenerator.withMinimumData();
+    offersData = OfferGenerator.data.withObligatoryData();
   });
 
   afterAll(() => Database.close());
@@ -36,13 +40,17 @@ describe("getOffers", () => {
     let offer1;
     let offer2;
     const createOffers = async () => {
-      const { uuid } = await CompanyRepository.create(companyMocks.companyData());
+      const { uuid: companyUuid } = await companies.next().value;
       const career1 = await careers.next().value;
       const career2 = await careers.next().value;
-      const offerAttributes1 = OfferMocks.withOneCareer(uuid, career1.code);
-      const offerAttributes2 = OfferMocks.withOneCareer(uuid, career2.code);
-      offer1 = await OfferRepository.create(offerAttributes1);
-      offer2 = await OfferRepository.create(offerAttributes2);
+      offer1 = await OfferRepository.create({
+        ...offersData.next({ companyUuid }).value,
+        careers: [{ careerCode: career1.code }]
+      });
+      offer2 = await OfferRepository.create({
+        ...offersData.next({ companyUuid }).value,
+        careers: [{ careerCode: career2.code }]
+      });
     };
 
     beforeAll(() => createOffers());

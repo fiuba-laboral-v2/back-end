@@ -4,7 +4,7 @@ import { CompanyRepository } from "../../../../src/models/Company";
 import { UserRepository } from "../../../../src/models/User";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 import { OfferRepository } from "../../../../src/models/Offer";
-import { OfferMocks } from "../../../models/Offer/mocks";
+import { OfferGenerator, TOfferDataGenerator } from "../../../generators/Offer";
 import { client } from "../../ApolloTestClient";
 
 const EDIT_OFFER = gql`
@@ -35,18 +35,19 @@ const EDIT_OFFER = gql`
 `;
 
 describe("editOffer", () => {
-  beforeAll(() => {
+  let offersData: TOfferDataGenerator;
+
+  beforeAll(async () => {
     Database.setConnection();
-    return Promise.all([
-      CompanyRepository.truncate(),
-      UserRepository.truncate()
-    ]);
+    await CompanyRepository.truncate();
+    await UserRepository.truncate();
+    offersData = OfferGenerator.data.withObligatoryData();
   });
   afterAll(() => Database.close());
 
   it("edits an offer successfully", async () => {
     const { apolloClient, company } = await testClientFactory.company();
-    const initialAttributes = OfferMocks.withObligatoryData(company.uuid);
+    const initialAttributes = offersData.next({ companyUuid: company.uuid }).value;
     const { uuid } = await OfferRepository.create(initialAttributes);
     const newTitle = "Amazing Offer";
     await apolloClient.mutate({
@@ -60,7 +61,7 @@ describe("editOffer", () => {
 
   it("throws an error when the offer uuid is not found", async () => {
     const { apolloClient, company } = await testClientFactory.company();
-    const attributes = OfferMocks.withObligatoryData(company.uuid);
+    const attributes = offersData.next({ companyUuid: company.uuid }).value;
     const response = await apolloClient.mutate({
       mutation: EDIT_OFFER,
       variables: { ...attributes, uuid: "ca2c5210-cb79-4026-9a26-1eb7a4159e71" }
@@ -70,7 +71,9 @@ describe("editOffer", () => {
 
   it("throws an error when the user does not belong to a company", async () => {
     const { apolloClient } = await testClientFactory.applicant();
-    const attributes = OfferMocks.withObligatoryData("ca2c5210-cb79-4026-9a26-1eb7a4159e72");
+    const attributes = offersData.next({
+      companyUuid: "ca2c5210-cb79-4026-9a26-1eb7a4159e72"
+    }).value;
     const response = await apolloClient.mutate({
       mutation: EDIT_OFFER,
       variables: { ...attributes, uuid: "ca2c5210-cb79-4026-9a26-1eb7a4159e71" }
@@ -80,7 +83,9 @@ describe("editOffer", () => {
 
   it("throws an error when a user is not logged in", async () => {
     const apolloClient = client.loggedOut;
-    const attributes = OfferMocks.withObligatoryData("ca2c5210-cb79-4026-9a26-1eb7a4159e72");
+    const attributes = offersData.next({
+      companyUuid: "ca2c5210-cb79-4026-9a26-1eb7a4159e72"
+    }).value;
     const response = await apolloClient.mutate({
       mutation: EDIT_OFFER,
       variables: { ...attributes, uuid: "ca2c5210-cb79-4026-9a26-1eb7a4159e71" }
