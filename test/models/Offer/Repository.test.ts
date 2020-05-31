@@ -1,38 +1,42 @@
+import { UniqueConstraintError } from "sequelize";
 import Database from "../../../src/config/Database";
+import { CareerRepository } from "../../../src/models/Career/Repository";
 import { OfferRepository } from "../../../src/models/Offer/Repository";
 import { CompanyRepository } from "../../../src/models/Company/Repository";
-import { CareerRepository } from "../../../src/models/Career";
 import { OfferNotFound } from "../../../src/models/Offer/Errors";
 import { OfferSection } from "../../../src/models/Offer/OfferSection";
 import { OfferCareer } from "../../../src/models/Offer/OfferCareer";
 import { Offer } from "../../../src/models/Offer";
 import { CompanyGenerator, TCompanyGenerator } from "../../generators/Company";
 import { OfferMocks } from "./mocks";
-import { careerMocks } from "../Career/mocks";
+import { CareerGenerator, TCareerGenerator } from "../../generators/Career";
 import { omit } from "lodash";
 import { UserRepository } from "../../../src/models/User";
 
 describe("OfferRepository", () => {
   let companies: TCompanyGenerator;
+  let careersGenerator: TCareerGenerator;
 
   beforeAll(async () => {
     Database.setConnection();
+    await CareerRepository.truncate();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     companies = CompanyGenerator.withMinimumData();
+    careersGenerator = CareerGenerator.model();
   });
 
   afterAll(() => Database.close());
 
   describe("Create", () => {
-    it("should create a new offer", async () => {
+    it("creates a new offer", async () => {
       const { uuid } = await companies.next().value;
       const offerProps = OfferMocks.withObligatoryData(uuid);
       const offer = await OfferRepository.create(offerProps);
       expect(offer).toEqual(expect.objectContaining(offerProps));
     });
 
-    it("should create a new offer with one section", async () => {
+    it("creates a new offer with one section", async () => {
       const { uuid } = await companies.next().value;
       const attributes = OfferMocks.withOneSection(uuid);
       const offer = await OfferRepository.create(attributes);
@@ -42,9 +46,9 @@ describe("OfferRepository", () => {
       expect(sections[0]).toEqual(expect.objectContaining(attributes.sections![0]));
     });
 
-    it("should create a new offer with one career", async () => {
+    it("creates a new offer with one career", async () => {
       const { uuid } = await companies.next().value;
-      const { code } = await CareerRepository.create(careerMocks.careerData());
+      const { code } = await careersGenerator.next().value;
       const attributes = OfferMocks.withOneCareer(uuid, code);
       const offer = await OfferRepository.create(attributes);
       expect(offer).toEqual(expect.objectContaining(omit(attributes, ["careers"])));
@@ -55,9 +59,9 @@ describe("OfferRepository", () => {
       ));
     });
 
-    it("should create a new offer with one career and one section", async () => {
+    it("creates a new offer with one career and one section", async () => {
       const { uuid } = await companies.next().value;
-      const { code } = await CareerRepository.create(careerMocks.careerData());
+      const { code } = await careersGenerator.next().value;
       const attributes = OfferMocks.withOneCareerAndOneSection(uuid, code);
       const offer = await OfferRepository.create(attributes);
       expect(offer).toEqual(expect.objectContaining(
@@ -74,14 +78,14 @@ describe("OfferRepository", () => {
     });
 
     describe("Rollback Transaction", () => {
-      it("should throw error if offer is invalid and not create the section", async () => {
+      it("throws error if offer is invalid and not create the section", async () => {
         const attributes = OfferMocks.withOneSectionButNullCompanyId();
         await expect(
           OfferRepository.create(attributes)
         ).rejects.toThrow("notNull Violation: Offer.companyUuid cannot be null");
       });
 
-      it("should throw error if section is invalid and not create the offer", async () => {
+      it("throws error if section is invalid and not create the offer", async () => {
         await CompanyRepository.truncate();
         const { uuid } = await companies.next().value;
         await expect(
@@ -91,7 +95,7 @@ describe("OfferRepository", () => {
         expect(await Offer.findAll()).toHaveLength(0);
       });
 
-      it("should throw error if career is invalid and not create the offer", async () => {
+      it("throws error if career is invalid and not create the offer", async () => {
         await CompanyRepository.truncate();
         const { uuid } = await companies.next().value;
         await expect(
@@ -100,6 +104,18 @@ describe("OfferRepository", () => {
         expect(await OfferSection.findAll()).toHaveLength(0);
         expect(await OfferCareer.findAll()).toHaveLength(0);
         expect(await Offer.findAll()).toHaveLength(0);
+      });
+
+      it("should throw an error if adding and existing career to one offer", async () => {
+        const { uuid } = await companies.next().value;
+        const { code } = await careersGenerator.next().value;
+        const offerCareersData = [{ careerCode: code }, { careerCode: code }];
+        await expect(
+          OfferRepository.create({ ...OfferMocks.completeData(uuid), careers: offerCareersData })
+        ).rejects.toThrowErrorWithMessage(
+          UniqueConstraintError,
+          "Validation error"
+        );
       });
     });
   });
@@ -148,11 +164,33 @@ describe("OfferRepository", () => {
   });
 
   describe("Delete", () => {
-    it("should delete all offers if all companies are deleted", async () => {
+    it("deletes all offers if all companies are deleted", async () => {
       const { uuid } = await companies.next().value;
       const offer = await OfferRepository.create(OfferMocks.withObligatoryData(uuid));
       await CompanyRepository.truncate();
       await expect(OfferRepository.findByUuid(offer.uuid)).rejects.toThrow(OfferNotFound);
+    });
+
+    it("deletes all offersCareers if all offers are deleted", async () => {
+      await OfferRepository.truncate();
+      const { uuid } = await companies.next().value;
+      const { code } = await careersGenerator.next().value;
+      await OfferRepository.create(OfferMocks.withOneCareer(uuid, code));
+      expect(await OfferCareer.findAll()).toHaveLength(1);
+      await OfferRepository.truncate();
+      expect(await OfferCareer.findAll()).toHaveLength(0);
+    });
+
+    it("deletes all offersCareers and offer if all companies are deleted", async () => {
+      await CareerRepository.truncate();
+      await CompanyRepository.truncate();
+      const { uuid } = await companies.next().value;
+      const { code } = await careersGenerator.next().value;
+      await OfferRepository.create(OfferMocks.withOneCareer(uuid, code));
+
+      expect(await OfferCareer.findAll()).toHaveLength(1);
+      await CompanyRepository.truncate();
+      expect(await OfferCareer.findAll()).toHaveLength(0);
     });
   });
 });
