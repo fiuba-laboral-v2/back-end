@@ -31,7 +31,7 @@ describe("getMyOffers", () => {
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await UserRepository.truncate();
-    careers = CareerGenerator.model();
+    careers = CareerGenerator.instance();
     companies = CompanyGenerator.withMinimumData();
   });
 

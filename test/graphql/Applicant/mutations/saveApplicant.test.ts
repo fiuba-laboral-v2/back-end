@@ -84,7 +84,7 @@ describe("saveApplicant", () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
     applicantsData = ApplicantGenerator.data.minimum();
-    career = await CareerGenerator.model().next().value;
+    career = await CareerGenerator.instance().next().value;
   });
 
   afterAll(() => Database.close());

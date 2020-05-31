@@ -23,7 +23,7 @@ describe("OfferRepository", () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     companies = CompanyGenerator.withMinimumData();
-    careersGenerator = CareerGenerator.model();
+    careersGenerator = CareerGenerator.instance();
   });
 
   afterAll(() => Database.close());

@@ -25,7 +25,7 @@ describe("getCareerByCode", () => {
   beforeAll(async () => {
     Database.setConnection();
     await CareerRepository.truncate();
-    careers = CareerGenerator.model();
+    careers = CareerGenerator.instance();
   });
 
   afterAll(() => Database.close());
