@@ -7,7 +7,7 @@ import { AuthenticationError } from "../../../../src/graphql/Errors";
 import { CareerRepository } from "../../../../src/models/Career";
 import { UserRepository } from "../../../../src/models/User/Repository";
 
-import { careerMocks } from "../../../models/Career/mocks";
+import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 import { userFactory } from "../../../mocks/user";
 
@@ -45,22 +45,16 @@ const GET_APPLICANTS = gql`
 `;
 
 describe("getApplicants", () => {
+  let careers: TCareerGenerator;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     Database.setConnection();
-    return Promise.all([
-      CareerRepository.truncate(),
-      UserRepository.truncate()
-    ]);
+    await CareerRepository.truncate();
+    await UserRepository.truncate();
+    careers = CareerGenerator.instance();
   });
 
-  afterAll(async () => {
-    await Promise.all([
-      CareerRepository.truncate(),
-      UserRepository.truncate()
-    ]);
-    return Database.close();
-  });
+  afterAll(() => Database.close());
 
   describe("when no applicant exists", () => {
     it("fetches an empty array of applicants", async () => {
@@ -73,7 +67,7 @@ describe("getApplicants", () => {
 
   describe("when applicants exists", () => {
     it("fetches the existing applicant", async () => {
-      const newCareer = await CareerRepository.create(careerMocks.careerData());
+      const newCareer = await careers.next().value;
       const applicantCareer = [{ code: newCareer.code, creditsCount: 150 }];
       const {
         user,
@@ -107,7 +101,7 @@ describe("getApplicants", () => {
     });
 
     it("fetches all the applicants", async () => {
-      const newCareer = await CareerRepository.create(careerMocks.careerData());
+      const newCareer = await careers.next().value;
       const applicantCareersData = [{ code: newCareer.code, creditsCount: 150 }];
       const {
         applicant: firstApplicant,
