@@ -1,5 +1,5 @@
 import { IOffer } from "../../../src/models/Offer";
-import { IOfferInput } from "./index";
+import { IVariables } from "./interfaces";
 
 export const withObligatoryData = (
   {
@@ -7,7 +7,7 @@ export const withObligatoryData = (
     companyUuid,
     careers,
     sections
-  }: IWithObligatoryData
+  }: IVariables
 ): IOffer => {
   const data = {
     companyUuid,
@@ -23,7 +23,3 @@ export const withObligatoryData = (
   if (!sections) delete data.sections;
   return data;
 };
-
-interface IWithObligatoryData extends IOfferInput {
-  index: number;
-}

@@ -1,4 +1,5 @@
 import { withObligatoryData } from "./withObligatoryData";
+import { withOneSection } from "./withOneSection";
 import { offerGenericGenerator } from "./offerGenericGenerator";
 import { IOffer, Offer, OfferRepository } from "../../../src/models/Offer";
 import { IOfferCareer } from "../../../src/models/Offer/OfferCareer";
@@ -19,6 +20,14 @@ export const OfferGenerator = {
       const generator = offerGenericGenerator<Promise<Offer>, IOfferInput>(
         (index, variables) =>
           OfferRepository.create(withObligatoryData({ index, ...variables }))
+      );
+      await generator.next();
+      return generator;
+    },
+    withOneSection: async (): Promise<TOfferGenerator> => {
+      const generator = offerGenericGenerator<Promise<Offer>, IOfferInput>(
+        (index, variables) =>
+          OfferRepository.create(withOneSection({ index, ...variables }))
       );
       await generator.next();
       return generator;

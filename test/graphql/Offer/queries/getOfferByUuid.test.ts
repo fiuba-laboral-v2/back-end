@@ -4,7 +4,6 @@ import Database from "../../../../src/config/Database";
 
 import { CareerRepository } from "../../../../src/models/Career";
 import { CompanyRepository } from "../../../../src/models/Company";
-import { OfferRepository } from "../../../../src/models/Offer";
 import { JobApplicationRepository } from "../../../../src/models/JobApplication";
 import { UserRepository } from "../../../../src/models/User";
 
@@ -12,7 +11,7 @@ import { OfferNotFound } from "../../../../src/models/Offer/Errors";
 import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
 
 import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
-import { OfferMocks } from "../../../models/Offer/mocks";
+import { OfferGenerator, TOfferGenerator } from "../../../generators/Offer";
 import { userFactory } from "../../../mocks/user";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
@@ -63,6 +62,7 @@ const GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION = gql`
 
 describe("getOfferByUuid", () => {
   let careers: TCareerGenerator;
+  let offers: TOfferGenerator;
 
   beforeAll(async () => {
     Database.setConnection();
@@ -70,15 +70,15 @@ describe("getOfferByUuid", () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
+    offers = await OfferGenerator.instance.withOneSection();
   });
 
   afterAll(() => Database.close());
 
   const createOffer = async company => {
     const career = await careers.next().value;
-    const offer = await OfferRepository.create(
-      OfferMocks.withOneCareerAndOneSection(company.uuid, career.code)
-    );
+    const careerCode = career.code;
+    const offer = await offers.next({ companyUuid: company.uuid, careers: [{ careerCode }] }).value;
     return { offer, career, company };
   };
 
