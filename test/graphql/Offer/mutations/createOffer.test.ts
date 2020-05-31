@@ -1,7 +1,7 @@
 import { gql } from "apollo-server";
 import Database from "../../../../src/config/Database";
 
-import { careerMocks } from "../../../models/Career/mocks";
+import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
 import { OfferMocks } from "../../../models/Offer/mocks";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
@@ -11,14 +11,22 @@ import { UserRepository } from "../../../../src/models/User";
 
 const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
     mutation createOffer(
-        $title: String!, $description: String!, $hoursPerDay: Int!,
-        $minimumSalary: Int!, $maximumSalary: Int!, $sections: [OfferSectionInput],
+        $title: String!,
+        $description: String!,
+        $hoursPerDay: Int!,
+        $minimumSalary: Int!,
+        $maximumSalary: Int!,
+        $sections: [OfferSectionInput],
         $careers: [OfferCareerInput]
     ) {
         createOffer(
-            title: $title, description: $description,
-            hoursPerDay: $hoursPerDay, minimumSalary: $minimumSalary, maximumSalary: $maximumSalary,
-            sections: $sections, careers: $careers
+            title: $title,
+            description: $description,
+            hoursPerDay: $hoursPerDay,
+            minimumSalary: $minimumSalary,
+            maximumSalary: $maximumSalary,
+            sections: $sections,
+            careers: $careers
         ) {
             uuid
             title
@@ -79,23 +87,17 @@ const SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA = gql`
 `;
 
 describe("createOffer", () => {
-  beforeAll(() => {
+  let careers: TCareerGenerator;
+
+  beforeAll(async () => {
     Database.setConnection();
-    return Promise.all([
-      CompanyRepository.truncate(),
-      CareerRepository.truncate(),
-      UserRepository.truncate()
-    ]);
+    await CompanyRepository.truncate();
+    await CareerRepository.truncate();
+    await UserRepository.truncate();
+    careers = CareerGenerator.model();
   });
 
-  afterAll(async () => {
-    await Promise.all([
-      CompanyRepository.truncate(),
-      CareerRepository.truncate(),
-      UserRepository.truncate()
-    ]);
-    return Database.close();
-  });
+  afterAll(() => Database.close());
 
   describe("when the input values are valid", () => {
     it("should create a new offer with only obligatory data", async () => {
@@ -122,7 +124,7 @@ describe("createOffer", () => {
 
     it("should create a new offer with one section and one career", async () => {
       const { company, apolloClient } = await testClientFactory.company();
-      const { code } = await CareerRepository.create(careerMocks.careerData());
+      const { code } = await careers.next().value;
 
       const { companyUuid, ...createOfferAttributes } = OfferMocks.withOneCareerAndOneSection(
         company.uuid,
