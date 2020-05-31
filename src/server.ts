@@ -13,7 +13,8 @@ export const ApolloServer = new Server({
   context: (expressContext: ExpressContext) => {
     const token = expressContext.req.headers.authorization || "";
     const apolloServerContext: Context = {
-      ...(token && { currentUser: JWT.extractTokenPayload(token) })
+      ...(token && { currentUser: JWT.extractTokenPayload(token) }),
+      ...expressContext
     };
     return apolloServerContext;
   }

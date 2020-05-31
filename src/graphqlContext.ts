@@ -1,3 +1,5 @@
+import { ExpressContext } from "apollo-server-express/dist/ApolloServer";
+
 export interface IUser {
   uuid: string;
   email: string;
@@ -25,4 +27,4 @@ export type IApolloServerContext = {
   currentUser: ICurrentUser;
 };
 
-export type Context = IApolloServerContext | object;
+export type Context = (IApolloServerContext | object) & ExpressContext;
