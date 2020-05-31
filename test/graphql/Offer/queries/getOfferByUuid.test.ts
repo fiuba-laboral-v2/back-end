@@ -11,7 +11,7 @@ import { UserRepository } from "../../../../src/models/User";
 import { OfferNotFound } from "../../../../src/models/Offer/Errors";
 import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
 
-import { careerMocks } from "../../../models/Career/mocks";
+import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
 import { OfferMocks } from "../../../models/Offer/mocks";
 import { userFactory } from "../../../mocks/user";
 import { testClientFactory } from "../../../mocks/testClientFactory";
@@ -62,26 +62,20 @@ const GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION = gql`
 `;
 
 describe("getOfferByUuid", () => {
-  beforeAll(() => {
+  let careers: TCareerGenerator;
+
+  beforeAll(async () => {
     Database.setConnection();
-    return Promise.all([
-      CompanyRepository.truncate(),
-      CareerRepository.truncate(),
-      UserRepository.truncate()
-    ]);
+    await CompanyRepository.truncate();
+    await CareerRepository.truncate();
+    await UserRepository.truncate();
+    careers = CareerGenerator.model();
   });
 
-  afterAll(async () => {
-    await Promise.all([
-      CompanyRepository.truncate(),
-      CareerRepository.truncate(),
-      UserRepository.truncate()
-    ]);
-    return Database.close();
-  });
+  afterAll(() => Database.close());
 
   const createOffer = async company => {
-    const career = await CareerRepository.create(careerMocks.careerData());
+    const career = await careers.next().value;
     const offer = await OfferRepository.create(
       OfferMocks.withOneCareerAndOneSection(company.uuid, career.code)
     );
