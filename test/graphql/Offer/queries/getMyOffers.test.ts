@@ -9,8 +9,8 @@ import { CompanyRepository } from "../../../../src/models/Company";
 import { OfferRepository } from "../../../../src/models/Offer";
 import { UserRepository } from "../../../../src/models/User";
 
-import { careerMocks } from "../../../models/Career/mocks";
-import { companyMocks } from "../../../models/Company/mocks";
+import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
+import { CompanyGenerator, TCompanyGenerator } from "../../../generators/Company";
 import { OfferMocks } from "../../../models/Offer/mocks";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
@@ -23,31 +23,27 @@ const GET_MY_OFFERS = gql`
 `;
 
 describe("getMyOffers", () => {
-  beforeAll(() => {
+  let careers: TCareerGenerator;
+  let companies: TCompanyGenerator;
+
+  beforeAll(async () => {
     Database.setConnection();
-    return Promise.all([
-      CompanyRepository.truncate(),
-      CareerRepository.truncate(),
-      UserRepository.truncate()
-    ]);
+    await CompanyRepository.truncate();
+    await CareerRepository.truncate();
+    await UserRepository.truncate();
+    careers = CareerGenerator.model();
+    companies = CompanyGenerator.withMinimumData();
   });
 
-  afterAll(async () => {
-    await Promise.all([
-      CompanyRepository.truncate(),
-      CareerRepository.truncate(),
-      UserRepository.truncate()
-    ]);
-    return Database.close();
-  });
+  afterAll(() => Database.close());
 
   describe("when offers exists", () => {
     let offer1;
     let offer2;
     const createOffers = async (companyUuid: string) => {
-      const { uuid } = await CompanyRepository.create(companyMocks.companyData());
-      const career1 = await CareerRepository.create(careerMocks.careerData());
-      const career2 = await CareerRepository.create(careerMocks.careerData());
+      const { uuid } = await companies.next().value;
+      const career1 = await careers.next().value;
+      const career2 = await careers.next().value;
       const offerAttributes1 = OfferMocks.withOneCareer(companyUuid, career1.code);
       const offerAttributes2 = OfferMocks.withOneCareer(companyUuid, career2.code);
       const offerAttributes3 = OfferMocks.withOneCareer(uuid, career1.code);
