@@ -2,7 +2,7 @@ import { gql } from "apollo-server";
 import Database from "../../../../src/config/Database";
 
 import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
-import { OfferMocks } from "../../../models/Offer/mocks";
+import { OfferGenerator, TOfferDataGenerator } from "../../../generators/Offer";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
 import { CareerRepository } from "../../../../src/models/Career";
@@ -88,6 +88,7 @@ const SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA = gql`
 
 describe("createOffer", () => {
   let careers: TCareerGenerator;
+  let offers: TOfferDataGenerator;
 
   beforeAll(async () => {
     Database.setConnection();
@@ -95,6 +96,7 @@ describe("createOffer", () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
     careers = CareerGenerator.model();
+    offers = OfferGenerator.data.withObligatoryData();
   });
 
   afterAll(() => Database.close());
@@ -103,7 +105,9 @@ describe("createOffer", () => {
     it("should create a new offer with only obligatory data", async () => {
       const { company, apolloClient } = await testClientFactory.company();
 
-      const { companyUuid, ...createOfferAttributes } = OfferMocks.completeData(company.uuid);
+      const { companyUuid, ...createOfferAttributes } = offers.next({
+        companyUuid: company.uuid
+      }).value;
       const { data, errors } = await apolloClient.mutate({
         mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
         variables: createOfferAttributes
@@ -126,13 +130,20 @@ describe("createOffer", () => {
       const { company, apolloClient } = await testClientFactory.company();
       const { code } = await careers.next().value;
 
-      const { companyUuid, ...createOfferAttributes } = OfferMocks.withOneCareerAndOneSection(
-        company.uuid,
-        code
-      );
+      const { companyUuid, ...createOfferAttributes } = offers.next({
+        companyUuid: company.uuid
+      }).value;
       const { data, errors } = await apolloClient.mutate({
         mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
-        variables: createOfferAttributes
+        variables: {
+          ...createOfferAttributes,
+          careers: [{ careerCode: code }],
+          sections: [{
+            title: "title",
+            text: "text",
+            displayOrder: 1
+          }]
+        }
       });
 
       expect(errors).toBeUndefined();
@@ -143,12 +154,12 @@ describe("createOffer", () => {
 
   describe("when the input values are invalid", () => {
     it("should throw an error if no title is provided", async () => {
-      const { apolloClient } = await testClientFactory.company();
+      const { company, apolloClient } = await testClientFactory.company();
       const {
         companyUuid,
         title,
         ...createOfferAttributesWithNoTitle
-      } = OfferMocks.completeData("");
+      } = offers.next({ companyUuid: company.uuid }).value;
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
         variables: createOfferAttributesWithNoTitle
