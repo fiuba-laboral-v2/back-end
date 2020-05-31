@@ -1,52 +1,43 @@
 import { withObligatoryData } from "./withObligatoryData";
+import { offerGenericGenerator } from "./offerGenericGenerator";
 import { IOffer, Offer, OfferRepository } from "../../../src/models/Offer";
+import { IOfferCareer } from "../../../src/models/Offer/OfferCareer";
 
-interface ICompanyUuid { companyUuid: string; }
-type CustomOfferGenerator<T> = Generator<T, T, ICompanyUuid>;
-export type TOfferGenerator = CustomOfferGenerator<Promise<Offer>>;
-export type TOfferDataGenerator = CustomOfferGenerator<IOffer>;
+interface IOfferInput {
+  companyUuid: string;
+  careers?: IOfferCareer[];
+}
+export type TCustomOfferGenerator<TData, TVariables> = Generator<TData, TData, TVariables>;
+export type TOfferGenerator = TCustomOfferGenerator<Promise<Offer>, IOfferInput>;
+export type TOfferDataGenerator = TCustomOfferGenerator<IOffer, IOfferInput>;
 
 export const OfferGenerator = {
   instance: {
     withObligatoryData: async (): Promise<TOfferGenerator> => {
-      const generator = function*(): TOfferGenerator {
-        let index = 0;
-        let companyUuid: string = "";
-        while (true) {
-          if (companyUuid === "") {
-            companyUuid = (yield Promise.resolve(new Offer({}))).companyUuid;
-            continue;
-          }
-
-          const response = yield OfferRepository.create(withObligatoryData({ index, companyUuid }));
-          companyUuid = response.companyUuid;
-          index++;
-        }
-      };
-      const offers: TOfferGenerator = generator();
-      await offers.next();
-      return offers;
+      const generator = offerGenericGenerator<Promise<Offer>, IOfferInput>(
+        (index, { companyUuid }) =>
+          OfferRepository.create(withObligatoryData({ index, companyUuid }))
+      );
+      await generator.next();
+      return generator;
+    },
+    withCareers: async (): Promise<TOfferGenerator> => {
+      const generator = offerGenericGenerator<Promise<Offer>, IOfferInput>(
+        (index, { companyUuid, careers }) =>
+          OfferRepository.create({ ...withObligatoryData({ index, companyUuid }), careers })
+      );
+      await generator.next();
+      return generator;
     }
   },
   data: {
     withObligatoryData: (): TOfferDataGenerator => {
-      const generator = function*(): TOfferDataGenerator {
-        let index = 0;
-        let companyUuid: string = "";
-        while (true) {
-          if (companyUuid === "") {
-            companyUuid = (yield withObligatoryData({ index, companyUuid })).companyUuid;
-            continue;
-          }
-
-          const response = yield withObligatoryData({ index, companyUuid });
-          companyUuid = response.companyUuid;
-          index++;
-        }
-      };
-      const offersData: TOfferDataGenerator = generator();
-      offersData.next();
-      return offersData;
+      const generator = offerGenericGenerator<IOffer, IOfferInput>(
+        (index, { companyUuid }) =>
+          withObligatoryData({ index, companyUuid })
+      );
+      generator.next();
+      return generator;
     }
   }
 };

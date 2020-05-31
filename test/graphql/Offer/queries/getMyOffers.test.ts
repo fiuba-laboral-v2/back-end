@@ -6,12 +6,11 @@ import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/
 
 import { CareerRepository } from "../../../../src/models/Career";
 import { CompanyRepository } from "../../../../src/models/Company";
-import { OfferRepository } from "../../../../src/models/Offer";
 import { UserRepository } from "../../../../src/models/User";
 
 import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
 import { CompanyGenerator, TCompanyGenerator } from "../../../generators/Company";
-import { OfferMocks } from "../../../models/Offer/mocks";
+import { OfferGenerator, TOfferGenerator } from "../../../generators/Offer";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
 const GET_MY_OFFERS = gql`
@@ -25,6 +24,7 @@ const GET_MY_OFFERS = gql`
 describe("getMyOffers", () => {
   let careers: TCareerGenerator;
   let companies: TCompanyGenerator;
+  let offers: TOfferGenerator;
 
   beforeAll(async () => {
     Database.setConnection();
@@ -33,6 +33,7 @@ describe("getMyOffers", () => {
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
     companies = CompanyGenerator.withMinimumData();
+    offers = await OfferGenerator.instance.withCareers();
   });
 
   afterAll(() => Database.close());
@@ -44,12 +45,9 @@ describe("getMyOffers", () => {
       const { uuid } = await companies.next().value;
       const career1 = await careers.next().value;
       const career2 = await careers.next().value;
-      const offerAttributes1 = OfferMocks.withOneCareer(companyUuid, career1.code);
-      const offerAttributes2 = OfferMocks.withOneCareer(companyUuid, career2.code);
-      const offerAttributes3 = OfferMocks.withOneCareer(uuid, career1.code);
-      offer1 = await OfferRepository.create(offerAttributes1);
-      offer2 = await OfferRepository.create(offerAttributes2);
-      await OfferRepository.create(offerAttributes3);
+      offer1 = await offers.next({ companyUuid, careers: [{ careerCode: career1.code }] }).value;
+      offer2 = await offers.next({ companyUuid, careers: [{ careerCode: career2.code }] }).value;
+      await offers.next({ companyUuid: uuid, careers: [{ careerCode: career1.code }] }).value;
     };
 
     it("returns only the offers that the company made", async () => {
