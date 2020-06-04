@@ -53,6 +53,18 @@ const AuthConfigForAllEnvironments: IAuthenticationVariables = {
       maxAge: TOKEN_EXPIRATION_MILLISECONDS,
       sameSite: "strict"
     }
+  },
+  test_travis: {
+    JWT: {
+      expiresIn: TOKEN_EXPIRATION_DAYS_AS_STRING
+    },
+    cookieName: "fiuba_laboral_v2_access_token",
+    cookieOptions: {
+      secure: false,
+      httpOnly: true,
+      maxAge: TOKEN_EXPIRATION_MILLISECONDS,
+      sameSite: "strict"
+    }
   }
 };
 
@@ -73,4 +85,5 @@ interface IAuthenticationVariables {
   staging: IEnvironment;
   development: IEnvironment;
   test: IEnvironment;
+  test_travis: IEnvironment;
 }
