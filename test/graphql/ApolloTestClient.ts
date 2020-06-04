@@ -33,7 +33,7 @@ const LoggedInTestClient = (currentUser: ICurrentUser = defaultCurrentUser) =>
 const LoggedOutTestClient = createTestClient(new Server({
   schema,
   formatError: apolloErrorConverter({ logger: false }),
-  context: () => expressContextMock
+  context: () => expressContextMock()
 }));
 
 const defaultClient = (loggedIn: boolean) => loggedIn ? LoggedInTestClient({
