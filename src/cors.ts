@@ -1,7 +1,4 @@
 import CORS from "cors";
+import { AuthConfig } from "./config/AuthConfig";
 
-export const cors = () => CORS({
-  origin: "http://localhost:3000",
-  credentials: true,
-  optionsSuccessStatus: 200
-});
+export const cors = () => CORS(AuthConfig.cors.options);

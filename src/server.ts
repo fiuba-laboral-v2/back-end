@@ -12,7 +12,9 @@ export const ApolloServer = new Server({
   validationRules: [depthLimit(1000)],
   formatError: apolloErrorConverter(),
   context: (expressContext: ExpressContext) => {
-    expressContext.res.header({ "Access-Control-Allow-Origin": "http://localhost:3000" });
+    expressContext.res.header({
+      "Access-Control-Allow-Origin": AuthConfig.cors.accessControlAllowOrigin
+    });
     const token = expressContext.req.cookies[AuthConfig.cookieName] || "";
     const apolloServerContext: Context = {
       ...(token && { currentUser: JWT.extractTokenPayload(token) }),
