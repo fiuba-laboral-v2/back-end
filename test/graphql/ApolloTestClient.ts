@@ -1,9 +1,10 @@
 import { createTestClient } from "apollo-server-testing";
 import { apolloErrorConverter } from "../../src/FormatErrors";
-import { IApolloServerContext, ICurrentUser } from "../../src/graphqlContext";
+import { ICurrentUser } from "../../src/graphqlContext";
 import { DocumentNode } from "graphql";
-import { ApolloServer as Server } from "apollo-server-express/dist/ApolloServer";
+import { ApolloServer as Server } from "apollo-server-express";
 import { schema } from "../../src/graphql/Schema";
+import { CookieOptions } from "express";
 
 export const testCurrentUserEmail = "test@test.test";
 export const defaultUserUuid = "5bca6c9d-8367-4500-be05-0db55066b2a1";
@@ -15,21 +16,24 @@ export const defaultCurrentUser = {
   applicantUuid: defaultApplicantUuid
 };
 
+const expressContextMock = () => ({
+  res: { cookie: (name: string, val: string, options: CookieOptions) => ({}) }
+});
+
 const LoggedInTestClient = (currentUser: ICurrentUser = defaultCurrentUser) =>
   createTestClient(new Server({
     schema,
     formatError: apolloErrorConverter({ logger: false }),
-    context: () => {
-      const apolloServerContext: IApolloServerContext = {
-        currentUser
-      };
-      return apolloServerContext;
-    }
+    context: () => ({
+      ...expressContextMock(),
+      currentUser
+    })
   }));
 
 const LoggedOutTestClient = createTestClient(new Server({
   schema,
-  formatError: apolloErrorConverter({ logger: false })
+  formatError: apolloErrorConverter({ logger: false }),
+  context: () => expressContextMock
 }));
 
 const defaultClient = (loggedIn: boolean) => loggedIn ? LoggedInTestClient({
