@@ -77,7 +77,7 @@ describe("updateCurrentCompany", () => {
 
   describe("when the update errors", () => {
     it("throws an error if there is no current user", async () => {
-      const apolloClient = client.loggedOut;
+      const apolloClient = client.loggedOut();
       const dataToUpdate = { companyName: "new company name" };
       const { errors } = await apolloClient.mutate({
         mutation: UPDATE_CURRENT_COMPANY,

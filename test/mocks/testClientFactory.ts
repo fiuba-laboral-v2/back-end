@@ -1,37 +1,55 @@
 import { client } from "../graphql/ApolloTestClient";
 import { userFactory } from "./user";
-import { IApplicantProps } from "./interfaces";
+import { IApplicantProps, IClientFactory } from "./interfaces";
 
 export const testClientFactory = {
-  user: async () => {
+  user: async ({ expressContext }: IClientFactory = {}) => {
     const user = await userFactory.user();
     const apolloClient = client.loggedIn({
-      uuid: user.uuid,
-      email: user.email
+      currentUser: {
+        uuid: user.uuid,
+        email: user.email
+      },
+      expressContext
     });
 
     return { user, apolloClient };
   },
-  applicant: async ({
-    careers, password, capabilities
-  }: IApplicantProps = { careers: [], capabilities: [], password: null }) => {
-    const applicant = await userFactory.applicant({ careers, password });
+  applicant: async (
+    {
+      careers,
+      password,
+      capabilities,
+      expressContext
+    }: IApplicantProps = {}
+  ) => {
+    const applicant = await userFactory.applicant({
+      capabilities,
+      careers,
+      password
+    });
     const user = await applicant.getUser();
     const apolloClient = client.loggedIn({
-      uuid: user.uuid,
-      email: user.email,
-      applicantUuid: applicant.uuid
+      currentUser: {
+        uuid: user.uuid,
+        email: user.email,
+        applicantUuid: applicant.uuid
+      },
+      expressContext
     });
 
     return { user, applicant, apolloClient };
   },
-  company: async () => {
+  company: async ({ expressContext }: IClientFactory = {}) => {
     const company = await userFactory.company();
     const [user] = await company.getUsers();
     const apolloClient = client.loggedIn({
-      uuid: user.uuid,
-      email: user.email,
-      companyUuid: company.uuid
+      currentUser: {
+        uuid: user.uuid,
+        email: user.email,
+        companyUuid: company.uuid
+      },
+      expressContext
     });
 
     return { user, company, apolloClient };

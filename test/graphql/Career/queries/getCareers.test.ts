@@ -45,7 +45,7 @@ describe("getCareers", () => {
   });
 
   it("works if there is no current user", async () => {
-    const apolloClient = client.loggedOut;
+    const apolloClient = client.loggedOut();
     const { errors } = await apolloClient.query({ query: GET_CAREERS });
     expect(errors).toBeUndefined();
   });

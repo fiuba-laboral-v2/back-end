@@ -62,7 +62,7 @@ describe("saveJobApplication", () => {
     });
 
     it("returns an error if there is no current user", async () => {
-      const apolloClient = client.loggedOut;
+      const apolloClient = client.loggedOut();
       const offer = await offers.next({ companyUuid: company.uuid }).value;
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,

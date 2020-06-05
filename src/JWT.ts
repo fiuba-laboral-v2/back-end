@@ -4,6 +4,7 @@ import { sign, verify } from "jsonwebtoken";
 import { Application } from "express";
 import jwt from "express-jwt";
 import { ICurrentUser } from "./graphqlContext";
+import { AuthConfig } from "./config/AuthConfig";
 
 let JWT_SECRET: string;
 if (["test", "development", "test_travis"].includes(Environment.NODE_ENV)) {
@@ -29,7 +30,7 @@ export const JWT = {
     return sign(
       payload,
       JWT_SECRET,
-      { expiresIn: "2d" }
+      { expiresIn: AuthConfig.JWT.expiresIn }
     );
   },
   decodeToken: (token: string): ICurrentUser | undefined => {

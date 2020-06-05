@@ -62,7 +62,7 @@ describe("getCareerByCode", () => {
     });
 
     it("returns an error if there is no current user", async () => {
-      const apolloClient = client.loggedOut;
+      const apolloClient = client.loggedOut();
 
       const { errors } = await apolloClient.query({
         query: GET_CAREER_BY_CODE,
