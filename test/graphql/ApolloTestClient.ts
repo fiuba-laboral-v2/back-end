@@ -17,30 +17,28 @@ export const defaultCurrentUser = {
 };
 
 const LoggedInTestClient = (
-  currentUser: ICurrentUser = defaultCurrentUser,
-  context = expressContextMock()
-) =>
+  {
+    currentUser = defaultCurrentUser,
+    expressContext = expressContextMock()
+  }: IClient) =>
   createTestClient(new Server({
     schema,
     formatError: apolloErrorConverter({ logger: false }),
     context: () => ({
-      ...context,
+      ...expressContext,
       currentUser
     })
   }));
 
-const LoggedOutTestClient = (context = expressContextMock()) =>
+const LoggedOutTestClient = ({ expressContext = expressContextMock() }: IClient) =>
   createTestClient(new Server({
     schema,
     formatError: apolloErrorConverter({ logger: false }),
-    context: () => context
+    context: () => expressContext
   }));
 
-const defaultClient = (loggedIn: boolean) => loggedIn ? LoggedInTestClient({
-  uuid: defaultUserUuid,
-  email: testCurrentUserEmail,
-  applicantUuid: defaultApplicantUuid
-}) : LoggedOutTestClient();
+const defaultClient = (loggedIn: boolean) =>
+  loggedIn ? LoggedInTestClient({ currentUser: defaultCurrentUser }) : LoggedOutTestClient({});
 
 export const executeQuery = (
   query: DocumentNode,
@@ -70,12 +68,9 @@ export const client = {
       currentUser = defaultCurrentUser,
       expressContext = expressContextMock()
     }: IClient = {}
-  ) => LoggedInTestClient(currentUser, expressContext),
-  loggedOut: (
-    {
-      expressContext = expressContextMock()
-    }: IClient = {}
-  ) => LoggedOutTestClient(expressContext)
+  ) => LoggedInTestClient({ currentUser, expressContext }),
+  loggedOut: ({ expressContext = expressContextMock() }: IClient = {}) =>
+    LoggedOutTestClient({ expressContext })
 };
 
 interface IClient {
