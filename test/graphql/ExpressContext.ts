@@ -13,6 +13,6 @@ export interface IExpressContext {
 
 export const expressContextMock = (): IExpressContext => ({
   res: {
-    cookie: (name: string, val: string, options: CookieOptions) => val
+    cookie: () => null
   }
 });
