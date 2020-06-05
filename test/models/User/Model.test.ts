@@ -2,7 +2,6 @@ import { ValidationError } from "sequelize";
 import uuid from "uuid/v4";
 import Database from "../../../src/config/Database";
 import { User } from "../../../src/models/User";
-import { UserRepository } from "../../../src/models/User/Repository";
 import {
   NameWithDigitsError,
   PasswordWithoutDigitsError,
@@ -12,19 +11,16 @@ import {
 describe("User", () => {
   beforeAll(() => Database.setConnection());
 
-  beforeEach(() => UserRepository.truncate());
-
   afterAll(() => Database.close());
 
-  it("should instantiate a valid user", async () => {
+  it("instantiates a valid user", async () => {
     const params = {
       email: "asd@qwe.com",
       password: "somethingVerySecret123",
       name: "name",
       surname: "surname"
     };
-    const user = await User.create(params);
-
+    const user = new User(params);
     expect(params).toEqual(expect.objectContaining(
       {
         email: user.email,
@@ -32,6 +28,7 @@ describe("User", () => {
         surname: user.surname
       }
     ));
+    await expect(user.validate()).resolves.not.toThrow();
   });
 
   describe("Errors", () => {
@@ -79,22 +76,6 @@ describe("User", () => {
       await expect(user.validate()).rejects.toThrow(ValidationError);
     });
 
-    it("should throw an error when creating an user with an existing email", async () => {
-      await User.create({
-        email: "asd@qwe.com",
-        password: "somethingVerySecret123",
-        name: "name",
-        surname: "surname"
-      });
-      const secondUSer = new User({
-        email: "asd@qwe.com",
-        password: "somethingVerySecret123",
-        name: "name",
-        surname: "surname"
-      });
-      await expect(secondUSer.save()).rejects.toThrow();
-    });
-
     it("should throw an error if email format is invalid", async () => {
       const email = "asdqwe.com";
       const user = new User({
@@ -104,20 +85,21 @@ describe("User", () => {
         surname: "surname"
       });
 
-      await expect(user.save()).rejects.toThrow(InvalidEmailError.buildMessage(email));
+      await expect(user.validate()).rejects.toThrow(InvalidEmailError.buildMessage(email));
     });
   });
 
   describe("Before create", () => {
-    it("checks for password validity before creation", async () => {
+    it("throws error if password is invalid in before creation hook", async () => {
       const user = new User({
         email: "asd@qwe.com",
         password: "somethingWithoutDigits",
         name: "name",
         surname: "surname"
       });
-
-      await expect(user.save()).rejects.toThrow(PasswordWithoutDigitsError);
+      expect(
+        () => User.beforeCreateHook(user)
+      ).toThrow(PasswordWithoutDigitsError);
     });
 
     it("hashes password before creation", async () => {

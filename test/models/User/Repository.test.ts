@@ -1,6 +1,8 @@
+import { UniqueConstraintError } from "sequelize";
 import Database from "../../../src/config/Database";
 import { UserRepository } from "../../../src/models/User/Repository";
 import { UserNotFoundError } from "../../../src/models/User";
+import { PasswordWithoutDigitsError } from "validations-fiuba-laboral-v2";
 
 describe("UserRepository", () => {
   beforeAll(() => Database.setConnection());
@@ -40,6 +42,41 @@ describe("UserRepository", () => {
       name: "Sebastian",
       surname: "blanco"
     })).rejects.toThrow();
+  });
+
+  it("throws an error when creating an user with an existing email", async () => {
+    const email = "asd@qwe.com";
+    await UserRepository.create({
+      email: email,
+      password: "somethingVerySecret123",
+      name: "name",
+      surname: "surname"
+    });
+    await expect(
+      UserRepository.create({
+        email: email,
+        password: "somethingVerySecret123",
+        name: "name",
+        surname: "surname"
+      })
+    ).rejects.toThrowErrorWithMessage(
+      UniqueConstraintError,
+      "Validation error"
+    );
+  });
+
+  it("checks for password validity before creation", async () => {
+    await expect(
+      UserRepository.create({
+        email: "asd@qwe.com",
+        password: "somethingWithoutDigits",
+        name: "name",
+        surname: "surname"
+      })
+    ).rejects.toThrowErrorWithMessage(
+      PasswordWithoutDigitsError,
+      "La contraseña debe contener numeros"
+    );
   });
 
   it("should find a user by email", async () => {
