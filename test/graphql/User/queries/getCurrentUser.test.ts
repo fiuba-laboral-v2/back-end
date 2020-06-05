@@ -81,7 +81,7 @@ describe("Current User query", () => {
   });
 
   it("returns null if the current user is not set in context", async () => {
-    const { data, errors } = await client.loggedOut.query({ query: GET_CURRENT_USER });
+    const { data, errors } = await client.loggedOut().query({ query: GET_CURRENT_USER });
     expect(errors).toBeUndefined();
     expect(data?.getCurrentUser).toBeNull();
   });

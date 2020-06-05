@@ -93,7 +93,7 @@ describe("saveApplicant", () => {
     it("creates a new applicant", async () => {
       const applicantData = applicantsData.next().value;
 
-      const { data, errors } = await client.loggedOut.mutate({
+      const { data, errors } = await client.loggedOut().mutate({
         mutation: SAVE_APPLICANT_WITH_COMPLETE_DATA,
         variables: {
           ...applicantData,
@@ -122,7 +122,7 @@ describe("saveApplicant", () => {
 
     it("creates applicant with only obligatory data", async () => {
       const applicantData = applicantsData.next().value;
-      const { data, errors } = await client.loggedOut.mutate({
+      const { data, errors } = await client.loggedOut().mutate({
         mutation: SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA,
         variables: {
           ...applicantData,
@@ -157,7 +157,7 @@ describe("saveApplicant", () => {
     it("should throw and error if the user exists", async () => {
       const applicantData = applicantsData.next().value;
       await UserRepository.create(applicantData.user);
-      const { errors } = await client.loggedOut.mutate({
+      const { errors } = await client.loggedOut().mutate({
         mutation: SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA,
         variables: applicantData
       });

@@ -27,7 +27,7 @@ describe("saveCareer", () => {
 
   it("creates the career model", async () => {
     const params = careersData.next().value;
-    const { data, errors } = await client.loggedOut.mutate({
+    const { data, errors } = await client.loggedOut().mutate({
       mutation: SAVE_CAREER,
       variables: params
     });
@@ -43,7 +43,7 @@ describe("saveCareer", () => {
 
   describe("Errors", () => {
     it("should throw an if the description is not provided", async () => {
-      const { errors } = await client.loggedOut.mutate({
+      const { errors } = await client.loggedOut().mutate({
         mutation: SAVE_CAREER,
         variables: { code: "3" , credits: 250 }
       });
@@ -52,8 +52,8 @@ describe("saveCareer", () => {
 
     it("should throw an if career already exist", async () => {
       const params = careersData.next().value;
-      await client.loggedOut.mutate({ mutation: SAVE_CAREER, variables: params });
-      const { errors } = await client.loggedOut.mutate({
+      await client.loggedOut().mutate({ mutation: SAVE_CAREER, variables: params });
+      const { errors } = await client.loggedOut().mutate({
         mutation: SAVE_CAREER,
         variables: params
       });

@@ -4,7 +4,7 @@ import { ICurrentUser } from "../../src/graphqlContext";
 import { DocumentNode } from "graphql";
 import { ApolloServer as Server } from "apollo-server-express";
 import { schema } from "../../src/graphql/Schema";
-import { CookieOptions } from "express";
+import { expressContextMock, IExpressContext } from "./ExpressContext";
 
 export const testCurrentUserEmail = "test@test.test";
 export const defaultUserUuid = "5bca6c9d-8367-4500-be05-0db55066b2a1";
@@ -16,31 +16,31 @@ export const defaultCurrentUser = {
   applicantUuid: defaultApplicantUuid
 };
 
-const expressContextMock = () => ({
-  res: { cookie: (name: string, val: string, options: CookieOptions) => ({}) }
-});
-
-const LoggedInTestClient = (currentUser: ICurrentUser = defaultCurrentUser) =>
+const LoggedInTestClient = (
+  currentUser: ICurrentUser = defaultCurrentUser,
+  context = expressContextMock()
+) =>
   createTestClient(new Server({
     schema,
     formatError: apolloErrorConverter({ logger: false }),
     context: () => ({
-      ...expressContextMock(),
+      ...context,
       currentUser
     })
   }));
 
-const LoggedOutTestClient = createTestClient(new Server({
-  schema,
-  formatError: apolloErrorConverter({ logger: false }),
-  context: () => expressContextMock()
-}));
+const LoggedOutTestClient = (context = expressContextMock()) =>
+  createTestClient(new Server({
+    schema,
+    formatError: apolloErrorConverter({ logger: false }),
+    context: () => context
+  }));
 
 const defaultClient = (loggedIn: boolean) => loggedIn ? LoggedInTestClient({
   uuid: defaultUserUuid,
   email: testCurrentUserEmail,
   applicantUuid: defaultApplicantUuid
-}) : LoggedOutTestClient;
+}) : LoggedOutTestClient();
 
 export const executeQuery = (
   query: DocumentNode,
@@ -65,6 +65,18 @@ export const executeMutation = (
 };
 
 export const client = {
-  loggedIn: (currentUser: ICurrentUser = defaultCurrentUser) => LoggedInTestClient(currentUser),
-  loggedOut: LoggedOutTestClient
+  loggedIn: (
+    currentUser: ICurrentUser = defaultCurrentUser,
+    context = expressContextMock()
+  ) => LoggedInTestClient(currentUser, context),
+  loggedOut: (
+    {
+      expressContext = expressContextMock()
+    }: IClient = {}
+  ) => LoggedOutTestClient(expressContext)
 };
+
+interface IClient {
+  currentUser?: ICurrentUser;
+  expressContext?: IExpressContext;
+}

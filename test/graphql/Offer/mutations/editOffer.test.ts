@@ -82,7 +82,7 @@ describe("editOffer", () => {
   });
 
   it("throws an error when a user is not logged in", async () => {
-    const apolloClient = client.loggedOut;
+    const apolloClient = client.loggedOut();
     const attributes = offersData.next({
       companyUuid: "ca2c5210-cb79-4026-9a26-1eb7a4159e72"
     }).value;

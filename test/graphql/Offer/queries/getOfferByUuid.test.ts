@@ -197,7 +197,7 @@ describe("getOfferByUuid", () => {
     });
 
     it("returns an error if there is no current user", async () => {
-      const apolloClient = client.loggedOut;
+      const apolloClient = client.loggedOut();
       const company = await userFactory.company();
 
       const { offer: { uuid } } = await createOffer(company);

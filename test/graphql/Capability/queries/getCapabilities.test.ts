@@ -48,7 +48,7 @@ describe("getCapabilities", () => {
 
   describe("Errors", () => {
     it("returns an error if there is no current user", async () => {
-      const apolloClient = client.loggedOut;
+      const apolloClient = client.loggedOut();
 
       const { errors } = await apolloClient.query({ query: GET_CAPABILITIES });
       expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });

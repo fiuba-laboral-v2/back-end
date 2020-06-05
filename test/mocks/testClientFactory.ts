@@ -12,16 +12,28 @@ export const testClientFactory = {
 
     return { user, apolloClient };
   },
-  applicant: async ({
-    careers, password, capabilities
-  }: IApplicantProps = { careers: [], capabilities: [], password: null }) => {
-    const applicant = await userFactory.applicant({ careers, password });
-    const user = await applicant.getUser();
-    const apolloClient = client.loggedIn({
-      uuid: user.uuid,
-      email: user.email,
-      applicantUuid: applicant.uuid
+  applicant: async (
+    {
+      careers,
+      password,
+      capabilities,
+      expressContext
+    }: IApplicantProps = {}
+  ) => {
+    const applicant = await userFactory.applicant({
+      capabilities,
+      careers,
+      password
     });
+    const user = await applicant.getUser();
+    const apolloClient = client.loggedIn(
+      {
+        uuid: user.uuid,
+        email: user.email,
+        applicantUuid: applicant.uuid
+      },
+      expressContext
+    );
 
     return { user, applicant, apolloClient };
   },
