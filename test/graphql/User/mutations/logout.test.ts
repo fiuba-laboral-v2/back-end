@@ -22,7 +22,7 @@ describe("logout", () => {
 
   afterAll(() => Database.close());
 
-  it("logouts with no errors", async () => {
+  it("logouts an applicant setting empty cookie", async () => {
     const setCookie = jest.fn();
     const expressContext = {
       res: { cookie: setCookie }

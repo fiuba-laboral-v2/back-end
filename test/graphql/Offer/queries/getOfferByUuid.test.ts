@@ -182,8 +182,10 @@ describe("getOfferByUuid", () => {
     it("returns an error if the current user is not an applicant", async () => {
       const user = await userFactory.user();
       const apolloClient = client.loggedIn({
-        uuid: user.uuid,
-        email: user.email
+        currentUser: {
+          uuid: user.uuid,
+          email: user.email
+        }
       });
       const company = await userFactory.company();
       const { offer: { uuid } } = await createOffer(company);

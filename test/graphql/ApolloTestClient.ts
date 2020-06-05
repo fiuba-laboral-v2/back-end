@@ -66,9 +66,11 @@ export const executeMutation = (
 
 export const client = {
   loggedIn: (
-    currentUser: ICurrentUser = defaultCurrentUser,
-    context = expressContextMock()
-  ) => LoggedInTestClient(currentUser, context),
+    {
+      currentUser = defaultCurrentUser,
+      expressContext = expressContextMock()
+    }: IClient = {}
+  ) => LoggedInTestClient(currentUser, expressContext),
   loggedOut: (
     {
       expressContext = expressContextMock()
