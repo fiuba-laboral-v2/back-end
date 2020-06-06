@@ -9,7 +9,7 @@ import {
   Unique
 } from "sequelize-typescript";
 import { compare, hashSync } from "bcrypt";
-import { HasOneGetAssociationMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
+import { HasOneGetAssociationMixin, STRING, TEXT, UUID, UUIDV4, BOOLEAN } from "sequelize";
 import { Applicant } from "../Applicant/Model";
 import { CompanyUser } from "../CompanyUser/Model";
 import { validateEmail, validateName, validatePassword } from "validations-fiuba-laboral-v2";
@@ -55,6 +55,13 @@ export class User extends Model<User> {
     type: TEXT
   })
   public surname: string;
+
+  @Column({
+    allowNull: false,
+    defaultValue: false,
+    type: BOOLEAN
+  })
+  public isAdmin: string;
 
   @HasOne(() => Applicant, "userUuid")
   public applicant: Applicant;

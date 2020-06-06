@@ -4,6 +4,7 @@ export interface IUser {
   surname: string;
   email: string;
   password: string;
+  isAdmin?: boolean;
 }
 
 export interface IUserEditable {
