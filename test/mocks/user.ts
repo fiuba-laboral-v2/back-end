@@ -7,12 +7,13 @@ import { CompanyRepository } from "../../src/models/Company";
 import { IApplicantProps } from "./interfaces";
 
 export const userFactory = {
-  user: (password?: string) =>
+  user: (password?: string, isAdmin?: boolean) =>
     UserRepository.create({
       email: internet.email(),
       password: password || "AValidPassword123",
       name: "Bruno",
-      surname: "Diaz"
+      surname: "Diaz",
+      isAdmin
     }
   ),
   applicant: ({

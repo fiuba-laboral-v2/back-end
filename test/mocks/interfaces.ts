@@ -5,6 +5,11 @@ export interface IClientFactory {
   expressContext?: IExpressContext;
 }
 
+export interface IUserProps extends IClientFactory {
+  password?: string;
+  isAdmin?: boolean;
+}
+
 export interface IApplicantProps extends IClientFactory {
   careers?: IApplicantCareer [];
   capabilities?: string[];
