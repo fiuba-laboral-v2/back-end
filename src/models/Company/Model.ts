@@ -1,5 +1,5 @@
 import { AllowNull, Column, HasMany, Is, Model, Table, BelongsToMany } from "sequelize-typescript";
-import { HasManyGetAssociationsMixin, DataTypes } from "sequelize";
+import { HasManyGetAssociationsMixin, STRING, TEXT, UUID, UUIDV4, ENUM } from "sequelize";
 import { CompanyPhoneNumber } from "../CompanyPhoneNumber";
 import { CompanyPhoto } from "../CompanyPhoto";
 import { Offer } from "../Offer/Model";
@@ -18,41 +18,41 @@ export class Company extends Model<Company> {
   @Column({
     allowNull: false,
     primaryKey: true,
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4
+    type: UUID,
+    defaultValue: UUIDV4
   })
   public uuid: string;
 
   @AllowNull(false)
   @Is("cuit", validateCuit)
-  @Column(DataTypes.STRING)
+  @Column(STRING)
   public cuit: string;
 
   @AllowNull(false)
   @Is("name", validateName)
-  @Column(DataTypes.STRING)
+  @Column(STRING)
   public companyName: string;
 
-  @Column(DataTypes.STRING)
+  @Column(STRING)
   public slogan: string;
 
-  @Column(DataTypes.TEXT)
+  @Column(TEXT)
   public description: string;
 
-  @Column(DataTypes.TEXT)
+  @Column(TEXT)
   public logo: string;
 
   @Is(validateURL)
-  @Column(DataTypes.STRING)
+  @Column(STRING)
   public website: string;
 
   @Is(validateEmail)
-  @Column(DataTypes.STRING)
+  @Column(STRING)
   public email: string;
 
   @Column({
     allowNull: false,
-    type: DataTypes.ENUM<string>({ values: approvalStatuses }),
+    type: ENUM<string>({ values: approvalStatuses }),
     defaultValue: ApprovalStatus.pending
   })
   public approvalStatus: ApprovalStatus;
