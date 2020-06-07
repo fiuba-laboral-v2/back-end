@@ -4,4 +4,4 @@ export enum ApprovalStatus {
   rejected = "rejected"
 }
 
-export const approvalStatus = Object.keys(ApprovalStatus);
+export const approvalStatuses = Object.keys(ApprovalStatus);

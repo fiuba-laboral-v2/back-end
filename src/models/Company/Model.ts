@@ -5,7 +5,7 @@ import { CompanyPhoto } from "../CompanyPhoto";
 import { Offer } from "../Offer/Model";
 import { User } from "../User/Model";
 import { CompanyUser } from "../CompanyUser/Model";
-import { ApprovalStatus, approvalStatus } from "../ApprovalStatus";
+import { ApprovalStatus, approvalStatuses } from "../ApprovalStatus";
 import {
   validateCuit,
   validateName,
@@ -52,7 +52,7 @@ export class Company extends Model<Company> {
 
   @Column({
     allowNull: false,
-    type: DataTypes.ENUM<string>({ values: approvalStatus }),
+    type: DataTypes.ENUM<string>({ values: approvalStatuses }),
     defaultValue: ApprovalStatus.pending
   })
   public approvalStatus: ApprovalStatus;
