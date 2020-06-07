@@ -10,6 +10,7 @@ const GET_CURRENT_USER = gql`
       email
       name
       surname
+      isAdmin
       applicant {
         padron
       }
@@ -22,11 +23,12 @@ const GET_CURRENT_USER = gql`
   }
 `;
 
-describe("Current User query", () => {
+describe("getCurrentUser", () => {
   beforeAll(() => {
     Database.setConnection();
     return UserRepository.truncate();
   });
+
   afterAll(() => Database.close());
 
   it("returns current user if it's set in context", async () => {
@@ -38,6 +40,23 @@ describe("Current User query", () => {
         email: user.email,
         name: user.name,
         surname: user.surname,
+        isAdmin: false,
+        applicant: null,
+        company: null
+      }
+    );
+  });
+
+  it("returns current admin user if it's set in context", async () => {
+    const { user, apolloClient } = await testClientFactory.admin();
+    const { data, errors } = await apolloClient.query({ query: GET_CURRENT_USER });
+    expect(errors).toBeUndefined();
+    expect(data?.getCurrentUser).toEqual(
+      {
+        email: user.email,
+        name: user.name,
+        surname: user.surname,
+        isAdmin: true,
         applicant: null,
         company: null
       }
@@ -53,6 +72,7 @@ describe("Current User query", () => {
         email: user.email,
         name: user.name,
         surname: user.surname,
+        isAdmin: false,
         applicant: {
           padron: applicant.padron
         },
@@ -70,6 +90,7 @@ describe("Current User query", () => {
         email: user.email,
         name: user.name,
         surname: user.surname,
+        isAdmin: false,
         applicant: null,
         company: {
           uuid: company.uuid,

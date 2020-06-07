@@ -4,15 +4,16 @@ import { cuitGenerator } from "../generators/Company/cuitGenerator";
 import { UserRepository } from "../../src/models/User";
 import { ApplicantRepository } from "../../src/models/Applicant";
 import { CompanyRepository } from "../../src/models/Company";
-import { IApplicantProps } from "./interfaces";
+import { IUserProps, IApplicantProps } from "./interfaces";
 
 export const userFactory = {
-  user: (password?: string) =>
+  user: ({ password, isAdmin }: IUserProps = {}) =>
     UserRepository.create({
       email: internet.email(),
       password: password || "AValidPassword123",
       name: "Bruno",
-      surname: "Diaz"
+      surname: "Diaz",
+      isAdmin
     }
   ),
   applicant: ({

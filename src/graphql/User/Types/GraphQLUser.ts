@@ -1,5 +1,5 @@
 import { GraphQLObjectType } from "graphql";
-import { ID, nonNull, String } from "../../fieldTypes";
+import { ID, nonNull, String, Boolean } from "../../fieldTypes";
 import { User } from "../../../models/User";
 import { GraphQLApplicant } from "../../Applicant/Types/Applicant";
 import { GraphQLCompany } from "../../Company/Types/GraphQLCompany";
@@ -18,6 +18,9 @@ const GraphQLUser = new GraphQLObjectType<User>({
     },
     surname: {
       type: nonNull(String)
+    },
+    isAdmin: {
+      type: nonNull(Boolean)
     },
     applicant: {
       type: GraphQLApplicant,

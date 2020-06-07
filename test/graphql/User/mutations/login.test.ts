@@ -44,7 +44,7 @@ describe("login", () => {
   it("sets the cookie for a user", async () => {
     const password = "AValidPassword3";
     const expressContext = createExpressContext();
-    const user = await userFactory.user(password);
+    const user = await userFactory.user({ password });
     const apolloClient = client.loggedOut({ expressContext });
     const { errors } = await apolloClient.mutate({
       mutation: LOGIN,
