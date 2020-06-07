@@ -32,7 +32,7 @@ describe("getMyOffers", () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
-    companies = CompanyGenerator.withMinimumData();
+    companies = CompanyGenerator.instance.withMinimumData();
     offers = await OfferGenerator.instance.withObligatoryData();
   });
 

@@ -1,10 +1,11 @@
 import { AllowNull, Column, HasMany, Is, Model, Table, BelongsToMany } from "sequelize-typescript";
-import { HasManyGetAssociationsMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
+import { HasManyGetAssociationsMixin, STRING, TEXT, UUID, UUIDV4, ENUM } from "sequelize";
 import { CompanyPhoneNumber } from "../CompanyPhoneNumber";
 import { CompanyPhoto } from "../CompanyPhoto";
 import { Offer } from "../Offer/Model";
 import { User } from "../User/Model";
 import { CompanyUser } from "../CompanyUser/Model";
+import { ApprovalStatus, approvalStatuses } from "../ApprovalStatus";
 import {
   validateCuit,
   validateName,
@@ -48,6 +49,13 @@ export class Company extends Model<Company> {
   @Is(validateEmail)
   @Column(STRING)
   public email: string;
+
+  @Column({
+    allowNull: false,
+    type: ENUM<string>({ values: approvalStatuses }),
+    defaultValue: ApprovalStatus.pending
+  })
+  public approvalStatus: ApprovalStatus;
 
   @HasMany(() => CompanyPhoneNumber)
   public phoneNumbers: CompanyPhoneNumber[];

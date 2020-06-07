@@ -1,20 +1,7 @@
 import { UserMocks } from "../User/mocks";
 import { ICompany } from "../../../src/models/Company";
 
-const additionalData = {
-  phoneNumbers: ["1143076222", "1159821999", "1143336666", "1143337777"],
-  photos: [
-    "https://miro.medium.com/max/11520/1*Om-snCmpOoI5vehnF6FBlw.jpeg",
-    "https://pbs.twimg.com/media/EK_OWQEWwAIwDXr.jpg"
-  ]
-};
-
 export const companyMocks = {
-  minimumData: () => ({
-    cuit: "30711819017",
-    companyName: "devartis",
-    user: UserMocks.userAttributes
-  }),
   companyDataWithoutUser: () => ({
     cuit: "30711819017",
     companyName: "Mercado Libre",
@@ -32,13 +19,5 @@ export const companyMocks = {
   companyData: (): ICompany => ({
     ...companyMocks.companyDataWithoutUser(),
     user: UserMocks.userAttributes
-  }),
-  completeDataWithoutUser: () => ({
-    ...companyMocks.companyDataWithoutUser(),
-    ...additionalData
-  }),
-  completeData: () => ({
-    ...companyMocks.companyData(),
-    ...additionalData
   })
 };

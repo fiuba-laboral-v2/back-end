@@ -1,6 +1,8 @@
 import { ValidationError } from "sequelize";
 import { Company } from "../../../src/models/Company";
 import Database from "../../../src/config/Database";
+import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
+import { UUID_REGEX } from "../index";
 import {
   InvalidCuitError,
   WrongLengthCuitError,
@@ -15,7 +17,7 @@ describe("Company", () => {
 
   afterAll(() => Database.close());
 
-  it("create a valid company", async () => {
+  it("creates a valid company", async () => {
     const companyData = {
       cuit: "30711819017",
       companyName: "companyName",
@@ -23,12 +25,15 @@ describe("Company", () => {
       description: "description",
       logo: "https://logo.png",
       website: "https://website.com/",
-      email: "email@email.com"
+      email: "email@email.com",
+      approvalStatus: ApprovalStatus.pending
     };
     const company = new Company(companyData);
     await expect(company.validate()).resolves.not.toThrow();
-    expect(company.uuid).not.toBeUndefined();
-    expect(company).toEqual(expect.objectContaining(companyData));
+    expect(company).toEqual(expect.objectContaining({
+      uuid: expect.stringMatching(UUID_REGEX),
+      ...companyData
+    }));
   });
 
   it("throws an error if cuit is null", async () => {

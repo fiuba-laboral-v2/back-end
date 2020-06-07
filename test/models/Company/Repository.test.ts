@@ -3,6 +3,7 @@ import Database from "../../../src/config/Database";
 import { PhoneNumberWithLettersError, InvalidCuitError } from "validations-fiuba-laboral-v2";
 import { CompanyRepository } from "../../../src/models/Company";
 import { UserRepository } from "../../../src/models/User";
+import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
 import { CompanyGenerator, TCompanyDataGenerator } from "../../generators/Company";
 import { UserMocks } from "../User/mocks";
 
@@ -13,7 +14,7 @@ describe("CompanyRepository", () => {
     Database.setConnection();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
-    companiesData = await CompanyGenerator.completeData();
+    companiesData = await CompanyGenerator.data.completeData();
   });
 
   afterAll(() => Database.close());
@@ -36,6 +37,12 @@ describe("CompanyRepository", () => {
     expect((await company.getPhotos())).toHaveLength(
       companyCompleteData.photos!.length
     );
+  });
+
+  it("creates a company in a pending approval status as default", async () => {
+    const companyCompleteData = companiesData.next().value;
+    const company = await CompanyRepository.create(companyCompleteData);
+    expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
   });
 
   it("creates a valid company with a logo with more than 255 characters", async () => {

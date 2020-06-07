@@ -4,5 +4,9 @@
     "outDir": "../../dist_migrations",
     "rootDir": "../../",
     "sourceMap": false
-  }
+  },
+  "include": [
+    "../models/ApprovalStatus",
+    "../migrations"
+  ]
 }

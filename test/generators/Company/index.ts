@@ -7,18 +7,29 @@ export type TCompanyGenerator = CustomGenerator<Promise<Company>>;
 export type TCompanyDataGenerator = CustomGenerator<ICompany>;
 
 export const CompanyGenerator = {
-  withMinimumData: function*(): TCompanyGenerator {
-    let index = 0;
-    while (true) {
-      yield CompanyRepository.create(withMinimumData(index));
-      index++;
+  instance: {
+    withMinimumData: function*(): TCompanyGenerator {
+      let index = 0;
+      while (true) {
+        yield CompanyRepository.create(withMinimumData(index));
+        index++;
+      }
+    },
+    withCompleteData: function*(): TCompanyGenerator {
+      let index = 0;
+      while (true) {
+        yield CompanyRepository.create(completeData(index));
+        index++;
+      }
     }
   },
-  completeData: function*(): TCompanyDataGenerator {
-    let index = 0;
-    while (true) {
-      yield completeData(index);
-      index++;
+  data: {
+    completeData: function*(): TCompanyDataGenerator {
+      let index = 0;
+      while (true) {
+        yield completeData(index);
+        index++;
+      }
     }
   }
 };

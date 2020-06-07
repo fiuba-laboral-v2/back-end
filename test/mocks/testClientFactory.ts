@@ -1,6 +1,6 @@
 import { client } from "../graphql/ApolloTestClient";
 import { userFactory } from "./user";
-import { IUserProps, IApplicantProps, IClientFactory } from "./interfaces";
+import { IUserProps, IApplicantProps, ICompanyProps } from "./interfaces";
 
 const createUser = async ({ password, isAdmin, expressContext }: IUserProps = {}) => {
   const user = await userFactory.user({ password, isAdmin });
@@ -45,8 +45,8 @@ export const testClientFactory = {
 
     return { user, applicant, apolloClient };
   },
-  company: async ({ expressContext }: IClientFactory = {}) => {
-    const company = await userFactory.company();
+  company: async ({ photos, expressContext }: ICompanyProps = {}) => {
+    const company = await userFactory.company({ photos });
     const [user] = await company.getUsers();
     const apolloClient = client.loggedIn({
       currentUser: {
