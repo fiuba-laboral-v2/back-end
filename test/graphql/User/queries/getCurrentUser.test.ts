@@ -48,7 +48,7 @@ describe("getCurrentUser", () => {
   });
 
   it("returns current admin user if it's set in context", async () => {
-    const { user, apolloClient } = await testClientFactory.user({ isAdmin: true });
+    const { user, apolloClient } = await testClientFactory.admin();
     const { data, errors } = await apolloClient.query({ query: GET_CURRENT_USER });
     expect(errors).toBeUndefined();
     expect(data?.getCurrentUser).toEqual(

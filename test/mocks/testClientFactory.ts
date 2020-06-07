@@ -3,8 +3,20 @@ import { userFactory } from "./user";
 import { IUserProps, IApplicantProps, IClientFactory } from "./interfaces";
 
 export const testClientFactory = {
-  user: async ({ password, isAdmin, expressContext }: IUserProps = {}) => {
-    const user = await userFactory.user(password, isAdmin);
+  user: async ({ password, expressContext }: IUserProps = {}) => {
+    const user = await userFactory.user({ password });
+    const apolloClient = client.loggedIn({
+      currentUser: {
+        uuid: user.uuid,
+        email: user.email
+      },
+      expressContext
+    });
+
+    return { user, apolloClient };
+  },
+  admin: async ({ password, expressContext }: IUserProps = {}) => {
+    const user = await userFactory.user({ password, isAdmin: true });
     const apolloClient = client.loggedIn({
       currentUser: {
         uuid: user.uuid,
