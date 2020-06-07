@@ -2,6 +2,7 @@ import { ValidationError } from "sequelize";
 import { Company } from "../../../src/models/Company";
 import Database from "../../../src/config/Database";
 import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
+import { UUID_REGEX } from "../index";
 import {
   InvalidCuitError,
   WrongLengthCuitError,
@@ -10,8 +11,6 @@ import {
   InvalidURLError,
   InvalidEmailError
 } from "validations-fiuba-laboral-v2";
-
-const UUID_REGEX = "\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b";
 
 describe("Company", () => {
   beforeAll(() => Database.setConnection());
