@@ -1,5 +1,5 @@
 import { AllowNull, Column, HasMany, Is, Model, Table, BelongsToMany } from "sequelize-typescript";
-import { HasManyGetAssociationsMixin, DataTypes, ENUM } from "sequelize";
+import { HasManyGetAssociationsMixin, DataTypes } from "sequelize";
 import { CompanyPhoneNumber } from "../CompanyPhoneNumber";
 import { CompanyPhoto } from "../CompanyPhoto";
 import { Offer } from "../Offer/Model";
@@ -52,7 +52,7 @@ export class Company extends Model<Company> {
 
   @Column({
     allowNull: false,
-    type: ENUM<string>({ values: approvalStatus }),
+    type: DataTypes.ENUM<string>({ values: approvalStatus }),
     defaultValue: ApprovalStatus.pending
   })
   public approvalStatus: ApprovalStatus;
