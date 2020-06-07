@@ -17,7 +17,7 @@ describe("JobApplicationRepository", () => {
     Database.setConnection();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
-    companies = CompanyGenerator.withMinimumData();
+    companies = CompanyGenerator.instance.withMinimumData();
     applicants = ApplicantGenerator.withMinimumData();
     offers = await OfferGenerator.instance.withObligatoryData();
   });

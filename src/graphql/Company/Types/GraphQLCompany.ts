@@ -29,6 +29,9 @@ const GraphQLCompany = new GraphQLObjectType<Company>({
     email: {
       type: String
     },
+    approvalStatus: {
+      type: nonNull(String)
+    },
     phoneNumbers: {
       type: List(String),
       resolve: async company =>

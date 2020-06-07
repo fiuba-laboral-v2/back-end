@@ -10,6 +10,11 @@ export interface IUserProps extends IClientFactory {
   isAdmin?: boolean;
 }
 
+export interface ICompanyProps extends IClientFactory {
+  user?: IUserProps;
+  photos?: string[];
+}
+
 export interface IApplicantProps extends IClientFactory {
   careers?: IApplicantCareer [];
   capabilities?: string[];

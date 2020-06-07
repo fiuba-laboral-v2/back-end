@@ -25,13 +25,7 @@ describe("getCompanies", () => {
     ]);
   });
 
-  afterAll(async () => {
-    await Promise.all([
-      CompanyRepository.truncate(),
-      UserRepository.truncate()
-    ]);
-    return Database.close();
-  });
+  afterAll(() => Database.close());
 
   it("returns all companies", async () => {
     const { company, apolloClient } = await testClientFactory.company();

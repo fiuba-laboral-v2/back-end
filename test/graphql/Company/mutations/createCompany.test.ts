@@ -1,20 +1,37 @@
 import { gql } from "apollo-server";
-import { executeMutation } from "../../ApolloTestClient";
+import { client } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { UserRepository } from "../../../../src/models/User";
-import { UserMocks } from "../../../models/User/mocks";
-import { companyMocks } from "../../../models/Company/mocks";
+import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
+import { CompanyGenerator, TCompanyDataGenerator } from "../../../generators/Company";
 
 const SAVE_COMPANY_WITH_COMPLETE_DATA = gql`
   mutation (
-    $cuit: String!, $companyName: String!, $slogan: String, $description: String,
-    $logo: String, $website: String, $email: String, $phoneNumbers: [String],
-    $photos: [String], $user: UserInput!) {
+      $user: UserInput!,
+      $cuit: String!,
+      $companyName: String!,
+      $slogan: String,
+      $description: String,
+      $logo: String,
+      $website: String,
+      $email: String,
+      $phoneNumbers: [String],
+      $photos: [String]
+  ) {
     createCompany(
-      cuit: $cuit, companyName: $companyName, slogan: $slogan, description: $description,
-      logo: $logo, website: $website, email: $email, phoneNumbers: $phoneNumbers,
-      photos: $photos, user: $user) {
+        user: $user,
+        cuit: $cuit,
+        companyName:
+        $companyName,
+        slogan: $slogan,
+        description: $description,
+        logo: $logo,
+        website: $website,
+        email: $email,
+        phoneNumbers: $phoneNumbers,
+        photos: $photos
+    ) {
       cuit
       companyName
       slogan
@@ -22,6 +39,7 @@ const SAVE_COMPANY_WITH_COMPLETE_DATA = gql`
       logo
       website
       email
+      approvalStatus
       phoneNumbers
       photos
     }
@@ -38,59 +56,66 @@ const SAVE_COMPANY_WITH_MINIMUM_DATA = gql`
 `;
 
 describe("createCompany", () => {
-  beforeAll(() => Database.setConnection());
-  beforeEach(() => Promise.all([
-    CompanyRepository.truncate(),
-    UserRepository.truncate()
-  ]));
+  let companiesData: TCompanyDataGenerator;
+
+  beforeAll(async () => {
+    Database.setConnection();
+    await CompanyRepository.truncate();
+    await UserRepository.truncate();
+    companiesData = CompanyGenerator.data.completeData();
+  });
+
   afterAll(() => Database.close());
 
   describe("When the creation succeeds", () => {
     it("create company", async () => {
-      const response = await executeMutation(
-        SAVE_COMPANY_WITH_COMPLETE_DATA,
-        companyMocks.completeData()
-      );
+      const { user, ...companyData } = companiesData.next().value;
+      const response = await client.loggedOut().mutate({
+        mutation: SAVE_COMPANY_WITH_COMPLETE_DATA,
+        variables: { user, ...companyData }
+      });
       expect(response.errors).toBeUndefined();
-      expect(response.data).not.toBeUndefined();
       expect(response.data).toEqual(
         {
           createCompany: {
-            ...companyMocks.completeDataWithoutUser(),
-            phoneNumbers: expect.arrayContaining(
-              companyMocks.completeDataWithoutUser().phoneNumbers
-            )
+            ...companyData,
+            approvalStatus: ApprovalStatus.pending,
+            phoneNumbers: expect.arrayContaining(companyData.phoneNumbers!)
           }
         }
       );
     });
 
     it("creates company with only obligatory data", async () => {
-      const { user: userData, ...companyData } = companyMocks.minimumData();
-      const response = await executeMutation(
-        SAVE_COMPANY_WITH_MINIMUM_DATA,
-        { user: userData, ...companyData }
-      );
+      const { user, cuit, companyName } = companiesData.next().value;
+      const response = await client.loggedOut().mutate({
+        mutation: SAVE_COMPANY_WITH_MINIMUM_DATA,
+        variables: { user, cuit, companyName }
+      });
       expect(response.errors).toBeUndefined();
       expect(response.data).not.toBeUndefined();
-      expect(response.data).toEqual({ createCompany: companyData });
+      expect(response.data).toEqual({ createCompany: { cuit, companyName } });
     });
   });
 
   describe("when the creation errors", () => {
-    it("should throw an error if the company with its cuit already exist", async () => {
-      await executeMutation(
-        SAVE_COMPANY_WITH_MINIMUM_DATA,
-        companyMocks.minimumData()
-      );
-      const { errors } = await executeMutation(
-        SAVE_COMPANY_WITH_MINIMUM_DATA,
-        {
-          ...companyMocks.minimumData(),
-          user: { ...UserMocks.userAttributes, email: "qwe@qwe.qwe" }
+    it("throws an error if the company with its cuit already exist", async () => {
+      const companyData = companiesData.next().value;
+      const cuit = companyData.cuit;
+      await client.loggedOut().mutate({
+        mutation: SAVE_COMPANY_WITH_MINIMUM_DATA,
+        variables: companyData
+      });
+      const { errors } = await client.loggedOut().mutate({
+        mutation: SAVE_COMPANY_WITH_MINIMUM_DATA,
+        variables: {
+          ...companiesData.next().value,
+          cuit
         }
-      );
-      expect(errors![0].extensions!.data).toEqual(
+      });
+      expect(
+        errors![0].extensions!.data
+      ).toEqual(
         { errorType: "CompanyCuitAlreadyExistsError" }
       );
     });

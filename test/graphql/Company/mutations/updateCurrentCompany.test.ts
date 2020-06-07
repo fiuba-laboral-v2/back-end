@@ -48,11 +48,7 @@ describe("updateCurrentCompany", () => {
     await UserRepository.truncate();
   });
 
-  afterAll(async () => {
-    await Database.close();
-    await CompanyRepository.truncate();
-    await UserRepository.truncate();
-  });
+  afterAll(() => Database.close());
 
   describe("When the update succeeds", () => {
     it("update all company attributes", async () => {

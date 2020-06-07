@@ -14,7 +14,7 @@ describe("CompanyRepository", () => {
     Database.setConnection();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
-    companiesData = await CompanyGenerator.completeData();
+    companiesData = await CompanyGenerator.data.completeData();
   });
 
   afterAll(() => Database.close());
