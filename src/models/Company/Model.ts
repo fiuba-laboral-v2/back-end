@@ -1,10 +1,11 @@
 import { AllowNull, Column, HasMany, Is, Model, Table, BelongsToMany } from "sequelize-typescript";
-import { HasManyGetAssociationsMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
+import { HasManyGetAssociationsMixin, DataTypes, ENUM } from "sequelize";
 import { CompanyPhoneNumber } from "../CompanyPhoneNumber";
 import { CompanyPhoto } from "../CompanyPhoto";
 import { Offer } from "../Offer/Model";
 import { User } from "../User/Model";
 import { CompanyUser } from "../CompanyUser/Model";
+import { ApprovalStatus, approvalStatus } from "../ApprovalStatus";
 import {
   validateCuit,
   validateName,
@@ -17,37 +18,44 @@ export class Company extends Model<Company> {
   @Column({
     allowNull: false,
     primaryKey: true,
-    type: UUID,
-    defaultValue: UUIDV4
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4
   })
   public uuid: string;
 
   @AllowNull(false)
   @Is("cuit", validateCuit)
-  @Column(STRING)
+  @Column(DataTypes.STRING)
   public cuit: string;
 
   @AllowNull(false)
   @Is("name", validateName)
-  @Column(STRING)
+  @Column(DataTypes.STRING)
   public companyName: string;
 
-  @Column(STRING)
+  @Column(DataTypes.STRING)
   public slogan: string;
 
-  @Column(TEXT)
+  @Column(DataTypes.TEXT)
   public description: string;
 
-  @Column(TEXT)
+  @Column(DataTypes.TEXT)
   public logo: string;
 
   @Is(validateURL)
-  @Column(STRING)
+  @Column(DataTypes.STRING)
   public website: string;
 
   @Is(validateEmail)
-  @Column(STRING)
+  @Column(DataTypes.STRING)
   public email: string;
+
+  @Column({
+    allowNull: false,
+    type: ENUM<string>({ values: approvalStatus }),
+    defaultValue: ApprovalStatus.pending
+  })
+  public approvalStatus: ApprovalStatus;
 
   @HasMany(() => CompanyPhoneNumber)
   public phoneNumbers: CompanyPhoneNumber[];
