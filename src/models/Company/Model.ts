@@ -1,5 +1,22 @@
-import { AllowNull, Column, HasMany, Is, Model, Table, BelongsToMany } from "sequelize-typescript";
-import { HasManyGetAssociationsMixin, STRING, TEXT, UUID, UUIDV4, ENUM } from "sequelize";
+import {
+  AllowNull,
+  AfterUpdate,
+  Column,
+  HasMany,
+  Is,
+  Model,
+  Table,
+  BelongsToMany
+} from "sequelize-typescript";
+import {
+  Transactionable,
+  HasManyGetAssociationsMixin,
+  STRING,
+  TEXT,
+  UUID,
+  UUIDV4,
+  ENUM
+} from "sequelize";
 import { CompanyPhoneNumber } from "../CompanyPhoneNumber";
 import { CompanyPhoto } from "../CompanyPhoto";
 import { Offer } from "../Offer/Model";
@@ -15,6 +32,12 @@ import {
 
 @Table
 export class Company extends Model<Company> {
+  @AfterUpdate
+  public static afterUpdateHook(company: Company, { transaction }: Transactionable): void {
+    if (!company.changed("approvalStatus")) return;
+    return;
+  }
+
   @Column({
     allowNull: false,
     primaryKey: true,

@@ -7,6 +7,7 @@ import { ApplicantCareer } from "./ApplicantCareer";
 import { Capability } from "./Capability";
 import { ApplicantCapability } from "./ApplicantCapability";
 import { Company } from "./Company";
+import { CompanyApprovalEvent } from "./Company/CompanyApprovalEvent";
 import { CompanyPhoneNumber } from "./CompanyPhoneNumber";
 import { CompanyPhoto } from "./CompanyPhoto";
 import { Offer } from "./Offer";
@@ -25,6 +26,7 @@ const models = [
   Capability,
   ApplicantCapability,
   Company,
+  CompanyApprovalEvent,
   CompanyPhoneNumber,
   CompanyPhoto,
   CompanyUser,
