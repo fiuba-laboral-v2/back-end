@@ -18,8 +18,8 @@ describe("CompanyApprovalEvent", () => {
     await expect(companyApprovalEvent.validate()).resolves.not.toThrow();
     expect(companyApprovalEvent).toEqual(expect.objectContaining({
       uuid: expect.stringMatching(UUID_REGEX),
-      createdAt: expect.any(Number),
-      updatedAt: expect.any(Number),
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date),
       ...companyApprovalEventAttributes
     }));
   });

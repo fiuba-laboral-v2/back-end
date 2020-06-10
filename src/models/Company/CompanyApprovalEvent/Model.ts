@@ -37,14 +37,14 @@ export class CompanyApprovalEvent extends Model<CompanyApprovalEvent> {
   @Column({
     allowNull: false,
     type: DATE,
-    defaultValue: Date.now()
+    defaultValue: new Date(Date.now())
   })
   public createdAt: Date;
 
   @Column({
     allowNull: false,
     type: DATE,
-    defaultValue: Date.now()
+    defaultValue: new Date(Date.now())
   })
   public updatedAt: Date;
 
