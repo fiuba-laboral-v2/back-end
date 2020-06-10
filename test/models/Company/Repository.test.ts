@@ -235,6 +235,30 @@ describe("CompanyRepository", () => {
       }));
     });
 
+    it("gets company by companyApprovalEvent association", async () => {
+      const company = await CompanyRepository.create(companiesData.next().value);
+      const { companyApprovalEvent } = await CompanyRepository.updateApprovalStatus(
+        admin,
+        company,
+        ApprovalStatus.rejected
+      );
+      expect((await companyApprovalEvent.getCompany()).uuid).toEqual(company.uuid);
+    });
+
+    it("gets admin by companyApprovalEvent association", async () => {
+      const company = await CompanyRepository.create(companiesData.next().value);
+      const { companyApprovalEvent } = await CompanyRepository.updateApprovalStatus(
+        admin,
+        company,
+        ApprovalStatus.rejected
+      );
+      expect(
+        (await companyApprovalEvent.getAdmin()).toJSON()
+      ).toEqual(
+        admin.toJSON()
+      );
+    });
+
     it("throws an error if a company user tries to update its status", async () => {
       const company = await CompanyRepository.create(companiesData.next().value);
       const [companyUser] = await company.getUsers();
