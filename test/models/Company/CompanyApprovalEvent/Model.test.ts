@@ -12,7 +12,7 @@ describe("CompanyApprovalEvent", () => {
     const companyApprovalEventAttributes = {
       adminUuid: "cfe18465-9454-48b6-80bc-375411650d99",
       companyUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
-      approvalStatus: ApprovalStatus.approved
+      status: ApprovalStatus.approved
     };
     const companyApprovalEvent = new CompanyApprovalEvent(companyApprovalEventAttributes);
     await expect(companyApprovalEvent.validate()).resolves.not.toThrow();
@@ -27,7 +27,7 @@ describe("CompanyApprovalEvent", () => {
   it("throws and error if no adminUuid id provided", async () => {
     const event = new CompanyApprovalEvent({
       companyUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
-      approvalStatus: ApprovalStatus.approved
+      status: ApprovalStatus.approved
     });
     await expect(event.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -38,7 +38,7 @@ describe("CompanyApprovalEvent", () => {
   it("throws and error if no companyUuid id provided", async () => {
     const event = new CompanyApprovalEvent({
       adminUuid: "cfe18465-9454-48b6-80bc-375411650d99",
-      approvalStatus: ApprovalStatus.approved
+      status: ApprovalStatus.approved
     });
     await expect(event.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -46,14 +46,14 @@ describe("CompanyApprovalEvent", () => {
     );
   });
 
-  it("throws and error if no approvalStatus id provided", async () => {
+  it("throws and error if no status id provided", async () => {
     const event = new CompanyApprovalEvent({
       adminUuid: "cfe18465-9454-48b6-80bc-375411650d99",
       companyUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27"
     });
     await expect(event.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
-      "notNull Violation: CompanyApprovalEvent.approvalStatus"
+      "notNull Violation: CompanyApprovalEvent.status"
     );
   });
 });

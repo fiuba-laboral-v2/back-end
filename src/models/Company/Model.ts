@@ -1,6 +1,5 @@
 import {
   AllowNull,
-  AfterUpdate,
   Column,
   HasMany,
   Is,
@@ -9,7 +8,6 @@ import {
   BelongsToMany
 } from "sequelize-typescript";
 import {
-  Transactionable,
   HasManyGetAssociationsMixin,
   STRING,
   TEXT,
@@ -32,12 +30,6 @@ import {
 
 @Table
 export class Company extends Model<Company> {
-  @AfterUpdate
-  public static afterUpdateHook(company: Company, { transaction }: Transactionable): void {
-    if (!company.changed("approvalStatus")) return;
-    return;
-  }
-
   @Column({
     allowNull: false,
     primaryKey: true,

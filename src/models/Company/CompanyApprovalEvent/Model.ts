@@ -32,7 +32,7 @@ export class CompanyApprovalEvent extends Model<CompanyApprovalEvent> {
     allowNull: false,
     type: ENUM<string>({ values: approvalStatuses })
   })
-  public approvalStatus: ApprovalStatus;
+  public status: ApprovalStatus;
 
   @Column({
     allowNull: false,
