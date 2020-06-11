@@ -1,20 +1,5 @@
-import {
-  AllowNull,
-  Column,
-  HasMany,
-  Is,
-  Model,
-  Table,
-  BelongsToMany
-} from "sequelize-typescript";
-import {
-  HasManyGetAssociationsMixin,
-  STRING,
-  TEXT,
-  UUID,
-  UUIDV4,
-  ENUM
-} from "sequelize";
+import { AllowNull, Column, HasMany, Is, Model, Table, BelongsToMany } from "sequelize-typescript";
+import { HasManyGetAssociationsMixin, STRING, TEXT, UUID, UUIDV4, ENUM } from "sequelize";
 import { CompanyPhoneNumber } from "../CompanyPhoneNumber";
 import { CompanyPhoto } from "../CompanyPhoto";
 import { Offer } from "../Offer/Model";

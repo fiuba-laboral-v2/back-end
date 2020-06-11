@@ -1,4 +1,4 @@
-import { UniqueConstraintError, ValidationError } from "sequelize";
+import { UniqueConstraintError, ValidationError, DatabaseError } from "sequelize";
 import Database from "../../../src/config/Database";
 import { InvalidCuitError, PhoneNumberWithLettersError } from "validations-fiuba-laboral-v2";
 import { CompanyRepository } from "../../../src/models/Company";
@@ -270,6 +270,22 @@ describe("CompanyRepository", () => {
           ApprovalStatus.rejected
         )
       ).rejects.toThrow("admin required");
+    });
+
+    it("throws an error and rollbacks transaction if status is invalid", async () => {
+      const company = await CompanyRepository.create(companiesData.next().value);
+      expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
+      admin.uuid = null as any;
+      await expect(
+        CompanyRepository.updateApprovalStatus(
+          admin,
+          company,
+          "notDefinedStatus" as any
+        )
+      ).rejects.toThrowErrorWithMessage(
+        DatabaseError,
+        "invalid input value for enum \"enum_CompanyApprovalEvents_status\": \"notDefinedStatus\""
+      );
     });
   });
 });

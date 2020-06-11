@@ -24,6 +24,26 @@ describe("CompanyApprovalEvent", () => {
     }));
   });
 
+  it("creates a rejected CompanyApprovalEvent", async () => {
+    const companyApprovalEvent = new CompanyApprovalEvent({
+      adminUuid: "cfe18465-9454-48b6-80bc-375411650d99",
+      companyUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
+      status: ApprovalStatus.rejected
+    });
+    await expect(companyApprovalEvent.validate()).resolves.not.toThrow();
+    await expect(companyApprovalEvent.status).toEqual(ApprovalStatus.rejected);
+  });
+
+  it("creates a pending CompanyApprovalEvent", async () => {
+    const companyApprovalEvent = new CompanyApprovalEvent({
+      adminUuid: "cfe18465-9454-48b6-80bc-375411650d99",
+      companyUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
+      status: ApprovalStatus.pending
+    });
+    await expect(companyApprovalEvent.validate()).resolves.not.toThrow();
+    await expect(companyApprovalEvent.status).toEqual(ApprovalStatus.pending);
+  });
+
   it("throws and error if no adminUuid id provided", async () => {
     const event = new CompanyApprovalEvent({
       companyUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
