@@ -7,7 +7,6 @@ export = {
         "Admins",
         {
           userUuid: {
-            primaryKey: true,
             allowNull: false,
             references: { model: "Users", key: "uuid" },
             onDelete: "CASCADE",
@@ -28,7 +27,7 @@ export = {
         "Admins",
         ["userUuid"],
         {
-          type: "unique",
+          type: "primary key",
           name: "Admins_userUuid_key",
           transaction
         }
