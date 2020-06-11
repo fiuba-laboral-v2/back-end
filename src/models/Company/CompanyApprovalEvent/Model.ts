@@ -1,8 +1,8 @@
-import { Column, Model, Table, BelongsTo } from "sequelize-typescript";
+import { Column, Model, Table, BelongsTo, ForeignKey } from "sequelize-typescript";
 import { DATE, UUID, UUIDV4, ENUM, HasOneGetAssociationMixin } from "sequelize";
 import { ApprovalStatus, approvalStatuses } from "../../ApprovalStatus";
-import { Company } from "../../Company";
-import { Admin } from "../../Admin";
+import { Company } from "../../Company/Model";
+import { Admin } from "../../Admin/Model";
 
 @Table({ tableName: "CompanyApprovalEvents" })
 export class CompanyApprovalEvent extends Model<CompanyApprovalEvent> {
@@ -14,6 +14,7 @@ export class CompanyApprovalEvent extends Model<CompanyApprovalEvent> {
   })
   public uuid: string;
 
+  @ForeignKey(() => Admin)
   @Column({
     allowNull: false,
     references: { model: "Admins", key: "uuid" },
@@ -21,6 +22,7 @@ export class CompanyApprovalEvent extends Model<CompanyApprovalEvent> {
   })
   public adminUuid: string;
 
+  @ForeignKey(() => Company)
   @Column({
     allowNull: false,
     references: { model: "Companies", key: "uuid" },

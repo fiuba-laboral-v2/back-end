@@ -52,7 +52,7 @@ export const CompanyRepository = {
     const transaction = await Database.transaction();
     try {
       await company.update({ approvalStatus: newStatus }, { transaction });
-      const companyApprovalEvent = await CompanyApprovalEvent.create(
+      await CompanyApprovalEvent.create(
         {
           adminUuid: admin.uuid,
           companyUuid: company.uuid,
@@ -61,7 +61,7 @@ export const CompanyRepository = {
         { transaction }
       );
       await transaction.commit();
-      return { company, companyApprovalEvent };
+      return company;
     } catch (error) {
       await transaction.rollback();
       throw error;

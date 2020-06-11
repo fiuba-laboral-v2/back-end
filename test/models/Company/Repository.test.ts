@@ -199,63 +199,55 @@ describe("CompanyRepository", () => {
     it("approves company only by an admin and create new event", async () => {
       const company = await CompanyRepository.create(companiesData.next().value);
       expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
-      const {
-        company: approvedCompany,
-        companyApprovalEvent
-      } = await CompanyRepository.updateApprovalStatus(
+      const approvedCompany = await CompanyRepository.updateApprovalStatus(
         admin,
         company,
         ApprovalStatus.approved
       );
       expect(approvedCompany.approvalStatus).toEqual(ApprovalStatus.approved);
-      expect(companyApprovalEvent).toEqual(expect.objectContaining({
-        adminUuid: admin.uuid,
-        companyUuid: company.uuid,
-        status: ApprovalStatus.approved
-      }));
+      expect(await approvedCompany.getApprovalEvents()).toEqual([
+        expect.objectContaining({
+          adminUuid: admin.uuid,
+          companyUuid: company.uuid,
+          status: ApprovalStatus.approved
+        })
+      ]);
     });
 
     it("rejects company only by an admin and create new event", async () => {
       const company = await CompanyRepository.create(companiesData.next().value);
       expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
-      const {
-        company: approvedCompany,
-        companyApprovalEvent
-      } = await CompanyRepository.updateApprovalStatus(
+      const approvedCompany = await CompanyRepository.updateApprovalStatus(
         admin,
         company,
         ApprovalStatus.rejected
       );
       expect(approvedCompany.approvalStatus).toEqual(ApprovalStatus.rejected);
-      expect(companyApprovalEvent).toEqual(expect.objectContaining({
-        adminUuid: admin.uuid,
-        companyUuid: company.uuid,
-        status: ApprovalStatus.rejected
-      }));
+      expect(await approvedCompany.getApprovalEvents()).toEqual([
+        expect.objectContaining({
+          adminUuid: admin.uuid,
+          companyUuid: company.uuid,
+          status: ApprovalStatus.rejected
+        })
+      ]);
     });
 
     it("gets company by companyApprovalEvent association", async () => {
       const company = await CompanyRepository.create(companiesData.next().value);
-      const { companyApprovalEvent } = await CompanyRepository.updateApprovalStatus(
+      await CompanyRepository.updateApprovalStatus(
         admin,
         company,
         ApprovalStatus.rejected
       );
-      expect((await companyApprovalEvent.getCompany()).uuid).toEqual(company.uuid);
+      const [event] = await company.getApprovalEvents();
+      expect((await event.getCompany()).uuid).toEqual(company.uuid);
     });
 
     it("gets admin by companyApprovalEvent association", async () => {
       const company = await CompanyRepository.create(companiesData.next().value);
-      const { companyApprovalEvent } = await CompanyRepository.updateApprovalStatus(
-        admin,
-        company,
-        ApprovalStatus.rejected
-      );
-      expect(
-        (await companyApprovalEvent.getAdmin()).toJSON()
-      ).toEqual(
-        admin.toJSON()
-      );
+      await CompanyRepository.updateApprovalStatus(admin, company, ApprovalStatus.rejected);
+      const [event] = await company.getApprovalEvents();
+      expect((await event.getAdmin()).toJSON()).toEqual(admin.toJSON());
     });
 
     it("throws an error if status is invalid and not change the company", async () => {
