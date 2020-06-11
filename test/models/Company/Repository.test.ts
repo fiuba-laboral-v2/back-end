@@ -258,7 +258,7 @@ describe("CompanyRepository", () => {
       );
     });
 
-    it("throws an error and rollbacks transaction if status is invalid", async () => {
+    it("throws an error if status is invalid and not change the company", async () => {
       const company = await CompanyRepository.create(companiesData.next().value);
       expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
       admin.uuid = null as any;
@@ -270,8 +270,11 @@ describe("CompanyRepository", () => {
         )
       ).rejects.toThrowErrorWithMessage(
         DatabaseError,
-        "invalid input value for enum \"enum_CompanyApprovalEvents_status\": \"notDefinedStatus\""
+        "invalid input value for enum \"enum_Companies_approvalStatus\": \"notDefinedStatus\""
       );
+      expect(
+        (await CompanyRepository.findByUuid(company.uuid)).approvalStatus
+      ).toEqual(ApprovalStatus.pending);
     });
   });
 });

@@ -51,7 +51,7 @@ export const CompanyRepository = {
   updateApprovalStatus: async (admin: Admin, company: Company, newStatus: ApprovalStatus) => {
     const transaction = await Database.transaction();
     try {
-      await company.set({ approvalStatus: newStatus });
+      await company.update({ approvalStatus: newStatus }, { transaction });
       const companyApprovalEvent = await CompanyApprovalEvent.create(
         {
           adminUuid: admin.uuid,
