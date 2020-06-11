@@ -6,12 +6,8 @@ export = {
       await queryInterface.createTable(
         "Admins",
         {
-          uuid: {
-            allowNull: false,
-            primaryKey: true,
-            type: UUID
-          },
           userUuid: {
+            primaryKey: true,
             allowNull: false,
             references: { model: "Users", key: "uuid" },
             onDelete: "CASCADE",

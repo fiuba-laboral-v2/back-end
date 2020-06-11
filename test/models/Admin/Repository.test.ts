@@ -3,7 +3,6 @@ import { AdminRepository } from "../../../src/models/Admin";
 import { UserRepository } from "../../../src/models/User";
 import { UniqueConstraintError } from "sequelize";
 import { AdminGenerator, TAdminDataGenerator } from "../../generators/Admin";
-import { UUID_REGEX } from "../index";
 
 describe("AdminRepository", () => {
   let adminsData: TAdminDataGenerator;
@@ -19,7 +18,6 @@ describe("AdminRepository", () => {
     it("creates a valid Admin", async () => {
       const adminAttributes = adminsData.next().value;
       const admin = await AdminRepository.create(adminAttributes);
-      expect(admin.uuid).toEqual(expect.stringMatching(UUID_REGEX));
       expect(await admin.getUser()).toEqual(expect.objectContaining({
         ...adminAttributes.user,
         password: expect.any(String)

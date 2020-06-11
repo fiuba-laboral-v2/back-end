@@ -5,7 +5,7 @@ export const CompanyApprovalEventRepository = {
   create: async ({ admin, company, status, transaction }: ICreateCompanyApprovalEvent) =>
     CompanyApprovalEvent.create(
       {
-        adminUuid: admin.uuid,
+        userUuid: admin.userUuid,
         companyUuid: company.uuid,
         status: status
       },

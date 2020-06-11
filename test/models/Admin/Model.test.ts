@@ -1,7 +1,6 @@
 import Database from "../../../src/config/Database";
 import { Admin } from "../../../src/models/Admin";
 import { ValidationError } from "sequelize";
-import { UUID_REGEX } from "../index";
 
 describe("Admin", () => {
   beforeAll(() => Database.setConnection());
@@ -12,7 +11,6 @@ describe("Admin", () => {
     const admin = new Admin({ userUuid });
     await expect(admin.validate()).resolves.not.toThrow();
     expect(admin).toEqual(expect.objectContaining({
-      uuid: expect.stringMatching(UUID_REGEX),
       userUuid,
       createdAt: expect.any(Date),
       updatedAt: expect.any(Date)

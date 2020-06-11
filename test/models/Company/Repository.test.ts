@@ -207,7 +207,7 @@ describe("CompanyRepository", () => {
       expect(approvedCompany.approvalStatus).toEqual(ApprovalStatus.approved);
       expect(await approvedCompany.getApprovalEvents()).toEqual([
         expect.objectContaining({
-          adminUuid: admin.uuid,
+          userUuid: admin.userUuid,
           companyUuid: company.uuid,
           status: ApprovalStatus.approved
         })
@@ -225,7 +225,7 @@ describe("CompanyRepository", () => {
       expect(approvedCompany.approvalStatus).toEqual(ApprovalStatus.rejected);
       expect(await approvedCompany.getApprovalEvents()).toEqual([
         expect.objectContaining({
-          adminUuid: admin.uuid,
+          userUuid: admin.userUuid,
           companyUuid: company.uuid,
           status: ApprovalStatus.rejected
         })

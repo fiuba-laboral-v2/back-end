@@ -20,7 +20,7 @@ export class CompanyApprovalEvent extends Model<CompanyApprovalEvent> {
     references: { model: "Admins", key: "uuid" },
     type: UUID
   })
-  public adminUuid: string;
+  public userUuid: string;
 
   @ForeignKey(() => Company)
   @Column({
@@ -50,7 +50,7 @@ export class CompanyApprovalEvent extends Model<CompanyApprovalEvent> {
   })
   public updatedAt: Date;
 
-  @BelongsTo(() => Admin, "adminUuid")
+  @BelongsTo(() => Admin, "userUuid")
   public admin: Admin;
 
   @BelongsTo(() => Company, "companyUuid")

@@ -10,7 +10,7 @@ describe("CompanyApprovalEvent", () => {
 
   it("creates a valid CompanyApprovalEvent", async () => {
     const companyApprovalEventAttributes = {
-      adminUuid: "cfe18465-9454-48b6-80bc-375411650d99",
+      userUuid: "cfe18465-9454-48b6-80bc-375411650d99",
       companyUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
       status: ApprovalStatus.approved
     };
@@ -26,7 +26,7 @@ describe("CompanyApprovalEvent", () => {
 
   it("creates a rejected CompanyApprovalEvent", async () => {
     const companyApprovalEvent = new CompanyApprovalEvent({
-      adminUuid: "cfe18465-9454-48b6-80bc-375411650d99",
+      userUuid: "cfe18465-9454-48b6-80bc-375411650d99",
       companyUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
       status: ApprovalStatus.rejected
     });
@@ -36,7 +36,7 @@ describe("CompanyApprovalEvent", () => {
 
   it("creates a pending CompanyApprovalEvent", async () => {
     const companyApprovalEvent = new CompanyApprovalEvent({
-      adminUuid: "cfe18465-9454-48b6-80bc-375411650d99",
+      userUuid: "cfe18465-9454-48b6-80bc-375411650d99",
       companyUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
       status: ApprovalStatus.pending
     });
@@ -44,20 +44,20 @@ describe("CompanyApprovalEvent", () => {
     await expect(companyApprovalEvent.status).toEqual(ApprovalStatus.pending);
   });
 
-  it("throws and error if no adminUuid id provided", async () => {
+  it("throws and error if no userUuid id provided", async () => {
     const event = new CompanyApprovalEvent({
       companyUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
       status: ApprovalStatus.approved
     });
     await expect(event.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
-      "notNull Violation: CompanyApprovalEvent.adminUuid"
+      "notNull Violation: CompanyApprovalEvent.userUuid"
     );
   });
 
   it("throws and error if no companyUuid id provided", async () => {
     const event = new CompanyApprovalEvent({
-      adminUuid: "cfe18465-9454-48b6-80bc-375411650d99",
+      userUuid: "cfe18465-9454-48b6-80bc-375411650d99",
       status: ApprovalStatus.approved
     });
     await expect(event.validate()).rejects.toThrowErrorWithMessage(
@@ -68,7 +68,7 @@ describe("CompanyApprovalEvent", () => {
 
   it("throws and error if no status id provided", async () => {
     const event = new CompanyApprovalEvent({
-      adminUuid: "cfe18465-9454-48b6-80bc-375411650d99",
+      userUuid: "cfe18465-9454-48b6-80bc-375411650d99",
       companyUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27"
     });
     await expect(event.validate()).rejects.toThrowErrorWithMessage(

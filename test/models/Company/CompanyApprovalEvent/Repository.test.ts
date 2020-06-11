@@ -27,7 +27,7 @@ describe("CompanyApprovalEventRepository", () => {
       const company = await companies.next().value;
       const admin = await admins.next().value;
       const event = await CompanyApprovalEventRepository.create({ admin, company, status });
-      expect(event.adminUuid).toEqual(admin.uuid);
+      expect(event.userUuid).toEqual(admin.userUuid);
       expect(event.companyUuid).toEqual(company.uuid);
       expect(event.status).toEqual(status);
     };

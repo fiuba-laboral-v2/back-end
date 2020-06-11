@@ -1,18 +1,12 @@
-import { Model, Table, Column, BelongsTo } from "sequelize-typescript";
-import { UUID, UUIDV4, HasOneGetAssociationMixin, DATE } from "sequelize";
+import { Model, Table, Column, BelongsTo, ForeignKey } from "sequelize-typescript";
+import { UUID, HasOneGetAssociationMixin, DATE } from "sequelize";
 import { User } from "../User";
 
 @Table({ tableName: "Admins" })
 export class Admin extends Model<Admin> {
+  @ForeignKey(() => User)
   @Column({
-    allowNull: false,
     primaryKey: true,
-    type: UUID,
-    defaultValue: UUIDV4
-  })
-  public uuid: string;
-
-  @Column({
     allowNull: false,
     references: { model: "Users", key: "uuid" },
     onDelete: "CASCADE",
