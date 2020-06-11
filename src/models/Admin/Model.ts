@@ -6,6 +6,7 @@ import { User } from "../User";
 export class Admin extends Model<Admin> {
   @Column({
     allowNull: false,
+    primaryKey: true,
     type: UUID,
     defaultValue: UUIDV4
   })
