@@ -7,6 +7,7 @@ export = {
       {
         uuid: {
           allowNull: false,
+          primaryKey: true,
           type: UUID
         },
         userUuid: {

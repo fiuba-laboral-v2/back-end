@@ -2,9 +2,11 @@ import { UniqueConstraintError, ValidationError, DatabaseError } from "sequelize
 import Database from "../../../src/config/Database";
 import { InvalidCuitError, PhoneNumberWithLettersError } from "validations-fiuba-laboral-v2";
 import { CompanyRepository } from "../../../src/models/Company";
-import { User, UserRepository } from "../../../src/models/User";
+import { UserRepository } from "../../../src/models/User";
+import { Admin } from "../../../src/models/Admin";
 import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
 import { CompanyGenerator, TCompanyDataGenerator } from "../../generators/Company";
+import { AdminGenerator } from "../../generators/Admin";
 import { UserMocks } from "../User/mocks";
 
 describe("CompanyRepository", () => {
@@ -188,13 +190,10 @@ describe("CompanyRepository", () => {
   });
 
   describe("updateApprovalStatus", () => {
-    let admin: User;
+    let admin: Admin;
 
     beforeAll(async () => {
-      admin = await UserRepository.create({
-        ...UserMocks.userAttributes,
-        isAdmin: true
-      });
+      admin = await AdminGenerator.instance().next().value;
     });
 
     it("approves company only by an admin and create new event", async () => {
@@ -257,19 +256,6 @@ describe("CompanyRepository", () => {
       ).toEqual(
         admin.toJSON()
       );
-    });
-
-    it("throws an error if a company user tries to update its status", async () => {
-      const company = await CompanyRepository.create(companiesData.next().value);
-      const [companyUser] = await company.getUsers();
-      expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
-      await expect(
-        CompanyRepository.updateApprovalStatus(
-          companyUser,
-          company,
-          ApprovalStatus.rejected
-        )
-      ).rejects.toThrow("admin required");
     });
 
     it("throws an error and rollbacks transaction if status is invalid", async () => {

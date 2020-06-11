@@ -3,7 +3,8 @@ import { Company, ICompany, ICompanyEditable } from "./index";
 import { CompanyPhotoRepository } from "../CompanyPhoto";
 import { CompanyPhoneNumberRepository } from "../CompanyPhoneNumber";
 import { CompanyNotFoundError } from "./Errors/CompanyNotFoundError";
-import { User, UserRepository } from "../User";
+import { UserRepository } from "../User";
+import { Admin } from "../Admin";
 import { ApprovalStatus } from "../ApprovalStatus";
 import { CompanyUserRepository } from "../CompanyUser/Repository";
 import { CompanyApprovalEvent } from "./CompanyApprovalEvent";
@@ -47,9 +48,7 @@ export const CompanyRepository = {
 
     return updatedCompany;
   },
-  updateApprovalStatus: async (admin: User, company: Company, newStatus: ApprovalStatus) => {
-    if (!admin.isAdmin) throw new Error("admin required");
-
+  updateApprovalStatus: async (admin: Admin, company: Company, newStatus: ApprovalStatus) => {
     const transaction = await Database.transaction();
     try {
       await company.set({ approvalStatus: newStatus });

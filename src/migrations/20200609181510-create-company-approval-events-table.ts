@@ -13,12 +13,14 @@ export = {
         },
         adminUuid: {
           allowNull: false,
-          references: { model: "Users", key: "uuid" },
+          references: { model: "Admins", key: "uuid" },
+          onDelete: "CASCADE",
           type: UUID
         },
         companyUuid: {
           allowNull: false,
           references: { model: "Companies", key: "uuid" },
+          onDelete: "CASCADE",
           type: UUID
         },
         status: {

@@ -2,7 +2,7 @@ import { Column, Model, Table, BelongsTo } from "sequelize-typescript";
 import { DATE, UUID, UUIDV4, ENUM, HasOneGetAssociationMixin } from "sequelize";
 import { ApprovalStatus, approvalStatuses } from "../../ApprovalStatus";
 import { Company } from "../../Company";
-import { User } from "../../User";
+import { Admin } from "../../Admin";
 
 @Table({ tableName: "CompanyApprovalEvents" })
 export class CompanyApprovalEvent extends Model<CompanyApprovalEvent> {
@@ -16,7 +16,7 @@ export class CompanyApprovalEvent extends Model<CompanyApprovalEvent> {
 
   @Column({
     allowNull: false,
-    references: { model: "Users", key: "uuid" },
+    references: { model: "Admins", key: "uuid" },
     type: UUID
   })
   public adminUuid: string;
@@ -48,12 +48,12 @@ export class CompanyApprovalEvent extends Model<CompanyApprovalEvent> {
   })
   public updatedAt: Date;
 
-  @BelongsTo(() => User, "adminUuid")
-  public admin: User;
+  @BelongsTo(() => Admin, "adminUuid")
+  public admin: Admin;
 
   @BelongsTo(() => Company, "companyUuid")
   public company: Company;
 
   public getCompany: HasOneGetAssociationMixin<Company>;
-  public getAdmin: HasOneGetAssociationMixin<User>;
+  public getAdmin: HasOneGetAssociationMixin<Admin>;
 }
