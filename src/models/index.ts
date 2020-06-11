@@ -1,3 +1,4 @@
+import { Admin } from "./Admin";
 import { Applicant } from "./Applicant";
 import { Section } from "./Applicant/Section";
 import { ApplicantLink } from "./Applicant/Link";
@@ -17,6 +18,7 @@ import { User } from "./User";
 import { CompanyUser } from "./CompanyUser";
 
 const models = [
+  Admin,
   Applicant,
   Section,
   ApplicantLink,
