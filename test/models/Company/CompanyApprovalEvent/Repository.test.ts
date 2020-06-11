@@ -1,10 +1,12 @@
 import Database from "../../../../src/config/Database";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { UserRepository } from "../../../../src/models/User";
+import { Admin } from "../../../../src/models/Admin";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import {
   CompanyApprovalEventRepository
 } from "../../../../src/models/Company/CompanyApprovalEvent";
+import { ForeignKeyConstraintError } from "sequelize";
 import { CompanyGenerator, TCompanyGenerator } from "../../../generators/Company";
 import { AdminGenerator, TAdminGenerator } from "../../../generators/Admin";
 
@@ -42,6 +44,20 @@ describe("CompanyApprovalEventRepository", () => {
 
     it("creates a valid CompanyApprovalEvent with pending status", async () => {
       await expectValidCreation(ApprovalStatus.pending);
+    });
+
+    it("throws an error if userUuid does not belong to an admin", async () => {
+      const company = await companies.next().value;
+      const [userCompany] = await company.getUsers();
+      const admin = new Admin({ userUuid: userCompany.uuid });
+      const status = ApprovalStatus.approved;
+      await expect(
+        CompanyApprovalEventRepository.create({ admin, company, status })
+      ).rejects.toThrowErrorWithMessage(
+        ForeignKeyConstraintError,
+        "insert or update on table \"CompanyApprovalEvents\" violates " +
+        "foreign key constraint \"CompanyApprovalEvents_userUuid_fkey\""
+      );
     });
 
     it("gets company and admin by association", async () => {
