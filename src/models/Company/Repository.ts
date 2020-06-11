@@ -7,7 +7,7 @@ import { UserRepository } from "../User";
 import { Admin } from "../Admin";
 import { ApprovalStatus } from "../ApprovalStatus";
 import { CompanyUserRepository } from "../CompanyUser/Repository";
-import { CompanyApprovalEvent } from "./CompanyApprovalEvent";
+import { CompanyApprovalEventRepository } from "./CompanyApprovalEvent";
 
 export const CompanyRepository = {
   create: async (
@@ -52,14 +52,12 @@ export const CompanyRepository = {
     const transaction = await Database.transaction();
     try {
       await company.update({ approvalStatus: newStatus }, { transaction });
-      await CompanyApprovalEvent.create(
-        {
-          adminUuid: admin.uuid,
-          companyUuid: company.uuid,
-          status: newStatus
-        },
-        { transaction }
-      );
+      await CompanyApprovalEventRepository.create({
+        admin: admin,
+        company: company,
+        status: newStatus,
+        transaction
+      });
       await transaction.commit();
       return company;
     } catch (error) {
