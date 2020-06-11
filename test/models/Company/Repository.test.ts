@@ -236,18 +236,16 @@ describe("CompanyRepository", () => {
       const company = await CompanyRepository.create(companiesData.next().value);
       expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
       await expect(
-        CompanyRepository.updateApprovalStatus(
-          admin,
-          company,
-          "notDefinedStatus" as any
-        )
+        CompanyRepository.updateApprovalStatus(admin, company, "notDefinedStatus" as any)
       ).rejects.toThrowErrorWithMessage(
         DatabaseError,
         "invalid input value for enum \"enum_Companies_approvalStatus\": \"notDefinedStatus\""
       );
       expect(
         (await CompanyRepository.findByUuid(company.uuid)).approvalStatus
-      ).toEqual(ApprovalStatus.pending);
+      ).toEqual(
+        ApprovalStatus.pending
+      );
     });
   });
 });
