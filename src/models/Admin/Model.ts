@@ -17,14 +17,14 @@ export class Admin extends Model<Admin> {
   @Column({
     allowNull: false,
     type: DATE,
-    defaultValue: new Date(Date.now())
+    defaultValue: new Date()
   })
   public createdAt: Date;
 
   @Column({
     allowNull: false,
     type: DATE,
-    defaultValue: new Date(Date.now())
+    defaultValue: new Date()
   })
   public updatedAt: Date;
 
