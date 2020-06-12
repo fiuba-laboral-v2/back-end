@@ -1,3 +1,4 @@
+import { adminTypes } from "./Admin";
 import { companyTypes } from "./Company";
 import { offerTypes } from "./Offer";
 import { applicantTypes } from "./Applicant";
@@ -8,6 +9,7 @@ import { capabilityTypes } from "./Capability";
 import { translationTypes } from "./Translation/Types";
 
 const types = [
+  ...adminTypes,
   ...companyTypes,
   ...offerTypes,
   ...applicantTypes,

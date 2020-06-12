@@ -7,7 +7,10 @@ export interface IClientFactory {
 
 export interface IUserProps extends IClientFactory {
   password?: string;
-  isAdmin?: boolean;
+}
+
+export interface IAdminProps extends IClientFactory {
+  user?: IUserProps;
 }
 
 export interface ICompanyProps extends IClientFactory {

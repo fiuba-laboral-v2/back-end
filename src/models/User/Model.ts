@@ -9,9 +9,10 @@ import {
   Unique
 } from "sequelize-typescript";
 import { compare, hashSync } from "bcrypt";
-import { HasOneGetAssociationMixin, STRING, TEXT, UUID, UUIDV4, BOOLEAN } from "sequelize";
+import { HasOneGetAssociationMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
 import { Applicant } from "../Applicant/Model";
 import { CompanyUser } from "../CompanyUser/Model";
+import { Admin } from "../Admin/Model";
 import { validateEmail, validateName, validatePassword } from "validations-fiuba-laboral-v2";
 import { Company } from "../Company";
 
@@ -56,21 +57,18 @@ export class User extends Model<User> {
   })
   public surname: string;
 
-  @Column({
-    allowNull: false,
-    defaultValue: false,
-    type: BOOLEAN
-  })
-  public isAdmin: string;
-
   @HasOne(() => Applicant, "userUuid")
   public applicant: Applicant;
 
-  @HasOne(() => CompanyUser)
+  @HasOne(() => CompanyUser, "userUuid")
   public companyUser: CompanyUser;
+
+  @HasOne(() => Admin, "userUuid")
+  public admin: Admin;
 
   public getApplicant: HasOneGetAssociationMixin<Applicant>;
   public getCompanyUser: HasOneGetAssociationMixin<CompanyUser>;
+  public getAdmin: HasOneGetAssociationMixin<Admin>;
 
   public async getCompany() {
     const companyUser = await this.getCompanyUser();
