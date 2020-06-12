@@ -1,10 +1,11 @@
 import { GraphQLObjectType } from "graphql";
-import { ID, nonNull, String, Boolean } from "../../fieldTypes";
+import { ID, nonNull, String } from "../../fieldTypes";
 import { User } from "../../../models/User";
+import { GraphQLAdmin } from "../../Admin/Types/GraphQLAdmin";
 import { GraphQLApplicant } from "../../Applicant/Types/Applicant";
 import { GraphQLCompany } from "../../Company/Types/GraphQLCompany";
 
-const GraphQLUser = new GraphQLObjectType<User>({
+export const GraphQLUser = new GraphQLObjectType<User>({
   name: "User",
   fields: () => ({
     uuid: {
@@ -19,8 +20,9 @@ const GraphQLUser = new GraphQLObjectType<User>({
     surname: {
       type: nonNull(String)
     },
-    isAdmin: {
-      type: nonNull(Boolean)
+    admin: {
+      type: GraphQLAdmin,
+      resolve: user => user.getAdmin()
     },
     applicant: {
       type: GraphQLApplicant,
@@ -32,5 +34,3 @@ const GraphQLUser = new GraphQLObjectType<User>({
     }
   })
 });
-
-export { GraphQLUser };

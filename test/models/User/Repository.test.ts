@@ -29,8 +29,7 @@ describe("UserRepository", () => {
       expect(user).toEqual(expect.objectContaining({
         email: userAttributes.email,
         name: userAttributes.name,
-        surname: userAttributes.surname,
-        isAdmin: false
+        surname: userAttributes.surname
       }));
     });
 
@@ -91,23 +90,6 @@ describe("UserRepository", () => {
         PasswordWithoutDigitsError,
         "La contraseña debe contener numeros"
       );
-    });
-
-    it("creates an user as an admin", async () => {
-      const userAttributes = {
-        email: "admin@admin.com",
-        password: "AValidPassword123",
-        name: "admin",
-        surname: "admin",
-        isAdmin: true
-      };
-      const user = await UserRepository.create(userAttributes);
-
-      expect(user.uuid).not.toBeNull();
-      expect(user).toEqual(expect.objectContaining({
-        ...userAttributes,
-        password: expect.any(String)
-      }));
     });
   });
 

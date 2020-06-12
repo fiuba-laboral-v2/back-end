@@ -2,20 +2,29 @@ import { internet, random, company, lorem } from "faker";
 import { cuitGenerator } from "../generators/Company/cuitGenerator";
 
 import { UserRepository } from "../../src/models/User";
+import { AdminRepository } from "../../src/models/Admin";
 import { ApplicantRepository } from "../../src/models/Applicant";
 import { CompanyRepository } from "../../src/models/Company";
 import { IUserProps, IApplicantProps, ICompanyProps } from "./interfaces";
 
 export const userFactory = {
-  user: ({ password, isAdmin }: IUserProps = {}) =>
+  user: ({ password }: IUserProps = {}) =>
     UserRepository.create({
       email: internet.email(),
       password: password || "AValidPassword123",
       name: "Bruno",
-      surname: "Diaz",
-      isAdmin
+      surname: "Diaz"
     }
   ),
+  admin: ({ password }: IUserProps = {}) =>
+    AdminRepository.create({
+      user: {
+        email: internet.email(),
+        password: password || "AValidPassword123",
+        name: "Bruno",
+        surname: "Diaz"
+      }
+    }),
   applicant: ({
     careers, password, capabilities
   }: IApplicantProps = { careers: [], capabilities: [], password: null }) =>
