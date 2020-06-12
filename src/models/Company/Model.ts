@@ -5,6 +5,7 @@ import { CompanyPhoto } from "../CompanyPhoto";
 import { Offer } from "../Offer/Model";
 import { User } from "../User/Model";
 import { CompanyUser } from "../CompanyUser/Model";
+import { CompanyApprovalEvent } from "./CompanyApprovalEvent/Model";
 import { ApprovalStatus, approvalStatuses } from "../ApprovalStatus";
 import {
   validateCuit,
@@ -69,8 +70,12 @@ export class Company extends Model<Company> {
   @BelongsToMany(() => User, () => CompanyUser)
   public users: User[];
 
-  public getPhoneNumbers!: HasManyGetAssociationsMixin<CompanyPhoneNumber>;
-  public getPhotos!: HasManyGetAssociationsMixin<CompanyPhoto>;
-  public getOffers!: HasManyGetAssociationsMixin<Offer>;
+  @HasMany(() => CompanyApprovalEvent)
+  public approvalEvents: CompanyApprovalEvent;
+
+  public getPhoneNumbers: HasManyGetAssociationsMixin<CompanyPhoneNumber>;
+  public getPhotos: HasManyGetAssociationsMixin<CompanyPhoto>;
+  public getOffers: HasManyGetAssociationsMixin<Offer>;
   public getUsers: HasManyGetAssociationsMixin<User>;
+  public getApprovalEvents: HasManyGetAssociationsMixin<CompanyApprovalEvent>;
 }

@@ -1,3 +1,4 @@
+import { Admin } from "./Admin";
 import { Applicant } from "./Applicant";
 import { Section } from "./Applicant/Section";
 import { ApplicantLink } from "./Applicant/Link";
@@ -7,6 +8,7 @@ import { ApplicantCareer } from "./ApplicantCareer";
 import { Capability } from "./Capability";
 import { ApplicantCapability } from "./ApplicantCapability";
 import { Company } from "./Company";
+import { CompanyApprovalEvent } from "./Company/CompanyApprovalEvent";
 import { CompanyPhoneNumber } from "./CompanyPhoneNumber";
 import { CompanyPhoto } from "./CompanyPhoto";
 import { Offer } from "./Offer";
@@ -16,6 +18,7 @@ import { User } from "./User";
 import { CompanyUser } from "./CompanyUser";
 
 const models = [
+  Admin,
   Applicant,
   Section,
   ApplicantLink,
@@ -25,6 +28,7 @@ const models = [
   Capability,
   ApplicantCapability,
   Company,
+  CompanyApprovalEvent,
   CompanyPhoneNumber,
   CompanyPhoto,
   CompanyUser,

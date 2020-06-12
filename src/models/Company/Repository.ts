@@ -1,10 +1,13 @@
+import Database from "../../config/Database";
 import { Company, ICompany, ICompanyEditable } from "./index";
 import { CompanyPhotoRepository } from "../CompanyPhoto";
 import { CompanyPhoneNumberRepository } from "../CompanyPhoneNumber";
 import { CompanyNotFoundError } from "./Errors/CompanyNotFoundError";
-import Database from "../../config/Database";
 import { UserRepository } from "../User";
+import { Admin } from "../Admin";
+import { ApprovalStatus } from "../ApprovalStatus";
 import { CompanyUserRepository } from "../CompanyUser/Repository";
+import { CompanyApprovalEventRepository } from "./CompanyApprovalEvent";
 
 export const CompanyRepository = {
   create: async (
@@ -44,6 +47,23 @@ export const CompanyRepository = {
     if (!updatedCompany) throw new CompanyNotFoundError(uuid);
 
     return updatedCompany;
+  },
+  updateApprovalStatus: async (admin: Admin, company: Company, newStatus: ApprovalStatus) => {
+    const transaction = await Database.transaction();
+    try {
+      await company.update({ approvalStatus: newStatus }, { transaction });
+      await CompanyApprovalEventRepository.create({
+        admin: admin,
+        company: company,
+        status: newStatus,
+        transaction
+      });
+      await transaction.commit();
+      return company;
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
   },
   findByUuid: async (uuid: string) => {
     const company = await Company.findByPk(uuid);

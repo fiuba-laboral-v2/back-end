@@ -1,10 +1,12 @@
-import { UniqueConstraintError, ValidationError } from "sequelize";
+import { UniqueConstraintError, ValidationError, DatabaseError } from "sequelize";
 import Database from "../../../src/config/Database";
-import { PhoneNumberWithLettersError, InvalidCuitError } from "validations-fiuba-laboral-v2";
+import { InvalidCuitError, PhoneNumberWithLettersError } from "validations-fiuba-laboral-v2";
 import { CompanyRepository } from "../../../src/models/Company";
 import { UserRepository } from "../../../src/models/User";
+import { Admin } from "../../../src/models/Admin";
 import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
 import { CompanyGenerator, TCompanyDataGenerator } from "../../generators/Company";
+import { AdminGenerator } from "../../generators/Admin";
 import { UserMocks } from "../User/mocks";
 
 describe("CompanyRepository", () => {
@@ -184,6 +186,66 @@ describe("CompanyRepository", () => {
       await expect(
         CompanyRepository.update({ uuid, cuit: "invalidCuit" })
       ).rejects.toThrowErrorWithMessage(ValidationError, InvalidCuitError.buildMessage());
+    });
+  });
+
+  describe("updateApprovalStatus", () => {
+    let admin: Admin;
+
+    beforeAll(async () => {
+      admin = await AdminGenerator.instance().next().value;
+    });
+
+    it("approves company only by an admin and create new event", async () => {
+      const company = await CompanyRepository.create(companiesData.next().value);
+      expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
+      const approvedCompany = await CompanyRepository.updateApprovalStatus(
+        admin,
+        company,
+        ApprovalStatus.approved
+      );
+      expect(approvedCompany.approvalStatus).toEqual(ApprovalStatus.approved);
+      expect(await approvedCompany.getApprovalEvents()).toEqual([
+        expect.objectContaining({
+          userUuid: admin.userUuid,
+          companyUuid: company.uuid,
+          status: ApprovalStatus.approved
+        })
+      ]);
+    });
+
+    it("rejects company only by an admin and create new event", async () => {
+      const company = await CompanyRepository.create(companiesData.next().value);
+      expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
+      const approvedCompany = await CompanyRepository.updateApprovalStatus(
+        admin,
+        company,
+        ApprovalStatus.rejected
+      );
+      expect(approvedCompany.approvalStatus).toEqual(ApprovalStatus.rejected);
+      expect(await approvedCompany.getApprovalEvents()).toEqual([
+        expect.objectContaining({
+          userUuid: admin.userUuid,
+          companyUuid: company.uuid,
+          status: ApprovalStatus.rejected
+        })
+      ]);
+    });
+
+    it("throws an error if status is invalid and not change the company", async () => {
+      const company = await CompanyRepository.create(companiesData.next().value);
+      expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
+      await expect(
+        CompanyRepository.updateApprovalStatus(admin, company, "notDefinedStatus" as any)
+      ).rejects.toThrowErrorWithMessage(
+        DatabaseError,
+        "invalid input value for enum \"enum_Companies_approvalStatus\": \"notDefinedStatus\""
+      );
+      expect(
+        (await CompanyRepository.findByUuid(company.uuid)).approvalStatus
+      ).toEqual(
+        ApprovalStatus.pending
+      );
     });
   });
 });
