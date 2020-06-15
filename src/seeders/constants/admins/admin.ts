@@ -4,7 +4,7 @@ import { hashSync } from "bcrypt";
 export const admin = {
   user: {
     uuid: uuids.admin.user,
-    email: "admin@admin",
+    email: "admin@admin.com",
     password: hashSync("SecurePassword1010", 10),
     name: "admin",
     surname: "admin",
