@@ -6,13 +6,13 @@ export const GraphQLEnumType = (config: IGraphQLEnumTypeConfig) => new Enum({
   ...config,
   values: (() => {
     const values = {};
-    config.enumValues.forEach(status => values[status] = { value: status });
+    config.values.forEach(status => values[status] = { value: status });
     return values;
   })()
 });
 
 interface IGraphQLEnumTypeConfig {
-  enumValues: string[];
+  values: string[];
   name: string;
   description?: Maybe<string>;
   extensions?: Maybe<Readonly<Record<string, any>>>;
