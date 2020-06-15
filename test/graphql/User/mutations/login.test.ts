@@ -24,9 +24,7 @@ describe("login", () => {
 
   afterAll(() => Database.close());
 
-  const createExpressContext = () => ({
-    res: { cookie: jest.fn() }
-  });
+  const createExpressContext = () => ({ res: { cookie: jest.fn() } });
 
   const expectCookieToBeSet = async (
     user: User,
@@ -35,7 +33,7 @@ describe("login", () => {
     expect(expressContext.res.cookie.mock.calls).toEqual([
       [
         AuthConfig.cookieName,
-        await JWT.createToken(user),
+        expect.any(String),
         AuthConfig.cookieOptions
       ]
     ]);
@@ -55,6 +53,11 @@ describe("login", () => {
     });
     expect(errors).toBeUndefined();
     await expectCookieToBeSet(user, expressContext);
+    const token: string = expressContext.res.cookie.mock.calls[0][1];
+    expect(JWT.decodeToken(token)).toEqual({
+      uuid: user.uuid,
+      email: user.email
+    });
   });
 
   it("sets the cookie for an applicant user", async () => {
@@ -69,6 +72,12 @@ describe("login", () => {
     });
     expect(errors).toBeUndefined();
     await expectCookieToBeSet(user, expressContext);
+    const token: string = expressContext.res.cookie.mock.calls[0][1];
+    expect(JWT.decodeToken(token)).toEqual({
+      uuid: user.uuid,
+      email: user.email,
+      applicantUuid: applicant.uuid
+    });
   });
 
   it("returns a token for an company user", async () => {
@@ -83,6 +92,12 @@ describe("login", () => {
     });
     expect(errors).toBeUndefined();
     await expectCookieToBeSet(user, expressContext);
+    const token: string = expressContext.res.cookie.mock.calls[0][1];
+    expect(JWT.decodeToken(token)).toEqual({
+      uuid: user.uuid,
+      email: user.email,
+      companyUuid: company.uuid
+    });
   });
 
   it("returns error if user is not registered", async () => {
