@@ -1,15 +1,7 @@
-import { GraphQLEnumType } from "graphql";
+import { GraphQLEnumType } from "../../GraphQLEnumType";
 import { approvalStatuses } from "../../../models/ApprovalStatus";
 
-const buildEnumValues = () => {
-  const values = {};
-  approvalStatuses.forEach(status => {
-    values[status] = { value: status };
-  });
-  return values;
-};
-
-export const GraphQLApprovalStatus = new GraphQLEnumType({
+export const GraphQLApprovalStatus = GraphQLEnumType({
   name: "ApprovalStatus",
-  values: buildEnumValues()
+  enumValues: approvalStatuses
 });
