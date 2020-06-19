@@ -1,7 +1,7 @@
 import { GraphQLObjectType } from "graphql";
 import { ID, nonNull, String } from "../../fieldTypes";
 
-const GraphQLCapability = new GraphQLObjectType({
+export const GraphQLCapability = new GraphQLObjectType({
   name: "Capability",
   fields: () => ({
     uuid: {
@@ -12,5 +12,3 @@ const GraphQLCapability = new GraphQLObjectType({
     }
   })
 });
-
-export { GraphQLCapability };

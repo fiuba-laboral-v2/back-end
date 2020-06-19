@@ -7,6 +7,7 @@ import CareerTypes from "./Career/Types";
 import { userTypes } from "./User/Types";
 import { capabilityTypes } from "./Capability";
 import { translationTypes } from "./Translation/Types";
+import { approvalStatusTypes } from "./ApprovalStatus";
 
 const types = [
   ...adminTypes,
@@ -17,7 +18,8 @@ const types = [
   ...userTypes,
   ...capabilityTypes,
   ...jobApplicationTypes,
-  ...translationTypes
+  ...translationTypes,
+  ...approvalStatusTypes
 ];
 
 export default types;

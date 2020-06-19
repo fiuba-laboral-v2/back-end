@@ -114,7 +114,9 @@ export const defaultTranslations = {
     { key: "logOut", value: "Cerrar sesión" },
     { key: "myProfile", value: "Mi perfil" },
     { key: "myCompanyProfile", value: "Mi empresa" },
-    { key: "myOffers", value: "Mis Ofertas" }
+    { key: "myOffers", value: "Mis Ofertas" },
+    { key: "pendingProfile", value: "Su perfil esta pendiente de aprobación" },
+    { key: "rejectedProfile", value: "Su perfil ha sido rechazado" }
   ],
   offerCareer: [
     { key: "careersTitle", value: "Carreras" }

@@ -1,8 +1,9 @@
 import { GraphQLObjectType } from "graphql";
 import { ID, nonNull, String, List } from "../../fieldTypes";
 import { Company } from "../../../models/Company";
+import { GraphQLApprovalStatus } from "../../ApprovalStatus/Types/GraphQLApprovalStatus";
 
-const GraphQLCompany = new GraphQLObjectType<Company>({
+export const GraphQLCompany = new GraphQLObjectType<Company>({
   name: "Company",
   fields: () => ({
     uuid: {
@@ -30,7 +31,7 @@ const GraphQLCompany = new GraphQLObjectType<Company>({
       type: String
     },
     approvalStatus: {
-      type: nonNull(String)
+      type: nonNull(GraphQLApprovalStatus)
     },
     phoneNumbers: {
       type: List(String),
@@ -44,5 +45,3 @@ const GraphQLCompany = new GraphQLObjectType<Company>({
     }
   })
 });
-
-export { GraphQLCompany };
