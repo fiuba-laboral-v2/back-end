@@ -1,8 +1,6 @@
-import { GraphQLEnumType as Enum } from "graphql";
-import Maybe from "graphql/tsutils/Maybe";
-import { EnumTypeDefinitionNode, EnumTypeExtensionNode } from "graphql/language/ast";
+import { GraphQLEnumType as Enum, GraphQLEnumTypeConfig } from "graphql";
 
-export const GraphQLEnumType = (config: IGraphQLEnumTypeConfig) => new Enum({
+export const GraphQLEnumType = (config: GraphQLEnumTypeProps) => new Enum({
   ...config,
   values: (() => {
     const values = {};
@@ -10,12 +8,4 @@ export const GraphQLEnumType = (config: IGraphQLEnumTypeConfig) => new Enum({
     return values;
   })()
 });
-
-interface IGraphQLEnumTypeConfig {
-  values: string[];
-  name: string;
-  description?: Maybe<string>;
-  extensions?: Maybe<Readonly<Record<string, any>>>;
-  astNode?: Maybe<EnumTypeDefinitionNode>;
-  extensionASTNodes?: Maybe<ReadonlyArray<EnumTypeExtensionNode>>;
-}
+type GraphQLEnumTypeProps = Omit<GraphQLEnumTypeConfig, "values"> & { values: string[]; };
