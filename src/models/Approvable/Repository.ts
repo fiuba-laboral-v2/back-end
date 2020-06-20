@@ -7,7 +7,7 @@ const APPROVABLE_MODELS = [
   Company
 ];
 
-const TABLE_NAME_COLUMN = "tableName";
+const TABLE_NAME_COLUMN = "tableNameColumn";
 
 const getModelByTableName = (tableName: string) =>
   find(APPROVABLE_MODELS, ["tableName", tableName]);
@@ -22,7 +22,7 @@ const findPendingQuery = () => `
 export const ApprovableRepository = {
   findPending: async () => {
     const rows = await Database.query(findPendingQuery(), { type: "SELECT" });
-    return rows.map((row: { tableName: string }) => {
+    return rows.map((row: object) => {
       const tableName = row[TABLE_NAME_COLUMN];
       const modelClass = getModelByTableName(tableName);
       if (!modelClass) throw new Error(`Invalid table name: ${tableName}`);
