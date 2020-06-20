@@ -10,5 +10,5 @@ export interface ICompanyUser {
   email: string;
   adminUuid?: undefined;
   company: ICurrentCompany;
-  applicantUuid?: undefined;
+  applicant?: undefined;
 }

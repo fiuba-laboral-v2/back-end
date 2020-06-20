@@ -17,6 +17,6 @@ export const saveJobApplication = {
     { currentUser }: { currentUser: IApplicantUser }
   ) => {
     const offer = await OfferRepository.findByUuid(offerUuid);
-    return JobApplicationRepository.apply(currentUser.applicantUuid, offer);
+    return JobApplicationRepository.apply(currentUser.applicant.uuid, offer);
   }
 };

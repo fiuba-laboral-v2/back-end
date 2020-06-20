@@ -13,7 +13,7 @@ export const defaultApplicantUuid = "f1866416-bbb7-4890-9c19-603ac02c3dec";
 export const defaultCurrentUser = {
   uuid: defaultUserUuid,
   email: testCurrentUserEmail,
-  applicantUuid: defaultApplicantUuid
+  applicant: { uuid: defaultApplicantUuid }
 };
 
 const LoggedInTestClient = (

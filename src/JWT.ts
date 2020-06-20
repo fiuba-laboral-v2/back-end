@@ -33,7 +33,7 @@ export const JWT = {
     const payload = {
       uuid: user.uuid,
       email: user.email,
-      ...(isApplicant && { applicantUuid: applicant.uuid }),
+      ...(isApplicant && { applicant: { uuid: applicant.uuid } }),
       ...(isCompanyUser && { company: await createCompanyContext(companyUser) })
     };
 
@@ -50,10 +50,10 @@ export const JWT = {
         uuid: payload.uuid,
         email: payload.email
       };
-      const applicantUuid = !payload.company && payload.applicantUuid;
-      const company = !payload.applicantUuid && payload.company;
+      const applicant = !payload.company && payload.applicant;
+      const company = !payload.applicant && payload.company;
       if (company) return { ...user, company };
-      if (applicantUuid) return { ...user, applicantUuid };
+      if (applicant) return { ...user, applicant };
       return user;
     } catch (e) {
       return;

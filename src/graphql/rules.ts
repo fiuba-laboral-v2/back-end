@@ -10,7 +10,7 @@ const isUser = rule({ cache: "contextual" })
 
 const userHasApplicant = rule({ cache: "contextual" })
   (async (parent, args, context: IApolloServerContext) => {
-    if (!context.currentUser.applicantUuid) throw new UnauthorizedError();
+    if (!context.currentUser.applicant) throw new UnauthorizedError();
     return true;
   });
 

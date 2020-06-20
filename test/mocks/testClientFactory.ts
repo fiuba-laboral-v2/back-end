@@ -49,7 +49,9 @@ export const testClientFactory = {
       currentUser: {
         uuid: user.uuid,
         email: user.email,
-        applicantUuid: applicant.uuid
+        applicant: {
+          uuid: applicant.uuid
+        }
       },
       expressContext
     });

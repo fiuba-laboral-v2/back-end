@@ -36,7 +36,7 @@ const updateCurrentApplicant = {
     _: undefined,
     props: IApplicantEditable,
     { currentUser }: { currentUser: IApplicantUser }
-  ) => ApplicantRepository.update({ ...props, uuid: currentUser.applicantUuid })
+  ) => ApplicantRepository.update({ ...props, uuid: currentUser.applicant.uuid })
 };
 
 export { updateCurrentApplicant };

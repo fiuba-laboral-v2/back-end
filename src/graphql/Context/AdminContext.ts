@@ -7,5 +7,5 @@ export interface IAdminUser {
   email: string;
   admin: ICurrentAdmin;
   company?: undefined;
-  applicantUuid?: undefined;
+  applicant?: undefined;
 }

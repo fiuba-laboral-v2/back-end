@@ -8,7 +8,7 @@ export interface IUser {
   email: string;
   admin?: undefined;
   company?: undefined;
-  applicantUuid?: undefined;
+  applicant?: undefined;
 }
 
 export type ICurrentUser = IAdminUser | IApplicantUser | ICompanyUser | IUser;

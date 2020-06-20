@@ -76,7 +76,9 @@ describe("login", () => {
     expect(JWT.decodeToken(token)).toEqual({
       uuid: user.uuid,
       email: user.email,
-      applicantUuid: applicant.uuid
+      applicant: {
+        uuid: applicant.uuid
+      }
     });
   });
 
