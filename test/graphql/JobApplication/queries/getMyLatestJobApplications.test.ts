@@ -4,14 +4,19 @@ import Database from "../../../../src/config/Database";
 
 import { UserRepository } from "../../../../src/models/User";
 import { Applicant } from "../../../../src/models/Applicant";
+import { Admin } from "../../../../src/models/Admin";
+import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { JobApplicationRepository } from "../../../../src/models/JobApplication";
 
 import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
 
 import { OfferGenerator, TOfferGenerator } from "../../../generators/Offer";
+import { AdminGenerator } from "../../../generators/Admin";
+import { CompanyGenerator, TCompanyGenerator } from "../../../generators/Company";
 import { ApplicantGenerator } from "../../../generators/Applicant";
 import { testClientFactory } from "../../../mocks/testClientFactory";
+import { apolloClientFactory } from "../../../mocks/apolloClientFactory";
 
 const GET_MY_LATEST_JOB_APPLICATIONS = gql`
     query getMyLatestJobApplications {
@@ -35,6 +40,8 @@ const GET_MY_LATEST_JOB_APPLICATIONS = gql`
 describe("getMyLatestJobApplications", () => {
   let applicant: Applicant;
   let offers: TOfferGenerator;
+  let admin: Admin;
+  let companies: TCompanyGenerator;
 
   beforeAll(async () => {
     Database.setConnection();
@@ -42,13 +49,21 @@ describe("getMyLatestJobApplications", () => {
     await CompanyRepository.truncate();
     applicant = await ApplicantGenerator.withMinimumData().next().value;
     offers = await OfferGenerator.instance.withObligatoryData();
+    admin = await AdminGenerator.instance().next().value;
+    companies = CompanyGenerator.instance.withMinimumData();
   });
 
   afterAll(() => Database.close());
 
+  const createCompany = async (approvalStatus: ApprovalStatus) => {
+    const company = await companies.next().value;
+    return CompanyRepository.updateApprovalStatus(admin, company, approvalStatus);
+  };
+
   describe("when the input is valid", () => {
     it("returns all my company jobApplications", async () => {
-      const { company, apolloClient } = await testClientFactory.company();
+      const company = await createCompany(ApprovalStatus.approved);
+      const { apolloClient } = await apolloClientFactory.login.company(company);
       const offer = await offers.next({ companyUuid: company.uuid }).value;
       const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
 
@@ -80,7 +95,7 @@ describe("getMyLatestJobApplications", () => {
   });
 
   describe("Errors", () => {
-    it("should return an error if there is no current user", async () => {
+    it("return an error if there is no current user", async () => {
       const apolloClient = client.loggedOut();
       const { errors } = await apolloClient.query({
         query: GET_MY_LATEST_JOB_APPLICATIONS
@@ -89,8 +104,28 @@ describe("getMyLatestJobApplications", () => {
       expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
     });
 
-    it("should return an error if current user is not a companyUser", async () => {
+    it("returns an error if current user is not a companyUser", async () => {
       const { apolloClient } = await testClientFactory.user();
+      const { errors } = await apolloClient.query({
+        query: GET_MY_LATEST_JOB_APPLICATIONS
+      });
+
+      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+    });
+
+    it("returns an error if company has a pending pending status", async () => {
+      const company = await createCompany(ApprovalStatus.pending);
+      const { apolloClient } = await apolloClientFactory.login.company(company);
+      const { errors } = await apolloClient.query({
+        query: GET_MY_LATEST_JOB_APPLICATIONS
+      });
+
+      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+    });
+
+    it("returns an error if company has a pending rejected status", async () => {
+      const company = await createCompany(ApprovalStatus.rejected);
+      const { apolloClient } = await apolloClientFactory.login.company(company);
       const { errors } = await apolloClient.query({
         query: GET_MY_LATEST_JOB_APPLICATIONS
       });
