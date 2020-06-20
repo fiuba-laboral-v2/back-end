@@ -1,4 +1,4 @@
-import { isApplicant, isCompanyUser } from "../rules";
+import { isApplicant, isCompanyUser } from "../Rules";
 
 export const jobApplicationPermissions = {
   Mutation: {

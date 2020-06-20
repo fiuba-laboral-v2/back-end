@@ -1,4 +1,4 @@
-import { isUser } from "../rules";
+import { isUser } from "../Rules";
 
 export const careersPermissions = {
   Query: {
