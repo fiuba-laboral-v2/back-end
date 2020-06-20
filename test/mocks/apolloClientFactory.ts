@@ -60,5 +60,6 @@ export const apolloClientFactory = {
       });
       return { apolloClient, user, applicant };
     }
-  }
+  },
+  loggedOut: client.loggedOut()
 };

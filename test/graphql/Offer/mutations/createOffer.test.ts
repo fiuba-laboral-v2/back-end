@@ -3,11 +3,16 @@ import Database from "../../../../src/config/Database";
 
 import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
 import { OfferGenerator, TOfferDataGenerator } from "../../../generators/Offer";
-import { testClientFactory } from "../../../mocks/testClientFactory";
+import { CompanyGenerator, TCompanyGenerator } from "../../../generators/Company";
+import { AdminGenerator } from "../../../generators/Admin";
+import { apolloClientFactory } from "../../../mocks/apolloClientFactory";
 
 import { CareerRepository } from "../../../../src/models/Career";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { UserRepository } from "../../../../src/models/User";
+import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
+import { Admin } from "../../../../src/models/Admin";
+import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
 
 const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
     mutation createOffer(
@@ -89,6 +94,8 @@ const SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA = gql`
 describe("createOffer", () => {
   let careers: TCareerGenerator;
   let offers: TOfferDataGenerator;
+  let companies: TCompanyGenerator;
+  let admin: Admin;
 
   beforeAll(async () => {
     Database.setConnection();
@@ -97,13 +104,21 @@ describe("createOffer", () => {
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
     offers = OfferGenerator.data.withObligatoryData();
+    companies = CompanyGenerator.instance.withMinimumData();
+    admin = await AdminGenerator.instance().next().value;
   });
 
   afterAll(() => Database.close());
 
+  const createCompany = async (approvalStatus: ApprovalStatus) => {
+    const company = await companies.next().value;
+    return CompanyRepository.updateApprovalStatus(admin, company, approvalStatus);
+  };
+
   describe("when the input values are valid", () => {
-    it("should create a new offer with only obligatory data", async () => {
-      const { company, apolloClient } = await testClientFactory.company();
+    it("creates a new offer with only obligatory data", async () => {
+      const company = await createCompany(ApprovalStatus.approved);
+      const { apolloClient } = await apolloClientFactory.login.company(company);
 
       const { companyUuid, ...createOfferAttributes } = offers.next({
         companyUuid: company.uuid
@@ -126,8 +141,9 @@ describe("createOffer", () => {
       );
     });
 
-    it("should create a new offer with one section and one career", async () => {
-      const { company, apolloClient } = await testClientFactory.company();
+    it("creates a new offer with one section and one career", async () => {
+      const company = await createCompany(ApprovalStatus.approved);
+      const { apolloClient } = await apolloClientFactory.login.company(company);
       const { code } = await careers.next().value;
 
       const { companyUuid, ...createOfferAttributes } = offers.next({
@@ -153,8 +169,9 @@ describe("createOffer", () => {
   });
 
   describe("when the input values are invalid", () => {
-    it("should throw an error if no title is provided", async () => {
-      const { company, apolloClient } = await testClientFactory.company();
+    it("throws an error if no title is provided", async () => {
+      const company = await createCompany(ApprovalStatus.approved);
+      const { apolloClient } = await apolloClientFactory.login.company(company);
       const {
         companyUuid,
         title,
@@ -165,6 +182,58 @@ describe("createOffer", () => {
         variables: createOfferAttributesWithNoTitle
       });
       expect(errors).not.toBeUndefined();
+    });
+
+    it("throws an error if no user is logged in", async () => {
+      const company = await createCompany(ApprovalStatus.approved);
+      const apolloClient = apolloClientFactory.loggedOut;
+      const { companyUuid, ...createOfferAttributes } = offers.next({
+        companyUuid: company.uuid
+      }).value;
+      const { errors } = await apolloClient.mutate({
+        mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
+        variables: createOfferAttributes
+      });
+      expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
+    });
+
+    it("throws an error if the current user is not a company", async () => {
+      const company = await createCompany(ApprovalStatus.approved);
+      const { apolloClient } = await apolloClientFactory.login.admin(admin);
+      const { companyUuid, ...createOfferAttributes } = offers.next({
+        companyUuid: company.uuid
+      }).value;
+      const { errors } = await apolloClient.mutate({
+        mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
+        variables: createOfferAttributes
+      });
+      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+    });
+
+    it("throws an error if the company has a pending approval status", async () => {
+      const company = await createCompany(ApprovalStatus.pending);
+      const { apolloClient } = await apolloClientFactory.login.company(company);
+      const { companyUuid, ...createOfferAttributes } = offers.next({
+        companyUuid: company.uuid
+      }).value;
+      const { errors } = await apolloClient.mutate({
+        mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
+        variables: createOfferAttributes
+      });
+      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+    });
+
+    it("throws an error if the company has a rejected approval status", async () => {
+      const company = await createCompany(ApprovalStatus.rejected);
+      const { apolloClient } = await apolloClientFactory.login.company(company);
+      const { companyUuid, ...createOfferAttributes } = offers.next({
+        companyUuid: company.uuid
+      }).value;
+      const { errors } = await apolloClient.mutate({
+        mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
+        variables: createOfferAttributes
+      });
+      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
   });
 });
