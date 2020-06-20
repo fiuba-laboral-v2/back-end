@@ -2,6 +2,7 @@ import { Sequelize } from "sequelize-typescript";
 import { Environment } from "./Environment";
 import databaseJSON from "../../config/database.json";
 import { models } from "../models";
+import { QueryOptions } from "sequelize";
 
 export default class Database {
   public static sequelize: Sequelize;
@@ -12,6 +13,10 @@ export default class Database {
 
   public static transaction() {
     return this.sequelize?.transaction();
+  }
+
+  public static query(sql: string, options: QueryOptions) {
+    return this.sequelize?.query(sql, options);
   }
 
   public static setConnection() {
