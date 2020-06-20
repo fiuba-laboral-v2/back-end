@@ -2,11 +2,7 @@ import { gql } from "apollo-server";
 import Database from "../../../../src/config/Database";
 import { client } from "../../ApolloTestClient";
 
-import {
-  AuthenticationError,
-  UnauthorizedError,
-  CompanyNotApprovedError
-} from "../../../../src/graphql/Errors";
+import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
 
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import { Admin } from "../../../../src/models/Admin";
@@ -115,14 +111,14 @@ describe("getMyOffers", () => {
       const company = await companies.next().value;
       const { apolloClient } = await apolloClientFactory.login.company(company);
       const { errors } = await apolloClient.query({ query: GET_MY_OFFERS });
-      expect(errors![0].extensions!.data).toEqual({ errorType: CompanyNotApprovedError.name });
+      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("returns an error if company has a rejected status", async () => {
       const company = await createCompany(ApprovalStatus.rejected);
       const { apolloClient } = await apolloClientFactory.login.company(company);
       const { errors } = await apolloClient.query({ query: GET_MY_OFFERS });
-      expect(errors![0].extensions!.data).toEqual({ errorType: CompanyNotApprovedError.name });
+      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
   });
 });
