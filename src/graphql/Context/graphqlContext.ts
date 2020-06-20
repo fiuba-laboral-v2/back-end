@@ -2,14 +2,7 @@ import { ExpressContext } from "apollo-server-express/dist/ApolloServer";
 import { IAdminUser } from "./AdminContext";
 import { ICompanyUser } from "./CompanyContext";
 import { IApplicantUser } from "./ApplicantContext";
-
-export interface IUser {
-  uuid: string;
-  email: string;
-  admin?: undefined;
-  company?: undefined;
-  applicant?: undefined;
-}
+import { IUser } from "./UserContext";
 
 export type ICurrentUser = IAdminUser | IApplicantUser | ICompanyUser | IUser;
 

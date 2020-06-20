@@ -1,6 +1,6 @@
-export interface IApplicantUser {
-  uuid: string;
-  email: string;
+import { ICurrentUser } from "./UserContext";
+
+export interface IApplicantUser extends ICurrentUser {
   adminUuid?: undefined;
   applicant: { uuid: string; };
   company?: undefined;
