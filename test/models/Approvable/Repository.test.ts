@@ -5,25 +5,26 @@ import { UserRepository } from "../../../src/models/User";
 import { ApprovableRepository } from "../../../src/models/Approvable";
 import { AdminGenerator } from "../../generators/Admin";
 import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
+import { Admin } from "../../../src/models/Admin";
 
 describe("ApprovableRepository", () => {
   let companiesData: TCompanyDataGenerator;
+  let admin: Admin;
 
   beforeAll(async () => {
     Database.setConnection();
+    await UserRepository.truncate();
     companiesData = await CompanyGenerator.data.completeData();
+    admin = await AdminGenerator.instance().next().value;
   });
 
   beforeEach(async () => {
     await CompanyRepository.truncate();
-    await UserRepository.truncate();
   });
 
   afterAll(() => Database.close());
 
   it("returns only pending companies", async () => {
-    const admin = await AdminGenerator.instance().next().value;
-
     const rejectedCompany = await CompanyRepository.create(companiesData.next().value);
     await CompanyRepository.updateApprovalStatus(
       admin,
