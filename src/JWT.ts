@@ -3,8 +3,10 @@ import { Environment } from "./config/Environment";
 import { sign, verify } from "jsonwebtoken";
 import { Application } from "express";
 import jwt from "express-jwt";
-import { ICurrentUser } from "./graphqlContext";
+import { ICurrentUser } from "./graphql/Context/graphqlContext";
 import { AuthConfig } from "./config/AuthConfig";
+import { CompanyRepository } from "./models/Company";
+import { CompanyUser } from "./models/CompanyUser";
 
 let JWT_SECRET: string;
 if (["test", "development", "test_travis"].includes(Environment.NODE_ENV)) {
@@ -13,6 +15,14 @@ if (["test", "development", "test_travis"].includes(Environment.NODE_ENV)) {
   if (!Environment.JWT_SECRET) throw new Error("JWT_SECRET not set");
   JWT_SECRET = Environment.JWT_SECRET;
 }
+
+const createCompanyContext = async (companyUser: CompanyUser) => {
+  const company = await CompanyRepository.findByUuid(companyUser.companyUuid);
+  return {
+    uuid: companyUser.companyUuid,
+    approvalStatus: company.approvalStatus
+  };
+};
 
 export const JWT = {
   createToken: async (user: User) => {
@@ -23,8 +33,8 @@ export const JWT = {
     const payload = {
       uuid: user.uuid,
       email: user.email,
-      ...(isApplicant && { applicantUuid: applicant.uuid }),
-      ...(isCompanyUser && { companyUuid: companyUser.companyUuid })
+      ...(isApplicant && { applicant: { uuid: applicant.uuid } }),
+      ...(isCompanyUser && { company: await createCompanyContext(companyUser) })
     };
 
     return sign(
@@ -40,10 +50,10 @@ export const JWT = {
         uuid: payload.uuid,
         email: payload.email
       };
-      const applicantUuid = !payload.companyUuid && payload.applicantUuid;
-      const companyUuid = !payload.applicantUuid && payload.companyUuid;
-      if (companyUuid) return { ...user, companyUuid };
-      if (applicantUuid) return { ...user, applicantUuid };
+      const applicant = !payload.company && payload.applicant;
+      const company = !payload.applicant && payload.company;
+      if (company) return { ...user, company };
+      if (applicant) return { ...user, applicant };
       return user;
     } catch (e) {
       return;

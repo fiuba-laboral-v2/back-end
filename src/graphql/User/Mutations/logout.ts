@@ -1,5 +1,5 @@
 import { Boolean } from "../../fieldTypes";
-import { Context } from "../../../graphqlContext";
+import { Context } from "../../Context/graphqlContext";
 import { AuthConfig } from "../../../config/AuthConfig";
 
 export const logout = {

@@ -1,7 +1,7 @@
 import { GraphQLOffer } from "../Types/GraphQLOffer";
 import { OfferRepository } from "../../../models/Offer";
 import { List } from "../../fieldTypes";
-import { ICompanyUser } from "src/graphqlContext";
+import { ICompanyUser } from "src/graphql/Context";
 
 const getMyOffers = {
   type: List(GraphQLOffer),
@@ -9,7 +9,7 @@ const getMyOffers = {
     _: undefined,
     __: undefined,
     { currentUser }: { currentUser: ICompanyUser }) =>
-      OfferRepository.findByCompanyUuid(currentUser.companyUuid)
+      OfferRepository.findByCompanyUuid(currentUser.company.uuid)
 };
 
 export { getMyOffers };

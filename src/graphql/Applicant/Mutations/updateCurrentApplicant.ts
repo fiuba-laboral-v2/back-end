@@ -5,7 +5,7 @@ import { GraphQLSectionInput } from "../Types/Section";
 import { GraphQLUserUpdateInput } from "../../User/Types/GraphQLUserUpdateInput";
 import { ApplicantRepository, IApplicantEditable } from "../../../models/Applicant";
 import { GraphQLLinkInput } from "../Types/Link";
-import { IApplicantUser } from "../../../graphqlContext";
+import { IApplicantUser } from "../../Context";
 
 const updateCurrentApplicant = {
   type: GraphQLApplicant,
@@ -36,7 +36,7 @@ const updateCurrentApplicant = {
     _: undefined,
     props: IApplicantEditable,
     { currentUser }: { currentUser: IApplicantUser }
-  ) => ApplicantRepository.update({ ...props, uuid: currentUser.applicantUuid })
+  ) => ApplicantRepository.update({ ...props, uuid: currentUser.applicant.uuid })
 };
 
 export { updateCurrentApplicant };

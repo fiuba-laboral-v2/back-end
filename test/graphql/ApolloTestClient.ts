@@ -1,6 +1,6 @@
 import { createTestClient } from "apollo-server-testing";
 import { apolloErrorConverter } from "../../src/FormatErrors";
-import { ICurrentUser } from "../../src/graphqlContext";
+import { ICurrentUser } from "../../src/graphql/Context/graphqlContext";
 import { DocumentNode } from "graphql";
 import { ApolloServer as Server } from "apollo-server-express";
 import { schema } from "../../src/graphql/Schema";
@@ -13,7 +13,7 @@ export const defaultApplicantUuid = "f1866416-bbb7-4890-9c19-603ac02c3dec";
 export const defaultCurrentUser = {
   uuid: defaultUserUuid,
   email: testCurrentUserEmail,
-  applicantUuid: defaultApplicantUuid
+  applicant: { uuid: defaultApplicantUuid }
 };
 
 const LoggedInTestClient = (

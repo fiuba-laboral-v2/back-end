@@ -2,7 +2,7 @@ import { GraphQLOffer } from "../Types/GraphQLOffer";
 import { GraphQLOfferCareerInput } from "../Types/GraphQLOfferCareer";
 import { GraphQLOfferSectionInput } from "../Types/GraphQLOfferSection";
 import { IOffer, OfferRepository } from "../../../models/Offer";
-import { ICompanyUser } from "../../../graphqlContext";
+import { ICompanyUser } from "../../Context";
 import { ID, Int, List, nonNull, String } from "../../fieldTypes";
 
 export const editOffer = {
@@ -37,5 +37,5 @@ export const editOffer = {
     _: undefined,
     props: IOffer & { uuid: string },
     { currentUser }: { currentUser: ICompanyUser }
-  ) => OfferRepository.update({ companyUuid: currentUser.companyUuid, ...props })
+  ) => OfferRepository.update({ companyUuid: currentUser.company.uuid, ...props })
 };
