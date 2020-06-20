@@ -2,7 +2,7 @@ import { nonNull, String, Boolean } from "../../fieldTypes";
 import { IUser } from "../../../models/User";
 import { UserRepository } from "../../../models/User/Repository";
 import { JWT } from "../../../JWT";
-import { Context } from "../../../graphqlContext";
+import { Context } from "../../Context/graphqlContext";
 import { BadCredentialsError } from "../Errors";
 import { AuthConfig } from "../../../config/AuthConfig";
 

@@ -5,7 +5,7 @@ import depthLimit from "graphql-depth-limit";
 import { ExpressContext } from "apollo-server-express/dist/ApolloServer";
 import { JWT } from "./JWT";
 import { AuthConfig } from "./config/AuthConfig";
-import { Context } from "./graphqlContext";
+import { Context } from "./graphql/Context/graphqlContext";
 
 export const ApolloServer = new Server({
   schema,

@@ -1,5 +1,5 @@
 import { GraphQLObjectType } from "graphql";
-import { IApolloServerContext } from "../../../graphqlContext";
+import { IApolloServerContext } from "../../Context/graphqlContext";
 import { ID, Int, List, nonNull, String, Boolean } from "../../fieldTypes";
 import { GraphQLOfferSection } from "./GraphQLOfferSection";
 import { GraphQLCareer } from "../../Career/Types/Career";

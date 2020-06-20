@@ -22,7 +22,9 @@ export const testClientFactory = {
       currentUser: {
         uuid: user.uuid,
         email: user.email,
-        adminUuid: admin.userUuid
+        admin: {
+          userUuid: admin.userUuid
+        }
       },
       expressContext
     });
@@ -61,7 +63,10 @@ export const testClientFactory = {
       currentUser: {
         uuid: user.uuid,
         email: user.email,
-        companyUuid: company.uuid
+        company: {
+          uuid: company.uuid,
+          approvalStatus: company.approvalStatus
+        }
       },
       expressContext
     });

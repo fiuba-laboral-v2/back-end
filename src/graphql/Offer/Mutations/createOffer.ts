@@ -2,7 +2,7 @@ import { GraphQLOffer } from "../Types/GraphQLOffer";
 import { GraphQLOfferCareerInput } from "../Types/GraphQLOfferCareer";
 import { GraphQLOfferSectionInput } from "../Types/GraphQLOfferSection";
 import { IOffer, OfferRepository } from "../../../models/Offer";
-import { ICompanyUser } from "../../../graphqlContext";
+import { ICompanyUser } from "../../Context";
 import { Int, List, nonNull, String } from "../../fieldTypes";
 
 export const createOffer = {
@@ -31,5 +31,5 @@ export const createOffer = {
     }
   },
   resolve: (_: undefined, props: IOffer, { currentUser }: { currentUser: ICompanyUser }) =>
-    OfferRepository.create({ companyUuid: currentUser.companyUuid, ...props })
+    OfferRepository.create({ companyUuid: currentUser.company.uuid, ...props })
 };

@@ -1,6 +1,6 @@
 import { createTestClient } from "apollo-server-testing";
 import { apolloErrorConverter } from "../../src/FormatErrors";
-import { ICurrentUser } from "../../src/graphqlContext";
+import { ICurrentUser } from "../../src/graphql/Context/graphqlContext";
 import { DocumentNode } from "graphql";
 import { ApolloServer as Server } from "apollo-server-express";
 import { schema } from "../../src/graphql/Schema";

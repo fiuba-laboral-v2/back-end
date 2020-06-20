@@ -1,6 +1,6 @@
 import { rule, chain } from "graphql-shield";
 import { AuthenticationError, UnauthorizedError } from "./Errors";
-import { IApolloServerContext } from "../graphqlContext";
+import { IApolloServerContext } from "./Context/graphqlContext";
 
 const isUser = rule({ cache: "contextual" })
   ((parent, args, context: IApolloServerContext) => {
@@ -16,7 +16,7 @@ const userHasApplicant = rule({ cache: "contextual" })
 
 const userHasCompany = rule({ cache: "contextual" })
   (async (parent, args, context: IApolloServerContext) => {
-    if (!context.currentUser.companyUuid) throw new UnauthorizedError();
+    if (!context.currentUser.company) throw new UnauthorizedError();
     return true;
   });
 
