@@ -12,4 +12,4 @@ const companyIsApproved = rule({ cache: "contextual" })
     return true;
   });
 
-export const isApprovedCompany = chain(isCompanyUser, companyIsApproved);
+export const isFromApprovedCompany = chain(isCompanyUser, companyIsApproved);
