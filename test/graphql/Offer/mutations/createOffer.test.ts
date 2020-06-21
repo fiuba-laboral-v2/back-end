@@ -210,7 +210,7 @@ describe("createOffer", () => {
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
-    it("throws an error if the company has a pending approval status", async () => {
+    it("returns an error if the company has pending approval status", async () => {
       const { apolloClient, company } = await createCompany(ApprovalStatus.pending);
       const { companyUuid, ...createOfferAttributes } = offers.next({
         companyUuid: company.uuid
@@ -222,7 +222,7 @@ describe("createOffer", () => {
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
-    it("throws an error if the company has a rejected approval status", async () => {
+    it("returns an error if the company has rejected approval status", async () => {
       const { apolloClient, company } = await createCompany(ApprovalStatus.rejected);
       const { companyUuid, ...createOfferAttributes } = offers.next({
         companyUuid: company.uuid

@@ -113,7 +113,7 @@ describe("getMyLatestJobApplications", () => {
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
-    it("returns an error if company has a pending pending status", async () => {
+    it("returns an error if the company has pending status", async () => {
       const { apolloClient } = await createCompany(ApprovalStatus.pending);
       const { errors } = await apolloClient.query({
         query: GET_MY_LATEST_JOB_APPLICATIONS
@@ -122,7 +122,7 @@ describe("getMyLatestJobApplications", () => {
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
-    it("returns an error if company has a pending rejected status", async () => {
+    it("returns an error if the company has rejected status", async () => {
       const { apolloClient } = await createCompany(ApprovalStatus.rejected);
       const { errors } = await apolloClient.query({
         query: GET_MY_LATEST_JOB_APPLICATIONS
