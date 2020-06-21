@@ -17,7 +17,7 @@ describe("User", () => {
     const params = {
       email: "asd@qwe.com",
       password: "somethingVerySecret123",
-      name: "name",
+      name: "A Very Very Very Very Very Very Very Very Very Very Very Long Name",
       surname: "surname"
     };
     const user = new User(params);
