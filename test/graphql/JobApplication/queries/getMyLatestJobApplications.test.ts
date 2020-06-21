@@ -63,7 +63,12 @@ describe("getMyLatestJobApplications", () => {
 
   describe("when the input is valid", () => {
     it("returns all my company jobApplications", async () => {
-      const { apolloClient, company } = await createCompany(ApprovalStatus.approved);
+      const { apolloClient, company } = await testClientFactory.company({
+        status: {
+          admin,
+          approvalStatus: ApprovalStatus.approved
+        }
+      });
       const offer = await offers.next({ companyUuid: company.uuid }).value;
       const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
 
@@ -114,7 +119,12 @@ describe("getMyLatestJobApplications", () => {
     });
 
     it("returns an error if the company has pending status", async () => {
-      const { apolloClient } = await createCompany(ApprovalStatus.pending);
+      const { apolloClient } = await testClientFactory.company({
+        status: {
+          admin,
+          approvalStatus: ApprovalStatus.pending
+        }
+      });
       const { errors } = await apolloClient.query({
         query: GET_MY_LATEST_JOB_APPLICATIONS
       });
@@ -123,7 +133,12 @@ describe("getMyLatestJobApplications", () => {
     });
 
     it("returns an error if the company has rejected status", async () => {
-      const { apolloClient } = await createCompany(ApprovalStatus.rejected);
+      const { apolloClient } = await testClientFactory.company({
+        status: {
+          admin,
+          approvalStatus: ApprovalStatus.rejected
+        }
+      });
       const { errors } = await apolloClient.query({
         query: GET_MY_LATEST_JOB_APPLICATIONS
       });

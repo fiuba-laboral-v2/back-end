@@ -1,6 +1,7 @@
 import { userFactory } from "./user";
-import { IUserProps, IApplicantProps, ICompanyProps } from "./interfaces";
+import { IUserProps, IApplicantProps, ICompanyAttributes } from "./interfaces";
 import { User } from "../../src/models/User";
+import { CompanyRepository } from "../../src/models/Company";
 import { client } from "../graphql/ApolloTestClient";
 import { IExpressContext } from "../graphql/ExpressContext";
 
@@ -37,11 +38,15 @@ export const testClientFactory = {
     const apolloClient = createApolloClient(user, expressContext, applicantContext);
     return { apolloClient, user, applicant };
   },
-  company: async ({ photos, expressContext }: ICompanyProps = {}) => {
-    const company = await userFactory.company({ photos });
+  company: async ({ status, photos, expressContext }: ICompanyAttributes = {}) => {
+    let company = await userFactory.company({ photos });
     const [user] = await company.getUsers();
     const companyContext = { company: { uuid: company.uuid } };
     const apolloClient = createApolloClient(user, expressContext, companyContext);
+    if (status) {
+      const { admin, approvalStatus } = status;
+      company = await CompanyRepository.updateApprovalStatus(admin, company, approvalStatus);
+    }
     return { apolloClient, user, company };
   }
 };

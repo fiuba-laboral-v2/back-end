@@ -44,16 +44,6 @@ describe("getMyOffers", () => {
 
   afterAll(() => Database.close());
 
-  const createCompany = async (approvalStatus: ApprovalStatus) => {
-    const { apolloClient, company, user } = await testClientFactory.company();
-    const updatedCompany = await CompanyRepository.updateApprovalStatus(
-      admin,
-      company,
-      approvalStatus
-    );
-    return { apolloClient, company: updatedCompany, user };
-  };
-
   describe("when offers exists", () => {
     let offer1;
     let offer2;
@@ -68,7 +58,12 @@ describe("getMyOffers", () => {
     };
 
     it("returns only the offers that the company made", async () => {
-      const { apolloClient, company } = await createCompany(ApprovalStatus.approved);
+      const { apolloClient, company } = await testClientFactory.company({
+        status: {
+          admin,
+          approvalStatus: ApprovalStatus.approved
+        }
+      });
       await createOffers(company.uuid);
       const { data, errors } = await apolloClient.query({ query: GET_MY_OFFERS });
       expect(errors).toBeUndefined();
@@ -85,7 +80,12 @@ describe("getMyOffers", () => {
   describe("when no offers exists", () => {
     it("returns no offers when no offers were created", async () => {
       await OfferRepository.truncate();
-      const { apolloClient } = await createCompany(ApprovalStatus.approved);
+      const { apolloClient } = await testClientFactory.company({
+        status: {
+          admin,
+          approvalStatus: ApprovalStatus.approved
+        }
+      });
       const { data, errors } = await apolloClient.query({ query: GET_MY_OFFERS });
 
       expect(errors).toBeUndefined();
@@ -111,13 +111,23 @@ describe("getMyOffers", () => {
     });
 
     it("returns an error if company has pending status", async () => {
-      const { apolloClient } = await createCompany(ApprovalStatus.pending);
+      const { apolloClient } = await testClientFactory.company({
+        status: {
+          admin,
+          approvalStatus: ApprovalStatus.pending
+        }
+      });
       const { errors } = await apolloClient.query({ query: GET_MY_OFFERS });
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("returns an error if company has rejected status", async () => {
-      const { apolloClient } = await createCompany(ApprovalStatus.rejected);
+      const { apolloClient } = await testClientFactory.company({
+        status: {
+          admin,
+          approvalStatus: ApprovalStatus.rejected
+        }
+      });
       const { errors } = await apolloClient.query({ query: GET_MY_OFFERS });
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
