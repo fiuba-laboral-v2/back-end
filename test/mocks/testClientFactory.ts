@@ -1,78 +1,52 @@
-import { client } from "../graphql/ApolloTestClient";
 import { userFactory } from "./user";
-import { IUserProps, IApplicantProps, ICompanyProps } from "./interfaces";
+import { IUserProps, IApplicantProps, ICompanyAttributes } from "./interfaces";
+import { User } from "../../src/models/User";
+import { CompanyRepository } from "../../src/models/Company";
+import { client } from "../graphql/ApolloTestClient";
+import { IExpressContext } from "../graphql/ExpressContext";
+
+const createApolloClient = (
+  user: User,
+  expressContext?: IExpressContext,
+  entityContext?: object
+) => client.loggedIn({
+  currentUser: {
+    uuid: user.uuid,
+    email: user.email,
+    ...entityContext
+  },
+  expressContext
+});
 
 export const testClientFactory = {
   user: async ({ password, expressContext }: IUserProps = {}) => {
     const user = await userFactory.user({ password });
-    const apolloClient = client.loggedIn({
-      currentUser: {
-        uuid: user.uuid,
-        email: user.email
-      },
-      expressContext
-    });
-
-    return { user, apolloClient };
+    const apolloClient = createApolloClient(user, expressContext);
+    return { apolloClient, user };
   },
   admin: async ({ password, expressContext }: IUserProps = {}) => {
     const admin = await userFactory.admin({ password });
     const user = await admin.getUser();
-    const apolloClient = client.loggedIn({
-      currentUser: {
-        uuid: user.uuid,
-        email: user.email,
-        admin: {
-          userUuid: admin.userUuid
-        }
-      },
-      expressContext
-    });
-
-    return { admin, user, apolloClient };
+    const adminContext = { admin: { userUuid: admin.userUuid } };
+    const apolloClient = createApolloClient(user, expressContext, adminContext);
+    return { apolloClient, user, admin };
   },
-  applicant: async (
-    {
-      careers,
-      password,
-      capabilities,
-      expressContext
-    }: IApplicantProps = {}
-  ) => {
-    const applicant = await userFactory.applicant({
-      capabilities,
-      careers,
-      password
-    });
+  applicant: async ({ expressContext, ...applicantAttributes }: IApplicantProps = {}) => {
+    const applicant = await userFactory.applicant(applicantAttributes);
     const user = await applicant.getUser();
-    const apolloClient = client.loggedIn({
-      currentUser: {
-        uuid: user.uuid,
-        email: user.email,
-        applicant: {
-          uuid: applicant.uuid
-        }
-      },
-      expressContext
-    });
-
-    return { user, applicant, apolloClient };
+    const applicantContext = { applicant: { uuid: applicant.uuid } };
+    const apolloClient = createApolloClient(user, expressContext, applicantContext);
+    return { apolloClient, user, applicant };
   },
-  company: async ({ photos, expressContext }: ICompanyProps = {}) => {
-    const company = await userFactory.company({ photos });
+  company: async ({ status, photos, expressContext }: ICompanyAttributes = {}) => {
+    let company = await userFactory.company({ photos });
     const [user] = await company.getUsers();
-    const apolloClient = client.loggedIn({
-      currentUser: {
-        uuid: user.uuid,
-        email: user.email,
-        company: {
-          uuid: company.uuid,
-          approvalStatus: company.approvalStatus
-        }
-      },
-      expressContext
-    });
-
-    return { user, company, apolloClient };
+    const companyContext = { company: { uuid: company.uuid } };
+    const apolloClient = createApolloClient(user, expressContext, companyContext);
+    if (status) {
+      const { admin, approvalStatus } = status;
+      company = await CompanyRepository.updateApprovalStatus(admin, company, approvalStatus);
+    }
+    return { apolloClient, user, company };
   }
 };

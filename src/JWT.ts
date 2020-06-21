@@ -5,8 +5,6 @@ import { Application } from "express";
 import jwt from "express-jwt";
 import { ICurrentUser } from "./graphql/Context/graphqlContext";
 import { AuthConfig } from "./config/AuthConfig";
-import { CompanyRepository } from "./models/Company";
-import { CompanyUser } from "./models/CompanyUser";
 
 let JWT_SECRET: string;
 if (["test", "development", "test_travis"].includes(Environment.NODE_ENV)) {
@@ -15,14 +13,6 @@ if (["test", "development", "test_travis"].includes(Environment.NODE_ENV)) {
   if (!Environment.JWT_SECRET) throw new Error("JWT_SECRET not set");
   JWT_SECRET = Environment.JWT_SECRET;
 }
-
-const createCompanyContext = async (companyUser: CompanyUser) => {
-  const company = await CompanyRepository.findByUuid(companyUser.companyUuid);
-  return {
-    uuid: companyUser.companyUuid,
-    approvalStatus: company.approvalStatus
-  };
-};
 
 export const JWT = {
   createToken: async (user: User) => {
@@ -34,7 +24,7 @@ export const JWT = {
       uuid: user.uuid,
       email: user.email,
       ...(isApplicant && { applicant: { uuid: applicant.uuid } }),
-      ...(isCompanyUser && { company: await createCompanyContext(companyUser) })
+      ...(isCompanyUser && { company: { uuid: companyUser.companyUuid } })
     };
 
     return sign(

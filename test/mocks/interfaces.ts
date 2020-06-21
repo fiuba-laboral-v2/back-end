@@ -1,5 +1,7 @@
 import { IApplicantCareer } from "../../src/models/Applicant";
+import { Admin } from "../../src/models/Admin";
 import { IExpressContext } from "../graphql/ExpressContext";
+import { ApprovalStatus } from "../../src/models/ApprovalStatus";
 
 export interface IClientFactory {
   expressContext?: IExpressContext;
@@ -9,11 +11,13 @@ export interface IUserProps extends IClientFactory {
   password?: string;
 }
 
-export interface IAdminProps extends IClientFactory {
-  user?: IUserProps;
+interface ICompanyApproval {
+  approvalStatus: ApprovalStatus;
+  admin: Admin;
 }
 
-export interface ICompanyProps extends IClientFactory {
+export interface ICompanyAttributes extends IClientFactory {
+  status?: ICompanyApproval;
   user?: IUserProps;
   photos?: string[];
 }

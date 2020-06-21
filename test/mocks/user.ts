@@ -5,7 +5,7 @@ import { UserRepository } from "../../src/models/User";
 import { AdminRepository } from "../../src/models/Admin";
 import { ApplicantRepository } from "../../src/models/Applicant";
 import { CompanyRepository } from "../../src/models/Company";
-import { IUserProps, IApplicantProps, ICompanyProps } from "./interfaces";
+import { IUserProps, IApplicantProps, ICompanyAttributes } from "./interfaces";
 
 export const userFactory = {
   user: ({ password }: IUserProps = {}) =>
@@ -40,7 +40,7 @@ export const userFactory = {
         surname: "Diaz"
       }
     }),
-  company: ({ photos, user }: ICompanyProps = {}) =>
+  company: ({ photos, user }: ICompanyAttributes = {}) =>
     CompanyRepository.create({
       cuit: cuitGenerator(),
       companyName: "Cachito y Asociados",

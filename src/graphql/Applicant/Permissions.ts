@@ -1,4 +1,4 @@
-import { isApplicant, isUser } from "../rules";
+import { isApplicant, isUser } from "../Rules";
 
 export const applicantPermissions = {
   Query: {

@@ -1,4 +1,4 @@
-import { isUser, isCompanyUser } from "../rules";
+import { isUser, isCompanyUser } from "../Rules";
 
 export const companyPermissions = {
   Query: {

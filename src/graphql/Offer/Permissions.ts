@@ -1,12 +1,12 @@
-import { isApplicant, isCompanyUser, isUser } from "../rules";
+import { isApplicant, isCompanyUser, isUser, isFromApprovedCompany } from "../Rules";
 
 export const offerPermissions = {
   Mutation: {
-    createOffer: isCompanyUser,
+    createOffer: isFromApprovedCompany,
     editOffer: isCompanyUser
   },
   Query: {
-    getMyOffers: isCompanyUser,
+    getMyOffers: isFromApprovedCompany,
     getOfferByUuid: isUser,
     getOffers: isUser
   },
