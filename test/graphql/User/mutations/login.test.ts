@@ -87,7 +87,7 @@ describe("login", () => {
     });
   });
 
-  it("returns a token for an company user", async () => {
+  it("returns a token for a company user", async () => {
     const password = "AValidPassword2";
     const company = await userFactory.company({ user: { password } });
     const [user] = await company.getUsers();
