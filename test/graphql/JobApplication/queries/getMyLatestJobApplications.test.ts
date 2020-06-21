@@ -51,16 +51,6 @@ describe("getMyLatestJobApplications", () => {
 
   afterAll(() => Database.close());
 
-  const createCompany = async (approvalStatus: ApprovalStatus) => {
-    const { apolloClient, company, user } = await testClientFactory.company();
-    const updatedCompany = await CompanyRepository.updateApprovalStatus(
-      admin,
-      company,
-      approvalStatus
-    );
-    return { apolloClient, company: updatedCompany, user };
-  };
-
   describe("when the input is valid", () => {
     it("returns all my company jobApplications", async () => {
       const { apolloClient, company } = await testClientFactory.company({
