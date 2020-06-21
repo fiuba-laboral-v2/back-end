@@ -38,10 +38,13 @@ describe("getPendingEntities", () => {
   afterAll(() => Database.close());
 
   it("returns company typename", async () => {
-    await CompanyRepository.create(companiesData.next().value);
+    const company = await CompanyRepository.create(companiesData.next().value);
     const { apolloClient } = await testClientFactory.user();
     const { data } = await apolloClient.query({ query: GET_PENDING_ENTITIES });
-    expect(data!.getPendingEntities[0].__typename).toEqual(GraphQLCompany.name);
+    expect(data!.getPendingEntities).toEqual([{
+      __typename: GraphQLCompany.name,
+      uuid: company.uuid
+    }]);
   });
 
   it("returns only pending companies", async () => {
