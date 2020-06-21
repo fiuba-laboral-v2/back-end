@@ -99,8 +99,7 @@ describe("login", () => {
       uuid: user.uuid,
       email: user.email,
       company: {
-        uuid: company.uuid,
-        approvalStatus: company.approvalStatus
+        uuid: company.uuid
       }
     });
   });

@@ -13,10 +13,8 @@ import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/
 
 import { OfferGenerator, TOfferGenerator } from "../../../generators/Offer";
 import { AdminGenerator } from "../../../generators/Admin";
-import { CompanyGenerator, TCompanyGenerator } from "../../../generators/Company";
 import { ApplicantGenerator } from "../../../generators/Applicant";
 import { testClientFactory } from "../../../mocks/testClientFactory";
-import { apolloClientFactory } from "../../../mocks/apolloClientFactory";
 
 const GET_MY_LATEST_JOB_APPLICATIONS = gql`
     query getMyLatestJobApplications {
@@ -41,7 +39,6 @@ describe("getMyLatestJobApplications", () => {
   let applicant: Applicant;
   let offers: TOfferGenerator;
   let admin: Admin;
-  let companies: TCompanyGenerator;
 
   beforeAll(async () => {
     Database.setConnection();
@@ -50,20 +47,23 @@ describe("getMyLatestJobApplications", () => {
     applicant = await ApplicantGenerator.withMinimumData().next().value;
     offers = await OfferGenerator.instance.withObligatoryData();
     admin = await AdminGenerator.instance().next().value;
-    companies = CompanyGenerator.instance.withMinimumData();
   });
 
   afterAll(() => Database.close());
 
   const createCompany = async (approvalStatus: ApprovalStatus) => {
-    const company = await companies.next().value;
-    return CompanyRepository.updateApprovalStatus(admin, company, approvalStatus);
+    const { apolloClient, company, user } = await testClientFactory.company();
+    const updatedCompany = await CompanyRepository.updateApprovalStatus(
+      admin,
+      company,
+      approvalStatus
+    );
+    return { apolloClient, company: updatedCompany, user };
   };
 
   describe("when the input is valid", () => {
     it("returns all my company jobApplications", async () => {
-      const company = await createCompany(ApprovalStatus.approved);
-      const { apolloClient } = await apolloClientFactory.login.company(company);
+      const { apolloClient, company } = await createCompany(ApprovalStatus.approved);
       const offer = await offers.next({ companyUuid: company.uuid }).value;
       const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
 
@@ -114,8 +114,7 @@ describe("getMyLatestJobApplications", () => {
     });
 
     it("returns an error if company has a pending pending status", async () => {
-      const company = await createCompany(ApprovalStatus.pending);
-      const { apolloClient } = await apolloClientFactory.login.company(company);
+      const { apolloClient } = await createCompany(ApprovalStatus.pending);
       const { errors } = await apolloClient.query({
         query: GET_MY_LATEST_JOB_APPLICATIONS
       });
@@ -124,8 +123,7 @@ describe("getMyLatestJobApplications", () => {
     });
 
     it("returns an error if company has a pending rejected status", async () => {
-      const company = await createCompany(ApprovalStatus.rejected);
-      const { apolloClient } = await apolloClientFactory.login.company(company);
+      const { apolloClient } = await createCompany(ApprovalStatus.rejected);
       const { errors } = await apolloClient.query({
         query: GET_MY_LATEST_JOB_APPLICATIONS
       });
