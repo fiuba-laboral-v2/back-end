@@ -8,6 +8,8 @@ import { Admin } from "../../../../src/models/Admin";
 import { gql } from "apollo-server";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 import { GraphQLCompany } from "../../../../src/graphql/Company/Types/GraphQLCompany";
+import { UnauthorizedError } from "../../../../src/graphql/Errors";
+import { ApolloServerTestClient } from "apollo-server-testing";
 
 const GET_PENDING_ENTITIES = gql`
   query GetPendingEntities {
@@ -39,7 +41,7 @@ describe("getPendingEntities", () => {
 
   it("returns company typename", async () => {
     const company = await CompanyRepository.create(companiesData.next().value);
-    const { apolloClient } = await testClientFactory.user();
+    const { apolloClient } = await testClientFactory.admin();
     const { data } = await apolloClient.query({ query: GET_PENDING_ENTITIES });
     expect(data!.getPendingEntities).toEqual([{
       __typename: GraphQLCompany.name,
@@ -64,7 +66,7 @@ describe("getPendingEntities", () => {
 
     const pendingCompany = await CompanyRepository.create(companiesData.next().value);
 
-    const { apolloClient } = await testClientFactory.user();
+    const { apolloClient } = await testClientFactory.admin();
     const { data } = await apolloClient.query({ query: GET_PENDING_ENTITIES });
 
     const result = data!.getPendingEntities;
@@ -78,11 +80,32 @@ describe("getPendingEntities", () => {
 
     expect(firstCompany.updatedAt < secondCompany.updatedAt).toBe(true);
 
-    const { apolloClient } = await testClientFactory.user();
+    const { apolloClient } = await testClientFactory.admin();
     const { data } = await apolloClient.query({ query: GET_PENDING_ENTITIES });
 
     const [firstResult, secondResult] = data!.getPendingEntities;
     expect(firstResult.uuid).toEqual(secondCompany.uuid);
     expect(secondResult.uuid).toEqual(firstCompany.uuid);
+  });
+
+  describe("only admins can execute this query", () => {
+    const testForbiddenAccess = async (
+      { apolloClient }: { apolloClient: ApolloServerTestClient }
+    ) => {
+      const { errors } = await apolloClient.query({ query: GET_PENDING_ENTITIES });
+      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+    };
+
+    it("throws an error to plain users", async () => {
+      await testForbiddenAccess(await testClientFactory.user());
+    });
+
+    it("throws an error to company users", async () => {
+      await testForbiddenAccess(await testClientFactory.company());
+    });
+
+    it("throws an error to applicants", async () => {
+      await testForbiddenAccess(await testClientFactory.applicant());
+    });
   });
 });

@@ -5,7 +5,7 @@ interface ICurrentApplicant {
 }
 
 export interface IApplicantUser extends ICurrentUser {
-  adminUuid?: undefined;
+  admin?: undefined;
   applicant: ICurrentApplicant;
   company?: undefined;
 }

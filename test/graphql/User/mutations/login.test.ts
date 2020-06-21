@@ -1,5 +1,5 @@
 import { gql } from "apollo-server";
-import { executeMutation, client } from "../../ApolloTestClient";
+import { client, executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 import { User, UserRepository } from "../../../../src/models/User";
 import { CompanyRepository } from "../../../../src/models/Company";
@@ -39,10 +39,10 @@ describe("login", () => {
     ]);
   };
 
-  it("sets the cookie for a user", async () => {
-    const password = "AValidPassword3";
+  const testToken = async (
+    { user, password, result }: { user: User, password: string, result: object }
+  ) => {
     const expressContext = createExpressContext();
-    const user = await userFactory.user({ password });
     const apolloClient = client.loggedOut({ expressContext });
     const { errors } = await apolloClient.mutate({
       mutation: LOGIN,
@@ -54,52 +54,69 @@ describe("login", () => {
     expect(errors).toBeUndefined();
     await expectCookieToBeSet(user, expressContext);
     const token: string = expressContext.res.cookie.mock.calls[0][1];
-    expect(JWT.decodeToken(token)).toEqual({
-      uuid: user.uuid,
-      email: user.email
-    });
-  });
+    expect(JWT.decodeToken(token)).toEqual(expect.objectContaining(result));
+  };
 
-  it("sets the cookie for an applicant user", async () => {
-    const expressContext = createExpressContext();
-    const password = "AValidPassword3";
-    const applicant = await userFactory.applicant({ password });
-    const user = await applicant.getUser();
-    const apolloClient = client.loggedOut({ expressContext });
-    const { errors } = await apolloClient.mutate({
-      mutation: LOGIN,
-      variables: { email: user.email, password }
-    });
-    expect(errors).toBeUndefined();
-    await expectCookieToBeSet(user, expressContext);
-    const token: string = expressContext.res.cookie.mock.calls[0][1];
-    expect(JWT.decodeToken(token)).toEqual({
-      uuid: user.uuid,
-      email: user.email,
-      applicant: {
-        uuid: applicant.uuid
+  it("sets the cookie for a user", async () => {
+    const password = "AValidPassword0";
+    const user = await userFactory.user({ password });
+    await testToken({
+      user,
+      password,
+      result: {
+        uuid: user.uuid,
+        email: user.email
       }
     });
   });
 
-  it("returns a token for an company user", async () => {
-    const expressContext = createExpressContext();
-    const password = "AValidPassword3";
+  it("sets the cookie for an applicant user", async () => {
+    const password = "AValidPassword1";
+    const applicant = await userFactory.applicant({ password });
+    const user = await applicant.getUser();
+    await testToken({
+      user,
+      password,
+      result: {
+        uuid: user.uuid,
+        email: user.email,
+        applicant: {
+          uuid: applicant.uuid
+        }
+      }
+    });
+  });
+
+  it("returns a token for a company user", async () => {
+    const password = "AValidPassword2";
     const company = await userFactory.company({ user: { password } });
     const [user] = await company.getUsers();
-    const apolloClient = client.loggedOut({ expressContext });
-    const { errors } = await apolloClient.mutate({
-      mutation: LOGIN,
-      variables: { email: user.email, password }
+    await testToken({
+      user,
+      password,
+      result: {
+        uuid: user.uuid,
+        email: user.email,
+        company: {
+          uuid: company.uuid
+        }
+      }
     });
-    expect(errors).toBeUndefined();
-    await expectCookieToBeSet(user, expressContext);
-    const token: string = expressContext.res.cookie.mock.calls[0][1];
-    expect(JWT.decodeToken(token)).toEqual({
-      uuid: user.uuid,
-      email: user.email,
-      company: {
-        uuid: company.uuid
+  });
+
+  it("returns a token for an admin", async () => {
+    const password = "AValidPassword3";
+    const admin = await userFactory.admin({ password });
+    const user = await admin.getUser();
+    await testToken({
+      user,
+      password,
+      result: {
+        uuid: user.uuid,
+        email: user.email,
+        admin: {
+          userUuid: admin.userUuid
+        }
       }
     });
   });
@@ -116,13 +133,13 @@ describe("login", () => {
     const email = "asd@asd.com";
     await UserRepository.create({
       email: email,
-      password: "AValidPassword1",
+      password: "AValidPassword11",
       name: "name",
       surname: "surname"
     });
     const { errors } = await executeMutation(LOGIN, {
       email: email,
-      password: "AValidPassword2"
+      password: "AValidPassword22"
     });
     expect(errors![0].extensions!.data).toEqual({ errorType: BadCredentialsError.name });
   });
