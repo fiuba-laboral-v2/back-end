@@ -11,7 +11,6 @@ import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/
 
 const UPDATE_CURRENT_COMPANY = gql`
     mutation (
-        $cuit: String,
         $companyName: String,
         $slogan: String,
         $description: String,
@@ -21,7 +20,6 @@ const UPDATE_CURRENT_COMPANY = gql`
         $phoneNumbers: [String],
         $photos: [String]) {
         updateCurrentCompany(
-            cuit: $cuit,
             companyName: $companyName,
             slogan: $slogan, description: $description,
             logo: $logo,
@@ -30,7 +28,6 @@ const UPDATE_CURRENT_COMPANY = gql`
             phoneNumbers: $phoneNumbers,
             photos: $photos
         ) {
-            cuit
             companyName
             slogan
             description
@@ -54,7 +51,6 @@ describe("updateCurrentCompany", () => {
     it("update all company attributes", async () => {
       const { apolloClient } = await testClientFactory.company();
       const dataToUpdate = {
-        cuit: "30711311773",
         companyName: "Devartis SA",
         slogan: "new slogan",
         description: "new description",

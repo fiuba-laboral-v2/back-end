@@ -6,9 +6,6 @@ import { ICompanyUser } from "../../Context";
 export const updateCurrentCompany = {
   type: GraphQLCompany,
   args: {
-    cuit: {
-      type: String
-    },
     companyName: {
       type: String
     },
