@@ -5,6 +5,6 @@ export interface ICurrentUser {
 
 export interface IUser extends ICurrentUser {
   admin?: undefined;
-  company?: undefined;
   applicant?: undefined;
+  company?: undefined;
 }

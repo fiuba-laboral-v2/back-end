@@ -16,15 +16,15 @@ if (["test", "development", "test_travis"].includes(Environment.NODE_ENV)) {
 
 export const JWT = {
   createToken: async (user: User) => {
+    const admin = await user.getAdmin();
     const applicant = await user.getApplicant();
     const companyUser = await user.getCompanyUser();
-    const isApplicant = applicant?.uuid && !companyUser?.companyUuid;
-    const isCompanyUser = !applicant?.uuid && companyUser?.companyUuid;
     const payload = {
       uuid: user.uuid,
       email: user.email,
-      ...(isApplicant && { applicant: { uuid: applicant.uuid } }),
-      ...(isCompanyUser && { company: { uuid: companyUser.companyUuid } })
+      ...(admin?.userUuid && { admin: { userUuid: admin.userUuid } }),
+      ...(applicant?.uuid && { applicant: { uuid: applicant.uuid } }),
+      ...(companyUser?.companyUuid && { company: { uuid: companyUser.companyUuid } })
     };
 
     return sign(
@@ -35,16 +35,7 @@ export const JWT = {
   },
   decodeToken: (token: string): ICurrentUser | undefined => {
     try {
-      const payload = verify(token, JWT_SECRET) as ICurrentUser;
-      const user = {
-        uuid: payload.uuid,
-        email: payload.email
-      };
-      const applicant = !payload.company && payload.applicant;
-      const company = !payload.applicant && payload.company;
-      if (company) return { ...user, company };
-      if (applicant) return { ...user, applicant };
-      return user;
+      return verify(token, JWT_SECRET) as ICurrentUser;
     } catch (e) {
       return;
     }

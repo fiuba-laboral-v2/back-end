@@ -6,6 +6,6 @@ interface ICurrentAdmin {
 
 export interface IAdminUser extends ICurrentUser {
   admin: ICurrentAdmin;
-  company?: undefined;
   applicant?: undefined;
+  company?: undefined;
 }

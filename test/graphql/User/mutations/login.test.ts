@@ -1,5 +1,5 @@
 import { gql } from "apollo-server";
-import { executeMutation, client } from "../../ApolloTestClient";
+import { client, executeMutation } from "../../ApolloTestClient";
 import Database from "../../../../src/config/Database";
 import { User, UserRepository } from "../../../../src/models/User";
 import { CompanyRepository } from "../../../../src/models/Company";
@@ -54,10 +54,10 @@ describe("login", () => {
     expect(errors).toBeUndefined();
     await expectCookieToBeSet(user, expressContext);
     const token: string = expressContext.res.cookie.mock.calls[0][1];
-    expect(JWT.decodeToken(token)).toEqual({
+    expect(JWT.decodeToken(token)).toEqual(expect.objectContaining({
       uuid: user.uuid,
       email: user.email
-    });
+    }));
   });
 
   it("sets the cookie for an applicant user", async () => {
@@ -73,13 +73,13 @@ describe("login", () => {
     expect(errors).toBeUndefined();
     await expectCookieToBeSet(user, expressContext);
     const token: string = expressContext.res.cookie.mock.calls[0][1];
-    expect(JWT.decodeToken(token)).toEqual({
+    expect(JWT.decodeToken(token)).toEqual(expect.objectContaining({
       uuid: user.uuid,
       email: user.email,
       applicant: {
         uuid: applicant.uuid
       }
-    });
+    }));
   });
 
   it("returns a token for an company user", async () => {
@@ -95,13 +95,13 @@ describe("login", () => {
     expect(errors).toBeUndefined();
     await expectCookieToBeSet(user, expressContext);
     const token: string = expressContext.res.cookie.mock.calls[0][1];
-    expect(JWT.decodeToken(token)).toEqual({
+    expect(JWT.decodeToken(token)).toEqual(expect.objectContaining({
       uuid: user.uuid,
       email: user.email,
       company: {
         uuid: company.uuid
       }
-    });
+    }));
   });
 
   it("returns error if user is not registered", async () => {
