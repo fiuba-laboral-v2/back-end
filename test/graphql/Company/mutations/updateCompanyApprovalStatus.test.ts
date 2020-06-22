@@ -33,14 +33,14 @@ const UPDATE_COMPANY_APPROVAL_STATUS = gql`
 describe("updateCompanyApprovalStatus", () => {
   let company: Company;
 
-  beforeEach(() => CompanyApprovalEventRepository.truncate());
-
   beforeAll(async () => {
     Database.setConnection();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     company = await CompanyGenerator.instance.withMinimumData().next().value;
   });
+
+  beforeEach(() => CompanyApprovalEventRepository.truncate());
 
   afterAll(() => Database.close());
 
