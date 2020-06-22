@@ -18,7 +18,7 @@ import { CompanyNotFoundError } from "../../../../src/models/Company/Errors/Comp
 const UPDATE_COMPANY_APPROVAL_STATUS = gql`
     mutation (
         $uuid: ID!,
-        $approvalStatus: ApprovalStatus!,
+        $approvalStatus: ApprovalStatus!
        ) {
         updateCompanyApprovalStatus(
             uuid: $uuid,
