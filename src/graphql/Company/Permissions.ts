@@ -1,4 +1,4 @@
-import { isUser, isCompanyUser } from "../Rules";
+import { isUser, isCompanyUser, isAdmin } from "../Rules";
 
 export const companyPermissions = {
   Query: {
@@ -6,6 +6,7 @@ export const companyPermissions = {
     getCompanyByUuid: isUser
   },
   Mutation: {
-    updateCurrentCompany: isCompanyUser
+    updateCurrentCompany: isCompanyUser,
+    updateCompanyApprovalStatus: isAdmin
   }
 };

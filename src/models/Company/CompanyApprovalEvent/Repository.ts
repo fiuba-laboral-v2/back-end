@@ -11,5 +11,6 @@ export const CompanyApprovalEventRepository = {
       },
       { transaction }
     ),
-  findAll: () => CompanyApprovalEvent.findAll()
+  findAll: () => CompanyApprovalEvent.findAll(),
+  truncate: () => CompanyApprovalEvent.truncate({ cascade: true })
 };
