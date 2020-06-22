@@ -1,0 +1,1 @@
+export { AdminNotFoundError } from "./AdminNotFoundError";
