@@ -27,15 +27,15 @@ describe("ApprovableRepository", () => {
   it("returns only pending companies", async () => {
     const rejectedCompany = await CompanyRepository.create(companiesData.next().value);
     await CompanyRepository.updateApprovalStatus(
-      admin,
-      rejectedCompany,
+      admin.userUuid,
+      rejectedCompany.uuid,
       ApprovalStatus.rejected
     );
 
     const approvedCompany = await CompanyRepository.create(companiesData.next().value);
     await CompanyRepository.updateApprovalStatus(
-      admin,
-      approvedCompany,
+      admin.userUuid,
+      approvedCompany.uuid,
       ApprovalStatus.approved
     );
 

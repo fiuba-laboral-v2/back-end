@@ -2,9 +2,8 @@ import Database from "../../config/Database";
 import { Company, ICompany, ICompanyEditable } from "./index";
 import { CompanyPhotoRepository } from "../CompanyPhoto";
 import { CompanyPhoneNumberRepository } from "../CompanyPhoneNumber";
-import { CompanyNotFoundError } from "./Errors/CompanyNotFoundError";
+import { CompanyNotFoundError, CompanyNotUpdatedError } from "./Errors";
 import { UserRepository } from "../User";
-import { Admin } from "../Admin";
 import { ApprovalStatus } from "../ApprovalStatus";
 import { CompanyUserRepository } from "../CompanyUser/Repository";
 import { CompanyApprovalEventRepository } from "./CompanyApprovalEvent";
@@ -48,18 +47,27 @@ export const CompanyRepository = {
 
     return updatedCompany;
   },
-  updateApprovalStatus: async (admin: Admin, company: Company, newStatus: ApprovalStatus) => {
+  updateApprovalStatus: async (
+    adminUserUuid: string,
+    companyUuid: string,
+    status: ApprovalStatus
+  ) => {
     const transaction = await Database.transaction();
     try {
-      await company.update({ approvalStatus: newStatus }, { transaction });
+      const [numberOfUpdatedCompanies, [updatedCompany]] = await Company.update(
+        { approvalStatus: status },
+        { where: { uuid: companyUuid }, returning: true, transaction }
+      );
+      if (numberOfUpdatedCompanies !== 1) throw new CompanyNotUpdatedError(companyUuid);
+
       await CompanyApprovalEventRepository.create({
-        admin: admin,
-        company: company,
-        status: newStatus,
+        adminUserUuid,
+        company: updatedCompany,
+        status: status,
         transaction
       });
       await transaction.commit();
-      return company;
+      return updatedCompany;
     } catch (error) {
       await transaction.rollback();
       throw error;

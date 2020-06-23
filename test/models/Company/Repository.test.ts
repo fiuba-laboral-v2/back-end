@@ -1,4 +1,9 @@
-import { UniqueConstraintError, ValidationError, DatabaseError } from "sequelize";
+import {
+  DatabaseError,
+  UniqueConstraintError,
+  ValidationError,
+  ForeignKeyConstraintError
+} from "sequelize";
 import Database from "../../../src/config/Database";
 import { InvalidCuitError, PhoneNumberWithLettersError } from "validations-fiuba-laboral-v2";
 import { CompanyRepository } from "../../../src/models/Company";
@@ -8,6 +13,7 @@ import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
 import { CompanyGenerator, TCompanyDataGenerator } from "../../generators/Company";
 import { AdminGenerator } from "../../generators/Admin";
 import { UserMocks } from "../User/mocks";
+import { CompanyNotUpdatedError } from "../../../src/models/Company/Errors";
 
 describe("CompanyRepository", () => {
   let companiesData: TCompanyDataGenerator;
@@ -200,8 +206,8 @@ describe("CompanyRepository", () => {
       const company = await CompanyRepository.create(companiesData.next().value);
       expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
       const approvedCompany = await CompanyRepository.updateApprovalStatus(
-        admin,
-        company,
+        admin.userUuid,
+        company.uuid,
         ApprovalStatus.approved
       );
       expect(approvedCompany.approvalStatus).toEqual(ApprovalStatus.approved);
@@ -218,8 +224,8 @@ describe("CompanyRepository", () => {
       const company = await CompanyRepository.create(companiesData.next().value);
       expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
       const approvedCompany = await CompanyRepository.updateApprovalStatus(
-        admin,
-        company,
+        admin.userUuid,
+        company.uuid,
         ApprovalStatus.rejected
       );
       expect(approvedCompany.approvalStatus).toEqual(ApprovalStatus.rejected);
@@ -236,7 +242,11 @@ describe("CompanyRepository", () => {
       const company = await CompanyRepository.create(companiesData.next().value);
       expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
       await expect(
-        CompanyRepository.updateApprovalStatus(admin, company, "notDefinedStatus" as any)
+        CompanyRepository.updateApprovalStatus(
+          admin.userUuid,
+          company.uuid,
+          "notDefinedStatus" as ApprovalStatus
+        )
       ).rejects.toThrowErrorWithMessage(
         DatabaseError,
         "invalid input value for enum \"enum_Companies_approvalStatus\": \"notDefinedStatus\""
@@ -245,6 +255,63 @@ describe("CompanyRepository", () => {
         (await CompanyRepository.findByUuid(company.uuid)).approvalStatus
       ).toEqual(
         ApprovalStatus.pending
+      );
+    });
+
+    it("throws an error if admin does not exist", async () => {
+      const company = await CompanyRepository.create(companiesData.next().value);
+      const nonExistentAdminUserUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+      await expect(
+        CompanyRepository.updateApprovalStatus(
+          nonExistentAdminUserUuid,
+          company.uuid,
+          ApprovalStatus.approved
+        )
+      ).rejects.toThrowErrorWithMessage(
+        ForeignKeyConstraintError,
+        "insert or update on table \"CompanyApprovalEvents\" violates foreign " +
+        "key constraint \"CompanyApprovalEvents_userUuid_fkey\""
+      );
+    });
+
+    it("throws an error if company does not exist", async () => {
+      const nonExistentAdminCompanyUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+      await expect(
+        CompanyRepository.updateApprovalStatus(
+          admin.userUuid,
+          nonExistentAdminCompanyUuid,
+          ApprovalStatus.approved
+        )
+      ).rejects.toThrowErrorWithMessage(
+        CompanyNotUpdatedError,
+        CompanyNotUpdatedError.buildMessage(nonExistentAdminCompanyUuid)
+      );
+    });
+
+    it("throws an error if company uuid has an invalid format", async () => {
+      await expect(
+        CompanyRepository.updateApprovalStatus(
+          admin.userUuid,
+          "invalidUuid",
+          ApprovalStatus.approved
+        )
+      ).rejects.toThrowErrorWithMessage(
+        DatabaseError,
+        "invalid input syntax for type uuid: \"invalidUuid\""
+      );
+    });
+
+    it("throws an error if admin userUuid has an invalid format", async () => {
+      const company = await CompanyRepository.create(companiesData.next().value);
+      await expect(
+        CompanyRepository.updateApprovalStatus(
+          "invalidUuid",
+          company.uuid,
+          ApprovalStatus.approved
+        )
+      ).rejects.toThrowErrorWithMessage(
+        DatabaseError,
+        "invalid input syntax for type uuid: \"invalidUuid\""
       );
     });
   });

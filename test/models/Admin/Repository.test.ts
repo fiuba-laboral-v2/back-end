@@ -3,6 +3,7 @@ import { AdminRepository } from "../../../src/models/Admin";
 import { UserRepository } from "../../../src/models/User";
 import { UniqueConstraintError } from "sequelize";
 import { AdminGenerator, TAdminDataGenerator } from "../../generators/Admin";
+import { AdminNotFoundError } from "../../../src/models/Admin/Errors";
 
 describe("AdminRepository", () => {
   let adminsData: TAdminDataGenerator;
@@ -35,6 +36,25 @@ describe("AdminRepository", () => {
         "Validation error"
       );
       expect(await AdminRepository.findAll()).toEqual(numberOfAdmins);
+    });
+  });
+
+  describe("findByUserUuid", () => {
+    it("returns an admin by userUuid", async () => {
+      const adminAttributes = adminsData.next().value;
+      const { userUuid } = await AdminRepository.create(adminAttributes);
+      const admin = await AdminRepository.findByUserUuid(userUuid);
+      expect(admin.userUuid).toEqual(userUuid);
+    });
+
+    it("throws an error if the admin does not exist", async () => {
+      const nonExistentUserUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+      await expect(
+        AdminRepository.findByUserUuid(nonExistentUserUuid)
+      ).rejects.toThrowErrorWithMessage(
+        AdminNotFoundError,
+        AdminNotFoundError.buildMessage(nonExistentUserUuid)
+      );
     });
   });
 

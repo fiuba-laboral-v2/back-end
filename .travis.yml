@@ -3,8 +3,9 @@ cache:
   yarn: false
   npm: false
 services:
-  - postgresql
   - docker
+addons:
+  postgresql: "10"
 before_install:
   - openssl aes-256-cbc -K $encrypted_2092b72ab2aa_key -iv $encrypted_2092b72ab2aa_iv
     -in deploy_key.enc -out ./deploy_key -d
@@ -16,7 +17,7 @@ env:
   - NODE_ENV="test_travis"
     DATABASE_URL="postgres://postgres:postgres@localhost:5432/test_travis"
 before_script:
-  - yarn db:create && yarn db:migrate
+  - yarn db:drop || true && yarn db:create && yarn db:migrate
 script:
   - yarn lint && yarn build && yarn build-test && yarn test
 after_success: yarn coverage
