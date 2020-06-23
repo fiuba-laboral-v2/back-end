@@ -13,7 +13,7 @@ import {
 import { UserRepository } from "../../../../src/models/User";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
-import { CompanyNotFoundError } from "../../../../src/models/Company/Errors/CompanyNotFoundError";
+import { CompanyNotUpdatedError } from "../../../../src/models/Company/Errors";
 
 const UPDATE_COMPANY_APPROVAL_STATUS = gql`
     mutation (
@@ -106,7 +106,7 @@ describe("updateCompanyApprovalStatus", () => {
     const { apolloClient } = await testClientFactory.admin();
     const dataToUpdate = { uuid: nonExistentCompanyUuid, approvalStatus: ApprovalStatus.approved };
     const { errors } = await performMutation(apolloClient, dataToUpdate);
-    expect(errors![0].extensions!.data).toEqual({ errorType: CompanyNotFoundError.name });
+    expect(errors![0].extensions!.data).toEqual({ errorType: CompanyNotUpdatedError.name });
   });
 
   it("throws an error if the approvalStatus is invalid", async () => {

@@ -1,6 +1,5 @@
 import { ID, nonNull } from "../../fieldTypes";
 import { CompanyRepository } from "../../../models/Company";
-import { AdminRepository } from "../../../models/Admin";
 import { GraphQLCompany } from "../Types/GraphQLCompany";
 import { IAdminUser } from "../../Context";
 import { GraphQLApprovalStatus } from "../../ApprovalStatus/Types/GraphQLApprovalStatus";
@@ -20,11 +19,7 @@ export const updateCompanyApprovalStatus = {
     _: undefined,
     { uuid, approvalStatus }: IUpdateCompanyApprovalStatusArguments,
     { currentUser }: { currentUser: IAdminUser }
-  ) => {
-    const admin = await AdminRepository.findByUserUuid(currentUser.admin.userUuid);
-    const company = await CompanyRepository.findByUuid(uuid);
-    return CompanyRepository.updateApprovalStatus(admin.userUuid, company.uuid, approvalStatus);
-  }
+  ) => CompanyRepository.updateApprovalStatus(currentUser.admin.userUuid, uuid, approvalStatus)
 };
 
 interface IUpdateCompanyApprovalStatusArguments {
