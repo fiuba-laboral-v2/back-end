@@ -18,7 +18,7 @@ env:
   - NODE_ENV="test_travis"
     DATABASE_URL="postgres://postgres:postgres@localhost:5432/test_travis"
 before_script:
-  - yarn db:create && yarn db:migrate
+  - yarn db:test:drop || true && yarn db:test:create && yarn db:test:migrate
 script:
   - yarn lint && yarn build && yarn build-test && yarn test
 after_success: yarn coverage
