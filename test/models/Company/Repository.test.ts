@@ -201,7 +201,7 @@ describe("CompanyRepository", () => {
       expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
       const approvedCompany = await CompanyRepository.updateApprovalStatus(
         admin.userUuid,
-        company,
+        company.uuid,
         ApprovalStatus.approved
       );
       expect(approvedCompany.approvalStatus).toEqual(ApprovalStatus.approved);
@@ -219,7 +219,7 @@ describe("CompanyRepository", () => {
       expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
       const approvedCompany = await CompanyRepository.updateApprovalStatus(
         admin.userUuid,
-        company,
+        company.uuid,
         ApprovalStatus.rejected
       );
       expect(approvedCompany.approvalStatus).toEqual(ApprovalStatus.rejected);
@@ -236,7 +236,11 @@ describe("CompanyRepository", () => {
       const company = await CompanyRepository.create(companiesData.next().value);
       expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
       await expect(
-        CompanyRepository.updateApprovalStatus(admin.userUuid, company, "notDefinedStatus" as any)
+        CompanyRepository.updateApprovalStatus(
+          admin.userUuid,
+          company.uuid,
+          "notDefinedStatus" as any
+        )
       ).rejects.toThrowErrorWithMessage(
         DatabaseError,
         "invalid input value for enum \"enum_Companies_approvalStatus\": \"notDefinedStatus\""

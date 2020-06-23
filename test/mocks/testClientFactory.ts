@@ -47,7 +47,7 @@ export const testClientFactory = {
       const { admin, approvalStatus } = status;
       company = await CompanyRepository.updateApprovalStatus(
         admin.userUuid,
-        company,
+        company.uuid,
         approvalStatus
       );
     }

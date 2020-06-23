@@ -23,7 +23,7 @@ export const updateCompanyApprovalStatus = {
   ) => {
     const admin = await AdminRepository.findByUserUuid(currentUser.admin.userUuid);
     const company = await CompanyRepository.findByUuid(uuid);
-    return CompanyRepository.updateApprovalStatus(admin.userUuid, company, approvalStatus);
+    return CompanyRepository.updateApprovalStatus(admin.userUuid, company.uuid, approvalStatus);
   }
 };
 

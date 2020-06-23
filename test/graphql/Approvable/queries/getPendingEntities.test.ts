@@ -53,14 +53,14 @@ describe("getPendingEntities", () => {
     const rejectedCompany = await CompanyRepository.create(companiesData.next().value);
     await CompanyRepository.updateApprovalStatus(
       admin.userUuid,
-      rejectedCompany,
+      rejectedCompany.uuid,
       ApprovalStatus.rejected
     );
 
     const approvedCompany = await CompanyRepository.create(companiesData.next().value);
     await CompanyRepository.updateApprovalStatus(
       admin.userUuid,
-      approvedCompany,
+      approvedCompany.uuid,
       ApprovalStatus.approved
     );
 

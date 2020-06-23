@@ -49,20 +49,23 @@ export const CompanyRepository = {
   },
   updateApprovalStatus: async (
     adminUserUuid: string,
-    company: Company,
+    companyUuid: string,
     status: ApprovalStatus
   ) => {
     const transaction = await Database.transaction();
     try {
-      await company.update({ approvalStatus: status }, { transaction });
+      const [, [updatedCompany]] = await Company.update(
+        { approvalStatus: status },
+        { where: { uuid: companyUuid }, returning: true, transaction }
+      );
       await CompanyApprovalEventRepository.create({
         adminUserUuid,
-        company,
+        company: updatedCompany,
         status: status,
         transaction
       });
       await transaction.commit();
-      return company;
+      return updatedCompany;
     } catch (error) {
       await transaction.rollback();
       throw error;
