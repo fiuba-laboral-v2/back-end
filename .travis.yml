@@ -5,7 +5,7 @@ cache:
 services:
   - docker
 addons:
-  postgresql: "12.1"
+  postgresql: "12"
 before_install:
   - openssl aes-256-cbc -K $encrypted_2092b72ab2aa_key -iv $encrypted_2092b72ab2aa_iv
     -in deploy_key.enc -out ./deploy_key -d
