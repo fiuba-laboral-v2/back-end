@@ -13,7 +13,7 @@ services:
     depends_on:
       - fiuba-laboral-v2-backend-database-postgres
   fiuba-laboral-v2-backend-database-postgres:
-    image: postgres:latest
+    image: postgres:12.1
     container_name: fiuba-laboral-v2-backend-database-postgres
     volumes:
       - ./data/db:/usr/data/db
