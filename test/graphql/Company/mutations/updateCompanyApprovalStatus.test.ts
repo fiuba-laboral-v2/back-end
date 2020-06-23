@@ -102,9 +102,9 @@ describe("updateCompanyApprovalStatus", () => {
   });
 
   it("throws an error if the company does not exists", async () => {
-    const notExistenceCompanyUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+    const nonExistentCompanyUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
     const { apolloClient } = await testClientFactory.admin();
-    const dataToUpdate = { uuid: notExistenceCompanyUuid, approvalStatus: ApprovalStatus.approved };
+    const dataToUpdate = { uuid: nonExistentCompanyUuid, approvalStatus: ApprovalStatus.approved };
     const { errors } = await performMutation(apolloClient, dataToUpdate);
     expect(errors![0].extensions!.data).toEqual({ errorType: CompanyNotFoundError.name });
   });

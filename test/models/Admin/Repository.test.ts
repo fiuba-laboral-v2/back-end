@@ -47,13 +47,13 @@ describe("AdminRepository", () => {
       expect(admin.userUuid).toEqual(userUuid);
     });
 
-    it("throws an error if the admin does not exists", async () => {
-      const notExistenceUserUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+    it("throws an error if the admin does not exist", async () => {
+      const nonExistentUserUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       await expect(
-        AdminRepository.findByUserUuid(notExistenceUserUuid)
+        AdminRepository.findByUserUuid(nonExistentUserUuid)
       ).rejects.toThrowErrorWithMessage(
         AdminNotFoundError,
-        AdminNotFoundError.buildMessage(notExistenceUserUuid)
+        AdminNotFoundError.buildMessage(nonExistentUserUuid)
       );
     });
   });
