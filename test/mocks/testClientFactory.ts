@@ -45,7 +45,11 @@ export const testClientFactory = {
     const apolloClient = createApolloClient(user, expressContext, companyContext);
     if (status) {
       const { admin, approvalStatus } = status;
-      company = await CompanyRepository.updateApprovalStatus(admin, company, approvalStatus);
+      company = await CompanyRepository.updateApprovalStatus(
+        admin.userUuid,
+        company,
+        approvalStatus
+      );
     }
     return { apolloClient, user, company };
   }

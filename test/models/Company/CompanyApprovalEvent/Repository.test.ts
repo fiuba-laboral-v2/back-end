@@ -28,7 +28,8 @@ describe("CompanyApprovalEventRepository", () => {
     const expectValidCreation = async (status: ApprovalStatus) => {
       const company = await companies.next().value;
       const admin = await admins.next().value;
-      const event = await CompanyApprovalEventRepository.create({ admin, company, status });
+      const adminUserUuid = admin.userUuid;
+      const event = await CompanyApprovalEventRepository.create({ adminUserUuid, company, status });
       expect(event.userUuid).toEqual(admin.userUuid);
       expect(event.companyUuid).toEqual(company.uuid);
       expect(event.status).toEqual(status);
@@ -49,10 +50,10 @@ describe("CompanyApprovalEventRepository", () => {
     it("throws an error if userUuid does not belong to an admin", async () => {
       const company = await companies.next().value;
       const [userCompany] = await company.getUsers();
-      const admin = new Admin({ userUuid: userCompany.uuid });
+      const { userUuid: adminUserUuid } = new Admin({ userUuid: userCompany.uuid });
       const status = ApprovalStatus.approved;
       await expect(
-        CompanyApprovalEventRepository.create({ admin, company, status })
+        CompanyApprovalEventRepository.create({ adminUserUuid, company, status })
       ).rejects.toThrowErrorWithMessage(
         ForeignKeyConstraintError,
         "insert or update on table \"CompanyApprovalEvents\" violates " +
@@ -64,7 +65,8 @@ describe("CompanyApprovalEventRepository", () => {
       const company = await companies.next().value;
       const admin = await admins.next().value;
       const status = ApprovalStatus.approved;
-      const event = await CompanyApprovalEventRepository.create({ admin, company, status });
+      const adminUserUuid = admin.userUuid;
+      const event = await CompanyApprovalEventRepository.create({ adminUserUuid, company, status });
       expect((await event.getCompany()).toJSON()).toEqual(company.toJSON());
       expect((await event.getAdmin()).toJSON()).toEqual(admin.toJSON());
     });
@@ -73,9 +75,9 @@ describe("CompanyApprovalEventRepository", () => {
   describe("Delete cascade", () => {
     const createCompanyApprovalEvent = async () => {
       const company = await companies.next().value;
-      const admin = await admins.next().value;
+      const { userUuid: adminUserUuid } = await admins.next().value;
       const status = ApprovalStatus.approved;
-      return CompanyApprovalEventRepository.create({ admin, company, status });
+      return CompanyApprovalEventRepository.create({ adminUserUuid, company, status });
     };
 
     it("deletes all events if companies tables is truncated", async () => {
