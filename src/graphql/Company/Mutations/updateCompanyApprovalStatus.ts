@@ -18,7 +18,7 @@ export const updateCompanyApprovalStatus = {
   },
   resolve: async (
     _: undefined,
-    { uuid, approvalStatus }: IUpdateCompanyApprovalStatusArgs,
+    { uuid, approvalStatus }: IUpdateCompanyApprovalStatusArguments,
     { currentUser }: { currentUser: IAdminUser }
   ) => {
     const admin = await AdminRepository.findByUserUuid(currentUser.admin.userUuid);
@@ -27,7 +27,7 @@ export const updateCompanyApprovalStatus = {
   }
 };
 
-interface IUpdateCompanyApprovalStatusArgs {
+interface IUpdateCompanyApprovalStatusArguments {
   uuid: string;
   approvalStatus: ApprovalStatus;
 }
