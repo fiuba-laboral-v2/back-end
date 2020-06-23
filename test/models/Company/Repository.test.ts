@@ -301,7 +301,7 @@ describe("CompanyRepository", () => {
       );
     });
 
-    it("throws an error if admin useruuid has an invalid format", async () => {
+    it("throws an error if admin userUuid has an invalid format", async () => {
       const company = await CompanyRepository.create(companiesData.next().value);
       await expect(
         CompanyRepository.updateApprovalStatus(
