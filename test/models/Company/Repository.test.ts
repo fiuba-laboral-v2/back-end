@@ -245,7 +245,11 @@ describe("CompanyRepository", () => {
         DatabaseError,
         "invalid input value for enum \"enum_Companies_approvalStatus\": \"notDefinedStatus\""
       );
-      expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
+      expect(
+        (await CompanyRepository.findByUuid(company.uuid)).approvalStatus
+      ).toEqual(
+        ApprovalStatus.pending
+      );
     });
   });
 });
