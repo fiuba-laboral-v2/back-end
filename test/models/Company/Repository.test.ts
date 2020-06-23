@@ -239,7 +239,7 @@ describe("CompanyRepository", () => {
         CompanyRepository.updateApprovalStatus(
           admin.userUuid,
           company.uuid,
-          "notDefinedStatus" as any
+          "notDefinedStatus" as ApprovalStatus
         )
       ).rejects.toThrowErrorWithMessage(
         DatabaseError,
