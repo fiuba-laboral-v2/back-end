@@ -138,5 +138,11 @@ export const defaultTranslations = {
   offerWorkload: [
     { key: "title", value: "Carga horaria" },
     { key: "hoursPerDay", value: "Horas por dia" }
+  ],
+  adminMenu: [
+    { key: "companyIconTitle", value: "Registro de empresa pendiente" }
+  ],
+  emptyDetailContent: [
+    { key: "selectToStart", value: "Seleccioná para comenzar" }
   ]
 };
