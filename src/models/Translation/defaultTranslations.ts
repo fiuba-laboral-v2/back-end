@@ -142,7 +142,7 @@ export const defaultTranslations = {
   adminMenu: [
     { key: "companyIconTitle", value: "Registro de empresa pendiente" }
   ],
-  adminTaskDetail: [
+  emptyDetailContent: [
     { key: "selectToStart", value: "Seleccioná para comenzar" }
   ]
 };
