@@ -62,7 +62,13 @@ export class Applicant extends Model<Applicant> {
   @Column({
     allowNull: false,
     type: ENUM<string>({ values: approvalStatuses }),
-    defaultValue: ApprovalStatus.pending
+    defaultValue: ApprovalStatus.pending,
+    validate: {
+      isIn: {
+        msg: `approvalStatus must be on of these values: ${approvalStatuses}`,
+        args: [approvalStatuses]
+      }
+    }
   })
   public approvalStatus: ApprovalStatus;
 

@@ -2,7 +2,7 @@ import { ValidationError } from "sequelize";
 import uuid from "uuid/v4";
 import Database from "../../../src/config/Database";
 import { Applicant } from "../../../src/models/Applicant";
-import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
+import { ApprovalStatus, approvalStatuses } from "../../../src/models/ApprovalStatus";
 import { NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
 import { UUID_REGEX } from "../index";
 
@@ -34,6 +34,19 @@ describe("Applicant", () => {
       description: "Batman",
       approvalStatus: ApprovalStatus.pending
     }));
+  });
+
+  it("throws an error if approval status is not defined", async () => {
+    const applicant = new Applicant({
+      userUuid: uuid(),
+      padron: 98539,
+      description: "Batman",
+      approvalStatus: "undefinedApprovalStatus"
+    });
+    await expect(applicant.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      `approvalStatus must be on of these values: ${approvalStatuses}`
+    );
   });
 
   it("throws an error if no userUuid is provided", async () => {
