@@ -9,6 +9,7 @@ import {
   Table
 } from "sequelize-typescript";
 import {
+  ENUM,
   HasManyCreateAssociationMixin,
   HasManyGetAssociationsMixin,
   HasOneGetAssociationMixin,
@@ -26,6 +27,7 @@ import { ApplicantCapability } from "../ApplicantCapability/Model";
 import { Section } from "./Section";
 import { ApplicantLink } from "./Link";
 import { User } from "../User";
+import { ApprovalStatus, approvalStatuses } from "../ApprovalStatus";
 
 @Table({ tableName: "Applicants" })
 export class Applicant extends Model<Applicant> {
@@ -56,6 +58,13 @@ export class Applicant extends Model<Applicant> {
     type: UUID
   })
   public userUuid: string;
+
+  @Column({
+    allowNull: false,
+    type: ENUM<string>({ values: approvalStatuses }),
+    defaultValue: ApprovalStatus.pending
+  })
+  public approvalStatus: ApprovalStatus;
 
   @BelongsTo(() => User, "userUuid")
   public user: User;

@@ -2,14 +2,16 @@ import { ValidationError } from "sequelize";
 import uuid from "uuid/v4";
 import Database from "../../../src/config/Database";
 import { Applicant } from "../../../src/models/Applicant";
+import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
 import { NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
+import { UUID_REGEX } from "../index";
 
 describe("Applicant", () => {
   beforeAll(() => Database.setConnection());
 
   afterAll(() => Database.close());
 
-  it("should create a valid applicant", async () => {
+  it("creates a valid applicant", async () => {
     const applicant = new Applicant({
       userUuid: uuid(),
       padron: 1,
@@ -18,51 +20,78 @@ describe("Applicant", () => {
     await expect(applicant.validate()).resolves.not.toThrow();
   });
 
-  it("should throw an error if no userUuid is provided", async () => {
+  it("creates an applicant with pending approval status by default", async () => {
+    const userUuid = uuid();
+    const applicant = new Applicant({
+      userUuid,
+      padron: 1,
+      description: "Batman"
+    });
+    expect(applicant).toEqual(expect.objectContaining({
+      uuid: expect.stringMatching(UUID_REGEX),
+      userUuid,
+      padron: 1,
+      description: "Batman",
+      approvalStatus: ApprovalStatus.pending
+    }));
+  });
+
+  it("throws an error if no userUuid is provided", async () => {
     const applicant = new Applicant({
       padron: 98539,
       description: "Batman"
     });
-    await expect(applicant.validate()).rejects.toThrow(ValidationError);
+    await expect(applicant.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      "notNull Violation: Applicant.userUuid cannot be null"
+    );
   });
 
-  it("should throw an error if padron is 0", async () => {
+  it("throws an error if padron is 0", async () => {
     const applicant = new Applicant({
       userUuid: uuid(),
       padron: 0,
       description: "Batman"
     });
-    await expect(applicant.validate()).rejects.toThrow(
+    await expect(applicant.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
       NumberIsTooSmallError.buildMessage(0, false)
     );
   });
 
-  it("should throw an error if padron is negative", async () => {
+  it("throws an error if padron is negative", async () => {
     const applicant = new Applicant({
       userUuid: uuid(),
       padron: -243,
       description: "Batman"
     });
-    await expect(applicant.validate()).rejects.toThrow(
+    await expect(applicant.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
       NumberIsTooSmallError.buildMessage(0, false)
     );
   });
 
-  it("should throw an error if no padron is provided", async () => {
+  it("throws an error if no padron is provided", async () => {
     const applicant = new Applicant({
       userUuid: uuid(),
       description: "Batman"
     });
 
-    await expect(applicant.validate()).rejects.toThrow(ValidationError);
+    await expect(applicant.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      "notNull Violation: Applicant.padron cannot be null"
+    );
   });
 
-  it("should throw an error if padron is null", async () => {
+  it("throws an error if padron is null", async () => {
     const applicant = new Applicant({
       userUuid: uuid(),
       padron: null,
       description: "Batman"
     });
-    await expect(applicant.validate()).rejects.toThrow(ValidationError);
+    await expect(applicant.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      "notNull Violation: Applicant.padron cannot be null"
+    );
   });
 });
