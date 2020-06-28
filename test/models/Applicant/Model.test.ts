@@ -36,7 +36,7 @@ describe("Applicant", () => {
     }));
   });
 
-  it("throws an error if approval status is not defined", async () => {
+  it("throws an error if approval status not part of the enum values", async () => {
     const applicant = new Applicant({
       userUuid: uuid(),
       padron: 98539,
