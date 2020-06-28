@@ -1,0 +1,1 @@
+export { isUuid } from "./isUuid";

@@ -3,6 +3,7 @@ import { DATE, UUID, UUIDV4, ENUM, HasOneGetAssociationMixin } from "sequelize";
 import { ApprovalStatus, approvalStatuses } from "../../ApprovalStatus";
 import { Applicant } from "../../Applicant/Model";
 import { Admin } from "../../Admin/Model";
+import { isUuid } from "../../SequelizeModelValidators";
 
 @Table({ tableName: "ApplicantApprovalEvents" })
 export class ApplicantApprovalEvent extends Model<ApplicantApprovalEvent> {
@@ -11,7 +12,7 @@ export class ApplicantApprovalEvent extends Model<ApplicantApprovalEvent> {
     primaryKey: true,
     type: UUID,
     defaultValue: UUIDV4,
-    validate: { isUUID: { msg: "uuid has invalid format", args: 4 } }
+    ...isUuid
   })
   public uuid: string;
 
@@ -20,7 +21,7 @@ export class ApplicantApprovalEvent extends Model<ApplicantApprovalEvent> {
     allowNull: false,
     references: { model: "Admins", key: "uuid" },
     type: UUID,
-    validate: { isUUID: { msg: "uuid has invalid format", args: 4 } }
+    ...isUuid
   })
   public userUuid: string;
 
@@ -29,7 +30,7 @@ export class ApplicantApprovalEvent extends Model<ApplicantApprovalEvent> {
     allowNull: false,
     references: { model: "Applicants", key: "uuid" },
     type: UUID,
-    validate: { isUUID: { msg: "uuid has invalid format", args: 4 } }
+    ...isUuid
   })
   public applicantUuid: string;
 
