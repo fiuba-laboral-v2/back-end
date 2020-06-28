@@ -28,6 +28,7 @@ import { Section } from "./Section";
 import { ApplicantLink } from "./Link";
 import { User } from "../User";
 import { ApprovalStatus, approvalStatuses } from "../ApprovalStatus";
+import { isApprovalStatus } from "../SequelizeModelValidators";
 
 @Table({ tableName: "Applicants" })
 export class Applicant extends Model<Applicant> {
@@ -63,12 +64,7 @@ export class Applicant extends Model<Applicant> {
     allowNull: false,
     type: ENUM<string>({ values: approvalStatuses }),
     defaultValue: ApprovalStatus.pending,
-    validate: {
-      isIn: {
-        msg: `ApprovalStatus must be one of these values: ${approvalStatuses}`,
-        args: [approvalStatuses]
-      }
-    }
+    ...isApprovalStatus
   })
   public approvalStatus: ApprovalStatus;
 

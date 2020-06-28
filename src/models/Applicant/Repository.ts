@@ -84,7 +84,5 @@ export const ApplicantRepository = {
       throw error;
     }
   },
-  truncate: async () => {
-    UserRepository.truncate();
-  }
+  truncate: () => UserRepository.truncate()
 };

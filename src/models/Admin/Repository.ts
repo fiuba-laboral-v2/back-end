@@ -23,5 +23,6 @@ export const AdminRepository = {
 
     return admin;
   },
-  findAll: () => Admin.findAll()
+  findAll: () => Admin.findAll(),
+  truncate: () => Admin.truncate({ cascade: true })
 };
