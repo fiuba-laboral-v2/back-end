@@ -45,7 +45,7 @@ describe("Applicant", () => {
     });
     await expect(applicant.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
-      `approvalStatus must be on of these values: ${approvalStatuses}`
+      `ApprovalStatus must be one of these values: ${approvalStatuses}`
     );
   });
 

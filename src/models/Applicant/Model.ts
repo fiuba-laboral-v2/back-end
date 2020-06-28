@@ -65,7 +65,7 @@ export class Applicant extends Model<Applicant> {
     defaultValue: ApprovalStatus.pending,
     validate: {
       isIn: {
-        msg: `approvalStatus must be on of these values: ${approvalStatuses}`,
+        msg: `ApprovalStatus must be one of these values: ${approvalStatuses}`,
         args: [approvalStatuses]
       }
     }
