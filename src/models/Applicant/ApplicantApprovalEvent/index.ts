@@ -1,0 +1,1 @@
+export { ApplicantApprovalEvent } from "./Model";

@@ -1,5 +1,6 @@
 import { Admin } from "./Admin";
 import { Applicant } from "./Applicant";
+import { ApplicantApprovalEvent } from "./Applicant/ApplicantApprovalEvent";
 import { Section } from "./Applicant/Section";
 import { ApplicantLink } from "./Applicant/Link";
 import { JobApplication } from "./JobApplication";
@@ -20,6 +21,7 @@ import { CompanyUser } from "./CompanyUser";
 const models = [
   Admin,
   Applicant,
+  ApplicantApprovalEvent,
   Section,
   ApplicantLink,
   JobApplication,
