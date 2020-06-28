@@ -3,7 +3,7 @@ import { DATE, UUID, UUIDV4, ENUM, HasOneGetAssociationMixin } from "sequelize";
 import { ApprovalStatus, approvalStatuses } from "../../ApprovalStatus";
 import { Applicant } from "../../Applicant/Model";
 import { Admin } from "../../Admin/Model";
-import { isUuid } from "../../SequelizeModelValidators";
+import { isUuid, isApprovalStatus } from "../../SequelizeModelValidators";
 
 @Table({ tableName: "ApplicantApprovalEvents" })
 export class ApplicantApprovalEvent extends Model<ApplicantApprovalEvent> {
@@ -37,12 +37,7 @@ export class ApplicantApprovalEvent extends Model<ApplicantApprovalEvent> {
   @Column({
     allowNull: false,
     type: ENUM<string>({ values: approvalStatuses }),
-    validate: {
-      isIn: {
-        msg: `ApprovalStatus must be one of these values: ${approvalStatuses}`,
-        args: [approvalStatuses]
-      }
-    }
+    ...isApprovalStatus
   })
   public status: ApprovalStatus;
 
