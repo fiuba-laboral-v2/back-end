@@ -140,12 +140,12 @@ export const defaultTranslations = {
     { key: "hoursPerDay", value: "Horas por dia" }
   ],
   adminMenu: [
-    { key: "companyIconTitle", value: "Registro de empresa pendiente" }
+    { key: "companyIconTitle", value: "Nueva empresa" }
   ],
   adminTaskList: [
     { key: "pendingTasks", value: "Tareas pendientes" }
   ],
-  emptyDetailContent: [
+  adminEmptyDetail: [
     { key: "selectToStart", value: "Seleccioná para comenzar" }
   ]
 };
