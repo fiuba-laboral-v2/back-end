@@ -56,6 +56,28 @@ describe("ApplicantApprovalEventRepository", () => {
     await expectToCreateAValidInstanceWithAStatus(ApprovalStatus.rejected);
   });
 
+  it("gets applicant by association", async () => {
+    const applicant = await applicants.next().value;
+    const admin = await admins.next().value;
+    const applicantApprovalEvent = await ApplicantApprovalEventRepository.create({
+      adminUserUuid: admin.userUuid,
+      applicantUuid: applicant.uuid,
+      status: ApprovalStatus.approved
+    });
+    expect((await applicantApprovalEvent.getApplicant()).toJSON()).toEqual(applicant.toJSON());
+  });
+
+  it("gets admin by association", async () => {
+    const applicant = await applicants.next().value;
+    const admin = await admins.next().value;
+    const applicantApprovalEvent = await ApplicantApprovalEventRepository.create({
+      adminUserUuid: admin.userUuid,
+      applicantUuid: applicant.uuid,
+      status: ApprovalStatus.approved
+    });
+    expect((await applicantApprovalEvent.getAdmin()).toJSON()).toEqual(admin.toJSON());
+  });
+
   it("throws an error if the adminUserUuid does not belongs to an admin", async () => {
     const applicant = await applicants.next().value;
     const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
