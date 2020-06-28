@@ -23,7 +23,7 @@ export class ApplicantApprovalEvent extends Model<ApplicantApprovalEvent> {
     type: UUID,
     ...isUuid
   })
-  public userUuid: string;
+  public adminUserUuid: string;
 
   @ForeignKey(() => Applicant)
   @Column({
@@ -55,7 +55,7 @@ export class ApplicantApprovalEvent extends Model<ApplicantApprovalEvent> {
   })
   public updatedAt: Date;
 
-  @BelongsTo(() => Admin, "userUuid")
+  @BelongsTo(() => Admin, "adminUserUuid")
   public admin: Admin;
 
   @BelongsTo(() => Applicant, "applicantUuid")

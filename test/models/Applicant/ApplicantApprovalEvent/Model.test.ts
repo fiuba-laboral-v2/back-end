@@ -10,7 +10,7 @@ describe("ApplicantApprovalEvent", () => {
 
   const expectToCreateAValidInstanceWithAStatus = async (status: ApprovalStatus) => {
     const applicantApprovalEventAttributes = {
-      userUuid: "cfe18465-9454-48b6-80bc-375411650d99",
+      adminUserUuid: "cfe18465-9454-48b6-80bc-375411650d99",
       applicantUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
       status
     };
@@ -38,7 +38,7 @@ describe("ApplicantApprovalEvent", () => {
 
   it("throws an error if approvalStatus is not part of the enum values", async () => {
     const applicantApprovalEvent = new ApplicantApprovalEvent({
-      userUuid: "cfe18465-9454-48b6-80bc-375411650d99",
+      adminUserUuid: "cfe18465-9454-48b6-80bc-375411650d99",
       applicantUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
       status: "notDefinedStatusInEnum"
     });
@@ -48,20 +48,20 @@ describe("ApplicantApprovalEvent", () => {
     );
   });
 
-  it("throws an error if no userUuid is provided", async () => {
+  it("throws an error if no adminUserUuid is provided", async () => {
     const applicantApprovalEvent = new ApplicantApprovalEvent({
       applicantUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
       status: ApprovalStatus.approved
     });
     await expect(applicantApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
-      "notNull Violation: ApplicantApprovalEvent.userUuid cannot be null"
+      "notNull Violation: ApplicantApprovalEvent.adminUserUuid cannot be null"
     );
   });
 
   it("throws an error if no applicantUuid is provided", async () => {
     const applicantApprovalEvent = new ApplicantApprovalEvent({
-      userUuid: "cfe18465-9454-48b6-80bc-375411650d99",
+      adminUserUuid: "cfe18465-9454-48b6-80bc-375411650d99",
       status: ApprovalStatus.approved
     });
     await expect(applicantApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
@@ -72,7 +72,7 @@ describe("ApplicantApprovalEvent", () => {
 
   it("throws an error if no status is provided", async () => {
     const applicantApprovalEvent = new ApplicantApprovalEvent({
-      userUuid: "cfe18465-9454-48b6-80bc-375411650d99",
+      adminUserUuid: "cfe18465-9454-48b6-80bc-375411650d99",
       applicantUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27"
     });
     await expect(applicantApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
@@ -83,7 +83,7 @@ describe("ApplicantApprovalEvent", () => {
 
   it("throws an error if no status is provided", async () => {
     const applicantApprovalEvent = new ApplicantApprovalEvent({
-      userUuid: "cfe18465-9454-48b6-80bc-375411650d99",
+      adminUserUuid: "cfe18465-9454-48b6-80bc-375411650d99",
       applicantUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27"
     });
     await expect(applicantApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
@@ -95,7 +95,7 @@ describe("ApplicantApprovalEvent", () => {
   it("throws an error if uuid has an invalid format", async () => {
     const applicantApprovalEvent = new ApplicantApprovalEvent({
       uuid: "invalidFormat",
-      userUuid: "cfe18465-9454-48b6-80bc-375411650d99",
+      adminUserUuid: "cfe18465-9454-48b6-80bc-375411650d99",
       applicantUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
       status: ApprovalStatus.approved
     });
@@ -105,9 +105,9 @@ describe("ApplicantApprovalEvent", () => {
     );
   });
 
-  it("throws an error if userUuid has an invalid format", async () => {
+  it("throws an error if adminUserUuid has an invalid format", async () => {
     const applicantApprovalEvent = new ApplicantApprovalEvent({
-      userUuid: "invalidFormat",
+      adminUserUuid: "invalidFormat",
       applicantUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
       status: ApprovalStatus.approved
     });
@@ -119,7 +119,7 @@ describe("ApplicantApprovalEvent", () => {
 
   it("throws an error if applicantUuid has an invalid format", async () => {
     const applicantApprovalEvent = new ApplicantApprovalEvent({
-      userUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
+      adminUserUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
       applicantUuid: "invalidFormat",
       status: ApprovalStatus.approved
     });

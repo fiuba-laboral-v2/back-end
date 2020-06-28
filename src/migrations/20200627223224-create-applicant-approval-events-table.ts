@@ -11,7 +11,7 @@ export = {
           primaryKey: true,
           type: UUID
         },
-        userUuid: {
+        adminUserUuid: {
           allowNull: false,
           references: { model: "Admins", key: "userUuid" },
           onDelete: "CASCADE",

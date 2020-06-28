@@ -40,9 +40,7 @@ describe("ApplicantApprovalEventRepository", () => {
       uuid: expect.stringMatching(UUID_REGEX),
       createdAt: expect.any(Date),
       updatedAt: expect.any(Date),
-      userUuid: applicantApprovalEventAttributes.adminUserUuid,
-      applicantUuid: applicantApprovalEventAttributes.applicantUuid,
-      status: applicantApprovalEventAttributes.status
+      ...applicantApprovalEventAttributes
     }));
   };
 
@@ -70,7 +68,7 @@ describe("ApplicantApprovalEventRepository", () => {
     ).rejects.toThrowErrorWithMessage(
       ForeignKeyConstraintError,
       "insert or update on table \"ApplicantApprovalEvents\" violates foreign " +
-      "key constraint \"ApplicantApprovalEvents_userUuid_fkey\""
+      "key constraint \"ApplicantApprovalEvents_adminUserUuid_fkey\""
     );
   });
 

@@ -5,7 +5,7 @@ export const ApplicantApprovalEventRepository = {
   create: ({ adminUserUuid, applicantUuid, status, transaction }: ICreateApplicantApprovalEvent) =>
     ApplicantApprovalEvent.create(
       {
-        userUuid: adminUserUuid,
+        adminUserUuid,
         applicantUuid,
         status
       },
