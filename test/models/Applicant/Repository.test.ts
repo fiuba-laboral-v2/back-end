@@ -593,7 +593,7 @@ describe("ApplicantRepository", () => {
       admin = await AdminGenerator.instance().next().value;
     });
 
-    const expectApplicantToHaveApprovalStatus = async (approvalStatus: ApprovalStatus) => {
+    const expectApplicantWithApprovalStatus = async (approvalStatus: ApprovalStatus) => {
       const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
       const approvedApplicant = await ApplicantRepository.updateApprovalStatus(
         admin.userUuid,
@@ -625,11 +625,11 @@ describe("ApplicantRepository", () => {
     });
 
     it("approves applicant only by an admin", async () => {
-      await expectApplicantToHaveApprovalStatus(ApprovalStatus.approved);
+      await expectApplicantWithApprovalStatus(ApprovalStatus.approved);
     });
 
     it("rejects applicant only by an admin", async () => {
-      await expectApplicantToHaveApprovalStatus(ApprovalStatus.rejected);
+      await expectApplicantWithApprovalStatus(ApprovalStatus.rejected);
     });
 
     it("returns approved event by association", async () => {
