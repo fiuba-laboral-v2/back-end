@@ -1,7 +1,7 @@
-import { ValidationError, ForeignKeyConstraintError, DatabaseError } from "sequelize";
+import { DatabaseError, ForeignKeyConstraintError, ValidationError } from "sequelize";
 import Database from "../../../src/config/Database";
 import { CareerRepository } from "../../../src/models/Career";
-import { ApplicantRepository, IApplicantEditable } from "../../../src/models/Applicant";
+import { Applicant, ApplicantRepository, IApplicantEditable } from "../../../src/models/Applicant";
 import { ApplicantCareersRepository } from "../../../src/models/ApplicantCareer/Repository";
 import { UserRepository } from "../../../src/models/User/Repository";
 import { CapabilityRepository } from "../../../src/models/Capability";
@@ -593,27 +593,27 @@ describe("ApplicantRepository", () => {
       admin = await AdminGenerator.instance().next().value;
     });
 
-    const expectApplicantWithApprovalStatus = async (approvalStatus: ApprovalStatus) => {
-      const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
-      const approvedApplicant = await ApplicantRepository.updateApprovalStatus(
+    const updateApplicantWithStatus = async (applicant: Applicant, status: ApprovalStatus) => {
+      return ApplicantRepository.updateApprovalStatus(
         admin.userUuid,
         applicant.uuid,
-        approvalStatus
+        status
       );
+    };
+
+    const expectApplicantWithApprovalStatus = async (approvalStatus: ApprovalStatus) => {
+      const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      const approvedApplicant = await updateApplicantWithStatus(applicant, approvalStatus);
       expect(approvedApplicant.approvalStatus).toEqual(approvalStatus);
     };
 
     const expectApplicantToHaveOneApprovalEvent = async (approvalStatus: ApprovalStatus) => {
       const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
-      const approvedApplicant = await ApplicantRepository.updateApprovalStatus(
-        admin.userUuid,
-        applicant.uuid,
-        approvalStatus
-      );
+      const approvedApplicant = await updateApplicantWithStatus(applicant, approvalStatus);
       expect(await approvedApplicant.getApprovalEvents()).toEqual([
         expect.objectContaining({
           adminUserUuid: admin.userUuid,
-          applicantUuid: applicant.uuid,
+          applicantUuid: approvedApplicant.uuid,
           status: approvalStatus
         })
       ]);
@@ -642,6 +642,37 @@ describe("ApplicantRepository", () => {
 
     it("returns rejected event by association", async () => {
       await expectApplicantToHaveOneApprovalEvent(ApprovalStatus.rejected);
+    });
+
+    it("creates four events by changing four times the applicant status", async () => {
+      const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      await updateApplicantWithStatus(applicant, ApprovalStatus.pending);
+      await updateApplicantWithStatus(applicant, ApprovalStatus.approved);
+      await updateApplicantWithStatus(applicant, ApprovalStatus.rejected);
+      await updateApplicantWithStatus(applicant, ApprovalStatus.pending);
+      const events = await applicant.getApprovalEvents();
+      expect(events).toEqual(expect.arrayContaining([
+        expect.objectContaining({
+          adminUserUuid: admin.userUuid,
+          applicantUuid: applicant.uuid,
+          status: ApprovalStatus.pending
+        }),
+        expect.objectContaining({
+          adminUserUuid: admin.userUuid,
+          applicantUuid: applicant.uuid,
+          status: ApprovalStatus.approved
+        }),
+        expect.objectContaining({
+          adminUserUuid: admin.userUuid,
+          applicantUuid: applicant.uuid,
+          status: ApprovalStatus.rejected
+        }),
+        expect.objectContaining({
+          adminUserUuid: admin.userUuid,
+          applicantUuid: applicant.uuid,
+          status: ApprovalStatus.pending
+        })
+      ]));
     });
 
     it("throws an error if admin does not exist", async () => {
