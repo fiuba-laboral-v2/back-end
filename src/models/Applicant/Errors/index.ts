@@ -1,3 +1,2 @@
-import { ApplicantNotFound } from "./ApplicantNotFound";
-
-export default { ApplicantNotFound };
+export { ApplicantNotFound } from "./ApplicantNotFound";
+export { ApplicantNotUpdatedError } from "./ApplicantNotUpdatedError";
