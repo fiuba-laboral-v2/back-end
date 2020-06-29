@@ -19,7 +19,7 @@ describe("ApplicantApprovalEventRepository", () => {
   beforeAll(async () => {
     Database.setConnection();
     await ApplicantRepository.truncate();
-    applicants = ApplicantGenerator.withMinimumData();
+    applicants = ApplicantGenerator.instance.withMinimumData();
     admins = AdminGenerator.instance();
   });
 
