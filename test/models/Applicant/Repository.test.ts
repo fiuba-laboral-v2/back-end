@@ -613,7 +613,7 @@ describe("ApplicantRepository", () => {
       expect(approvedApplicant.approvalStatus).toEqual(approvalStatus);
     };
 
-    const expectApplicantToHaveOneApprovalEvent = async (approvalStatus: ApprovalStatus) => {
+    const expectStatusUpdateToCreateOneEvent = async (approvalStatus: ApprovalStatus) => {
       const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
       const approvedApplicant = await expectSuccessfulApplicantStatusUpdate(
         applicant,
@@ -642,15 +642,15 @@ describe("ApplicantRepository", () => {
     });
 
     it("creates an event when approving an applicant", async () => {
-      await expectApplicantToHaveOneApprovalEvent(ApprovalStatus.approved);
+      await expectStatusUpdateToCreateOneEvent(ApprovalStatus.approved);
     });
 
     it("creates an event when marking an applicant approval as pending", async () => {
-      await expectApplicantToHaveOneApprovalEvent(ApprovalStatus.pending);
+      await expectStatusUpdateToCreateOneEvent(ApprovalStatus.pending);
     });
 
     it("creates an event when rejecting an applicant", async () => {
-      await expectApplicantToHaveOneApprovalEvent(ApprovalStatus.rejected);
+      await expectStatusUpdateToCreateOneEvent(ApprovalStatus.rejected);
     });
 
     it("creates four events by changing four times the applicant status", async () => {
