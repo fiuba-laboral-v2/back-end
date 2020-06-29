@@ -674,7 +674,7 @@ describe("ApplicantRepository", () => {
       );
     });
 
-    it("throws an error if applicantUuid has invalid error", async () => {
+    it("throws an error if applicantUuid has invalid format", async () => {
       await expect(
         ApplicantRepository.updateApprovalStatus(
           admin.userUuid,
@@ -687,7 +687,7 @@ describe("ApplicantRepository", () => {
       );
     });
 
-    it("throws an error if adminUserUuid has invalid error", async () => {
+    it("throws an error if adminUserUuid has invalid format", async () => {
       const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
       await expect(
         ApplicantRepository.updateApprovalStatus(
