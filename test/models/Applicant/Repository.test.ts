@@ -633,23 +633,23 @@ describe("ApplicantRepository", () => {
       expect(applicant.approvalStatus).toEqual(ApprovalStatus.pending);
     });
 
-    it("approves applicant only by an admin", async () => {
+    it("allows admins to approve an applicant", async () => {
       await expectApplicantWithApprovalStatus(ApprovalStatus.approved);
     });
 
-    it("rejects applicant only by an admin", async () => {
+    it("allows admins to reject an applicant", async () => {
       await expectApplicantWithApprovalStatus(ApprovalStatus.rejected);
     });
 
-    it("returns approved event by association", async () => {
+    it("creates an event when approving an applicant", async () => {
       await expectApplicantToHaveOneApprovalEvent(ApprovalStatus.approved);
     });
 
-    it("returns pending event by association", async () => {
+    it("creates an event when marking an applicant approval as pending", async () => {
       await expectApplicantToHaveOneApprovalEvent(ApprovalStatus.pending);
     });
 
-    it("returns rejected event by association", async () => {
+    it("creates an event when rejecting an applicant", async () => {
       await expectApplicantToHaveOneApprovalEvent(ApprovalStatus.rejected);
     });
 
@@ -755,7 +755,7 @@ describe("ApplicantRepository", () => {
       );
     });
 
-    it("doest not update applicant status if it throws an error", async () => {
+    it("does not update applicant status if it throws an error", async () => {
       const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
       await expect(
         ApplicantRepository.updateApprovalStatus(
@@ -769,7 +769,7 @@ describe("ApplicantRepository", () => {
       ).toEqual(ApprovalStatus.pending);
     });
 
-    it("doest not create an event for the applicant if it throws an error", async () => {
+    it("does not create an event for the applicant if it throws an error", async () => {
       const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
       await expect(
         ApplicantRepository.updateApprovalStatus(
