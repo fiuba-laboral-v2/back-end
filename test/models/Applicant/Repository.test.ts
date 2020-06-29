@@ -603,7 +603,7 @@ describe("ApplicantRepository", () => {
       expect(approvedApplicant.approvalStatus).toEqual(approvalStatus);
     };
 
-    const expectApplicantToHaveApprovalEvent = async (approvalStatus: ApprovalStatus) => {
+    const expectApplicantToHaveOneApprovalEvent = async (approvalStatus: ApprovalStatus) => {
       const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
       const approvedApplicant = await ApplicantRepository.updateApprovalStatus(
         admin.userUuid,
@@ -633,15 +633,15 @@ describe("ApplicantRepository", () => {
     });
 
     it("returns approved event by association", async () => {
-      await expectApplicantToHaveApprovalEvent(ApprovalStatus.approved);
+      await expectApplicantToHaveOneApprovalEvent(ApprovalStatus.approved);
     });
 
     it("returns pending event by association", async () => {
-      await expectApplicantToHaveApprovalEvent(ApprovalStatus.pending);
+      await expectApplicantToHaveOneApprovalEvent(ApprovalStatus.pending);
     });
 
     it("returns rejected event by association", async () => {
-      await expectApplicantToHaveApprovalEvent(ApprovalStatus.rejected);
+      await expectApplicantToHaveOneApprovalEvent(ApprovalStatus.rejected);
     });
 
     it("throws an error if admin does not exist", async () => {
