@@ -1,10 +1,10 @@
 import {
   DatabaseError,
+  ForeignKeyConstraintError,
   UniqueConstraintError,
-  ValidationError,
-  ForeignKeyConstraintError
+  ValidationError
 } from "sequelize";
-import Database from "../../../src/config/Database";
+import { Database } from "../../../src/config/Database";
 import { InvalidCuitError, PhoneNumberWithLettersError } from "validations-fiuba-laboral-v2";
 import { CompanyRepository } from "../../../src/models/Company";
 import { UserRepository } from "../../../src/models/User";

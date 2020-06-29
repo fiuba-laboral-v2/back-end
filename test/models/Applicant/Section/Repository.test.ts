@@ -1,7 +1,7 @@
-import Database from "../../../../src/config/Database";
-import { ApplicantRepository, Applicant } from "../../../../src/models/Applicant";
+import { Database } from "../../../../src/config/Database";
+import { Applicant, ApplicantRepository } from "../../../../src/models/Applicant";
 import { Section, SectionRepository } from "../../../../src/models/Applicant/Section";
-import { random, lorem } from "faker";
+import { lorem, random } from "faker";
 import { UserRepository } from "../../../../src/models/User/Repository";
 
 describe("Section model", () => {

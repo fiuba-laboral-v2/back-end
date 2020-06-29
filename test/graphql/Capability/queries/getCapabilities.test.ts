@@ -1,5 +1,5 @@
 import { gql } from "apollo-server";
-import Database from "../../../../src/config/Database";
+import { Database } from "../../../../src/config/Database";
 import { CapabilityRepository } from "../../../../src/models/Capability";
 import { client } from "../../ApolloTestClient";
 

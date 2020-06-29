@@ -1,4 +1,4 @@
-import Database from "../../../src/config/Database";
+import { Database } from "../../../src/config/Database";
 import { Career, CareerRepository, Errors } from "../../../src/models/Career";
 import { CareerGenerator, TCareerDataGenerator } from "../../generators/Career";
 

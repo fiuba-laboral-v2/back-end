@@ -1,5 +1,5 @@
 import { ValidationError } from "sequelize";
-import Database from "../../../../src/config/Database";
+import { Database } from "../../../../src/config/Database";
 import { OfferSection } from "../../../../src/models/Offer/OfferSection";
 
 describe("OfferSection", () => {

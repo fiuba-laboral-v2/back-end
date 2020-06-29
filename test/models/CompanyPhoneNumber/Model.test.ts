@@ -1,7 +1,7 @@
 import { ValidationError } from "sequelize";
-import Database from "../../../src/config/Database";
+import { Database } from "../../../src/config/Database";
 import { CompanyPhoneNumber } from "../../../src/models/CompanyPhoneNumber";
-import { PhoneNumberWithLettersError, InvalidPhoneNumberError } from "validations-fiuba-laboral-v2";
+import { InvalidPhoneNumberError, PhoneNumberWithLettersError } from "validations-fiuba-laboral-v2";
 
 describe("companyPhoneNumber", () => {
   beforeAll(() => Database.setConnection());

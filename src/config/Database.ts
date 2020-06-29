@@ -2,17 +2,27 @@ import { Sequelize } from "sequelize-typescript";
 import { Environment } from "./Environment";
 import databaseJSON from "../../config/database.json";
 import { models } from "../models";
-import { QueryOptions } from "sequelize";
+import { QueryOptions, Transaction } from "sequelize";
 
-export default class Database {
+export class Database {
   public static sequelize: Sequelize;
 
   public static close() {
     this.sequelize?.close();
   }
 
-  public static transaction() {
-    return this.sequelize?.transaction();
+  public static async transaction<CallbackReturnType>(
+    callback: (transaction: Transaction) => Promise<CallbackReturnType>
+  ) {
+    const transaction = await this.sequelize?.transaction();
+    try {
+      const result = await callback(transaction);
+      await transaction.commit();
+      return result;
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
   }
 
   public static query(sql: string, options: QueryOptions) {

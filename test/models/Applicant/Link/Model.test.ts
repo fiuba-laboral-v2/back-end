@@ -1,5 +1,5 @@
 import { ValidationError } from "sequelize";
-import Database from "../../../../src/config/Database";
+import { Database } from "../../../../src/config/Database";
 import { Applicant } from "../../../../src/models/Applicant";
 import { ApplicantLink } from "../../../../src/models/Applicant/Link";
 import { UserRepository } from "../../../../src/models/User/Repository";

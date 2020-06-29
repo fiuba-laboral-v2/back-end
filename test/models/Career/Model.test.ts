@@ -1,5 +1,5 @@
 import { ValidationError } from "sequelize";
-import Database from "../../../src/config/Database";
+import { Database } from "../../../src/config/Database";
 import { Career } from "../../../src/models/Career";
 import { NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
 

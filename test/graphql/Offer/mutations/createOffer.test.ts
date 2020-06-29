@@ -1,6 +1,6 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
-import Database from "../../../../src/config/Database";
+import { Database } from "../../../../src/config/Database";
 
 import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
 import { OfferGenerator, TOfferDataGenerator } from "../../../generators/Offer";
