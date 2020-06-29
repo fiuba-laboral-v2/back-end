@@ -1,4 +1,4 @@
-import Database from "../../config/Database";
+import { Database } from "../../config/Database";
 import { IOffer, Offer } from "./";
 import { IOfferSection, OfferSection } from "./OfferSection";
 import { IOfferCareer, OfferCareer } from "./OfferCareer";
@@ -22,23 +22,20 @@ export const OfferRepository = {
     if (!updatedOffer) throw new OfferNotFound(offer.uuid);
     return updatedOffer;
   },
-  save: async (offer: Offer, sections: IOfferSection[], offersCareers: IOfferCareer[]) => {
-    const transaction = await Database.transaction();
-    try {
-      await offer.save({ transaction });
-      await Promise.all(sections.map(section => (
-        OfferSection.create({ ...section, offerUuid: offer.uuid }, { transaction })
-      )));
-      await Promise.all(offersCareers.map(({ careerCode }) => (
-        OfferCareer.create({ careerCode, offerUuid: offer.uuid }, { transaction })
-      )));
-      await transaction.commit();
-      return offer;
-    } catch (error) {
-      await transaction.rollback();
-      throw error;
-    }
-  },
+  save: async (
+    offer: Offer,
+    sections: IOfferSection[],
+    offersCareers: IOfferCareer[]
+  ) => Database.transaction(async transaction => {
+    await offer.save({ transaction });
+    await Promise.all(sections.map(section =>
+      OfferSection.create({ ...section, offerUuid: offer.uuid }, { transaction })
+    ));
+    await Promise.all(offersCareers.map(({ careerCode }) =>
+      OfferCareer.create({ careerCode, offerUuid: offer.uuid }, { transaction })
+    ));
+    return offer;
+  }),
   findByUuid: async (uuid: string) => {
     const offer = await Offer.findByPk(uuid);
     if (!offer) throw new OfferNotFound(uuid);

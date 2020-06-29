@@ -1,5 +1,5 @@
 import { UniqueConstraintError } from "sequelize";
-import Database from "../../../src/config/Database";
+import { Database } from "../../../src/config/Database";
 import { CareerRepository } from "../../../src/models/Career/Repository";
 import { OfferRepository } from "../../../src/models/Offer/Repository";
 import { CompanyRepository } from "../../../src/models/Company/Repository";

@@ -1,5 +1,5 @@
 import { DatabaseError, ForeignKeyConstraintError, ValidationError } from "sequelize";
-import Database from "../../../src/config/Database";
+import { Database } from "../../../src/config/Database";
 import { CareerRepository } from "../../../src/models/Career";
 import { Applicant, ApplicantRepository, IApplicantEditable } from "../../../src/models/Applicant";
 import { ApplicantCareersRepository } from "../../../src/models/ApplicantCareer/Repository";

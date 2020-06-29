@@ -1,4 +1,4 @@
-import Database from "../../../src/config/Database";
+import { Database } from "../../../src/config/Database";
 import { Admin } from "../../../src/models/Admin";
 import { ValidationError } from "sequelize";
 

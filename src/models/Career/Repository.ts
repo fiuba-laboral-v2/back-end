@@ -1,7 +1,7 @@
-import { ICareer, Career } from "./index";
+import { Career, ICareer } from "./index";
 import { Op } from "sequelize";
 import { ApplicantCareer } from "../ApplicantCareer/Model";
-import Database from "../../config/Database";
+import { Database } from "../../config/Database";
 
 import { CareersNotFound } from "./Errors/CareersNotFound";
 
@@ -26,18 +26,12 @@ export const CareerRepository = {
   },
   findAll: async () =>
     Career.findAll(),
-  deleteByCode: async (code: string) => {
-    const transaction = await Database.transaction();
-    try {
-      await ApplicantCareer.destroy({ where: { careerCode: code }, transaction });
-      const careerErased = await Career.destroy({ where: { code }, transaction });
-      await transaction.commit();
-      return careerErased;
-    } catch (error) {
-      await transaction.rollback();
-      throw error;
-    }
-  },
+  deleteByCode: (
+    code: string
+  ) => Database.transaction(async transaction => {
+    await ApplicantCareer.destroy({ where: { careerCode: code }, transaction });
+    return Career.destroy({ where: { code }, transaction });
+  }),
   truncate: async () =>
     Career.truncate({ cascade: true })
 };

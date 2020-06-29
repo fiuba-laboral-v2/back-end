@@ -1,4 +1,4 @@
-import Database from "../../config/Database";
+import { Database } from "../../config/Database";
 import { Company, ICompany, ICompanyEditable } from "./index";
 import { CompanyPhotoRepository } from "../CompanyPhoto";
 import { CompanyPhoneNumberRepository } from "../CompanyPhoneNumber";
@@ -9,28 +9,21 @@ import { CompanyUserRepository } from "../CompanyUser/Repository";
 import { CompanyApprovalEventRepository } from "./CompanyApprovalEvent";
 
 export const CompanyRepository = {
-  create: async (
+  create: (
     {
-      phoneNumbers= [],
-      photos= [],
+      phoneNumbers = [],
+      photos = [],
       user: userAttributes,
       ...companyAttributes
     }: ICompany
-  ) => {
-    const transaction = await Database.transaction();
-    try {
-      const user = await UserRepository.create(userAttributes, transaction);
-      const company = await Company.create(companyAttributes, { transaction: transaction });
-      await CompanyUserRepository.create(company, user, transaction);
-      await CompanyPhotoRepository.bulkCreate(photos, company, transaction);
-      await CompanyPhoneNumberRepository.bulkCreate(phoneNumbers, company, transaction);
-      await transaction.commit();
-      return company;
-    } catch (error) {
-      await transaction.rollback();
-      throw error;
-    }
-  },
+  ) => Database.transaction(async transaction => {
+    const user = await UserRepository.create(userAttributes, transaction);
+    const company = await Company.create(companyAttributes, { transaction: transaction });
+    await CompanyUserRepository.create(company, user, transaction);
+    await CompanyPhotoRepository.bulkCreate(photos, company, transaction);
+    await CompanyPhoneNumberRepository.bulkCreate(phoneNumbers, company, transaction);
+    return company;
+  }),
   update: async (
     {
       uuid,
@@ -47,32 +40,25 @@ export const CompanyRepository = {
 
     return updatedCompany;
   },
-  updateApprovalStatus: async (
+  updateApprovalStatus: (
     adminUserUuid: string,
     companyUuid: string,
     status: ApprovalStatus
-  ) => {
-    const transaction = await Database.transaction();
-    try {
-      const [numberOfUpdatedCompanies, [updatedCompany]] = await Company.update(
-        { approvalStatus: status },
-        { where: { uuid: companyUuid }, returning: true, transaction }
-      );
-      if (numberOfUpdatedCompanies !== 1) throw new CompanyNotUpdatedError(companyUuid);
+  ) => Database.transaction(async transaction => {
+    const [numberOfUpdatedCompanies, [updatedCompany]] = await Company.update(
+      { approvalStatus: status },
+      { where: { uuid: companyUuid }, returning: true, transaction }
+    );
+    if (numberOfUpdatedCompanies !== 1) throw new CompanyNotUpdatedError(companyUuid);
 
-      await CompanyApprovalEventRepository.create({
-        adminUserUuid,
-        company: updatedCompany,
-        status: status,
-        transaction
-      });
-      await transaction.commit();
-      return updatedCompany;
-    } catch (error) {
-      await transaction.rollback();
-      throw error;
-    }
-  },
+    await CompanyApprovalEventRepository.create({
+      adminUserUuid,
+      company: updatedCompany,
+      status: status,
+      transaction
+    });
+    return updatedCompany;
+  }),
   findByUuid: async (uuid: string) => {
     const company = await Company.findByPk(uuid);
     if (!company) throw new CompanyNotFoundError(uuid);

@@ -1,5 +1,5 @@
 import { UniqueConstraintError } from "sequelize";
-import Database from "../../../src/config/Database";
+import { Database } from "../../../src/config/Database";
 import { CapabilityRepository } from "../../../src/models/Capability";
 
 describe("CapabilityRepository", () => {

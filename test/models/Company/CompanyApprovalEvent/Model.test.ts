@@ -1,4 +1,4 @@
-import Database from "../../../../src/config/Database";
+import { Database } from "../../../../src/config/Database";
 import { CompanyApprovalEvent } from "../../../../src/models/Company/CompanyApprovalEvent";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import { ValidationError } from "sequelize";

@@ -1,5 +1,5 @@
 import { gql } from "apollo-server";
-import Database from "../../../../src/config/Database";
+import { Database } from "../../../../src/config/Database";
 
 import { CareerRepository } from "../../../../src/models/Career";
 import { CompanyRepository } from "../../../../src/models/Company";

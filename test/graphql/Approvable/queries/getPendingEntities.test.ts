@@ -1,6 +1,6 @@
 import { CompanyRepository } from "../../../../src/models/Company";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
-import Database from "../../../../src/config/Database";
+import { Database } from "../../../../src/config/Database";
 import { AdminGenerator } from "../../../generators/Admin";
 import { CompanyGenerator, TCompanyDataGenerator } from "../../../generators/Company";
 import { UserRepository } from "../../../../src/models/User";

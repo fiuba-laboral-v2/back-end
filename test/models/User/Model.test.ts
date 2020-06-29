@@ -1,11 +1,11 @@
 import { ValidationError } from "sequelize";
 import uuid from "uuid/v4";
-import Database from "../../../src/config/Database";
+import { Database } from "../../../src/config/Database";
 import { User } from "../../../src/models/User";
 import {
+  InvalidEmailError,
   NameWithDigitsError,
-  PasswordWithoutDigitsError,
-  InvalidEmailError
+  PasswordWithoutDigitsError
 } from "validations-fiuba-laboral-v2";
 
 describe("User", () => {

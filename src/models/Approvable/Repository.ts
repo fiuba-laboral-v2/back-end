@@ -1,4 +1,4 @@
-import Database from "../../config/Database";
+import { Database } from "../../config/Database";
 import { Company } from "../Company";
 import { find } from "lodash";
 import { ApprovalStatus } from "../ApprovalStatus";
