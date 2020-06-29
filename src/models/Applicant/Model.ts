@@ -26,6 +26,7 @@ import { Capability } from "../Capability/Model";
 import { ApplicantCapability } from "../ApplicantCapability/Model";
 import { Section } from "./Section";
 import { ApplicantLink } from "./Link";
+import { ApplicantApprovalEvent } from "./ApplicantApprovalEvent";
 import { User } from "../User";
 import { ApprovalStatus, approvalStatuses } from "../ApprovalStatus";
 import { isApprovalStatus } from "../SequelizeModelValidators";
@@ -89,6 +90,9 @@ export class Applicant extends Model<Applicant> {
   @BelongsToMany(() => Capability, () => ApplicantCapability)
   public capabilities: Capability[];
 
+  @HasMany(() => ApplicantApprovalEvent)
+  public approvalEvents: ApplicantApprovalEvent;
+
   public getCareers: HasManyGetAssociationsMixin<Career>;
   public getUser: HasOneGetAssociationMixin<User>;
 
@@ -101,4 +105,6 @@ export class Applicant extends Model<Applicant> {
   public getLinks: HasManyGetAssociationsMixin<ApplicantLink>;
 
   public getJobApplications: HasManyGetAssociationsMixin<JobApplication>;
+
+  public getApprovalEvents: HasManyGetAssociationsMixin<ApplicantApprovalEvent>;
 }

@@ -1,11 +1,13 @@
 import { Applicant, IApplicant, IApplicantEditable } from "./index";
-import { ApplicantNotFound } from "./Errors/ApplicantNotFound";
+import { ApplicantNotFound, ApplicantNotUpdatedError } from "./Errors";
 import { Database } from "../../config/Database";
 import { ApplicantCareersRepository } from "../ApplicantCareer/Repository";
 import { ApplicantCapabilityRepository } from "../ApplicantCapability/Repository";
+import { ApplicantApprovalEventRepository } from "./ApplicantApprovalEvent";
 import { SectionRepository } from "./Section/Repository";
 import { ApplicantLinkRepository } from "./Link";
 import { UserRepository } from "../User/Repository";
+import { ApprovalStatus } from "../ApprovalStatus";
 
 export const ApplicantRepository = {
   create: (
@@ -60,6 +62,24 @@ export const ApplicantRepository = {
     await ApplicantCapabilityRepository.update(newCapabilities, applicant, transaction);
     await applicant.save({ transaction });
     return applicant;
+  }),
+  updateApprovalStatus: (
+    adminUserUuid: string,
+    applicantUuid: string,
+    status: ApprovalStatus
+  ) => Database.transaction(async transaction => {
+    const [numberOfUpdatedApplicants, [updatedApplicant]] = await Applicant.update(
+      { approvalStatus: status },
+      { where: { uuid: applicantUuid }, returning: true, transaction }
+    );
+    if (numberOfUpdatedApplicants !== 1) throw new ApplicantNotUpdatedError(applicantUuid);
+    await ApplicantApprovalEventRepository.create({
+      adminUserUuid,
+      applicantUuid,
+      status,
+      transaction
+    });
+    return updatedApplicant;
   }),
   truncate: () => UserRepository.truncate()
 };

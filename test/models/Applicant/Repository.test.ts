@@ -1,14 +1,17 @@
-import { ValidationError } from "sequelize";
+import { DatabaseError, ForeignKeyConstraintError, ValidationError } from "sequelize";
 import { Database } from "../../../src/config/Database";
 import { CareerRepository } from "../../../src/models/Career";
-import { ApplicantRepository, IApplicantEditable } from "../../../src/models/Applicant";
+import { Applicant, ApplicantRepository, IApplicantEditable } from "../../../src/models/Applicant";
 import { ApplicantCareersRepository } from "../../../src/models/ApplicantCareer/Repository";
 import { UserRepository } from "../../../src/models/User/Repository";
 import { CapabilityRepository } from "../../../src/models/Capability";
-import { ApplicantNotFound } from "../../../src/models/Applicant/Errors/ApplicantNotFound";
+import { Admin } from "../../../src/models/Admin";
+import { ApplicantNotFound, ApplicantNotUpdatedError } from "../../../src/models/Applicant/Errors";
 import { ApplicantGenerator, TApplicantDataGenerator } from "../../generators/Applicant";
 import { CareerGenerator, TCareerGenerator } from "../../generators/Career";
+import { AdminGenerator } from "../../generators/Admin";
 import { internet, random } from "faker";
+import { ApprovalStatus, approvalStatuses } from "../../../src/models/ApprovalStatus";
 
 describe("ApplicantRepository", () => {
   let applicantsMinimumData: TApplicantDataGenerator;
@@ -581,6 +584,201 @@ describe("ApplicantRepository", () => {
           )
         ).toEqual(expect.arrayContaining(sectionsData));
       });
+    });
+  });
+
+  describe("updateApprovalStatus", () => {
+    let admin: Admin;
+    beforeAll(async () => {
+      admin = await AdminGenerator.instance().next().value;
+    });
+
+    const expectSuccessfulApplicantStatusUpdate = async (
+      applicant: Applicant,
+      status: ApprovalStatus
+    ) => {
+      return ApplicantRepository.updateApprovalStatus(
+        admin.userUuid,
+        applicant.uuid,
+        status
+      );
+    };
+
+    const expectApplicantWithApprovalStatus = async (approvalStatus: ApprovalStatus) => {
+      const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      const approvedApplicant = await expectSuccessfulApplicantStatusUpdate(
+        applicant,
+        approvalStatus
+      );
+      expect(approvedApplicant.approvalStatus).toEqual(approvalStatus);
+    };
+
+    const expectStatusUpdateToCreateOneEvent = async (approvalStatus: ApprovalStatus) => {
+      const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      const approvedApplicant = await expectSuccessfulApplicantStatusUpdate(
+        applicant,
+        approvalStatus
+      );
+      expect(await approvedApplicant.getApprovalEvents()).toEqual([
+        expect.objectContaining({
+          adminUserUuid: admin.userUuid,
+          applicantUuid: approvedApplicant.uuid,
+          status: approvalStatus
+        })
+      ]);
+    };
+
+    it("creates an applicant with a pending status", async () => {
+      const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      expect(applicant.approvalStatus).toEqual(ApprovalStatus.pending);
+    });
+
+    it("allows admins to approve an applicant", async () => {
+      await expectApplicantWithApprovalStatus(ApprovalStatus.approved);
+    });
+
+    it("allows admins to reject an applicant", async () => {
+      await expectApplicantWithApprovalStatus(ApprovalStatus.rejected);
+    });
+
+    it("creates an event when approving an applicant", async () => {
+      await expectStatusUpdateToCreateOneEvent(ApprovalStatus.approved);
+    });
+
+    it("creates an event when marking an applicant approval as pending", async () => {
+      await expectStatusUpdateToCreateOneEvent(ApprovalStatus.pending);
+    });
+
+    it("creates an event when rejecting an applicant", async () => {
+      await expectStatusUpdateToCreateOneEvent(ApprovalStatus.rejected);
+    });
+
+    it("creates four events by changing four times the applicant status", async () => {
+      const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      await expectSuccessfulApplicantStatusUpdate(applicant, ApprovalStatus.pending);
+      await expectSuccessfulApplicantStatusUpdate(applicant, ApprovalStatus.approved);
+      await expectSuccessfulApplicantStatusUpdate(applicant, ApprovalStatus.rejected);
+      await expectSuccessfulApplicantStatusUpdate(applicant, ApprovalStatus.pending);
+      const events = await applicant.getApprovalEvents();
+      expect(events).toEqual(expect.arrayContaining([
+        expect.objectContaining({
+          adminUserUuid: admin.userUuid,
+          applicantUuid: applicant.uuid,
+          status: ApprovalStatus.pending
+        }),
+        expect.objectContaining({
+          adminUserUuid: admin.userUuid,
+          applicantUuid: applicant.uuid,
+          status: ApprovalStatus.approved
+        }),
+        expect.objectContaining({
+          adminUserUuid: admin.userUuid,
+          applicantUuid: applicant.uuid,
+          status: ApprovalStatus.rejected
+        }),
+        expect.objectContaining({
+          adminUserUuid: admin.userUuid,
+          applicantUuid: applicant.uuid,
+          status: ApprovalStatus.pending
+        })
+      ]));
+    });
+
+    it("throws an error if admin does not exist", async () => {
+      const nonExistentAdminUserUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+      const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      await expect(
+        ApplicantRepository.updateApprovalStatus(
+          nonExistentAdminUserUuid,
+          applicant.uuid,
+          ApprovalStatus.approved
+        )
+      ).rejects.toThrowErrorWithMessage(
+        ForeignKeyConstraintError,
+        "insert or update on table \"ApplicantApprovalEvents\" violates " +
+        "foreign key constraint \"ApplicantApprovalEvents_adminUserUuid_fkey\""
+      );
+    });
+
+    it("throws an error if applicant does not exist", async () => {
+      const nonExistentApplicantUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+      await expect(
+        ApplicantRepository.updateApprovalStatus(
+          admin.userUuid,
+          nonExistentApplicantUuid,
+          ApprovalStatus.approved
+        )
+      ).rejects.toThrowErrorWithMessage(
+        ApplicantNotUpdatedError,
+        ApplicantNotUpdatedError.buildMessage(nonExistentApplicantUuid)
+      );
+    });
+
+    it("throws an error if applicantUuid has invalid format", async () => {
+      await expect(
+        ApplicantRepository.updateApprovalStatus(
+          admin.userUuid,
+          "InvalidFormat",
+          ApprovalStatus.approved
+        )
+      ).rejects.toThrowErrorWithMessage(
+        DatabaseError,
+        "invalid input syntax for type uuid: \"InvalidFormat\""
+      );
+    });
+
+    it("throws an error if adminUserUuid has invalid format", async () => {
+      const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      await expect(
+        ApplicantRepository.updateApprovalStatus(
+          "InvalidFormat",
+          applicant.uuid,
+          ApprovalStatus.approved
+        )
+      ).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        "Validation error: uuid has invalid format"
+      );
+    });
+
+    it("throws an error if status is not part of the enum values", async () => {
+      const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      await expect(
+        ApplicantRepository.updateApprovalStatus(
+          admin.userUuid,
+          applicant.uuid,
+          "notDefinedValue" as ApprovalStatus
+        )
+      ).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        `ApprovalStatus must be one of these values: ${approvalStatuses}`
+      );
+    });
+
+    it("does not update applicant status if it throws an error", async () => {
+      const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      await expect(
+        ApplicantRepository.updateApprovalStatus(
+          admin.userUuid,
+          applicant.uuid,
+          "unknownStatus" as ApprovalStatus
+        )
+      ).rejects.toThrow();
+      expect(
+        (await ApplicantRepository.findByUuid(applicant.uuid)).approvalStatus
+      ).toEqual(ApprovalStatus.pending);
+    });
+
+    it("does not create an event for the applicant if it throws an error", async () => {
+      const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      await expect(
+        ApplicantRepository.updateApprovalStatus(
+          admin.userUuid,
+          applicant.uuid,
+          "unknownStatus" as ApprovalStatus
+        )
+      ).rejects.toThrow();
+      expect(await applicant.getApprovalEvents()).toHaveLength(0);
     });
   });
 });
