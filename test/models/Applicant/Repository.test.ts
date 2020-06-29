@@ -593,7 +593,10 @@ describe("ApplicantRepository", () => {
       admin = await AdminGenerator.instance().next().value;
     });
 
-    const updateApplicantWithStatus = async (applicant: Applicant, status: ApprovalStatus) => {
+    const expectSuccessfulApplicantStatusUpdate = async (
+      applicant: Applicant,
+      status: ApprovalStatus
+    ) => {
       return ApplicantRepository.updateApprovalStatus(
         admin.userUuid,
         applicant.uuid,
@@ -603,13 +606,19 @@ describe("ApplicantRepository", () => {
 
     const expectApplicantWithApprovalStatus = async (approvalStatus: ApprovalStatus) => {
       const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
-      const approvedApplicant = await updateApplicantWithStatus(applicant, approvalStatus);
+      const approvedApplicant = await expectSuccessfulApplicantStatusUpdate(
+        applicant,
+        approvalStatus
+      );
       expect(approvedApplicant.approvalStatus).toEqual(approvalStatus);
     };
 
     const expectApplicantToHaveOneApprovalEvent = async (approvalStatus: ApprovalStatus) => {
       const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
-      const approvedApplicant = await updateApplicantWithStatus(applicant, approvalStatus);
+      const approvedApplicant = await expectSuccessfulApplicantStatusUpdate(
+        applicant,
+        approvalStatus
+      );
       expect(await approvedApplicant.getApprovalEvents()).toEqual([
         expect.objectContaining({
           adminUserUuid: admin.userUuid,
@@ -646,10 +655,10 @@ describe("ApplicantRepository", () => {
 
     it("creates four events by changing four times the applicant status", async () => {
       const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
-      await updateApplicantWithStatus(applicant, ApprovalStatus.pending);
-      await updateApplicantWithStatus(applicant, ApprovalStatus.approved);
-      await updateApplicantWithStatus(applicant, ApprovalStatus.rejected);
-      await updateApplicantWithStatus(applicant, ApprovalStatus.pending);
+      await expectSuccessfulApplicantStatusUpdate(applicant, ApprovalStatus.pending);
+      await expectSuccessfulApplicantStatusUpdate(applicant, ApprovalStatus.approved);
+      await expectSuccessfulApplicantStatusUpdate(applicant, ApprovalStatus.rejected);
+      await expectSuccessfulApplicantStatusUpdate(applicant, ApprovalStatus.pending);
       const events = await applicant.getApprovalEvents();
       expect(events).toEqual(expect.arrayContaining([
         expect.objectContaining({
