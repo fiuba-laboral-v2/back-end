@@ -1,7 +1,7 @@
 import { Applicant } from "./Model";
 import { IApplicant, IApplicantEditable, IApplicantCareer, TSection } from "./Interface";
 import { ApplicantRepository } from "./Repository";
-import Errors from "./Errors";
+import { ApplicantNotUpdatedError, ApplicantNotFound } from "./Errors";
 
 export {
   Applicant,
@@ -10,5 +10,6 @@ export {
   IApplicantCareer,
   TSection,
   ApplicantRepository,
-  Errors
+  ApplicantNotUpdatedError,
+  ApplicantNotFound
 };
