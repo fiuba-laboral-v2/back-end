@@ -111,5 +111,5 @@ export const ApplicantRepository = {
       throw error;
     }
   },
-  truncate: () => UserRepository.truncate()
+  truncate: () => Applicant.truncate({ cascade: true })
 };
