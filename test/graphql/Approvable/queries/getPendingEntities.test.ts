@@ -61,10 +61,10 @@ describe("getPendingEntities", () => {
   };
 
   const updateApplicantWithStatus = async (status: ApprovalStatus) => {
-    const { uuid: aplicantUuid } = await applicants.next().value;
+    const { uuid: applicantUuid } = await applicants.next().value;
     return ApplicantRepository.updateApprovalStatus(
       admin.userUuid,
-      aplicantUuid,
+      applicantUuid,
       status
     );
   };
