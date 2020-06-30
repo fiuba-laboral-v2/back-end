@@ -24,8 +24,8 @@ const GET_PENDING_ENTITIES = gql`
         uuid
       }
       ... on Applicant {
-          __typename
-          uuid
+        __typename
+        uuid
       }
     }
   }
