@@ -84,12 +84,12 @@ describe("getPendingEntities", () => {
     }]);
   };
 
-  it("returns company typename", async () => {
+  it("finds a company and returns its typename", async () => {
     const company = await companies.next().value;
     await expectToFindPendingEntityWithTypename(company, GraphQLCompany.name);
   });
 
-  it("returns applicant typename", async () => {
+  it("finds an applicant and returns its typename", async () => {
     const applicant = await applicants.next().value;
     await expectToFindPendingEntityWithTypename(applicant, GraphQLApplicant.name);
   });
