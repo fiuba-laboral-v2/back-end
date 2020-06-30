@@ -76,7 +76,7 @@ describe("getPendingEntities", () => {
     );
   };
 
-  const expectEntityToEqualTypename = async (entity: Approvable, typename: string) => {
+  const expectToFindPendingEntityWithTypename = async (entity: Approvable, typename: string) => {
     const pendingEntities = await getPendingEntities();
     expect(pendingEntities).toEqual([{
       __typename: typename,
@@ -86,12 +86,12 @@ describe("getPendingEntities", () => {
 
   it("returns company typename", async () => {
     const company = await companies.next().value;
-    await expectEntityToEqualTypename(company, GraphQLCompany.name);
+    await expectToFindPendingEntityWithTypename(company, GraphQLCompany.name);
   });
 
   it("returns applicant typename", async () => {
     const applicant = await applicants.next().value;
-    await expectEntityToEqualTypename(applicant, GraphQLApplicant.name);
+    await expectToFindPendingEntityWithTypename(applicant, GraphQLApplicant.name);
   });
 
   it("returns only pending companies", async () => {
