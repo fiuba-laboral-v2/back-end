@@ -2,8 +2,8 @@ import { gql } from "apollo-server";
 import { ApolloServerTestClient } from "apollo-server-testing";
 import { Database } from "../../../../src/config/Database";
 
-import { CompanyRepository } from "../../../../src/models/Company";
-import { ApplicantRepository } from "../../../../src/models/Applicant";
+import { Company, CompanyRepository } from "../../../../src/models/Company";
+import { Applicant, ApplicantRepository } from "../../../../src/models/Applicant";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import { UserRepository } from "../../../../src/models/User";
 import { Admin } from "../../../../src/models/Admin";
@@ -31,6 +31,8 @@ const GET_PENDING_ENTITIES = gql`
   }
 `;
 
+type Approvable = Applicant | Company;
+
 describe("getPendingEntities", () => {
   let companies: TCompanyGenerator;
   let applicants: TApplicantGenerator;
@@ -51,6 +53,12 @@ describe("getPendingEntities", () => {
 
   afterAll(() => Database.close());
 
+  const getPendingEntities = async () => {
+    const { apolloClient } = await testClientFactory.admin();
+    const { data } = await apolloClient.query({ query: GET_PENDING_ENTITIES });
+    return data!.getPendingEntities;
+  };
+
   const updateCompanyWithStatus = async (status: ApprovalStatus) => {
     const { uuid: companyUuid } = await companies.next().value;
     return CompanyRepository.updateApprovalStatus(
@@ -69,35 +77,29 @@ describe("getPendingEntities", () => {
     );
   };
 
+  const expectEntityToEqualTypename = async (entity: Approvable, typename: string) => {
+    const pendingEntities = await getPendingEntities();
+    expect(pendingEntities).toEqual([{
+      __typename: typename,
+      uuid: entity.uuid
+    }]);
+  };
+
   it("returns company typename", async () => {
     const company = await companies.next().value;
-    const { apolloClient } = await testClientFactory.admin();
-    const { data } = await apolloClient.query({ query: GET_PENDING_ENTITIES });
-    expect(data!.getPendingEntities).toEqual([{
-      __typename: GraphQLCompany.name,
-      uuid: company.uuid
-    }]);
+    await expectEntityToEqualTypename(company, GraphQLCompany.name);
   });
 
   it("returns applicant typename", async () => {
     const applicant = await applicants.next().value;
-    const { apolloClient } = await testClientFactory.admin();
-    const { data } = await apolloClient.query({ query: GET_PENDING_ENTITIES });
-    expect(data!.getPendingEntities).toEqual([{
-      __typename: GraphQLApplicant.name,
-      uuid: applicant.uuid
-    }]);
+    await expectEntityToEqualTypename(applicant, GraphQLApplicant.name);
   });
 
   it("returns only pending companies", async () => {
     await updateCompanyWithStatus(ApprovalStatus.rejected);
     await updateCompanyWithStatus(ApprovalStatus.approved);
     const pendingCompany = await companies.next().value;
-
-    const { apolloClient } = await testClientFactory.admin();
-    const { data } = await apolloClient.query({ query: GET_PENDING_ENTITIES });
-
-    const result = data!.getPendingEntities;
+    const result = await getPendingEntities();
     expect(result).toHaveLength(1);
     expect(result[0].uuid).toEqual(pendingCompany.uuid);
   });
@@ -106,11 +108,7 @@ describe("getPendingEntities", () => {
     await updateApplicantWithStatus(ApprovalStatus.rejected);
     await updateApplicantWithStatus(ApprovalStatus.approved);
     const pendingApplicant = await applicants.next().value;
-
-    const { apolloClient } = await testClientFactory.admin();
-    const { data } = await apolloClient.query({ query: GET_PENDING_ENTITIES });
-
-    const result = data!.getPendingEntities;
+    const result = await getPendingEntities();
     expect(result).toHaveLength(1);
     expect(result[0].uuid).toEqual(pendingApplicant.uuid);
   });
@@ -122,11 +120,7 @@ describe("getPendingEntities", () => {
     await updateApplicantWithStatus(ApprovalStatus.approved);
     const pendingApplicant = await applicants.next().value;
     const pendingCompany = await companies.next().value;
-
-    const { apolloClient } = await testClientFactory.admin();
-    const { data } = await apolloClient.query({ query: GET_PENDING_ENTITIES });
-
-    const result = data!.getPendingEntities;
+    const result = await getPendingEntities();
     expect(result).toHaveLength(2);
     expect(result.map(entity => entity.uuid)).toEqual(expect.arrayContaining([
       pendingApplicant.uuid,
@@ -138,11 +132,7 @@ describe("getPendingEntities", () => {
     const firstCompany = await companies.next().value;
     const secondCompany = await companies.next().value;
     expect([secondCompany, firstCompany]).toBeSortedBy({ key: "updatedAt", descending: true });
-
-    const { apolloClient } = await testClientFactory.admin();
-    const { data } = await apolloClient.query({ query: GET_PENDING_ENTITIES });
-
-    const [firstResult, secondResult] = data!.getPendingEntities;
+    const [firstResult, secondResult] = await getPendingEntities();
     expect(firstResult.uuid).toEqual(secondCompany.uuid);
     expect(secondResult.uuid).toEqual(firstCompany.uuid);
   });
@@ -151,11 +141,7 @@ describe("getPendingEntities", () => {
     const firstApplicant = await applicants.next().value;
     const secondApplicant = await applicants.next().value;
     expect([secondApplicant, firstApplicant]).toBeSortedBy({ key: "updatedAt", descending: true });
-
-    const { apolloClient } = await testClientFactory.admin();
-    const { data } = await apolloClient.query({ query: GET_PENDING_ENTITIES });
-
-    const [firstResult, secondResult] = data!.getPendingEntities;
+    const [firstResult, secondResult] = await getPendingEntities();
     expect(firstResult.uuid).toEqual(secondApplicant.uuid);
     expect(secondResult.uuid).toEqual(firstApplicant.uuid);
   });
@@ -167,11 +153,7 @@ describe("getPendingEntities", () => {
     const company4 = await companies.next().value;
     const entitiesOrderByLatestUpdated = [company4, company3, applicant2, applicant1];
     expect(entitiesOrderByLatestUpdated).toBeSortedBy({ key: "updatedAt", descending: true });
-
-    const { apolloClient } = await testClientFactory.admin();
-    const { data } = await apolloClient.query({ query: GET_PENDING_ENTITIES });
-
-    const [firstResult, secondResult, thirdResult, fourthResult] = data!.getPendingEntities;
+    const [firstResult, secondResult, thirdResult, fourthResult] = await getPendingEntities();
     expect(firstResult.uuid).toEqual(company4.uuid);
     expect(secondResult.uuid).toEqual(company3.uuid);
     expect(thirdResult.uuid).toEqual(applicant2.uuid);
