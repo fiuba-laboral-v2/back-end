@@ -30,7 +30,7 @@ describe("ApprovableRepository", () => {
 
   afterAll(() => Database.close());
 
-  const updateCompanyWithStatus = async (status: ApprovalStatus) => {
+  const createCompanyWithStatus = async (status: ApprovalStatus) => {
     const { uuid: companyUuid } = await companies.next().value;
     return CompanyRepository.updateApprovalStatus(
       admin.userUuid,
@@ -39,7 +39,7 @@ describe("ApprovableRepository", () => {
     );
   };
 
-  const updateApplicantWithStatus = async (status: ApprovalStatus) => {
+  const createApplicantWithStatus = async (status: ApprovalStatus) => {
     const { uuid: applicantUuid } = await applicants.next().value;
     return ApplicantRepository.updateApprovalStatus(
       admin.userUuid,
@@ -49,8 +49,8 @@ describe("ApprovableRepository", () => {
   };
 
   it("returns only pending companies", async () => {
-    await updateCompanyWithStatus(ApprovalStatus.rejected);
-    await updateCompanyWithStatus(ApprovalStatus.approved);
+    await createCompanyWithStatus(ApprovalStatus.rejected);
+    await createCompanyWithStatus(ApprovalStatus.approved);
 
     const pendingCompany = await companies.next().value;
 
@@ -61,8 +61,8 @@ describe("ApprovableRepository", () => {
   });
 
   it("returns only pending applicants", async () => {
-    await updateApplicantWithStatus(ApprovalStatus.rejected);
-    await updateApplicantWithStatus(ApprovalStatus.approved);
+    await createApplicantWithStatus(ApprovalStatus.rejected);
+    await createApplicantWithStatus(ApprovalStatus.approved);
     const pendingApplicant = await applicants.next().value;
     const result = await ApprovableRepository.findPending();
     expect(result).toHaveLength(1);
@@ -71,10 +71,10 @@ describe("ApprovableRepository", () => {
   });
 
   it("returns only pending applicants and companies", async () => {
-    await updateApplicantWithStatus(ApprovalStatus.rejected);
-    await updateApplicantWithStatus(ApprovalStatus.approved);
-    await updateCompanyWithStatus(ApprovalStatus.rejected);
-    await updateCompanyWithStatus(ApprovalStatus.approved);
+    await createApplicantWithStatus(ApprovalStatus.rejected);
+    await createApplicantWithStatus(ApprovalStatus.approved);
+    await createCompanyWithStatus(ApprovalStatus.rejected);
+    await createCompanyWithStatus(ApprovalStatus.approved);
     const pendingApplicant = await applicants.next().value;
     const pendingCompany = await companies.next().value;
 
