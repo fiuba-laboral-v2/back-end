@@ -1,15 +1,20 @@
-import { CompanyRepository } from "../../../../src/models/Company";
-import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
+import { gql } from "apollo-server";
+import { ApolloServerTestClient } from "apollo-server-testing";
 import Database from "../../../../src/config/Database";
-import { AdminGenerator } from "../../../generators/Admin";
-import { CompanyGenerator, TCompanyDataGenerator } from "../../../generators/Company";
+
+import { CompanyRepository } from "../../../../src/models/Company";
+import { ApplicantRepository } from "../../../../src/models/Applicant";
+import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import { UserRepository } from "../../../../src/models/User";
 import { Admin } from "../../../../src/models/Admin";
-import { gql } from "apollo-server";
-import { testClientFactory } from "../../../mocks/testClientFactory";
 import { GraphQLCompany } from "../../../../src/graphql/Company/Types/GraphQLCompany";
+import { GraphQLApplicant } from "../../../../src/graphql/Applicant/Types/Applicant";
 import { UnauthorizedError } from "../../../../src/graphql/Errors";
-import { ApolloServerTestClient } from "apollo-server-testing";
+
+import { AdminGenerator } from "../../../generators/Admin";
+import { CompanyGenerator, TCompanyGenerator } from "../../../generators/Company";
+import { ApplicantGenerator, TApplicantGenerator } from "../../../generators/Applicant";
+import { testClientFactory } from "../../../mocks/testClientFactory";
 
 const GET_PENDING_ENTITIES = gql`
   query GetPendingEntities {
@@ -18,29 +23,54 @@ const GET_PENDING_ENTITIES = gql`
         __typename
         uuid
       }
+      ... on Applicant {
+          __typename
+          uuid
+      }
     }
   }
 `;
 
 describe("getPendingEntities", () => {
-  let companiesData: TCompanyDataGenerator;
+  let companies: TCompanyGenerator;
+  let applicants: TApplicantGenerator;
   let admin: Admin;
 
   beforeAll(async () => {
     Database.setConnection();
     await UserRepository.truncate();
-    companiesData = await CompanyGenerator.data.completeData();
+    companies = CompanyGenerator.instance.withCompleteData();
+    applicants = ApplicantGenerator.instance.withMinimumData();
     admin = await AdminGenerator.instance().next().value;
   });
 
   beforeEach(async () => {
     await CompanyRepository.truncate();
+    await ApplicantRepository.truncate();
   });
 
   afterAll(() => Database.close());
 
+  const updateCompanyWithStatus = async (status: ApprovalStatus) => {
+    const { uuid: companyUuid } = await companies.next().value;
+    return CompanyRepository.updateApprovalStatus(
+      admin.userUuid,
+      companyUuid,
+      status
+    );
+  };
+
+  const updateApplicantWithStatus = async (status: ApprovalStatus) => {
+    const { uuid: aplicantUuid } = await applicants.next().value;
+    return ApplicantRepository.updateApprovalStatus(
+      admin.userUuid,
+      aplicantUuid,
+      status
+    );
+  };
+
   it("returns company typename", async () => {
-    const company = await CompanyRepository.create(companiesData.next().value);
+    const company = await companies.next().value;
     const { apolloClient } = await testClientFactory.admin();
     const { data } = await apolloClient.query({ query: GET_PENDING_ENTITIES });
     expect(data!.getPendingEntities).toEqual([{
@@ -49,36 +79,65 @@ describe("getPendingEntities", () => {
     }]);
   });
 
+  it("returns applicant typename", async () => {
+    const applicant = await applicants.next().value;
+    const { apolloClient } = await testClientFactory.admin();
+    const { data } = await apolloClient.query({ query: GET_PENDING_ENTITIES });
+    expect(data!.getPendingEntities).toEqual([{
+      __typename: GraphQLApplicant.name,
+      uuid: applicant.uuid
+    }]);
+  });
+
   it("returns only pending companies", async () => {
-    const rejectedCompany = await CompanyRepository.create(companiesData.next().value);
-    await CompanyRepository.updateApprovalStatus(
-      admin.userUuid,
-      rejectedCompany.uuid,
-      ApprovalStatus.rejected
-    );
-
-    const approvedCompany = await CompanyRepository.create(companiesData.next().value);
-    await CompanyRepository.updateApprovalStatus(
-      admin.userUuid,
-      approvedCompany.uuid,
-      ApprovalStatus.approved
-    );
-
-    const pendingCompany = await CompanyRepository.create(companiesData.next().value);
+    await updateCompanyWithStatus(ApprovalStatus.rejected);
+    await updateCompanyWithStatus(ApprovalStatus.approved);
+    const pendingCompany = await companies.next().value;
 
     const { apolloClient } = await testClientFactory.admin();
     const { data } = await apolloClient.query({ query: GET_PENDING_ENTITIES });
 
     const result = data!.getPendingEntities;
-    expect(result.length).toEqual(1);
+    expect(result).toHaveLength(1);
     expect(result[0].uuid).toEqual(pendingCompany.uuid);
   });
 
-  it("sorts pending companies by updated timestamp", async () => {
-    const firstCompany = await CompanyRepository.create(companiesData.next().value);
-    const secondCompany = await CompanyRepository.create(companiesData.next().value);
+  it("returns only pending applicants", async () => {
+    await updateApplicantWithStatus(ApprovalStatus.rejected);
+    await updateApplicantWithStatus(ApprovalStatus.approved);
+    const pendingApplicant = await applicants.next().value;
 
-    expect(firstCompany.updatedAt < secondCompany.updatedAt).toBe(true);
+    const { apolloClient } = await testClientFactory.admin();
+    const { data } = await apolloClient.query({ query: GET_PENDING_ENTITIES });
+
+    const result = data!.getPendingEntities;
+    expect(result).toHaveLength(1);
+    expect(result[0].uuid).toEqual(pendingApplicant.uuid);
+  });
+
+  it("returns only pending applicants and companies", async () => {
+    await updateCompanyWithStatus(ApprovalStatus.rejected);
+    await updateCompanyWithStatus(ApprovalStatus.approved);
+    await updateApplicantWithStatus(ApprovalStatus.rejected);
+    await updateApplicantWithStatus(ApprovalStatus.approved);
+    const pendingApplicant = await applicants.next().value;
+    const pendingCompany = await companies.next().value;
+
+    const { apolloClient } = await testClientFactory.admin();
+    const { data } = await apolloClient.query({ query: GET_PENDING_ENTITIES });
+
+    const result = data!.getPendingEntities;
+    expect(result).toHaveLength(2);
+    expect(result.map(entity => entity.uuid)).toEqual(expect.arrayContaining([
+      pendingApplicant.uuid,
+      pendingCompany.uuid
+    ]));
+  });
+
+  it("sorts pending companies by updated timestamp", async () => {
+    const firstCompany = await companies.next().value;
+    const secondCompany = await companies.next().value;
+    expect([secondCompany, firstCompany]).toBeSortedBy({ key: "updatedAt", descending: true });
 
     const { apolloClient } = await testClientFactory.admin();
     const { data } = await apolloClient.query({ query: GET_PENDING_ENTITIES });
@@ -86,6 +145,37 @@ describe("getPendingEntities", () => {
     const [firstResult, secondResult] = data!.getPendingEntities;
     expect(firstResult.uuid).toEqual(secondCompany.uuid);
     expect(secondResult.uuid).toEqual(firstCompany.uuid);
+  });
+
+  it("sorts pending applicants by updated timestamp", async () => {
+    const firstApplicant = await applicants.next().value;
+    const secondApplicant = await applicants.next().value;
+    expect([secondApplicant, firstApplicant]).toBeSortedBy({ key: "updatedAt", descending: true });
+
+    const { apolloClient } = await testClientFactory.admin();
+    const { data } = await apolloClient.query({ query: GET_PENDING_ENTITIES });
+
+    const [firstResult, secondResult] = data!.getPendingEntities;
+    expect(firstResult.uuid).toEqual(secondApplicant.uuid);
+    expect(secondResult.uuid).toEqual(firstApplicant.uuid);
+  });
+
+  it("sorts pending applicants and companies by updated timestamp", async () => {
+    const applicant1 = await applicants.next().value;
+    const applicant2 = await applicants.next().value;
+    const company3 = await companies.next().value;
+    const company4 = await companies.next().value;
+    const entitiesOrderByLatestUpdated = [company4, company3, applicant2, applicant1];
+    expect(entitiesOrderByLatestUpdated).toBeSortedBy({ key: "updatedAt", descending: true });
+
+    const { apolloClient } = await testClientFactory.admin();
+    const { data } = await apolloClient.query({ query: GET_PENDING_ENTITIES });
+
+    const [firstResult, secondResult, thirdResult, fourthResult] = data!.getPendingEntities;
+    expect(firstResult.uuid).toEqual(company4.uuid);
+    expect(secondResult.uuid).toEqual(company3.uuid);
+    expect(thirdResult.uuid).toEqual(applicant2.uuid);
+    expect(fourthResult.uuid).toEqual(applicant1.uuid);
   });
 
   describe("only admins can execute this query", () => {

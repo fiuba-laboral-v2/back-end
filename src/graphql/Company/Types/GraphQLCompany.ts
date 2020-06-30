@@ -7,7 +7,7 @@ export const GraphQLCompany = new GraphQLObjectType<Company>({
   name: "Company",
   fields: () => ({
     uuid: {
-      type: ID
+      type: nonNull(ID)
     },
     cuit: {
       type: nonNull(String)
