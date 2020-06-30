@@ -2,8 +2,9 @@ import { gql } from "apollo-server";
 import { ApolloServerTestClient } from "apollo-server-testing";
 import { Database } from "../../../../src/config/Database";
 
-import { Company, CompanyRepository } from "../../../../src/models/Company";
-import { Applicant, ApplicantRepository } from "../../../../src/models/Applicant";
+import { CompanyRepository } from "../../../../src/models/Company";
+import { ApplicantRepository } from "../../../../src/models/Applicant";
+import { Approvable } from "../../../../src/models/Approvable";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import { UserRepository } from "../../../../src/models/User";
 import { Admin } from "../../../../src/models/Admin";
@@ -30,8 +31,6 @@ const GET_PENDING_ENTITIES = gql`
     }
   }
 `;
-
-type Approvable = Applicant | Company;
 
 describe("getPendingEntities", () => {
   let companies: TCompanyGenerator;
