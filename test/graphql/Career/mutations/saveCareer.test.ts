@@ -1,6 +1,6 @@
-import { gql, ApolloError } from "apollo-server";
+import { ApolloError, gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
-import Database from "../../../../src/config/Database";
+import { Database } from "../../../../src/config/Database";
 import { CareerRepository } from "../../../../src/models/Career";
 import { CareerGenerator, TCareerDataGenerator } from "../../../generators/Career";
 

@@ -1,4 +1,4 @@
-import Database from "../../../src/config/Database";
+import { Database } from "../../../src/config/Database";
 import { AdminRepository } from "../../../src/models/Admin";
 import { UserRepository } from "../../../src/models/User";
 import { UniqueConstraintError } from "sequelize";

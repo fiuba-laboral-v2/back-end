@@ -1,8 +1,8 @@
-import { UniqueConstraintError, DatabaseError, ValidationError } from "sequelize";
-import Database from "../../../../src/config/Database";
+import { DatabaseError, UniqueConstraintError, ValidationError } from "sequelize";
+import { Database } from "../../../../src/config/Database";
 import { Applicant } from "../../../../src/models/Applicant";
-import { ApplicantLinkRepository, ApplicantLink } from "../../../../src/models/Applicant/Link";
-import { random, internet } from "faker";
+import { ApplicantLink, ApplicantLinkRepository } from "../../../../src/models/Applicant/Link";
+import { internet, random } from "faker";
 import { UserRepository } from "../../../../src/models/User/Repository";
 
 const createApplicant = async () => {

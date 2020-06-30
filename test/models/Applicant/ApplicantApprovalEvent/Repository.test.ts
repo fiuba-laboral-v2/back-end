@@ -1,4 +1,4 @@
-import Database from "../../../../src/config/Database";
+import { Database } from "../../../../src/config/Database";
 import { ForeignKeyConstraintError } from "sequelize";
 import { ApplicantRepository } from "../../../../src/models/Applicant";
 import { UserRepository } from "../../../../src/models/User";

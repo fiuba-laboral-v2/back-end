@@ -1,4 +1,4 @@
-import Database from "../../../src/config/Database";
+import { Database } from "../../../src/config/Database";
 import { Career, CareerRepository } from "../../../src/models/Career";
 import { ApplicantCareer } from "../../../src/models/ApplicantCareer";
 import { NumberIsTooLargeError, NumberIsTooSmallError } from "validations-fiuba-laboral-v2";

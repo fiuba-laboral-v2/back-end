@@ -1,4 +1,4 @@
-import Database from "../../../src/config/Database";
+import { Database } from "../../../src/config/Database";
 import { Company, CompanyRepository } from "../../../src/models/Company";
 import { User, UserRepository } from "../../../src/models/User";
 import { UserMocks } from "../User/mocks";

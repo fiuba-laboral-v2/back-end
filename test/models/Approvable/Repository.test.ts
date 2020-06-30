@@ -1,4 +1,4 @@
-import Database from "../../../src/config/Database";
+import { Database } from "../../../src/config/Database";
 import { CompanyGenerator, TCompanyDataGenerator } from "../../generators/Company";
 import { Company, CompanyRepository } from "../../../src/models/Company";
 import { Applicant, ApplicantRepository } from "../../../src/models/Applicant";

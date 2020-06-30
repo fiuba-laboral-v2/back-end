@@ -1,15 +1,15 @@
 import { ValidationError } from "sequelize";
 import { Company } from "../../../src/models/Company";
-import Database from "../../../src/config/Database";
+import { Database } from "../../../src/config/Database";
 import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
 import { UUID_REGEX } from "../index";
 import {
-  InvalidCuitError,
-  WrongLengthCuitError,
   EmptyNameError,
-  NameWithDigitsError,
+  InvalidCuitError,
+  InvalidEmailError,
   InvalidURLError,
-  InvalidEmailError
+  NameWithDigitsError,
+  WrongLengthCuitError
 } from "validations-fiuba-laboral-v2";
 
 describe("Company", () => {

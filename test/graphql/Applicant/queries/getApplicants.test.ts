@@ -1,6 +1,6 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
-import Database from "../../../../src/config/Database";
+import { Database } from "../../../../src/config/Database";
 
 import { AuthenticationError } from "../../../../src/graphql/Errors";
 

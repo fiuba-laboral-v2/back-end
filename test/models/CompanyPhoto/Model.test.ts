@@ -1,5 +1,5 @@
-import Database from "../../../src/config/Database";
-import { CompanyPhotoRepository, CompanyPhoto } from "../../../src/models/CompanyPhoto";
+import { Database } from "../../../src/config/Database";
+import { CompanyPhoto, CompanyPhotoRepository } from "../../../src/models/CompanyPhoto";
 
 describe("CompanyPhoto", () => {
   beforeAll(() => Database.setConnection());

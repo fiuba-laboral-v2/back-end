@@ -1,11 +1,9 @@
 import { gql } from "apollo-server";
 import { ApolloServerTestClient as TestClient } from "apollo-server-testing";
-import Database from "../../../../src/config/Database";
-import { client } from "../../../graphql/ApolloTestClient";
-
+import { Database } from "../../../../src/config/Database";
+import { client } from "../../ApolloTestClient";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 import { CompanyGenerator } from "../../../generators/Company";
-
 import { Company, CompanyRepository } from "../../../../src/models/Company";
 import {
   CompanyApprovalEventRepository

@@ -1,5 +1,5 @@
 import { ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
-import Database from "../../../src/config/Database";
+import { Database } from "../../../src/config/Database";
 import { CompanyRepository } from "../../../src/models/Company";
 import { OfferRepository } from "../../../src/models/Offer";
 import { JobApplication, JobApplicationRepository } from "../../../src/models/JobApplication";

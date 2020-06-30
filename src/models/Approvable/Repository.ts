@@ -1,4 +1,4 @@
-import Database from "../../config/Database";
+import { Database } from "../../config/Database";
 import { find } from "lodash";
 import { findPendingQuery } from "./findPendingQuery";
 import { APPROVABLE_MODELS } from "./ApprovableModels";

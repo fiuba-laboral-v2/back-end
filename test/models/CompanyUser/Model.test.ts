@@ -1,4 +1,4 @@
-import Database from "../../../src/config/Database";
+import { Database } from "../../../src/config/Database";
 import { CompanyUser } from "../../../src/models/CompanyUser";
 import { ValidationError } from "sequelize";
 import uuid from "uuid/v4";

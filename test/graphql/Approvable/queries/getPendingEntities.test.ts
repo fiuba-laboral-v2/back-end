@@ -1,6 +1,6 @@
 import { gql } from "apollo-server";
 import { ApolloServerTestClient } from "apollo-server-testing";
-import Database from "../../../../src/config/Database";
+import { Database } from "../../../../src/config/Database";
 
 import { CompanyRepository } from "../../../../src/models/Company";
 import { ApplicantRepository } from "../../../../src/models/Applicant";

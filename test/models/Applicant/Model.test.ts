@@ -1,6 +1,6 @@
 import { ValidationError } from "sequelize";
 import uuid from "uuid/v4";
-import Database from "../../../src/config/Database";
+import { Database } from "../../../src/config/Database";
 import { Applicant } from "../../../src/models/Applicant";
 import { ApprovalStatus, approvalStatuses } from "../../../src/models/ApprovalStatus";
 import { NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
