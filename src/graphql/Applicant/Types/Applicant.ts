@@ -7,6 +7,7 @@ import { GraphQLSection } from "./Section";
 import { GraphQLLink } from "./Link";
 import { Applicant } from "../../../models/Applicant";
 import { ApplicantCareersSerializer } from "../../../models/ApplicantCareer";
+import { GraphQLApprovalStatus } from "../../ApprovalStatus/Types/GraphQLApprovalStatus";
 
 const GraphQLApplicant = new GraphQLObjectType<Applicant>({
   name: "Applicant",
@@ -23,6 +24,9 @@ const GraphQLApplicant = new GraphQLObjectType<Applicant>({
     },
     description: {
       type: String
+    },
+    approvalStatus: {
+      type: nonNull(GraphQLApprovalStatus)
     },
     careers: {
       type: nonNull(List(GraphQLApplicantCareer)),
