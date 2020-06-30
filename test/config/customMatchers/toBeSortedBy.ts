@@ -6,18 +6,15 @@ export const toBeSortedBy = (received, { descending = false, key, coerce = false
     let element = elements[i];
     let nextElement = elements[i + 1];
 
-    if (key && !(key in element)) {
-      return buildResponse({ ...responseOptions, pass: false, missingKey: true });
-    }
+    const keyInElement = key && key in element;
+    if (!keyInElement) return buildResponse({ ...responseOptions, pass: false, missingKey: true });
 
     if (key) {
       element = element[key];
       nextElement = nextElement && nextElement[key];
     }
-
-    if (descending ? element < nextElement : element > nextElement) {
-      return buildResponse({ ...responseOptions, pass: false });
-    }
+    const isNotInOrder = descending ? element < nextElement : element > nextElement;
+    if (isNotInOrder) return buildResponse({ ...responseOptions, pass: false });
   }
   return buildResponse({ ...responseOptions, pass: true });
 };
