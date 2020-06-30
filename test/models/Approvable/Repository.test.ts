@@ -101,7 +101,6 @@ describe("ApprovableRepository", () => {
     const [firstResult, secondResult] = await ApprovableRepository.findPending();
     expect(firstResult).toBeInstanceOf(Applicant);
     expect(secondResult).toBeInstanceOf(Applicant);
-    expect(firstResult.updatedAt > secondResult.updatedAt).toBe(true);
     expect([firstResult, secondResult]).toBeSortedBy({ key: "updatedAt", descending: true });
   });
 
