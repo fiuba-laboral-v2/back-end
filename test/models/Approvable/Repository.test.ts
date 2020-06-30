@@ -92,7 +92,7 @@ describe("ApprovableRepository", () => {
     const [firstResult, secondResult] = await ApprovableRepository.findPending();
     expect(firstResult).toBeInstanceOf(Company);
     expect(secondResult).toBeInstanceOf(Company);
-    expect([firstResult, secondResult]).toBeSortedBy({ key: "updatedAt", descending: true });
+    expect([firstResult, secondResult]).toBeSortedBy({ key: "updatedAt" });
   });
 
   it("sorts pending applicants by updatedAt", async () => {
@@ -101,7 +101,7 @@ describe("ApprovableRepository", () => {
     const [firstResult, secondResult] = await ApprovableRepository.findPending();
     expect(firstResult).toBeInstanceOf(Applicant);
     expect(secondResult).toBeInstanceOf(Applicant);
-    expect([firstResult, secondResult]).toBeSortedBy({ key: "updatedAt", descending: true });
+    expect([firstResult, secondResult]).toBeSortedBy({ key: "updatedAt" });
   });
 
   it("sorts pending applicants and companies by updatedAt", async () => {
@@ -117,6 +117,6 @@ describe("ApprovableRepository", () => {
       applicant2.uuid,
       applicant1.uuid
     ]);
-    expect(result).toBeSortedBy({ key: "updatedAt", descending: true });
+    expect(result).toBeSortedBy({ key: "updatedAt" });
   });
 });

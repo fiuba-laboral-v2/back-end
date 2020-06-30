@@ -1,62 +1,25 @@
-export const toBeSortedBy = (received, { descending = false, key, coerce = false }: IOptions) => {
-  const elements = coerce ? coerceValues(received) : received;
-  const responseOptions = { received, descending, key };
+import { orderBy, isEqual } from "lodash";
 
-  for (let i = 0; i < elements.length; i++) {
-    let element = elements[i];
-    let nextElement = elements[i + 1];
-
-    const keyInElement = key && key in element;
-    if (!keyInElement) return buildResponse({ ...responseOptions, pass: false, missingKey: true });
-
-    if (key) {
-      element = element[key];
-      nextElement = nextElement && nextElement[key];
-    }
-    const isNotInOrder = descending ? element < nextElement : element > nextElement;
-    if (isNotInOrder) return buildResponse({ ...responseOptions, pass: false });
-  }
-  return buildResponse({ ...responseOptions, pass: true });
+export const toBeSortedBy = (received, { key, order = "desc" }: IOptions) => {
+  const orderedArray = orderBy(received, key, order);
+  if (isEqual(received, orderedArray)) return buildResponse({ key, pass: true, received, order });
+  return buildResponse({ key, pass: false, received, order });
 };
 
-const coerceValues = (values: any[]) => values.map(value => +value);
-
-const missingKeyMessage = (key: string) => `by a missing key, ${key}, `;
-
-const buildResponse = (options: IBuildResponseMessage) => ({
-  pass: options.pass,
-  message: () => buildResponseMessage(options)
-});
-
-const buildResponseMessage = (
-  {
-    pass,
-    descending,
-    key,
-    keyMessage,
-    received,
-    missingKey
-  }: IBuildResponseMessage
-) => {
-  let keyMsg = keyMessage ? keyMessage : (key ? `by ${key} ` : "");
-  keyMsg = missingKey ? missingKeyMessage(key!) : keyMsg;
-  const passMsg = pass ? "not " : "";
-  const orderMsg = descending ? "descending" : "ascending";
-  const arrayMsg = key ? `Array(${received.length})` : `[${received}]`;
-  return `Expected ${arrayMsg} to ${passMsg} be sorted ${keyMsg} in ${orderMsg} order`;
+const buildResponse = ({ received, pass, key, order }: TBuildResponse) => {
+  const negation = pass ? "not " : "";
+  return {
+    pass: pass,
+    message: () => `Expected ${received} to ${negation} be sorted by ${key} in ${order} order`
+  };
 };
 
-interface IBuildResponseMessage {
-  key?: string;
+type TBuildResponse = {
   received: any;
-  descending: boolean;
   pass: boolean;
-  keyMessage?: string;
-  missingKey?: boolean;
-}
+} & IOptions;
 
 export interface IOptions {
-  descending?: boolean;
-  key?: string;
-  coerce?: boolean;
+  key: string;
+  order?: "asc" | "desc";
 }

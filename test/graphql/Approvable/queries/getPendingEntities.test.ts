@@ -130,7 +130,7 @@ describe("getPendingEntities", () => {
   it("sorts pending companies by updated timestamp", async () => {
     const firstCompany = await companies.next().value;
     const secondCompany = await companies.next().value;
-    expect([secondCompany, firstCompany]).toBeSortedBy({ key: "updatedAt", descending: true });
+    expect([secondCompany, firstCompany]).toBeSortedBy({ key: "updatedAt" });
     const [firstResult, secondResult] = await getPendingEntities();
     expect(firstResult.uuid).toEqual(secondCompany.uuid);
     expect(secondResult.uuid).toEqual(firstCompany.uuid);
@@ -139,7 +139,7 @@ describe("getPendingEntities", () => {
   it("sorts pending applicants by updated timestamp", async () => {
     const firstApplicant = await applicants.next().value;
     const secondApplicant = await applicants.next().value;
-    expect([secondApplicant, firstApplicant]).toBeSortedBy({ key: "updatedAt", descending: true });
+    expect([secondApplicant, firstApplicant]).toBeSortedBy({ key: "updatedAt" });
     const [firstResult, secondResult] = await getPendingEntities();
     expect(firstResult.uuid).toEqual(secondApplicant.uuid);
     expect(secondResult.uuid).toEqual(firstApplicant.uuid);
@@ -151,7 +151,7 @@ describe("getPendingEntities", () => {
     const company3 = await companies.next().value;
     const company4 = await companies.next().value;
     const entitiesOrderByLatestUpdated = [company4, company3, applicant2, applicant1];
-    expect(entitiesOrderByLatestUpdated).toBeSortedBy({ key: "updatedAt", descending: true });
+    expect(entitiesOrderByLatestUpdated).toBeSortedBy({ key: "updatedAt" });
     const [firstResult, secondResult, thirdResult, fourthResult] = await getPendingEntities();
     expect(firstResult.uuid).toEqual(company4.uuid);
     expect(secondResult.uuid).toEqual(company3.uuid);
