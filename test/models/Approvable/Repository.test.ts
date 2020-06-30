@@ -1,5 +1,5 @@
 import { Database } from "../../../src/config/Database";
-import { CompanyGenerator, TCompanyDataGenerator } from "../../generators/Company";
+import { CompanyGenerator, TCompanyGenerator } from "../../generators/Company";
 import { Company, CompanyRepository } from "../../../src/models/Company";
 import { Applicant, ApplicantRepository } from "../../../src/models/Applicant";
 import { UserRepository } from "../../../src/models/User";
@@ -11,14 +11,14 @@ import { AdminGenerator } from "../../generators/Admin";
 import { ApplicantGenerator, TApplicantGenerator } from "../../generators/Applicant";
 
 describe("ApprovableRepository", () => {
-  let companiesData: TCompanyDataGenerator;
+  let companies: TCompanyGenerator;
   let applicants: TApplicantGenerator;
   let admin: Admin;
 
   beforeAll(async () => {
     Database.setConnection();
     await UserRepository.truncate();
-    companiesData = await CompanyGenerator.data.completeData();
+    companies = await CompanyGenerator.instance.withCompleteData();
     admin = await AdminGenerator.instance().next().value;
     applicants = ApplicantGenerator.instance.withMinimumData();
   });
@@ -31,7 +31,7 @@ describe("ApprovableRepository", () => {
   afterAll(() => Database.close());
 
   const updateCompanyWithStatus = async (status: ApprovalStatus) => {
-    const { uuid: companyUuid } = await CompanyRepository.create(companiesData.next().value);
+    const { uuid: companyUuid } = await companies.next().value;
     return CompanyRepository.updateApprovalStatus(
       admin.userUuid,
       companyUuid,
@@ -52,7 +52,7 @@ describe("ApprovableRepository", () => {
     await updateCompanyWithStatus(ApprovalStatus.rejected);
     await updateCompanyWithStatus(ApprovalStatus.approved);
 
-    const pendingCompany = await CompanyRepository.create(companiesData.next().value);
+    const pendingCompany = await companies.next().value;
 
     const result = await ApprovableRepository.findPending();
     expect(result).toHaveLength(1);
@@ -76,7 +76,7 @@ describe("ApprovableRepository", () => {
     await updateCompanyWithStatus(ApprovalStatus.rejected);
     await updateCompanyWithStatus(ApprovalStatus.approved);
     const pendingApplicant = await applicants.next().value;
-    const pendingCompany = await CompanyRepository.create(companiesData.next().value);
+    const pendingCompany = await companies.next().value;
 
     const result = await ApprovableRepository.findPending();
     expect(result).toHaveLength(2);
@@ -87,8 +87,8 @@ describe("ApprovableRepository", () => {
   });
 
   it("sorts pending companies by updatedAt", async () => {
-    await CompanyRepository.create(companiesData.next().value);
-    await CompanyRepository.create(companiesData.next().value);
+    await companies.next().value;
+    await companies.next().value;
     const [firstResult, secondResult] = await ApprovableRepository.findPending();
     expect(firstResult).toBeInstanceOf(Company);
     expect(secondResult).toBeInstanceOf(Company);
@@ -108,8 +108,8 @@ describe("ApprovableRepository", () => {
   it("sorts pending applicants and companies by updatedAt", async () => {
     const applicant1 = await applicants.next().value;
     const applicant2 = await applicants.next().value;
-    const company3 = await CompanyRepository.create(companiesData.next().value);
-    const company4 = await CompanyRepository.create(companiesData.next().value);
+    const company3 = await companies.next().value;
+    const company4 = await companies.next().value;
 
     const result = await ApprovableRepository.findPending();
     expect(result.map(entity => entity.uuid)).toEqual([
