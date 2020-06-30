@@ -8,9 +8,12 @@ import { AuthenticationError } from "../../../../src/graphql/Errors";
 
 import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
 import { testClientFactory } from "../../../mocks/testClientFactory";
-
 import { random } from "faker";
-import { UserRepository } from "../../../../src/models/User/Repository";
+import { UserRepository } from "../../../../src/models/User";
+import { ApplicantGenerator, TApplicantGenerator } from "../../../generators/Applicant";
+import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
+import { ApplicantRepository } from "../../../../src/models/Applicant";
+import { AdminGenerator, TAdminGenerator } from "../../../generators/Admin";
 
 const GET_APPLICANT = gql`
   query GetApplicant($uuid: ID!) {
@@ -22,6 +25,7 @@ const GET_APPLICANT = gql`
       }
       padron
       description
+      approvalStatus
       capabilities {
         uuid
         description
@@ -38,12 +42,16 @@ const GET_APPLICANT = gql`
 
 describe("getApplicant", () => {
   let careers: TCareerGenerator;
+  let applicants: TApplicantGenerator;
+  let admins: TAdminGenerator;
 
   beforeAll(async () => {
     Database.setConnection();
     await CareerRepository.truncate();
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
+    applicants = await ApplicantGenerator.withMinimumData();
+    admins = await AdminGenerator.instance();
   });
 
   afterAll(() => Database.close());
@@ -81,6 +89,32 @@ describe("getApplicant", () => {
         description: career.description,
         creditsCount: applicantCareer[0].creditsCount
       });
+    });
+
+    it("returns the applicant's default approvalStatus", async () => {
+      const { apolloClient } = await testClientFactory.user();
+      const applicant = await applicants.next().value;
+      const { data } = await apolloClient.query({
+        query: GET_APPLICANT,
+        variables: { uuid: applicant.uuid }
+      });
+      expect(data!.getApplicant.approvalStatus).toEqual(ApprovalStatus.pending);
+    });
+
+    it("returns the applicant's modified approvalStatus", async () => {
+      const { apolloClient } = await testClientFactory.user();
+      const applicant = await applicants.next().value;
+      const admin = await admins.next().value;
+      await ApplicantRepository.updateApprovalStatus(
+        admin.userUuid,
+        applicant.uuid,
+        ApprovalStatus.rejected
+      );
+      const { data } = await apolloClient.query({
+        query: GET_APPLICANT,
+        variables: { uuid: applicant.uuid }
+      });
+      expect(data!.getApplicant.approvalStatus).toEqual(ApprovalStatus.rejected);
     });
   });
 
