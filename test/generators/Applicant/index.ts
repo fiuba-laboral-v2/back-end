@@ -6,11 +6,13 @@ export type TApplicantGenerator = CustomGenerator<Promise<Applicant>>;
 export type TApplicantDataGenerator = CustomGenerator<IApplicant>;
 
 export const ApplicantGenerator = {
-  withMinimumData: function*(): TApplicantGenerator {
-    let index = 0;
-    while (true) {
-      yield ApplicantRepository.create(withMinimumData(index));
-      index++;
+  instance: {
+    withMinimumData: function*(): TApplicantGenerator {
+      let index = 0;
+      while (true) {
+        yield ApplicantRepository.create(withMinimumData(index));
+        index++;
+      }
     }
   },
   data: {

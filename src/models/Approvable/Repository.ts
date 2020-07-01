@@ -1,23 +1,11 @@
 import { Database } from "../../config/Database";
-import { Company } from "../Company";
 import { find } from "lodash";
-import { ApprovalStatus } from "../ApprovalStatus";
-
-const APPROVABLE_MODELS = [
-  Company
-];
-
-const TABLE_NAME_COLUMN = "tableNameColumn";
+import { findPendingQuery } from "./findPendingQuery";
+import { APPROVABLE_MODELS } from "./ApprovableModels";
+import { TABLE_NAME_COLUMN } from "./TableNameColumn";
 
 const getModelByTableName = (tableName: string) =>
   find(APPROVABLE_MODELS, ["tableName", tableName]);
-
-const findPendingQuery = () => `
-  SELECT *, '${Company.tableName}' AS "${TABLE_NAME_COLUMN}"
-  FROM "${Company.tableName}"
-  WHERE "approvalStatus" = '${ApprovalStatus.pending}'
-  ORDER BY "updatedAt" DESC
-`;
 
 export const ApprovableRepository = {
   findPending: async () => {

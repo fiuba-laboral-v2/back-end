@@ -81,5 +81,5 @@ export const ApplicantRepository = {
     });
     return updatedApplicant;
   }),
-  truncate: () => UserRepository.truncate()
+  truncate: () => Applicant.truncate({ cascade: true })
 };

@@ -3,11 +3,13 @@ import { toBeAggregateErrorIncluding } from "./customMatchers/toBeAggregateError
 import { toBeBulkRecordError } from "./customMatchers/toBeBulkRecordError";
 import { toThrowBulkRecordErrorIncluding } from "./customMatchers/toThrowBulkRecordErrorIncluding";
 import { toThrowErrorWithMessage } from "./customMatchers/toThrowErrorWithMessage";
+import { toBeSortedBy } from "./customMatchers/toBeSortedBy";
 
 expect.extend({
   toBeAggregateError,
   toBeAggregateErrorIncluding,
   toBeBulkRecordError,
   toThrowBulkRecordErrorIncluding,
-  toThrowErrorWithMessage
+  toThrowErrorWithMessage,
+  toBeSortedBy
 });
