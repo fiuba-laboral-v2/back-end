@@ -36,9 +36,17 @@ describe("findPendingQuery", () => {
       ORDER BY "Approvable"."updatedAt" DESC
     `;
     expect(
-      query.replace(/\s/g, "")
+      query
+      .replace(/\s/g, "")
+      .toLowerCase()
+      .split("")
+      .sort()
     ).toEqual(
-      expectedQuery.replace(/\s/g, "")
+      expectedQuery
+      .replace(/\s/g, "")
+      .toLowerCase()
+      .split("")
+      .sort()
     );
   });
 });
