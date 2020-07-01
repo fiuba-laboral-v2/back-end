@@ -13,6 +13,7 @@ declare global {
       toThrowBulkRecordErrorIncluding(expected: IExpected[]): R;
       toThrowErrorWithMessage(type: Constructable, message: string | string[]): R;
       toBeSortedBy(options: IOptions): R;
+      toEqualIgnoringSpacing(expected: string): R;
     }
   }
 }

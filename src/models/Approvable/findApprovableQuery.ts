@@ -1,21 +1,9 @@
 import { APPROVABLE_MODELS } from "./ApprovableModels";
 import { TABLE_NAME_COLUMN } from "./TableNameColumn";
-
-const getTablesByColumn = () => {
-  const tablesByColumn = {};
-  APPROVABLE_MODELS.forEach(model => {
-    const columnNames = Object.keys(model.rawAttributes).concat([TABLE_NAME_COLUMN]);
-    columnNames.forEach(columnName => {
-      const tableNames = tablesByColumn[columnName] || [];
-      tableNames.push(model.tableName);
-      tablesByColumn[columnName] = tableNames;
-    });
-  });
-  return tablesByColumn;
-};
+import { groupTableNamesByColumn } from "./groupTableNamesByColumn";
 
 const getRowsToSelect = () => {
-  const tablesByColumn: object = getTablesByColumn();
+  const tablesByColumn: object = groupTableNamesByColumn();
   return Object.entries(tablesByColumn).map(([columnName, tableNames]) =>
     `COALESCE (
       ${tableNames.map(tableName => `${tableName}."${columnName}"`).join(",")}
