@@ -29,18 +29,6 @@ describe("findApprovableQuery", () => {
         (SELECT *, 'Applicants' AS "tableNameColumn" FROM "Applicants") AS Applicants ON FALSE
         )
     `;
-    expect(
-      query
-      .replace(/\s/g, "")
-      .toLowerCase()
-      .split("")
-      .sort()
-    ).toEqual(
-      expectedQuery
-      .replace(/\s/g, "")
-      .toLowerCase()
-      .split("")
-      .sort()
-    );
+    expect(query).toEqualTheCharacters(expectedQuery);
   });
 });

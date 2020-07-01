@@ -35,18 +35,6 @@ describe("findPendingQuery", () => {
       WHERE "Approvable"."approvalStatus" = 'pending'
       ORDER BY "Approvable"."updatedAt" DESC
     `;
-    expect(
-      query
-      .replace(/\s/g, "")
-      .toLowerCase()
-      .split("")
-      .sort()
-    ).toEqual(
-      expectedQuery
-      .replace(/\s/g, "")
-      .toLowerCase()
-      .split("")
-      .sort()
-    );
+    expect(query).toEqualTheCharacters(expectedQuery);
   });
 });
