@@ -44,7 +44,8 @@ export const JWT = {
     app.use(
       jwt({
         secret: JWT_SECRET,
-        credentialsRequired: false
+        credentialsRequired: false,
+        algorithms: AuthConfig.JWT.algorithms
       })
     );
   },
