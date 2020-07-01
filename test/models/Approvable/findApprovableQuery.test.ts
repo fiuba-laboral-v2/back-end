@@ -29,10 +29,6 @@ describe("findApprovableQuery", () => {
         (SELECT *, 'Applicants' AS "tableNameColumn" FROM "Applicants") AS Applicants ON FALSE
         )
     `;
-    expect(
-      query.replace(/\s/g, "")
-    ).toEqual(
-      expectedQuery.replace(/\s/g, "")
-    );
+    expect(query).toEqualIgnoringSpacing(expectedQuery);
   });
 });
