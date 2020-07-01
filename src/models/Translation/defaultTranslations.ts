@@ -140,7 +140,8 @@ export const defaultTranslations = {
     { key: "hoursPerDay", value: "Horas por dia" }
   ],
   adminMenu: [
-    { key: "companyIconTitle", value: "Nueva empresa" }
+    { key: "companyIconTitle", value: "Nueva empresa" },
+    { key: "applicantIconTitle", value: "Nuevo postulante" }
   ],
   adminTaskList: [
     { key: "pendingTasks", value: "Tareas pendientes" }
