@@ -4,7 +4,7 @@ import { toBeBulkRecordError } from "./customMatchers/toBeBulkRecordError";
 import { toThrowBulkRecordErrorIncluding } from "./customMatchers/toThrowBulkRecordErrorIncluding";
 import { toThrowErrorWithMessage } from "./customMatchers/toThrowErrorWithMessage";
 import { toBeSortedBy } from "./customMatchers/toBeSortedBy";
-import { toEqualTheCharacters } from "./customMatchers/toEqualTheCharacters";
+import { toEqualIgnoringSpacing } from "./customMatchers/toEqualIgnoringSpacing";
 
 expect.extend({
   toBeAggregateError,
@@ -13,5 +13,5 @@ expect.extend({
   toThrowBulkRecordErrorIncluding,
   toThrowErrorWithMessage,
   toBeSortedBy,
-  toEqualTheCharacters
+  toEqualIgnoringSpacing
 });

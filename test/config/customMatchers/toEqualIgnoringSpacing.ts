@@ -11,7 +11,7 @@ const buildResponseMessage = (pass: boolean) => {
   };
 };
 
-export const toEqualTheCharacters = (received: string, expected: string) => {
+export const toEqualIgnoringSpacing = (received: string, expected: string) => {
   const receivedFormatted = formatString(received);
   const expectedFormatted = formatString(expected);
   if (isEqual(receivedFormatted, expectedFormatted)) return buildResponseMessage(true);
