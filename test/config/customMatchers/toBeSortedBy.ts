@@ -1,6 +1,6 @@
 import { orderBy, isEqual } from "lodash";
 
-export const toBeSortedBy = (received, { key, order = "desc" }: IOptions) => {
+export const toBeSortedBy = (received, { key, order }: IOptions) => {
   const orderedArray = orderBy(received, key, order);
   if (isEqual(received, orderedArray)) return buildResponse({ key, pass: true, received, order });
   return buildResponse({ key, pass: false, received, order });
@@ -21,5 +21,5 @@ type TBuildResponse = {
 
 export interface IOptions {
   key: string;
-  order?: "asc" | "desc";
+  order: "asc" | "desc";
 }
