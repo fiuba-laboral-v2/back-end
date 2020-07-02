@@ -150,7 +150,7 @@ export const defaultTranslations = {
     { key: "selectToStart", value: "Seleccioná para comenzar" }
   ],
   approvalActions: [
-    { key: "success", value: "Operación exitosa!" },
-    { key: "error", value: "Operación fallida!" }
+    { key: "approved", value: "Aprobado" },
+    { key: "rejected", value: "Rechazado" }
   ]
 };
