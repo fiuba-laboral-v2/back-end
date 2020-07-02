@@ -148,5 +148,9 @@ export const defaultTranslations = {
   ],
   adminEmptyDetail: [
     { key: "selectToStart", value: "Seleccioná para comenzar" }
+  ],
+  approvalActions: [
+    { key: "approved", value: "Aprobado" },
+    { key: "rejected", value: "Rechazado" }
   ]
 };
