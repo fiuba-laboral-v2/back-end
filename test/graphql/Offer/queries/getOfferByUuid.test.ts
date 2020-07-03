@@ -228,19 +228,22 @@ describe("getOfferByUuid", () => {
       expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
     });
 
-    it("throws if user is not admin, approved company or approved applicant", async () => {
-      const expectUnauthorized = async (
-        { apolloClient }: { apolloClient: ApolloServerTestClient }
-      ) => {
-        const { errors } = await apolloClient.query({
-          query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
-          variables: { uuid: generateUuid() }
-        });
-        expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
-      };
-      await expectUnauthorized(await testClientFactory.company());
-      await expectUnauthorized(await testClientFactory.applicant());
-      await expectUnauthorized(await testClientFactory.user());
-    });
+    it(
+      "returns an error if the user is not admin, approved company or approved applicant",
+      async () => {
+        const expectUnauthorized = async (
+          { apolloClient }: { apolloClient: ApolloServerTestClient }
+        ) => {
+          const { errors } = await apolloClient.query({
+            query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
+            variables: { uuid: generateUuid() }
+          });
+          expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+        };
+        await expectUnauthorized(await testClientFactory.company());
+        await expectUnauthorized(await testClientFactory.applicant());
+        await expectUnauthorized(await testClientFactory.user());
+      }
+    );
   });
 });
