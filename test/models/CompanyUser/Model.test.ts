@@ -1,7 +1,7 @@
 import { Database } from "../../../src/config/Database";
 import { CompanyUser } from "../../../src/models/CompanyUser";
 import { ValidationError } from "sequelize";
-import uuid from "uuid/v4";
+import generateUuid from "uuid/v4";
 
 describe("CompanyUser", () => {
   beforeAll(() => Database.setConnection());
@@ -19,7 +19,7 @@ describe("CompanyUser", () => {
 
   it("needs to reference a company", async () =>
     expect((new CompanyUser({
-      userUuid: uuid()
+      userUuid: generateUuid()
     })).validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       "notNull Violation: CompanyUser.companyUuid cannot be null"
@@ -28,7 +28,7 @@ describe("CompanyUser", () => {
 
   it("needs to reference a user", async () =>
     expect((new CompanyUser({
-      companyUuid: uuid()
+      companyUuid: generateUuid()
     })).validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       "notNull Violation: CompanyUser.userUuid cannot be null"
@@ -37,8 +37,8 @@ describe("CompanyUser", () => {
 
   it("is valid when both references are present", () =>
     expect((new CompanyUser({
-      companyUuid: uuid(),
-      userUuid: uuid()
+      companyUuid: generateUuid(),
+      userUuid: generateUuid()
     })).validate()).resolves.not.toThrow()
   );
 });

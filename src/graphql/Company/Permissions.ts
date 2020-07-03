@@ -1,9 +1,11 @@
-import { isUser, isCompanyUser, isAdmin } from "../Rules";
+import { isAdmin, isCompanyUser } from "../Rules";
+import { isApprovedApplicant } from "../Rules/isApprovedApplicant";
+import { or } from "graphql-shield";
 
 export const companyPermissions = {
   Query: {
-    getCompanies: isUser,
-    getCompanyByUuid: isUser
+    getCompanies: isApprovedApplicant,
+    getCompanyByUuid: or(isApprovedApplicant, isAdmin)
   },
   Mutation: {
     updateCurrentCompany: isCompanyUser,

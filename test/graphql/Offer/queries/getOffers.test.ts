@@ -10,6 +10,9 @@ import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
 import { CompanyGenerator, TCompanyGenerator } from "../../../generators/Company";
 import { OfferGenerator, TOfferDataGenerator } from "../../../generators/Offer";
 import { testClientFactory } from "../../../mocks/testClientFactory";
+import { UnauthorizedError } from "../../../../src/graphql/Errors";
+import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
+import { AdminGenerator, TAdminGenerator } from "../../../generators/Admin";
 
 const GET_OFFERS = gql`
   query {
@@ -23,6 +26,7 @@ describe("getOffers", () => {
   let careers: TCareerGenerator;
   let companies: TCompanyGenerator;
   let offersData: TOfferDataGenerator;
+  let admins: TAdminGenerator;
 
   beforeAll(async () => {
     Database.setConnection();
@@ -32,6 +36,7 @@ describe("getOffers", () => {
     careers = CareerGenerator.instance();
     companies = CompanyGenerator.instance.withMinimumData();
     offersData = OfferGenerator.data.withObligatoryData();
+    admins = AdminGenerator.instance();
   });
 
   afterAll(() => Database.close());
@@ -56,14 +61,24 @@ describe("getOffers", () => {
     beforeAll(() => createOffers());
 
     it("returns two offers if two offers were created", async () => {
-      const { apolloClient } = await testClientFactory.user();
+      const { apolloClient } = await testClientFactory.applicant({
+        status: {
+          approvalStatus: ApprovalStatus.approved,
+          admin: await admins.next().value
+        }
+      });
       const { data, errors } = await apolloClient.query({ query: GET_OFFERS });
       expect(errors).toBeUndefined();
       expect(data!.getOffers).toHaveLength(2);
     });
 
     it("returns two offers with there own uuid", async () => {
-      const { apolloClient } = await testClientFactory.user();
+      const { apolloClient } = await testClientFactory.applicant({
+        status: {
+          approvalStatus: ApprovalStatus.approved,
+          admin: await admins.next().value
+        }
+      });
       const { data, errors } = await apolloClient.query({ query: GET_OFFERS });
       expect(errors).toBeUndefined();
       expect(data!.getOffers).toMatchObject(
@@ -83,11 +98,45 @@ describe("getOffers", () => {
     ]));
 
     it("returns no offers when no offers were created", async () => {
-      const { apolloClient } = await testClientFactory.user();
+      const { apolloClient } = await testClientFactory.applicant({
+        status: {
+          approvalStatus: ApprovalStatus.approved,
+          admin: await admins.next().value
+        }
+      });
       const { data, errors } = await apolloClient.query({ query: GET_OFFERS });
 
       expect(errors).toBeUndefined();
       expect(data!.getOffers).toHaveLength(0);
     });
+  });
+
+  it("throws an error when the user is from a company", async () => {
+    const { apolloClient } = await testClientFactory.company();
+    const { errors } = await apolloClient.query({ query: GET_OFFERS });
+    expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+  });
+
+  it("throws an error when the user is an admin", async () => {
+    const { apolloClient } = await testClientFactory.admin();
+    const { errors } = await apolloClient.query({ query: GET_OFFERS });
+    expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+  });
+
+  it("throws an error when the user is a rejected applicant", async () => {
+    const { apolloClient } = await testClientFactory.applicant({
+      status: {
+        approvalStatus: ApprovalStatus.rejected,
+        admin: await admins.next().value
+      }
+    });
+    const { errors } = await apolloClient.query({ query: GET_OFFERS });
+    expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+  });
+
+  it("throws an error when the user is a pending applicant", async () => {
+    const { apolloClient } = await testClientFactory.applicant();
+    const { errors } = await apolloClient.query({ query: GET_OFFERS });
+    expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
   });
 });

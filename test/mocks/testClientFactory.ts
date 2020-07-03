@@ -1,9 +1,10 @@
 import { userFactory } from "./user";
-import { IUserProps, IApplicantProps, ICompanyAttributes } from "./interfaces";
+import { IApplicantAttributes, ICompanyAttributes, IUserProps } from "./interfaces";
 import { User } from "../../src/models/User";
 import { CompanyRepository } from "../../src/models/Company";
 import { client } from "../graphql/ApolloTestClient";
 import { IExpressContext } from "../graphql/ExpressContext";
+import { ApplicantRepository } from "../../src/models/Applicant";
 
 const createApolloClient = (
   user: User,
@@ -31,11 +32,21 @@ export const testClientFactory = {
     const apolloClient = createApolloClient(user, expressContext, adminContext);
     return { apolloClient, user, admin };
   },
-  applicant: async ({ expressContext, ...applicantAttributes }: IApplicantProps = {}) => {
-    const applicant = await userFactory.applicant(applicantAttributes);
+  applicant: async (
+    { status, expressContext, ...applicantAttributes }: IApplicantAttributes = {}
+  ) => {
+    let applicant = await userFactory.applicant(applicantAttributes);
     const user = await applicant.getUser();
     const applicantContext = { applicant: { uuid: applicant.uuid } };
     const apolloClient = createApolloClient(user, expressContext, applicantContext);
+    if (status) {
+      const { admin, approvalStatus } = status;
+      applicant = await ApplicantRepository.updateApprovalStatus(
+        admin.userUuid,
+        applicant.uuid,
+        approvalStatus
+      );
+    }
     return { apolloClient, user, applicant };
   },
   company: async ({ status, photos, expressContext }: ICompanyAttributes = {}) => {
