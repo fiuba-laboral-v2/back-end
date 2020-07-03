@@ -111,19 +111,19 @@ describe("getOffers", () => {
     });
   });
 
-  it("throws an error when the user is from a company", async () => {
+  it("returns an error when the user is from a company", async () => {
     const { apolloClient } = await testClientFactory.company();
     const { errors } = await apolloClient.query({ query: GET_OFFERS });
     expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
   });
 
-  it("throws an error when the user is an admin", async () => {
+  it("returns an error when the user is an admin", async () => {
     const { apolloClient } = await testClientFactory.admin();
     const { errors } = await apolloClient.query({ query: GET_OFFERS });
     expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
   });
 
-  it("throws an error when the user is a rejected applicant", async () => {
+  it("returns an error when the user is a rejected applicant", async () => {
     const { apolloClient } = await testClientFactory.applicant({
       status: {
         approvalStatus: ApprovalStatus.rejected,
@@ -134,7 +134,7 @@ describe("getOffers", () => {
     expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
   });
 
-  it("throws an error when the user is a pending applicant", async () => {
+  it("returns an error when the user is a pending applicant", async () => {
     const { apolloClient } = await testClientFactory.applicant();
     const { errors } = await apolloClient.query({ query: GET_OFFERS });
     expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
