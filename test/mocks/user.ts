@@ -25,9 +25,11 @@ export const userFactory = {
         surname: "Diaz"
       }
     }),
-  applicant: ({
-                careers, password, capabilities
-              }: IApplicantAttributes = { careers: [], capabilities: [], password: null }) =>
+  applicant: (
+    {
+      careers, password, capabilities
+    }: IApplicantAttributes = { careers: [], capabilities: [], password: null }
+  ) =>
     ApplicantRepository.create({
       padron: random.number(),
       description: random.words(),
