@@ -110,7 +110,7 @@ describe("getApplicants", () => {
       });
     });
 
-    it("fetches all the applicants", async () => {
+    it("allows an applicant user to fetch all applicants", async () => {
       const newCareer = await careers.next().value;
       const applicantCareersData = [{ code: newCareer.code, creditsCount: 150 }];
       const {
