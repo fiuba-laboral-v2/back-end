@@ -50,7 +50,7 @@ describe("getApplicant", () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
-    applicants = await ApplicantGenerator.withMinimumData();
+    applicants = await ApplicantGenerator.instance.withMinimumData();
     admins = AdminGenerator.instance();
   });
 

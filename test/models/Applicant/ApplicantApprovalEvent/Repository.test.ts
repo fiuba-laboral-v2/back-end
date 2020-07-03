@@ -1,6 +1,7 @@
 import { Database } from "../../../../src/config/Database";
 import { ForeignKeyConstraintError } from "sequelize";
 import { ApplicantRepository } from "../../../../src/models/Applicant";
+import { UserRepository } from "../../../../src/models/User";
 import { AdminRepository } from "../../../../src/models/Admin";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import {
@@ -18,8 +19,8 @@ describe("ApplicantApprovalEventRepository", () => {
 
   beforeAll(async () => {
     Database.setConnection();
-    await ApplicantRepository.truncate();
-    applicants = ApplicantGenerator.withMinimumData();
+    await UserRepository.truncate();
+    applicants = ApplicantGenerator.instance.withMinimumData();
     admins = AdminGenerator.instance();
   });
 

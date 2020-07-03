@@ -1,5 +1,6 @@
 import { CookieOptions } from "express-serve-static-core";
 import { CorsOptions } from "cors";
+import { Algorithm } from "jsonwebtoken";
 import { Environment } from "./Environment";
 
 const TOKEN_EXPIRATION_DAYS = 2;
@@ -22,7 +23,8 @@ const localAuthConfig: IEnvironment = {
     accessControlAllowOrigin: LOCAL_FRONT_END_DOMAIN
   },
   JWT: {
-    expiresIn: TOKEN_EXPIRATION_DAYS_AS_STRING
+    expiresIn: TOKEN_EXPIRATION_DAYS_AS_STRING,
+    algorithms: ["RS256"]
   },
   cookieName: "fiuba_laboral_v2_access_token",
   cookieOptions: {
@@ -40,7 +42,8 @@ const AuthConfigForAllEnvironments: IAuthenticationVariables = {
       accessControlAllowOrigin: PRODUCTION_FRONT_END_DOMAIN
     },
     JWT: {
-      expiresIn: TOKEN_EXPIRATION_DAYS_AS_STRING
+      expiresIn: TOKEN_EXPIRATION_DAYS_AS_STRING,
+      algorithms: ["RS256"]
     },
     cookieName: "fiuba_laboral_v2_access_token",
     cookieOptions: {
@@ -56,7 +59,8 @@ const AuthConfigForAllEnvironments: IAuthenticationVariables = {
       accessControlAllowOrigin: STAGING_FRONT_END_DOMAIN
     },
     JWT: {
-      expiresIn: TOKEN_EXPIRATION_DAYS_AS_STRING
+      expiresIn: TOKEN_EXPIRATION_DAYS_AS_STRING,
+      algorithms: ["RS256"]
     },
     cookieName: "fiuba_laboral_v2_access_token",
     cookieOptions: {
@@ -75,6 +79,7 @@ export const AuthConfig: IEnvironment = AuthConfigForAllEnvironments[Environment
 
 interface IJWT {
   expiresIn: string;
+  algorithms: Algorithm[];
 }
 
 interface ICors {

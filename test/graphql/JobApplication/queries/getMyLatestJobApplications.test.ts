@@ -44,7 +44,7 @@ describe("getMyLatestJobApplications", () => {
     Database.setConnection();
     await UserRepository.truncate();
     await CompanyRepository.truncate();
-    applicant = await ApplicantGenerator.withMinimumData().next().value;
+    applicant = await ApplicantGenerator.instance.withMinimumData().next().value;
     offers = await OfferGenerator.instance.withObligatoryData();
     admin = await AdminGenerator.instance().next().value;
   });

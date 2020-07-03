@@ -1,5 +1,4 @@
-import { ENUM, QueryInterface } from "sequelize";
-import { approvalStatuses, ApprovalStatus } from "../models/ApprovalStatus";
+import { QueryInterface } from "sequelize";
 
 export = {
   up: (queryInterface: QueryInterface) =>
@@ -8,8 +7,8 @@ export = {
       "approvalStatus",
       {
         allowNull: false,
-        type: ENUM<string>({ values: approvalStatuses }),
-        defaultValue: ApprovalStatus.pending
+        type: "approval_status",
+        defaultValue: "pending"
       }
     ),
   down: (queryInterface: QueryInterface) =>

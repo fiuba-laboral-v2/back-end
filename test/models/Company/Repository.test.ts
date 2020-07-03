@@ -249,7 +249,7 @@ describe("CompanyRepository", () => {
         )
       ).rejects.toThrowErrorWithMessage(
         DatabaseError,
-        "invalid input value for enum \"enum_Companies_approvalStatus\": \"notDefinedStatus\""
+        "invalid input value for enum approval_status: \"notDefinedStatus\""
       );
       expect(
         (await CompanyRepository.findByUuid(company.uuid)).approvalStatus
