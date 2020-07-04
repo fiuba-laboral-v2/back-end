@@ -1,5 +1,5 @@
 import { ValidationError } from "sequelize";
-import uuid from "uuid/v4";
+import generateUuid from "uuid/v4";
 import { Database } from "../../../src/config/Database";
 import { Applicant } from "../../../src/models/Applicant";
 import { ApprovalStatus, approvalStatuses } from "../../../src/models/ApprovalStatus";
@@ -13,7 +13,7 @@ describe("Applicant", () => {
 
   it("creates a valid applicant", async () => {
     const applicant = new Applicant({
-      userUuid: uuid(),
+      userUuid: generateUuid(),
       padron: 1,
       description: "Batman"
     });
@@ -21,7 +21,7 @@ describe("Applicant", () => {
   });
 
   it("creates an applicant with pending approval status by default", async () => {
-    const userUuid = uuid();
+    const userUuid = generateUuid();
     const applicant = new Applicant({
       userUuid,
       padron: 1,
@@ -38,7 +38,7 @@ describe("Applicant", () => {
 
   it("throws an error if approval status is not part of the enum values", async () => {
     const applicant = new Applicant({
-      userUuid: uuid(),
+      userUuid: generateUuid(),
       padron: 98539,
       description: "Batman",
       approvalStatus: "undefinedApprovalStatus"
@@ -62,7 +62,7 @@ describe("Applicant", () => {
 
   it("throws an error if padron is 0", async () => {
     const applicant = new Applicant({
-      userUuid: uuid(),
+      userUuid: generateUuid(),
       padron: 0,
       description: "Batman"
     });
@@ -74,7 +74,7 @@ describe("Applicant", () => {
 
   it("throws an error if padron is negative", async () => {
     const applicant = new Applicant({
-      userUuid: uuid(),
+      userUuid: generateUuid(),
       padron: -243,
       description: "Batman"
     });
@@ -86,7 +86,7 @@ describe("Applicant", () => {
 
   it("throws an error if no padron is provided", async () => {
     const applicant = new Applicant({
-      userUuid: uuid(),
+      userUuid: generateUuid(),
       description: "Batman"
     });
 
@@ -98,7 +98,7 @@ describe("Applicant", () => {
 
   it("throws an error if padron is null", async () => {
     const applicant = new Applicant({
-      userUuid: uuid(),
+      userUuid: generateUuid(),
       padron: null,
       description: "Batman"
     });

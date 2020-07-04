@@ -2,14 +2,16 @@ import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 import { Database } from "../../../../src/config/Database";
 
-import { AuthenticationError } from "../../../../src/graphql/Errors";
+import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
 
 import { CareerRepository } from "../../../../src/models/Career";
-import { UserRepository } from "../../../../src/models/User/Repository";
+import { UserRepository } from "../../../../src/models/User";
 
 import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 import { userFactory } from "../../../mocks/user";
+import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
+import { AdminGenerator, TAdminGenerator } from "../../../generators/Admin";
 
 const GET_APPLICANTS = gql`
     query getApplicants {
@@ -46,19 +48,21 @@ const GET_APPLICANTS = gql`
 
 describe("getApplicants", () => {
   let careers: TCareerGenerator;
+  let admins: TAdminGenerator;
 
   beforeAll(async () => {
     Database.setConnection();
     await CareerRepository.truncate();
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
+    admins = AdminGenerator.instance();
   });
 
   afterAll(() => Database.close());
 
   describe("when no applicant exists", () => {
     it("fetches an empty array of applicants", async () => {
-      const { apolloClient } = await testClientFactory.user();
+      const { apolloClient } = await testClientFactory.admin();
       const { data, errors } = await apolloClient.query({ query: GET_APPLICANTS });
       expect(errors).toBeUndefined();
       expect(data!.getApplicants).toEqual([]);
@@ -73,7 +77,13 @@ describe("getApplicants", () => {
         user,
         applicant,
         apolloClient
-      } = await testClientFactory.applicant({ careers: applicantCareer });
+      } = await testClientFactory.applicant({
+        careers: applicantCareer,
+        status: {
+          approvalStatus: ApprovalStatus.approved,
+          admin: await admins.next().value
+        }
+      });
 
       const { data, errors } = await apolloClient.query({ query: GET_APPLICANTS });
 
@@ -100,7 +110,7 @@ describe("getApplicants", () => {
       });
     });
 
-    it("fetches all the applicants", async () => {
+    it("allows an applicant user to fetch all applicants", async () => {
       const newCareer = await careers.next().value;
       const applicantCareersData = [{ code: newCareer.code, creditsCount: 150 }];
       const {
@@ -108,7 +118,11 @@ describe("getApplicants", () => {
         apolloClient
       } = await testClientFactory.applicant({
         careers: applicantCareersData,
-        capabilities: ["Go"]
+        capabilities: ["Go"],
+        status: {
+          approvalStatus: ApprovalStatus.approved,
+          admin: await admins.next().value
+        }
       });
       const secondApplicant = await userFactory.applicant({
         careers: applicantCareersData,
@@ -160,6 +174,29 @@ describe("getApplicants", () => {
 
       const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
       expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
+    });
+
+    it("returns an error if current user is pending applicant", async () => {
+      const { apolloClient } = await testClientFactory.applicant();
+      const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
+      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+    });
+
+    it("returns an error if current user is rejected applicant", async () => {
+      const { apolloClient } = await testClientFactory.applicant({
+        status: {
+          approvalStatus: ApprovalStatus.rejected,
+          admin: await admins.next().value
+        }
+      });
+      const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
+      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+    });
+
+    it("returns an error if current user is from company", async () => {
+      const { apolloClient } = await testClientFactory.company();
+      const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
+      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
   });
 });

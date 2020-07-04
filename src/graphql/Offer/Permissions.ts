@@ -1,16 +1,18 @@
-import { isApplicant, isCompanyUser, isUser, isFromApprovedCompany } from "../Rules";
+import { isAdmin, isFromApprovedCompany } from "../Rules";
+import { isApprovedApplicant } from "../Rules/isApprovedApplicant";
+import { or } from "graphql-shield";
 
 export const offerPermissions = {
   Mutation: {
     createOffer: isFromApprovedCompany,
-    editOffer: isCompanyUser
+    editOffer: isFromApprovedCompany
   },
   Query: {
     getMyOffers: isFromApprovedCompany,
-    getOfferByUuid: isUser,
-    getOffers: isUser
+    getOfferByUuid: or(isApprovedApplicant, isFromApprovedCompany, isAdmin),
+    getOffers: isApprovedApplicant
   },
   Offer: {
-    hasApplied: isApplicant
+    hasApplied: isApprovedApplicant
   }
 };

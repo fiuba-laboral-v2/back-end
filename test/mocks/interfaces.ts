@@ -22,7 +22,8 @@ export interface ICompanyAttributes extends IClientFactory {
   photos?: string[];
 }
 
-export interface IApplicantProps extends IClientFactory {
+export interface IApplicantAttributes extends IClientFactory {
+  status?: ICompanyApproval;
   careers?: IApplicantCareer [];
   capabilities?: string[];
   password?: string | null;

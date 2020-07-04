@@ -8,7 +8,7 @@ import { AuthenticationError } from "../../../../src/graphql/Errors";
 
 import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
 import { testClientFactory } from "../../../mocks/testClientFactory";
-import { random } from "faker";
+import generateUuid from "uuid/v4";
 import { UserRepository } from "../../../../src/models/User";
 import { ApplicantGenerator, TApplicantGenerator } from "../../../generators/Applicant";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
@@ -51,7 +51,7 @@ describe("getApplicant", () => {
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
     applicants = await ApplicantGenerator.instance.withMinimumData();
-    admins = await AdminGenerator.instance();
+    admins = AdminGenerator.instance();
   });
 
   afterAll(() => Database.close());
@@ -122,7 +122,7 @@ describe("getApplicant", () => {
     it("returns an error if the applicant does not exist", async () => {
       const { apolloClient } = await testClientFactory.user();
 
-      const uuid = random.uuid();
+      const uuid = generateUuid();
       const { errors } = await apolloClient.query({
         query: GET_APPLICANT,
         variables: { uuid }
@@ -135,7 +135,7 @@ describe("getApplicant", () => {
   describe("Errors", () => {
     it("returns an error if there is no current user", async () => {
       const apolloClient = client.loggedOut();
-      const uuid = random.uuid();
+      const uuid = generateUuid();
       const { errors } = await apolloClient.query({
         query: GET_APPLICANT,
         variables: { uuid: uuid }

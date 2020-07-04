@@ -4,7 +4,11 @@ import { CompanyRepository } from "../../../../src/models/Company";
 import { UserRepository } from "../../../../src/models/User";
 import { client } from "../../ApolloTestClient";
 import { testClientFactory } from "../../../mocks/testClientFactory";
-import { AuthenticationError } from "../../../../src/graphql/Errors";
+import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
+import { AdminGenerator, TAdminGenerator } from "../../../generators/Admin";
+import { userFactory } from "../../../mocks/user";
+import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
+import generateUuid from "uuid/v4";
 
 const query = gql`
   query ($uuid: ID!) {
@@ -24,16 +28,20 @@ const query = gql`
 `;
 
 describe("getCompanyByUuid", () => {
+  let admins: TAdminGenerator;
+
   beforeAll(async () => {
     Database.setConnection();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
+    admins = AdminGenerator.instance();
   });
 
   afterAll(() => Database.close());
 
   it("finds a company given its uuid", async () => {
-    const { apolloClient, company } = await testClientFactory.company();
+    const company = await userFactory.company();
+    const { apolloClient } = await testClientFactory.admin();
     const response = await apolloClient.query({
       query: query,
       variables: { uuid: company.uuid }
@@ -56,7 +64,12 @@ describe("getCompanyByUuid", () => {
   });
 
   it("returns error if the Company does not exists", async () => {
-    const { apolloClient } = await testClientFactory.applicant();
+    const { apolloClient } = await testClientFactory.applicant({
+      status: {
+        approvalStatus: ApprovalStatus.approved,
+        admin: await admins.next().value
+      }
+    });
     const notExistentUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
     const { errors } = await apolloClient.query({
       query: query,
@@ -70,7 +83,8 @@ describe("getCompanyByUuid", () => {
   });
 
   it("find a company with photos with an empty array", async () => {
-    const { apolloClient, company } = await testClientFactory.company({ photos: [] });
+    const company = await userFactory.company({ photos: [] });
+    const { apolloClient } = await testClientFactory.admin();
     const { data, errors } = await apolloClient.query({
       query: query,
       variables: { uuid: company.uuid }
@@ -80,15 +94,42 @@ describe("getCompanyByUuid", () => {
   });
 
   it("returns an error if no user is loggedin", async () => {
-    const { company } = await testClientFactory.company({ photos: [] });
     const { errors } = await client.loggedOut().query({
       query: query,
-      variables: { uuid: company.uuid }
+      variables: { uuid: generateUuid() }
     });
-    expect(
-      errors![0].extensions!.data
-    ).toEqual(
-      { errorType: AuthenticationError.name }
-    );
+    expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
+  });
+
+  it("returns an error if user is from a company", async () => {
+    const { apolloClient } = await testClientFactory.company();
+    const { errors } = await apolloClient.query({
+      query: query,
+      variables: { uuid: generateUuid() }
+    });
+    expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+  });
+
+  it("returns an error if user is a pending applicant", async () => {
+    const { apolloClient } = await testClientFactory.applicant();
+    const { errors } = await apolloClient.query({
+      query: query,
+      variables: { uuid: generateUuid() }
+    });
+    expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+  });
+
+  it("returns an error if user is a rejected applicant", async () => {
+    const { apolloClient } = await testClientFactory.applicant({
+      status: {
+        approvalStatus: ApprovalStatus.rejected,
+        admin: await admins.next().value
+      }
+    });
+    const { errors } = await apolloClient.query({
+      query: query,
+      variables: { uuid: generateUuid() }
+    });
+    expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
   });
 });

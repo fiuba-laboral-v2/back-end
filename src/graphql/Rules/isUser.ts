@@ -1,9 +1,8 @@
-import { rule } from "graphql-shield";
 import { IApolloServerContext } from "../Context";
 import { AuthenticationError } from "../Errors";
+import { rule } from "./rule";
 
-export const isUser = rule({ cache: "contextual" })
-  ((parent, args, context: IApolloServerContext) => {
-    if (!context.currentUser) throw new AuthenticationError();
-    return true;
-  });
+export const isUser = rule((parent, args, context: IApolloServerContext) => {
+  if (!context.currentUser) return new AuthenticationError();
+  return true;
+});

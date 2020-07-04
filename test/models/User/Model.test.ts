@@ -1,5 +1,5 @@
 import { ValidationError } from "sequelize";
-import uuid from "uuid/v4";
+import generateUuid from "uuid/v4";
 import { Database } from "../../../src/config/Database";
 import { User } from "../../../src/models/User";
 import {
@@ -34,7 +34,7 @@ describe("User", () => {
   describe("Errors", () => {
     it("should throw an error if name has a digit", async () => {
       const user = new User({
-        uuid: uuid(),
+        uuid: generateUuid(),
         email: "asd@qwe.com",
         password: "somethingVerySecret123",
         name: 1,
@@ -45,7 +45,7 @@ describe("User", () => {
 
     it("throws an error if surname has a digit", async () => {
       const user = new User({
-        uuid: uuid(),
+        uuid: generateUuid(),
         email: "asd@qwe.com",
         password: "somethingVerySecret123",
         name: "name",
@@ -56,7 +56,7 @@ describe("User", () => {
 
     it("should throw an error if name is null", async () => {
       const user = new User({
-        uuid: uuid(),
+        uuid: generateUuid(),
         email: "asd@qwe.com",
         password: "somethingVerySecret123",
         name: null,
@@ -67,7 +67,7 @@ describe("User", () => {
 
     it("should throw an error if surname is null", async () => {
       const user = new User({
-        uuid: uuid(),
+        uuid: generateUuid(),
         email: "asd@qwe.com",
         password: "somethingVerySecret123",
         name: "name",

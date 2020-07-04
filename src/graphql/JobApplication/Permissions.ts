@@ -1,8 +1,9 @@
-import { isApplicant, isFromApprovedCompany } from "../Rules";
+import { isFromApprovedCompany } from "../Rules";
+import { isApprovedApplicant } from "../Rules/isApprovedApplicant";
 
 export const jobApplicationPermissions = {
   Mutation: {
-    saveJobApplication: isApplicant
+    saveJobApplication: isApprovedApplicant
   },
   Query: {
     getMyLatestJobApplications: isFromApprovedCompany

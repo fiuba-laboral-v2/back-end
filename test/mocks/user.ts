@@ -1,11 +1,11 @@
-import { internet, random, company, lorem } from "faker";
+import { company, internet, lorem, random } from "faker";
 import { cuitGenerator } from "../generators/Company/cuitGenerator";
 
 import { UserRepository } from "../../src/models/User";
 import { AdminRepository } from "../../src/models/Admin";
 import { ApplicantRepository } from "../../src/models/Applicant";
 import { CompanyRepository } from "../../src/models/Company";
-import { IUserProps, IApplicantProps, ICompanyAttributes } from "./interfaces";
+import { IApplicantAttributes, ICompanyAttributes, IUserProps } from "./interfaces";
 
 export const userFactory = {
   user: ({ password }: IUserProps = {}) =>
@@ -25,9 +25,11 @@ export const userFactory = {
         surname: "Diaz"
       }
     }),
-  applicant: ({
-    careers, password, capabilities
-  }: IApplicantProps = { careers: [], capabilities: [], password: null }) =>
+  applicant: (
+    {
+      careers, password, capabilities
+    }: IApplicantAttributes = { careers: [], capabilities: [], password: null }
+  ) =>
     ApplicantRepository.create({
       padron: random.number(),
       description: random.words(),
