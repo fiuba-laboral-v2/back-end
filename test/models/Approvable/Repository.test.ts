@@ -3,7 +3,7 @@ import { CompanyGenerator, TCompanyGenerator } from "../../generators/Company";
 import { Company, CompanyRepository } from "../../../src/models/Company";
 import { Applicant, ApplicantRepository } from "../../../src/models/Applicant";
 import { UserRepository } from "../../../src/models/User";
-import { ApprovableRepository } from "../../../src/models/Approvable";
+import { ApprovableEntityType, ApprovableRepository } from "../../../src/models/Approvable";
 import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
 import { Admin } from "../../../src/models/Admin";
 
@@ -118,5 +118,51 @@ describe("ApprovableRepository", () => {
       applicant1.uuid
     ]);
     expect(result).toBeSortedBy({ key: "updatedAt", order: "desc" });
+  });
+
+  describe("Filters", () => {
+    beforeEach(async () => {
+      await createApplicantWithStatus(ApprovalStatus.rejected);
+      await createApplicantWithStatus(ApprovalStatus.approved);
+      await createCompanyWithStatus(ApprovalStatus.rejected);
+      await createCompanyWithStatus(ApprovalStatus.approved);
+    });
+
+    it("filters by Company type and returns pending companies", async () => {
+      await applicants.next().value;
+      const pendingCompany = await companies.next().value;
+
+      const result = await ApprovableRepository.findPending({
+        approvableEntityTypes: [ApprovableEntityType.Company]
+      });
+      expect(result).toEqual(expect.arrayContaining([
+        expect.objectContaining(pendingCompany.toJSON())
+      ]));
+    });
+
+    it("filters by applicant type and returns pending applicants", async () => {
+      await companies.next().value;
+      const pendingApplicant = await applicants.next().value;
+
+      const result = await ApprovableRepository.findPending({
+        approvableEntityTypes: [ApprovableEntityType.Applicant]
+      });
+      expect(result).toEqual(expect.arrayContaining([
+        expect.objectContaining(pendingApplicant.toJSON())
+      ]));
+    });
+
+    it("filters by applicant and company type", async () => {
+      const pendingCompany = await companies.next().value;
+      const pendingApplicant = await applicants.next().value;
+
+      const result = await ApprovableRepository.findPending({
+        approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company]
+      });
+      expect(result).toEqual(expect.arrayContaining([
+        expect.objectContaining(pendingApplicant.toJSON()),
+        expect.objectContaining(pendingCompany.toJSON())
+      ]));
+    });
   });
 });
