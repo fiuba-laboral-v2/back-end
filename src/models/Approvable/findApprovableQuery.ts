@@ -1,9 +1,14 @@
-import { APPROVABLE_MODELS, TABLE_NAME_COLUMN } from "./Model";
-import { IApprovableFilterOptions, IFindApprovableAttributes } from "./Interfaces";
+import {
+  APPROVABLE_MODELS,
+  ApprovableEntityType,
+  ApprovableModelsType,
+  TABLE_NAME_COLUMN
+} from "./Model";
+import { IApprovableFilterOptions } from "./Interfaces";
 import { groupTableNamesByColumn } from "./groupTableNamesByColumn";
 
-const getRowsToSelect = (options: IFindApprovableAttributes) => {
-  const tablesByColumn: object = groupTableNamesByColumn(options);
+const getRowsToSelect = (approvableModels: ApprovableModelsType[]) => {
+  const tablesByColumn: object = groupTableNamesByColumn(approvableModels);
   return Object.entries(tablesByColumn).map(([columnName, tableNames]) =>
     `COALESCE (
       ${tableNames.map(tableName => `${tableName}."${columnName}"`).join(",")}
@@ -11,7 +16,7 @@ const getRowsToSelect = (options: IFindApprovableAttributes) => {
   ).join(",");
 };
 
-const getFullOuterJoin = ({ approvableModels }: IFindApprovableAttributes) => {
+const getFullOuterJoin = (approvableModels: ApprovableModelsType[]) => {
   let selectStatements = approvableModels.map(model => {
     const tableName = model.tableName;
     return `(
@@ -26,16 +31,16 @@ const getFullOuterJoin = ({ approvableModels }: IFindApprovableAttributes) => {
   return `(${selectStatements.join(" FULL OUTER JOIN ")})`;
 };
 
-const getApprovableModels = ({ approvableEntityTypes }: IApprovableFilterOptions) => {
+const getApprovableModels = (approvableEntityTypes?: ApprovableEntityType[]) => {
   if (!approvableEntityTypes) return APPROVABLE_MODELS;
   const modelNames = approvableEntityTypes.map(type => type.toString());
   return APPROVABLE_MODELS.filter(model => modelNames.includes(model.name));
 };
 
 export const findApprovableQuery = ({ approvableEntityTypes }: IApprovableFilterOptions) => {
-  const approvableModels = getApprovableModels({ approvableEntityTypes });
+  const approvableModels = getApprovableModels(approvableEntityTypes);
   return `
-    SELECT ${getRowsToSelect({ approvableModels })}
-    FROM ${getFullOuterJoin({ approvableModels })}
+    SELECT ${getRowsToSelect(approvableModels)}
+    FROM ${getFullOuterJoin(approvableModels)}
   `;
 };

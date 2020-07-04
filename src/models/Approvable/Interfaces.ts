@@ -1,9 +1,5 @@
-import { ApprovableEntityType, ApprovableModelsType } from "./Model";
+import { ApprovableEntityType } from "./Model";
 
 export interface IApprovableFilterOptions {
   approvableEntityTypes?: ApprovableEntityType[];
-}
-
-export interface IFindApprovableAttributes {
-  approvableModels: ApprovableModelsType[];
 }

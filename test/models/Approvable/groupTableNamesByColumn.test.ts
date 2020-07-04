@@ -11,7 +11,7 @@ describe("groupTableNamesByColumn", () => {
   it("groups each column as a key and their related tableNames as values", async () => {
     const APPLICANTS_TABLE_NAME = Applicant.tableName;
     const COMPANIES_TABLE_NAME = Company.tableName;
-    const tableNamesByColumn = groupTableNamesByColumn({ approvableModels: APPROVABLE_MODELS });
+    const tableNamesByColumn = groupTableNamesByColumn(APPROVABLE_MODELS);
     expect(tableNamesByColumn).toMatchObject(
       {
         uuid: expect.arrayContaining([APPLICANTS_TABLE_NAME, COMPANIES_TABLE_NAME]),
@@ -31,7 +31,7 @@ describe("groupTableNamesByColumn", () => {
 
   it("groups each Applicant column as a key", async () => {
     const APPLICANTS_TABLE_NAME = Applicant.tableName;
-    const tableNamesByColumn = groupTableNamesByColumn({ approvableModels: [Applicant] });
+    const tableNamesByColumn = groupTableNamesByColumn([Applicant]);
     expect(tableNamesByColumn).toMatchObject(
       {
         uuid: expect.arrayContaining([APPLICANTS_TABLE_NAME]),
@@ -45,7 +45,7 @@ describe("groupTableNamesByColumn", () => {
 
   it("groups each Company column as a key", async () => {
     const COMPANIES_TABLE_NAME = Company.tableName;
-    const tableNamesByColumn = groupTableNamesByColumn({ approvableModels: [Company] });
+    const tableNamesByColumn = groupTableNamesByColumn([Company]);
     expect(tableNamesByColumn).toMatchObject(
       {
         uuid: expect.arrayContaining([COMPANIES_TABLE_NAME]),

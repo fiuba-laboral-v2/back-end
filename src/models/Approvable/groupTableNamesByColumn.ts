@@ -1,5 +1,4 @@
-import { TABLE_NAME_COLUMN } from "./Model";
-import { IFindApprovableAttributes } from "./Interfaces";
+import { ApprovableModelsType, TABLE_NAME_COLUMN } from "./Model";
 import { groupBy, mapValues } from "lodash";
 
 const getColumns = model => [TABLE_NAME_COLUMN].concat(Object.keys(model.rawAttributes));
@@ -7,13 +6,13 @@ const getColumns = model => [TABLE_NAME_COLUMN].concat(Object.keys(model.rawAttr
 const mapModelToTableNameColumnTuple = model =>
   getColumns(model).map(column => ({ tableName: model.tableName, column }));
 
-const mapAllModelsToTableNameColumnTuple = ({ approvableModels }: IFindApprovableAttributes) =>
+const mapAllModelsToTableNameColumnTuple = (approvableModels: ApprovableModelsType[]) =>
   approvableModels.map(model => mapModelToTableNameColumnTuple(model)).flat();
 
-const groupByColumns = (options: IFindApprovableAttributes) =>
-  groupBy(mapAllModelsToTableNameColumnTuple(options), "column");
+const groupByColumns = (approvableModels: ApprovableModelsType[]) =>
+  groupBy(mapAllModelsToTableNameColumnTuple(approvableModels), "column");
 
-export const groupTableNamesByColumn = (options: IFindApprovableAttributes) =>
-  mapValues(groupByColumns(options), columnTableObjects =>
+export const groupTableNamesByColumn = (approvableModels: ApprovableModelsType[]) =>
+  mapValues(groupByColumns(approvableModels), columnTableObjects =>
     columnTableObjects.map(columnTableObject => columnTableObject.tableName)
 );
