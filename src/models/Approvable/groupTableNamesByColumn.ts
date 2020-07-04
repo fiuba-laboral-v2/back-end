@@ -1,5 +1,4 @@
-import { TABLE_NAME_COLUMN } from "./TableNameColumn";
-import { APPROVABLE_MODELS } from "./ApprovableModels";
+import { APPROVABLE_MODELS, TABLE_NAME_COLUMN } from "./Model";
 import { groupBy, mapValues } from "lodash";
 
 const getColumns = model => [TABLE_NAME_COLUMN].concat(Object.keys(model.rawAttributes));

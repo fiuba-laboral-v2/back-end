@@ -1,8 +1,7 @@
 import { Database } from "../../config/Database";
 import { find } from "lodash";
 import { findPendingQuery } from "./findPendingQuery";
-import { APPROVABLE_MODELS } from "./ApprovableModels";
-import { TABLE_NAME_COLUMN } from "./TableNameColumn";
+import { APPROVABLE_MODELS, TABLE_NAME_COLUMN } from "./Model";
 
 const getModelByTableName = (tableName: string) =>
   find(APPROVABLE_MODELS, ["tableName", tableName]);

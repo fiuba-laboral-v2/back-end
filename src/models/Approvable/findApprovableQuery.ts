@@ -1,5 +1,5 @@
-import { APPROVABLE_MODELS } from "./ApprovableModels";
-import { TABLE_NAME_COLUMN } from "./TableNameColumn";
+import { APPROVABLE_MODELS } from "./Model";
+import { TABLE_NAME_COLUMN } from "./Model";
 import { groupTableNamesByColumn } from "./groupTableNamesByColumn";
 
 const getRowsToSelect = () => {
