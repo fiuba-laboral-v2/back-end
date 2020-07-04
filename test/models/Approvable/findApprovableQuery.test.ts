@@ -45,9 +45,7 @@ describe("findApprovableQuery", () => {
         COALESCE (Applicants."tableNameColumn") AS "tableNameColumn",
         COALESCE (Applicants."padron") AS "padron",
         COALESCE (Applicants."userUuid") AS "userUuid"
-      FROM (
-        (SELECT *, 'Applicants' AS "tableNameColumn" FROM "Applicants") AS Applicants
-        )
+      FROM (SELECT *, 'Applicants' AS "tableNameColumn" FROM "Applicants") AS Applicants
     `;
     expect(query).toEqualIgnoringSpacing(expectedQuery);
   });
@@ -68,9 +66,7 @@ describe("findApprovableQuery", () => {
         COALESCE (Companies."createdAt") AS "createdAt",
         COALESCE (Companies."updatedAt") AS "updatedAt",
         COALESCE (Companies."tableNameColumn") AS "tableNameColumn"
-      FROM (
-        (SELECT *, 'Companies' AS "tableNameColumn" FROM "Companies") AS Companies
-      )
+      FROM (SELECT *, 'Companies' AS "tableNameColumn" FROM "Companies") AS Companies
     `;
     expect(query).toEqualIgnoringSpacing(expectedQuery);
   });

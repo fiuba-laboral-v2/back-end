@@ -22,7 +22,8 @@ const getFullOuterJoin = ({ approvableModels }: IFindApprovableOptions) => {
     if (index === 0) return selectStatement;
     return `${selectStatement} ON FALSE`;
   });
-  return selectStatements.join(" FULL OUTER JOIN ");
+  if (selectStatements.length === 1) return selectStatements.join(" FULL OUTER JOIN ");
+  return `(${selectStatements.join(" FULL OUTER JOIN ")})`;
 };
 
 const getApprovableModels = ({ approvableEntityTypes }: IApprovableFilterOptions) => {
@@ -35,6 +36,6 @@ export const findApprovableQuery = ({ approvableEntityTypes }: IApprovableFilter
   const approvableModels = getApprovableModels({ approvableEntityTypes });
   return `
     SELECT ${getRowsToSelect({ approvableModels })}
-    FROM (${getFullOuterJoin({ approvableModels })})
+    FROM ${getFullOuterJoin({ approvableModels })}
   `;
 };
