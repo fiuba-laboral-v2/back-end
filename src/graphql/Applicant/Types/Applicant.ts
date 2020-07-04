@@ -1,5 +1,5 @@
 import { GraphQLObjectType } from "graphql";
-import { ID, Int, nonNull, String, List } from "../../fieldTypes";
+import { ID, Int, List, nonNull, String } from "../../fieldTypes";
 import { GraphQLUser } from "../../User/Types/GraphQLUser";
 import { GraphQLCapability } from "../../Capability/Types/Capability";
 import { GraphQLApplicantCareer } from "./ApplicantCareers";
@@ -24,6 +24,9 @@ const GraphQLApplicant = new GraphQLObjectType<Applicant>({
     },
     description: {
       type: String
+    },
+    createdAt: {
+      type: nonNull(String)
     },
     approvalStatus: {
       type: nonNull(GraphQLApprovalStatus)

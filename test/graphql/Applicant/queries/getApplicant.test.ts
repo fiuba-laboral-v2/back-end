@@ -26,6 +26,7 @@ const GET_APPLICANT = gql`
       padron
       description
       approvalStatus
+      createdAt
       capabilities {
         uuid
         description
@@ -79,7 +80,8 @@ describe("getApplicant", () => {
           surname: user.surname
         },
         description: applicant.description,
-        padron: applicant.padron
+        padron: applicant.padron,
+        createdAt: applicant.createdAt.getTime().toString()
       });
       expect(data!.getApplicant).toHaveProperty("capabilities");
       expect(data!.getApplicant).toHaveProperty("careers");
