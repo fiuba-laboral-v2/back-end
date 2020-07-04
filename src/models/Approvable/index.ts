@@ -1,2 +1,3 @@
 export * from "./Repository";
-export { Approvable } from "./Model";
+export * from "./Model";
+export * from "./Interfaces";

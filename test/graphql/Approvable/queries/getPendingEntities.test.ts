@@ -4,7 +4,11 @@ import { Database } from "../../../../src/config/Database";
 
 import { CompanyRepository } from "../../../../src/models/Company";
 import { ApplicantRepository } from "../../../../src/models/Applicant";
-import { Approvable } from "../../../../src/models/Approvable";
+import {
+  Approvable,
+  IApprovableFilterOptions,
+  ApprovableEntityType
+} from "../../../../src/models/Approvable";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import { UserRepository } from "../../../../src/models/User";
 import { Admin } from "../../../../src/models/Admin";
@@ -18,8 +22,8 @@ import { ApplicantGenerator, TApplicantGenerator } from "../../../generators/App
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
 const GET_PENDING_ENTITIES = gql`
-  query GetPendingEntities {
-    getPendingEntities {
+  query GetPendingEntities($approvableEntityTypes: [ApprovableEntityType]) {
+    getPendingEntities(approvableEntityTypes: $approvableEntityTypes) {
       ... on Company {
         __typename
         uuid
@@ -52,9 +56,13 @@ describe("getPendingEntities", () => {
 
   afterAll(() => Database.close());
 
-  const getPendingEntities = async () => {
+  const getPendingEntities = async (options?: IApprovableFilterOptions) => {
     const { apolloClient } = await testClientFactory.admin();
-    const { data } = await apolloClient.query({ query: GET_PENDING_ENTITIES });
+    const { errors, data } = await apolloClient.query({
+      query: GET_PENDING_ENTITIES,
+      variables: options
+    });
+    expect(errors).toBeUndefined();
     return data!.getPendingEntities;
   };
 
@@ -157,6 +165,43 @@ describe("getPendingEntities", () => {
     expect(secondResult.uuid).toEqual(company3.uuid);
     expect(thirdResult.uuid).toEqual(applicant2.uuid);
     expect(fourthResult.uuid).toEqual(applicant1.uuid);
+  });
+
+  describe("Filters", () => {
+    beforeEach(async () => {
+      await createCompanyWithStatus(ApprovalStatus.rejected);
+      await createCompanyWithStatus(ApprovalStatus.approved);
+      await createApplicantWithStatus(ApprovalStatus.rejected);
+      await createApplicantWithStatus(ApprovalStatus.approved);
+    });
+
+    it("filters by Applicant type and returns pending applicants", async () => {
+      await companies.next().value;
+      const pendingApplicant = await applicants.next().value;
+
+      const result = await getPendingEntities({
+        approvableEntityTypes: [ApprovableEntityType.Applicant]
+      });
+      expect(result).toHaveLength(1);
+      expect(result).toEqual([{
+        __typename: GraphQLApplicant.name,
+        uuid: pendingApplicant.uuid
+      }]);
+    });
+
+    it("filters by Company type and returns pending companies", async () => {
+      await applicants.next().value;
+      const pendingCompany = await companies.next().value;
+
+      const result = await getPendingEntities({
+        approvableEntityTypes: [ApprovableEntityType.Company]
+      });
+      expect(result).toHaveLength(1);
+      expect(result).toEqual([{
+        __typename: GraphQLCompany.name,
+        uuid: pendingCompany.uuid
+      }]);
+    });
   });
 
   describe("only admins can execute this query", () => {

@@ -14,8 +14,9 @@ import {
   validateEmail
 } from "validations-fiuba-laboral-v2";
 
-@Table
+@Table({ tableName: "Companies" })
 export class Company extends Model<Company> {
+
   @Column({
     allowNull: false,
     primaryKey: true,
