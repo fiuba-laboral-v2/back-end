@@ -8,7 +8,7 @@ const getModelByTableName = (tableName: string) =>
 
 export const ApprovableRepository = {
   findPending: async () => {
-    const rows = await Database.query(findPendingQuery(), { type: "SELECT" });
+    const rows = await Database.query(findPendingQuery({}), { type: "SELECT" });
     return rows.map((row: object) => {
       const tableName = row[TABLE_NAME_COLUMN];
       const modelClass = getModelByTableName(tableName);

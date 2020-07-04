@@ -1,9 +1,9 @@
-import { APPROVABLE_MODELS } from "./Model";
-import { TABLE_NAME_COLUMN } from "./Model";
+import { APPROVABLE_MODELS, TABLE_NAME_COLUMN } from "./Model";
+import { IApprovableFilterOptions, IFindApprovableOptions } from "./Interfaces";
 import { groupTableNamesByColumn } from "./groupTableNamesByColumn";
 
-const getRowsToSelect = () => {
-  const tablesByColumn: object = groupTableNamesByColumn();
+const getRowsToSelect = (options: IFindApprovableOptions) => {
+  const tablesByColumn: object = groupTableNamesByColumn(options);
   return Object.entries(tablesByColumn).map(([columnName, tableNames]) =>
     `COALESCE (
       ${tableNames.map(tableName => `${tableName}."${columnName}"`).join(",")}
@@ -11,8 +11,8 @@ const getRowsToSelect = () => {
   ).join(",");
 };
 
-const getFullOuterJoin = () => {
-  let selectStatements = APPROVABLE_MODELS.map(model => {
+const getFullOuterJoin = ({ approvableModels }: IFindApprovableOptions) => {
+  let selectStatements = approvableModels.map(model => {
     const tableName = model.tableName;
     return `(
       SELECT *, '${tableName}' AS "${TABLE_NAME_COLUMN}" FROM "${tableName}"
@@ -25,7 +25,16 @@ const getFullOuterJoin = () => {
   return selectStatements.join(" FULL OUTER JOIN ");
 };
 
-export const findApprovableQuery = () => `
-  SELECT ${getRowsToSelect()}
-  FROM (${getFullOuterJoin()})
-`;
+const getApprovableModels = ({ approvableEntityTypes }: IApprovableFilterOptions) => {
+  if (!approvableEntityTypes) return APPROVABLE_MODELS;
+  const modelNames = approvableEntityTypes.map(type => type.toString());
+  return APPROVABLE_MODELS.filter(model => modelNames.includes(model.name));
+};
+
+export const findApprovableQuery = ({ approvableEntityTypes }: IApprovableFilterOptions) => {
+  const approvableModels = getApprovableModels({ approvableEntityTypes });
+  return `
+    SELECT ${getRowsToSelect({ approvableModels })}
+    FROM (${getFullOuterJoin({ approvableModels })})
+  `;
+};
