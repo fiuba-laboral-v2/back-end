@@ -4,6 +4,6 @@ export interface IApprovableFilterOptions {
   approvableEntityTypes?: ApprovableEntityType[];
 }
 
-export interface IFindApprovableOptions {
+export interface IFindApprovableAttributes {
   approvableModels: ApprovableModelsType[];
 }

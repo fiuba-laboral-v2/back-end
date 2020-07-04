@@ -1,8 +1,8 @@
 import { APPROVABLE_MODELS, TABLE_NAME_COLUMN } from "./Model";
-import { IApprovableFilterOptions, IFindApprovableOptions } from "./Interfaces";
+import { IApprovableFilterOptions, IFindApprovableAttributes } from "./Interfaces";
 import { groupTableNamesByColumn } from "./groupTableNamesByColumn";
 
-const getRowsToSelect = (options: IFindApprovableOptions) => {
+const getRowsToSelect = (options: IFindApprovableAttributes) => {
   const tablesByColumn: object = groupTableNamesByColumn(options);
   return Object.entries(tablesByColumn).map(([columnName, tableNames]) =>
     `COALESCE (
@@ -11,7 +11,7 @@ const getRowsToSelect = (options: IFindApprovableOptions) => {
   ).join(",");
 };
 
-const getFullOuterJoin = ({ approvableModels }: IFindApprovableOptions) => {
+const getFullOuterJoin = ({ approvableModels }: IFindApprovableAttributes) => {
   let selectStatements = approvableModels.map(model => {
     const tableName = model.tableName;
     return `(
