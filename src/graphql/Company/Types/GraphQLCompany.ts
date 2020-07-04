@@ -1,5 +1,5 @@
 import { GraphQLObjectType } from "graphql";
-import { ID, nonNull, String, List } from "../../fieldTypes";
+import { ID, List, nonNull, String } from "../../fieldTypes";
 import { Company } from "../../../models/Company";
 import { GraphQLApprovalStatus } from "../../ApprovalStatus/Types/GraphQLApprovalStatus";
 
@@ -29,6 +29,9 @@ export const GraphQLCompany = new GraphQLObjectType<Company>({
     },
     email: {
       type: String
+    },
+    createdAt: {
+      type: nonNull(String)
     },
     approvalStatus: {
       type: nonNull(GraphQLApprovalStatus)
