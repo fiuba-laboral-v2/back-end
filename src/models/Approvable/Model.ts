@@ -4,8 +4,8 @@ import { Company } from "../Company";
 export const TABLE_NAME_COLUMN = "tableNameColumn";
 export type ApprovableModelsType = typeof Applicant | typeof Company;
 export const APPROVABLE_MODELS = [
-  Company,
-  Applicant
+  Applicant,
+  Company
 ];
 export type Approvable = Applicant | Company;
 export enum ApprovableEntityType {
