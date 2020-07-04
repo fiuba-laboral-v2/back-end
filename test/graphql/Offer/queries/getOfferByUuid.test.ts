@@ -107,7 +107,7 @@ describe("getOfferByUuid", () => {
           hoursPerDay: offer.hoursPerDay,
           minimumSalary: offer.minimumSalary,
           maximumSalary: offer.maximumSalary,
-          createdAt: offer.createdAt.getTime().toString(),
+          createdAt: offer.createdAt.toISOString(),
           careers: [
             {
               code: career.code,

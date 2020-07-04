@@ -1,4 +1,5 @@
 import { GraphQLObjectType } from "graphql";
+import { GraphQLDateTime } from "graphql-iso-date";
 import { IApolloServerContext } from "../../Context/graphqlContext";
 import { ID, Int, List, nonNull, String, Boolean } from "../../fieldTypes";
 import { GraphQLOfferSection } from "./GraphQLOfferSection";
@@ -30,7 +31,7 @@ const GraphQLOffer = new GraphQLObjectType<Offer, IApolloServerContext>({
       type: nonNull(Int)
     },
     createdAt: {
-      type: nonNull(String)
+      type: nonNull(GraphQLDateTime)
     },
     sections: {
       type: List(GraphQLOfferSection),

@@ -71,7 +71,7 @@ describe("getMyLatestJobApplications", () => {
       expect(data!.getMyLatestJobApplications).toMatchObject(
         [
           {
-            createdAt: jobApplication.createdAt.getTime().toString(),
+            createdAt: jobApplication.createdAt.toISOString(),
             offer: {
               uuid: offer.uuid,
               title: offer.title

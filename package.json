@@ -41,6 +41,7 @@
     "graphql-depth-limit": "1.1.0",
     "graphql-import": "0.7.1",
     "graphql-import-node": "0.0.4",
+    "graphql-iso-date": "^3.6.1",
     "graphql-middleware": "4.0.2",
     "graphql-shield": "7.2.6",
     "http-status-codes": "1.4.0",
