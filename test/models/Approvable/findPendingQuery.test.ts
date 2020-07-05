@@ -8,7 +8,9 @@ describe("findPendingQuery", () => {
   afterAll(() => Database.close());
 
   it("returns an sql query of approvable entities in pending status", async () => {
-    const query = findPendingQuery({});
+    const query = findPendingQuery({
+      approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company]
+    });
     const expectedQuery = `
       WITH "Approvable" AS
         (

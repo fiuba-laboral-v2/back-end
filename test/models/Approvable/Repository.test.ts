@@ -48,13 +48,24 @@ describe("ApprovableRepository", () => {
     );
   };
 
+  it("returns an empty array if no approvableEntities are provided", async () => {
+    await companies.next().value;
+    await applicants.next().value;
+    const result = await ApprovableRepository.findPending({
+      approvableEntityTypes: []
+    });
+    expect(result).toEqual([]);
+  });
+
   it("returns only pending companies", async () => {
     await createCompanyWithStatus(ApprovalStatus.rejected);
     await createCompanyWithStatus(ApprovalStatus.approved);
 
     const pendingCompany = await companies.next().value;
 
-    const result = await ApprovableRepository.findPending({});
+    const result = await ApprovableRepository.findPending({
+      approvableEntityTypes: [ApprovableEntityType.Company]
+    });
     expect(result).toHaveLength(1);
     expect(result[0].uuid).toEqual(pendingCompany.uuid);
     expect(result).toEqual([expect.objectContaining(pendingCompany.toJSON())]);
@@ -64,7 +75,9 @@ describe("ApprovableRepository", () => {
     await createApplicantWithStatus(ApprovalStatus.rejected);
     await createApplicantWithStatus(ApprovalStatus.approved);
     const pendingApplicant = await applicants.next().value;
-    const result = await ApprovableRepository.findPending({});
+    const result = await ApprovableRepository.findPending({
+      approvableEntityTypes: [ApprovableEntityType.Applicant]
+    });
     expect(result).toHaveLength(1);
     expect(result[0].uuid).toEqual(pendingApplicant.uuid);
     expect(result).toEqual([expect.objectContaining(pendingApplicant.toJSON())]);
@@ -78,7 +91,9 @@ describe("ApprovableRepository", () => {
     const pendingApplicant = await applicants.next().value;
     const pendingCompany = await companies.next().value;
 
-    const result = await ApprovableRepository.findPending({});
+    const result = await ApprovableRepository.findPending({
+      approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company]
+    });
     expect(result).toHaveLength(2);
     expect(result).toEqual(expect.arrayContaining([
       expect.objectContaining(pendingApplicant.toJSON()),
@@ -89,7 +104,9 @@ describe("ApprovableRepository", () => {
   it("sorts pending companies by updatedAt", async () => {
     await companies.next().value;
     await companies.next().value;
-    const [firstResult, secondResult] = await ApprovableRepository.findPending({});
+    const [firstResult, secondResult] = await ApprovableRepository.findPending({
+      approvableEntityTypes: [ApprovableEntityType.Company]
+    });
     expect(firstResult).toBeInstanceOf(Company);
     expect(secondResult).toBeInstanceOf(Company);
     expect([firstResult, secondResult]).toBeSortedBy({ key: "updatedAt", order: "desc" });
@@ -98,7 +115,9 @@ describe("ApprovableRepository", () => {
   it("sorts pending applicants by updatedAt", async () => {
     await applicants.next().value;
     await applicants.next().value;
-    const [firstResult, secondResult] = await ApprovableRepository.findPending({});
+    const [firstResult, secondResult] = await ApprovableRepository.findPending({
+      approvableEntityTypes: [ApprovableEntityType.Applicant]
+    });
     expect(firstResult).toBeInstanceOf(Applicant);
     expect(secondResult).toBeInstanceOf(Applicant);
     expect([firstResult, secondResult]).toBeSortedBy({ key: "updatedAt", order: "desc" });
@@ -110,7 +129,9 @@ describe("ApprovableRepository", () => {
     const company3 = await companies.next().value;
     const company4 = await companies.next().value;
 
-    const result = await ApprovableRepository.findPending({});
+    const result = await ApprovableRepository.findPending({
+      approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company]
+    });
     expect(result.map(entity => entity.uuid)).toEqual([
       company4.uuid,
       company3.uuid,
@@ -118,59 +139,5 @@ describe("ApprovableRepository", () => {
       applicant1.uuid
     ]);
     expect(result).toBeSortedBy({ key: "updatedAt", order: "desc" });
-  });
-
-  describe("Filters", () => {
-    beforeEach(async () => {
-      await createApplicantWithStatus(ApprovalStatus.rejected);
-      await createApplicantWithStatus(ApprovalStatus.approved);
-      await createCompanyWithStatus(ApprovalStatus.rejected);
-      await createCompanyWithStatus(ApprovalStatus.approved);
-    });
-
-    it("filters by Company type and returns pending companies", async () => {
-      await applicants.next().value;
-      const pendingCompany = await companies.next().value;
-
-      const result = await ApprovableRepository.findPending({
-        approvableEntityTypes: [ApprovableEntityType.Company]
-      });
-      expect(result).toEqual(expect.arrayContaining([
-        expect.objectContaining(pendingCompany.toJSON())
-      ]));
-    });
-
-    it("filters by applicant type and returns pending applicants", async () => {
-      await companies.next().value;
-      const pendingApplicant = await applicants.next().value;
-
-      const result = await ApprovableRepository.findPending({
-        approvableEntityTypes: [ApprovableEntityType.Applicant]
-      });
-      expect(result).toEqual(expect.arrayContaining([
-        expect.objectContaining(pendingApplicant.toJSON())
-      ]));
-    });
-
-    it("filters by applicant and company type", async () => {
-      const pendingCompany = await companies.next().value;
-      const pendingApplicant = await applicants.next().value;
-      const result = await ApprovableRepository.findPending({
-        approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company]
-      });
-      expect(result).toEqual(expect.arrayContaining([
-        expect.objectContaining(pendingApplicant.toJSON()),
-        expect.objectContaining(pendingCompany.toJSON())
-      ]));
-    });
-
-    it("returns an empty array if no approvableEntities are provided", async () => {
-      await companies.next().value;
-      await applicants.next().value;
-      const result = await ApprovableRepository.findPending({
-        approvableEntityTypes: []
-      });
-      expect(result).toEqual([]);
-    });
   });
 });

@@ -8,7 +8,9 @@ describe("findApprovableQuery", () => {
   afterAll(() => Database.close());
 
   it("returns an sql query of all approvable entities", async () => {
-    const query = findApprovableQuery({});
+    const query = findApprovableQuery({
+      approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company]
+    });
     const expectedQuery = `
       SELECT
         COALESCE (Companies."uuid",Applicants."uuid") AS "uuid",
