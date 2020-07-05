@@ -1,13 +1,16 @@
 import { Database } from "../../../src/config/Database";
 import { findApprovableQuery } from "../../../src/models/Approvable/findApprovableQuery";
 import { ApprovableEntityType } from "../../../src/models/Approvable";
+import { ApprovableEntityTypesIsEmptyError } from "../../../src/models/Approvable/Errors";
 
 describe("findApprovableQuery", () => {
   beforeAll(() => Database.setConnection());
   afterAll(() => Database.close());
 
   it("returns an sql query of all approvable entities", async () => {
-    const query = findApprovableQuery({});
+    const query = findApprovableQuery({
+      approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company]
+    });
     const expectedQuery = `
       SELECT
         COALESCE (Companies."uuid",Applicants."uuid") AS "uuid",
@@ -31,6 +34,15 @@ describe("findApprovableQuery", () => {
         )
     `;
     expect(query).toEqualIgnoringSpacing(expectedQuery);
+  });
+
+  it("throws an error if no approvableEntityTypes are provided", async () => {
+    expect(
+      () => findApprovableQuery({ approvableEntityTypes: [] })
+    ).toThrowErrorWithMessage(
+      ApprovableEntityTypesIsEmptyError,
+      ApprovableEntityTypesIsEmptyError.buildMessage()
+    );
   });
 
   it("returns an sql query of all Applicants", async () => {
