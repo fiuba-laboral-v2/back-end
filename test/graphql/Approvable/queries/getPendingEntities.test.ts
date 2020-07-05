@@ -175,24 +175,6 @@ describe("getPendingEntities", () => {
       await createApplicantWithStatus(ApprovalStatus.approved);
     });
 
-    const expectToReturnAllPendingEntities = async (options: IApprovableFilterOptions) => {
-      const pendingApplicant = await applicants.next().value;
-      const pendingCompany = await companies.next().value;
-
-      const result = await getPendingEntities(options);
-      expect(result).toHaveLength(2);
-      expect(result).toEqual([
-        {
-          __typename: GraphQLCompany.name,
-          uuid: pendingCompany.uuid
-        },
-        {
-          __typename: GraphQLApplicant.name,
-          uuid: pendingApplicant.uuid
-        }
-      ]);
-    };
-
     it("filters by Applicant type and returns pending applicants", async () => {
       await companies.next().value;
       const pendingApplicant = await applicants.next().value;
@@ -221,12 +203,30 @@ describe("getPendingEntities", () => {
       }]);
     });
 
-    it("filters by Company and Applicant type if an empty array is provided", async () => {
-      await expectToReturnAllPendingEntities({ approvableEntityTypes: [] });
+    it("returns an empty array if no approvableEntities are provided", async () => {
+      await applicants.next().value;
+      await companies.next().value;
+
+      const result = await getPendingEntities({ approvableEntityTypes: [] });
+      expect(result).toEqual([]);
     });
 
     it("filters by Company and Applicant type if no options are provided", async () => {
-      await expectToReturnAllPendingEntities({});
+      const pendingApplicant = await applicants.next().value;
+      const pendingCompany = await companies.next().value;
+
+      const result = await getPendingEntities({});
+      expect(result).toHaveLength(2);
+      expect(result).toEqual([
+        {
+          __typename: GraphQLCompany.name,
+          uuid: pendingCompany.uuid
+        },
+        {
+          __typename: GraphQLApplicant.name,
+          uuid: pendingApplicant.uuid
+        }
+      ]);
     });
   });
 

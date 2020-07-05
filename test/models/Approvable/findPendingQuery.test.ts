@@ -1,13 +1,14 @@
 import { Database } from "../../../src/config/Database";
 import { findPendingQuery } from "../../../src/models/Approvable/findPendingQuery";
-import { ApprovableEntityType, IApprovableFilterOptions } from "../../../src/models/Approvable";
+import { ApprovableEntityType } from "../../../src/models/Approvable";
+import { ApprovableEntityTypesIsEmptyError } from "../../../src/models/Approvable/Errors";
 
 describe("findPendingQuery", () => {
   beforeAll(() => Database.setConnection());
   afterAll(() => Database.close());
 
-  const expectToReturnSQLQueryOfAllPendingEntities = (options: IApprovableFilterOptions) => {
-    const query = findPendingQuery(options);
+  it("returns an sql query of approvable entities in pending status", async () => {
+    const query = findPendingQuery({});
     const expectedQuery = `
       WITH "Approvable" AS
         (
@@ -37,18 +38,16 @@ describe("findPendingQuery", () => {
       ORDER BY "Approvable"."updatedAt" DESC
     `;
     expect(query).toEqualIgnoringSpacing(expectedQuery);
-  };
-
-  it("returns an sql query of approvable entities in pending status", async () => {
-    expectToReturnSQLQueryOfAllPendingEntities({});
   });
 
-  it(
-    "returns query of all approvable entities in pending status if an empty array is provided",
-    async () => {
-      expectToReturnSQLQueryOfAllPendingEntities({ approvableEntityTypes: [] });
-    }
-  );
+  it("throws an error if no approvableEntityTypes are provided", async () => {
+    expect(
+      () => findPendingQuery({ approvableEntityTypes: [] })
+    ).toThrowErrorWithMessage(
+      ApprovableEntityTypesIsEmptyError,
+      ApprovableEntityTypesIsEmptyError.buildMessage()
+    );
+  });
 
   it("returns an sql query of Companies in pending status", async () => {
     const query = findPendingQuery({ approvableEntityTypes: [ApprovableEntityType.Company] });

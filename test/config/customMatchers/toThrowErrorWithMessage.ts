@@ -19,13 +19,25 @@ const includesMessage = (receivedMessage: string, expectedMessage: string | stri
   return expectedMessage.filter(message => receivedMessage.includes(message)).length > 0;
 };
 
+const expectToThrow = (received, type: Constructable, message: string | string[]) => {
+  if (received instanceof type && includesMessage(received.message, message)) {
+    return passMessage(received, type, message);
+  }
+  return failMessage(received, type, message);
+};
+
 export const toThrowErrorWithMessage = (
   received,
   type: Constructable,
   message: string | string[]
 ) => {
-  if (received instanceof type && includesMessage(received.message, message)) {
-    return passMessage(received, type, message);
+  if (typeof received === "object") return expectToThrow(received, type, message);
+  if (typeof received === "function") {
+    try {
+      received();
+    } catch (error) {
+      return expectToThrow(error, type, message);
+    }
   }
   return failMessage(received, type, message);
 };

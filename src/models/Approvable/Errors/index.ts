@@ -1,0 +1,1 @@
+export { ApprovableEntityTypesIsEmptyError } from "./ApprovableEntityTypesIsEmptyError";

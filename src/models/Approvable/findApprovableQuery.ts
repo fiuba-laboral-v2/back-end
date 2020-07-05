@@ -5,6 +5,7 @@ import {
   TABLE_NAME_COLUMN
 } from "./Model";
 import { IApprovableFilterOptions } from "./Interfaces";
+import { ApprovableEntityTypesIsEmptyError } from "./Errors";
 import { groupTableNamesByColumn } from "./groupTableNamesByColumn";
 
 const getRowsToSelect = (approvableModels: ApprovableModelsType[]) => {
@@ -33,7 +34,7 @@ const getFullOuterJoin = (approvableModels: ApprovableModelsType[]) => {
 
 const getApprovableModels = (approvableEntityTypes?: ApprovableEntityType[]) => {
   if (!approvableEntityTypes) return APPROVABLE_MODELS;
-  if (approvableEntityTypes.length === 0) return APPROVABLE_MODELS;
+  if (approvableEntityTypes.length === 0) throw new ApprovableEntityTypesIsEmptyError();
   const modelNames = approvableEntityTypes.map(type => type.toString());
   return APPROVABLE_MODELS.filter(model => modelNames.includes(model.name));
 };
