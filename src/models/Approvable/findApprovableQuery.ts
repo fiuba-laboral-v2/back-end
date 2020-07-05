@@ -33,6 +33,7 @@ const getFullOuterJoin = (approvableModels: ApprovableModelsType[]) => {
 
 const getApprovableModels = (approvableEntityTypes?: ApprovableEntityType[]) => {
   if (!approvableEntityTypes) return APPROVABLE_MODELS;
+  if (approvableEntityTypes.length === 0) return APPROVABLE_MODELS;
   const modelNames = approvableEntityTypes.map(type => type.toString());
   return APPROVABLE_MODELS.filter(model => modelNames.includes(model.name));
 };

@@ -128,6 +128,18 @@ describe("ApprovableRepository", () => {
       await createCompanyWithStatus(ApprovalStatus.approved);
     });
 
+    const expectToFilterByApplicantAndCompany = async (
+      approvableEntityTypes: ApprovableEntityType[]
+    ) => {
+      const pendingCompany = await companies.next().value;
+      const pendingApplicant = await applicants.next().value;
+      const result = await ApprovableRepository.findPending({ approvableEntityTypes });
+      expect(result).toEqual(expect.arrayContaining([
+        expect.objectContaining(pendingApplicant.toJSON()),
+        expect.objectContaining(pendingCompany.toJSON())
+      ]));
+    };
+
     it("filters by Company type and returns pending companies", async () => {
       await applicants.next().value;
       const pendingCompany = await companies.next().value;
@@ -153,16 +165,14 @@ describe("ApprovableRepository", () => {
     });
 
     it("filters by applicant and company type", async () => {
-      const pendingCompany = await companies.next().value;
-      const pendingApplicant = await applicants.next().value;
+      await expectToFilterByApplicantAndCompany([
+        ApprovableEntityType.Applicant,
+        ApprovableEntityType.Company
+      ]);
+    });
 
-      const result = await ApprovableRepository.findPending({
-        approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company]
-      });
-      expect(result).toEqual(expect.arrayContaining([
-        expect.objectContaining(pendingApplicant.toJSON()),
-        expect.objectContaining(pendingCompany.toJSON())
-      ]));
+    it("filters by applicant and company type if no approvableEntities are provided", async () => {
+      await expectToFilterByApplicantAndCompany([]);
     });
   });
 });
