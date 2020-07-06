@@ -1,5 +1,5 @@
-import { AllowNull, Column, HasMany, Is, Model, Table, BelongsToMany } from "sequelize-typescript";
-import { HasManyGetAssociationsMixin, STRING, TEXT, UUID, UUIDV4, ENUM } from "sequelize";
+import { AllowNull, BelongsToMany, Column, HasMany, Is, Model, Table } from "sequelize-typescript";
+import { DATE, ENUM, HasManyGetAssociationsMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
 import { CompanyPhoneNumber } from "../CompanyPhoneNumber";
 import { CompanyPhoto } from "../CompanyPhoto";
 import { Offer } from "../Offer/Model";
@@ -9,9 +9,9 @@ import { CompanyApprovalEvent } from "./CompanyApprovalEvent/Model";
 import { ApprovalStatus, approvalStatuses } from "../ApprovalStatus";
 import {
   validateCuit,
+  validateEmail,
   validateName,
-  validateURL,
-  validateEmail
+  validateURL
 } from "validations-fiuba-laboral-v2";
 
 @Table({ tableName: "Companies" })
@@ -51,6 +51,13 @@ export class Company extends Model<Company> {
   @Is(validateEmail)
   @Column(STRING)
   public email: string;
+
+  @Column({
+    allowNull: false,
+    type: DATE,
+    defaultValue: new Date()
+  })
+  public createdAt: Date;
 
   @Column({
     allowNull: false,
