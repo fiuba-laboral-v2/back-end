@@ -57,7 +57,7 @@ describe("getCompanyByUuid", () => {
         logo: company.logo,
         website: company.website,
         email: company.email,
-        createdAt: company.createdAt.getTime().toString(),
+        createdAt: company.createdAt.toISOString(),
         approvalStatus: company.approvalStatus,
         phoneNumbers: expect.arrayContaining((await company.getPhoneNumbers())),
         photos: expect.arrayContaining((await company.getPhotos()))

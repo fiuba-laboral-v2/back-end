@@ -1,4 +1,5 @@
 import { GraphQLObjectType } from "graphql";
+import { GraphQLDateTime } from "graphql-iso-date";
 import { ID, List, nonNull, String } from "../../fieldTypes";
 import { Company } from "../../../models/Company";
 import { GraphQLApprovalStatus } from "../../ApprovalStatus/Types/GraphQLApprovalStatus";
@@ -31,7 +32,7 @@ export const GraphQLCompany = new GraphQLObjectType<Company>({
       type: String
     },
     createdAt: {
-      type: nonNull(String)
+      type: nonNull(GraphQLDateTime)
     },
     approvalStatus: {
       type: nonNull(GraphQLApprovalStatus)
