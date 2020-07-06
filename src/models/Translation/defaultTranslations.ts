@@ -141,8 +141,8 @@ export const defaultTranslations = {
   ],
   typeFilterMenu: [
     { key: "title", value: "Tipo" },
-    { key: "companyIconTitle", value: "Nueva empresa" },
-    { key: "applicantIconTitle", value: "Nuevo postulante" }
+    { key: "companyIconTitle", value: "Empresa" },
+    { key: "applicantIconTitle", value: "Postulante" }
   ],
   adminTaskList: [
     { key: "pendingTasks", value: "Tareas pendientes" }
