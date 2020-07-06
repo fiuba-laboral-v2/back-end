@@ -1,4 +1,5 @@
 import { GraphQLObjectType } from "graphql";
+import { GraphQLDateTime } from "graphql-iso-date";
 import { nonNull, String } from "../../fieldTypes";
 import { JobApplication } from "../../../models/JobApplication/Model";
 import { GraphQLApplicant } from "../../Applicant/Types/Applicant";
@@ -22,7 +23,7 @@ const GraphQLJobApplication = new GraphQLObjectType<JobApplication>({
       resolve: jobApplication => jobApplication.getOffer()
     },
     createdAt: {
-      type: nonNull(String)
+      type: nonNull(GraphQLDateTime)
     }
   })
 });

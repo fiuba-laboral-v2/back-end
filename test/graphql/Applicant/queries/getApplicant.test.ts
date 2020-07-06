@@ -81,7 +81,7 @@ describe("getApplicant", () => {
         },
         description: applicant.description,
         padron: applicant.padron,
-        createdAt: applicant.createdAt.getTime().toString()
+        createdAt: applicant.createdAt.toISOString()
       });
       expect(data!.getApplicant).toHaveProperty("capabilities");
       expect(data!.getApplicant).toHaveProperty("careers");

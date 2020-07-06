@@ -1,4 +1,5 @@
 import { GraphQLObjectType } from "graphql";
+import { GraphQLDateTime } from "graphql-iso-date";
 import { ID, Int, List, nonNull, String } from "../../fieldTypes";
 import { GraphQLUser } from "../../User/Types/GraphQLUser";
 import { GraphQLCapability } from "../../Capability/Types/Capability";
@@ -26,7 +27,7 @@ const GraphQLApplicant = new GraphQLObjectType<Applicant>({
       type: String
     },
     createdAt: {
-      type: nonNull(String)
+      type: nonNull(GraphQLDateTime)
     },
     approvalStatus: {
       type: nonNull(GraphQLApprovalStatus)
