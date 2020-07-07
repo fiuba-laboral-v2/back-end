@@ -1,7 +1,8 @@
 import { withMinimumData } from "./withMinimumData";
 import { completeData } from "./completeData";
-import { Company, CompanyRepository, ICompany } from "../../../src/models/Company";
+import { CompanyRepository, ICompany } from "../../../src/models/Company";
 import { CustomGenerator } from "../types";
+import { Company } from "../../../src/models";
 
 export type TCompanyGenerator = CustomGenerator<Promise<Company>>;
 export type TCompanyDataGenerator = CustomGenerator<ICompany>;

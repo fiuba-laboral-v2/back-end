@@ -8,7 +8,7 @@ import { Database } from "../../../src/config/Database";
 import { InvalidCuitError, PhoneNumberWithLettersError } from "validations-fiuba-laboral-v2";
 import { CompanyRepository } from "../../../src/models/Company";
 import { UserRepository } from "../../../src/models/User";
-import { Admin } from "../../../src/models/Admin";
+import { Admin } from "../../../src/models";
 import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
 import { CompanyGenerator, TCompanyDataGenerator } from "../../generators/Company";
 import { AdminGenerator } from "../../generators/Admin";

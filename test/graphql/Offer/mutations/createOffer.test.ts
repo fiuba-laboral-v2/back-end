@@ -11,7 +11,7 @@ import { CareerRepository } from "../../../../src/models/Career";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { UserRepository } from "../../../../src/models/User";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
-import { Admin } from "../../../../src/models/Admin";
+import { Admin } from "../../../../src/models";
 import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
 
 const SAVE_OFFER_WITH_COMPLETE_DATA = gql`

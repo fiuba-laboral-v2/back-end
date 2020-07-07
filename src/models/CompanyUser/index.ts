@@ -1,1 +1,1 @@
-export { CompanyUser } from "./Model";
+export { CompanyUserRepository } from "./Repository";

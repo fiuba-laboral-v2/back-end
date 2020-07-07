@@ -1,6 +1,5 @@
 import { BelongsTo, Column, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript";
-import { Applicant } from "../Applicant/Model";
-import { Career } from "../Career/Model";
+import { Applicant, Career } from "..";
 import { HasOneGetAssociationMixin, INTEGER } from "sequelize";
 import { validateIntegerInRange } from "validations-fiuba-laboral-v2";
 

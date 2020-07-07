@@ -1,7 +1,7 @@
 import { gql } from "apollo-server";
 import { Database } from "../../../../src/config/Database";
 import { client } from "../../ApolloTestClient";
-import { UserRepository } from "../../../../src/models/User/Repository";
+import { UserRepository } from "../../../../src/models/User";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { AuthenticationError } from "../../../../src/graphql/Errors";
 import { testClientFactory } from "../../../mocks/testClientFactory";

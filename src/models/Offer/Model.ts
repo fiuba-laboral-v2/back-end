@@ -16,10 +16,7 @@ import {
   UUID,
   UUIDV4
 } from "sequelize";
-import { Company } from "../Company";
-import { OfferSection } from "./OfferSection";
-import { OfferCareer } from "./OfferCareer";
-import { Career } from "../Career/Model";
+import { Career, Company, OfferCareer, OfferSection } from "..";
 import { validateIntegerInRange, validateSalaryRange } from "validations-fiuba-laboral-v2";
 
 @Table({

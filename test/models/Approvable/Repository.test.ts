@@ -1,11 +1,11 @@
 import { Database } from "../../../src/config/Database";
 import { CompanyGenerator, TCompanyGenerator } from "../../generators/Company";
-import { Company, CompanyRepository } from "../../../src/models/Company";
-import { Applicant, ApplicantRepository } from "../../../src/models/Applicant";
+import { CompanyRepository } from "../../../src/models/Company";
+import { ApplicantRepository } from "../../../src/models/Applicant";
 import { UserRepository } from "../../../src/models/User";
 import { ApprovableEntityType, ApprovableRepository } from "../../../src/models/Approvable";
 import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
-import { Admin } from "../../../src/models/Admin";
+import { Admin, Applicant, Company } from "../../../src/models";
 
 import { AdminGenerator } from "../../generators/Admin";
 import { ApplicantGenerator, TApplicantGenerator } from "../../generators/Applicant";

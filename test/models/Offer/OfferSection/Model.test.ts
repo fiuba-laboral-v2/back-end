@@ -1,6 +1,6 @@
 import { ValidationError } from "sequelize";
 import { Database } from "../../../../src/config/Database";
-import { OfferSection } from "../../../../src/models/Offer/OfferSection";
+import { OfferSection } from "../../../../src/models";
 
 describe("OfferSection", () => {
   beforeAll(() => Database.setConnection());

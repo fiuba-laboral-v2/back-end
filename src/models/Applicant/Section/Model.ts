@@ -1,5 +1,5 @@
 import { BelongsTo, Column, ForeignKey, Model, Table } from "sequelize-typescript";
-import { Applicant } from "../Model";
+import { Applicant } from "../..";
 import { INTEGER, TEXT, UUID, UUIDV4 } from "sequelize";
 
 @Table({ tableName: "Sections" })

@@ -3,8 +3,7 @@ import { client } from "../../ApolloTestClient";
 import { Database } from "../../../../src/config/Database";
 
 import { UserRepository } from "../../../../src/models/User";
-import { Applicant } from "../../../../src/models/Applicant";
-import { Admin } from "../../../../src/models/Admin";
+import { Admin, Applicant } from "../../../../src/models";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { JobApplicationRepository } from "../../../../src/models/JobApplication";

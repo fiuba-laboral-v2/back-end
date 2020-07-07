@@ -1,5 +1,5 @@
 import { Database } from "../../../src/config/Database";
-import { CompanyUser } from "../../../src/models/CompanyUser";
+import { CompanyUser } from "../../../src/models";
 import { ValidationError } from "sequelize";
 import generateUuid from "uuid/v4";
 

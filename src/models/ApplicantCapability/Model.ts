@@ -1,6 +1,5 @@
-import { Table, Model, Column, ForeignKey, PrimaryKey } from "sequelize-typescript";
-import { Capability } from "../Capability/Model";
-import { Applicant } from "../Applicant/Model";
+import { Column, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript";
+import { Applicant, Capability } from "..";
 
 @Table({ tableName: "ApplicantsCapabilities" })
 export class ApplicantCapability extends Model<ApplicantCapability> {

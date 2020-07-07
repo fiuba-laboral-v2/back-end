@@ -24,6 +24,12 @@ const query = gql`
       approvalStatus
       phoneNumbers
       photos
+      users {
+        uuid
+        email
+        name
+        surname
+      }
     }
   }
 `;
@@ -60,7 +66,10 @@ describe("getCompanyByUuid", () => {
         createdAt: company.createdAt.toISOString(),
         approvalStatus: company.approvalStatus,
         phoneNumbers: expect.arrayContaining((await company.getPhoneNumbers())),
-        photos: expect.arrayContaining((await company.getPhotos()))
+        photos: expect.arrayContaining((await company.getPhotos())),
+        users: expect.arrayContaining((await company.getUsers()).map(
+          ({ uuid, email, name, surname }) => ({ uuid, email, name, surname })
+        ))
       }
     });
   });

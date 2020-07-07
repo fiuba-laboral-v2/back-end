@@ -5,7 +5,7 @@ import { client } from "../../ApolloTestClient";
 import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
 
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
-import { Admin } from "../../../../src/models/Admin";
+import { Admin } from "../../../../src/models";
 import { CareerRepository } from "../../../../src/models/Career";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { UserRepository } from "../../../../src/models/User";

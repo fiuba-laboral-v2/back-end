@@ -1,5 +1,5 @@
 import { ValidationError } from "sequelize";
-import { Company } from "../../../src/models/Company";
+import { Company } from "../../../src/models";
 import { Database } from "../../../src/config/Database";
 import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
 import { UUID_REGEX } from "../index";

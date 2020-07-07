@@ -1,7 +1,7 @@
 import { GraphQLObjectType } from "graphql";
 import { GraphQLDateTime } from "graphql-iso-date";
 import { nonNull, String } from "../../fieldTypes";
-import { JobApplication } from "../../../models/JobApplication/Model";
+import { JobApplication } from "../../../models";
 import { GraphQLApplicant } from "../../Applicant/Types/Applicant";
 import { GraphQLOffer } from "../../Offer/Types/GraphQLOffer";
 

@@ -1,8 +1,50 @@
 import { Sequelize } from "sequelize-typescript";
 import { Environment } from "./Environment";
 import databaseJSON from "../../config/database.json";
-import { models } from "../models";
 import { QueryOptions, Transaction } from "sequelize";
+import {
+  Admin,
+  Applicant,
+  ApplicantApprovalEvent,
+  ApplicantCapability,
+  ApplicantCareer,
+  ApplicantLink,
+  Capability,
+  Career,
+  Company,
+  CompanyApprovalEvent,
+  CompanyPhoneNumber,
+  CompanyPhoto,
+  CompanyUser,
+  JobApplication,
+  Offer,
+  OfferCareer,
+  OfferSection,
+  Section,
+  User
+} from "../models";
+
+const models = [
+  Admin,
+  Applicant,
+  ApplicantApprovalEvent,
+  Section,
+  ApplicantLink,
+  JobApplication,
+  Career,
+  ApplicantCareer,
+  Capability,
+  ApplicantCapability,
+  Company,
+  CompanyApprovalEvent,
+  CompanyPhoneNumber,
+  CompanyPhoto,
+  CompanyUser,
+  Offer,
+  OfferSection,
+  OfferCareer,
+  User
+];
 
 export class Database {
   public static sequelize: Sequelize;

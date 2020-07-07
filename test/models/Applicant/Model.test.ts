@@ -1,7 +1,7 @@
 import { ValidationError } from "sequelize";
 import generateUuid from "uuid/v4";
 import { Database } from "../../../src/config/Database";
-import { Applicant } from "../../../src/models/Applicant";
+import { Applicant } from "../../../src/models";
 import { ApprovalStatus, approvalStatuses } from "../../../src/models/ApprovalStatus";
 import { NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
 import { UUID_REGEX } from "../index";

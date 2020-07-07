@@ -1,5 +1,5 @@
 import { IApplicantCareer } from "../../src/models/Applicant";
-import { Admin } from "../../src/models/Admin";
+import { Admin } from "../../src/models";
 import { IExpressContext } from "../graphql/ExpressContext";
 import { ApprovalStatus } from "../../src/models/ApprovalStatus";
 

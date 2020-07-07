@@ -1,6 +1,6 @@
 import { ValidationError } from "sequelize";
 import { Database } from "../../../src/config/Database";
-import { Capability } from "../../../src/models/Capability";
+import { Capability } from "../../../src/models";
 
 describe("Capability", () => {
   beforeAll(() => Database.setConnection());

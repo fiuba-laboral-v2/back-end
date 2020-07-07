@@ -1,13 +1,14 @@
-import { Applicant, IApplicant, IApplicantEditable } from "./index";
+import { IApplicant, IApplicantEditable } from "./index";
 import { ApplicantNotFound, ApplicantNotUpdatedError } from "./Errors";
 import { Database } from "../../config/Database";
-import { ApplicantCareersRepository } from "../ApplicantCareer/Repository";
-import { ApplicantCapabilityRepository } from "../ApplicantCapability/Repository";
+import { ApplicantCareersRepository } from "../ApplicantCareer";
+import { ApplicantCapabilityRepository } from "../ApplicantCapability";
 import { ApplicantApprovalEventRepository } from "./ApplicantApprovalEvent";
-import { SectionRepository } from "./Section/Repository";
+import { SectionRepository } from "./Section";
 import { ApplicantLinkRepository } from "./Link";
-import { UserRepository } from "../User/Repository";
+import { UserRepository } from "../User";
 import { ApprovalStatus } from "../ApprovalStatus";
+import { Applicant } from "..";
 
 export const ApplicantRepository = {
   create: (

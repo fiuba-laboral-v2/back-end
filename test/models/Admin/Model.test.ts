@@ -1,5 +1,5 @@
 import { Database } from "../../../src/config/Database";
-import { Admin } from "../../../src/models/Admin";
+import { Admin } from "../../../src/models";
 import { ValidationError } from "sequelize";
 
 describe("Admin", () => {

@@ -1,9 +1,9 @@
 import { AllowNull, BelongsTo, Column, ForeignKey, Model, Table } from "sequelize-typescript";
-import { Company } from "../Company";
 import { TEXT, UUID, UUIDV4 } from "sequelize";
+import { Company } from "..";
 
 @Table
-export default class CompanyPhoto extends Model<CompanyPhoto> {
+export class CompanyPhoto extends Model<CompanyPhoto> {
   @Column({
     allowNull: false,
     primaryKey: true,

@@ -19,15 +19,17 @@ import {
   UUIDV4
 } from "sequelize";
 import { validateIntegerInRange } from "validations-fiuba-laboral-v2";
-import { JobApplication } from "../JobApplication";
-import { Career } from "../Career/Model";
-import { ApplicantCareer } from "../ApplicantCareer/Model";
-import { Capability } from "../Capability/Model";
-import { ApplicantCapability } from "../ApplicantCapability/Model";
-import { Section } from "./Section";
-import { ApplicantLink } from "./Link";
-import { ApplicantApprovalEvent } from "./ApplicantApprovalEvent";
-import { User } from "../User";
+import {
+  ApplicantApprovalEvent,
+  ApplicantCapability,
+  ApplicantCareer,
+  ApplicantLink,
+  Capability,
+  Career,
+  JobApplication,
+  Section,
+  User
+} from "..";
 import { ApprovalStatus, approvalStatuses } from "../ApprovalStatus";
 import { isApprovalStatus } from "../SequelizeModelValidators";
 

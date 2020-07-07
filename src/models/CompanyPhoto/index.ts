@@ -1,4 +1,1 @@
-import CompanyPhoto from "./Model";
-import { CompanyPhotoRepository } from "./Repository";
-
-export { CompanyPhoto, CompanyPhotoRepository };
+export { CompanyPhotoRepository } from "./Repository";

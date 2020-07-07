@@ -1,8 +1,7 @@
 import { Database } from "../../../src/config/Database";
 import { groupTableNamesByColumn } from "../../../src/models/Approvable/groupTableNamesByColumn";
 import { APPROVABLE_MODELS } from "../../../src/models/Approvable";
-import { Applicant } from "../../../src/models/Applicant";
-import { Company } from "../../../src/models/Company";
+import { Applicant, Company } from "../../../src/models";
 
 describe("groupTableNamesByColumn", () => {
   beforeAll(() => Database.setConnection());

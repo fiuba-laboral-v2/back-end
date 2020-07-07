@@ -5,7 +5,7 @@ import { ID, Int, List, nonNull, String, Boolean } from "../../fieldTypes";
 import { GraphQLOfferSection } from "./GraphQLOfferSection";
 import { GraphQLCareer } from "../../Career/Types/Career";
 import { GraphQLCompany } from "../../Company/Types/GraphQLCompany";
-import { Offer } from "../../../models/Offer";
+import { Offer } from "../../../models";
 import { UserRepository } from "../../../models/User";
 import { JobApplicationRepository } from "../../../models/JobApplication";
 
