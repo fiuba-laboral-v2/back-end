@@ -16,7 +16,7 @@ import { testClientFactory } from "../../../mocks/testClientFactory";
 import { client } from "../../ApolloTestClient";
 
 const UPDATE_APPLICANT_APPROVAL_STATUS = gql`
-  mutation ($uuid: ID!,$approvalStatus: ApprovalStatus!) {
+  mutation ($uuid: ID!, $approvalStatus: ApprovalStatus!) {
     updateApplicantApprovalStatus(uuid: $uuid,approvalStatus: $approvalStatus) {
       uuid
       approvalStatus
@@ -93,6 +93,13 @@ describe("updateCompanyApprovalStatus", () => {
 
     beforeAll(async () => {
       applicant = await applicants.next().value;
+    });
+
+    it("returns an error if no uuid is provided", async () => {
+      const { apolloClient } = await testClientFactory.admin();
+      const dataToUpdate = { approvalStatus: ApprovalStatus.approved };
+      const { errors } = await performMutation(apolloClient, dataToUpdate);
+      expect(errors).not.toBeUndefined();
     });
 
     it("returns an error if no user is logged in", async () => {
