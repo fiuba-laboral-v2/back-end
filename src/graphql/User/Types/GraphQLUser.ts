@@ -6,7 +6,7 @@ import { GraphQLApplicant } from "../../Applicant/Types/Applicant";
 import { GraphQLCompany } from "../../Company/Types/GraphQLCompany";
 
 export const GraphQLUser = new GraphQLObjectType<User>({
-  name: "User",
+  name: "CompanyUser",
   fields: () => ({
     uuid: {
       type: nonNull(ID)

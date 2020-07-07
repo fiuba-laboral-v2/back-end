@@ -24,6 +24,12 @@ const query = gql`
       approvalStatus
       phoneNumbers
       photos
+      users {
+        uuid
+        email
+        name
+        surname
+      }
     }
   }
 `;
@@ -48,7 +54,7 @@ describe("getCompanyByUuid", () => {
       variables: { uuid: company.uuid }
     });
     expect(response.errors).toBeUndefined();
-    expect(response.data).toEqual({
+    expect(response.data).toMatchObject({
       getCompanyByUuid: {
         cuit: company.cuit,
         companyName: company.companyName,
@@ -59,8 +65,11 @@ describe("getCompanyByUuid", () => {
         email: company.email,
         createdAt: company.createdAt.toISOString(),
         approvalStatus: company.approvalStatus,
-        phoneNumbers: expect.arrayContaining((await company.getPhoneNumbers())),
-        photos: expect.arrayContaining((await company.getPhotos()))
+        phoneNumbers: (await company.getPhoneNumbers()),
+        photos: (await company.getPhotos()),
+        users: (await company.getUsers()).map(
+          ({ uuid, email, name, surname }) => ({ uuid, email, name, surname })
+        )
       }
     });
   });

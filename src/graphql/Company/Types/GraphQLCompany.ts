@@ -3,6 +3,7 @@ import { GraphQLDateTime } from "graphql-iso-date";
 import { ID, List, nonNull, String } from "../../fieldTypes";
 import { Company } from "../../../models/Company";
 import { GraphQLApprovalStatus } from "../../ApprovalStatus/Types/GraphQLApprovalStatus";
+import { GraphQLCompanyUser } from "./GraphQLCompanyUser";
 
 export const GraphQLCompany = new GraphQLObjectType<Company>({
   name: "Company",
@@ -46,6 +47,10 @@ export const GraphQLCompany = new GraphQLObjectType<Company>({
       type: List(String),
       resolve: async company =>
         (await company.getPhotos()).map(({ photo }) => photo)
+    },
+    users: {
+      type: List(GraphQLCompanyUser),
+      resolve: company => company.getUsers()
     }
   })
 });
