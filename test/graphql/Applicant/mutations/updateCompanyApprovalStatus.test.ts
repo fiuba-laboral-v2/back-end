@@ -95,28 +95,28 @@ describe("updateCompanyApprovalStatus", () => {
       applicant = await applicants.next().value;
     });
 
-    it("throws an error if no user is logged in", async () => {
+    it("returns an error if no user is logged in", async () => {
       const apolloClient = client.loggedOut();
       const dataToUpdate = { uuid: applicant.uuid, approvalStatus: ApprovalStatus.approved };
       const { errors } = await performMutation(apolloClient, dataToUpdate);
       expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
     });
 
-    it("throws an error if the current user is from a company", async () => {
+    it("returns an error if the current user is from a company", async () => {
       const { apolloClient } = await testClientFactory.company();
       const dataToUpdate = { uuid: applicant.uuid, approvalStatus: ApprovalStatus.approved };
       const { errors } = await performMutation(apolloClient, dataToUpdate);
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
-    it("throws an error if the current user is an applicant", async () => {
+    it("returns an error if the current user is an applicant", async () => {
       const { apolloClient } = await testClientFactory.applicant();
       const dataToUpdate = { uuid: applicant.uuid, approvalStatus: ApprovalStatus.approved };
       const { errors } = await performMutation(apolloClient, dataToUpdate);
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
-    it("throws an error if the applicant does not exists", async () => {
+    it("returns an error if the applicant does not exists", async () => {
       const nonExistentApplicantUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       const { apolloClient } = await testClientFactory.admin();
       const { errors } = await performMutation(
@@ -129,7 +129,7 @@ describe("updateCompanyApprovalStatus", () => {
       expect(errors![0].extensions!.data).toEqual({ errorType: ApplicantNotUpdatedError.name });
     });
 
-    it("throws an error if the approvalStatus is invalid", async () => {
+    it("returns an error if the approvalStatus is invalid", async () => {
       const { apolloClient } = await testClientFactory.admin();
       const dataToUpdate = { uuid: applicant.uuid, approvalStatus: "invalidApprovalStatus" };
       const { errors } = await performMutation(apolloClient, dataToUpdate);
