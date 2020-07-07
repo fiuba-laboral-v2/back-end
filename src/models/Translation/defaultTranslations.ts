@@ -164,7 +164,7 @@ export const defaultTranslations = {
     { key: "cuit", value: "Cuit:" }
   ],
   adminApplicantDetails: [
-    { key: "pardon", value: "Padrón:" }
+    { key: "padron", value: "Padrón:" }
   ],
   adminActions: [
     { key: "approve", value: "Aprobar" },
