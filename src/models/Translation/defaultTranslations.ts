@@ -140,8 +140,9 @@ export const defaultTranslations = {
     { key: "hoursPerDay", value: "Horas por dia" }
   ],
   typeFilterMenu: [
-    { key: "companyIconTitle", value: "Nueva empresa" },
-    { key: "applicantIconTitle", value: "Nuevo postulante" }
+    { key: "title", value: "Tipo" },
+    { key: "companyIconTitle", value: "Empresa" },
+    { key: "applicantIconTitle", value: "Postulante" }
   ],
   adminTaskList: [
     { key: "pendingTasks", value: "Tareas pendientes" }
