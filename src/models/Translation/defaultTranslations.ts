@@ -157,8 +157,14 @@ export const defaultTranslations = {
   adminCompanyMainTitle: [
     { key: "title", value: "Registro de Empresa" }
   ],
+  adminApplicantMainTitle: [
+    { key: "title", value: "Registro de Postulante" }
+  ],
   adminCompanyDetails: [
     { key: "cuit", value: "Cuit:" }
+  ],
+  adminApplicantDetails: [
+    { key: "pardon", value: "Padrón:" }
   ],
   adminActions: [
     { key: "approve", value: "Aprobar" },
