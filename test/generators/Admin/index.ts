@@ -1,5 +1,6 @@
 import { withCompleteData } from "./withCompleteData";
-import { Admin, AdminRepository, ISaveAdmin } from "../../../src/models/Admin";
+import { AdminRepository, ISaveAdmin } from "../../../src/models/Admin";
+import { Admin } from "../../../src/models";
 import { CustomGenerator } from "../types";
 
 export type TAdminDataGenerator = CustomGenerator<ISaveAdmin>;

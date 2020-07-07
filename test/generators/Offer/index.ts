@@ -1,7 +1,8 @@
 import { withObligatoryData } from "./withObligatoryData";
 import { withOneSection } from "./withOneSection";
 import { offerGenericGenerator } from "./offerGenericGenerator";
-import { IOffer, Offer, OfferRepository } from "../../../src/models/Offer";
+import { IOffer, OfferRepository } from "../../../src/models/Offer";
+import { Offer } from "../../../src/models";
 import { IOfferCareer } from "../../../src/models/Offer/OfferCareer";
 import { IOfferSection } from "../../../src/models/Offer/OfferSection";
 
