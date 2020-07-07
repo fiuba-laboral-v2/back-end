@@ -3,7 +3,7 @@ import { ID, nonNull, String } from "../../fieldTypes";
 import { User } from "../../../models/User";
 
 export const GraphQLCompanyUser = new GraphQLObjectType<User>({
-  name: "User",
+  name: "CompanyUser",
   fields: () => ({
     uuid: {
       type: nonNull(ID)

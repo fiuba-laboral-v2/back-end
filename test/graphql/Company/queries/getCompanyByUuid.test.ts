@@ -54,7 +54,7 @@ describe("getCompanyByUuid", () => {
       variables: { uuid: company.uuid }
     });
     expect(response.errors).toBeUndefined();
-    expect(response.data).toMatchObject({
+    expect(response.data).toEqual({
       getCompanyByUuid: {
         cuit: company.cuit,
         companyName: company.companyName,
@@ -65,11 +65,11 @@ describe("getCompanyByUuid", () => {
         email: company.email,
         createdAt: company.createdAt.toISOString(),
         approvalStatus: company.approvalStatus,
-        phoneNumbers: (await company.getPhoneNumbers()),
-        photos: (await company.getPhotos()),
-        users: (await company.getUsers()).map(
+        phoneNumbers: expect.arrayContaining((await company.getPhoneNumbers())),
+        photos: expect.arrayContaining((await company.getPhotos())),
+        users: expect.arrayContaining((await company.getUsers()).map(
           ({ uuid, email, name, surname }) => ({ uuid, email, name, surname })
-        )
+        ))
       }
     });
   });
