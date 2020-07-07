@@ -3,6 +3,7 @@ import { IOffer, Offer } from "./";
 import { IOfferSection, OfferSection } from "./OfferSection";
 import { IOfferCareer, OfferCareer } from "./OfferCareer";
 import { OfferNotFound } from "./Errors";
+import { Op } from "sequelize";
 
 export const OfferRepository = {
   create: (
@@ -42,7 +43,18 @@ export const OfferRepository = {
 
     return offer;
   },
-  findAll: () => Offer.findAll(),
+  findAll: ({ createdBeforeThan }: { createdBeforeThan?: string }) =>
+    Offer.findAll({
+      ...(createdBeforeThan && {
+        where: {
+          createdAt: {
+            [Op.lt]: createdBeforeThan
+          }
+        }
+      }),
+      order: [["createdAt", "DESC"]],
+      limit: 1
+    }),
   findByCompanyUuid: (companyUuid: string) =>
     Offer.findAll({ where: { companyUuid } }),
   truncate: () => Offer.truncate({ cascade: true })
