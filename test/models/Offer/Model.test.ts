@@ -1,6 +1,6 @@
 import { NumberIsTooSmallError, SalaryRangeError } from "validations-fiuba-laboral-v2";
 import { Database } from "../../../src/config/Database";
-import { Offer } from "../../../src/models/Offer";
+import { Offer } from "../../../src/models";
 
 describe("Offer", () => {
   beforeAll(() => Database.setConnection());

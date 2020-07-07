@@ -1,6 +1,6 @@
 import { ValidationError } from "sequelize";
 import { Database } from "../../../src/config/Database";
-import { JobApplication } from "../../../src/models/JobApplication";
+import { JobApplication } from "../../../src/models";
 
 describe("JobApplication", () => {
   beforeAll(() => Database.setConnection());

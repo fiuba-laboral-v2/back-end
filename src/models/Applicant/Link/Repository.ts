@@ -1,9 +1,7 @@
 import { TLink } from "./Interface";
-import { Applicant } from "../Model";
-import { ApplicantLink } from ".";
-import { Op } from "sequelize";
+import { Applicant, ApplicantLink } from "../..";
+import { Op, Transaction } from "sequelize";
 import { isEmpty } from "lodash";
-import { Transaction } from "sequelize";
 
 export const ApplicantLinkRepository = {
   update: async (links: TLink[], applicant: Applicant, transaction?: Transaction) => {

@@ -1,6 +1,7 @@
 import { Database } from "../../../src/config/Database";
-import { Career, CareerRepository, Errors } from "../../../src/models/Career";
+import { CareerRepository, Errors } from "../../../src/models/Career";
 import { CareerGenerator, TCareerDataGenerator } from "../../generators/Career";
+import { Career } from "../../../src/models";
 
 describe("CareerRepository", () => {
   let careersData: TCareerDataGenerator;

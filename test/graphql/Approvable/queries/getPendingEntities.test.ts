@@ -7,7 +7,7 @@ import { ApplicantRepository } from "../../../../src/models/Applicant";
 import { ApprovableEntityType, IApprovableFilterOptions } from "../../../../src/models/Approvable";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import { UserRepository } from "../../../../src/models/User";
-import { Admin } from "../../../../src/models/Admin";
+import { Admin } from "../../../../src/models";
 import { GraphQLCompany } from "../../../../src/graphql/Company/Types/GraphQLCompany";
 import { GraphQLApplicant } from "../../../../src/graphql/Applicant/Types/Applicant";
 import { UnauthorizedError } from "../../../../src/graphql/Errors";

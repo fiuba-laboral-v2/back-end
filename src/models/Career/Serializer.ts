@@ -1,4 +1,4 @@
-import { Career } from "./index";
+import { Career } from "..";
 
 import pick from "lodash/pick";
 

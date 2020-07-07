@@ -1,4 +1,4 @@
-import { ApplicantCareer } from "./index";
+import { ApplicantCareer } from "..";
 
 export const ApplicantCareersSerializer = {
   serialize: async (applicantCareer: ApplicantCareer) => {

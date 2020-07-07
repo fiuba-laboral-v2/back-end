@@ -1,8 +1,8 @@
 import { Database } from "../../config/Database";
 import { ISaveAdmin } from "./Interface";
-import { Admin } from "./Model";
 import { UserRepository } from "../User";
 import { AdminNotFoundError } from "./Errors";
+import { Admin } from "..";
 
 export const AdminRepository = {
   create: (

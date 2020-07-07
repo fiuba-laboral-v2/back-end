@@ -1,6 +1,5 @@
 import { List, nonNull } from "../../fieldTypes";
-import { ApprovableRepository } from "../../../models/Approvable";
-import { IApprovableFilterOptions } from "../../../models/Approvable/Interfaces";
+import { ApprovableRepository, IApprovableFilterOptions } from "../../../models/Approvable";
 import { GraphQLApprovable } from "../Types/GraphQLApprovable";
 import { GraphQLApprovableEntityType } from "../Types/GraphQLApprovableEntityType";
 

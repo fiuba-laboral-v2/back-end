@@ -139,7 +139,7 @@ export const defaultTranslations = {
     { key: "title", value: "Carga horaria" },
     { key: "hoursPerDay", value: "Horas por dia" }
   ],
-  adminMenu: [
+  typeFilterMenu: [
     { key: "companyIconTitle", value: "Nueva empresa" },
     { key: "applicantIconTitle", value: "Nuevo postulante" }
   ],

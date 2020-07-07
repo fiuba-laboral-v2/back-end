@@ -1,5 +1,4 @@
-import { Applicant } from "../Model";
-import { Section } from ".";
+import { Applicant, Section } from "../..";
 import { TSection } from "../Interface";
 import { Transaction } from "sequelize";
 

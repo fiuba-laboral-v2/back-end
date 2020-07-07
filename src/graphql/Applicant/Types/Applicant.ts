@@ -6,7 +6,7 @@ import { GraphQLCapability } from "../../Capability/Types/Capability";
 import { GraphQLApplicantCareer } from "./ApplicantCareers";
 import { GraphQLSection } from "./Section";
 import { GraphQLLink } from "./Link";
-import { Applicant } from "../../../models/Applicant";
+import { Applicant } from "../../../models";
 import { ApplicantCareersSerializer } from "../../../models/ApplicantCareer";
 import { GraphQLApprovalStatus } from "../../ApprovalStatus/Types/GraphQLApprovalStatus";
 

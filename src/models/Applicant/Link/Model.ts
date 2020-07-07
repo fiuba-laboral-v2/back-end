@@ -1,5 +1,5 @@
 import { BelongsTo, Column, ForeignKey, Is, Model, PrimaryKey, Table } from "sequelize-typescript";
-import { Applicant } from "../Model";
+import { Applicant } from "../..";
 import { validateURL } from "validations-fiuba-laboral-v2";
 import { STRING, UUID } from "sequelize";
 

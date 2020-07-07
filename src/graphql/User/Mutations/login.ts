@@ -1,6 +1,5 @@
-import { nonNull, String, Boolean } from "../../fieldTypes";
-import { IUser } from "../../../models/User";
-import { UserRepository } from "../../../models/User/Repository";
+import { Boolean, nonNull, String } from "../../fieldTypes";
+import { IUser, UserRepository } from "../../../models/User";
 import { JWT } from "../../../JWT";
 import { Context } from "../../Context/graphqlContext";
 import { BadCredentialsError } from "../Errors";

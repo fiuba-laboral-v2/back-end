@@ -1,6 +1,6 @@
 import { Database } from "../../../src/config/Database";
-import { Career, CareerRepository } from "../../../src/models/Career";
-import { ApplicantCareer } from "../../../src/models/ApplicantCareer";
+import { CareerRepository } from "../../../src/models/Career";
+import { ApplicantCareer, Career } from "../../../src/models";
 import { NumberIsTooLargeError, NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
 
 describe("ApplicantCareer", () => {

@@ -1,3 +1,1 @@
-import { ApplicantCapability } from "./Model";
-
-export { ApplicantCapability };
+export { ApplicantCapabilityRepository } from "./Repository";

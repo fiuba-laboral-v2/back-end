@@ -1,5 +1,5 @@
-import { Applicant } from "../Applicant";
-import { Company } from "../Company";
+import { Applicant } from "..";
+import { Company } from "..";
 
 export const TABLE_NAME_COLUMN = "tableNameColumn";
 export type ApprovableModelsType = typeof Applicant | typeof Company;

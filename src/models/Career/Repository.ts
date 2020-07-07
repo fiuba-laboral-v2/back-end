@@ -1,6 +1,6 @@
-import { Career, ICareer } from "./index";
+import { ICareer } from "./index";
 import { Op } from "sequelize";
-import { ApplicantCareer } from "../ApplicantCareer/Model";
+import { ApplicantCareer, Career } from "..";
 import { Database } from "../../config/Database";
 
 import { CareersNotFound } from "./Errors/CareersNotFound";

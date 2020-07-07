@@ -1,8 +1,7 @@
 import { ValidationError } from "sequelize";
 import { Database } from "../../../../src/config/Database";
-import { Applicant } from "../../../../src/models/Applicant";
-import { ApplicantLink } from "../../../../src/models/Applicant/Link";
-import { UserRepository } from "../../../../src/models/User/Repository";
+import { Applicant, ApplicantLink } from "../../../../src/models";
+import { UserRepository } from "../../../../src/models/User";
 
 describe("ApplicantLink", () => {
   let applicant: Applicant;

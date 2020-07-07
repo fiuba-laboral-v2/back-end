@@ -1,8 +1,7 @@
 import { GraphQLUnionType } from "graphql";
 import { GraphQLCompany } from "../../Company/Types/GraphQLCompany";
 import { GraphQLApplicant } from "../../Applicant/Types/Applicant";
-import { Applicant } from "../../../models/Applicant";
-import { Company } from "../../../models/Company";
+import { Applicant, Company } from "../../../models";
 
 export const GraphQLApprovable = new GraphQLUnionType({
   name: "Approvable",

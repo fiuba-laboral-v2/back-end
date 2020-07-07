@@ -4,7 +4,8 @@ import { Database } from "../../../../src/config/Database";
 import { client } from "../../ApolloTestClient";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 import { CompanyGenerator } from "../../../generators/Company";
-import { Company, CompanyRepository } from "../../../../src/models/Company";
+import { CompanyRepository } from "../../../../src/models/Company";
+import { Company } from "../../../../src/models";
 import {
   CompanyApprovalEventRepository
 } from "../../../../src/models/Company/CompanyApprovalEvent";

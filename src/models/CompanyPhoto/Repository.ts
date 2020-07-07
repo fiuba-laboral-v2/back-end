@@ -1,6 +1,5 @@
 import { Transaction } from "sequelize";
-import { CompanyPhoto } from "./index";
-import { Company } from "../Company";
+import { Company, CompanyPhoto } from "..";
 
 export const CompanyPhotoRepository = {
   bulkCreate: (photos: string[] = [], company: Company, transaction?: Transaction) => {

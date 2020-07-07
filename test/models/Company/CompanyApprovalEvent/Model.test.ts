@@ -1,5 +1,5 @@
 import { Database } from "../../../../src/config/Database";
-import { CompanyApprovalEvent } from "../../../../src/models/Company/CompanyApprovalEvent";
+import { CompanyApprovalEvent } from "../../../../src/models";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import { ValidationError } from "sequelize";
 import { UUID_REGEX } from "../../index";

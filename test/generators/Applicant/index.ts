@@ -1,6 +1,7 @@
 import { withMinimumData } from "./withMinimumData";
-import { IApplicant, Applicant, ApplicantRepository } from "../../../src/models/Applicant";
+import { IApplicant, ApplicantRepository } from "../../../src/models/Applicant";
 import { CustomGenerator } from "../types";
+import { Applicant } from "../../../src/models";
 
 export type TApplicantGenerator = CustomGenerator<Promise<Applicant>>;
 export type TApplicantDataGenerator = CustomGenerator<IApplicant>;

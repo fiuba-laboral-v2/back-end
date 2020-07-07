@@ -1,6 +1,5 @@
 import { BelongsToMany, Column, HasMany, Is, Model, Table } from "sequelize-typescript";
-import { Applicant } from "../Applicant/Model";
-import { ApplicantCareer } from "../ApplicantCareer/Model";
+import { Applicant, ApplicantCareer } from "..";
 import { validateIntegerInRange } from "validations-fiuba-laboral-v2";
 import { INTEGER, STRING } from "sequelize";
 
