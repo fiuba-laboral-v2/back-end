@@ -17,7 +17,7 @@ import { client } from "../../ApolloTestClient";
 
 const UPDATE_APPLICANT_APPROVAL_STATUS = gql`
   mutation ($uuid: ID!, $approvalStatus: ApprovalStatus!) {
-    updateApplicantApprovalStatus(uuid: $uuid,approvalStatus: $approvalStatus) {
+    updateApplicantApprovalStatus(uuid: $uuid, approvalStatus: $approvalStatus) {
       uuid
       approvalStatus
     }
