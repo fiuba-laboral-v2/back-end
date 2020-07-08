@@ -8,6 +8,7 @@ export const applicantPermissions = {
     getApplicants: or(isApprovedApplicant, isAdmin)
   },
   Mutation: {
-    updateCurrentApplicant: isApplicant
+    updateCurrentApplicant: isApplicant,
+    updateApplicantApprovalStatus: isAdmin
   }
 };
