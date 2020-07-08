@@ -51,7 +51,7 @@ describe("ApprovableRepository", () => {
   it("returns an empty array if no approvableEntities are provided", async () => {
     await companies.next().value;
     await applicants.next().value;
-    const result = await ApprovableRepository.findPending({
+    const result = await ApprovableRepository.findApprovables({
       approvableEntityTypes: []
     });
     expect(result).toEqual([]);
@@ -63,7 +63,7 @@ describe("ApprovableRepository", () => {
 
     const pendingCompany = await companies.next().value;
 
-    const result = await ApprovableRepository.findPending({
+    const result = await ApprovableRepository.findApprovables({
       approvableEntityTypes: [ApprovableEntityType.Company]
     });
     expect(result).toHaveLength(1);
@@ -75,7 +75,7 @@ describe("ApprovableRepository", () => {
     await createApplicantWithStatus(ApprovalStatus.rejected);
     await createApplicantWithStatus(ApprovalStatus.approved);
     const pendingApplicant = await applicants.next().value;
-    const result = await ApprovableRepository.findPending({
+    const result = await ApprovableRepository.findApprovables({
       approvableEntityTypes: [ApprovableEntityType.Applicant]
     });
     expect(result).toHaveLength(1);
@@ -91,7 +91,7 @@ describe("ApprovableRepository", () => {
     const pendingApplicant = await applicants.next().value;
     const pendingCompany = await companies.next().value;
 
-    const result = await ApprovableRepository.findPending({
+    const result = await ApprovableRepository.findApprovables({
       approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company]
     });
     expect(result).toHaveLength(2);
@@ -104,7 +104,7 @@ describe("ApprovableRepository", () => {
   it("sorts pending companies by updatedAt", async () => {
     await companies.next().value;
     await companies.next().value;
-    const [firstResult, secondResult] = await ApprovableRepository.findPending({
+    const [firstResult, secondResult] = await ApprovableRepository.findApprovables({
       approvableEntityTypes: [ApprovableEntityType.Company]
     });
     expect(firstResult).toBeInstanceOf(Company);
@@ -115,7 +115,7 @@ describe("ApprovableRepository", () => {
   it("sorts pending applicants by updatedAt", async () => {
     await applicants.next().value;
     await applicants.next().value;
-    const [firstResult, secondResult] = await ApprovableRepository.findPending({
+    const [firstResult, secondResult] = await ApprovableRepository.findApprovables({
       approvableEntityTypes: [ApprovableEntityType.Applicant]
     });
     expect(firstResult).toBeInstanceOf(Applicant);
@@ -129,7 +129,7 @@ describe("ApprovableRepository", () => {
     const company3 = await companies.next().value;
     const company4 = await companies.next().value;
 
-    const result = await ApprovableRepository.findPending({
+    const result = await ApprovableRepository.findApprovables({
       approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company]
     });
     expect(result.map(entity => entity.uuid)).toEqual([

@@ -11,5 +11,5 @@ export const getApprovables = {
     }
   },
   resolve: (_: undefined, options: IApprovableFilterOptions) =>
-    ApprovableRepository.findPending(options)
+    ApprovableRepository.findApprovables(options)
 };

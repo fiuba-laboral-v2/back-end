@@ -8,7 +8,7 @@ const getModelByTableName = (tableName: string) =>
   find(APPROVABLE_MODELS, ["tableName", tableName]);
 
 export const ApprovableRepository = {
-  findPending: async (options: IApprovableFilterOptions) => {
+  findApprovables: async (options: IApprovableFilterOptions) => {
     if (options.approvableEntityTypes.length === 0) return [];
     const rows = await Database.query(findPendingQuery(options), { type: "SELECT" });
     return rows.map((row: object) => {
