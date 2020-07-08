@@ -1,14 +1,14 @@
 import { Database } from "../../../src/config/Database";
-import { findPendingQuery } from "../../../src/models/Approvable/findPendingQuery";
+import { findApprovablesQuery } from "../../../src/models/Approvable/findApprovablesQuery";
 import { ApprovableEntityType } from "../../../src/models/Approvable";
 import { ApprovableEntityTypesIsEmptyError } from "../../../src/models/Approvable/Errors";
 
-describe("findPendingQuery", () => {
+describe("findApprovablesQuery", () => {
   beforeAll(() => Database.setConnection());
   afterAll(() => Database.close());
 
   it("returns an sql query of approvable entities in pending status", async () => {
-    const query = findPendingQuery({
+    const query = findApprovablesQuery({
       approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company]
     });
     const expectedQuery = `
@@ -44,7 +44,7 @@ describe("findPendingQuery", () => {
 
   it("throws an error if no approvableEntityTypes are provided", async () => {
     expect(
-      () => findPendingQuery({ approvableEntityTypes: [] })
+      () => findApprovablesQuery({ approvableEntityTypes: [] })
     ).toThrowErrorWithMessage(
       ApprovableEntityTypesIsEmptyError,
       ApprovableEntityTypesIsEmptyError.buildMessage()
@@ -52,7 +52,7 @@ describe("findPendingQuery", () => {
   });
 
   it("returns an sql query of Companies in pending status", async () => {
-    const query = findPendingQuery({ approvableEntityTypes: [ApprovableEntityType.Company] });
+    const query = findApprovablesQuery({ approvableEntityTypes: [ApprovableEntityType.Company] });
     const expectedQuery = `
       WITH "Approvable" AS
         (
@@ -79,7 +79,7 @@ describe("findPendingQuery", () => {
   });
 
   it("returns an sql query of Applicants in pending status", async () => {
-    const query = findPendingQuery({ approvableEntityTypes: [ApprovableEntityType.Applicant] });
+    const query = findApprovablesQuery({ approvableEntityTypes: [ApprovableEntityType.Applicant] });
     const expectedQuery = `
       WITH "Approvable" AS
         (
