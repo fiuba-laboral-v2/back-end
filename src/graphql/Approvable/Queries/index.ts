@@ -1,5 +1,5 @@
-import { getPendingEntities } from "./getPendingEntities";
+import { getApprovables } from "./getApprovables";
 
 export const approvableQueries = {
-  getPendingEntities
+  getApprovables
 };

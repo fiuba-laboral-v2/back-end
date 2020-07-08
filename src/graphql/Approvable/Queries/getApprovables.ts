@@ -3,7 +3,7 @@ import { ApprovableRepository, IApprovableFilterOptions } from "../../../models/
 import { GraphQLApprovable } from "../Types/GraphQLApprovable";
 import { GraphQLApprovableEntityType } from "../Types/GraphQLApprovableEntityType";
 
-export const getPendingEntities = {
+export const getApprovables = {
   type: nonNull(List(GraphQLApprovable)),
   args: {
     approvableEntityTypes: {

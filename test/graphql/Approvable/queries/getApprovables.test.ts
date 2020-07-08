@@ -17,9 +17,9 @@ import { CompanyGenerator, TCompanyGenerator } from "../../../generators/Company
 import { ApplicantGenerator, TApplicantGenerator } from "../../../generators/Applicant";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
-const GET_PENDING_ENTITIES = gql`
-  query GetPendingEntities($approvableEntityTypes: [ApprovableEntityType]!) {
-    getPendingEntities(approvableEntityTypes: $approvableEntityTypes) {
+const GET_APPROVABLES = gql`
+  query GetApprovables($approvableEntityTypes: [ApprovableEntityType]!) {
+      getApprovables(approvableEntityTypes: $approvableEntityTypes) {
       ... on Company {
         __typename
         uuid
@@ -32,7 +32,7 @@ const GET_PENDING_ENTITIES = gql`
   }
 `;
 
-describe("getPendingEntities", () => {
+describe("getApprovables", () => {
   let companies: TCompanyGenerator;
   let applicants: TApplicantGenerator;
   let admin: Admin;
@@ -52,14 +52,14 @@ describe("getPendingEntities", () => {
 
   afterAll(() => Database.close());
 
-  const getPendingEntities = async (options: IApprovableFilterOptions) => {
+  const getApprovables = async (options: IApprovableFilterOptions) => {
     const { apolloClient } = await testClientFactory.admin();
     const { errors, data } = await apolloClient.query({
-      query: GET_PENDING_ENTITIES,
+      query: GET_APPROVABLES,
       variables: options
     });
     expect(errors).toBeUndefined();
-    return data!.getPendingEntities;
+    return data!.getApprovables;
   };
 
   const createCompanyWithStatus = async (status: ApprovalStatus) => {
@@ -85,7 +85,7 @@ describe("getPendingEntities", () => {
     await createCompanyWithStatus(ApprovalStatus.approved);
     await companies.next().value;
     await applicants.next().value;
-    const result = await getPendingEntities({ approvableEntityTypes: [] });
+    const result = await getApprovables({ approvableEntityTypes: [] });
     expect(result).toEqual([]);
   });
 
@@ -93,7 +93,7 @@ describe("getPendingEntities", () => {
     await createCompanyWithStatus(ApprovalStatus.rejected);
     await createCompanyWithStatus(ApprovalStatus.approved);
     const pendingCompany = await companies.next().value;
-    const result = await getPendingEntities({
+    const result = await getApprovables({
       approvableEntityTypes: [ApprovableEntityType.Company]
     });
     expect(result).toEqual([{
@@ -106,7 +106,7 @@ describe("getPendingEntities", () => {
     await createApplicantWithStatus(ApprovalStatus.rejected);
     await createApplicantWithStatus(ApprovalStatus.approved);
     const pendingApplicant = await applicants.next().value;
-    const result = await getPendingEntities({
+    const result = await getApprovables({
       approvableEntityTypes: [ApprovableEntityType.Applicant]
     });
     expect(result).toEqual([{
@@ -122,7 +122,7 @@ describe("getPendingEntities", () => {
     await createApplicantWithStatus(ApprovalStatus.approved);
     const pendingApplicant = await applicants.next().value;
     const pendingCompany = await companies.next().value;
-    const result = await getPendingEntities({
+    const result = await getApprovables({
       approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company]
     });
     expect(result).toEqual(expect.arrayContaining([
@@ -141,7 +141,7 @@ describe("getPendingEntities", () => {
     const firstCompany = await companies.next().value;
     const secondCompany = await companies.next().value;
     expect([secondCompany, firstCompany]).toBeSortedBy({ key: "updatedAt", order: "desc" });
-    const [firstResult, secondResult] = await getPendingEntities({
+    const [firstResult, secondResult] = await getApprovables({
       approvableEntityTypes: [ApprovableEntityType.Company]
     });
     expect(firstResult.uuid).toEqual(secondCompany.uuid);
@@ -152,7 +152,7 @@ describe("getPendingEntities", () => {
     const firstApplicant = await applicants.next().value;
     const secondApplicant = await applicants.next().value;
     expect([secondApplicant, firstApplicant]).toBeSortedBy({ key: "updatedAt", order: "desc" });
-    const [firstResult, secondResult] = await getPendingEntities({
+    const [firstResult, secondResult] = await getApprovables({
       approvableEntityTypes: [ApprovableEntityType.Applicant]
     });
     expect(firstResult.uuid).toEqual(secondApplicant.uuid);
@@ -166,7 +166,7 @@ describe("getPendingEntities", () => {
     const company4 = await companies.next().value;
     const entitiesOrderByLatestUpdated = [company4, company3, applicant2, applicant1];
     expect(entitiesOrderByLatestUpdated).toBeSortedBy({ key: "updatedAt", order: "desc" });
-    const [firstResult, secondResult, thirdResult, fourthResult] = await getPendingEntities({
+    const [firstResult, secondResult, thirdResult, fourthResult] = await getApprovables({
       approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company]
     });
     expect(firstResult.uuid).toEqual(company4.uuid);
@@ -179,7 +179,7 @@ describe("getPendingEntities", () => {
     it("returns an error if no approvableEntityTypes are provided", async () => {
       const { apolloClient } = await testClientFactory.admin();
       const { errors } = await apolloClient.query({
-        query: GET_PENDING_ENTITIES,
+        query: GET_APPROVABLES,
         variables: {}
       });
       expect(errors).not.toBeUndefined();
@@ -191,7 +191,7 @@ describe("getPendingEntities", () => {
       { apolloClient }: { apolloClient: ApolloServerTestClient }
     ) => {
       const { errors } = await apolloClient.query({
-        query: GET_PENDING_ENTITIES,
+        query: GET_APPROVABLES,
         variables: {
           approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company]
         }
