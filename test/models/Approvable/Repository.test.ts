@@ -44,7 +44,7 @@ describe("ApprovableRepository", () => {
     approvables: Approvable[],
     statuses: ApprovalStatus[]
   ) => {
-    const result = await ApprovableRepository.findApprovables({
+    const result = await ApprovableRepository.find({
       approvableEntityTypes: approvables.map(approvable => approvable.constructor.name) as any,
       statuses: statuses
     });
@@ -54,7 +54,7 @@ describe("ApprovableRepository", () => {
   };
 
   it("returns an empty array if no approvableEntities are provided", async () => {
-    const result = await ApprovableRepository.findApprovables({
+    const result = await ApprovableRepository.find({
       approvableEntityTypes: [],
       statuses: [ApprovalStatus.pending]
     });
@@ -118,7 +118,7 @@ describe("ApprovableRepository", () => {
   });
 
   it("sorts pending applicants and companies by updatedAt in any status", async () => {
-    const result = await ApprovableRepository.findApprovables({
+    const result = await ApprovableRepository.find({
       approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company],
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected]
     });
