@@ -2,7 +2,7 @@ import { Database } from "../../../src/config/Database";
 import { CompanyRepository } from "../../../src/models/Company";
 import { UserRepository } from "../../../src/models/User";
 import {
-  Approvable,
+  AdminTask,
   AdminTaskType,
   AdminTaskRepository
 } from "../../../src/models/AdminTask";
@@ -41,7 +41,7 @@ describe("AdminTaskRepository", () => {
   afterAll(() => Database.close());
 
   const expectToFindAdminTasksWithStatuses = async (
-    approvables: Approvable[],
+    approvables: AdminTask[],
     statuses: ApprovalStatus[]
   ) => {
     const result = await AdminTaskRepository.find({

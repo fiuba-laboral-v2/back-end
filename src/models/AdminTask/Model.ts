@@ -7,7 +7,7 @@ export const ADMIN_TASK_MODELS = [
   Applicant,
   Company
 ];
-export type Approvable = Applicant | Company;
+export type AdminTask = Applicant | Company;
 export enum AdminTaskType {
   Applicant = "Applicant",
   Company = "Company"

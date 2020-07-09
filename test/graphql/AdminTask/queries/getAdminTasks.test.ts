@@ -4,7 +4,7 @@ import { Database } from "../../../../src/config/Database";
 
 import { CompanyRepository } from "../../../../src/models/Company";
 import {
-  Approvable,
+  AdminTask,
   AdminTaskType,
   IAdminTasksFilter
 } from "../../../../src/models/AdminTask";
@@ -77,7 +77,7 @@ describe("getAdminTasks", () => {
   };
 
   const expectToFindApprovableWithStatuses = async (
-    approvables: Approvable[],
+    approvables: AdminTask[],
     statuses: ApprovalStatus[]
   ) => {
     const result = await getAdminTasks({
