@@ -1,10 +1,10 @@
 import { Database } from "../../../src/config/Database";
-import { findApprovablesQuery } from "../../../src/models/Approvable/findApprovablesQuery";
-import { AdminTaskType } from "../../../src/models/Approvable";
+import { findApprovablesQuery } from "../../../src/models/AdminTask/findApprovablesQuery";
+import { AdminTaskType } from "../../../src/models/AdminTask";
 import {
   AdminTaskTypesIsEmptyError,
   StatusesIsEmptyError
-} from "../../../src/models/Approvable/Errors";
+} from "../../../src/models/AdminTask/Errors";
 import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
 
 describe("findApprovablesQuery", () => {

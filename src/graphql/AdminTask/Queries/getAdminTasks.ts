@@ -1,5 +1,5 @@
 import { List, nonNull } from "../../fieldTypes";
-import { ApprovableRepository, IAdminTasksFilter } from "../../../models/Approvable";
+import { ApprovableRepository, IAdminTasksFilter } from "../../../models/AdminTask";
 import { GraphQLApprovable } from "../Types/GraphQLApprovable";
 import { GraphQLAdminTaskType } from "../Types/GraphQLAdminTaskType";
 import { GraphQLApprovalStatus } from "../../ApprovalStatus/Types/GraphQLApprovalStatus";

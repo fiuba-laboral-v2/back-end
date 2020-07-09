@@ -5,7 +5,7 @@ import {
   Approvable,
   AdminTaskType,
   ApprovableRepository
-} from "../../../src/models/Approvable";
+} from "../../../src/models/AdminTask";
 import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
 import { Admin, Applicant, Company } from "../../../src/models";
 

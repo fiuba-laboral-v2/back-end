@@ -7,7 +7,7 @@ import {
   Approvable,
   AdminTaskType,
   IAdminTasksFilter
-} from "../../../../src/models/Approvable";
+} from "../../../../src/models/AdminTask";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import { UserRepository } from "../../../../src/models/User";
 import { Admin, Applicant, Company } from "../../../../src/models";

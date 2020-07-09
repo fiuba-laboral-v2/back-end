@@ -1,5 +1,5 @@
 import { GraphQLEnumType } from "../../GraphQLEnumType";
-import { AdminTaskType } from "../../../models/Approvable";
+import { AdminTaskType } from "../../../models/AdminTask";
 
 export const GraphQLAdminTaskType = GraphQLEnumType({
   name: "AdminTaskType",

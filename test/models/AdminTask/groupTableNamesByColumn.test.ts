@@ -1,6 +1,6 @@
 import { Database } from "../../../src/config/Database";
-import { groupTableNamesByColumn } from "../../../src/models/Approvable/groupTableNamesByColumn";
-import { APPROVABLE_MODELS } from "../../../src/models/Approvable";
+import { groupTableNamesByColumn } from "../../../src/models/AdminTask/groupTableNamesByColumn";
+import { APPROVABLE_MODELS } from "../../../src/models/AdminTask";
 import { Applicant, Company } from "../../../src/models";
 
 describe("groupTableNamesByColumn", () => {
