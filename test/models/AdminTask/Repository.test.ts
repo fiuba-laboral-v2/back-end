@@ -138,7 +138,7 @@ describe("AdminTaskRepository", () => {
       adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected]
     });
-    expect(result.map(entity => entity.uuid)).toEqual([
+    expect(result.map(adminTask => adminTask.uuid)).toEqual([
       pendingApplicant.uuid,
       approvedApplicant.uuid,
       rejectedApplicant.uuid,
