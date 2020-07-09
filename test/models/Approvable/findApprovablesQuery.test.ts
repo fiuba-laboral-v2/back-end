@@ -1,7 +1,10 @@
 import { Database } from "../../../src/config/Database";
 import { findApprovablesQuery } from "../../../src/models/Approvable/findApprovablesQuery";
 import { ApprovableEntityType } from "../../../src/models/Approvable";
-import { ApprovableEntityTypesIsEmptyError } from "../../../src/models/Approvable/Errors";
+import {
+  ApprovableEntityTypesIsEmptyError,
+  StatusesIsEmptyError
+} from "../../../src/models/Approvable/Errors";
 import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
 
 describe("findApprovablesQuery", () => {
@@ -119,8 +122,8 @@ describe("findApprovablesQuery", () => {
         statuses: []
       })
     ).toThrowErrorWithMessage(
-      ApprovableEntityTypesIsEmptyError,
-      ApprovableEntityTypesIsEmptyError.buildMessage()
+      StatusesIsEmptyError,
+      StatusesIsEmptyError.buildMessage()
     );
   });
 
