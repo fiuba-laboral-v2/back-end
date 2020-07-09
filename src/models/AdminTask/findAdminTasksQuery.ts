@@ -1,7 +1,7 @@
 import {
   ADMIN_TASK_MODELS,
   AdminTaskType,
-  ApprovableModelsType,
+  AdminTaskModelsType,
   TABLE_NAME_COLUMN
 } from "./Model";
 import { IAdminTasksFilter } from "./Interfaces";
@@ -12,7 +12,7 @@ import { ApprovalStatus } from "../ApprovalStatus";
 const getWhereClause = (statuses: ApprovalStatus[]) =>
   statuses.map(status => `"Approvable"."approvalStatus" = '${status}'`).join(" OR ");
 
-const getRowsToSelect = (approvableModels: ApprovableModelsType[]) => {
+const getRowsToSelect = (approvableModels: AdminTaskModelsType[]) => {
   const tablesByColumn: object = groupTableNamesByColumn(approvableModels);
   return Object.entries(tablesByColumn).map(([columnName, tableNames]) =>
     `COALESCE (
@@ -21,7 +21,7 @@ const getRowsToSelect = (approvableModels: ApprovableModelsType[]) => {
   ).join(",");
 };
 
-const getFullOuterJoin = (approvableModels: ApprovableModelsType[]) => {
+const getFullOuterJoin = (approvableModels: AdminTaskModelsType[]) => {
   let selectStatements = approvableModels.map(model => {
     const tableName = model.tableName;
     return `(

@@ -1,4 +1,4 @@
-import { ApprovableModelsType, TABLE_NAME_COLUMN } from "./Model";
+import { AdminTaskModelsType, TABLE_NAME_COLUMN } from "./Model";
 import { groupBy, mapValues } from "lodash";
 
 const getColumns = model => [TABLE_NAME_COLUMN].concat(Object.keys(model.rawAttributes));
@@ -6,13 +6,13 @@ const getColumns = model => [TABLE_NAME_COLUMN].concat(Object.keys(model.rawAttr
 const mapModelToTableNameColumnTuple = model =>
   getColumns(model).map(column => ({ tableName: model.tableName, column }));
 
-const mapAllModelsToTableNameColumnTuple = (approvableModels: ApprovableModelsType[]) =>
+const mapAllModelsToTableNameColumnTuple = (approvableModels: AdminTaskModelsType[]) =>
   approvableModels.map(model => mapModelToTableNameColumnTuple(model)).flat();
 
-const groupByColumns = (approvableModels: ApprovableModelsType[]) =>
+const groupByColumns = (approvableModels: AdminTaskModelsType[]) =>
   groupBy(mapAllModelsToTableNameColumnTuple(approvableModels), "column");
 
-export const groupTableNamesByColumn = (approvableModels: ApprovableModelsType[]) =>
+export const groupTableNamesByColumn = (approvableModels: AdminTaskModelsType[]) =>
   mapValues(groupByColumns(approvableModels), columnTableObjects =>
     columnTableObjects.map(columnTableObject => columnTableObject.tableName)
 );
