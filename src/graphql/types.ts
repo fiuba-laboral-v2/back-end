@@ -8,7 +8,7 @@ import { userTypes } from "./User/Types";
 import { capabilityTypes } from "./Capability";
 import { translationTypes } from "./Translation/Types";
 import { approvalStatusTypes } from "./ApprovalStatus";
-import { approvableTypes } from "./Approvable/Types";
+import { approvableTypes } from "./AdminTask/Types";
 
 const types = [
   ...adminTypes,

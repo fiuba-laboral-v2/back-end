@@ -9,7 +9,7 @@ import { capabilitiesPermissions } from "./Capability";
 import { careersPermissions } from "./Career";
 import { companyPermissions } from "./Company";
 import { userPermissions } from "./User";
-import { approvablePermissions } from "./Approvable";
+import { approvablePermissions } from "./AdminTask";
 
 const permissions = merge(
   offerPermissions,
