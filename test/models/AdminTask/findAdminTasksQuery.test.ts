@@ -17,7 +17,7 @@ describe("findAdminTasksQuery", () => {
       statuses: [status]
     });
     const expectedQuery = `
-      WITH "Approvable" AS
+      WITH "AdminTask" AS
         (
           SELECT
             COALESCE(Companies."uuid",Applicants."uuid") AS "uuid",
@@ -40,9 +40,9 @@ describe("findAdminTasksQuery", () => {
             (SELECT *, 'Applicants' AS "tableNameColumn" FROM "Applicants") AS Applicants ON FALSE
           )
         )
-      SELECT * FROM "Approvable"
-      WHERE "Approvable"."approvalStatus" = '${status}'
-      ORDER BY "Approvable"."updatedAt" DESC
+      SELECT * FROM "AdminTask"
+      WHERE "AdminTask"."approvalStatus" = '${status}'
+      ORDER BY "AdminTask"."updatedAt" DESC
     `;
     expect(query).toEqualIgnoringSpacing(expectedQuery);
   };
@@ -53,7 +53,7 @@ describe("findAdminTasksQuery", () => {
       statuses: [status]
     });
     const expectedQuery = `
-      WITH "Approvable" AS
+      WITH "AdminTask" AS
         (
           SELECT
             COALESCE(Companies."uuid") AS "uuid",
@@ -70,9 +70,9 @@ describe("findAdminTasksQuery", () => {
             COALESCE(Companies."tableNameColumn") AS "tableNameColumn"
           FROM (SELECT *, 'Companies' AS "tableNameColumn" FROM "Companies") AS Companies
         )
-      SELECT * FROM "Approvable"
-      WHERE "Approvable"."approvalStatus" = '${status}'
-      ORDER BY "Approvable"."updatedAt" DESC
+      SELECT * FROM "AdminTask"
+      WHERE "AdminTask"."approvalStatus" = '${status}'
+      ORDER BY "AdminTask"."updatedAt" DESC
     `;
     expect(query).toEqualIgnoringSpacing(expectedQuery);
   };
@@ -83,7 +83,7 @@ describe("findAdminTasksQuery", () => {
       statuses: [status]
     });
     const expectedQuery = `
-      WITH "Approvable" AS
+      WITH "AdminTask" AS
         (
           SELECT
             COALESCE(Applicants."uuid") AS "uuid",
@@ -96,9 +96,9 @@ describe("findAdminTasksQuery", () => {
             COALESCE(Applicants."userUuid") AS "userUuid"
           FROM (SELECT *, 'Applicants' AS "tableNameColumn" FROM "Applicants") AS Applicants
         )
-      SELECT * FROM "Approvable"
-      WHERE "Approvable"."approvalStatus" = '${status}'
-      ORDER BY "Approvable"."updatedAt" DESC
+      SELECT * FROM "AdminTask"
+      WHERE "AdminTask"."approvalStatus" = '${status}'
+      ORDER BY "AdminTask"."updatedAt" DESC
     `;
     expect(query).toEqualIgnoringSpacing(expectedQuery);
   };
@@ -169,7 +169,7 @@ describe("findAdminTasksQuery", () => {
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected]
     });
     const expectedQuery = `
-      WITH "Approvable" AS
+      WITH "AdminTask" AS
         (
           SELECT
             COALESCE(Companies."uuid",Applicants."uuid") AS "uuid",
@@ -192,11 +192,11 @@ describe("findAdminTasksQuery", () => {
             (SELECT *, 'Applicants' AS "tableNameColumn" FROM "Applicants") AS Applicants ON FALSE
           )
         )
-      SELECT * FROM "Approvable"
-      WHERE "Approvable"."approvalStatus" = 'pending'
-            OR "Approvable"."approvalStatus" = 'approved'
-            OR "Approvable"."approvalStatus" = 'rejected'
-      ORDER BY "Approvable"."updatedAt" DESC
+      SELECT * FROM "AdminTask"
+      WHERE "AdminTask"."approvalStatus" = 'pending'
+            OR "AdminTask"."approvalStatus" = 'approved'
+            OR "AdminTask"."approvalStatus" = 'rejected'
+      ORDER BY "AdminTask"."updatedAt" DESC
     `;
     expect(query).toEqualIgnoringSpacing(expectedQuery);
   });
@@ -207,7 +207,7 @@ describe("findAdminTasksQuery", () => {
       statuses: [ApprovalStatus.approved, ApprovalStatus.rejected]
     });
     const expectedQuery = `
-      WITH "Approvable" AS
+      WITH "AdminTask" AS
         (
           SELECT
             COALESCE(Companies."uuid",Applicants."uuid") AS "uuid",
@@ -230,10 +230,10 @@ describe("findAdminTasksQuery", () => {
             (SELECT *, 'Applicants' AS "tableNameColumn" FROM "Applicants") AS Applicants ON FALSE
           )
         )
-      SELECT * FROM "Approvable"
-      WHERE "Approvable"."approvalStatus" = 'approved'
-            OR "Approvable"."approvalStatus" = 'rejected'
-      ORDER BY "Approvable"."updatedAt" DESC
+      SELECT * FROM "AdminTask"
+      WHERE "AdminTask"."approvalStatus" = 'approved'
+            OR "AdminTask"."approvalStatus" = 'rejected'
+      ORDER BY "AdminTask"."updatedAt" DESC
     `;
     expect(query).toEqualIgnoringSpacing(expectedQuery);
   });

@@ -10,7 +10,7 @@ import { groupTableNamesByColumn } from "./groupTableNamesByColumn";
 import { ApprovalStatus } from "../ApprovalStatus";
 
 const getWhereClause = (statuses: ApprovalStatus[]) =>
-  statuses.map(status => `"Approvable"."approvalStatus" = '${status}'`).join(" OR ");
+  statuses.map(status => `"AdminTask"."approvalStatus" = '${status}'`).join(" OR ");
 
 const getRowsToSelect = (approvableModels: AdminTaskModelsType[]) => {
   const tablesByColumn: object = groupTableNamesByColumn(approvableModels);
@@ -58,9 +58,9 @@ export const findAdminTasksQuery = (
   if (adminTaskTypes.length === 0) throw new AdminTaskTypesIsEmptyError();
   if (statuses.length === 0) throw new StatusesIsEmptyError();
   return `
-    WITH "Approvable" AS (${findAdminTasksByTypeQuery(adminTaskTypes)})
-    SELECT * FROM "Approvable"
+    WITH "AdminTask" AS (${findAdminTasksByTypeQuery(adminTaskTypes)})
+    SELECT * FROM "AdminTask"
     WHERE ${getWhereClause(statuses)}
-    ORDER BY "Approvable"."updatedAt" DESC
+    ORDER BY "AdminTask"."updatedAt" DESC
   `;
 };
