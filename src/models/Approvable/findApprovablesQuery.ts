@@ -9,6 +9,15 @@ import { ApprovableEntityTypesIsEmptyError } from "./Errors";
 import { groupTableNamesByColumn } from "./groupTableNamesByColumn";
 import { ApprovalStatus } from "../ApprovalStatus";
 
+const getWhereClause = (statuses: ApprovalStatus[]) => {
+  const numberOfStatuses = statuses.length;
+  return statuses.map((status, index) => {
+    const clause = `"Approvable"."approvalStatus" = '${status}'`;
+    if (index !== numberOfStatuses - 1) return `${clause} OR `;
+    return clause;
+  }).join("");
+};
+
 const getRowsToSelect = (approvableModels: ApprovableModelsType[]) => {
   const tablesByColumn: object = groupTableNamesByColumn(approvableModels);
   return Object.entries(tablesByColumn).map(([columnName, tableNames]) =>
@@ -39,7 +48,7 @@ const getApprovableModels = (approvableEntityTypes: ApprovableEntityType[]) => {
   return APPROVABLE_MODELS.filter(model => modelNames.includes(model.name));
 };
 
-const findApprovablesByTypeQuery = ({ approvableEntityTypes }: IApprovableFilterOptions) => {
+const findApprovablesByTypeQuery = (approvableEntityTypes: ApprovableEntityType[]) => {
   const approvableModels = getApprovableModels(approvableEntityTypes);
   return `
     SELECT ${getRowsToSelect(approvableModels)}
@@ -47,10 +56,15 @@ const findApprovablesByTypeQuery = ({ approvableEntityTypes }: IApprovableFilter
   `;
 };
 
-export const findApprovablesQuery = ({ approvableEntityTypes }: IApprovableFilterOptions) =>
+export const findApprovablesQuery = (
+  {
+    approvableEntityTypes,
+    statuses
+  }: IApprovableFilterOptions
+) =>
   `
-    WITH "Approvable" AS (${findApprovablesByTypeQuery({ approvableEntityTypes })})
+    WITH "Approvable" AS (${findApprovablesByTypeQuery(approvableEntityTypes)})
     SELECT * FROM "Approvable"
-    WHERE "Approvable"."approvalStatus" = '${ApprovalStatus.pending}'
+    WHERE ${getWhereClause(statuses)}
     ORDER BY "Approvable"."updatedAt" DESC
 `;

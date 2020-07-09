@@ -4,12 +4,14 @@ import { Database } from "../../../../src/config/Database";
 
 import { CompanyRepository } from "../../../../src/models/Company";
 import { ApplicantRepository } from "../../../../src/models/Applicant";
-import { ApprovableEntityType, IApprovableFilterOptions } from "../../../../src/models/Approvable";
+import {
+  Approvable,
+  ApprovableEntityType,
+  IApprovableFilterOptions
+} from "../../../../src/models/Approvable";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import { UserRepository } from "../../../../src/models/User";
-import { Admin } from "../../../../src/models";
-import { GraphQLCompany } from "../../../../src/graphql/Company/Types/GraphQLCompany";
-import { GraphQLApplicant } from "../../../../src/graphql/Applicant/Types/Applicant";
+import { Admin, Applicant, Company } from "../../../../src/models";
 import { UnauthorizedError } from "../../../../src/graphql/Errors";
 
 import { AdminGenerator } from "../../../generators/Admin";
@@ -18,8 +20,14 @@ import { ApplicantGenerator, TApplicantGenerator } from "../../../generators/App
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
 const GET_APPROVABLES = gql`
-  query GetApprovables($approvableEntityTypes: [ApprovableEntityType]!) {
-      getApprovables(approvableEntityTypes: $approvableEntityTypes) {
+  query GetApprovables(
+      $approvableEntityTypes: [ApprovableEntityType]!,
+      $statuses: [ApprovalStatus]!
+  ) {
+      getApprovables(
+          approvableEntityTypes: $approvableEntityTypes,
+          statuses: $statuses
+      ) {
       ... on Company {
         __typename
         uuid
@@ -36,18 +44,27 @@ describe("getApprovables", () => {
   let companies: TCompanyGenerator;
   let applicants: TApplicantGenerator;
   let admin: Admin;
+  let approvedCompany: Company;
+  let rejectedCompany: Company;
+  let pendingCompany: Company;
+  let approvedApplicant: Applicant;
+  let rejectedApplicant: Applicant;
+  let pendingApplicant: Applicant;
 
   beforeAll(async () => {
     Database.setConnection();
     await UserRepository.truncate();
+    await CompanyRepository.truncate();
     companies = CompanyGenerator.instance.withCompleteData();
     applicants = ApplicantGenerator.instance.withMinimumData();
     admin = await AdminGenerator.instance().next().value;
-  });
 
-  beforeEach(async () => {
-    await CompanyRepository.truncate();
-    await ApplicantRepository.truncate();
+    rejectedCompany = await createCompanyWithStatus(ApprovalStatus.rejected);
+    approvedCompany = await createCompanyWithStatus(ApprovalStatus.approved);
+    pendingCompany = await companies.next().value;
+    rejectedApplicant = await createApplicantWithStatus(ApprovalStatus.rejected);
+    approvedApplicant = await createApplicantWithStatus(ApprovalStatus.approved);
+    pendingApplicant = await applicants.next().value;
   });
 
   afterAll(() => Database.close());
@@ -80,99 +97,92 @@ describe("getApprovables", () => {
     );
   };
 
+  const expectToFindApprovableWithStatuses = async (
+    approvables: Approvable[],
+    statuses: ApprovalStatus[]
+  ) => {
+    const result = await getApprovables({
+      approvableEntityTypes: approvables.map(approvable => approvable.constructor.name) as any,
+      statuses: statuses
+    });
+    expect(result).toEqual(expect.arrayContaining(
+      approvables.map(approvable => expect.objectContaining({
+        uuid: approvable.uuid
+      }))
+    ));
+  };
+
   it("returns an empty array if no approvableEntityTypes are provided", async () => {
-    await createCompanyWithStatus(ApprovalStatus.rejected);
-    await createCompanyWithStatus(ApprovalStatus.approved);
-    await companies.next().value;
-    await applicants.next().value;
-    const result = await getApprovables({ approvableEntityTypes: [] });
+    const result = await getApprovables({
+      approvableEntityTypes: [],
+      statuses: [ApprovalStatus.pending]
+    });
     expect(result).toEqual([]);
   });
 
   it("returns only pending companies", async () => {
-    await createCompanyWithStatus(ApprovalStatus.rejected);
-    await createCompanyWithStatus(ApprovalStatus.approved);
-    const pendingCompany = await companies.next().value;
-    const result = await getApprovables({
-      approvableEntityTypes: [ApprovableEntityType.Company]
-    });
-    expect(result).toEqual([{
-      __typename: GraphQLCompany.name,
-      uuid: pendingCompany.uuid
-    }]);
+    await expectToFindApprovableWithStatuses(
+      [pendingCompany],
+      [ApprovalStatus.pending]
+    );
+  });
+
+  it("returns only approved companies", async () => {
+    await expectToFindApprovableWithStatuses(
+      [approvedCompany],
+      [ApprovalStatus.approved]
+    );
+  });
+
+  it("returns only rejected companies", async () => {
+    await expectToFindApprovableWithStatuses(
+      [rejectedCompany],
+      [ApprovalStatus.rejected]
+    );
   });
 
   it("returns only pending applicants", async () => {
-    await createApplicantWithStatus(ApprovalStatus.rejected);
-    await createApplicantWithStatus(ApprovalStatus.approved);
-    const pendingApplicant = await applicants.next().value;
-    const result = await getApprovables({
-      approvableEntityTypes: [ApprovableEntityType.Applicant]
-    });
-    expect(result).toEqual([{
-      __typename: GraphQLApplicant.name,
-      uuid: pendingApplicant.uuid
-    }]);
+    await expectToFindApprovableWithStatuses(
+      [pendingApplicant],
+      [ApprovalStatus.pending]
+    );
+  });
+
+  it("returns only approved applicants", async () => {
+    await expectToFindApprovableWithStatuses(
+      [approvedApplicant],
+      [ApprovalStatus.approved]
+    );
+  });
+
+  it("returns only rejected applicants", async () => {
+    await expectToFindApprovableWithStatuses(
+      [rejectedApplicant],
+      [ApprovalStatus.rejected]
+    );
   });
 
   it("returns only pending applicants and companies", async () => {
-    await createCompanyWithStatus(ApprovalStatus.rejected);
-    await createCompanyWithStatus(ApprovalStatus.approved);
-    await createApplicantWithStatus(ApprovalStatus.rejected);
-    await createApplicantWithStatus(ApprovalStatus.approved);
-    const pendingApplicant = await applicants.next().value;
-    const pendingCompany = await companies.next().value;
+    await expectToFindApprovableWithStatuses(
+      [pendingApplicant, pendingCompany],
+      [ApprovalStatus.pending]
+    );
+  });
+
+  it("sorts all applicants and companies in any status by updated timestamp", async () => {
     const result = await getApprovables({
-      approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company]
+      approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company],
+      statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected]
     });
-    expect(result).toEqual(expect.arrayContaining([
-      {
-        __typename: GraphQLApplicant.name,
-        uuid: pendingApplicant.uuid
-      },
-      {
-        __typename: GraphQLCompany.name,
-        uuid: pendingCompany.uuid
-      }
-    ]));
-  });
-
-  it("sorts pending companies by updated timestamp", async () => {
-    const firstCompany = await companies.next().value;
-    const secondCompany = await companies.next().value;
-    expect([secondCompany, firstCompany]).toBeSortedBy({ key: "updatedAt", order: "desc" });
-    const [firstResult, secondResult] = await getApprovables({
-      approvableEntityTypes: [ApprovableEntityType.Company]
-    });
-    expect(firstResult.uuid).toEqual(secondCompany.uuid);
-    expect(secondResult.uuid).toEqual(firstCompany.uuid);
-  });
-
-  it("sorts pending applicants by updated timestamp", async () => {
-    const firstApplicant = await applicants.next().value;
-    const secondApplicant = await applicants.next().value;
-    expect([secondApplicant, firstApplicant]).toBeSortedBy({ key: "updatedAt", order: "desc" });
-    const [firstResult, secondResult] = await getApprovables({
-      approvableEntityTypes: [ApprovableEntityType.Applicant]
-    });
-    expect(firstResult.uuid).toEqual(secondApplicant.uuid);
-    expect(secondResult.uuid).toEqual(firstApplicant.uuid);
-  });
-
-  it("sorts pending applicants and companies by updated timestamp", async () => {
-    const applicant1 = await applicants.next().value;
-    const applicant2 = await applicants.next().value;
-    const company3 = await companies.next().value;
-    const company4 = await companies.next().value;
-    const entitiesOrderByLatestUpdated = [company4, company3, applicant2, applicant1];
-    expect(entitiesOrderByLatestUpdated).toBeSortedBy({ key: "updatedAt", order: "desc" });
-    const [firstResult, secondResult, thirdResult, fourthResult] = await getApprovables({
-      approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company]
-    });
-    expect(firstResult.uuid).toEqual(company4.uuid);
-    expect(secondResult.uuid).toEqual(company3.uuid);
-    expect(thirdResult.uuid).toEqual(applicant2.uuid);
-    expect(fourthResult.uuid).toEqual(applicant1.uuid);
+    expect(result.map(approvable => approvable.uuid)).toEqual([
+      pendingApplicant.uuid,
+      approvedApplicant.uuid,
+      rejectedApplicant.uuid,
+      pendingCompany.uuid,
+      approvedCompany.uuid,
+      rejectedCompany.uuid
+    ]);
+    expect(result).toBeSortedBy({ key: "updatedAt", order: "desc" });
   });
 
   describe("when the variables are incorrect", () => {
@@ -193,7 +203,8 @@ describe("getApprovables", () => {
       const { errors } = await apolloClient.query({
         query: GET_APPROVABLES,
         variables: {
-          approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company]
+          approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company],
+          statuses: [ApprovalStatus.pending]
         }
       });
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
