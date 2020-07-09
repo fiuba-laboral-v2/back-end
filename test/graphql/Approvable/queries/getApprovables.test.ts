@@ -6,7 +6,7 @@ import { CompanyRepository } from "../../../../src/models/Company";
 import {
   Approvable,
   ApprovableEntityType,
-  IApprovableFilterOptions
+  IApprovableFilter
 } from "../../../../src/models/Approvable";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import { UserRepository } from "../../../../src/models/User";
@@ -66,11 +66,11 @@ describe("getApprovables", () => {
 
   afterAll(() => Database.close());
 
-  const getApprovables = async (options: IApprovableFilterOptions) => {
+  const getApprovables = async (filter: IApprovableFilter) => {
     const { apolloClient } = await testClientFactory.admin();
     const { errors, data } = await apolloClient.query({
       query: GET_APPROVABLES,
-      variables: options
+      variables: filter
     });
     expect(errors).toBeUndefined();
     return data!.getApprovables;

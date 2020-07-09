@@ -4,7 +4,7 @@ import {
   ApprovableModelsType,
   TABLE_NAME_COLUMN
 } from "./Model";
-import { IApprovableFilterOptions } from "./Interfaces";
+import { IApprovableFilter } from "./Interfaces";
 import { ApprovableEntityTypesIsEmptyError, StatusesIsEmptyError } from "./Errors";
 import { groupTableNamesByColumn } from "./groupTableNamesByColumn";
 import { ApprovalStatus } from "../ApprovalStatus";
@@ -59,7 +59,7 @@ export const findApprovablesQuery = (
   {
     approvableEntityTypes,
     statuses
-  }: IApprovableFilterOptions
+  }: IApprovableFilter
 ) => {
   if (approvableEntityTypes.length === 0) throw new ApprovableEntityTypesIsEmptyError();
   if (statuses.length === 0) throw new StatusesIsEmptyError();
