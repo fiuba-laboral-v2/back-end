@@ -1,7 +1,7 @@
 import { GraphQLAdminTask } from "./GraphQLAdminTask";
 import { GraphQLAdminTaskType } from "./GraphQLAdminTaskType";
 
-export const approvableTypes = [
+export const adminTaskTypes = [
   GraphQLAdminTask,
   GraphQLAdminTaskType
 ];

@@ -9,6 +9,6 @@ export const GraphQLAdminTask = new GraphQLUnionType({
   resolveType(value) {
     if (value instanceof Company) return GraphQLCompany;
     if (value instanceof Applicant) return GraphQLApplicant;
-    throw new Error("Value is not of an Approvable type");
+    throw new Error("Value is not of AdminTask type");
   }
 });

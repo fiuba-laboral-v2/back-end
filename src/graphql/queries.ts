@@ -7,7 +7,7 @@ import { applicantQueries } from "./Applicant";
 import { careerQueries } from "./Career";
 import { userQueries } from "./User";
 import { capabilityQueries } from "./Capability";
-import { approvableQueries } from "./AdminTask/Queries";
+import { adminTaskQueries } from "./AdminTask/Queries";
 
 const queries = () => merge(
   translationQueries,
@@ -18,7 +18,7 @@ const queries = () => merge(
   careerQueries,
   userQueries,
   capabilityQueries,
-  approvableQueries
+  adminTaskQueries
 );
 
 export default queries;

@@ -1,5 +1,5 @@
 import { getAdminTasks } from "./getAdminTasks";
 
-export const approvableQueries = {
+export const adminTaskQueries = {
   getAdminTasks
 };
