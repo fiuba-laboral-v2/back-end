@@ -1,5 +1,5 @@
 import {
-  APPROVABLE_MODELS,
+  ADMIN_TASK_MODELS,
   AdminTaskType,
   ApprovableModelsType,
   TABLE_NAME_COLUMN
@@ -36,20 +36,20 @@ const getFullOuterJoin = (approvableModels: ApprovableModelsType[]) => {
   return `(${selectStatements.join(" FULL OUTER JOIN ")})`;
 };
 
-const getApprovableModels = (adminTaskTypes: AdminTaskType[]) => {
+const getAdminTaskModels = (adminTaskTypes: AdminTaskType[]) => {
   const modelNames = adminTaskTypes.map(type => type.toString());
-  return APPROVABLE_MODELS.filter(model => modelNames.includes(model.name));
+  return ADMIN_TASK_MODELS.filter(model => modelNames.includes(model.name));
 };
 
-const findApprovablesByTypeQuery = (adminTaskTypes: AdminTaskType[]) => {
-  const approvableModels = getApprovableModels(adminTaskTypes);
+const findAdminTasksByTypeQuery = (adminTaskTypes: AdminTaskType[]) => {
+  const approvableModels = getAdminTaskModels(adminTaskTypes);
   return `
     SELECT ${getRowsToSelect(approvableModels)}
     FROM ${getFullOuterJoin(approvableModels)}
   `;
 };
 
-export const findApprovablesQuery = (
+export const findAdminTasksQuery = (
   {
     adminTaskTypes,
     statuses
@@ -58,7 +58,7 @@ export const findApprovablesQuery = (
   if (adminTaskTypes.length === 0) throw new AdminTaskTypesIsEmptyError();
   if (statuses.length === 0) throw new StatusesIsEmptyError();
   return `
-    WITH "Approvable" AS (${findApprovablesByTypeQuery(adminTaskTypes)})
+    WITH "Approvable" AS (${findAdminTasksByTypeQuery(adminTaskTypes)})
     SELECT * FROM "Approvable"
     WHERE ${getWhereClause(statuses)}
     ORDER BY "Approvable"."updatedAt" DESC
