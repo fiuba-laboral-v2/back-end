@@ -4,9 +4,13 @@ import {
   ApprovableModelsType,
   TABLE_NAME_COLUMN
 } from "./Model";
-import { IApprovableFilterOptions } from "./Interfaces";
-import { ApprovableEntityTypesIsEmptyError } from "./Errors";
+import { IApprovableFilter } from "./Interfaces";
+import { ApprovableEntityTypesIsEmptyError, StatusesIsEmptyError } from "./Errors";
 import { groupTableNamesByColumn } from "./groupTableNamesByColumn";
+import { ApprovalStatus } from "../ApprovalStatus";
+
+const getWhereClause = (statuses: ApprovalStatus[]) =>
+  statuses.map(status => `"Approvable"."approvalStatus" = '${status}'`).join(" OR ");
 
 const getRowsToSelect = (approvableModels: ApprovableModelsType[]) => {
   const tablesByColumn: object = groupTableNamesByColumn(approvableModels);
@@ -33,15 +37,30 @@ const getFullOuterJoin = (approvableModels: ApprovableModelsType[]) => {
 };
 
 const getApprovableModels = (approvableEntityTypes: ApprovableEntityType[]) => {
-  if (approvableEntityTypes.length === 0) throw new ApprovableEntityTypesIsEmptyError();
   const modelNames = approvableEntityTypes.map(type => type.toString());
   return APPROVABLE_MODELS.filter(model => modelNames.includes(model.name));
 };
 
-export const findApprovableQuery = ({ approvableEntityTypes }: IApprovableFilterOptions) => {
+const findApprovablesByTypeQuery = (approvableEntityTypes: ApprovableEntityType[]) => {
   const approvableModels = getApprovableModels(approvableEntityTypes);
   return `
     SELECT ${getRowsToSelect(approvableModels)}
     FROM ${getFullOuterJoin(approvableModels)}
+  `;
+};
+
+export const findApprovablesQuery = (
+  {
+    approvableEntityTypes,
+    statuses
+  }: IApprovableFilter
+) => {
+  if (approvableEntityTypes.length === 0) throw new ApprovableEntityTypesIsEmptyError();
+  if (statuses.length === 0) throw new StatusesIsEmptyError();
+  return `
+    WITH "Approvable" AS (${findApprovablesByTypeQuery(approvableEntityTypes)})
+    SELECT * FROM "Approvable"
+    WHERE ${getWhereClause(statuses)}
+    ORDER BY "Approvable"."updatedAt" DESC
   `;
 };

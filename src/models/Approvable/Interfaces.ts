@@ -1,5 +1,7 @@
 import { ApprovableEntityType } from "./Model";
+import { ApprovalStatus } from "../ApprovalStatus";
 
-export interface IApprovableFilterOptions {
+export interface IApprovableFilter {
   approvableEntityTypes: ApprovableEntityType[];
+  statuses: ApprovalStatus[];
 }
