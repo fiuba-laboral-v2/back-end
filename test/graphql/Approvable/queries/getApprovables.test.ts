@@ -3,7 +3,6 @@ import { ApolloServerTestClient } from "apollo-server-testing";
 import { Database } from "../../../../src/config/Database";
 
 import { CompanyRepository } from "../../../../src/models/Company";
-import { ApplicantRepository } from "../../../../src/models/Applicant";
 import {
   Approvable,
   ApprovableEntityType,
@@ -15,8 +14,8 @@ import { Admin, Applicant, Company } from "../../../../src/models";
 import { UnauthorizedError } from "../../../../src/graphql/Errors";
 
 import { AdminGenerator } from "../../../generators/Admin";
-import { CompanyGenerator, TCompanyGenerator } from "../../../generators/Company";
-import { ApplicantGenerator, TApplicantGenerator } from "../../../generators/Applicant";
+import { CompanyGenerator } from "../../../generators/Company";
+import { ApplicantGenerator } from "../../../generators/Applicant";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
 const GET_APPROVABLES = gql`
@@ -41,8 +40,6 @@ const GET_APPROVABLES = gql`
 `;
 
 describe("getApprovables", () => {
-  let companies: TCompanyGenerator;
-  let applicants: TApplicantGenerator;
   let admin: Admin;
   let approvedCompany: Company;
   let rejectedCompany: Company;
@@ -55,15 +52,15 @@ describe("getApprovables", () => {
     Database.setConnection();
     await UserRepository.truncate();
     await CompanyRepository.truncate();
-    companies = CompanyGenerator.instance.withCompleteData();
-    applicants = ApplicantGenerator.instance.withMinimumData();
+    const companies = await CompanyGenerator.instance.updatedWithStatus();
+    const applicants = await ApplicantGenerator.instance.updatedWithStatus();
     admin = await AdminGenerator.instance().next().value;
 
-    rejectedCompany = await createCompanyWithStatus(ApprovalStatus.rejected);
-    approvedCompany = await createCompanyWithStatus(ApprovalStatus.approved);
+    rejectedCompany = await companies.next({ status: ApprovalStatus.rejected, admin }).value;
+    approvedCompany = await companies.next({ status: ApprovalStatus.approved, admin }).value;
     pendingCompany = await companies.next().value;
-    rejectedApplicant = await createApplicantWithStatus(ApprovalStatus.rejected);
-    approvedApplicant = await createApplicantWithStatus(ApprovalStatus.approved);
+    rejectedApplicant = await applicants.next({ status: ApprovalStatus.rejected, admin }).value;
+    approvedApplicant = await applicants.next({ status: ApprovalStatus.approved, admin }).value;
     pendingApplicant = await applicants.next().value;
   });
 
@@ -77,24 +74,6 @@ describe("getApprovables", () => {
     });
     expect(errors).toBeUndefined();
     return data!.getApprovables;
-  };
-
-  const createCompanyWithStatus = async (status: ApprovalStatus) => {
-    const { uuid: companyUuid } = await companies.next().value;
-    return CompanyRepository.updateApprovalStatus(
-      admin.userUuid,
-      companyUuid,
-      status
-    );
-  };
-
-  const createApplicantWithStatus = async (status: ApprovalStatus) => {
-    const { uuid: applicantUuid } = await applicants.next().value;
-    return ApplicantRepository.updateApprovalStatus(
-      admin.userUuid,
-      applicantUuid,
-      status
-    );
   };
 
   const expectToFindApprovableWithStatuses = async (

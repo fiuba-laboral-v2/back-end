@@ -1,7 +1,5 @@
 import { Database } from "../../../src/config/Database";
-import { CompanyGenerator, TCompanyGenerator } from "../../generators/Company";
 import { CompanyRepository } from "../../../src/models/Company";
-import { ApplicantRepository } from "../../../src/models/Applicant";
 import { UserRepository } from "../../../src/models/User";
 import {
   Approvable,
@@ -12,11 +10,10 @@ import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
 import { Admin, Applicant, Company } from "../../../src/models";
 
 import { AdminGenerator } from "../../generators/Admin";
-import { ApplicantGenerator, TApplicantGenerator } from "../../generators/Applicant";
+import { ApplicantGenerator } from "../../generators/Applicant";
+import { CompanyGenerator } from "../../generators/Company";
 
 describe("ApprovableRepository", () => {
-  let companies: TCompanyGenerator;
-  let applicants: TApplicantGenerator;
   let admin: Admin;
   let approvedCompany: Company;
   let rejectedCompany: Company;
@@ -29,37 +26,19 @@ describe("ApprovableRepository", () => {
     Database.setConnection();
     await UserRepository.truncate();
     await CompanyRepository.truncate();
-    companies = await CompanyGenerator.instance.withCompleteData();
+    const companies = await CompanyGenerator.instance.updatedWithStatus();
     admin = await AdminGenerator.instance().next().value;
-    applicants = ApplicantGenerator.instance.withMinimumData();
+    const applicants = await ApplicantGenerator.instance.updatedWithStatus();
 
-    rejectedCompany = await createCompanyWithStatus(ApprovalStatus.rejected);
-    approvedCompany = await createCompanyWithStatus(ApprovalStatus.approved);
+    rejectedCompany = await companies.next({ status: ApprovalStatus.rejected, admin }).value;
+    approvedCompany = await companies.next({ status: ApprovalStatus.approved, admin }).value;
     pendingCompany = await companies.next().value;
-    rejectedApplicant = await createApplicantWithStatus(ApprovalStatus.rejected);
-    approvedApplicant = await createApplicantWithStatus(ApprovalStatus.approved);
+    rejectedApplicant = await applicants.next({ status: ApprovalStatus.rejected, admin }).value;
+    approvedApplicant = await applicants.next({ status: ApprovalStatus.approved, admin }).value;
     pendingApplicant = await applicants.next().value;
   });
 
   afterAll(() => Database.close());
-
-  const createCompanyWithStatus = async (status: ApprovalStatus) => {
-    const { uuid: companyUuid } = await companies.next().value;
-    return CompanyRepository.updateApprovalStatus(
-      admin.userUuid,
-      companyUuid,
-      status
-    );
-  };
-
-  const createApplicantWithStatus = async (status: ApprovalStatus) => {
-    const { uuid: applicantUuid } = await applicants.next().value;
-    return ApplicantRepository.updateApprovalStatus(
-      admin.userUuid,
-      applicantUuid,
-      status
-    );
-  };
 
   const expectToFindApprovableWithStatuses = async (
     approvables: Approvable[],

@@ -1,11 +1,18 @@
 import { withMinimumData } from "./withMinimumData";
 import { completeData } from "./completeData";
+import { GenericGenerator, TGenericGenerator } from "../GenericGenerator";
 import { CompanyRepository, ICompany } from "../../../src/models/Company";
 import { CustomGenerator } from "../types";
-import { Company } from "../../../src/models";
+import { Admin, Company } from "../../../src/models";
+import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
 
 export type TCompanyGenerator = CustomGenerator<Promise<Company>>;
+export type TUpdateCompanyGenerator = TGenericGenerator<Promise<Company>, IUpdatedWithStatus>;
 export type TCompanyDataGenerator = CustomGenerator<ICompany>;
+interface IUpdatedWithStatus {
+  admin: Admin;
+  status: ApprovalStatus;
+}
 
 export const CompanyGenerator = {
   instance: {
@@ -22,6 +29,18 @@ export const CompanyGenerator = {
         yield CompanyRepository.create(completeData(index));
         index++;
       }
+    },
+    updatedWithStatus: async ():  Promise<TUpdateCompanyGenerator> => {
+      const generator = GenericGenerator<Promise<Company>, IUpdatedWithStatus>(
+        async (index, variables) => {
+          const company = await CompanyRepository.create(withMinimumData(index));
+          if (!variables) return company;
+          const { admin, status } = variables;
+          return CompanyRepository.updateApprovalStatus(admin.userUuid, company.uuid, status);
+        }
+      );
+      await generator.next();
+      return generator;
     }
   },
   data: {
