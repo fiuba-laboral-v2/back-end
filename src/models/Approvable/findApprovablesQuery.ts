@@ -43,7 +43,6 @@ const getFullOuterJoin = (approvableModels: ApprovableModelsType[]) => {
 };
 
 const getApprovableModels = (approvableEntityTypes: ApprovableEntityType[]) => {
-  if (approvableEntityTypes.length === 0) throw new ApprovableEntityTypesIsEmptyError();
   const modelNames = approvableEntityTypes.map(type => type.toString());
   return APPROVABLE_MODELS.filter(model => modelNames.includes(model.name));
 };
@@ -61,10 +60,13 @@ export const findApprovablesQuery = (
     approvableEntityTypes,
     statuses
   }: IApprovableFilterOptions
-) =>
-  `
+) => {
+  if (approvableEntityTypes.length === 0) throw new ApprovableEntityTypesIsEmptyError();
+  if (statuses.length === 0) throw new ApprovableEntityTypesIsEmptyError();
+  return `
     WITH "Approvable" AS (${findApprovablesByTypeQuery(approvableEntityTypes)})
     SELECT * FROM "Approvable"
     WHERE ${getWhereClause(statuses)}
     ORDER BY "Approvable"."updatedAt" DESC
-`;
+  `;
+};

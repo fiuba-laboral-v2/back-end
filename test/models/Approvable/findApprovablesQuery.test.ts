@@ -112,6 +112,18 @@ describe("findApprovablesQuery", () => {
     );
   });
 
+  it("throws an error if no statuses are provided", async () => {
+    expect(
+      () => findApprovablesQuery({
+        approvableEntityTypes: [ApprovableEntityType.Applicant],
+        statuses: []
+      })
+    ).toThrowErrorWithMessage(
+      ApprovableEntityTypesIsEmptyError,
+      ApprovableEntityTypesIsEmptyError.buildMessage()
+    );
+  });
+
   it("returns an sql query of approvable entities in pending status", async () => {
     expectToReturnSQLQueryOfAllApprovableEntitiesWithStatus(ApprovalStatus.pending);
   });

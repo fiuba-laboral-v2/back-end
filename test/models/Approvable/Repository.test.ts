@@ -53,10 +53,26 @@ describe("ApprovableRepository", () => {
     ));
   };
 
+  it("returns an empty array if no statuses are provided", async () => {
+    const result = await ApprovableRepository.find({
+      approvableEntityTypes: [ApprovableEntityType.Applicant],
+      statuses: []
+    });
+    expect(result).toEqual([]);
+  });
+
   it("returns an empty array if no approvableEntities are provided", async () => {
     const result = await ApprovableRepository.find({
       approvableEntityTypes: [],
       statuses: [ApprovalStatus.pending]
+    });
+    expect(result).toEqual([]);
+  });
+
+  it("returns an empty array if no approvableEntities and statuses are provided", async () => {
+    const result = await ApprovableRepository.find({
+      approvableEntityTypes: [],
+      statuses: []
     });
     expect(result).toEqual([]);
   });

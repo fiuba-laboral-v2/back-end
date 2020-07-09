@@ -10,6 +10,7 @@ const getModelByTableName = (tableName: string) =>
 export const ApprovableRepository = {
   find: async (options: IApprovableFilterOptions) => {
     if (options.approvableEntityTypes.length === 0) return [];
+    if (options.statuses.length === 0) return [];
     const rows = await Database.query(findApprovablesQuery(options), { type: "SELECT" });
     return rows.map((row: object) => {
       const tableName = row[TABLE_NAME_COLUMN];
