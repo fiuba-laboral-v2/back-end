@@ -41,15 +41,15 @@ describe("AdminTaskRepository", () => {
   afterAll(() => Database.close());
 
   const expectToFindAdminTasksWithStatuses = async (
-    approvables: AdminTask[],
+    adminTasks: AdminTask[],
     statuses: ApprovalStatus[]
   ) => {
     const result = await AdminTaskRepository.find({
-      adminTaskTypes: approvables.map(approvable => approvable.constructor.name) as any,
+      adminTaskTypes: adminTasks.map(adminTask => adminTask.constructor.name) as any,
       statuses: statuses
     });
     expect(result).toEqual(expect.arrayContaining(
-      approvables.map(approvable => expect.objectContaining(approvable.toJSON()))
+      adminTasks.map(adminTask => expect.objectContaining(adminTask.toJSON()))
     ));
   };
 
