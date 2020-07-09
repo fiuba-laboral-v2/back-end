@@ -10,12 +10,8 @@ import { groupTableNamesByColumn } from "./groupTableNamesByColumn";
 import { ApprovalStatus } from "../ApprovalStatus";
 
 const getWhereClause = (statuses: ApprovalStatus[]) => {
-  const numberOfStatuses = statuses.length;
-  return statuses.map((status, index) => {
-    const clause = `"Approvable"."approvalStatus" = '${status}'`;
-    if (index !== numberOfStatuses - 1) return `${clause} OR `;
-    return clause;
-  }).join("");
+  return statuses.map((status, index) =>
+    `"Approvable"."approvalStatus" = '${status}'`).join(" OR ");
 };
 
 const getRowsToSelect = (approvableModels: ApprovableModelsType[]) => {
