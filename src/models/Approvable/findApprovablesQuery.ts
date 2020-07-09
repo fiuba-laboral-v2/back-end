@@ -9,10 +9,8 @@ import { ApprovableEntityTypesIsEmptyError, StatusesIsEmptyError } from "./Error
 import { groupTableNamesByColumn } from "./groupTableNamesByColumn";
 import { ApprovalStatus } from "../ApprovalStatus";
 
-const getWhereClause = (statuses: ApprovalStatus[]) => {
-  return statuses.map((status, index) =>
-    `"Approvable"."approvalStatus" = '${status}'`).join(" OR ");
-};
+const getWhereClause = (statuses: ApprovalStatus[]) =>
+  statuses.map(status => `"Approvable"."approvalStatus" = '${status}'`).join(" OR ");
 
 const getRowsToSelect = (approvableModels: ApprovableModelsType[]) => {
   const tablesByColumn: object = groupTableNamesByColumn(approvableModels);
