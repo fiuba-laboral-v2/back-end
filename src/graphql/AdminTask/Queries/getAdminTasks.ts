@@ -1,5 +1,5 @@
 import { List, nonNull } from "../../fieldTypes";
-import { ApprovableRepository, IAdminTasksFilter } from "../../../models/AdminTask";
+import { AdminTaskRepository, IAdminTasksFilter } from "../../../models/AdminTask";
 import { GraphQLApprovable } from "../Types/GraphQLApprovable";
 import { GraphQLAdminTaskType } from "../Types/GraphQLAdminTaskType";
 import { GraphQLApprovalStatus } from "../../ApprovalStatus/Types/GraphQLApprovalStatus";
@@ -15,5 +15,5 @@ export const getAdminTasks = {
     }
   },
   resolve: (_: undefined, filter: IAdminTasksFilter) =>
-    ApprovableRepository.find(filter)
+    AdminTaskRepository.find(filter)
 };

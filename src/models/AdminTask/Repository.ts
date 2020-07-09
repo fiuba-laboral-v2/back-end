@@ -7,7 +7,7 @@ import { IAdminTasksFilter } from "./Interfaces";
 const getModelByTableName = (tableName: string) =>
   find(APPROVABLE_MODELS, ["tableName", tableName]);
 
-export const ApprovableRepository = {
+export const AdminTaskRepository = {
   find: async (filter: IAdminTasksFilter) => {
     if (filter.adminTaskTypes.length === 0) return [];
     if (filter.statuses.length === 0) return [];
