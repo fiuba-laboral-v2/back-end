@@ -1,5 +1,5 @@
-import { getApprovables } from "./getApprovables";
+import { getAdminTasks } from "./getAdminTasks";
 
 export const approvableQueries = {
-  getApprovables
+  getAdminTasks
 };

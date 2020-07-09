@@ -18,12 +18,12 @@ import { CompanyGenerator } from "../../../generators/Company";
 import { ApplicantGenerator } from "../../../generators/Applicant";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
-const GET_APPROVABLES = gql`
-  query GetApprovables(
+const GET_ADMIN_TASKS = gql`
+  query GetAdminTasks(
       $adminTaskTypes: [AdminTaskType]!,
       $statuses: [ApprovalStatus]!
   ) {
-      getApprovables(
+      getAdminTasks(
           adminTaskTypes: $adminTaskTypes,
           statuses: $statuses
       ) {
@@ -39,7 +39,7 @@ const GET_APPROVABLES = gql`
   }
 `;
 
-describe("getApprovables", () => {
+describe("getAdminTasks", () => {
   let admin: Admin;
   let approvedCompany: Company;
   let rejectedCompany: Company;
@@ -66,21 +66,21 @@ describe("getApprovables", () => {
 
   afterAll(() => Database.close());
 
-  const getApprovables = async (filter: IApprovableFilter) => {
+  const getAdminTasks = async (filter: IApprovableFilter) => {
     const { apolloClient } = await testClientFactory.admin();
     const { errors, data } = await apolloClient.query({
-      query: GET_APPROVABLES,
+      query: GET_ADMIN_TASKS,
       variables: filter
     });
     expect(errors).toBeUndefined();
-    return data!.getApprovables;
+    return data!.getAdminTasks;
   };
 
   const expectToFindApprovableWithStatuses = async (
     approvables: Approvable[],
     statuses: ApprovalStatus[]
   ) => {
-    const result = await getApprovables({
+    const result = await getAdminTasks({
       adminTaskTypes: approvables.map(approvable => approvable.constructor.name) as any,
       statuses: statuses
     });
@@ -92,7 +92,7 @@ describe("getApprovables", () => {
   };
 
   it("returns an empty array if no adminTaskTypes are provided", async () => {
-    const result = await getApprovables({
+    const result = await getAdminTasks({
       adminTaskTypes: [],
       statuses: [ApprovalStatus.pending]
     });
@@ -149,7 +149,7 @@ describe("getApprovables", () => {
   });
 
   it("sorts all applicants and companies in any status by updated timestamp", async () => {
-    const result = await getApprovables({
+    const result = await getAdminTasks({
       adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected]
     });
@@ -168,7 +168,7 @@ describe("getApprovables", () => {
     it("returns an error if no filter is provided", async () => {
       const { apolloClient } = await testClientFactory.admin();
       const { errors } = await apolloClient.query({
-        query: GET_APPROVABLES,
+        query: GET_ADMIN_TASKS,
         variables: {}
       });
       expect(errors).not.toBeUndefined();
@@ -180,7 +180,7 @@ describe("getApprovables", () => {
       { apolloClient }: { apolloClient: ApolloServerTestClient }
     ) => {
       const { errors } = await apolloClient.query({
-        query: GET_APPROVABLES,
+        query: GET_ADMIN_TASKS,
         variables: {
           adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
           statuses: [ApprovalStatus.pending]

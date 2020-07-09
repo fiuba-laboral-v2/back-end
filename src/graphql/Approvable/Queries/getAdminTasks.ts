@@ -4,7 +4,7 @@ import { GraphQLApprovable } from "../Types/GraphQLApprovable";
 import { GraphQLAdminTaskType } from "../Types/GraphQLAdminTaskType";
 import { GraphQLApprovalStatus } from "../../ApprovalStatus/Types/GraphQLApprovalStatus";
 
-export const getApprovables = {
+export const getAdminTasks = {
   type: nonNull(List(GraphQLApprovable)),
   args: {
     adminTaskTypes: {

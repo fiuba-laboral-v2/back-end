@@ -2,6 +2,6 @@ import { isAdmin } from "../Rules";
 
 export const approvablePermissions = {
   Query: {
-    getApprovables: isAdmin
+    getAdminTasks: isAdmin
   }
 };
