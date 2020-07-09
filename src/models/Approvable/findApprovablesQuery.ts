@@ -1,11 +1,11 @@
 import {
   APPROVABLE_MODELS,
-  ApprovableEntityType,
+  AdminTaskType,
   ApprovableModelsType,
   TABLE_NAME_COLUMN
 } from "./Model";
 import { IApprovableFilter } from "./Interfaces";
-import { ApprovableEntityTypesIsEmptyError, StatusesIsEmptyError } from "./Errors";
+import { AdminTaskTypesIsEmptyError, StatusesIsEmptyError } from "./Errors";
 import { groupTableNamesByColumn } from "./groupTableNamesByColumn";
 import { ApprovalStatus } from "../ApprovalStatus";
 
@@ -36,13 +36,13 @@ const getFullOuterJoin = (approvableModels: ApprovableModelsType[]) => {
   return `(${selectStatements.join(" FULL OUTER JOIN ")})`;
 };
 
-const getApprovableModels = (approvableEntityTypes: ApprovableEntityType[]) => {
-  const modelNames = approvableEntityTypes.map(type => type.toString());
+const getApprovableModels = (adminTaskTypes: AdminTaskType[]) => {
+  const modelNames = adminTaskTypes.map(type => type.toString());
   return APPROVABLE_MODELS.filter(model => modelNames.includes(model.name));
 };
 
-const findApprovablesByTypeQuery = (approvableEntityTypes: ApprovableEntityType[]) => {
-  const approvableModels = getApprovableModels(approvableEntityTypes);
+const findApprovablesByTypeQuery = (adminTaskTypes: AdminTaskType[]) => {
+  const approvableModels = getApprovableModels(adminTaskTypes);
   return `
     SELECT ${getRowsToSelect(approvableModels)}
     FROM ${getFullOuterJoin(approvableModels)}
@@ -51,14 +51,14 @@ const findApprovablesByTypeQuery = (approvableEntityTypes: ApprovableEntityType[
 
 export const findApprovablesQuery = (
   {
-    approvableEntityTypes,
+    adminTaskTypes,
     statuses
   }: IApprovableFilter
 ) => {
-  if (approvableEntityTypes.length === 0) throw new ApprovableEntityTypesIsEmptyError();
+  if (adminTaskTypes.length === 0) throw new AdminTaskTypesIsEmptyError();
   if (statuses.length === 0) throw new StatusesIsEmptyError();
   return `
-    WITH "Approvable" AS (${findApprovablesByTypeQuery(approvableEntityTypes)})
+    WITH "Approvable" AS (${findApprovablesByTypeQuery(adminTaskTypes)})
     SELECT * FROM "Approvable"
     WHERE ${getWhereClause(statuses)}
     ORDER BY "Approvable"."updatedAt" DESC

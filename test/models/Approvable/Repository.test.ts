@@ -3,7 +3,7 @@ import { CompanyRepository } from "../../../src/models/Company";
 import { UserRepository } from "../../../src/models/User";
 import {
   Approvable,
-  ApprovableEntityType,
+  AdminTaskType,
   ApprovableRepository
 } from "../../../src/models/Approvable";
 import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
@@ -45,7 +45,7 @@ describe("ApprovableRepository", () => {
     statuses: ApprovalStatus[]
   ) => {
     const result = await ApprovableRepository.find({
-      approvableEntityTypes: approvables.map(approvable => approvable.constructor.name) as any,
+      adminTaskTypes: approvables.map(approvable => approvable.constructor.name) as any,
       statuses: statuses
     });
     expect(result).toEqual(expect.arrayContaining(
@@ -55,7 +55,7 @@ describe("ApprovableRepository", () => {
 
   it("returns an empty array if no statuses are provided", async () => {
     const result = await ApprovableRepository.find({
-      approvableEntityTypes: [ApprovableEntityType.Applicant],
+      adminTaskTypes: [AdminTaskType.Applicant],
       statuses: []
     });
     expect(result).toEqual([]);
@@ -63,7 +63,7 @@ describe("ApprovableRepository", () => {
 
   it("returns an empty array if no approvableEntities are provided", async () => {
     const result = await ApprovableRepository.find({
-      approvableEntityTypes: [],
+      adminTaskTypes: [],
       statuses: [ApprovalStatus.pending]
     });
     expect(result).toEqual([]);
@@ -71,7 +71,7 @@ describe("ApprovableRepository", () => {
 
   it("returns an empty array if no approvableEntities and statuses are provided", async () => {
     const result = await ApprovableRepository.find({
-      approvableEntityTypes: [],
+      adminTaskTypes: [],
       statuses: []
     });
     expect(result).toEqual([]);
@@ -135,7 +135,7 @@ describe("ApprovableRepository", () => {
 
   it("sorts pending applicants and companies by updatedAt in any status", async () => {
     const result = await ApprovableRepository.find({
-      approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company],
+      adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected]
     });
     expect(result.map(entity => entity.uuid)).toEqual([

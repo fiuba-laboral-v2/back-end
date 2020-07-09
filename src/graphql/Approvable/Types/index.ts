@@ -1,7 +1,7 @@
 import { GraphQLApprovable } from "./GraphQLApprovable";
-import { GraphQLApprovableEntityType } from "./GraphQLApprovableEntityType";
+import { GraphQLAdminTaskType } from "./GraphQLAdminTaskType";
 
 export const approvableTypes = [
   GraphQLApprovable,
-  GraphQLApprovableEntityType
+  GraphQLAdminTaskType
 ];

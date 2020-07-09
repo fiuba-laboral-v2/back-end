@@ -9,7 +9,7 @@ const getModelByTableName = (tableName: string) =>
 
 export const ApprovableRepository = {
   find: async (filter: IApprovableFilter) => {
-    if (filter.approvableEntityTypes.length === 0) return [];
+    if (filter.adminTaskTypes.length === 0) return [];
     if (filter.statuses.length === 0) return [];
     const rows = await Database.query(findApprovablesQuery(filter), { type: "SELECT" });
     return rows.map((row: object) => {

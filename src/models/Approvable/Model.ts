@@ -8,7 +8,7 @@ export const APPROVABLE_MODELS = [
   Company
 ];
 export type Approvable = Applicant | Company;
-export enum ApprovableEntityType {
+export enum AdminTaskType {
   Applicant = "Applicant",
   Company = "Company"
 }

@@ -5,7 +5,7 @@ import { Database } from "../../../../src/config/Database";
 import { CompanyRepository } from "../../../../src/models/Company";
 import {
   Approvable,
-  ApprovableEntityType,
+  AdminTaskType,
   IApprovableFilter
 } from "../../../../src/models/Approvable";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
@@ -20,11 +20,11 @@ import { testClientFactory } from "../../../mocks/testClientFactory";
 
 const GET_APPROVABLES = gql`
   query GetApprovables(
-      $approvableEntityTypes: [ApprovableEntityType]!,
+      $adminTaskTypes: [AdminTaskType]!,
       $statuses: [ApprovalStatus]!
   ) {
       getApprovables(
-          approvableEntityTypes: $approvableEntityTypes,
+          adminTaskTypes: $adminTaskTypes,
           statuses: $statuses
       ) {
       ... on Company {
@@ -81,7 +81,7 @@ describe("getApprovables", () => {
     statuses: ApprovalStatus[]
   ) => {
     const result = await getApprovables({
-      approvableEntityTypes: approvables.map(approvable => approvable.constructor.name) as any,
+      adminTaskTypes: approvables.map(approvable => approvable.constructor.name) as any,
       statuses: statuses
     });
     expect(result).toEqual(expect.arrayContaining(
@@ -91,9 +91,9 @@ describe("getApprovables", () => {
     ));
   };
 
-  it("returns an empty array if no approvableEntityTypes are provided", async () => {
+  it("returns an empty array if no adminTaskTypes are provided", async () => {
     const result = await getApprovables({
-      approvableEntityTypes: [],
+      adminTaskTypes: [],
       statuses: [ApprovalStatus.pending]
     });
     expect(result).toEqual([]);
@@ -150,7 +150,7 @@ describe("getApprovables", () => {
 
   it("sorts all applicants and companies in any status by updated timestamp", async () => {
     const result = await getApprovables({
-      approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company],
+      adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected]
     });
     expect(result.map(approvable => approvable.uuid)).toEqual([
@@ -165,7 +165,7 @@ describe("getApprovables", () => {
   });
 
   describe("when the variables are incorrect", () => {
-    it("returns an error if no approvableEntityTypes are provided", async () => {
+    it("returns an error if no filter is provided", async () => {
       const { apolloClient } = await testClientFactory.admin();
       const { errors } = await apolloClient.query({
         query: GET_APPROVABLES,
@@ -182,7 +182,7 @@ describe("getApprovables", () => {
       const { errors } = await apolloClient.query({
         query: GET_APPROVABLES,
         variables: {
-          approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company],
+          adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
           statuses: [ApprovalStatus.pending]
         }
       });

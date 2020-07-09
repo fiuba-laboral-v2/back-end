@@ -1,7 +1,7 @@
-import { ApprovableEntityType } from "./Model";
+import { AdminTaskType } from "./Model";
 import { ApprovalStatus } from "../ApprovalStatus";
 
 export interface IApprovableFilter {
-  approvableEntityTypes: ApprovableEntityType[];
+  adminTaskTypes: AdminTaskType[];
   statuses: ApprovalStatus[];
 }

@@ -1,8 +1,8 @@
 import { Database } from "../../../src/config/Database";
 import { findApprovablesQuery } from "../../../src/models/Approvable/findApprovablesQuery";
-import { ApprovableEntityType } from "../../../src/models/Approvable";
+import { AdminTaskType } from "../../../src/models/Approvable";
 import {
-  ApprovableEntityTypesIsEmptyError,
+  AdminTaskTypesIsEmptyError,
   StatusesIsEmptyError
 } from "../../../src/models/Approvable/Errors";
 import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
@@ -13,7 +13,7 @@ describe("findApprovablesQuery", () => {
 
   const expectToReturnSQLQueryOfAllApprovableEntitiesWithStatus = (status: ApprovalStatus) => {
     const query = findApprovablesQuery({
-      approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company],
+      adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
       statuses: [status]
     });
     const expectedQuery = `
@@ -49,7 +49,7 @@ describe("findApprovablesQuery", () => {
 
   const expectToReturnSQLQueryOfCompaniesWithStatus = (status: ApprovalStatus) => {
     const query = findApprovablesQuery({
-      approvableEntityTypes: [ApprovableEntityType.Company],
+      adminTaskTypes: [AdminTaskType.Company],
       statuses: [status]
     });
     const expectedQuery = `
@@ -79,7 +79,7 @@ describe("findApprovablesQuery", () => {
 
   const expectToReturnSQLQueryOfApplicantsWithStatus = (status: ApprovalStatus) => {
     const query = findApprovablesQuery({
-      approvableEntityTypes: [ApprovableEntityType.Applicant],
+      adminTaskTypes: [AdminTaskType.Applicant],
       statuses: [status]
     });
     const expectedQuery = `
@@ -103,22 +103,22 @@ describe("findApprovablesQuery", () => {
     expect(query).toEqualIgnoringSpacing(expectedQuery);
   };
 
-  it("throws an error if no approvableEntityTypes are provided", async () => {
+  it("throws an error if no adminTaskTypes are provided", async () => {
     expect(
       () => findApprovablesQuery({
-        approvableEntityTypes: [],
+        adminTaskTypes: [],
         statuses: [ApprovalStatus.pending]
       })
     ).toThrowErrorWithMessage(
-      ApprovableEntityTypesIsEmptyError,
-      ApprovableEntityTypesIsEmptyError.buildMessage()
+      AdminTaskTypesIsEmptyError,
+      AdminTaskTypesIsEmptyError.buildMessage()
     );
   });
 
   it("throws an error if no statuses are provided", async () => {
     expect(
       () => findApprovablesQuery({
-        approvableEntityTypes: [ApprovableEntityType.Applicant],
+        adminTaskTypes: [AdminTaskType.Applicant],
         statuses: []
       })
     ).toThrowErrorWithMessage(
@@ -165,7 +165,7 @@ describe("findApprovablesQuery", () => {
 
   it("returns an sql query of approvable entities in all statuses", async () => {
     const query = findApprovablesQuery({
-      approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company],
+      adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected]
     });
     const expectedQuery = `
@@ -203,7 +203,7 @@ describe("findApprovablesQuery", () => {
 
   it("returns an sql query of approvable entities in approved and rejected statuses", async () => {
     const query = findApprovablesQuery({
-      approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company],
+      adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
       statuses: [ApprovalStatus.approved, ApprovalStatus.rejected]
     });
     const expectedQuery = `

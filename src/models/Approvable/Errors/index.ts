@@ -1,2 +1,2 @@
-export { ApprovableEntityTypesIsEmptyError } from "./ApprovableEntityTypesIsEmptyError";
+export { AdminTaskTypesIsEmptyError } from "./AdminTaskTypesIsEmptyError";
 export { StatusesIsEmptyError } from "./StatusesIsEmptyError";

@@ -1,14 +1,14 @@
 import { List, nonNull } from "../../fieldTypes";
 import { ApprovableRepository, IApprovableFilter } from "../../../models/Approvable";
 import { GraphQLApprovable } from "../Types/GraphQLApprovable";
-import { GraphQLApprovableEntityType } from "../Types/GraphQLApprovableEntityType";
+import { GraphQLAdminTaskType } from "../Types/GraphQLAdminTaskType";
 import { GraphQLApprovalStatus } from "../../ApprovalStatus/Types/GraphQLApprovalStatus";
 
 export const getApprovables = {
   type: nonNull(List(GraphQLApprovable)),
   args: {
-    approvableEntityTypes: {
-      type: nonNull(List(GraphQLApprovableEntityType))
+    adminTaskTypes: {
+      type: nonNull(List(GraphQLAdminTaskType))
     },
     statuses: {
       type: nonNull(List(GraphQLApprovalStatus))
