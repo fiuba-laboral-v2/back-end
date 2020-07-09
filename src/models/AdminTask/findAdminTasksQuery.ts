@@ -12,8 +12,8 @@ import { ApprovalStatus } from "../ApprovalStatus";
 const getWhereClause = (statuses: ApprovalStatus[]) =>
   statuses.map(status => `"AdminTask"."approvalStatus" = '${status}'`).join(" OR ");
 
-const getRowsToSelect = (approvableModels: AdminTaskModelsType[]) => {
-  const tablesByColumn: object = groupTableNamesByColumn(approvableModels);
+const getRowsToSelect = (adminTaskModelsTypes: AdminTaskModelsType[]) => {
+  const tablesByColumn: object = groupTableNamesByColumn(adminTaskModelsTypes);
   return Object.entries(tablesByColumn).map(([columnName, tableNames]) =>
     `COALESCE (
       ${tableNames.map(tableName => `${tableName}."${columnName}"`).join(",")}
@@ -21,8 +21,8 @@ const getRowsToSelect = (approvableModels: AdminTaskModelsType[]) => {
   ).join(",");
 };
 
-const getFullOuterJoin = (approvableModels: AdminTaskModelsType[]) => {
-  let selectStatements = approvableModels.map(model => {
+const getFullOuterJoin = (adminTaskModelsTypes: AdminTaskModelsType[]) => {
+  let selectStatements = adminTaskModelsTypes.map(model => {
     const tableName = model.tableName;
     return `(
       SELECT *, '${tableName}' AS "${TABLE_NAME_COLUMN}" FROM "${tableName}"
@@ -42,10 +42,10 @@ const getAdminTaskModels = (adminTaskTypes: AdminTaskType[]) => {
 };
 
 const findAdminTasksByTypeQuery = (adminTaskTypes: AdminTaskType[]) => {
-  const approvableModels = getAdminTaskModels(adminTaskTypes);
+  const adminTaskModelsTypes = getAdminTaskModels(adminTaskTypes);
   return `
-    SELECT ${getRowsToSelect(approvableModels)}
-    FROM ${getFullOuterJoin(approvableModels)}
+    SELECT ${getRowsToSelect(adminTaskModelsTypes)}
+    FROM ${getFullOuterJoin(adminTaskModelsTypes)}
   `;
 };
 

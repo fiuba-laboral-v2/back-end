@@ -6,13 +6,13 @@ const getColumns = model => [TABLE_NAME_COLUMN].concat(Object.keys(model.rawAttr
 const mapModelToTableNameColumnTuple = model =>
   getColumns(model).map(column => ({ tableName: model.tableName, column }));
 
-const mapAllModelsToTableNameColumnTuple = (approvableModels: AdminTaskModelsType[]) =>
-  approvableModels.map(model => mapModelToTableNameColumnTuple(model)).flat();
+const mapAllModelsToTableNameColumnTuple = (adminTaskModelsTypes: AdminTaskModelsType[]) =>
+  adminTaskModelsTypes.map(model => mapModelToTableNameColumnTuple(model)).flat();
 
-const groupByColumns = (approvableModels: AdminTaskModelsType[]) =>
-  groupBy(mapAllModelsToTableNameColumnTuple(approvableModels), "column");
+const groupByColumns = (adminTaskModelsTypes: AdminTaskModelsType[]) =>
+  groupBy(mapAllModelsToTableNameColumnTuple(adminTaskModelsTypes), "column");
 
-export const groupTableNamesByColumn = (approvableModels: AdminTaskModelsType[]) =>
-  mapValues(groupByColumns(approvableModels), columnTableObjects =>
+export const groupTableNamesByColumn = (adminTaskModelsTypes: AdminTaskModelsType[]) =>
+  mapValues(groupByColumns(adminTaskModelsTypes), columnTableObjects =>
     columnTableObjects.map(columnTableObject => columnTableObject.tableName)
 );
