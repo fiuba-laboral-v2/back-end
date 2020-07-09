@@ -4,7 +4,7 @@ import {
   ApprovableModelsType,
   TABLE_NAME_COLUMN
 } from "./Model";
-import { IApprovableFilter } from "./Interfaces";
+import { IAdminTasksFilter } from "./Interfaces";
 import { AdminTaskTypesIsEmptyError, StatusesIsEmptyError } from "./Errors";
 import { groupTableNamesByColumn } from "./groupTableNamesByColumn";
 import { ApprovalStatus } from "../ApprovalStatus";
@@ -53,7 +53,7 @@ export const findApprovablesQuery = (
   {
     adminTaskTypes,
     statuses
-  }: IApprovableFilter
+  }: IAdminTasksFilter
 ) => {
   if (adminTaskTypes.length === 0) throw new AdminTaskTypesIsEmptyError();
   if (statuses.length === 0) throw new StatusesIsEmptyError();

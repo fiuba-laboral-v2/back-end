@@ -1,5 +1,5 @@
 import { List, nonNull } from "../../fieldTypes";
-import { ApprovableRepository, IApprovableFilter } from "../../../models/Approvable";
+import { ApprovableRepository, IAdminTasksFilter } from "../../../models/Approvable";
 import { GraphQLApprovable } from "../Types/GraphQLApprovable";
 import { GraphQLAdminTaskType } from "../Types/GraphQLAdminTaskType";
 import { GraphQLApprovalStatus } from "../../ApprovalStatus/Types/GraphQLApprovalStatus";
@@ -14,6 +14,6 @@ export const getAdminTasks = {
       type: nonNull(List(GraphQLApprovalStatus))
     }
   },
-  resolve: (_: undefined, filter: IApprovableFilter) =>
+  resolve: (_: undefined, filter: IAdminTasksFilter) =>
     ApprovableRepository.find(filter)
 };

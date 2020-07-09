@@ -2,13 +2,13 @@ import { Database } from "../../config/Database";
 import { find } from "lodash";
 import { findApprovablesQuery } from "./findApprovablesQuery";
 import { APPROVABLE_MODELS, TABLE_NAME_COLUMN } from "./Model";
-import { IApprovableFilter } from "./Interfaces";
+import { IAdminTasksFilter } from "./Interfaces";
 
 const getModelByTableName = (tableName: string) =>
   find(APPROVABLE_MODELS, ["tableName", tableName]);
 
 export const ApprovableRepository = {
-  find: async (filter: IApprovableFilter) => {
+  find: async (filter: IAdminTasksFilter) => {
     if (filter.adminTaskTypes.length === 0) return [];
     if (filter.statuses.length === 0) return [];
     const rows = await Database.query(findApprovablesQuery(filter), { type: "SELECT" });

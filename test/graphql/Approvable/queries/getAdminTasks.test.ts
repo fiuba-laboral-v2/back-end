@@ -6,7 +6,7 @@ import { CompanyRepository } from "../../../../src/models/Company";
 import {
   Approvable,
   AdminTaskType,
-  IApprovableFilter
+  IAdminTasksFilter
 } from "../../../../src/models/Approvable";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import { UserRepository } from "../../../../src/models/User";
@@ -66,7 +66,7 @@ describe("getAdminTasks", () => {
 
   afterAll(() => Database.close());
 
-  const getAdminTasks = async (filter: IApprovableFilter) => {
+  const getAdminTasks = async (filter: IAdminTasksFilter) => {
     const { apolloClient } = await testClientFactory.admin();
     const { errors, data } = await apolloClient.query({
       query: GET_ADMIN_TASKS,

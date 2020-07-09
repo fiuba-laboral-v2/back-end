@@ -1,7 +1,7 @@
 import { AdminTaskType } from "./Model";
 import { ApprovalStatus } from "../ApprovalStatus";
 
-export interface IApprovableFilter {
+export interface IAdminTasksFilter {
   adminTaskTypes: AdminTaskType[];
   statuses: ApprovalStatus[];
 }
