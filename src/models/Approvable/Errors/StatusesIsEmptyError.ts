@@ -1,6 +1,6 @@
 export class StatusesIsEmptyError extends Error {
   public static buildMessage() {
-    return "statuses should have at least one ApprovableStatus";
+    return `No ApprovalStatus was provided`;
   }
   constructor() {
     super(StatusesIsEmptyError.buildMessage());
