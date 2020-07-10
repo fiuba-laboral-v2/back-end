@@ -1,6 +1,6 @@
 import { Database } from "../../../src/config/Database";
-import { groupTableNamesByColumn } from "../../../src/models/Approvable/groupTableNamesByColumn";
-import { APPROVABLE_MODELS } from "../../../src/models/Approvable";
+import { groupTableNamesByColumn } from "../../../src/models/AdminTask/groupTableNamesByColumn";
+import { ADMIN_TASK_MODELS } from "../../../src/models/AdminTask";
 import { Applicant, Company } from "../../../src/models";
 
 describe("groupTableNamesByColumn", () => {
@@ -10,7 +10,7 @@ describe("groupTableNamesByColumn", () => {
   it("groups each column as a key and their related tableNames as values", async () => {
     const APPLICANTS_TABLE_NAME = Applicant.tableName;
     const COMPANIES_TABLE_NAME = Company.tableName;
-    const tableNamesByColumn = groupTableNamesByColumn(APPROVABLE_MODELS);
+    const tableNamesByColumn = groupTableNamesByColumn(ADMIN_TASK_MODELS);
     expect(tableNamesByColumn).toMatchObject(
       {
         uuid: expect.arrayContaining([APPLICANTS_TABLE_NAME, COMPANIES_TABLE_NAME]),

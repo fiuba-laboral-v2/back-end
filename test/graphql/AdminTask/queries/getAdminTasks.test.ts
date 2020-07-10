@@ -4,10 +4,10 @@ import { Database } from "../../../../src/config/Database";
 
 import { CompanyRepository } from "../../../../src/models/Company";
 import {
-  Approvable,
-  ApprovableEntityType,
-  IApprovableFilter
-} from "../../../../src/models/Approvable";
+  AdminTask,
+  AdminTaskType,
+  IAdminTasksFilter
+} from "../../../../src/models/AdminTask";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import { UserRepository } from "../../../../src/models/User";
 import { Admin, Applicant, Company } from "../../../../src/models";
@@ -18,13 +18,13 @@ import { CompanyGenerator } from "../../../generators/Company";
 import { ApplicantGenerator } from "../../../generators/Applicant";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
-const GET_APPROVABLES = gql`
-  query GetApprovables(
-      $approvableEntityTypes: [ApprovableEntityType]!,
+const GET_ADMIN_TASKS = gql`
+  query GetAdminTasks(
+      $adminTaskTypes: [AdminTaskType]!,
       $statuses: [ApprovalStatus]!
   ) {
-      getApprovables(
-          approvableEntityTypes: $approvableEntityTypes,
+      getAdminTasks(
+          adminTaskTypes: $adminTaskTypes,
           statuses: $statuses
       ) {
       ... on Company {
@@ -39,7 +39,7 @@ const GET_APPROVABLES = gql`
   }
 `;
 
-describe("getApprovables", () => {
+describe("getAdminTasks", () => {
   let admin: Admin;
   let approvedCompany: Company;
   let rejectedCompany: Company;
@@ -66,94 +66,94 @@ describe("getApprovables", () => {
 
   afterAll(() => Database.close());
 
-  const getApprovables = async (filter: IApprovableFilter) => {
+  const getAdminTasks = async (filter: IAdminTasksFilter) => {
     const { apolloClient } = await testClientFactory.admin();
     const { errors, data } = await apolloClient.query({
-      query: GET_APPROVABLES,
+      query: GET_ADMIN_TASKS,
       variables: filter
     });
     expect(errors).toBeUndefined();
-    return data!.getApprovables;
+    return data!.getAdminTasks;
   };
 
-  const expectToFindApprovableWithStatuses = async (
-    approvables: Approvable[],
+  const expectToFindAdminTaskWithStatuses = async (
+    adminTasks: AdminTask[],
     statuses: ApprovalStatus[]
   ) => {
-    const result = await getApprovables({
-      approvableEntityTypes: approvables.map(approvable => approvable.constructor.name) as any,
+    const result = await getAdminTasks({
+      adminTaskTypes: adminTasks.map(adminTask => adminTask.constructor.name) as any,
       statuses: statuses
     });
     expect(result).toEqual(expect.arrayContaining(
-      approvables.map(approvable => expect.objectContaining({
-        uuid: approvable.uuid
+      adminTasks.map(adminTask => expect.objectContaining({
+        uuid: adminTask.uuid
       }))
     ));
   };
 
-  it("returns an empty array if no approvableEntityTypes are provided", async () => {
-    const result = await getApprovables({
-      approvableEntityTypes: [],
+  it("returns an empty array if no adminTaskTypes are provided", async () => {
+    const result = await getAdminTasks({
+      adminTaskTypes: [],
       statuses: [ApprovalStatus.pending]
     });
     expect(result).toEqual([]);
   });
 
   it("returns only pending companies", async () => {
-    await expectToFindApprovableWithStatuses(
+    await expectToFindAdminTaskWithStatuses(
       [pendingCompany],
       [ApprovalStatus.pending]
     );
   });
 
   it("returns only approved companies", async () => {
-    await expectToFindApprovableWithStatuses(
+    await expectToFindAdminTaskWithStatuses(
       [approvedCompany],
       [ApprovalStatus.approved]
     );
   });
 
   it("returns only rejected companies", async () => {
-    await expectToFindApprovableWithStatuses(
+    await expectToFindAdminTaskWithStatuses(
       [rejectedCompany],
       [ApprovalStatus.rejected]
     );
   });
 
   it("returns only pending applicants", async () => {
-    await expectToFindApprovableWithStatuses(
+    await expectToFindAdminTaskWithStatuses(
       [pendingApplicant],
       [ApprovalStatus.pending]
     );
   });
 
   it("returns only approved applicants", async () => {
-    await expectToFindApprovableWithStatuses(
+    await expectToFindAdminTaskWithStatuses(
       [approvedApplicant],
       [ApprovalStatus.approved]
     );
   });
 
   it("returns only rejected applicants", async () => {
-    await expectToFindApprovableWithStatuses(
+    await expectToFindAdminTaskWithStatuses(
       [rejectedApplicant],
       [ApprovalStatus.rejected]
     );
   });
 
   it("returns only pending applicants and companies", async () => {
-    await expectToFindApprovableWithStatuses(
+    await expectToFindAdminTaskWithStatuses(
       [pendingApplicant, pendingCompany],
       [ApprovalStatus.pending]
     );
   });
 
   it("sorts all applicants and companies in any status by updated timestamp", async () => {
-    const result = await getApprovables({
-      approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company],
+    const result = await getAdminTasks({
+      adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected]
     });
-    expect(result.map(approvable => approvable.uuid)).toEqual([
+    expect(result.map(adminTask => adminTask.uuid)).toEqual([
       pendingApplicant.uuid,
       approvedApplicant.uuid,
       rejectedApplicant.uuid,
@@ -165,10 +165,10 @@ describe("getApprovables", () => {
   });
 
   describe("when the variables are incorrect", () => {
-    it("returns an error if no approvableEntityTypes are provided", async () => {
+    it("returns an error if no filter is provided", async () => {
       const { apolloClient } = await testClientFactory.admin();
       const { errors } = await apolloClient.query({
-        query: GET_APPROVABLES,
+        query: GET_ADMIN_TASKS,
         variables: {}
       });
       expect(errors).not.toBeUndefined();
@@ -180,9 +180,9 @@ describe("getApprovables", () => {
       { apolloClient }: { apolloClient: ApolloServerTestClient }
     ) => {
       const { errors } = await apolloClient.query({
-        query: GET_APPROVABLES,
+        query: GET_ADMIN_TASKS,
         variables: {
-          approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company],
+          adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
           statuses: [ApprovalStatus.pending]
         }
       });

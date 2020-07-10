@@ -2,10 +2,10 @@ import { Database } from "../../../src/config/Database";
 import { CompanyRepository } from "../../../src/models/Company";
 import { UserRepository } from "../../../src/models/User";
 import {
-  Approvable,
-  ApprovableEntityType,
-  ApprovableRepository
-} from "../../../src/models/Approvable";
+  AdminTask,
+  AdminTaskType,
+  AdminTaskRepository
+} from "../../../src/models/AdminTask";
 import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
 import { Admin, Applicant, Company } from "../../../src/models";
 
@@ -13,7 +13,7 @@ import { AdminGenerator } from "../../generators/Admin";
 import { ApplicantGenerator } from "../../generators/Applicant";
 import { CompanyGenerator } from "../../generators/Company";
 
-describe("ApprovableRepository", () => {
+describe("AdminTaskRepository", () => {
   let admin: Admin;
   let approvedCompany: Company;
   let rejectedCompany: Company;
@@ -40,105 +40,105 @@ describe("ApprovableRepository", () => {
 
   afterAll(() => Database.close());
 
-  const expectToFindApprovableWithStatuses = async (
-    approvables: Approvable[],
+  const expectToFindAdminTasksWithStatuses = async (
+    adminTasks: AdminTask[],
     statuses: ApprovalStatus[]
   ) => {
-    const result = await ApprovableRepository.find({
-      approvableEntityTypes: approvables.map(approvable => approvable.constructor.name) as any,
+    const result = await AdminTaskRepository.find({
+      adminTaskTypes: adminTasks.map(adminTask => adminTask.constructor.name) as any,
       statuses: statuses
     });
     expect(result).toEqual(expect.arrayContaining(
-      approvables.map(approvable => expect.objectContaining(approvable.toJSON()))
+      adminTasks.map(adminTask => expect.objectContaining(adminTask.toJSON()))
     ));
   };
 
   it("returns an empty array if no statuses are provided", async () => {
-    const result = await ApprovableRepository.find({
-      approvableEntityTypes: [ApprovableEntityType.Applicant],
+    const result = await AdminTaskRepository.find({
+      adminTaskTypes: [AdminTaskType.Applicant],
       statuses: []
     });
     expect(result).toEqual([]);
   });
 
-  it("returns an empty array if no approvableEntities are provided", async () => {
-    const result = await ApprovableRepository.find({
-      approvableEntityTypes: [],
+  it("returns an empty array if no adminTaskTypes are provided", async () => {
+    const result = await AdminTaskRepository.find({
+      adminTaskTypes: [],
       statuses: [ApprovalStatus.pending]
     });
     expect(result).toEqual([]);
   });
 
-  it("returns an empty array if no approvableEntities and statuses are provided", async () => {
-    const result = await ApprovableRepository.find({
-      approvableEntityTypes: [],
+  it("returns an empty array if no adminTaskTypes and statuses are provided", async () => {
+    const result = await AdminTaskRepository.find({
+      adminTaskTypes: [],
       statuses: []
     });
     expect(result).toEqual([]);
   });
 
   it("returns only pending companies", async () => {
-    await expectToFindApprovableWithStatuses(
+    await expectToFindAdminTasksWithStatuses(
       [pendingCompany],
       [ApprovalStatus.pending]
     );
   });
 
   it("returns only approved companies", async () => {
-    await expectToFindApprovableWithStatuses(
+    await expectToFindAdminTasksWithStatuses(
       [approvedCompany],
       [ApprovalStatus.approved]
     );
   });
 
   it("returns only rejected companies", async () => {
-    await expectToFindApprovableWithStatuses(
+    await expectToFindAdminTasksWithStatuses(
       [rejectedCompany],
       [ApprovalStatus.rejected]
     );
   });
 
   it("returns only pending applicants", async () => {
-    await expectToFindApprovableWithStatuses(
+    await expectToFindAdminTasksWithStatuses(
       [pendingApplicant],
       [ApprovalStatus.pending]
     );
   });
 
   it("returns only approved applicants", async () => {
-    await expectToFindApprovableWithStatuses(
+    await expectToFindAdminTasksWithStatuses(
       [approvedApplicant],
       [ApprovalStatus.approved]
     );
   });
 
   it("returns only rejected applicants", async () => {
-    await expectToFindApprovableWithStatuses(
+    await expectToFindAdminTasksWithStatuses(
       [rejectedApplicant],
       [ApprovalStatus.rejected]
     );
   });
 
   it("returns only pending applicants and companies", async () => {
-    await expectToFindApprovableWithStatuses(
+    await expectToFindAdminTasksWithStatuses(
       [pendingCompany, pendingApplicant],
       [ApprovalStatus.pending]
     );
   });
 
   it("returns only approved and rejected applicants and companies", async () => {
-    await expectToFindApprovableWithStatuses(
+    await expectToFindAdminTasksWithStatuses(
       [approvedCompany, rejectedCompany, approvedApplicant, rejectedApplicant],
       [ApprovalStatus.approved, ApprovalStatus.rejected]
     );
   });
 
   it("sorts pending applicants and companies by updatedAt in any status", async () => {
-    const result = await ApprovableRepository.find({
-      approvableEntityTypes: [ApprovableEntityType.Applicant, ApprovableEntityType.Company],
+    const result = await AdminTaskRepository.find({
+      adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected]
     });
-    expect(result.map(entity => entity.uuid)).toEqual([
+    expect(result.map(adminTask => adminTask.uuid)).toEqual([
       pendingApplicant.uuid,
       approvedApplicant.uuid,
       rejectedApplicant.uuid,
