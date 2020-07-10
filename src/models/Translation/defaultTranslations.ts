@@ -144,6 +144,12 @@ export const defaultTranslations = {
     { key: "companyIconTitle", value: "Empresa" },
     { key: "applicantIconTitle", value: "Postulante" }
   ],
+  statusFilterMenu: [
+    { key: "title", value: "Estado" },
+    { key: "pending", value: "Pendiente" },
+    { key: "approved", value: "Aprobado" },
+    { key: "rejected", value: "Rechzado" }
+  ],
   adminTaskList: [
     { key: "pendingTasks", value: "Tareas pendientes" }
   ],
