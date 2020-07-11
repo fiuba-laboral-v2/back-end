@@ -148,7 +148,7 @@ export const defaultTranslations = {
     { key: "title", value: "Estado" },
     { key: "pending", value: "Pendiente" },
     { key: "approved", value: "Aprobado" },
-    { key: "rejected", value: "Rechzado" }
+    { key: "rejected", value: "Rechazado" }
   ],
   adminTaskList: [
     { key: "pendingTasks", value: "Tareas pendientes" }
