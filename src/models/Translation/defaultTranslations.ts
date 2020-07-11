@@ -174,6 +174,7 @@ export const defaultTranslations = {
   ],
   adminActions: [
     { key: "approve", value: "Aprobar" },
-    { key: "reject", value: "Rechazar" }
+    { key: "reject", value: "Rechazar" },
+    { key: "pending", value: "A Pendientes" }
   ]
 };
