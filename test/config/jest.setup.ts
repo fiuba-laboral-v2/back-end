@@ -1,5 +1,5 @@
 import { setupCustomMatchers } from "./customMatchers";
-import { SetupDatabase } from "./SetupDatabase";
+import { setupDatabase } from "./setupDatabase";
 
 setupCustomMatchers();
-SetupDatabase();
+setupDatabase();
