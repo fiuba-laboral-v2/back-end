@@ -1,6 +1,5 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
-import { Database } from "../../../../src/config/Database";
 
 import { UserRepository } from "../../../../src/models/User";
 import { Admin, Applicant } from "../../../../src/models";
@@ -40,15 +39,12 @@ describe("getMyLatestJobApplications", () => {
   let admin: Admin;
 
   beforeAll(async () => {
-    Database.setConnection();
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     applicant = await ApplicantGenerator.instance.withMinimumData().next().value;
     offers = await OfferGenerator.instance.withObligatoryData();
     admin = await AdminGenerator.instance().next().value;
   });
-
-  afterAll(() => Database.close());
 
   describe("when the input is valid", () => {
     it("returns all my company jobApplications", async () => {

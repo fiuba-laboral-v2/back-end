@@ -1,4 +1,3 @@
-import { Database } from "../../../src/config/Database";
 import { AdminRepository } from "../../../src/models/Admin";
 import { UserRepository } from "../../../src/models/User";
 import { UniqueConstraintError } from "sequelize";
@@ -9,11 +8,9 @@ describe("AdminRepository", () => {
   let adminsData: TAdminDataGenerator;
 
   beforeAll(async () => {
-    Database.setConnection();
     await UserRepository.truncate();
     adminsData = AdminGenerator.data();
   });
-  afterAll(() => Database.close());
 
   describe("create", () => {
     it("creates a valid Admin", async () => {

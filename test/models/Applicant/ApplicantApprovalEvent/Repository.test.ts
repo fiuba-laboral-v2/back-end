@@ -1,4 +1,3 @@
-import { Database } from "../../../../src/config/Database";
 import { ForeignKeyConstraintError } from "sequelize";
 import { ApplicantRepository } from "../../../../src/models/Applicant";
 import { UserRepository } from "../../../../src/models/User";
@@ -18,13 +17,10 @@ describe("ApplicantApprovalEventRepository", () => {
   let admins: TAdminGenerator;
 
   beforeAll(async () => {
-    Database.setConnection();
     await UserRepository.truncate();
     applicants = ApplicantGenerator.instance.withMinimumData();
     admins = AdminGenerator.instance();
   });
-
-  afterAll(() => Database.close());
 
   const expectToCreateAValidInstanceWithAStatus = async (status: ApprovalStatus) => {
     const applicant = await applicants.next().value;

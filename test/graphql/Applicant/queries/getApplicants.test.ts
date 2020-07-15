@@ -1,6 +1,5 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
-import { Database } from "../../../../src/config/Database";
 
 import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
 
@@ -51,14 +50,11 @@ describe("getApplicants", () => {
   let admins: TAdminGenerator;
 
   beforeAll(async () => {
-    Database.setConnection();
     await CareerRepository.truncate();
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
     admins = AdminGenerator.instance();
   });
-
-  afterAll(() => Database.close());
 
   describe("when no applicant exists", () => {
     it("fetches an empty array of applicants", async () => {

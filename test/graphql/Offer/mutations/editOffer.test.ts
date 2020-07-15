@@ -1,5 +1,4 @@
 import { gql } from "apollo-server";
-import { Database } from "../../../../src/config/Database";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { UserRepository } from "../../../../src/models/User";
 import { testClientFactory } from "../../../mocks/testClientFactory";
@@ -44,13 +43,11 @@ describe("editOffer", () => {
   let admins: TAdminGenerator;
 
   beforeAll(async () => {
-    Database.setConnection();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     offersData = OfferGenerator.data.withObligatoryData();
     admins = AdminGenerator.instance();
   });
-  afterAll(() => Database.close());
 
   it("edits an offer successfully", async () => {
     const { apolloClient, company } = await testClientFactory.company({

@@ -1,5 +1,4 @@
 import { ValidationError } from "sequelize";
-import { Database } from "../../../../src/config/Database";
 import { Applicant, ApplicantLink } from "../../../../src/models";
 import { UserRepository } from "../../../../src/models/User";
 
@@ -7,7 +6,6 @@ describe("ApplicantLink", () => {
   let applicant: Applicant;
 
   beforeAll(async () => {
-    Database.setConnection();
     await UserRepository.truncate();
     await ApplicantLink.truncate({ cascade: true });
     const { uuid: userUuid } = await UserRepository.create({
@@ -21,11 +19,6 @@ describe("ApplicantLink", () => {
       description: "Batman",
       userUuid: userUuid
     });
-  });
-
-  afterAll(async () => {
-    await UserRepository.truncate();
-    await Database.close();
   });
 
   it("should create a valid link with a name and a url", async () => {

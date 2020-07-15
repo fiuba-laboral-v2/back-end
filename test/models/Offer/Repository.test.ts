@@ -1,5 +1,4 @@
 import { UniqueConstraintError } from "sequelize";
-import { Database } from "../../../src/config/Database";
 import { CareerRepository } from "../../../src/models/Career";
 import { OfferRepository } from "../../../src/models/Offer";
 import { CompanyRepository } from "../../../src/models/Company";
@@ -19,7 +18,6 @@ describe("OfferRepository", () => {
   let offersData: TOfferDataGenerator;
 
   beforeAll(async () => {
-    Database.setConnection();
     await CareerRepository.truncate();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
@@ -27,8 +25,6 @@ describe("OfferRepository", () => {
     careersGenerator = CareerGenerator.instance();
     offersData = OfferGenerator.data.withObligatoryData();
   });
-
-  afterAll(() => Database.close());
 
   const sectionData = {
     title: "title",

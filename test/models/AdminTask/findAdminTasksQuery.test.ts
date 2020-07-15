@@ -1,4 +1,3 @@
-import { Database } from "../../../src/config/Database";
 import { findAdminTasksQuery } from "../../../src/models/AdminTask/findAdminTasksQuery";
 import { AdminTaskType } from "../../../src/models/AdminTask";
 import {
@@ -8,8 +7,6 @@ import {
 import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
 
 describe("findAdminTasksQuery", () => {
-  beforeAll(() => Database.setConnection());
-  afterAll(() => Database.close());
 
   const expectToReturnSQLQueryOfAllAdminTasksWithStatus = (status: ApprovalStatus) => {
     const query = findAdminTasksQuery({

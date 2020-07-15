@@ -1,12 +1,7 @@
 import { ValidationError } from "sequelize";
-import { Database } from "../../../src/config/Database";
 import { Capability } from "../../../src/models";
 
 describe("Capability", () => {
-  beforeAll(() => Database.setConnection());
-
-  afterAll(() => Database.close());
-
   it("create a valid capability", async () => {
     const capability = new Capability({ description: "Python" });
     await expect(capability.validate()).resolves.not.toThrow();

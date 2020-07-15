@@ -1,5 +1,4 @@
 import { gql } from "apollo-server";
-import { Database } from "../../../../src/config/Database";
 import { client } from "../../ApolloTestClient";
 import { UserRepository } from "../../../../src/models/User";
 import { CompanyRepository } from "../../../../src/models/Company";
@@ -15,12 +14,9 @@ const LOGOUT = gql`
 
 describe("logout", () => {
   beforeAll(async () => {
-    Database.setConnection();
     await UserRepository.truncate();
     await CompanyRepository.truncate();
   });
-
-  afterAll(() => Database.close());
 
   const createExpressContext = () => ({
     res: { cookie: jest.fn() }

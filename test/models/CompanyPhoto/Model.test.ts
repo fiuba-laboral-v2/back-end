@@ -1,13 +1,8 @@
-import { Database } from "../../../src/config/Database";
 import { CompanyPhotoRepository } from "../../../src/models/CompanyPhoto";
 import { CompanyPhoto } from "../../../src/models";
 
 describe("CompanyPhoto", () => {
-  beforeAll(() => Database.setConnection());
-
   beforeEach(() => CompanyPhotoRepository.truncate());
-
-  afterAll(() => Database.close());
 
   it("create a valid CompanyPhoto", async () => {
     const companyPhoto = new CompanyPhoto({

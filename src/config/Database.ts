@@ -50,7 +50,7 @@ export class Database {
   public static sequelize: Sequelize;
 
   public static close() {
-    this.sequelize?.close();
+    return this.sequelize?.close();
   }
 
   public static async transaction<CallbackReturnType>(

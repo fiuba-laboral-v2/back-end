@@ -1,6 +1,5 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
-import { Database } from "../../../../src/config/Database";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { UserRepository } from "../../../../src/models/User";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
@@ -59,13 +58,10 @@ describe("createCompany", () => {
   let companiesData: TCompanyDataGenerator;
 
   beforeAll(async () => {
-    Database.setConnection();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     companiesData = CompanyGenerator.data.completeData();
   });
-
-  afterAll(() => Database.close());
 
   describe("When the creation succeeds", () => {
     it("create company", async () => {

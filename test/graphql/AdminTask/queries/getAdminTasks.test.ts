@@ -1,6 +1,5 @@
 import { gql } from "apollo-server";
 import { ApolloServerTestClient } from "apollo-server-testing";
-import { Database } from "../../../../src/config/Database";
 
 import { CompanyRepository } from "../../../../src/models/Company";
 import {
@@ -49,7 +48,6 @@ describe("getAdminTasks", () => {
   let pendingApplicant: Applicant;
 
   beforeAll(async () => {
-    Database.setConnection();
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     const companies = await CompanyGenerator.instance.updatedWithStatus();
@@ -63,8 +61,6 @@ describe("getAdminTasks", () => {
     approvedApplicant = await applicants.next({ status: ApprovalStatus.approved, admin }).value;
     pendingApplicant = await applicants.next().value;
   });
-
-  afterAll(() => Database.close());
 
   const getAdminTasks = async (filter: IAdminTasksFilter) => {
     const { apolloClient } = await testClientFactory.admin();

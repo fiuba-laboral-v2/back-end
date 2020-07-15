@@ -1,13 +1,8 @@
 import { UniqueConstraintError } from "sequelize";
-import { Database } from "../../../src/config/Database";
 import { CapabilityRepository } from "../../../src/models/Capability";
 
 describe("CapabilityRepository", () => {
-  beforeAll(() => Database.setConnection());
-
   beforeEach(() => CapabilityRepository.truncate());
-
-  afterAll(() => Database.close());
 
   it("should create a valid capability", async () => {
     const capability = await CapabilityRepository.create({ description: "Python" });

@@ -1,13 +1,13 @@
 module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
+  preset: "ts-jest",
+  testEnvironment: "node",
   coveragePathIgnorePatterns: [
     "node_modules",
     "test",
     "config/Environment.ts"
   ],
   globals: {
-    'ts-jest': {
+    "ts-jest": {
       isolatedModules: true
     }
   },

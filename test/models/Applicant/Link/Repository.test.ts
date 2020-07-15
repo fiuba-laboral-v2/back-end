@@ -1,5 +1,4 @@
 import { DatabaseError, UniqueConstraintError, ValidationError } from "sequelize";
-import { Database } from "../../../../src/config/Database";
 import { Applicant, ApplicantLink } from "../../../../src/models";
 import { ApplicantLinkRepository } from "../../../../src/models/Applicant/Link";
 import { internet, random } from "faker";
@@ -22,19 +21,12 @@ const createApplicant = async () => {
 describe("ApplicantLinkRepository", () => {
   let applicant: Applicant;
 
-  beforeAll(async () => Database.setConnection());
-
   beforeEach(async () => {
     await UserRepository.truncate();
     applicant = await createApplicant();
   });
 
   beforeEach(() => ApplicantLink.truncate({ cascade: true }));
-
-  afterAll(async () => {
-    await UserRepository.truncate();
-    await Database.close();
-  });
 
   it("creates a valid link with a name and a url", async () => {
     const params = {

@@ -1,5 +1,4 @@
 import { DatabaseError, ForeignKeyConstraintError, ValidationError } from "sequelize";
-import { Database } from "../../../src/config/Database";
 import { CareerRepository } from "../../../src/models/Career";
 import { ApplicantRepository, IApplicantEditable } from "../../../src/models/Applicant";
 import { Admin, Applicant } from "../../../src/models";
@@ -18,15 +17,12 @@ describe("ApplicantRepository", () => {
   let careers: TCareerGenerator;
 
   beforeAll(async () => {
-    Database.setConnection();
     await UserRepository.truncate();
     await CareerRepository.truncate();
     await CapabilityRepository.truncate();
     applicantsMinimumData = ApplicantGenerator.data.minimum();
     careers = CareerGenerator.instance();
   });
-
-  afterAll(() => Database.close());
 
   describe("Create", () => {
     it("creates a new applicant", async () => {

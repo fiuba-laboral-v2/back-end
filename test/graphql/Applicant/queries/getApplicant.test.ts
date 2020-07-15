@@ -1,6 +1,5 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
-import { Database } from "../../../../src/config/Database";
 
 import { CareerRepository } from "../../../../src/models/Career";
 import { ApplicantNotFound } from "../../../../src/models/Applicant/Errors/ApplicantNotFound";
@@ -47,15 +46,12 @@ describe("getApplicant", () => {
   let admins: TAdminGenerator;
 
   beforeAll(async () => {
-    Database.setConnection();
     await CareerRepository.truncate();
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
     applicants = await ApplicantGenerator.instance.withMinimumData();
     admins = AdminGenerator.instance();
   });
-
-  afterAll(() => Database.close());
 
   describe("when the applicant exists", () => {
     it("fetches the applicant", async () => {

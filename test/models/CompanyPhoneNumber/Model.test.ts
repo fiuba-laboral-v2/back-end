@@ -1,13 +1,8 @@
 import { ValidationError } from "sequelize";
-import { Database } from "../../../src/config/Database";
 import { CompanyPhoneNumber } from "../../../src/models";
 import { InvalidPhoneNumberError, PhoneNumberWithLettersError } from "validations-fiuba-laboral-v2";
 
 describe("companyPhoneNumber", () => {
-  beforeAll(() => Database.setConnection());
-
-  afterAll(() => Database.close());
-
   it("creates a valid CompanyPhoneNumber", async () => {
     const companyPhoneNumber = new CompanyPhoneNumber({
       phoneNumber: "1143076555",

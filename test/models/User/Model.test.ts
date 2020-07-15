@@ -1,6 +1,5 @@
 import { ValidationError } from "sequelize";
 import generateUuid from "uuid/v4";
-import { Database } from "../../../src/config/Database";
 import { User } from "../../../src/models";
 import {
   InvalidEmailError,
@@ -9,10 +8,6 @@ import {
 } from "validations-fiuba-laboral-v2";
 
 describe("User", () => {
-  beforeAll(() => Database.setConnection());
-
-  afterAll(() => Database.close());
-
   it("instantiates a valid user", async () => {
     const params = {
       email: "asd@qwe.com",

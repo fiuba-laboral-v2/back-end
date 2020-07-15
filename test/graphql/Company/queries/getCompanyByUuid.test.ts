@@ -1,5 +1,4 @@
 import { gql } from "apollo-server";
-import { Database } from "../../../../src/config/Database";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { UserRepository } from "../../../../src/models/User";
 import { client } from "../../ApolloTestClient";
@@ -38,13 +37,10 @@ describe("getCompanyByUuid", () => {
   let admins: TAdminGenerator;
 
   beforeAll(async () => {
-    Database.setConnection();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     admins = AdminGenerator.instance();
   });
-
-  afterAll(() => Database.close());
 
   it("finds a company given its uuid", async () => {
     const company = await userFactory.company();

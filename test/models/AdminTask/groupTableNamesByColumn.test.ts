@@ -1,11 +1,8 @@
-import { Database } from "../../../src/config/Database";
 import { groupTableNamesByColumn } from "../../../src/models/AdminTask/groupTableNamesByColumn";
 import { ADMIN_TASK_MODELS } from "../../../src/models/AdminTask";
 import { Applicant, Company } from "../../../src/models";
 
 describe("groupTableNamesByColumn", () => {
-  beforeAll(() => Database.setConnection());
-  afterAll(() => Database.close());
 
   it("groups each column as a key and their related tableNames as values", async () => {
     const APPLICANTS_TABLE_NAME = Applicant.tableName;

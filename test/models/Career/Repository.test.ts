@@ -1,4 +1,3 @@
-import { Database } from "../../../src/config/Database";
 import { CareerRepository, Errors } from "../../../src/models/Career";
 import { CareerGenerator, TCareerDataGenerator } from "../../generators/Career";
 import { Career } from "../../../src/models";
@@ -7,14 +6,11 @@ describe("CareerRepository", () => {
   let careersData: TCareerDataGenerator;
 
   beforeAll(async () => {
-    Database.setConnection();
     await CareerRepository.truncate();
     careersData = CareerGenerator.data();
   });
 
   beforeEach(async () => await Career.truncate({ cascade: true }));
-
-  afterAll(async () => Database.close());
 
   it("deletes all asked Careers", async () => {
     const career = await CareerRepository.create(careersData.next().value);

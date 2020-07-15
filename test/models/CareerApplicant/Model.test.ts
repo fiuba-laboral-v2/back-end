@@ -1,4 +1,3 @@
-import { Database } from "../../../src/config/Database";
 import { CareerRepository } from "../../../src/models/Career";
 import { ApplicantCareer, Career } from "../../../src/models";
 import { NumberIsTooLargeError, NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
@@ -7,7 +6,6 @@ describe("ApplicantCareer", () => {
   let career: Career;
 
   beforeAll(async () => {
-    Database.setConnection();
     await CareerRepository.truncate();
     career = await Career.create({
       code: "123123",
@@ -15,8 +13,6 @@ describe("ApplicantCareer", () => {
       credits: 123
     });
   });
-
-  afterAll(() => Database.close());
 
   it("should throw an error if creditsCount is negative", async () => {
     const applicantCareer = new ApplicantCareer({
