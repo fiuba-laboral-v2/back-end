@@ -1,5 +1,4 @@
 import { UniqueConstraintError, ValidationError } from "sequelize";
-import { Database } from "../../../src/config/Database";
 import { UserRepository } from "../../../src/models/User/Repository";
 import { UserNotFoundError } from "../../../src/models/User";
 import {
