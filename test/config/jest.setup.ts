@@ -1,5 +1,5 @@
 import { CustomMatchers } from "./customMatchers";
-import { Database } from "../../src/config/Database";
+import { DatabaseTestSetUp } from "./DatabaseTestSetUp";
 
 CustomMatchers();
-Database.setConnection();
+DatabaseTestSetUp();
