@@ -6,7 +6,7 @@ import { toThrowErrorWithMessage } from "./toThrowErrorWithMessage";
 import { toBeSortedBy } from "./toBeSortedBy";
 import { toEqualIgnoringSpacing } from "./toEqualIgnoringSpacing";
 
-export const CustomMatchers = () => expect.extend({
+export const setupCustomMatchers = () => expect.extend({
   toBeAggregateError,
   toBeAggregateErrorIncluding,
   toBeBulkRecordError,

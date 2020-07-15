@@ -1,5 +1,5 @@
-import { CustomMatchers } from "./customMatchers";
-import { DatabaseTestSetUp } from "./DatabaseTestSetUp";
+import { setupCustomMatchers } from "./customMatchers";
+import { SetupDatabase } from "./SetupDatabase";
 
-CustomMatchers();
-DatabaseTestSetUp();
+setupCustomMatchers();
+SetupDatabase();
