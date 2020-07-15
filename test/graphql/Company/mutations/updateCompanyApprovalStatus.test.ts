@@ -1,6 +1,5 @@
 import { gql } from "apollo-server";
 import { ApolloServerTestClient as TestClient } from "apollo-server-testing";
-import { Database } from "../../../../src/config/Database";
 import { client } from "../../ApolloTestClient";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 import { CompanyGenerator } from "../../../generators/Company";
@@ -33,15 +32,12 @@ describe("updateCompanyApprovalStatus", () => {
   let company: Company;
 
   beforeAll(async () => {
-    Database.setConnection();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     company = await CompanyGenerator.instance.withMinimumData().next().value;
   });
 
   beforeEach(() => CompanyApprovalEventRepository.truncate());
-
-  afterAll(() => Database.close());
 
   const performMutation = (apolloClient: TestClient, dataToUpdate: object) =>
     apolloClient.mutate({

@@ -1,5 +1,4 @@
 import { gql } from "apollo-server";
-import { Database } from "../../../../src/config/Database";
 import { client } from "../../ApolloTestClient";
 
 import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
@@ -32,7 +31,6 @@ describe("getMyOffers", () => {
   let admin: Admin;
 
   beforeAll(async () => {
-    Database.setConnection();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await UserRepository.truncate();
@@ -41,8 +39,6 @@ describe("getMyOffers", () => {
     offers = await OfferGenerator.instance.withObligatoryData();
     admin = await AdminGenerator.instance().next().value;
   });
-
-  afterAll(() => Database.close());
 
   describe("when offers exists", () => {
     let offer1;

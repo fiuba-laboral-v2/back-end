@@ -1,6 +1,5 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
-import { Database } from "../../../../src/config/Database";
 import { CareerRepository } from "../../../../src/models/Career";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { JobApplicationRepository } from "../../../../src/models/JobApplication";
@@ -67,7 +66,6 @@ describe("getOfferByUuid", () => {
   let admins: TAdminGenerator;
 
   beforeAll(async () => {
-    Database.setConnection();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await UserRepository.truncate();
@@ -75,8 +73,6 @@ describe("getOfferByUuid", () => {
     offers = await OfferGenerator.instance.withOneSection();
     admins = AdminGenerator.instance();
   });
-
-  afterAll(() => Database.close());
 
   const createOffer = async company => {
     const career = await careers.next().value;

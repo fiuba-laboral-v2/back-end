@@ -1,5 +1,4 @@
 import { gql } from "apollo-server";
-import { Database } from "../../../../src/config/Database";
 
 import { CareerRepository } from "../../../../src/models/Career";
 import { CompanyRepository } from "../../../../src/models/Company";
@@ -29,7 +28,6 @@ describe("getOffers", () => {
   let admins: TAdminGenerator;
 
   beforeAll(async () => {
-    Database.setConnection();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await UserRepository.truncate();
@@ -38,8 +36,6 @@ describe("getOffers", () => {
     offersData = OfferGenerator.data.withObligatoryData();
     admins = AdminGenerator.instance();
   });
-
-  afterAll(() => Database.close());
 
   describe("when offers exists", () => {
     let offer1;

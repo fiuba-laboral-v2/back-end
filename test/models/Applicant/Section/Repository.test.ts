@@ -1,4 +1,3 @@
-import { Database } from "../../../../src/config/Database";
 import { ApplicantRepository } from "../../../../src/models/Applicant";
 import { SectionRepository } from "../../../../src/models/Applicant/Section";
 import { lorem, random } from "faker";
@@ -9,7 +8,6 @@ describe("Section model", () => {
   let applicant: Applicant;
 
   beforeAll(async () => {
-    Database.setConnection();
     await UserRepository.truncate();
     applicant = await ApplicantRepository.create({
       user: {
@@ -25,11 +23,6 @@ describe("Section model", () => {
   });
 
   beforeEach(() => Section.destroy({ truncate: true }));
-
-  afterAll(async () => {
-    await UserRepository.truncate();
-    await Database.close();
-  });
 
   it("should create a valid section with a title and a text", async () => {
     const sectionData = {

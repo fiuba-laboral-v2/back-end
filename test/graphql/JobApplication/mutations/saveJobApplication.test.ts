@@ -1,6 +1,5 @@
 import { ApolloError, gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
-import { Database } from "../../../../src/config/Database";
 
 import { UserRepository } from "../../../../src/models/User";
 import { CompanyRepository } from "../../../../src/models/Company";
@@ -29,15 +28,12 @@ describe("saveJobApplication", () => {
   let admins: TAdminGenerator;
 
   beforeAll(async () => {
-    Database.setConnection();
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     company = await CompanyRepository.create(companyMocks.companyData());
     offers = await OfferGenerator.instance.withObligatoryData();
     admins = AdminGenerator.instance();
   });
-
-  afterAll(() => Database.close());
 
   describe("when the input is valid", () => {
     it("should create a new job application", async () => {

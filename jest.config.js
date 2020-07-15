@@ -1,6 +1,6 @@
 module.exports = {
   preset: 'ts-jest',
-  testEnvironment: 'node',
+  testEnvironment: "node",
   coveragePathIgnorePatterns: [
     "node_modules",
     "test",
@@ -15,5 +15,6 @@ module.exports = {
     "/node_modules/"
   ],
   testPathIgnorePatterns: [".d.ts", ".js"],
-  setupFilesAfterEnv: ["./test/config/jest.setup.ts"]
+  setupFilesAfterEnv: ["./test/config/jest.setup.ts"],
+  globalTeardown: "./test/config/globalTeardown.ts"
 };

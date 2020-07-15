@@ -1,6 +1,5 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
-import { Database } from "../../../../src/config/Database";
 
 import { UserRepository } from "../../../../src/models/User";
 import { CareerRepository } from "../../../../src/models/Career";
@@ -81,14 +80,11 @@ describe("saveApplicant", () => {
   let career: Career;
 
   beforeAll(async () => {
-    Database.setConnection();
     await CareerRepository.truncate();
     await UserRepository.truncate();
     applicantsData = ApplicantGenerator.data.minimum();
     career = await CareerGenerator.instance().next().value;
   });
-
-  afterAll(() => Database.close());
 
   describe("when the input is valid", () => {
     it("creates a new applicant", async () => {

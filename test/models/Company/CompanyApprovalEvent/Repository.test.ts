@@ -1,4 +1,3 @@
-import { Database } from "../../../../src/config/Database";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { UserRepository } from "../../../../src/models/User";
 import { Admin } from "../../../../src/models";
@@ -15,14 +14,11 @@ describe("CompanyApprovalEventRepository", () => {
   let admins: TAdminGenerator;
 
   beforeAll(async () => {
-    Database.setConnection();
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     companies = CompanyGenerator.instance.withCompleteData();
     admins = AdminGenerator.instance();
   });
-
-  afterAll(() => Database.close());
 
   describe("create", () => {
     const expectValidCreation = async (status: ApprovalStatus) => {

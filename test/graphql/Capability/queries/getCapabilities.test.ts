@@ -1,5 +1,4 @@
 import { gql } from "apollo-server";
-import { Database } from "../../../../src/config/Database";
 import { CapabilityRepository } from "../../../../src/models/Capability";
 import { client } from "../../ApolloTestClient";
 
@@ -18,13 +17,7 @@ const GET_CAPABILITIES = gql`
 
 describe("getCapabilities", () => {
   beforeAll(() => {
-    Database.setConnection();
     return CapabilityRepository.truncate();
-  });
-
-  afterAll(async () => {
-    await CapabilityRepository.truncate();
-    return Database.close();
   });
 
   it("brings all capabilities in the database", async () => {

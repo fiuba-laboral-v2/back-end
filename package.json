@@ -46,6 +46,7 @@
     "graphql-shield": "7.2.6",
     "http-status-codes": "1.4.0",
     "husky": "3.1.0",
+    "jest-environment-node": "26.1.0",
     "jsonwebtoken": "8.5.1",
     "lodash": "4.17.15",
     "node": "12.14.0",

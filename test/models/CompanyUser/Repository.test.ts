@@ -1,4 +1,3 @@
-import { Database } from "../../../src/config/Database";
 import { CompanyRepository } from "../../../src/models/Company";
 import { UserRepository } from "../../../src/models/User";
 import { Company, User } from "../../../src/models";
@@ -8,12 +7,10 @@ import { CompanyUserRepository } from "../../../src/models/CompanyUser/Repositor
 import { ForeignKeyConstraintError } from "sequelize";
 
 describe("CompanyRepository", () => {
-  beforeAll(() => Database.setConnection());
   beforeEach(() => Promise.all([
     CompanyRepository.truncate(),
     UserRepository.truncate()
   ]));
-  afterAll(() => Database.close());
 
   it("needs to reference a persisted company", async () => {
     const company = new Company(companyMocks.companyDataWithoutUser());

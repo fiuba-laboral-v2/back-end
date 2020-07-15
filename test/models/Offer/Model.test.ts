@@ -1,12 +1,7 @@
 import { NumberIsTooSmallError, SalaryRangeError } from "validations-fiuba-laboral-v2";
-import { Database } from "../../../src/config/Database";
 import { Offer } from "../../../src/models";
 
 describe("Offer", () => {
-  beforeAll(() => Database.setConnection());
-
-  afterAll(() => Database.close());
-
   const offerAttributes = {
     companyUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
     title: "title",

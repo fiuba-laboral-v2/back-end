@@ -1,6 +1,5 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
-import { Database } from "../../../../src/config/Database";
 
 import { CareerRepository } from "../../../../src/models/Career";
 import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
@@ -63,13 +62,10 @@ describe("updateCurrentApplicant", () => {
   let careers: TCareerGenerator;
 
   beforeAll(async () => {
-    Database.setConnection();
     await CareerRepository.truncate();
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
   });
-
-  afterAll(() => Database.close());
 
   it("should update all possible data deleting all previous values", async () => {
     const { applicant, user, apolloClient } = await testClientFactory.applicant();

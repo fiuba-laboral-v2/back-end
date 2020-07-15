@@ -1,10 +1,7 @@
-import { Database } from "../../../src/config/Database";
 import { Admin } from "../../../src/models";
 import { ValidationError } from "sequelize";
 
 describe("Admin", () => {
-  beforeAll(() => Database.setConnection());
-  afterAll(() => Database.close());
 
   it("creates a valid admin", async () => {
     const userUuid = "fb047680-e2c0-4127-886b-170d0b474a98";

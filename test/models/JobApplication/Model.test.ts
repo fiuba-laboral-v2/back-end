@@ -1,12 +1,7 @@
 import { ValidationError } from "sequelize";
-import { Database } from "../../../src/config/Database";
 import { JobApplication } from "../../../src/models";
 
 describe("JobApplication", () => {
-  beforeAll(() => Database.setConnection());
-
-  afterAll(() => Database.close());
-
   describe("Valid create", () => {
     it("should create a valid jobApplication", async () => {
       const jobApplication = new JobApplication({

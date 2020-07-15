@@ -1,5 +1,4 @@
 import { DatabaseError, ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
-import { Database } from "../../../src/config/Database";
 import { Company, CompanyPhoneNumber } from "../../../src/models";
 import { CompanyRepository } from "../../../src/models/Company";
 import { CompanyPhoneNumberRepository } from "../../../src/models/CompanyPhoneNumber";
@@ -8,12 +7,10 @@ import { UserMocks } from "../User/mocks";
 import { companyMocks } from "../Company/mocks";
 
 describe("CompanyPhoneNumberRepository", () => {
-  beforeAll(() => Database.setConnection());
   beforeEach(() => Promise.all([
     CompanyRepository.truncate(),
     UserRepository.truncate()
   ]));
-  afterAll(() => Database.close());
 
   it("creates several phoneNumbers for the same company", async () => {
     const phoneNumbers = ["1144444444", "1155555555", "1166666666"];

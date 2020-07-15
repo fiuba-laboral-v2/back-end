@@ -9,11 +9,7 @@ import {
 } from "validations-fiuba-laboral-v2";
 
 describe("UserRepository", () => {
-  beforeAll(() => Database.setConnection());
-
   beforeEach(() => UserRepository.truncate());
-
-  afterAll(() => Database.close());
 
   describe("create", () => {
     it("creates a user", async () => {

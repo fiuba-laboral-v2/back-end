@@ -1,6 +1,5 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
-import { Database } from "../../../../src/config/Database";
 import { UserRepository } from "../../../../src/models/User";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
@@ -27,11 +26,8 @@ const GET_CURRENT_USER = gql`
 
 describe("getCurrentUser", () => {
   beforeAll(() => {
-    Database.setConnection();
     return UserRepository.truncate();
   });
-
-  afterAll(() => Database.close());
 
   it("returns current user if it's set in context", async () => {
     const { user, apolloClient } = await testClientFactory.user();

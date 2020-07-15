@@ -1,4 +1,3 @@
-import { Database } from "../../../src/config/Database";
 import { CompanyRepository } from "../../../src/models/Company";
 import { UserRepository } from "../../../src/models/User";
 import {
@@ -23,7 +22,6 @@ describe("AdminTaskRepository", () => {
   let pendingApplicant: Applicant;
 
   beforeAll(async () => {
-    Database.setConnection();
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     const companies = await CompanyGenerator.instance.updatedWithStatus();
@@ -37,8 +35,6 @@ describe("AdminTaskRepository", () => {
     approvedApplicant = await applicants.next({ status: ApprovalStatus.approved, admin }).value;
     pendingApplicant = await applicants.next().value;
   });
-
-  afterAll(() => Database.close());
 
   const expectToFindAdminTasksWithStatuses = async (
     adminTasks: AdminTask[],

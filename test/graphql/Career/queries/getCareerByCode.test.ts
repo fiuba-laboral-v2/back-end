@@ -1,6 +1,5 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
-import { Database } from "../../../../src/config/Database";
 
 import { CareerRepository } from "../../../../src/models/Career";
 import { CareersNotFound } from "../../../../src/models/Career/Errors/CareersNotFound";
@@ -23,12 +22,9 @@ describe("getCareerByCode", () => {
   let careers: TCareerGenerator;
 
   beforeAll(async () => {
-    Database.setConnection();
     await CareerRepository.truncate();
     careers = CareerGenerator.instance();
   });
-
-  afterAll(() => Database.close());
 
   it("gets a career using the code", async () => {
     const { apolloClient } = await testClientFactory.user();

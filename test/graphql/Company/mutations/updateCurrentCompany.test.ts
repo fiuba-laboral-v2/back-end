@@ -1,5 +1,4 @@
 import { gql } from "apollo-server";
-import { Database } from "../../../../src/config/Database";
 
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
@@ -40,12 +39,9 @@ const UPDATE_CURRENT_COMPANY = gql`
 
 describe("updateCurrentCompany", () => {
   beforeAll(async () => {
-    Database.setConnection();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
   });
-
-  afterAll(() => Database.close());
 
   describe("When the update succeeds", () => {
     it("update all company attributes", async () => {

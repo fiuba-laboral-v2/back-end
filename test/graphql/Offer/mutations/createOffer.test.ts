@@ -1,6 +1,5 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
-import { Database } from "../../../../src/config/Database";
 
 import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
 import { OfferGenerator, TOfferDataGenerator } from "../../../generators/Offer";
@@ -97,7 +96,6 @@ describe("createOffer", () => {
   let admin: Admin;
 
   beforeAll(async () => {
-    Database.setConnection();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await UserRepository.truncate();
@@ -105,8 +103,6 @@ describe("createOffer", () => {
     offers = OfferGenerator.data.withObligatoryData();
     admin = await AdminGenerator.instance().next().value;
   });
-
-  afterAll(() => Database.close());
 
   describe("when the input values are valid", () => {
     it("creates a new offer with only obligatory data", async () => {

@@ -1,16 +1,11 @@
 import { ValidationError } from "sequelize";
 import generateUuid from "uuid/v4";
-import { Database } from "../../../src/config/Database";
 import { Applicant } from "../../../src/models";
 import { ApprovalStatus, approvalStatuses } from "../../../src/models/ApprovalStatus";
 import { NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
 import { UUID_REGEX } from "../index";
 
 describe("Applicant", () => {
-  beforeAll(() => Database.setConnection());
-
-  afterAll(() => Database.close());
-
   it("creates a valid applicant", async () => {
     const applicant = new Applicant({
       userUuid: generateUuid(),
