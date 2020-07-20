@@ -184,6 +184,6 @@ export const defaultTranslations = {
     { key: "text", value: "Rechazado" }
   ],
   pendingLabel: [
-    { key: "text", value: "Pendiente" }
+    { key: "text", value: "Pendiente de Aprobación" }
   ]
 };
