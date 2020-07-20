@@ -724,9 +724,9 @@
     "@types/node" "*"
 
 "@types/lodash@*":
-  version "4.14.149"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.149.tgz#1342d63d948c6062838fbf961012f74d4e638440"
-  integrity sha512-ijGqzZt/b7BfzcK9vTrS6MFljQRPn5BFWOx8oE0GYxribu6uV+aA9zZuXI1zc/etK9E8nrgdoF2+LgUw7+9tJQ==
+  version "4.14.157"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.157.tgz#fdac1c52448861dfde1a2e1515dbc46e54926dc8"
+  integrity sha512-Ft5BNFmv2pHDgxV5JDsndOWTRJ+56zte0ZpYLowp03tW+K+t8u8YMOzAnpuqPgzX6WO1XpDIUm7u04M8vdDiVQ==
 
 "@types/long@^4.0.0":
   version "4.0.1"
@@ -4853,10 +4853,10 @@ lodash.sortby@^4.7.0:
   resolved "https://registry.yarnpkg.com/lodash.sortby/-/lodash.sortby-4.7.0.tgz#edd14c824e2cc9c1e0b0a1b42bb5210516a42438"
   integrity sha1-7dFMgk4sycHgsKG0K7UhBRakJDg=
 
-lodash@4.17.15, lodash@^4.17.10, lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.5.1:
-  version "4.17.15"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
-  integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
+lodash@4.17.19, lodash@^4.17.10, lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.5.1:
+  version "4.17.19"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.19.tgz#e48ddedbe30b3321783c5b4301fbd353bc1e4a4b"
+  integrity sha512-JNvd8XER9GQX0v2qJgsaN/mzFCNA5BRe/j8JN9d+tWyGLSodKQHKFicdwNYzWwI3wjRnaKPsGj1XkBjx/F96DQ==
 
 log-driver@^1.2.7:
   version "1.2.7"
@@ -7325,10 +7325,10 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
 
-validations-fiuba-laboral-v2@1.0.17:
-  version "1.0.17"
-  resolved "https://registry.yarnpkg.com/validations-fiuba-laboral-v2/-/validations-fiuba-laboral-v2-1.0.17.tgz#490da76e4b161be8fa9edcf1ccc07d6830e95f9a"
-  integrity sha512-Zl1DjhtxigAGfZ/XRPBYtYxGKTH9BWZegsdm/1NiOCohRkU+ic2WSbQl4iKSlF7uBcisxPRj+pzZfl8HJ6zJGQ==
+validations-fiuba-laboral-v2@1.0.18:
+  version "1.0.18"
+  resolved "https://registry.yarnpkg.com/validations-fiuba-laboral-v2/-/validations-fiuba-laboral-v2-1.0.18.tgz#4fb73034e565fe0c70717cdbab465ffa575a3c0d"
+  integrity sha512-HHlPjPWPLcHrAbS3Y3qcgI7wXwV8nTjrJqsOF8ZawS0OOtA9qZJXvedLvh1cIDZvevmXha3AkOPNCsJqR0hiww==
   dependencies:
     "@types/bluebird" "3.5.29"
     "@types/node" "13.1.4"
