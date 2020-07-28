@@ -151,7 +151,10 @@ export const defaultTranslations = {
     { key: "rejected", value: "Rechazado" }
   ],
   adminTaskList: [
-    { key: "pendingTasks", value: "Tareas pendientes" }
+    { key: "tasks", value: "Tareas" },
+    { key: "pending", value: "pendientes" },
+    { key: "rejected", value: "rechazadas" },
+    { key: "approved", value: "aprobadas" }
   ],
   adminEmptyDetail: [
     { key: "selectToStart", value: "Seleccioná para comenzar" }
