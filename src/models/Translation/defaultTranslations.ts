@@ -158,7 +158,8 @@ export const defaultTranslations = {
   ],
   approvalActions: [
     { key: "approved", value: "Aprobado" },
-    { key: "rejected", value: "Rechazado" }
+    { key: "rejected", value: "Rechazado" },
+    { key: "pending", value: "Pendiente" }
   ],
   adminCompanyMainTitle: [
     { key: "title", value: "Registro de Empresa" }
