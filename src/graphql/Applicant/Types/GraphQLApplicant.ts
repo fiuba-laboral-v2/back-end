@@ -10,7 +10,7 @@ import { Applicant } from "../../../models";
 import { ApplicantCareersSerializer } from "../../../models/ApplicantCareer";
 import { GraphQLApprovalStatus } from "../../ApprovalStatus/Types/GraphQLApprovalStatus";
 
-const GraphQLApplicant = new GraphQLObjectType<Applicant>({
+export const GraphQLApplicant = new GraphQLObjectType<Applicant>({
   name: "Applicant",
   fields: () => ({
     uuid: {
@@ -60,5 +60,3 @@ const GraphQLApplicant = new GraphQLObjectType<Applicant>({
     }
   })
 });
-
-export { GraphQLApplicant };

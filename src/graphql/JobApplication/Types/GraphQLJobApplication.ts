@@ -5,7 +5,7 @@ import { JobApplication } from "../../../models";
 import { GraphQLApplicant } from "../../Applicant/Types/GraphQLApplicant";
 import { GraphQLOffer } from "../../Offer/Types/GraphQLOffer";
 
-const GraphQLJobApplication = new GraphQLObjectType<JobApplication>({
+export const GraphQLJobApplication = new GraphQLObjectType<JobApplication>({
   name: "JobApplication",
   fields: () => ({
     applicantUuid: {
@@ -27,5 +27,3 @@ const GraphQLJobApplication = new GraphQLObjectType<JobApplication>({
     }
   })
 });
-
-export { GraphQLJobApplication };
