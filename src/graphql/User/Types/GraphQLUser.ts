@@ -2,7 +2,7 @@ import { GraphQLObjectType } from "graphql";
 import { ID, nonNull, String } from "../../fieldTypes";
 import { User } from "../../../models";
 import { GraphQLAdmin } from "../../Admin/Types/GraphQLAdmin";
-import { GraphQLApplicant } from "../../Applicant/Types/Applicant";
+import { GraphQLApplicant } from "../../Applicant/Types/GraphQLApplicant";
 import { GraphQLCompany } from "../../Company/Types/GraphQLCompany";
 
 export const GraphQLUser = new GraphQLObjectType<User>({

@@ -1,6 +1,6 @@
 import { GraphQLUnionType } from "graphql";
 import { GraphQLCompany } from "../../Company/Types/GraphQLCompany";
-import { GraphQLApplicant } from "../../Applicant/Types/Applicant";
+import { GraphQLApplicant } from "../../Applicant/Types/GraphQLApplicant";
 import { Applicant, Company } from "../../../models";
 
 export const GraphQLAdminTask = new GraphQLUnionType({

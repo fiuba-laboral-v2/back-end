@@ -1,4 +1,4 @@
-import { GraphQLApplicant } from "../Types/Applicant";
+import { GraphQLApplicant } from "../Types/GraphQLApplicant";
 import { List } from "../../fieldTypes";
 import { ApplicantRepository } from "../../../models/Applicant";
 
