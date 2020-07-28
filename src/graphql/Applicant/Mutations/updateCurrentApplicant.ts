@@ -1,5 +1,5 @@
 import { Int, List, String } from "../../fieldTypes";
-import { GraphQLApplicant } from "../Types/Applicant";
+import { GraphQLApplicant } from "../Types/GraphQLApplicant";
 import { GraphQLCareerCredits } from "../Types/CareerCredits";
 import { GraphQLSectionInput } from "../Types/Section";
 import { GraphQLUserUpdateInput } from "../../User/Types/GraphQLUserUpdateInput";
