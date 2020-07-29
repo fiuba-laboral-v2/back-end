@@ -20,6 +20,7 @@ const query = gql`
       website
       email
       createdAt
+      updatedAt
       approvalStatus
       phoneNumbers
       photos
@@ -60,6 +61,7 @@ describe("getCompanyByUuid", () => {
         website: company.website,
         email: company.email,
         createdAt: company.createdAt.toISOString(),
+        updatedAt: company.updatedAt.toISOString(),
         approvalStatus: company.approvalStatus,
         phoneNumbers: expect.arrayContaining((await company.getPhoneNumbers())),
         photos: expect.arrayContaining((await company.getPhotos())),
