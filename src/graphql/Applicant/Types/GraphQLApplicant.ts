@@ -29,6 +29,9 @@ export const GraphQLApplicant = new GraphQLObjectType<Applicant>({
     createdAt: {
       type: nonNull(GraphQLDateTime)
     },
+    updatedAt: {
+      type: nonNull(GraphQLDateTime)
+    },
     approvalStatus: {
       type: nonNull(GraphQLApprovalStatus)
     },
