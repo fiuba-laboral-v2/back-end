@@ -187,8 +187,10 @@ export const defaultTranslations = {
   pendingLabel: [
     { key: "text", value: "Pendiente de Aprobación" }
   ],
-  timeHumanizer: [
-    { key: "create", value: "Creado" },
+  createdSince: [
+    { key: "create", value: "Creado" }
+  ],
+  updatedSince: [
     { key: "update", value: "Actualizado" }
   ]
 };
