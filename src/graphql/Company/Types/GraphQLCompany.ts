@@ -35,6 +35,9 @@ export const GraphQLCompany = new GraphQLObjectType<Company>({
     createdAt: {
       type: nonNull(GraphQLDateTime)
     },
+    updatedAt: {
+      type: nonNull(GraphQLDateTime)
+    },
     approvalStatus: {
       type: nonNull(GraphQLApprovalStatus)
     },

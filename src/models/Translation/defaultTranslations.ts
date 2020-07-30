@@ -186,5 +186,11 @@ export const defaultTranslations = {
   ],
   pendingLabel: [
     { key: "text", value: "Pendiente de Aprobación" }
+  ],
+  createdSince: [
+    { key: "create", value: "Creado" }
+  ],
+  updatedSince: [
+    { key: "update", value: "Actualizado" }
   ]
 };

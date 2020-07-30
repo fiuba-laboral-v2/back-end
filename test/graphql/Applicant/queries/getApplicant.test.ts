@@ -26,6 +26,7 @@ const GET_APPLICANT = gql`
       description
       approvalStatus
       createdAt
+      updatedAt
       capabilities {
         uuid
         description
@@ -77,7 +78,8 @@ describe("getApplicant", () => {
         },
         description: applicant.description,
         padron: applicant.padron,
-        createdAt: applicant.createdAt.toISOString()
+        createdAt: applicant.createdAt.toISOString(),
+        updatedAt: applicant.updatedAt.toISOString()
       });
       expect(data!.getApplicant).toHaveProperty("capabilities");
       expect(data!.getApplicant).toHaveProperty("careers");
