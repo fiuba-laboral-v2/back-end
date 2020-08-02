@@ -8,6 +8,7 @@ export const admin = {
     password: hashSync("SecurePassword1010", 10),
     name: "admin",
     surname: "admin",
+    secretary: "extension",
     createdAt: new Date(),
     updatedAt: new Date()
   },

@@ -6,10 +6,10 @@ import { Admin } from "..";
 
 export const AdminRepository = {
   create: (
-    { user: userAttributes }: ISaveAdmin
+    { user: userAttributes, secretary }: ISaveAdmin
   ) => Database.transaction(async transaction => {
     const { uuid: userUuid } = await UserRepository.create(userAttributes, transaction);
-    return Admin.create({ userUuid }, { transaction });
+    return Admin.create({ userUuid, secretary }, { transaction });
   }),
   findByUserUuid: async (userUuid: string) => {
     const admin = await Admin.findByPk(userUuid);

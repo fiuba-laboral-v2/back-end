@@ -20,6 +20,9 @@ describe("AdminRepository", () => {
         ...adminAttributes.user,
         password: expect.any(String)
       }));
+      expect(admin).toEqual(expect.objectContaining({
+        secretary: adminAttributes.secretary
+      }));
     });
 
     it("throws error if admin already exists and rollback transaction", async () => {
