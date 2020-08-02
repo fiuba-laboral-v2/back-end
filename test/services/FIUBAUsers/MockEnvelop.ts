@@ -3,22 +3,24 @@ import { ICredentials } from "../../../src/services/FIUBAUsers";
 
 export const MockEnvelop = {
   AuthenticateSuccessResponse: (isValid: boolean) => parse(`
-      <SOAP-ENV:Envelope
-        xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
-        xmlns:ns1="https://services.fi.uba.ar/usuarios.php"
-        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
-        SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
-      >
-        <SOAP-ENV:Body>
-          <ns1:AutenticarResponse>
-              <return xsi:type="xsd:boolean">${isValid}</return>
-          </ns1:AutenticarResponse>
-        </SOAP-ENV:Body>
-      </SOAP-ENV:Envelope>
-    `),
+    <?xml version="1.0" encoding="utf-8"?>
+    <SOAP-ENV:Envelope
+      xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+      xmlns:ns1="https://services.fi.uba.ar/usuarios.php"
+      xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+      SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+    >
+      <SOAP-ENV:Body>
+        <ns1:AutenticarResponse>
+            <return xsi:type="xsd:boolean">${isValid}</return>
+        </ns1:AutenticarResponse>
+      </SOAP-ENV:Body>
+    </SOAP-ENV:Envelope>
+  `),
   AuthenticateErrorResponse: (message: string) => parse(`
+    <?xml version="1.0" encoding="utf-8"?>
     <SOAP-ENV:Envelope>
       <SOAP-ENV:Body>
         <SOAP-ENV:Fault>
@@ -30,19 +32,19 @@ export const MockEnvelop = {
       </SOAP-ENV:Body>
     </SOAP-ENV:Envelope>
   `),
-  AuthenticateInvalidFormatRequest: ({ username, password }: ICredentials) => parse(`
-    <?xml version="1.0" encoding="utf-8"?>
-    <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
-      <SOAP-ENV:Header/>
-      <SOAP-ENV:Body>
-        <Autenticar>
-          <userid>${username}</userid>
-          <password>${password}</password>
-        </Autenticar>
-      </SOAP-ENV:Body>
-    </SOAP-ENV:Envelope>
-  `),
-  AuthenticateUndefinedOperationRequest: ({ username, password }: ICredentials) => parse(`
+  AuthenticateInvalidFormatRequest: ({ username, password }: ICredentials) => `
+      <?xml version="1.0" encoding="utf-8"?>
+      <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+        <SOAP-ENV:Header/>
+        <SOAP-ENV:Body>
+          <Autenticar>
+            <userid>${username}</userid>
+            <password>${password}</password>
+          </Autenticar>
+        </SOAP-ENV:Body>
+      </SOAP-ENV:Envelope>
+    `,
+  AuthenticateUndefinedOperationRequest: ({ username, password }: ICredentials) => `
     <?xml version="1.0" encoding="utf-8"?>
     <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
       <SOAP-ENV:Header/>
@@ -53,5 +55,5 @@ export const MockEnvelop = {
         </UNDEFINED_OPERATION>
       </SOAP-ENV:Body>
     </SOAP-ENV:Envelope>
-  `)
+  `
 };

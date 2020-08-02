@@ -8,18 +8,6 @@ export interface IAuthenticateResponse {
   };
 }
 
-export interface IAuthenticateRequest {
-  "SOAP-ENV:Envelope": {
-    "SOAP-ENV:Header": {};
-    "SOAP-ENV:Body": {
-      "Autenticar": {
-        userid: string;
-        password: string;
-      };
-    };
-  };
-}
-
 export interface IResponseError {
   "SOAP-ENV:Envelope": {
     "SOAP-ENV:Body": {

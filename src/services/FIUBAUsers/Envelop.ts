@@ -1,14 +1,18 @@
-import { IAuthenticateRequest, ICredentials } from "./Interfaces";
-import { j2xParser, parse } from "fast-xml-parser";
-import { readFileSync } from "fs";
+import { ICredentials } from "./Interfaces";
 
 export const Envelop = {
   buildAuthenticate: ({ username, password }: ICredentials) => {
-    const operation: IAuthenticateRequest = parse(
-      readFileSync(`${__dirname}/Operations/Authenticate.xml`, "utf8")
-    );
-    operation["SOAP-ENV:Envelope"]["SOAP-ENV:Body"].Autenticar.userid = username;
-    operation["SOAP-ENV:Envelope"]["SOAP-ENV:Body"].Autenticar.password = password;
-    return (new j2xParser({})).parse(operation);
+    return `
+      <?xml version="1.0" encoding="utf-8"?>
+      <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+        <SOAP-ENV:Header/>
+        <SOAP-ENV:Body>
+          <Autenticar>
+            <userid>${username}</userid>
+            <password>${password}</password>
+          </Autenticar>
+        </SOAP-ENV:Body>
+      </SOAP-ENV:Envelope>
+    `;
   }
 };

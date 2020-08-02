@@ -6,8 +6,9 @@ describe("Envelop", () => {
     const password = "password";
     const envelop = Envelop.buildAuthenticate({ username, password });
     expect(envelop).toEqualIgnoringSpacing(`
-      <SOAP-ENV:Envelope>
-        <SOAP-ENV:Header></SOAP-ENV:Header>
+      <?xml version="1.0" encoding="utf-8"?>
+      <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+        <SOAP-ENV:Header/>
         <SOAP-ENV:Body>
           <Autenticar>
             <userid>${username}</userid>

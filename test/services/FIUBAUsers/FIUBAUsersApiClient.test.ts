@@ -16,7 +16,7 @@ const goodCredentials = {
 describe("FIUBAUsersApiClient", () => {
   afterEach(() => fetchMock.restore());
 
-  const mockRequestEnvelop = (mockEnvelop: object) => {
+  const mockRequestEnvelop = (mockEnvelop: string) => {
     jest.spyOn(Envelop, "buildAuthenticate").mockReturnValue(mockEnvelop);
   };
 
