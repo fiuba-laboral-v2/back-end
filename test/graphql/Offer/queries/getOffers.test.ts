@@ -68,7 +68,7 @@ describe("getOffers", () => {
       expect(data!.getOffers).toHaveLength(2);
     });
 
-    it("returns two offers with there own uuid", async () => {
+    it("returns two offers sorted by createdAt", async () => {
       const { apolloClient } = await testClientFactory.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
