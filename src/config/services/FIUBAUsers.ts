@@ -2,7 +2,7 @@ import { Environment } from "../Environment";
 
 const FIUBAUsersConfigForAllEnvironments: IFIUBAUsersConfig = {
   production: {
-    url: "https://services.fi.uba.ar//usuarios.php"
+    url: "https://services.fi.uba.ar/usuarios.php"
   },
   staging: {
     url: "http://services.desarrollo.fi.uba.ar/usuarios.php"
