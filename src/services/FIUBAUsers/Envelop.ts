@@ -1,9 +1,9 @@
-import { IAuthenticateRequest } from "./Interfaces";
+import { IAuthenticateRequest, ICredentials } from "./Interfaces";
 import { j2xParser, parse } from "fast-xml-parser";
 import { readFileSync } from "fs";
 
 export const Envelop = {
-  buildAuthenticate: (username: string, password: string) => {
+  buildAuthenticate: ({ username, password }: ICredentials) => {
     const operation: IAuthenticateRequest = parse(
       readFileSync(`${__dirname}/Operations/Authenticate.xml`, "utf8")
     );

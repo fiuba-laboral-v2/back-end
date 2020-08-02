@@ -11,7 +11,7 @@ export const FIUBAUsersApiClient = {
     const httpResponse = await fetch(FIUBAUsersConfig.url, {
       method: "POST",
       headers: FIUBAUsersApiClient.headers(),
-      body: Envelop.buildAuthenticate(username, password)
+      body: Envelop.buildAuthenticate({ username, password })
     });
     if (httpResponse.status === 200) {
       const response: IAuthenticateResponse = await httpResponse.json();

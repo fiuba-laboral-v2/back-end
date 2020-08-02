@@ -5,8 +5,8 @@
   <SOAP-ENV:Header/>
   <SOAP-ENV:Body>
     <Autenticar>
-      <userid>39207914</userid>
-      <password>pass</password>
+      <userid></userid>
+      <password></password>
     </Autenticar>
   </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
