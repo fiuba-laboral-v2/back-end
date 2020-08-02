@@ -52,7 +52,7 @@
     "jsonwebtoken": "8.5.1",
     "lodash": "4.17.19",
     "node": "12.14.0",
-    "nodemon": "2.0.2",
+    "nodemon": "2.0.4",
     "pg": "7.17.0",
     "pg-hstore": "2.3.3",
     "reflect-metadata": "0.1.13",
@@ -60,7 +60,7 @@
     "sequelize-cli": "6.2.0",
     "sequelize-typescript": "1",
     "typescript-logging": "0.6.4",
-    "validations-fiuba-laboral-v2": "1.0.18"
+    "validations-fiuba-laboral-v2": "1.0.19"
   },
   "devDependencies": {
     "@babel/core": "7.0.0",
