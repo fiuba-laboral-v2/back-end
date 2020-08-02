@@ -36,6 +36,7 @@
     "express": "4.17.1",
     "express-jwt": "6.0.0",
     "faker": "4.1.0",
+    "fast-xml-parser": "3.17.4",
     "glob": "7.1.6",
     "graphql": "14.5.8",
     "graphql-depth-limit": "1.1.0",
