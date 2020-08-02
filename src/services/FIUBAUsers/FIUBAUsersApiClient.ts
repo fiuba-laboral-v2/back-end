@@ -1,6 +1,7 @@
 import { IAuthenticateResponse, ICredentials, IResponseError } from "./Interfaces";
 import { FIUBAUsersConfig } from "../../config/services";
 import { Envelope } from "./Envelope";
+import "isomorphic-fetch";
 
 export const FIUBAUsersApiClient = {
   headers: () => ({
