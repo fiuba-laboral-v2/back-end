@@ -59,7 +59,7 @@ describe("FIUBAUsersApiClient", () => {
     ).rejects.toThrowErrorWithMessage(Error, errorMessage);
   });
 
-  it("throws unknown error", async () => {
+  it("throws error if the requested operation is not defined", async () => {
     mockRequestEnvelop(MockEnvelop.AuthenticateUndefinedOperationRequest(goodCredentials));
     const errorMessage = "Operation UNDEFINED_OPERATION is not defined in the " +
       "WSDL for this service";
