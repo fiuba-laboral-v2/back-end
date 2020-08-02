@@ -13,25 +13,25 @@ const validCredentials = {
   password: "goodPassword"
 };
 
+const mockRequestEnvelop = (mockEnvelop: string) => {
+  jest.spyOn(Envelope, "buildAuthenticate").mockReturnValue(mockEnvelop);
+};
+
+const stubRequest = ({ status, response }: { status: number; response: object }) =>
+  fetchMock.mock(
+    {
+      url: FIUBAUsersConfig.url,
+      method: "POST",
+      headers: FIUBAUsersApiClient.headers()
+    },
+    {
+      status: status,
+      body: response
+    }
+  );
+
 describe("FIUBAUsersApiClient", () => {
   afterEach(() => fetchMock.restore());
-
-  const mockRequestEnvelop = (mockEnvelop: string) => {
-    jest.spyOn(Envelope, "buildAuthenticate").mockReturnValue(mockEnvelop);
-  };
-
-  const stubRequest = ({ status, response }: { status: number; response: object }) =>
-    fetchMock.mock(
-      {
-        url: FIUBAUsersConfig.url,
-        method: "POST",
-        headers: FIUBAUsersApiClient.headers()
-      },
-      {
-        status: status,
-        body: response
-      }
-    );
 
   it("returns false if the credentials are incorrect", async () => {
     stubRequest({ status: 200, response: MockEnvelope.AuthenticateSuccessResponse(false) });
