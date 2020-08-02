@@ -3,12 +3,12 @@ import { FIUBAUsers, Envelope, FIUBAUsersApiClient } from "../../../src/services
 import { FIUBAUsersConfig } from "../../../src/config";
 import { MockEnvelope } from "./MockEnvelope";
 
-const badCredentials = {
+const invalidCredentials = {
   username: "badUsername",
   password: "badPassword"
 };
 
-const goodCredentials = {
+const validCredentials = {
   username: "goodUsername",
   password: "goodPassword"
 };
@@ -36,31 +36,31 @@ describe("FIUBAUsersApiClient", () => {
   it("returns false if the credentials are incorrect", async () => {
     stubRequest({ status: 200, response: MockEnvelope.AuthenticateSuccessResponse(false) });
     expect(
-      await FIUBAUsers.authenticate(badCredentials)
+      await FIUBAUsers.authenticate(invalidCredentials)
     ).toBe(false);
   });
 
   it("returns true if the credentials are correct", async () => {
     stubRequest({ status: 200, response: MockEnvelope.AuthenticateSuccessResponse(true) });
     expect(
-      await FIUBAUsers.authenticate(goodCredentials)
+      await FIUBAUsers.authenticate(validCredentials)
     ).toBe(true);
   });
 
   it("throws an error if the envelop has an invalid format", async () => {
-    mockRequestEnvelop(MockEnvelope.AuthenticateInvalidFormatRequest(goodCredentials));
+    mockRequestEnvelop(MockEnvelope.AuthenticateInvalidFormatRequest(validCredentials));
     const errorMessage = "error in msg parsing: XML error parsing SOAP payload on line 1: required";
     stubRequest({
       status: 500,
       response: MockEnvelope.AuthenticateErrorResponse(errorMessage)
     });
     await expect(
-      FIUBAUsers.authenticate(goodCredentials)
+      FIUBAUsers.authenticate(validCredentials)
     ).rejects.toThrowErrorWithMessage(Error, errorMessage);
   });
 
   it("throws error if the requested operation is not defined", async () => {
-    mockRequestEnvelop(MockEnvelope.AuthenticateUndefinedOperationRequest(goodCredentials));
+    mockRequestEnvelop(MockEnvelope.AuthenticateUndefinedOperationRequest(validCredentials));
     const errorMessage = "Operation UNDEFINED_OPERATION is not defined in the " +
       "WSDL for this service";
     stubRequest({
@@ -68,14 +68,14 @@ describe("FIUBAUsersApiClient", () => {
       response: MockEnvelope.AuthenticateErrorResponse(errorMessage)
     });
     await expect(
-      FIUBAUsers.authenticate(goodCredentials)
+      FIUBAUsers.authenticate(validCredentials)
     ).rejects.toThrowErrorWithMessage(Error, errorMessage);
   });
 
   it("throws unknown error if status code is different from 200 or 500", async () => {
     stubRequest({ status: 401, response: {} });
     await expect(
-      FIUBAUsers.authenticate(goodCredentials)
+      FIUBAUsers.authenticate(validCredentials)
     ).rejects.toThrowErrorWithMessage(Error, "Unknown error:");
   });
 });
