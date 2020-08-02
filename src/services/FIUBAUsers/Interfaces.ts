@@ -19,3 +19,16 @@ export interface IAuthenticateRequest {
     };
   };
 }
+
+export interface IResponseError {
+  "SOAP-ENV:Envelope": {
+    "SOAP-ENV:Body": {
+      "SOAP-ENV:Fault": {
+        faultcode: string;
+        faultactor: string;
+        faultstring: string;
+        detail: string;
+      };
+    };
+  };
+}
