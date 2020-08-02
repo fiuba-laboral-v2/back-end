@@ -1,0 +1,1 @@
+export { FIUBAUsersConfig } from "./FIUBAUsers";

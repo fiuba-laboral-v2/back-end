@@ -32,3 +32,8 @@ export interface IResponseError {
     };
   };
 }
+
+export interface ICredentials {
+  username: string;
+  password: string;
+}

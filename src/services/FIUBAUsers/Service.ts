@@ -1,16 +1,15 @@
 import { Envelop } from "./Envelop";
+import { FIUBAUsersConfig } from "../../config";
 import "isomorphic-fetch";
-import { IAuthenticateResponse, IResponseError } from "./Interfaces";
-
-const URI = "http://services.desarrollo.fi.uba.ar/usuarios.php";
+import { IAuthenticateResponse, IResponseError, ICredentials } from "./Interfaces";
 
 export const FIUBAUsers = {
   headers: () => ({
     "Content-Type": "text/xml,",
     "charset": "UTF-8"
   }),
-  authenticate: async (username: string, password: string) => {
-    const httpResponse = await fetch(URI, {
+  authenticate: async ({ username, password }: ICredentials) => {
+    const httpResponse = await fetch(FIUBAUsersConfig.url, {
       method: "POST",
       headers: FIUBAUsers.headers(),
       body: Envelop.buildAuthenticate(username, password)
