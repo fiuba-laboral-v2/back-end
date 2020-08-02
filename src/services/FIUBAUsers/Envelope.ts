@@ -1,6 +1,6 @@
 import { ICredentials } from "./Interfaces";
 
-export const Envelop = {
+export const Envelope = {
   buildAuthenticate: ({ username, password }: ICredentials) => {
     return `
       <?xml version="1.0" encoding="utf-8"?>

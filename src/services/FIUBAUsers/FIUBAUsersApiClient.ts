@@ -1,6 +1,6 @@
 import { IAuthenticateResponse, ICredentials, IResponseError } from "./Interfaces";
 import { FIUBAUsersConfig } from "../../config/services";
-import { Envelop } from "./Envelop";
+import { Envelope } from "./Envelope";
 
 export const FIUBAUsersApiClient = {
   headers: () => ({
@@ -11,7 +11,7 @@ export const FIUBAUsersApiClient = {
     const httpResponse = await fetch(FIUBAUsersConfig.url, {
       method: "POST",
       headers: FIUBAUsersApiClient.headers(),
-      body: Envelop.buildAuthenticate({ username, password })
+      body: Envelope.buildAuthenticate({ username, password })
     });
     if (httpResponse.status === 200) {
       const response: IAuthenticateResponse = await httpResponse.json();

@@ -1,7 +1,7 @@
 import fetchMock from "fetch-mock";
-import { FIUBAUsers, Envelop, FIUBAUsersApiClient } from "../../../src/services/FIUBAUsers";
+import { FIUBAUsers, Envelope, FIUBAUsersApiClient } from "../../../src/services/FIUBAUsers";
 import { FIUBAUsersConfig } from "../../../src/config";
-import { MockEnvelop } from "./MockEnvelop";
+import { MockEnvelope } from "./MockEnvelope";
 
 const badCredentials = {
   username: "badUsername",
@@ -17,7 +17,7 @@ describe("FIUBAUsersApiClient", () => {
   afterEach(() => fetchMock.restore());
 
   const mockRequestEnvelop = (mockEnvelop: string) => {
-    jest.spyOn(Envelop, "buildAuthenticate").mockReturnValue(mockEnvelop);
+    jest.spyOn(Envelope, "buildAuthenticate").mockReturnValue(mockEnvelop);
   };
 
   const stubRequest = ({ status, response }: { status: number; response: object }) =>
@@ -34,25 +34,25 @@ describe("FIUBAUsersApiClient", () => {
     );
 
   it("returns false if the credentials are incorrect", async () => {
-    stubRequest({ status: 200, response: MockEnvelop.AuthenticateSuccessResponse(false) });
+    stubRequest({ status: 200, response: MockEnvelope.AuthenticateSuccessResponse(false) });
     expect(
       await FIUBAUsers.authenticate(badCredentials)
     ).toBe(false);
   });
 
   it("returns true if the credentials are correct", async () => {
-    stubRequest({ status: 200, response: MockEnvelop.AuthenticateSuccessResponse(true) });
+    stubRequest({ status: 200, response: MockEnvelope.AuthenticateSuccessResponse(true) });
     expect(
       await FIUBAUsers.authenticate(goodCredentials)
     ).toBe(true);
   });
 
   it("throws an error if the envelop has an invalid format", async () => {
-    mockRequestEnvelop(MockEnvelop.AuthenticateInvalidFormatRequest(goodCredentials));
+    mockRequestEnvelop(MockEnvelope.AuthenticateInvalidFormatRequest(goodCredentials));
     const errorMessage = "error in msg parsing: XML error parsing SOAP payload on line 1: required";
     stubRequest({
       status: 500,
-      response: MockEnvelop.AuthenticateErrorResponse(errorMessage)
+      response: MockEnvelope.AuthenticateErrorResponse(errorMessage)
     });
     await expect(
       FIUBAUsers.authenticate(goodCredentials)
@@ -60,12 +60,12 @@ describe("FIUBAUsersApiClient", () => {
   });
 
   it("throws error if the requested operation is not defined", async () => {
-    mockRequestEnvelop(MockEnvelop.AuthenticateUndefinedOperationRequest(goodCredentials));
+    mockRequestEnvelop(MockEnvelope.AuthenticateUndefinedOperationRequest(goodCredentials));
     const errorMessage = "Operation UNDEFINED_OPERATION is not defined in the " +
       "WSDL for this service";
     stubRequest({
       status: 500,
-      response: MockEnvelop.AuthenticateErrorResponse(errorMessage)
+      response: MockEnvelope.AuthenticateErrorResponse(errorMessage)
     });
     await expect(
       FIUBAUsers.authenticate(goodCredentials)

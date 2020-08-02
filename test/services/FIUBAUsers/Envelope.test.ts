@@ -1,10 +1,10 @@
-import { Envelop } from "../../../src/services/FIUBAUsers/Envelop";
+import { Envelope } from "../../../src/services/FIUBAUsers/Envelope";
 
-describe("Envelop", () => {
+describe("Envelope", () => {
   it("returns an xml envelop with the required credentials", async () => {
     const username = "username";
     const password = "password";
-    const envelop = Envelop.buildAuthenticate({ username, password });
+    const envelop = Envelope.buildAuthenticate({ username, password });
     expect(envelop).toEqualIgnoringSpacing(`
       <?xml version="1.0" encoding="utf-8"?>
       <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
