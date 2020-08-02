@@ -1,14 +1,9 @@
 import { ValidationError } from "sequelize";
-import { Database } from "../../../../src/config/Database";
-import { Section } from "../../../../src/models/Applicant/Section";
+import { Section } from "../../../../src/models";
 import { lorem, random } from "faker";
 
 describe("Section model", () => {
   const applicantUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
-
-  beforeAll(() => Database.setConnection());
-
-  afterAll(() => Database.close());
 
   it("should create a valid section with a title and a text", async () => {
     const params = {

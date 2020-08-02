@@ -1,7 +1,6 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 import { CompanyRepository } from "../../../../src/models/Company";
-import { Database } from "../../../../src/config/Database";
 import { UserRepository } from "../../../../src/models/User";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
@@ -23,15 +22,12 @@ describe("getCompanies", () => {
   let admins: TAdminGenerator;
 
   beforeAll(() => {
-    Database.setConnection();
     admins = AdminGenerator.instance();
     return Promise.all([
       CompanyRepository.truncate(),
       UserRepository.truncate()
     ]);
   });
-
-  afterAll(() => Database.close());
 
   it("returns all companies", async () => {
     const company = await userFactory.company();

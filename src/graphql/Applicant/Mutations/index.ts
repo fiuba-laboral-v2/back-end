@@ -1,9 +1,11 @@
 import { saveApplicant } from "./saveApplicant";
 import { updateCurrentApplicant } from "./updateCurrentApplicant";
+import { updateApplicantApprovalStatus } from "./updateApplicantApprovalStatus";
 
 const applicantMutations = {
   saveApplicant,
-  updateCurrentApplicant
+  updateCurrentApplicant,
+  updateApplicantApprovalStatus
 };
 
 export { applicantMutations };

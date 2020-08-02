@@ -1,6 +1,5 @@
 import { ValidationError } from "sequelize";
-import { Company } from "../../../src/models/Company";
-import { Database } from "../../../src/config/Database";
+import { Company } from "../../../src/models";
 import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
 import { UUID_REGEX } from "../index";
 import {
@@ -13,10 +12,6 @@ import {
 } from "validations-fiuba-laboral-v2";
 
 describe("Company", () => {
-  beforeAll(() => Database.setConnection());
-
-  afterAll(() => Database.close());
-
   it("creates a valid company", async () => {
     const companyData = {
       cuit: "30711819017",

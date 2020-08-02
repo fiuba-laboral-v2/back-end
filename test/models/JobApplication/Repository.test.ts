@@ -1,8 +1,8 @@
 import { ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
-import { Database } from "../../../src/config/Database";
 import { CompanyRepository } from "../../../src/models/Company";
 import { OfferRepository } from "../../../src/models/Offer";
-import { JobApplication, JobApplicationRepository } from "../../../src/models/JobApplication";
+import { JobApplicationRepository } from "../../../src/models/JobApplication";
+import { JobApplication } from "../../../src/models";
 import { UserRepository } from "../../../src/models/User";
 import { CompanyGenerator, TCompanyGenerator } from "../../generators/Company";
 import { ApplicantGenerator, TApplicantGenerator } from "../../generators/Applicant";
@@ -14,15 +14,12 @@ describe("JobApplicationRepository", () => {
   let offers: TOfferGenerator;
 
   beforeAll(async () => {
-    Database.setConnection();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     companies = CompanyGenerator.instance.withMinimumData();
     applicants = ApplicantGenerator.instance.withMinimumData();
     offers = await OfferGenerator.instance.withObligatoryData();
   });
-
-  afterAll(() => Database.close());
 
   describe("Apply", () => {
     it("should apply to a new jobApplication", async () => {

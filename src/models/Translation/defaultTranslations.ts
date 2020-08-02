@@ -144,14 +144,56 @@ export const defaultTranslations = {
     { key: "companyIconTitle", value: "Empresa" },
     { key: "applicantIconTitle", value: "Postulante" }
   ],
+  statusFilterMenu: [
+    { key: "title", value: "Estado" },
+    { key: "pending", value: "Pendiente" },
+    { key: "approved", value: "Aprobado" },
+    { key: "rejected", value: "Rechazado" }
+  ],
   adminTaskList: [
-    { key: "pendingTasks", value: "Tareas pendientes" }
+    { key: "tasks", value: "Tareas" },
+    { key: "pending", value: "pendientes" },
+    { key: "rejected", value: "rechazadas" },
+    { key: "approved", value: "aprobadas" }
   ],
   adminEmptyDetail: [
     { key: "selectToStart", value: "Seleccioná para comenzar" }
   ],
   approvalActions: [
     { key: "approved", value: "Aprobado" },
-    { key: "rejected", value: "Rechazado" }
+    { key: "rejected", value: "Rechazado" },
+    { key: "pending", value: "Pendiente" }
+  ],
+  adminCompanyMainTitle: [
+    { key: "title", value: "Registro de Empresa" }
+  ],
+  adminApplicantMainTitle: [
+    { key: "title", value: "Registro de Postulante" }
+  ],
+  adminCompanyDetails: [
+    { key: "cuit", value: "Cuit:" }
+  ],
+  adminApplicantDetails: [
+    { key: "padron", value: "Padrón:" }
+  ],
+  adminActions: [
+    { key: "approve", value: "Aprobar" },
+    { key: "reject", value: "Rechazar" },
+    { key: "pending", value: "A Pendiente" }
+  ],
+  approvedLabel: [
+    { key: "text", value: "Aprobado" }
+  ],
+  rejectedLabel: [
+    { key: "text", value: "Rechazado" }
+  ],
+  pendingLabel: [
+    { key: "text", value: "Pendiente de Aprobación" }
+  ],
+  createdSince: [
+    { key: "create", value: "Creado" }
+  ],
+  updatedSince: [
+    { key: "update", value: "Actualizado" }
   ]
 };

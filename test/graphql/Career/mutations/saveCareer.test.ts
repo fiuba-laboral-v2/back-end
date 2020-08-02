@@ -1,5 +1,4 @@
 import { ApolloError, gql } from "apollo-server";
-import { Database } from "../../../../src/config/Database";
 import { CareerRepository } from "../../../../src/models/Career";
 import { CareerGenerator, TCareerDataGenerator } from "../../../generators/Career";
 import { testClientFactory } from "../../../mocks/testClientFactory";
@@ -19,12 +18,9 @@ describe("saveCareer", () => {
   let careersData: TCareerDataGenerator;
 
   beforeAll(async () => {
-    Database.setConnection();
     await CareerRepository.truncate();
     careersData = CareerGenerator.data();
   });
-
-  afterAll(() => Database.close());
 
   it("creates the career model", async () => {
     const { apolloClient } = await testClientFactory.admin();

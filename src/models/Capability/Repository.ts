@@ -1,4 +1,5 @@
-import { Capability, ICapability } from "./index";
+import { ICapability } from "./index";
+import { Capability } from "..";
 
 export const CapabilityRepository = {
   create: async ({ description }: ICapability) => {

@@ -1,5 +1,5 @@
 import { GraphQLUser } from "../Types/GraphQLUser";
-import { IApolloServerContext } from "../../Context/graphqlContext";
+import { IApolloServerContext } from "../../Context";
 import { UserRepository } from "../../../models/User";
 
 export const getCurrentUser = {

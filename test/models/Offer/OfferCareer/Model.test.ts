@@ -1,13 +1,7 @@
 import { ValidationError } from "sequelize";
-import { Database } from "../../../../src/config/Database";
-import { OfferCareer } from "../../../../src/models/Offer/OfferCareer";
+import { OfferCareer } from "../../../../src/models";
 
 describe("OfferCareer", () => {
-
-  beforeAll(() => Database.setConnection());
-
-  afterAll(() => Database.close());
-
   describe("Valid create", () => {
     it("should create a valid offer career", async () => {
       const offerCareer = new OfferCareer({

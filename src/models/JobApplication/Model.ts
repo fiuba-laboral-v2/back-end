@@ -1,8 +1,6 @@
 import { BelongsTo, Column, ForeignKey, Model, Table } from "sequelize-typescript";
 import { HasOneGetAssociationMixin, UUID } from "sequelize";
-
-import { Offer } from "../Offer/Model";
-import { Applicant } from "../Applicant/Model";
+import { Applicant, Offer } from "..";
 
 @Table({ tableName: "JobApplications" })
 export class JobApplication extends Model<JobApplication> {

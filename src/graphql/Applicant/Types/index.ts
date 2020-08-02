@@ -1,4 +1,4 @@
-import { GraphQLApplicant } from "./Applicant";
+import { GraphQLApplicant } from "./GraphQLApplicant";
 import { GraphQLCareerCredits } from "./CareerCredits";
 import { GraphQLApplicantCareer } from "./ApplicantCareers";
 import { GraphQLSectionInput, GraphQLSection } from "./Section";

@@ -10,11 +10,8 @@ import {
 } from "sequelize-typescript";
 import { compare, hashSync } from "bcrypt";
 import { HasOneGetAssociationMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
-import { Applicant } from "../Applicant/Model";
-import { CompanyUser } from "../CompanyUser/Model";
-import { Admin } from "../Admin/Model";
+import { Admin, Applicant, Company, CompanyUser } from "..";
 import { validateEmail, validateName, validatePassword } from "validations-fiuba-laboral-v2";
-import { Company } from "../Company";
 
 @Table
 export class User extends Model<User> {

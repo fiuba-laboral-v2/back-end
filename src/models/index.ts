@@ -1,43 +1,19 @@
-import { Admin } from "./Admin";
-import { Applicant } from "./Applicant";
-import { ApplicantApprovalEvent } from "./Applicant/ApplicantApprovalEvent";
-import { Section } from "./Applicant/Section";
-import { ApplicantLink } from "./Applicant/Link";
-import { JobApplication } from "./JobApplication";
-import { Career } from "./Career";
-import { ApplicantCareer } from "./ApplicantCareer";
-import { Capability } from "./Capability";
-import { ApplicantCapability } from "./ApplicantCapability";
-import { Company } from "./Company";
-import { CompanyApprovalEvent } from "./Company/CompanyApprovalEvent";
-import { CompanyPhoneNumber } from "./CompanyPhoneNumber";
-import { CompanyPhoto } from "./CompanyPhoto";
-import { Offer } from "./Offer";
-import { OfferSection } from "./Offer/OfferSection";
-import { OfferCareer } from "./Offer/OfferCareer";
-import { User } from "./User";
-import { CompanyUser } from "./CompanyUser";
-
-const models = [
-  Admin,
-  Applicant,
-  ApplicantApprovalEvent,
-  Section,
-  ApplicantLink,
-  JobApplication,
-  Career,
-  ApplicantCareer,
-  Capability,
-  ApplicantCapability,
-  Company,
-  CompanyApprovalEvent,
-  CompanyPhoneNumber,
-  CompanyPhoto,
-  CompanyUser,
-  Offer,
-  OfferSection,
-  OfferCareer,
-  User
-];
-
-export { models };
+export { Admin } from "./Admin/Model";
+export { Applicant } from "./Applicant/Model";
+export { ApplicantApprovalEvent } from "./Applicant/ApplicantApprovalEvent/Model";
+export { Section } from "./Applicant/Section/Model";
+export { ApplicantLink } from "./Applicant/Link/Model";
+export { JobApplication } from "./JobApplication/Model";
+export { Career } from "./Career/Model";
+export { ApplicantCareer } from "./ApplicantCareer/Model";
+export { Capability } from "./Capability/Model";
+export { ApplicantCapability } from "./ApplicantCapability/Model";
+export { Company } from "./Company/Model";
+export { CompanyApprovalEvent } from "./Company/CompanyApprovalEvent/Model";
+export { CompanyPhoneNumber } from "./CompanyPhoneNumber/Model";
+export { CompanyPhoto } from "./CompanyPhoto/Model";
+export { Offer } from "./Offer/Model";
+export { OfferSection } from "./Offer/OfferSection/Model";
+export { OfferCareer } from "./Offer/OfferCareer/Model";
+export { User } from "./User/Model";
+export { CompanyUser } from "./CompanyUser/Model";

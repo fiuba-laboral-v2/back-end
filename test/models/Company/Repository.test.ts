@@ -4,11 +4,10 @@ import {
   UniqueConstraintError,
   ValidationError
 } from "sequelize";
-import { Database } from "../../../src/config/Database";
 import { InvalidCuitError, PhoneNumberWithLettersError } from "validations-fiuba-laboral-v2";
 import { CompanyRepository } from "../../../src/models/Company";
 import { UserRepository } from "../../../src/models/User";
-import { Admin } from "../../../src/models/Admin";
+import { Admin } from "../../../src/models";
 import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
 import { CompanyGenerator, TCompanyDataGenerator } from "../../generators/Company";
 import { AdminGenerator } from "../../generators/Admin";
@@ -19,13 +18,10 @@ describe("CompanyRepository", () => {
   let companiesData: TCompanyDataGenerator;
 
   beforeAll(async () => {
-    Database.setConnection();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     companiesData = await CompanyGenerator.data.completeData();
   });
-
-  afterAll(() => Database.close());
 
   it("creates a new company", async () => {
     const companyCompleteData = companiesData.next().value;

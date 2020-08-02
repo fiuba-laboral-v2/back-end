@@ -1,10 +1,6 @@
 import { AllowNull, BelongsToMany, Column, HasMany, Is, Model, Table } from "sequelize-typescript";
 import { DATE, ENUM, HasManyGetAssociationsMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
-import { CompanyPhoneNumber } from "../CompanyPhoneNumber";
-import { CompanyPhoto } from "../CompanyPhoto";
-import { Offer } from "../Offer/Model";
-import { User } from "../User/Model";
-import { CompanyUser } from "../CompanyUser/Model";
+import { CompanyPhoneNumber, CompanyPhoto, CompanyUser, Offer, User } from "..";
 import { CompanyApprovalEvent } from "./CompanyApprovalEvent/Model";
 import { ApprovalStatus, approvalStatuses } from "../ApprovalStatus";
 import {

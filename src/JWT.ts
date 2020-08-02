@@ -1,9 +1,9 @@
-import { User } from "./models/User";
+import { User } from "./models";
 import { Environment } from "./config/Environment";
 import { sign, verify } from "jsonwebtoken";
 import { Application } from "express";
 import jwt from "express-jwt";
-import { ICurrentUser } from "./graphql/Context/graphqlContext";
+import { ICurrentUser } from "./graphql/Context";
 import { AuthConfig } from "./config/AuthConfig";
 
 let JWT_SECRET: string;

@@ -1,13 +1,8 @@
 import { ValidationError } from "sequelize";
-import { Database } from "../../../src/config/Database";
-import { Career } from "../../../src/models/Career";
+import { Career } from "../../../src/models";
 import { NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
 
 describe("Career", () => {
-
-  beforeAll(() => Database.setConnection());
-  afterAll(() => Database.close());
-
   it("creates a valid applicant", async () => {
     const career = new Career({
       code: "10",

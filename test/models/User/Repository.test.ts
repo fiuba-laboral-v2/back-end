@@ -1,5 +1,4 @@
 import { UniqueConstraintError, ValidationError } from "sequelize";
-import { Database } from "../../../src/config/Database";
 import { UserRepository } from "../../../src/models/User/Repository";
 import { UserNotFoundError } from "../../../src/models/User";
 import {
@@ -9,11 +8,7 @@ import {
 } from "validations-fiuba-laboral-v2";
 
 describe("UserRepository", () => {
-  beforeAll(() => Database.setConnection());
-
   beforeEach(() => UserRepository.truncate());
-
-  afterAll(() => Database.close());
 
   describe("create", () => {
     it("creates a user", async () => {

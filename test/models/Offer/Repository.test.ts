@@ -1,12 +1,11 @@
 import { UniqueConstraintError } from "sequelize";
-import { Database } from "../../../src/config/Database";
-import { CareerRepository } from "../../../src/models/Career/Repository";
-import { OfferRepository } from "../../../src/models/Offer/Repository";
-import { CompanyRepository } from "../../../src/models/Company/Repository";
+import { CareerRepository } from "../../../src/models/Career";
+import { OfferRepository } from "../../../src/models/Offer";
+import { CompanyRepository } from "../../../src/models/Company";
 import { OfferNotFound } from "../../../src/models/Offer/Errors";
-import { OfferSection } from "../../../src/models/Offer/OfferSection";
-import { OfferCareer } from "../../../src/models/Offer/OfferCareer";
-import { Offer } from "../../../src/models/Offer";
+import { OfferSection } from "../../../src/models";
+import { OfferCareer } from "../../../src/models";
+import { Offer } from "../../../src/models";
 import { CompanyGenerator, TCompanyGenerator } from "../../generators/Company";
 import { OfferGenerator, TOfferDataGenerator } from "../../generators/Offer";
 import { CareerGenerator, TCareerGenerator } from "../../generators/Career";
@@ -19,7 +18,6 @@ describe("OfferRepository", () => {
   let offersData: TOfferDataGenerator;
 
   beforeAll(async () => {
-    Database.setConnection();
     await CareerRepository.truncate();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
@@ -27,8 +25,6 @@ describe("OfferRepository", () => {
     careersGenerator = CareerGenerator.instance();
     offersData = OfferGenerator.data.withObligatoryData();
   });
-
-  afterAll(() => Database.close());
 
   const sectionData = {
     title: "title",

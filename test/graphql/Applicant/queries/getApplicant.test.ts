@@ -1,6 +1,5 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
-import { Database } from "../../../../src/config/Database";
 
 import { CareerRepository } from "../../../../src/models/Career";
 import { ApplicantNotFound } from "../../../../src/models/Applicant/Errors/ApplicantNotFound";
@@ -27,6 +26,7 @@ const GET_APPLICANT = gql`
       description
       approvalStatus
       createdAt
+      updatedAt
       capabilities {
         uuid
         description
@@ -47,15 +47,12 @@ describe("getApplicant", () => {
   let admins: TAdminGenerator;
 
   beforeAll(async () => {
-    Database.setConnection();
     await CareerRepository.truncate();
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
     applicants = await ApplicantGenerator.instance.withMinimumData();
     admins = AdminGenerator.instance();
   });
-
-  afterAll(() => Database.close());
 
   describe("when the applicant exists", () => {
     it("fetches the applicant", async () => {
@@ -81,7 +78,8 @@ describe("getApplicant", () => {
         },
         description: applicant.description,
         padron: applicant.padron,
-        createdAt: applicant.createdAt.toISOString()
+        createdAt: applicant.createdAt.toISOString(),
+        updatedAt: applicant.updatedAt.toISOString()
       });
       expect(data!.getApplicant).toHaveProperty("capabilities");
       expect(data!.getApplicant).toHaveProperty("careers");

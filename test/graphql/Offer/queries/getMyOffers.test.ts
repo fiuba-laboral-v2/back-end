@@ -1,11 +1,10 @@
 import { gql } from "apollo-server";
-import { Database } from "../../../../src/config/Database";
 import { client } from "../../ApolloTestClient";
 
 import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
 
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
-import { Admin } from "../../../../src/models/Admin";
+import { Admin } from "../../../../src/models";
 import { CareerRepository } from "../../../../src/models/Career";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { UserRepository } from "../../../../src/models/User";
@@ -32,7 +31,6 @@ describe("getMyOffers", () => {
   let admin: Admin;
 
   beforeAll(async () => {
-    Database.setConnection();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await UserRepository.truncate();
@@ -41,8 +39,6 @@ describe("getMyOffers", () => {
     offers = await OfferGenerator.instance.withObligatoryData();
     admin = await AdminGenerator.instance().next().value;
   });
-
-  afterAll(() => Database.close());
 
   describe("when offers exists", () => {
     let offer1;

@@ -1,5 +1,4 @@
 import { gql } from "apollo-server";
-import { Database } from "../../../../src/config/Database";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { UserRepository } from "../../../../src/models/User";
 import { client } from "../../ApolloTestClient";
@@ -21,9 +20,16 @@ const query = gql`
       website
       email
       createdAt
+      updatedAt
       approvalStatus
       phoneNumbers
       photos
+      users {
+        uuid
+        email
+        name
+        surname
+      }
     }
   }
 `;
@@ -32,13 +38,10 @@ describe("getCompanyByUuid", () => {
   let admins: TAdminGenerator;
 
   beforeAll(async () => {
-    Database.setConnection();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     admins = AdminGenerator.instance();
   });
-
-  afterAll(() => Database.close());
 
   it("finds a company given its uuid", async () => {
     const company = await userFactory.company();
@@ -58,9 +61,13 @@ describe("getCompanyByUuid", () => {
         website: company.website,
         email: company.email,
         createdAt: company.createdAt.toISOString(),
+        updatedAt: company.updatedAt.toISOString(),
         approvalStatus: company.approvalStatus,
         phoneNumbers: expect.arrayContaining((await company.getPhoneNumbers())),
-        photos: expect.arrayContaining((await company.getPhotos()))
+        photos: expect.arrayContaining((await company.getPhotos())),
+        users: expect.arrayContaining((await company.getUsers()).map(
+          ({ uuid, email, name, surname }) => ({ uuid, email, name, surname })
+        ))
       }
     });
   });

@@ -1,12 +1,9 @@
-import { Database } from "../../../../src/config/Database";
 import { ValidationError } from "sequelize";
-import { ApplicantApprovalEvent } from "../../../../src/models/Applicant/ApplicantApprovalEvent";
+import { ApplicantApprovalEvent } from "../../../../src/models";
 import { ApprovalStatus, approvalStatuses } from "../../../../src/models/ApprovalStatus";
 import { UUID_REGEX } from "../../index";
 
 describe("ApplicantApprovalEvent", () => {
-  beforeAll(() => Database.setConnection());
-  afterAll(() => Database.close());
 
   const expectToCreateAValidInstanceWithAStatus = async (status: ApprovalStatus) => {
     const applicantApprovalEventAttributes = {

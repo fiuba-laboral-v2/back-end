@@ -1,7 +1,7 @@
 import { gql } from "apollo-server";
 import { client, executeMutation } from "../../ApolloTestClient";
-import { Database } from "../../../../src/config/Database";
-import { User, UserRepository } from "../../../../src/models/User";
+import { User } from "../../../../src/models";
+import { UserRepository } from "../../../../src/models/User";
 import { CompanyRepository } from "../../../../src/models/Company";
 import { userFactory } from "../../../mocks/user";
 import { JWT } from "../../../../src/JWT";
@@ -17,12 +17,9 @@ const LOGIN = gql`
 
 describe("login", () => {
   beforeAll(async () => {
-    Database.setConnection();
     await UserRepository.truncate();
     await CompanyRepository.truncate();
   });
-
-  afterAll(() => Database.close());
 
   const createExpressContext = () => ({ res: { cookie: jest.fn() } });
 

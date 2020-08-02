@@ -1,7 +1,8 @@
-import { ICareer, Career, CareerRepository } from "../../../src/models/Career";
+import { ICareer, CareerRepository } from "../../../src/models/Career";
 import { careerGenerator } from "./careerGenerator";
 import { careerData } from "./careerData";
 import { CustomGenerator } from "../types";
+import { Career } from "../../../src/models";
 
 export type TCareerGenerator = CustomGenerator<Promise<Career>>;
 export type TCareerDataGenerator = CustomGenerator<ICareer>;

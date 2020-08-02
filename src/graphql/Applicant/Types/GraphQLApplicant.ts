@@ -6,11 +6,11 @@ import { GraphQLCapability } from "../../Capability/Types/Capability";
 import { GraphQLApplicantCareer } from "./ApplicantCareers";
 import { GraphQLSection } from "./Section";
 import { GraphQLLink } from "./Link";
-import { Applicant } from "../../../models/Applicant";
+import { Applicant } from "../../../models";
 import { ApplicantCareersSerializer } from "../../../models/ApplicantCareer";
 import { GraphQLApprovalStatus } from "../../ApprovalStatus/Types/GraphQLApprovalStatus";
 
-const GraphQLApplicant = new GraphQLObjectType<Applicant>({
+export const GraphQLApplicant = new GraphQLObjectType<Applicant>({
   name: "Applicant",
   fields: () => ({
     uuid: {
@@ -27,6 +27,9 @@ const GraphQLApplicant = new GraphQLObjectType<Applicant>({
       type: String
     },
     createdAt: {
+      type: nonNull(GraphQLDateTime)
+    },
+    updatedAt: {
       type: nonNull(GraphQLDateTime)
     },
     approvalStatus: {
@@ -60,5 +63,3 @@ const GraphQLApplicant = new GraphQLObjectType<Applicant>({
     }
   })
 });
-
-export { GraphQLApplicant };

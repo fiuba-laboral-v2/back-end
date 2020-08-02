@@ -1,11 +1,7 @@
 import { ValidationError } from "sequelize";
-import { Database } from "../../../../src/config/Database";
-import { OfferSection } from "../../../../src/models/Offer/OfferSection";
+import { OfferSection } from "../../../../src/models";
 
 describe("OfferSection", () => {
-  beforeAll(() => Database.setConnection());
-  afterAll(() => Database.close());
-
   describe("Valid create", () => {
     it("should create a valid section", async () => {
       const sectionAttributes = {

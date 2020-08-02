@@ -1,11 +1,10 @@
 import { DatabaseError, ForeignKeyConstraintError, ValidationError } from "sequelize";
-import { Database } from "../../../src/config/Database";
 import { CareerRepository } from "../../../src/models/Career";
-import { Applicant, ApplicantRepository, IApplicantEditable } from "../../../src/models/Applicant";
-import { ApplicantCareersRepository } from "../../../src/models/ApplicantCareer/Repository";
-import { UserRepository } from "../../../src/models/User/Repository";
+import { ApplicantRepository, IApplicantEditable } from "../../../src/models/Applicant";
+import { Admin, Applicant } from "../../../src/models";
+import { ApplicantCareersRepository } from "../../../src/models/ApplicantCareer";
+import { UserRepository } from "../../../src/models/User";
 import { CapabilityRepository } from "../../../src/models/Capability";
-import { Admin } from "../../../src/models/Admin";
 import { ApplicantNotFound, ApplicantNotUpdatedError } from "../../../src/models/Applicant/Errors";
 import { ApplicantGenerator, TApplicantDataGenerator } from "../../generators/Applicant";
 import { CareerGenerator, TCareerGenerator } from "../../generators/Career";
@@ -18,15 +17,12 @@ describe("ApplicantRepository", () => {
   let careers: TCareerGenerator;
 
   beforeAll(async () => {
-    Database.setConnection();
     await UserRepository.truncate();
     await CareerRepository.truncate();
     await CapabilityRepository.truncate();
     applicantsMinimumData = ApplicantGenerator.data.minimum();
     careers = CareerGenerator.instance();
   });
-
-  afterAll(() => Database.close());
 
   describe("Create", () => {
     it("creates a new applicant", async () => {

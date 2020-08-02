@@ -1,5 +1,5 @@
 import { Transaction } from "sequelize";
-import { Company } from "../Model";
+import { Company } from "../..";
 import { ApprovalStatus } from "../../ApprovalStatus";
 
 export interface ICreateCompanyApprovalEvent {

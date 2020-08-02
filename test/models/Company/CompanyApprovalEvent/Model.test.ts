@@ -1,13 +1,9 @@
-import { Database } from "../../../../src/config/Database";
-import { CompanyApprovalEvent } from "../../../../src/models/Company/CompanyApprovalEvent";
+import { CompanyApprovalEvent } from "../../../../src/models";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import { ValidationError } from "sequelize";
 import { UUID_REGEX } from "../../index";
 
 describe("CompanyApprovalEvent", () => {
-  beforeAll(() => Database.setConnection());
-  afterAll(() => Database.close());
-
   it("creates a valid CompanyApprovalEvent", async () => {
     const companyApprovalEventAttributes = {
       userUuid: "cfe18465-9454-48b6-80bc-375411650d99",

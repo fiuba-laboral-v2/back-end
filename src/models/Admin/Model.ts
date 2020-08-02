@@ -1,6 +1,6 @@
 import { Model, Table, Column, BelongsTo, ForeignKey } from "sequelize-typescript";
 import { UUID, HasOneGetAssociationMixin, DATE } from "sequelize";
-import { User } from "../User";
+import { User } from "..";
 
 @Table({ tableName: "Admins" })
 export class Admin extends Model<Admin> {

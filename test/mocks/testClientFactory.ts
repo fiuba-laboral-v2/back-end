@@ -1,6 +1,6 @@
 import { userFactory } from "./user";
 import { IApplicantAttributes, ICompanyAttributes, IUserProps } from "./interfaces";
-import { User } from "../../src/models/User";
+import { User } from "../../src/models";
 import { CompanyRepository } from "../../src/models/Company";
 import { client } from "../graphql/ApolloTestClient";
 import { IExpressContext } from "../graphql/ExpressContext";

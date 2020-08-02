@@ -1,8 +1,9 @@
 import { Database } from "../../config/Database";
-import { IOffer, Offer } from "./";
-import { IOfferSection, OfferSection } from "./OfferSection";
-import { IOfferCareer, OfferCareer } from "./OfferCareer";
+import { IOffer } from "./";
+import { IOfferSection } from "./OfferSection";
+import { IOfferCareer } from "./OfferCareer";
 import { OfferNotFound } from "./Errors";
+import { Offer, OfferCareer, OfferSection } from "..";
 import { Op } from "sequelize";
 
 export const OfferRepository = {
@@ -53,7 +54,7 @@ export const OfferRepository = {
         }
       }),
       order: [["createdAt", "DESC"]],
-      limit: 1
+      limit: 10
     }),
   findByCompanyUuid: (companyUuid: string) =>
     Offer.findAll({ where: { companyUuid } }),
