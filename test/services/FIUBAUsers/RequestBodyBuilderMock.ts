@@ -1,5 +1,4 @@
 import { parse } from "fast-xml-parser";
-import { ICredentials } from "../../../src/services/FIUBAUsers";
 
 export const RequestBodyBuilderMock = {
   authenticateSuccessResponse: ({ isValid }: { isValid: boolean }) => parse(`
@@ -31,29 +30,5 @@ export const RequestBodyBuilderMock = {
         </SOAP-ENV:Fault>
       </SOAP-ENV:Body>
     </SOAP-ENV:Envelope>
-  `),
-  authenticateInvalidFormatRequest: ({ username, password }: ICredentials) => `
-      <?xml version="1.0" encoding="utf-8"?>
-      <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
-        <SOAP-ENV:Header/>
-        <SOAP-ENV:Body>
-          <Autenticar>
-            <userid>${username}</userid>
-            <password>${password}</password>
-          </Autenticar>
-        </SOAP-ENV:Body>
-      </SOAP-ENV:Envelope>
-    `,
-  authenticateUndefinedOperationRequest: ({ username, password }: ICredentials) => `
-    <?xml version="1.0" encoding="utf-8"?>
-    <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
-      <SOAP-ENV:Header/>
-      <SOAP-ENV:Body>
-        <UNDEFINED_OPERATION>
-          <userid>${username}</userid>
-          <password>${password}</password>
-        </UNDEFINED_OPERATION>
-      </SOAP-ENV:Body>
-    </SOAP-ENV:Envelope>
-  `
+  `)
 };

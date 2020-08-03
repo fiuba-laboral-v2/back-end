@@ -53,7 +53,6 @@ describe("FIUBAUsersApi", () => {
   });
 
   it("throws an error if the request body has an invalid format", async () => {
-    mockRequestBody(RequestBodyBuilderMock.authenticateInvalidFormatRequest(validCredentials));
     const errorMessage = "error in msg parsing: XML error parsing SOAP payload on line 1: required";
     stubRequest({
       status: 500,
@@ -65,8 +64,6 @@ describe("FIUBAUsersApi", () => {
   });
 
   it("throws error if the requested operation is not defined", async () => {
-    const { authenticateUndefinedOperationRequest } = RequestBodyBuilderMock;
-    mockRequestBody(authenticateUndefinedOperationRequest(validCredentials));
     const responseError = RequestBodyBuilderMock.authenticateErrorResponse(
       "Operation UNDEFINED_OPERATION is not defined in the WSDL for this service"
     );
