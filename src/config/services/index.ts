@@ -1,0 +1,1 @@
+export { FiubaUsersServiceConfig } from "./FiubaUsersServiceConfig";
