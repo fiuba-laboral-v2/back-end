@@ -2,6 +2,7 @@ import { IFiubaUsersApiSuccessResponse, ICredentials } from "../Interfaces";
 import { FiubaUsersServiceConfig } from "../../../config/services";
 import { RequestBodyBuilder } from "./RequestBodyBuilder";
 import { AuthenticateUnknownError, AuthenticateFaultError } from "../Errors";
+import { parse } from "fast-xml-parser";
 import "isomorphic-fetch";
 
 export const FiubaUsersApi = {
@@ -16,11 +17,11 @@ export const FiubaUsersApi = {
       body: RequestBodyBuilder.buildAuthenticate({ username, password })
     });
     if (httpResponse.status === 200) {
-      const response: IFiubaUsersApiSuccessResponse = await httpResponse.json();
+      const response: IFiubaUsersApiSuccessResponse = parse(await httpResponse.text());
       return response["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns1:AutenticarResponse"].return;
     } else if (httpResponse.status === 500) {
-      throw new AuthenticateFaultError(await httpResponse.json());
+      throw new AuthenticateFaultError(parse(await httpResponse.text()));
     }
-    throw new AuthenticateUnknownError(await httpResponse.json());
+    throw new AuthenticateUnknownError(parse(await httpResponse.text()));
   }
 };

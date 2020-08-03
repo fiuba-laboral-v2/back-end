@@ -6,6 +6,7 @@ import {
 } from "../../../../src/services/FiubaUsers";
 import { FiubaUsersServiceConfig } from "../../../../src/config";
 import { RequestBodyMock } from "./RequestBodyMock";
+import { parse } from "fast-xml-parser";
 
 const invalidCredentials = {
   username: "badUsername",
@@ -17,7 +18,7 @@ const validCredentials = {
   password: "goodPassword"
 };
 
-const stubRequest = ({ status, response }: { status: number; response: object }) =>
+const stubRequest = ({ status, response }: { status: number; response: string }) =>
   fetchMock.mock(
     {
       url: FiubaUsersServiceConfig.url,
@@ -74,17 +75,17 @@ describe("FiubaUsersApi", () => {
       FiubaUsersApi.authenticate(validCredentials)
     ).rejects.toThrowErrorWithMessage(
       AuthenticateFaultError,
-      AuthenticateFaultError.buildMessage(responseError)
+      AuthenticateFaultError.buildMessage(parse(responseError))
     );
   });
 
   it("throws unknown error if status code is different from 200 or 500", async () => {
-    stubRequest({ status: 401, response: {} });
+    stubRequest({ status: 401, response: "" });
     await expect(
       FiubaUsersApi.authenticate(validCredentials)
     ).rejects.toThrowErrorWithMessage(
       AuthenticateUnknownError,
-      AuthenticateUnknownError.buildMessage({})
+      AuthenticateUnknownError.buildMessage(parse(""))
     );
   });
 });

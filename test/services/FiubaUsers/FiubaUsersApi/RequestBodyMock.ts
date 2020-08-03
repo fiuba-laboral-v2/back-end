@@ -1,7 +1,5 @@
-import { parse } from "fast-xml-parser";
-
 export const RequestBodyMock = {
-  authenticateSuccessResponse: ({ isValid }: { isValid: boolean }) => parse(`
+  authenticateSuccessResponse: ({ isValid }: { isValid: boolean }) => `
     <?xml version="1.0" encoding="utf-8"?>
     <SOAP-ENV:Envelope
       xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
@@ -17,8 +15,8 @@ export const RequestBodyMock = {
         </ns1:AutenticarResponse>
       </SOAP-ENV:Body>
     </SOAP-ENV:Envelope>
-  `),
-  authenticateErrorResponse: (message: string) => parse(`
+  `,
+  authenticateErrorResponse: (message: string) => `
     <?xml version="1.0" encoding="utf-8"?>
     <SOAP-ENV:Envelope>
       <SOAP-ENV:Body>
@@ -30,5 +28,5 @@ export const RequestBodyMock = {
         </SOAP-ENV:Fault>
       </SOAP-ENV:Body>
     </SOAP-ENV:Envelope>
-  `)
+  `
 };
