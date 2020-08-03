@@ -12,10 +12,12 @@ import { testClientFactory } from "../../../mocks/testClientFactory";
 import { UnauthorizedError } from "../../../../src/graphql/Errors";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import { ExtensionAdminGenerator, TAdminGenerator } from "../../../generators/Admin";
+import { range } from "lodash";
+import { Offer } from "../../../../src/models";
 
 const GET_OFFERS = gql`
-  query ($createdBeforeThan: DateTime) {
-    getOffers(createdBeforeThan: $createdBeforeThan) {
+  query ($updatedBeforeThan: DateTime) {
+    getOffers(updatedBeforeThan: $updatedBeforeThan) {
       uuid
     }
   }
@@ -48,8 +50,8 @@ describe("getOffers", () => {
   });
 
   describe("when offers exists", () => {
-    let offer1;
-    let offer2;
+    let offer1: Offer;
+    let offer2: Offer;
     const createOffers = async () => {
       const { uuid: companyUuid } = await companies.next().value;
       const career1 = await careers.next().value;
@@ -72,7 +74,7 @@ describe("getOffers", () => {
       expect(data!.getOffers).toHaveLength(2);
     });
 
-    it("returns two offers sorted by createdAt", async () => {
+    it("returns two offers sorted by updatedAt", async () => {
       const apolloClient = await approvedApplicantTestClient();
       const { data } = await apolloClient.query({ query: GET_OFFERS });
       expect(data!.getOffers).toMatchObject(
@@ -83,18 +85,53 @@ describe("getOffers", () => {
       );
     });
 
-    it("filters by createdAt", async () => {
+    it("filters by updatedAt", async () => {
       const apolloClient = await approvedApplicantTestClient();
       const { data } = await apolloClient.query({
         query: GET_OFFERS,
         variables: {
-          createdBeforeThan: offer2.createdAt.toISOString()
+          updatedBeforeThan: offer2.updatedAt.toISOString()
         }
       });
       expect(data!.getOffers).toMatchObject(
         [
           { uuid: offer1.uuid }
         ]
+      );
+    });
+
+    it("filters by updatedAt even when it does not coincide with createdAt", async () => {
+      offer1.title = "something";
+      await offer1.save();
+      const apolloClient = await approvedApplicantTestClient();
+      const { data } = await apolloClient.query({
+        query: GET_OFFERS,
+        variables: {
+          updatedBeforeThan: offer1.updatedAt.toISOString()
+        }
+      });
+      expect(data!.getOffers).toMatchObject(
+        [
+          { uuid: offer2.uuid }
+        ]
+      );
+    });
+
+    it("gets the latest 10 offers", async () => {
+      const newOffers: Offer[] = [];
+      for (const _ of range(15)) {
+        newOffers.push(
+          await OfferRepository.create(offersData.next({
+            companyUuid: offer1.companyUuid
+          }).value)
+        );
+      }
+      offer1.title = "something different";
+      await offer1.save();
+      const apolloClient = await approvedApplicantTestClient();
+      const { data } = await apolloClient.query({ query: GET_OFFERS });
+      expect(data!.getOffers.map(offer => offer.uuid)).toEqual(
+        [offer1.uuid, ...newOffers.slice(-9).map(offer => offer.uuid).reverse()]
       );
     });
   });

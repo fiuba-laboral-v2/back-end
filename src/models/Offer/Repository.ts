@@ -44,16 +44,16 @@ export const OfferRepository = {
 
     return offer;
   },
-  findAll: ({ createdBeforeThan }: { createdBeforeThan?: string }) =>
+  findAll: ({ updatedBeforeThan }: { updatedBeforeThan?: string }) =>
     Offer.findAll({
-      ...(createdBeforeThan && {
+      ...(updatedBeforeThan && {
         where: {
-          createdAt: {
-            [Op.lt]: createdBeforeThan
+          updatedAt: {
+            [Op.lt]: updatedBeforeThan
           }
         }
       }),
-      order: [["createdAt", "DESC"]],
+      order: [["updatedAt", "DESC"]],
       limit: 10
     }),
   findByCompanyUuid: (companyUuid: string) =>
