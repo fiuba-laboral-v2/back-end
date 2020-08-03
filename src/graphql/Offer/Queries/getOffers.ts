@@ -10,7 +10,7 @@ const getOffers = {
       type: GraphQLDateTime
     }
   },
-  resolve: async (_: undefined, { createdBeforeThan }: { createdBeforeThan?: string }) =>
+  resolve: (_: undefined, { createdBeforeThan }: { createdBeforeThan?: string }) =>
     OfferRepository.findAll({ createdBeforeThan })
 };
 
