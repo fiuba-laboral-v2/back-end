@@ -1,6 +1,6 @@
 import { Environment } from "../Environment";
 
-const FIUBAUsersConfigForAllEnvironments: IFIUBAUsersConfig = {
+export const FiubaUsersServiceConfig: IFiubaUsersServiceConfig = {
   production: {
     url: "https://services.fi.uba.ar/usuarios.php"
   },
@@ -16,20 +16,8 @@ const FIUBAUsersConfigForAllEnvironments: IFIUBAUsersConfig = {
   test: {
     url: "http://services.desarrollo.fi.uba.ar/usuarios.php"
   }
-};
+}[Environment.NODE_ENV];
 
-const FiubaUsersServiceConfig = FIUBAUsersConfigForAllEnvironments[Environment.NODE_ENV];
-
-interface IEnvironment {
+interface IFiubaUsersServiceConfig {
   url: string;
 }
-
-interface IFIUBAUsersConfig {
-  production: IEnvironment;
-  staging: IEnvironment;
-  development: IEnvironment;
-  test: IEnvironment;
-  test_travis: IEnvironment;
-}
-
-export { FiubaUsersServiceConfig };
