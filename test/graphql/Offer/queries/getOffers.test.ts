@@ -131,7 +131,7 @@ describe("getOffers", () => {
       const apolloClient = await approvedApplicantTestClient();
       const { data } = await apolloClient.query({ query: GET_OFFERS });
       expect(data!.getOffers.map(offer => offer.uuid)).toEqual(
-        [offer1.uuid].concat(newOffers.slice(-9).map(offer => offer.uuid).reverse())
+        [offer1.uuid, ...newOffers.slice(-9).map(offer => offer.uuid).reverse()]
       );
     });
   });
