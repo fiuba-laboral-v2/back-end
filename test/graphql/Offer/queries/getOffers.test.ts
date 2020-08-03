@@ -12,6 +12,7 @@ import { testClientFactory } from "../../../mocks/testClientFactory";
 import { UnauthorizedError } from "../../../../src/graphql/Errors";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import { ExtensionAdminGenerator, TAdminGenerator } from "../../../generators/Admin";
+import { range } from "lodash";
 
 const GET_OFFERS = gql`
   query ($updatedBeforeThan: DateTime) {
@@ -113,6 +114,17 @@ describe("getOffers", () => {
           { uuid: offer2.uuid }
         ]
       );
+    });
+
+    it("gets the latest 10 offers", async () => {
+      for (const _ of range(15)) {
+        await OfferRepository.create(offersData.next({
+          companyUuid: offer1.companyUuid
+        }).value);
+      }
+      const apolloClient = await approvedApplicantTestClient();
+      const { data } = await apolloClient.query({ query: GET_OFFERS });
+      expect(data!.getOffers.length).toEqual(10);
     });
   });
 
