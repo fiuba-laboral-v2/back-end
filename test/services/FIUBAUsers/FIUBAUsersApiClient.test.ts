@@ -14,8 +14,8 @@ const validCredentials = {
   password: "goodPassword"
 };
 
-const mockRequestBody = (mockEnvelop: string) => {
-  jest.spyOn(RequestBodyBuilder, "buildAuthenticate").mockReturnValue(mockEnvelop);
+const mockRequestBody = (requestBody: string) => {
+  jest.spyOn(RequestBodyBuilder, "buildAuthenticate").mockReturnValue(requestBody);
 };
 
 const stubRequest = ({ status, response }: { status: number; response: object }) =>
