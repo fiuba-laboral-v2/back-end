@@ -1,5 +1,5 @@
 import fetchMock from "fetch-mock";
-import { RequestBodyBuilder, FIUBAUsersApi } from "../../../src/services/FIUBAUsers";
+import { FIUBAUsersApi } from "../../../src/services/FIUBAUsers";
 import { AuthenticateFaultError, AuthenticateUnknownError } from "../../../src/services/FIUBAUsers";
 import { FiubaUsersServiceConfig } from "../../../src/config";
 import { RequestBodyBuilderMock } from "./RequestBodyBuilderMock";
@@ -12,10 +12,6 @@ const invalidCredentials = {
 const validCredentials = {
   username: "goodUsername",
   password: "goodPassword"
-};
-
-const mockRequestBody = (requestBody: string) => {
-  jest.spyOn(RequestBodyBuilder, "buildAuthenticate").mockReturnValue(requestBody);
 };
 
 const stubRequest = ({ status, response }: { status: number; response: object }) =>
