@@ -1,2 +1,2 @@
-export { FIUBAUsersApi } from "./Api";
+export { FiubaUsersApi } from "./Api";
 export { RequestBodyBuilder } from "./RequestBodyBuilder";

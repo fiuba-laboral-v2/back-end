@@ -2,8 +2,8 @@ import fetchMock from "fetch-mock";
 import {
   AuthenticateFaultError,
   AuthenticateUnknownError,
-  FIUBAUsersApi
-} from "../../../../src/services/FIUBAUsers";
+  FiubaUsersApi
+} from "../../../../src/services/FiubaUsers";
 import { FiubaUsersServiceConfig } from "../../../../src/config";
 import { RequestBodyBuilderMock } from "../RequestBodyBuilderMock";
 
@@ -22,7 +22,7 @@ const stubRequest = ({ status, response }: { status: number; response: object })
     {
       url: FiubaUsersServiceConfig.url,
       method: "POST",
-      headers: FIUBAUsersApi.headers()
+      headers: FiubaUsersApi.headers()
     },
     {
       status: status,
@@ -30,7 +30,7 @@ const stubRequest = ({ status, response }: { status: number; response: object })
     }
   );
 
-describe("FIUBAUsersApi", () => {
+describe("FiubaUsersApi", () => {
   afterEach(() => fetchMock.restore());
 
   it("returns false if the credentials are incorrect", async () => {
@@ -38,7 +38,7 @@ describe("FIUBAUsersApi", () => {
     const isValid = false;
     stubRequest({ status: 200, response: authenticateSuccessResponse({ isValid }) });
     expect(
-      await FIUBAUsersApi.authenticate(invalidCredentials)
+      await FiubaUsersApi.authenticate(invalidCredentials)
     ).toBe(isValid);
   });
 
@@ -47,7 +47,7 @@ describe("FIUBAUsersApi", () => {
     const isValid = true;
     stubRequest({ status: 200, response: authenticateSuccessResponse({ isValid }) });
     expect(
-      await FIUBAUsersApi.authenticate(validCredentials)
+      await FiubaUsersApi.authenticate(validCredentials)
     ).toBe(isValid);
   });
 
@@ -58,7 +58,7 @@ describe("FIUBAUsersApi", () => {
       response: RequestBodyBuilderMock.authenticateErrorResponse(errorMessage)
     });
     await expect(
-      FIUBAUsersApi.authenticate(validCredentials)
+      FiubaUsersApi.authenticate(validCredentials)
     ).rejects.toThrowErrorWithMessage(Error, errorMessage);
   });
 
@@ -71,7 +71,7 @@ describe("FIUBAUsersApi", () => {
       response: responseError
     });
     await expect(
-      FIUBAUsersApi.authenticate(validCredentials)
+      FiubaUsersApi.authenticate(validCredentials)
     ).rejects.toThrowErrorWithMessage(
       AuthenticateFaultError,
       AuthenticateFaultError.buildMessage(responseError)
@@ -81,7 +81,7 @@ describe("FIUBAUsersApi", () => {
   it("throws unknown error if status code is different from 200 or 500", async () => {
     stubRequest({ status: 401, response: {} });
     await expect(
-      FIUBAUsersApi.authenticate(validCredentials)
+      FiubaUsersApi.authenticate(validCredentials)
     ).rejects.toThrowErrorWithMessage(
       AuthenticateUnknownError,
       AuthenticateUnknownError.buildMessage({})
