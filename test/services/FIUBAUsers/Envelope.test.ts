@@ -1,7 +1,7 @@
 import { Envelope } from "../../../src/services/FIUBAUsers/Envelope";
 
 describe("Envelope", () => {
-  it("returns an xml envelope with the required credentials", async () => {
+  it("builds the request body for the api", async () => {
     const username = "username";
     const password = "password";
     const envelope = Envelope.buildAuthenticate({ username, password });
