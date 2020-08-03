@@ -2,7 +2,7 @@ import { parse } from "fast-xml-parser";
 import { ICredentials } from "../../../src/services/FIUBAUsers";
 
 export const MockEnvelope = {
-  authenticateSuccessResponse: (isValid: boolean) => parse(`
+  authenticateSuccessResponse: ({ isValid }: { isValid: boolean }) => parse(`
     <?xml version="1.0" encoding="utf-8"?>
     <SOAP-ENV:Envelope
       xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"

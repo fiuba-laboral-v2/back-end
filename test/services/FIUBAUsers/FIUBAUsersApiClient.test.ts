@@ -35,17 +35,19 @@ describe("FIUBAUsersApi", () => {
   afterEach(() => fetchMock.restore());
 
   it("returns false if the credentials are incorrect", async () => {
-    stubRequest({ status: 200, response: MockEnvelope.authenticateSuccessResponse(false) });
+    const isValid = false;
+    stubRequest({ status: 200, response: MockEnvelope.authenticateSuccessResponse({ isValid }) });
     expect(
       await FIUBAUsersApi.authenticate(invalidCredentials)
-    ).toBe(false);
+    ).toBe(isValid);
   });
 
   it("returns true if the credentials are correct", async () => {
-    stubRequest({ status: 200, response: MockEnvelope.authenticateSuccessResponse(true) });
+    const isValid = true;
+    stubRequest({ status: 200, response: MockEnvelope.authenticateSuccessResponse({ isValid }) });
     expect(
       await FIUBAUsersApi.authenticate(validCredentials)
-    ).toBe(true);
+    ).toBe(isValid);
   });
 
   it("throws an error if the envelope has an invalid format", async () => {
