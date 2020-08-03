@@ -44,12 +44,12 @@ export const OfferRepository = {
 
     return offer;
   },
-  findAll: ({ createdBeforeThan }: { createdBeforeThan?: string }) =>
+  findAll: ({ updatedBeforeThan }: { updatedBeforeThan?: string }) =>
     Offer.findAll({
-      ...(createdBeforeThan && {
+      ...(updatedBeforeThan && {
         where: {
-          createdAt: {
-            [Op.lt]: createdBeforeThan
+          updatedAt: {
+            [Op.lt]: updatedBeforeThan
           }
         }
       }),

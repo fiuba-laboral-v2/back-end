@@ -6,12 +6,12 @@ import { GraphQLDateTime } from "graphql-iso-date";
 const getOffers = {
   type: List(GraphQLOffer),
   args: {
-    createdBeforeThan: {
+    updatedBeforeThan: {
       type: GraphQLDateTime
     }
   },
-  resolve: (_: undefined, { createdBeforeThan }: { createdBeforeThan?: string }) =>
-    OfferRepository.findAll({ createdBeforeThan })
+  resolve: (_: undefined, { updatedBeforeThan }: { updatedBeforeThan?: string }) =>
+    OfferRepository.findAll({ updatedBeforeThan })
 };
 
 export { getOffers };
