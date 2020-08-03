@@ -1,4 +1,4 @@
-import { RequestBodyBuilder } from "../../../src/services/FIUBAUsers/RequestBodyBuilder";
+import { RequestBodyBuilder } from "../../../../src/services/FIUBAUsers/FIUBAUsersApi";
 
 describe("RequestBodyBuilder", () => {
   it("builds the request body for the api", async () => {

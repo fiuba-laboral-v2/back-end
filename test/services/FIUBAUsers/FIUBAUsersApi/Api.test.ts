@@ -1,8 +1,11 @@
 import fetchMock from "fetch-mock";
-import { FIUBAUsersApi } from "../../../src/services/FIUBAUsers";
-import { AuthenticateFaultError, AuthenticateUnknownError } from "../../../src/services/FIUBAUsers";
-import { FiubaUsersServiceConfig } from "../../../src/config";
-import { RequestBodyBuilderMock } from "./RequestBodyBuilderMock";
+import {
+  AuthenticateFaultError,
+  AuthenticateUnknownError,
+  FIUBAUsersApi
+} from "../../../../src/services/FIUBAUsers";
+import { FiubaUsersServiceConfig } from "../../../../src/config";
+import { RequestBodyBuilderMock } from "../RequestBodyBuilderMock";
 
 const invalidCredentials = {
   username: "badUsername",

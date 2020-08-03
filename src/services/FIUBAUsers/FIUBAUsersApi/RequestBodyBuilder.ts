@@ -1,4 +1,4 @@
-import { ICredentials } from "./Interfaces";
+import { ICredentials } from "../Interfaces";
 
 export const RequestBodyBuilder = {
   buildAuthenticate: ({ username, password }: ICredentials) => {

@@ -1,7 +1,7 @@
-import { IFiubaUsersApiSuccessResponse, ICredentials } from "./Interfaces";
-import { FiubaUsersServiceConfig } from "../../config/services";
+import { IFiubaUsersApiSuccessResponse, ICredentials } from "../Interfaces";
+import { FiubaUsersServiceConfig } from "../../../config/services";
 import { RequestBodyBuilder } from "./RequestBodyBuilder";
-import { AuthenticateUnknownError, AuthenticateFaultError } from "./Errors";
+import { AuthenticateUnknownError, AuthenticateFaultError } from "../Errors";
 import "isomorphic-fetch";
 
 export const FIUBAUsersApi = {

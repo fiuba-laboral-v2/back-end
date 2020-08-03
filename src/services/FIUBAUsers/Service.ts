@@ -1,4 +1,4 @@
-import { FIUBAUsersApi } from "./FIUBAUsersApi";
+import { FIUBAUsersApi } from "./FIUBAUsersApi/Api";
 import { Environment } from "../../config";
 import "isomorphic-fetch";
 import { ICredentials } from "./Interfaces";
