@@ -14,7 +14,7 @@ const validCredentials = {
   password: "goodPassword"
 };
 
-const mockRequestEnvelop = (mockEnvelop: string) => {
+const mockRequestEnvelope = (mockEnvelop: string) => {
   jest.spyOn(Envelope, "buildAuthenticate").mockReturnValue(mockEnvelop);
 };
 
@@ -48,8 +48,8 @@ describe("FIUBAUsersApi", () => {
     ).toBe(true);
   });
 
-  it("throws an error if the envelop has an invalid format", async () => {
-    mockRequestEnvelop(MockEnvelope.AuthenticateInvalidFormatRequest(validCredentials));
+  it("throws an error if the envelope has an invalid format", async () => {
+    mockRequestEnvelope(MockEnvelope.AuthenticateInvalidFormatRequest(validCredentials));
     const errorMessage = "error in msg parsing: XML error parsing SOAP payload on line 1: required";
     stubRequest({
       status: 500,
@@ -61,7 +61,7 @@ describe("FIUBAUsersApi", () => {
   });
 
   it("throws error if the requested operation is not defined", async () => {
-    mockRequestEnvelop(MockEnvelope.AuthenticateUndefinedOperationRequest(validCredentials));
+    mockRequestEnvelope(MockEnvelope.AuthenticateUndefinedOperationRequest(validCredentials));
     const responseError = MockEnvelope.AuthenticateErrorResponse(
       "Operation UNDEFINED_OPERATION is not defined in the WSDL for this service"
     );
