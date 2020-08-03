@@ -1,6 +1,8 @@
 import { Model, Table, Column, BelongsTo, ForeignKey } from "sequelize-typescript";
-import { UUID, HasOneGetAssociationMixin, DATE } from "sequelize";
+import { UUID, HasOneGetAssociationMixin, DATE, ENUM } from "sequelize";
 import { User } from "..";
+import { SecretaryEnumValues, Secretary } from "./Interface";
+import { isSecretary } from "../SequelizeModelValidators";
 
 @Table({ tableName: "Admins" })
 export class Admin extends Model<Admin> {
@@ -13,6 +15,13 @@ export class Admin extends Model<Admin> {
     type: UUID
   })
   public userUuid: string;
+
+  @Column({
+    allowNull: false,
+    type: ENUM<string>({ values: SecretaryEnumValues }),
+    ...isSecretary
+  })
+  public secretary: Secretary;
 
   @Column({
     allowNull: false,

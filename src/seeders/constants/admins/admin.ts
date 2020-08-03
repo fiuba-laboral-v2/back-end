@@ -13,6 +13,7 @@ export const admin = {
   },
   admin: {
     userUuid: uuids.admin.user,
+    secretary: "extension",
     createdAt: new Date(),
     updatedAt: new Date()
   }

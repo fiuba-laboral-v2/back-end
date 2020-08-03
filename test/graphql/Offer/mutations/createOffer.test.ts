@@ -3,7 +3,7 @@ import { client } from "../../ApolloTestClient";
 
 import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
 import { OfferGenerator, TOfferDataGenerator } from "../../../generators/Offer";
-import { AdminGenerator } from "../../../generators/Admin";
+import { ExtensionAdminGenerator } from "../../../generators/Admin";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
 import { CareerRepository } from "../../../../src/models/Career";
@@ -101,7 +101,7 @@ describe("createOffer", () => {
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
     offers = OfferGenerator.data.withObligatoryData();
-    admin = await AdminGenerator.instance().next().value;
+    admin = await ExtensionAdminGenerator.instance().next().value;
   });
 
   describe("when the input values are valid", () => {

@@ -4,7 +4,8 @@ export const uuids = {
     mercadoLibre: "70ec7184-bb98-4fd8-93fa-477df4abc060"
   },
   offers: {
-    java_semi_senior: "7f03fcfa-93a9-476b-881a-b81a7ea9dbd6"
+    java_semi_senior: "7f03fcfa-93a9-476b-881a-b81a7ea9dbd6",
+    java_senior: "7f03fcfb-93a9-476b-881a-b81a7ea9dbd6"
   },
   admin: {
     user: "68755de1-9dcb-44f9-8e08-f8e6ec1f668a"

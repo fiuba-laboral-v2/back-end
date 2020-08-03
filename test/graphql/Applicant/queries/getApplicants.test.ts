@@ -10,7 +10,7 @@ import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 import { userFactory } from "../../../mocks/user";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
-import { AdminGenerator, TAdminGenerator } from "../../../generators/Admin";
+import { ExtensionAdminGenerator, TAdminGenerator } from "../../../generators/Admin";
 
 const GET_APPLICANTS = gql`
     query getApplicants {
@@ -53,7 +53,7 @@ describe("getApplicants", () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
-    admins = AdminGenerator.instance();
+    admins = ExtensionAdminGenerator.instance();
   });
 
   describe("when no applicant exists", () => {
