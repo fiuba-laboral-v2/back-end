@@ -1,5 +1,6 @@
 import fetchMock from "fetch-mock";
 import { FIUBAUsers, Envelope, FIUBAUsersApiClient } from "../../../src/services/FIUBAUsers";
+import { AuthenticateFaultError, AuthenticateUnknownError } from "../../../src/services/FIUBAUsers";
 import { FIUBAUsersConfig } from "../../../src/config";
 import { MockEnvelope } from "./MockEnvelope";
 
@@ -61,21 +62,28 @@ describe("FIUBAUsersApiClient", () => {
 
   it("throws error if the requested operation is not defined", async () => {
     mockRequestEnvelop(MockEnvelope.AuthenticateUndefinedOperationRequest(validCredentials));
-    const errorMessage = "Operation UNDEFINED_OPERATION is not defined in the " +
-      "WSDL for this service";
+    const responseError = MockEnvelope.AuthenticateErrorResponse(
+      "Operation UNDEFINED_OPERATION is not defined in the WSDL for this service"
+    );
     stubRequest({
       status: 500,
-      response: MockEnvelope.AuthenticateErrorResponse(errorMessage)
+      response: responseError
     });
     await expect(
       FIUBAUsers.authenticate(validCredentials)
-    ).rejects.toThrowErrorWithMessage(Error, errorMessage);
+    ).rejects.toThrowErrorWithMessage(
+      AuthenticateFaultError,
+      AuthenticateFaultError.buildMessage(responseError)
+    );
   });
 
   it("throws unknown error if status code is different from 200 or 500", async () => {
     stubRequest({ status: 401, response: {} });
     await expect(
       FIUBAUsers.authenticate(validCredentials)
-    ).rejects.toThrowErrorWithMessage(Error, "Unknown error:");
+    ).rejects.toThrowErrorWithMessage(
+      AuthenticateUnknownError,
+      AuthenticateUnknownError.buildMessage({})
+    );
   });
 });
