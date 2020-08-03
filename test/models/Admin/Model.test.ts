@@ -1,14 +1,16 @@
-import { Admin } from "../../../src/models";
 import { ValidationError } from "sequelize";
 
-describe("Admin", () => {
+import { Admin } from "../../../src/models";
+import { Secretary } from "../../../src/models/Admin";
 
+describe("Admin", () => {
   it("creates a valid admin", async () => {
     const userUuid = "fb047680-e2c0-4127-886b-170d0b474a98";
-    const admin = new Admin({ userUuid });
+    const admin = new Admin({ userUuid, secretary: Secretary.extension });
     await expect(admin.validate()).resolves.not.toThrow();
     expect(admin).toEqual(expect.objectContaining({
       userUuid,
+      secretary: Secretary.extension,
       createdAt: expect.any(Date),
       updatedAt: expect.any(Date)
     }));
@@ -21,6 +23,17 @@ describe("Admin", () => {
     ).rejects.toThrowErrorWithMessage(
       ValidationError,
       "notNull Violation: Admin.userUuid cannot be null"
+    );
+  });
+
+  it("throws an error if no the secretary is not extension or graduados", async () => {
+    const userUuid = "fb047680-e2c0-4127-886b-170d0b474a98";
+    const admin = new Admin({ userUuid, secretary: "something" });
+    await expect(
+      admin.validate()
+    ).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      "Validation error: ApprovalStatus must be one of these values: extension,graduados"
     );
   });
 });

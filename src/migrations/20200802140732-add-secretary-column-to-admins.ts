@@ -1,17 +1,22 @@
-import { QueryInterface, ENUM } from "sequelize";
-import { SecretaryEnumValues } from "../models/Admin/Interface";
+import { QueryInterface } from "sequelize";
 
 export = {
-  up: (queryInterface: QueryInterface) =>
-    queryInterface.addColumn(
+  up: async (queryInterface: QueryInterface) => {
+    await queryInterface.sequelize.query(
+      "CREATE TYPE secretary AS ENUM ('graduados', 'extension');"
+    );
+    return queryInterface.addColumn(
       "Admins",
       "secretary",
       {
         allowNull: false,
-        type: ENUM<string>({ values: SecretaryEnumValues }),
+        type: "secretary",
         defaultValue: "extension"
       }
-    ),
-  down: (queryInterface: QueryInterface) =>
-    queryInterface.removeColumn("Admins", "secretary")
+    );
+  },
+  down: async (queryInterface: QueryInterface) => {
+    await queryInterface.sequelize.query("DROP TYPE IF EXISTS secretary;");
+    return queryInterface.removeColumn("Admins", "secretary");
+  }
 };
