@@ -9,18 +9,18 @@ import {
 import { AdminNotFoundError } from "../../../src/models/Admin/Errors";
 
 describe("AdminRepository", () => {
-  let adminsExtensionData: TAdminDataGenerator;
-  let adminsGraduadosData: TAdminDataGenerator;
+  let extensionAdminsData: TAdminDataGenerator;
+  let graduadosAdminsData: TAdminDataGenerator;
 
   beforeAll(async () => {
     await UserRepository.truncate();
-    adminsExtensionData = ExtensionAdminGenerator.data();
-    adminsGraduadosData = GraduadosAdminGenerator.data();
+    extensionAdminsData = ExtensionAdminGenerator.data();
+    graduadosAdminsData = GraduadosAdminGenerator.data();
   });
 
   describe("create", () => {
     it("creates a valid Admin of extension", async () => {
-      const adminAttributes = adminsExtensionData.next().value;
+      const adminAttributes = extensionAdminsData.next().value;
       const admin = await AdminRepository.create(adminAttributes);
       expect(await admin.getUser()).toEqual(expect.objectContaining({
         ...adminAttributes.user,
@@ -32,7 +32,7 @@ describe("AdminRepository", () => {
     });
 
     it("creates a valid Admin of graduados", async () => {
-      const adminAttributes = adminsGraduadosData.next().value;
+      const adminAttributes = graduadosAdminsData.next().value;
       const admin = await AdminRepository.create(adminAttributes);
       expect(await admin.getUser()).toEqual(expect.objectContaining({
         ...adminAttributes.user,
@@ -44,7 +44,7 @@ describe("AdminRepository", () => {
     });
 
     it("throws error if admin already exists and rollback transaction", async () => {
-      const adminAttributes = adminsExtensionData.next().value;
+      const adminAttributes = extensionAdminsData.next().value;
       await AdminRepository.create(adminAttributes);
       const numberOfAdmins = await AdminRepository.findAll();
       await expect(
@@ -59,22 +59,22 @@ describe("AdminRepository", () => {
 
   describe("findByUserUuid", () => {
     it("returns an admin of extension by userUuid", async () => {
-      const adminExtensionAttributes = adminsExtensionData.next().value;
+      const extensionAdminAttributes = extensionAdminsData.next().value;
       const { userUuid: userExtensionUuid } = await AdminRepository.create(
-        adminExtensionAttributes
+        extensionAdminAttributes
       );
 
-      const adminExtension = await AdminRepository.findByUserUuid(userExtensionUuid);
-      expect(adminExtension.userUuid).toEqual(userExtensionUuid);
+      const extensionAdmin = await AdminRepository.findByUserUuid(userExtensionUuid);
+      expect(extensionAdmin.userUuid).toEqual(userExtensionUuid);
     });
 
     it("returns an admin of graduados by userUuid", async () => {
-      const adminGraduadosAttributes = adminsGraduadosData.next().value;
+      const graduadosAdminAttributes = graduadosAdminsData.next().value;
       const { userUuid: userGraduadosUuid } = await AdminRepository.create(
-        adminGraduadosAttributes
+        graduadosAdminAttributes
       );
-      const adminGraduados = await AdminRepository.findByUserUuid(userGraduadosUuid);
-      expect(adminGraduados.userUuid).toEqual(userGraduadosUuid);
+      const graduadosAdmin = await AdminRepository.findByUserUuid(userGraduadosUuid);
+      expect(graduadosAdmin.userUuid).toEqual(userGraduadosUuid);
     });
 
     it("throws an error if the admin does not exist", async () => {
@@ -90,9 +90,9 @@ describe("AdminRepository", () => {
 
   describe("cascade", () => {
     it("deletes all admins if users tables is truncated", async () => {
-      await AdminRepository.create(adminsExtensionData.next().value);
-      await AdminRepository.create(adminsExtensionData.next().value);
-      await AdminRepository.create(adminsExtensionData.next().value);
+      await AdminRepository.create(extensionAdminsData.next().value);
+      await AdminRepository.create(extensionAdminsData.next().value);
+      await AdminRepository.create(extensionAdminsData.next().value);
       expect((await AdminRepository.findAll()).length).toBeGreaterThan(0);
       await UserRepository.truncate();
       expect(await AdminRepository.findAll()).toHaveLength(0);
