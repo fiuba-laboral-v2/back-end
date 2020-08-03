@@ -18,7 +18,7 @@ const FIUBAUsersConfigForAllEnvironments: IFIUBAUsersConfig = {
   }
 };
 
-const FIUBAUsersConfig = FIUBAUsersConfigForAllEnvironments[Environment.NODE_ENV];
+const FiubaUsersServiceConfig = FIUBAUsersConfigForAllEnvironments[Environment.NODE_ENV];
 
 interface IEnvironment {
   url: string;
@@ -32,4 +32,4 @@ interface IFIUBAUsersConfig {
   test_travis: IEnvironment;
 }
 
-export { FIUBAUsersConfig };
+export { FiubaUsersServiceConfig };

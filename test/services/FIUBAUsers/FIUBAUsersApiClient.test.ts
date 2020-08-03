@@ -1,7 +1,7 @@
 import fetchMock from "fetch-mock";
 import { Envelope, FIUBAUsersApiClient } from "../../../src/services/FIUBAUsers";
 import { AuthenticateFaultError, AuthenticateUnknownError } from "../../../src/services/FIUBAUsers";
-import { FIUBAUsersConfig } from "../../../src/config";
+import { FiubaUsersServiceConfig } from "../../../src/config";
 import { MockEnvelope } from "./MockEnvelope";
 
 const invalidCredentials = {
@@ -21,7 +21,7 @@ const mockRequestEnvelop = (mockEnvelop: string) => {
 const stubRequest = ({ status, response }: { status: number; response: object }) =>
   fetchMock.mock(
     {
-      url: FIUBAUsersConfig.url,
+      url: FiubaUsersServiceConfig.url,
       method: "POST",
       headers: FIUBAUsersApiClient.headers()
     },

@@ -1,5 +1,5 @@
 import { IAuthenticateResponse, ICredentials } from "./Interfaces";
-import { FIUBAUsersConfig } from "../../config/services";
+import { FiubaUsersServiceConfig } from "../../config/services";
 import { Envelope } from "./Envelope";
 import { AuthenticateUnknownError, AuthenticateFaultError } from "./Errors";
 import "isomorphic-fetch";
@@ -10,7 +10,7 @@ export const FIUBAUsersApiClient = {
     "charset": "UTF-8"
   }),
   authenticate: async ({ username, password }: ICredentials) => {
-    const httpResponse = await fetch(FIUBAUsersConfig.url, {
+    const httpResponse = await fetch(FiubaUsersServiceConfig.url, {
       method: "POST",
       headers: FIUBAUsersApiClient.headers(),
       body: Envelope.buildAuthenticate({ username, password })

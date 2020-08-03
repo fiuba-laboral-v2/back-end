@@ -1,1 +1,1 @@
-export { FIUBAUsersConfig } from "./FIUBAUsers";
+export { FiubaUsersServiceConfig } from "./FIUBAUsers";
