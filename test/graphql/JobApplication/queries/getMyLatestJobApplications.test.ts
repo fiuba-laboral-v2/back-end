@@ -10,7 +10,7 @@ import { JobApplicationRepository } from "../../../../src/models/JobApplication"
 import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
 
 import { OfferGenerator, TOfferGenerator } from "../../../generators/Offer";
-import { AdminExtensionGenerator } from "../../../generators/Admin";
+import { ExtensionAdminGenerator } from "../../../generators/Admin";
 import { ApplicantGenerator } from "../../../generators/Applicant";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
@@ -43,7 +43,7 @@ describe("getMyLatestJobApplications", () => {
     await CompanyRepository.truncate();
     applicant = await ApplicantGenerator.instance.withMinimumData().next().value;
     offers = await OfferGenerator.instance.withObligatoryData();
-    admin = await AdminExtensionGenerator.instance().next().value;
+    admin = await ExtensionAdminGenerator.instance().next().value;
   });
 
   describe("when the input is valid", () => {

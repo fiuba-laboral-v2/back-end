@@ -2,8 +2,8 @@ import { AdminRepository } from "../../../src/models/Admin";
 import { UserRepository } from "../../../src/models/User";
 import { UniqueConstraintError } from "sequelize";
 import {
-  AdminExtensionGenerator,
-  AdminGraduadosGenerator,
+  ExtensionAdminGenerator,
+  GraduadosAdminGenerator,
   TAdminDataGenerator
 } from "../../generators/Admin";
 import { AdminNotFoundError } from "../../../src/models/Admin/Errors";
@@ -14,8 +14,8 @@ describe("AdminRepository", () => {
 
   beforeAll(async () => {
     await UserRepository.truncate();
-    adminsExtensionData = AdminExtensionGenerator.data();
-    adminsGraduadosData = AdminGraduadosGenerator.data();
+    adminsExtensionData = ExtensionAdminGenerator.data();
+    adminsGraduadosData = GraduadosAdminGenerator.data();
   });
 
   describe("create", () => {
@@ -58,18 +58,22 @@ describe("AdminRepository", () => {
   });
 
   describe("findByUserUuid", () => {
-    it("returns an admin by userUuid", async () => {
+    it("returns an admin of extension by userUuid", async () => {
       const adminExtensionAttributes = adminsExtensionData.next().value;
-      const adminGraduadosAttributes = adminsGraduadosData.next().value;
       const { userUuid: userExtensionUuid } = await AdminRepository.create(
         adminExtensionAttributes
       );
+
+      const adminExtension = await AdminRepository.findByUserUuid(userExtensionUuid);
+      expect(adminExtension.userUuid).toEqual(userExtensionUuid);
+    });
+
+    it("returns an admin of graduados by userUuid", async () => {
+      const adminGraduadosAttributes = adminsGraduadosData.next().value;
       const { userUuid: userGraduadosUuid } = await AdminRepository.create(
         adminGraduadosAttributes
       );
-      const adminExtension = await AdminRepository.findByUserUuid(userExtensionUuid);
       const adminGraduados = await AdminRepository.findByUserUuid(userGraduadosUuid);
-      expect(adminExtension.userUuid).toEqual(userExtensionUuid);
       expect(adminGraduados.userUuid).toEqual(userGraduadosUuid);
     });
 

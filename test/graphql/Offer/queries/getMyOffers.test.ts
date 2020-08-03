@@ -13,7 +13,7 @@ import { OfferRepository } from "../../../../src/models/Offer";
 import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
 import { CompanyGenerator, TCompanyGenerator } from "../../../generators/Company";
 import { OfferGenerator, TOfferGenerator } from "../../../generators/Offer";
-import { AdminExtensionGenerator } from "../../../generators/Admin";
+import { ExtensionAdminGenerator } from "../../../generators/Admin";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 
 const GET_MY_OFFERS = gql`
@@ -37,7 +37,7 @@ describe("getMyOffers", () => {
     careers = CareerGenerator.instance();
     companies = CompanyGenerator.instance.withMinimumData();
     offers = await OfferGenerator.instance.withObligatoryData();
-    admin = await AdminExtensionGenerator.instance().next().value;
+    admin = await ExtensionAdminGenerator.instance().next().value;
   });
 
   describe("when offers exists", () => {

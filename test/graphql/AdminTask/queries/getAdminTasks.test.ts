@@ -12,7 +12,7 @@ import { UserRepository } from "../../../../src/models/User";
 import { Admin, Applicant, Company } from "../../../../src/models";
 import { UnauthorizedError } from "../../../../src/graphql/Errors";
 
-import { AdminExtensionGenerator } from "../../../generators/Admin";
+import { ExtensionAdminGenerator } from "../../../generators/Admin";
 import { CompanyGenerator } from "../../../generators/Company";
 import { ApplicantGenerator } from "../../../generators/Applicant";
 import { testClientFactory } from "../../../mocks/testClientFactory";
@@ -52,7 +52,7 @@ describe("getAdminTasks", () => {
     await CompanyRepository.truncate();
     const companies = await CompanyGenerator.instance.updatedWithStatus();
     const applicants = await ApplicantGenerator.instance.updatedWithStatus();
-    admin = await AdminExtensionGenerator.instance().next().value;
+    admin = await ExtensionAdminGenerator.instance().next().value;
 
     rejectedCompany = await companies.next({ status: ApprovalStatus.rejected, admin }).value;
     approvedCompany = await companies.next({ status: ApprovalStatus.approved, admin }).value;
