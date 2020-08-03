@@ -12,7 +12,7 @@ import { UserRepository } from "../../../../src/models/User";
 import { ApplicantGenerator, TApplicantGenerator } from "../../../generators/Applicant";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import { ApplicantRepository } from "../../../../src/models/Applicant";
-import { AdminGenerator, TAdminGenerator } from "../../../generators/Admin";
+import { ExtensionAdminGenerator, TAdminGenerator } from "../../../generators/Admin";
 
 const GET_APPLICANT = gql`
   query GetApplicant($uuid: ID!) {
@@ -51,7 +51,7 @@ describe("getApplicant", () => {
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
     applicants = await ApplicantGenerator.instance.withMinimumData();
-    admins = AdminGenerator.instance();
+    admins = ExtensionAdminGenerator.instance();
   });
 
   describe("when the applicant exists", () => {

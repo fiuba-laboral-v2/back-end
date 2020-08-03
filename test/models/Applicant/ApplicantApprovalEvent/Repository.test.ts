@@ -8,7 +8,7 @@ import {
   ICreateApplicantApprovalEvent
 } from "../../../../src/models/Applicant/ApplicantApprovalEvent";
 
-import { AdminGenerator, TAdminGenerator } from "../../../generators/Admin";
+import { ExtensionAdminGenerator, TAdminGenerator } from "../../../generators/Admin";
 import { ApplicantGenerator, TApplicantGenerator } from "../../../generators/Applicant";
 import { UUID_REGEX } from "../../index";
 
@@ -19,7 +19,7 @@ describe("ApplicantApprovalEventRepository", () => {
   beforeAll(async () => {
     await UserRepository.truncate();
     applicants = ApplicantGenerator.instance.withMinimumData();
-    admins = AdminGenerator.instance();
+    admins = ExtensionAdminGenerator.instance();
   });
 
   const expectToCreateAValidInstanceWithAStatus = async (status: ApprovalStatus) => {

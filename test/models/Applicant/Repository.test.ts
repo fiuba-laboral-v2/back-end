@@ -8,7 +8,7 @@ import { CapabilityRepository } from "../../../src/models/Capability";
 import { ApplicantNotFound, ApplicantNotUpdatedError } from "../../../src/models/Applicant/Errors";
 import { ApplicantGenerator, TApplicantDataGenerator } from "../../generators/Applicant";
 import { CareerGenerator, TCareerGenerator } from "../../generators/Career";
-import { AdminGenerator } from "../../generators/Admin";
+import { ExtensionAdminGenerator } from "../../generators/Admin";
 import { internet, random } from "faker";
 import { ApprovalStatus, approvalStatuses } from "../../../src/models/ApprovalStatus";
 
@@ -586,7 +586,7 @@ describe("ApplicantRepository", () => {
   describe("updateApprovalStatus", () => {
     let admin: Admin;
     beforeAll(async () => {
-      admin = await AdminGenerator.instance().next().value;
+      admin = await ExtensionAdminGenerator.instance().next().value;
     });
 
     const expectSuccessfulApplicantStatusUpdate = async (
