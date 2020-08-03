@@ -1,5 +1,5 @@
 export { FiubaUsersService } from "./Service";
-export { Envelope } from "./Envelope";
+export { RequestBodyBuilder } from "./RequestBodyBuilder";
 export { FIUBAUsersApi } from "./FIUBAUsersApi";
 export * from "./Errors";
 export * from "./Interfaces";

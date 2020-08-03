@@ -1,11 +1,11 @@
-import { Envelope } from "../../../src/services/FIUBAUsers/Envelope";
+import { RequestBodyBuilder } from "../../../src/services/FIUBAUsers/RequestBodyBuilder";
 
-describe("Envelope", () => {
+describe("RequestBodyBuilder", () => {
   it("builds the request body for the api", async () => {
     const username = "username";
     const password = "password";
-    const envelope = Envelope.buildAuthenticate({ username, password });
-    expect(envelope).toEqualIgnoringSpacing(`
+    const requestBody = RequestBodyBuilder.buildAuthenticate({ username, password });
+    expect(requestBody).toEqualIgnoringSpacing(`
       <?xml version="1.0" encoding="utf-8"?>
       <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
         <SOAP-ENV:Header/>

@@ -1,6 +1,6 @@
 import { ICredentials } from "./Interfaces";
 
-export const Envelope = {
+export const RequestBodyBuilder = {
   buildAuthenticate: ({ username, password }: ICredentials) => {
     return `
       <?xml version="1.0" encoding="utf-8"?>

@@ -1,8 +1,8 @@
 import fetchMock from "fetch-mock";
-import { Envelope, FIUBAUsersApi } from "../../../src/services/FIUBAUsers";
+import { RequestBodyBuilder, FIUBAUsersApi } from "../../../src/services/FIUBAUsers";
 import { AuthenticateFaultError, AuthenticateUnknownError } from "../../../src/services/FIUBAUsers";
 import { FiubaUsersServiceConfig } from "../../../src/config";
-import { MockEnvelope } from "./MockEnvelope";
+import { RequestBodyBuilderMock } from "./RequestBodyBuilderMock";
 
 const invalidCredentials = {
   username: "badUsername",
@@ -15,7 +15,7 @@ const validCredentials = {
 };
 
 const mockRequestEnvelope = (mockEnvelop: string) => {
-  jest.spyOn(Envelope, "buildAuthenticate").mockReturnValue(mockEnvelop);
+  jest.spyOn(RequestBodyBuilder, "buildAuthenticate").mockReturnValue(mockEnvelop);
 };
 
 const stubRequest = ({ status, response }: { status: number; response: object }) =>
@@ -35,27 +35,29 @@ describe("FIUBAUsersApi", () => {
   afterEach(() => fetchMock.restore());
 
   it("returns false if the credentials are incorrect", async () => {
+    const { authenticateSuccessResponse } = RequestBodyBuilderMock;
     const isValid = false;
-    stubRequest({ status: 200, response: MockEnvelope.authenticateSuccessResponse({ isValid }) });
+    stubRequest({ status: 200, response: authenticateSuccessResponse({ isValid }) });
     expect(
       await FIUBAUsersApi.authenticate(invalidCredentials)
     ).toBe(isValid);
   });
 
   it("returns true if the credentials are correct", async () => {
+    const { authenticateSuccessResponse } = RequestBodyBuilderMock;
     const isValid = true;
-    stubRequest({ status: 200, response: MockEnvelope.authenticateSuccessResponse({ isValid }) });
+    stubRequest({ status: 200, response: authenticateSuccessResponse({ isValid }) });
     expect(
       await FIUBAUsersApi.authenticate(validCredentials)
     ).toBe(isValid);
   });
 
-  it("throws an error if the envelope has an invalid format", async () => {
-    mockRequestEnvelope(MockEnvelope.authenticateInvalidFormatRequest(validCredentials));
+  it("throws an error if the request body has an invalid format", async () => {
+    mockRequestEnvelope(RequestBodyBuilderMock.authenticateInvalidFormatRequest(validCredentials));
     const errorMessage = "error in msg parsing: XML error parsing SOAP payload on line 1: required";
     stubRequest({
       status: 500,
-      response: MockEnvelope.authenticateErrorResponse(errorMessage)
+      response: RequestBodyBuilderMock.authenticateErrorResponse(errorMessage)
     });
     await expect(
       FIUBAUsersApi.authenticate(validCredentials)
@@ -63,8 +65,9 @@ describe("FIUBAUsersApi", () => {
   });
 
   it("throws error if the requested operation is not defined", async () => {
-    mockRequestEnvelope(MockEnvelope.authenticateUndefinedOperationRequest(validCredentials));
-    const responseError = MockEnvelope.authenticateErrorResponse(
+    const { authenticateUndefinedOperationRequest } = RequestBodyBuilderMock;
+    mockRequestEnvelope(authenticateUndefinedOperationRequest(validCredentials));
+    const responseError = RequestBodyBuilderMock.authenticateErrorResponse(
       "Operation UNDEFINED_OPERATION is not defined in the WSDL for this service"
     );
     stubRequest({

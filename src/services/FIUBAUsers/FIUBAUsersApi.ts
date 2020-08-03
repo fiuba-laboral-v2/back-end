@@ -1,6 +1,6 @@
 import { IFiubaUsersApiSuccessResponse, ICredentials } from "./Interfaces";
 import { FiubaUsersServiceConfig } from "../../config/services";
-import { Envelope } from "./Envelope";
+import { RequestBodyBuilder } from "./RequestBodyBuilder";
 import { AuthenticateUnknownError, AuthenticateFaultError } from "./Errors";
 import "isomorphic-fetch";
 
@@ -13,7 +13,7 @@ export const FIUBAUsersApi = {
     const httpResponse = await fetch(FiubaUsersServiceConfig.url, {
       method: "POST",
       headers: FIUBAUsersApi.headers(),
-      body: Envelope.buildAuthenticate({ username, password })
+      body: RequestBodyBuilder.buildAuthenticate({ username, password })
     });
     if (httpResponse.status === 200) {
       const response: IFiubaUsersApiSuccessResponse = await httpResponse.json();
