@@ -2,7 +2,7 @@ import { parse } from "fast-xml-parser";
 import { ICredentials } from "../../../src/services/FIUBAUsers";
 
 export const MockEnvelope = {
-  AuthenticateSuccessResponse: (isValid: boolean) => parse(`
+  authenticateSuccessResponse: (isValid: boolean) => parse(`
     <?xml version="1.0" encoding="utf-8"?>
     <SOAP-ENV:Envelope
       xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
@@ -19,7 +19,7 @@ export const MockEnvelope = {
       </SOAP-ENV:Body>
     </SOAP-ENV:Envelope>
   `),
-  AuthenticateErrorResponse: (message: string) => parse(`
+  authenticateErrorResponse: (message: string) => parse(`
     <?xml version="1.0" encoding="utf-8"?>
     <SOAP-ENV:Envelope>
       <SOAP-ENV:Body>
@@ -32,7 +32,7 @@ export const MockEnvelope = {
       </SOAP-ENV:Body>
     </SOAP-ENV:Envelope>
   `),
-  AuthenticateInvalidFormatRequest: ({ username, password }: ICredentials) => `
+  authenticateInvalidFormatRequest: ({ username, password }: ICredentials) => `
       <?xml version="1.0" encoding="utf-8"?>
       <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
         <SOAP-ENV:Header/>
@@ -44,7 +44,7 @@ export const MockEnvelope = {
         </SOAP-ENV:Body>
       </SOAP-ENV:Envelope>
     `,
-  AuthenticateUndefinedOperationRequest: ({ username, password }: ICredentials) => `
+  authenticateUndefinedOperationRequest: ({ username, password }: ICredentials) => `
     <?xml version="1.0" encoding="utf-8"?>
     <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
       <SOAP-ENV:Header/>
