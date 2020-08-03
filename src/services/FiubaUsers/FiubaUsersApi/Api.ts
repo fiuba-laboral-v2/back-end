@@ -17,11 +17,19 @@ export const FiubaUsersApi = {
       body: RequestBodyBuilder.buildAuthenticate({ username, password })
     });
     if (httpResponse.status === 200) {
-      const response: IFiubaUsersApiSuccessResponse = parse(await httpResponse.text());
+      const text0 = await httpResponse.text();
+      // tslint:disable-next-line:no-console
+      const response: IFiubaUsersApiSuccessResponse = parse(text0);
       return response["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns1:AutenticarResponse"].return;
     } else if (httpResponse.status === 500) {
-      throw new AuthenticateFaultError(parse(await httpResponse.text()));
+      const text1 = await httpResponse.text();
+      // tslint:disable-next-line:no-console
+      console.log(JSON.stringify(text1));
+      throw new AuthenticateFaultError(parse(text1));
     }
-    throw new AuthenticateUnknownError(parse(await httpResponse.text()));
+    const text2 = await httpResponse.text();
+    // tslint:disable-next-line:no-console
+    console.log(JSON.stringify(text2));
+    throw new AuthenticateUnknownError(parse(text2));
   }
 };
