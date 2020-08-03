@@ -1,6 +1,6 @@
 import { parse } from "fast-xml-parser";
 
-export const RequestBodyBuilderMock = {
+export const RequestBodyMock = {
   authenticateSuccessResponse: ({ isValid }: { isValid: boolean }) => parse(`
     <?xml version="1.0" encoding="utf-8"?>
     <SOAP-ENV:Envelope
