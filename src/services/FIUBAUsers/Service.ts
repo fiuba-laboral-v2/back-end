@@ -11,6 +11,7 @@ export const FiubaUsersService = {
 
     if (Environment.NODE_ENV === Environment.DEVELOPMENT) return true;
     if (Environment.NODE_ENV === Environment.TEST) return true;
+    if (Environment.NODE_ENV === Environment.TEST_TRAVIS) return true;
     return FIUBAUsersApi.authenticate({ username, password });
   }
 };
