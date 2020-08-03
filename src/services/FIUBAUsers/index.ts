@@ -1,4 +1,4 @@
-export { FIUBAUsers } from "./Service";
+export { FiubaUsersService } from "./Service";
 export { Envelope } from "./Envelope";
 export { FIUBAUsersApiClient } from "./FIUBAUsersApiClient";
 export * from "./Errors";

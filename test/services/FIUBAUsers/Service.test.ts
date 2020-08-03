@@ -1,13 +1,13 @@
 import {
-  FIUBAUsers,
+  FiubaUsersService,
   InvalidEmptyUsernameError,
   InvalidEmptyPasswordError
 } from "../../../src/services/FIUBAUsers";
 
-describe("FIUBAUsers", () => {
+describe("FiubaUsersService", () => {
   it("throws an error if the username is empty", async () => {
     await expect(
-      FIUBAUsers.authenticate({
+      FiubaUsersService.authenticate({
         username: "",
         password: "password"
       })
@@ -19,7 +19,7 @@ describe("FIUBAUsers", () => {
 
   it("throws an error if the password is empty", async () => {
     await expect(
-      FIUBAUsers.authenticate({
+      FiubaUsersService.authenticate({
         username: "username",
         password: ""
       })

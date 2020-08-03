@@ -1,5 +1,5 @@
 import fetchMock from "fetch-mock";
-import { FIUBAUsers, Envelope, FIUBAUsersApiClient } from "../../../src/services/FIUBAUsers";
+import { Envelope, FIUBAUsersApiClient } from "../../../src/services/FIUBAUsers";
 import { AuthenticateFaultError, AuthenticateUnknownError } from "../../../src/services/FIUBAUsers";
 import { FIUBAUsersConfig } from "../../../src/config";
 import { MockEnvelope } from "./MockEnvelope";
@@ -37,14 +37,14 @@ describe("FIUBAUsersApiClient", () => {
   it("returns false if the credentials are incorrect", async () => {
     stubRequest({ status: 200, response: MockEnvelope.AuthenticateSuccessResponse(false) });
     expect(
-      await FIUBAUsers.authenticate(invalidCredentials)
+      await FIUBAUsersApiClient.authenticate(invalidCredentials)
     ).toBe(false);
   });
 
   it("returns true if the credentials are correct", async () => {
     stubRequest({ status: 200, response: MockEnvelope.AuthenticateSuccessResponse(true) });
     expect(
-      await FIUBAUsers.authenticate(validCredentials)
+      await FIUBAUsersApiClient.authenticate(validCredentials)
     ).toBe(true);
   });
 
@@ -56,7 +56,7 @@ describe("FIUBAUsersApiClient", () => {
       response: MockEnvelope.AuthenticateErrorResponse(errorMessage)
     });
     await expect(
-      FIUBAUsers.authenticate(validCredentials)
+      FIUBAUsersApiClient.authenticate(validCredentials)
     ).rejects.toThrowErrorWithMessage(Error, errorMessage);
   });
 
@@ -70,7 +70,7 @@ describe("FIUBAUsersApiClient", () => {
       response: responseError
     });
     await expect(
-      FIUBAUsers.authenticate(validCredentials)
+      FIUBAUsersApiClient.authenticate(validCredentials)
     ).rejects.toThrowErrorWithMessage(
       AuthenticateFaultError,
       AuthenticateFaultError.buildMessage(responseError)
@@ -80,7 +80,7 @@ describe("FIUBAUsersApiClient", () => {
   it("throws unknown error if status code is different from 200 or 500", async () => {
     stubRequest({ status: 401, response: {} });
     await expect(
-      FIUBAUsers.authenticate(validCredentials)
+      FIUBAUsersApiClient.authenticate(validCredentials)
     ).rejects.toThrowErrorWithMessage(
       AuthenticateUnknownError,
       AuthenticateUnknownError.buildMessage({})

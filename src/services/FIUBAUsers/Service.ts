@@ -4,7 +4,7 @@ import "isomorphic-fetch";
 import { ICredentials } from "./Interfaces";
 import { InvalidEmptyPasswordError, InvalidEmptyUsernameError } from "./Errors";
 
-export const FIUBAUsers = {
+export const FiubaUsersService = {
   authenticate: async ({ username, password }: ICredentials) => {
     if (password.length === 0) throw new InvalidEmptyPasswordError();
     if (username.length === 0) throw new InvalidEmptyUsernameError();
