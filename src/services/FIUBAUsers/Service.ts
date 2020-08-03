@@ -10,6 +10,7 @@ export const FiubaUsersService = {
     if (username.length === 0) throw new InvalidEmptyUsernameError();
 
     if (Environment.NODE_ENV === Environment.DEVELOPMENT) return true;
+    if (Environment.NODE_ENV === Environment.TEST) return true;
     return FIUBAUsersApi.authenticate({ username, password });
   }
 };

@@ -28,4 +28,10 @@ describe("FiubaUsersService", () => {
       InvalidEmptyPasswordError.buildMessage()
     );
   });
+
+  it("always returns true in the test environment", async () => {
+    expect(
+      await FiubaUsersService.authenticate({ username: "username", password: "password" })
+    ).toBe(true);
+  });
 });
