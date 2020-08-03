@@ -13,7 +13,7 @@ import { testClientFactory } from "../../../mocks/testClientFactory";
 import { ApolloServerTestClient } from "apollo-server-testing";
 import generateUuid from "uuid/v4";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
-import { AdminGenerator, TAdminGenerator } from "../../../generators/Admin";
+import { AdminExtensionGenerator, TAdminGenerator } from "../../../generators/Admin";
 
 const GET_OFFER_BY_UUID = gql`
   query ($uuid: ID!) {
@@ -71,7 +71,7 @@ describe("getOfferByUuid", () => {
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
     offers = await OfferGenerator.instance.withOneSection();
-    admins = AdminGenerator.instance();
+    admins = AdminExtensionGenerator.instance();
   });
 
   const createOffer = async company => {

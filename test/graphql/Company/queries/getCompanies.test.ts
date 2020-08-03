@@ -7,7 +7,7 @@ import { testClientFactory } from "../../../mocks/testClientFactory";
 import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import { userFactory } from "../../../mocks/user";
-import { AdminGenerator, TAdminGenerator } from "../../../generators/Admin";
+import { AdminExtensionGenerator, TAdminGenerator } from "../../../generators/Admin";
 
 const GET_COMPANIES = gql`
   query {
@@ -22,7 +22,7 @@ describe("getCompanies", () => {
   let admins: TAdminGenerator;
 
   beforeAll(() => {
-    admins = AdminGenerator.instance();
+    admins = AdminExtensionGenerator.instance();
     return Promise.all([
       CompanyRepository.truncate(),
       UserRepository.truncate()

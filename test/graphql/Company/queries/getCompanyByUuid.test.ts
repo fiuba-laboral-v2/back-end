@@ -4,7 +4,7 @@ import { UserRepository } from "../../../../src/models/User";
 import { client } from "../../ApolloTestClient";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
-import { AdminGenerator, TAdminGenerator } from "../../../generators/Admin";
+import { AdminExtensionGenerator, TAdminGenerator } from "../../../generators/Admin";
 import { userFactory } from "../../../mocks/user";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import generateUuid from "uuid/v4";
@@ -40,7 +40,7 @@ describe("getCompanyByUuid", () => {
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
-    admins = AdminGenerator.instance();
+    admins = AdminExtensionGenerator.instance();
   });
 
   it("finds a company given its uuid", async () => {

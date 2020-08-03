@@ -1,20 +1,38 @@
 import { AdminRepository } from "../../../src/models/Admin";
 import { UserRepository } from "../../../src/models/User";
 import { UniqueConstraintError } from "sequelize";
-import { AdminGenerator, TAdminDataGenerator } from "../../generators/Admin";
+import {
+  AdminExtensionGenerator,
+  AdminGraduadosGenerator,
+  TAdminDataGenerator
+} from "../../generators/Admin";
 import { AdminNotFoundError } from "../../../src/models/Admin/Errors";
 
 describe("AdminRepository", () => {
-  let adminsData: TAdminDataGenerator;
+  let adminsExtensionData: TAdminDataGenerator;
+  let adminsGraduadosData: TAdminDataGenerator;
 
   beforeAll(async () => {
     await UserRepository.truncate();
-    adminsData = AdminGenerator.data();
+    adminsExtensionData = AdminExtensionGenerator.data();
+    adminsGraduadosData = AdminGraduadosGenerator.data();
   });
 
   describe("create", () => {
-    it("creates a valid Admin", async () => {
-      const adminAttributes = adminsData.next().value;
+    it("creates a valid Admin of extension", async () => {
+      const adminAttributes = adminsExtensionData.next().value;
+      const admin = await AdminRepository.create(adminAttributes);
+      expect(await admin.getUser()).toEqual(expect.objectContaining({
+        ...adminAttributes.user,
+        password: expect.any(String)
+      }));
+      expect(admin).toEqual(expect.objectContaining({
+        secretary: adminAttributes.secretary
+      }));
+    });
+
+    it("creates a valid Admin of graduados", async () => {
+      const adminAttributes = adminsGraduadosData.next().value;
       const admin = await AdminRepository.create(adminAttributes);
       expect(await admin.getUser()).toEqual(expect.objectContaining({
         ...adminAttributes.user,
@@ -26,7 +44,7 @@ describe("AdminRepository", () => {
     });
 
     it("throws error if admin already exists and rollback transaction", async () => {
-      const adminAttributes = adminsData.next().value;
+      const adminAttributes = adminsExtensionData.next().value;
       await AdminRepository.create(adminAttributes);
       const numberOfAdmins = await AdminRepository.findAll();
       await expect(
@@ -41,10 +59,18 @@ describe("AdminRepository", () => {
 
   describe("findByUserUuid", () => {
     it("returns an admin by userUuid", async () => {
-      const adminAttributes = adminsData.next().value;
-      const { userUuid } = await AdminRepository.create(adminAttributes);
-      const admin = await AdminRepository.findByUserUuid(userUuid);
-      expect(admin.userUuid).toEqual(userUuid);
+      const adminExtensionAttributes = adminsExtensionData.next().value;
+      const adminGraduadosAttributes = adminsGraduadosData.next().value;
+      const { userUuid: userExtensionUuid } = await AdminRepository.create(
+        adminExtensionAttributes
+      );
+      const { userUuid: userGraduadosUuid } = await AdminRepository.create(
+        adminGraduadosAttributes
+      );
+      const adminExtension = await AdminRepository.findByUserUuid(userExtensionUuid);
+      const adminGraduados = await AdminRepository.findByUserUuid(userGraduadosUuid);
+      expect(adminExtension.userUuid).toEqual(userExtensionUuid);
+      expect(adminGraduados.userUuid).toEqual(userGraduadosUuid);
     });
 
     it("throws an error if the admin does not exist", async () => {
@@ -60,9 +86,9 @@ describe("AdminRepository", () => {
 
   describe("cascade", () => {
     it("deletes all admins if users tables is truncated", async () => {
-      await AdminRepository.create(adminsData.next().value);
-      await AdminRepository.create(adminsData.next().value);
-      await AdminRepository.create(adminsData.next().value);
+      await AdminRepository.create(adminsExtensionData.next().value);
+      await AdminRepository.create(adminsExtensionData.next().value);
+      await AdminRepository.create(adminsExtensionData.next().value);
       expect((await AdminRepository.findAll()).length).toBeGreaterThan(0);
       await UserRepository.truncate();
       expect(await AdminRepository.findAll()).toHaveLength(0);

@@ -12,6 +12,10 @@ export = {
             onDelete: "CASCADE",
             type: UUID
           },
+          secretary: {
+            allowNull: false,
+            type: "secretary"
+          },
           createdAt: {
             allowNull: false,
             type: DATE

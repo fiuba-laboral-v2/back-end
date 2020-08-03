@@ -11,7 +11,7 @@ import { OfferGenerator, TOfferDataGenerator } from "../../../generators/Offer";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 import { UnauthorizedError } from "../../../../src/graphql/Errors";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
-import { AdminGenerator, TAdminGenerator } from "../../../generators/Admin";
+import { AdminExtensionGenerator, TAdminGenerator } from "../../../generators/Admin";
 
 const GET_OFFERS = gql`
   query {
@@ -34,7 +34,7 @@ describe("getOffers", () => {
     careers = CareerGenerator.instance();
     companies = CompanyGenerator.instance.withMinimumData();
     offersData = OfferGenerator.data.withObligatoryData();
-    admins = AdminGenerator.instance();
+    admins = AdminExtensionGenerator.instance();
   });
 
   describe("when offers exists", () => {

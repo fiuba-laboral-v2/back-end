@@ -10,7 +10,7 @@ import { OfferGenerator, TOfferGenerator } from "../../../generators/Offer";
 import { companyMocks } from "../../../models/Company/mocks";
 import { testClientFactory } from "../../../mocks/testClientFactory";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
-import { AdminGenerator, TAdminGenerator } from "../../../generators/Admin";
+import { AdminExtensionGenerator, TAdminGenerator } from "../../../generators/Admin";
 import generateUuid from "uuid/v4";
 
 const SAVE_JOB_APPLICATION = gql`
@@ -32,7 +32,7 @@ describe("saveJobApplication", () => {
     await CompanyRepository.truncate();
     company = await CompanyRepository.create(companyMocks.companyData());
     offers = await OfferGenerator.instance.withObligatoryData();
-    admins = AdminGenerator.instance();
+    admins = AdminExtensionGenerator.instance();
   });
 
   describe("when the input is valid", () => {

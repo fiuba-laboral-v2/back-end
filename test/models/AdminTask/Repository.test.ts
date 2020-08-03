@@ -8,7 +8,7 @@ import {
 import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
 import { Admin, Applicant, Company } from "../../../src/models";
 
-import { AdminGenerator } from "../../generators/Admin";
+import { AdminExtensionGenerator } from "../../generators/Admin";
 import { ApplicantGenerator } from "../../generators/Applicant";
 import { CompanyGenerator } from "../../generators/Company";
 
@@ -25,7 +25,7 @@ describe("AdminTaskRepository", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     const companies = await CompanyGenerator.instance.updatedWithStatus();
-    admin = await AdminGenerator.instance().next().value;
+    admin = await AdminExtensionGenerator.instance().next().value;
     const applicants = await ApplicantGenerator.instance.updatedWithStatus();
 
     rejectedCompany = await companies.next({ status: ApprovalStatus.rejected, admin }).value;

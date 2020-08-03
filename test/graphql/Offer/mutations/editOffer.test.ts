@@ -5,7 +5,7 @@ import { testClientFactory } from "../../../mocks/testClientFactory";
 import { OfferRepository } from "../../../../src/models/Offer";
 import { OfferGenerator, TOfferDataGenerator } from "../../../generators/Offer";
 import { client } from "../../ApolloTestClient";
-import { AdminGenerator, TAdminGenerator } from "../../../generators/Admin";
+import { AdminExtensionGenerator, TAdminGenerator } from "../../../generators/Admin";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import generateUuid from "uuid/v4";
 import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
@@ -46,7 +46,7 @@ describe("editOffer", () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     offersData = OfferGenerator.data.withObligatoryData();
-    admins = AdminGenerator.instance();
+    admins = AdminExtensionGenerator.instance();
   });
 
   it("edits an offer successfully", async () => {

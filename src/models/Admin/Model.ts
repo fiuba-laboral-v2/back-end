@@ -19,7 +19,6 @@ export class Admin extends Model<Admin> {
   @Column({
     allowNull: false,
     type: ENUM<string>({ values: SecretaryEnumValues }),
-    defaultValue: Secretary.extension,
     ...isSecretary
   })
   public secretary: Secretary;

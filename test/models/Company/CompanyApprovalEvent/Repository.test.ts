@@ -7,7 +7,7 @@ import {
 } from "../../../../src/models/Company/CompanyApprovalEvent";
 import { ForeignKeyConstraintError } from "sequelize";
 import { CompanyGenerator, TCompanyGenerator } from "../../../generators/Company";
-import { AdminGenerator, TAdminGenerator } from "../../../generators/Admin";
+import { AdminExtensionGenerator, TAdminGenerator } from "../../../generators/Admin";
 
 describe("CompanyApprovalEventRepository", () => {
   let companies: TCompanyGenerator;
@@ -17,7 +17,7 @@ describe("CompanyApprovalEventRepository", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     companies = CompanyGenerator.instance.withCompleteData();
-    admins = AdminGenerator.instance();
+    admins = AdminExtensionGenerator.instance();
   });
 
   describe("create", () => {
