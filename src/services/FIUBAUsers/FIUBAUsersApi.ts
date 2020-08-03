@@ -4,7 +4,7 @@ import { Envelope } from "./Envelope";
 import { AuthenticateUnknownError, AuthenticateFaultError } from "./Errors";
 import "isomorphic-fetch";
 
-export const FIUBAUsersApiClient = {
+export const FIUBAUsersApi = {
   headers: () => ({
     "Content-Type": "text/xml,",
     "charset": "UTF-8"
@@ -12,7 +12,7 @@ export const FIUBAUsersApiClient = {
   authenticate: async ({ username, password }: ICredentials) => {
     const httpResponse = await fetch(FiubaUsersServiceConfig.url, {
       method: "POST",
-      headers: FIUBAUsersApiClient.headers(),
+      headers: FIUBAUsersApi.headers(),
       body: Envelope.buildAuthenticate({ username, password })
     });
     if (httpResponse.status === 200) {

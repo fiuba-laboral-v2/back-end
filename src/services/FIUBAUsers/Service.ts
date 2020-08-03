@@ -1,4 +1,4 @@
-import { FIUBAUsersApiClient } from "./FIUBAUsersApiClient";
+import { FIUBAUsersApi } from "./FIUBAUsersApi";
 import { Environment } from "../../config";
 import "isomorphic-fetch";
 import { ICredentials } from "./Interfaces";
@@ -10,6 +10,6 @@ export const FiubaUsersService = {
     if (username.length === 0) throw new InvalidEmptyUsernameError();
 
     if (Environment.NODE_ENV === Environment.DEVELOPMENT) return true;
-    return FIUBAUsersApiClient.authenticate({ username, password });
+    return FIUBAUsersApi.authenticate({ username, password });
   }
 };
