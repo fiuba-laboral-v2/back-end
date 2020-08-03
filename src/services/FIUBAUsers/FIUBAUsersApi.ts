@@ -1,4 +1,4 @@
-import { IAuthenticateResponse, ICredentials } from "./Interfaces";
+import { IFiubaUsersApiSuccessResponse, ICredentials } from "./Interfaces";
 import { FiubaUsersServiceConfig } from "../../config/services";
 import { Envelope } from "./Envelope";
 import { AuthenticateUnknownError, AuthenticateFaultError } from "./Errors";
@@ -16,7 +16,7 @@ export const FIUBAUsersApi = {
       body: Envelope.buildAuthenticate({ username, password })
     });
     if (httpResponse.status === 200) {
-      const response: IAuthenticateResponse = await httpResponse.json();
+      const response: IFiubaUsersApiSuccessResponse = await httpResponse.json();
       return response["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns1:AutenticarResponse"].return;
     } else if (httpResponse.status === 500) {
       throw new AuthenticateFaultError(await httpResponse.json());

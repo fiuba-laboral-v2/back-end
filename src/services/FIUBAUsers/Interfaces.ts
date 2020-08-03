@@ -1,4 +1,4 @@
-export interface IAuthenticateResponse {
+export interface IFiubaUsersApiSuccessResponse {
   "SOAP-ENV:Envelope": {
     "SOAP-ENV:Body": {
       "ns1:AutenticarResponse": {
@@ -8,7 +8,7 @@ export interface IAuthenticateResponse {
   };
 }
 
-export interface IResponseError {
+export interface IFiubaUsersApiErrorResponse {
   "SOAP-ENV:Envelope": {
     "SOAP-ENV:Body": {
       "SOAP-ENV:Fault": {
