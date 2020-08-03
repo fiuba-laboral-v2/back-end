@@ -33,7 +33,7 @@ describe("Admin", () => {
       admin.validate()
     ).rejects.toThrowErrorWithMessage(
       ValidationError,
-      "Validation error: ApprovalStatus must be one of these values: extension,graduados"
+      "Validation error: Secretary must be one of these values: extension,graduados"
     );
   });
 });
