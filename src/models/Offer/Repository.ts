@@ -53,7 +53,7 @@ export const OfferRepository = {
           }
         }
       }),
-      order: [["createdAt", "DESC"]],
+      order: [["updatedAt", "DESC"]],
       limit: 10
     }),
   findByCompanyUuid: (companyUuid: string) =>

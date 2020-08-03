@@ -13,6 +13,7 @@ import { UnauthorizedError } from "../../../../src/graphql/Errors";
 import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
 import { ExtensionAdminGenerator, TAdminGenerator } from "../../../generators/Admin";
 import { range } from "lodash";
+import { Offer } from "../../../../src/models";
 
 const GET_OFFERS = gql`
   query ($updatedBeforeThan: DateTime) {
@@ -49,8 +50,8 @@ describe("getOffers", () => {
   });
 
   describe("when offers exists", () => {
-    let offer1;
-    let offer2;
+    let offer1: Offer;
+    let offer2: Offer;
     const createOffers = async () => {
       const { uuid: companyUuid } = await companies.next().value;
       const career1 = await careers.next().value;
@@ -100,7 +101,7 @@ describe("getOffers", () => {
     });
 
     it("filters by updatedAt even when it does not coincide with createdAt", async () => {
-      offer1.title = "";
+      offer1.title = "something";
       await offer1.save();
       const apolloClient = await approvedApplicantTestClient();
       const { data } = await apolloClient.query({
@@ -117,14 +118,21 @@ describe("getOffers", () => {
     });
 
     it("gets the latest 10 offers", async () => {
+      const newOffers: Offer[] = [];
       for (const _ of range(15)) {
-        await OfferRepository.create(offersData.next({
-          companyUuid: offer1.companyUuid
-        }).value);
+        newOffers.push(
+          await OfferRepository.create(offersData.next({
+            companyUuid: offer1.companyUuid
+          }).value)
+        );
       }
+      offer1.title = "something different";
+      await offer1.save();
       const apolloClient = await approvedApplicantTestClient();
       const { data } = await apolloClient.query({ query: GET_OFFERS });
-      expect(data!.getOffers.length).toEqual(10);
+      expect(data!.getOffers.map(offer => offer.uuid)).toEqual(
+        [offer1.uuid].concat(newOffers.slice(-9).map(offer => offer.uuid).reverse())
+      );
     });
   });
 
