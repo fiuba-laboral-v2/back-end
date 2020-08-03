@@ -1,5 +1,6 @@
 import { QueryInterface } from "sequelize";
 import { javaSemiSenior } from "./constants/offers";
+import { javaSenior } from "./constants/offers/javaSenior";
 
 export = {
   up: (queryInterface: QueryInterface) => {
@@ -7,13 +8,15 @@ export = {
       await queryInterface.bulkInsert(
         "Offers",
         [
-          javaSemiSenior.offer
+          javaSemiSenior.offer,
+          javaSenior.offer
         ]
       );
       await queryInterface.bulkInsert(
         "OffersSections",
         [
-          ...javaSemiSenior.offerSections
+          ...javaSemiSenior.offerSections,
+          ...javaSenior.offerSections
         ]
       );
     });
