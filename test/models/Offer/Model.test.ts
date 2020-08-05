@@ -96,16 +96,19 @@ describe("Offer", () => {
     await expect(offer.validate()).rejects.toThrow(SalaryRangeError.buildMessage());
   });
 
-  it("should throw error if graduadosApprovalStatus isn't a ApprovalStatus enum value", async () => {
-    const offer = new Offer({
-      ...offerAttributes,
-      graduadosApprovalStatus: "pepito"
-    });
-    await expect(
-      offer.validate()
-    ).rejects.toThrowErrorWithMessage(
-      ValidationError,
-      "Validation error: ApprovalStatus must be one of these values: pending,approved,rejected"
+  it(
+      "should throw error if graduadosApprovalStatus isn't a ApprovalStatus enum value",
+      async () => {
+        const offer = new Offer({
+          ...offerAttributes,
+          graduadosApprovalStatus: "pepito"
+        });
+        await expect(
+          offer.validate()
+        ).rejects.toThrowErrorWithMessage(
+          ValidationError,
+          "Validation error: ApprovalStatus must be one of these values: pending,approved,rejected"
+        );
+      }
     );
-  });
 });
