@@ -1,5 +1,6 @@
 import { ValidationError } from "sequelize";
 import generateUuid from "uuid/v4";
+import { UUID_REGEX } from "../index";
 import { User } from "../../../src/models";
 import {
   InvalidEmailError,
@@ -9,6 +10,28 @@ import {
 
 describe("User", () => {
   it("instantiates a valid user", async () => {
+    const user = new User({
+      email: "asd@qwe.com",
+      dni: 39207999,
+      password: "somethingVerySecret123",
+      name: "name",
+      surname: "surname"
+    });
+    await expect(user.validate()).resolves.not.toThrow();
+  });
+
+  it("instantiates a user with no dni", async () => {
+    const user = new User({
+      email: "asd@qwe.com",
+      password: "somethingVerySecret123",
+      name: "name",
+      surname: "surname"
+    });
+    await expect(user.validate()).resolves.not.toThrow();
+    expect(user.dni).toBeUndefined();
+  });
+
+  it("instantiates a valid user with a very long name", async () => {
     const params = {
       email: "asd@qwe.com",
       password: "somethingVerySecret123",
@@ -16,18 +39,15 @@ describe("User", () => {
       surname: "surname"
     };
     const user = new User(params);
-    expect(params).toEqual(expect.objectContaining(
-      {
-        email: user.email,
-        name: user.name,
-        surname: user.surname
-      }
-    ));
     await expect(user.validate()).resolves.not.toThrow();
+    expect(user).toEqual(expect.objectContaining({
+      uuid: expect.stringMatching(UUID_REGEX),
+      ...params
+    }));
   });
 
   describe("Errors", () => {
-    it("should throw an error if name has a digit", async () => {
+    it("throws an error if name has a digit", async () => {
       const user = new User({
         uuid: generateUuid(),
         email: "asd@qwe.com",
@@ -49,7 +69,7 @@ describe("User", () => {
       await expect(user.validate()).rejects.toThrow(NameWithDigitsError.buildMessage());
     });
 
-    it("should throw an error if name is null", async () => {
+    it("throws an error if name is null", async () => {
       const user = new User({
         uuid: generateUuid(),
         email: "asd@qwe.com",
@@ -60,7 +80,7 @@ describe("User", () => {
       await expect(user.validate()).rejects.toThrow(ValidationError);
     });
 
-    it("should throw an error if surname is null", async () => {
+    it("throws an error if surname is null", async () => {
       const user = new User({
         uuid: generateUuid(),
         email: "asd@qwe.com",
@@ -71,7 +91,7 @@ describe("User", () => {
       await expect(user.validate()).rejects.toThrow(ValidationError);
     });
 
-    it("should throw an error if email format is invalid", async () => {
+    it("throws an error if email format is invalid", async () => {
       const email = "asdqwe.com";
       const user = new User({
         email: email,

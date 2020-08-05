@@ -1,19 +1,17 @@
 import {
-  AllowNull,
   BeforeCreate,
   Column,
   HasOne,
   Is,
   Model,
-  Table,
-  Unique
+  Table
 } from "sequelize-typescript";
 import { compare, hashSync } from "bcrypt";
-import { HasOneGetAssociationMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
+import { HasOneGetAssociationMixin, INTEGER, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
 import { Admin, Applicant, Company, CompanyUser } from "..";
 import { validateEmail, validateName, validatePassword } from "validations-fiuba-laboral-v2";
 
-@Table
+@Table({ tableName: "Users" })
 export class User extends Model<User> {
   @BeforeCreate
   public static beforeCreateHook(user: User): void {
@@ -31,13 +29,25 @@ export class User extends Model<User> {
   public uuid: string;
 
   @Is(validateEmail)
-  @Unique
-  @AllowNull(false)
-  @Column(STRING)
+  @Column({
+    allowNull: false,
+    unique: true,
+    type: STRING,
+    validate: { validateEmail }
+  })
   public email: string;
 
-  @AllowNull(false)
-  @Column(STRING)
+  @Column({
+    allowNull: true,
+    unique: true,
+    type: INTEGER
+  })
+  public dni: number;
+
+  @Column({
+    allowNull: false,
+    type: STRING
+  })
   public password: string;
 
   @Is(validateName)
