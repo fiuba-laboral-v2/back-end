@@ -97,8 +97,9 @@ describe("JobApplicationRepository", () => {
       const company = await companies.next().value;
       const offer = await offers.next({ companyUuid: company.uuid }).value;
       const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
+      const offer1 = (await jobApplication.getOffer()).toJSON();
       expect((await jobApplication.getApplicant()).toJSON()).toMatchObject(applicant.toJSON());
-      expect((await jobApplication.getOffer()).toJSON()).toMatchObject(offer.toJSON());
+      expect(offer1).toMatchObject(offer.toJSON());
     });
 
     it("should get all applicant's jobApplications", async () => {

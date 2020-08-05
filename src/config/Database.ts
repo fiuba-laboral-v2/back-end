@@ -20,6 +20,7 @@ import {
   Offer,
   OfferCareer,
   OfferSection,
+  OfferApprovalEvent,
   Section,
   User
 } from "../models";
@@ -43,6 +44,7 @@ const models = [
   Offer,
   OfferSection,
   OfferCareer,
+  OfferApprovalEvent,
   User
 ];
 

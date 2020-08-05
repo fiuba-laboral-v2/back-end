@@ -1,5 +1,7 @@
 import { NumberIsTooSmallError, SalaryRangeError } from "validations-fiuba-laboral-v2";
+import { ValidationError } from "sequelize";
 import { Offer } from "../../../src/models";
+import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
 
 describe("Offer", () => {
   const offerAttributes = {
@@ -20,6 +22,18 @@ describe("Offer", () => {
   it("should create a valid offer", async () => {
     const offer = new Offer(offerAttributes);
     await expect(offer.validate()).resolves.not.toThrow();
+  });
+
+  it("should create a valid offer with default extensionApprovalStatus", async () => {
+    const offer = new Offer(offerAttributes);
+    await expect(offer.validate()).resolves.not.toThrow();
+    await expect(offer.extensionApprovalStatus).toEqual(ApprovalStatus.pending);
+  });
+
+  it("should create a valid offer with default graduadosApprovalStatus", async () => {
+    const offer = new Offer(offerAttributes);
+    await expect(offer.validate()).resolves.not.toThrow();
+    await expect(offer.graduadosApprovalStatus).toEqual(ApprovalStatus.pending);
   });
 
   it("should throw error if offer does not belong to any company", async () => {
@@ -80,5 +94,18 @@ describe("Offer", () => {
       maximumSalary: 50
     });
     await expect(offer.validate()).rejects.toThrow(SalaryRangeError.buildMessage());
+  });
+
+  it("should throw error if graduadosApprovalStatus isn't a ApprovalStatus enum value", async () => {
+    const offer = new Offer({
+      ...offerAttributes,
+      graduadosApprovalStatus: "pepito"
+    });
+    await expect(
+      offer.validate()
+    ).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      "Validation error: ApprovalStatus must be one of these values: pending,approved,rejected"
+    );
   });
 });

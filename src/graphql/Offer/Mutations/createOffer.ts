@@ -30,6 +30,8 @@ export const createOffer = {
       type: List(GraphQLOfferCareerInput)
     }
   },
-  resolve: (_: undefined, props: IOffer, { currentUser }: { currentUser: ICompanyUser }) =>
+  resolve: (
+    _: undefined, props: Omit<IOffer, "companyUuid">, { currentUser }: { currentUser: ICompanyUser }
+  ) =>
     OfferRepository.create({ companyUuid: currentUser.company.uuid, ...props })
 };

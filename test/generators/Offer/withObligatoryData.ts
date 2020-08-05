@@ -16,6 +16,8 @@ export const withObligatoryData = (
     hoursPerDay: index + 1,
     minimumSalary: index + 1,
     maximumSalary: 2 * index + 1,
+    extensionApprovalStatus: "pending",
+    graduadosApprovalStatus: "pending",
     careers,
     sections
   };
