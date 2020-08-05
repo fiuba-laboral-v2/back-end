@@ -2,7 +2,6 @@ import {
   BeforeCreate,
   Column,
   HasOne,
-  Is,
   Model,
   Table
 } from "sequelize-typescript";
@@ -33,7 +32,6 @@ export class User extends Model<User> {
   })
   public uuid: string;
 
-  @Is(validateEmail)
   @Column({
     allowNull: false,
     unique: true,
@@ -56,17 +54,17 @@ export class User extends Model<User> {
   })
   public password: string;
 
-  @Is(validateName)
   @Column({
     allowNull: false,
-    type: TEXT
+    type: TEXT,
+    validate: { validateName }
   })
   public name: string;
 
-  @Is(validateName)
   @Column({
     allowNull: false,
-    type: TEXT
+    type: TEXT,
+    validate: { validateName }
   })
   public surname: string;
 
