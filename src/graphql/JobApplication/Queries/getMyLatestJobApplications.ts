@@ -1,7 +1,7 @@
-import { List } from "../../fieldTypes";
+import { List } from "$graphql/fieldTypes";
 import { GraphQLJobApplication } from "../Types/GraphQLJobApplication";
-import { JobApplicationRepository } from "../../../models/JobApplication";
-import { ICompanyUser } from "../../Context";
+import { JobApplicationRepository } from "$models/JobApplication";
+import { ICompanyUser } from "$graphql/Context";
 
 export const getMyLatestJobApplications = {
   type: List(GraphQLJobApplication),

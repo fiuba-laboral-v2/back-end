@@ -1,5 +1,5 @@
 import { ValidationError } from "sequelize";
-import { CompanyPhoneNumber } from "../../../src/models";
+import { CompanyPhoneNumber } from "$models";
 import { InvalidPhoneNumberError, PhoneNumberWithLettersError } from "validations-fiuba-laboral-v2";
 
 describe("companyPhoneNumber", () => {

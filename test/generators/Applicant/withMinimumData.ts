@@ -1,4 +1,4 @@
-import { IApplicant } from "../../../src/models/Applicant";
+import { IApplicant } from "$models/Applicant";
 
 export const withMinimumData = (index: number): IApplicant => ({
   padron: index + 1,

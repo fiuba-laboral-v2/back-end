@@ -1,18 +1,18 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 
-import { UserRepository } from "../../../../src/models/User";
-import { Admin, Applicant } from "../../../../src/models";
-import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
-import { CompanyRepository } from "../../../../src/models/Company";
-import { JobApplicationRepository } from "../../../../src/models/JobApplication";
+import { UserRepository } from "$models/User";
+import { Admin, Applicant } from "$models";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { CompanyRepository } from "$models/Company";
+import { JobApplicationRepository } from "$models/JobApplication";
 
-import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
+import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
-import { OfferGenerator, TOfferGenerator } from "../../../generators/Offer";
-import { ExtensionAdminGenerator } from "../../../generators/Admin";
-import { ApplicantGenerator } from "../../../generators/Applicant";
-import { testClientFactory } from "../../../mocks/testClientFactory";
+import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
+import { ExtensionAdminGenerator } from "$generators/Admin";
+import { ApplicantGenerator } from "$generators/Applicant";
+import { testClientFactory } from "$mocks/testClientFactory";
 
 const GET_MY_LATEST_JOB_APPLICATIONS = gql`
     query getMyLatestJobApplications {

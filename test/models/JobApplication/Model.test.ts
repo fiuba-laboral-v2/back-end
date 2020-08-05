@@ -1,5 +1,5 @@
 import { ValidationError } from "sequelize";
-import { JobApplication } from "../../../src/models";
+import { JobApplication } from "$models";
 
 describe("JobApplication", () => {
   describe("Valid create", () => {

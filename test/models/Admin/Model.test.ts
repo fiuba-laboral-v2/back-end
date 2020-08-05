@@ -1,7 +1,7 @@
 import { ValidationError } from "sequelize";
 
-import { Admin } from "../../../src/models";
-import { Secretary } from "../../../src/models/Admin";
+import { Admin } from "$models";
+import { Secretary } from "$models/Admin";
 
 describe("Admin", () => {
   it("creates a valid admin", async () => {

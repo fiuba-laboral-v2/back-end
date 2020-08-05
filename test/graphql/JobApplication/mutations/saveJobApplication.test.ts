@@ -1,16 +1,16 @@
 import { ApolloError, gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 
-import { UserRepository } from "../../../../src/models/User";
-import { CompanyRepository } from "../../../../src/models/Company";
+import { UserRepository } from "$models/User";
+import { CompanyRepository } from "$models/Company";
 
-import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
+import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
-import { OfferGenerator, TOfferGenerator } from "../../../generators/Offer";
-import { companyMocks } from "../../../models/Company/mocks";
-import { testClientFactory } from "../../../mocks/testClientFactory";
-import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
-import { ExtensionAdminGenerator, TAdminGenerator } from "../../../generators/Admin";
+import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
+import { companyMocks } from "$test/models/Company/mocks";
+import { testClientFactory } from "$mocks/testClientFactory";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
 import generateUuid from "uuid/v4";
 
 const SAVE_JOB_APPLICATION = gql`

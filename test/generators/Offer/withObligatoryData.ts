@@ -1,4 +1,4 @@
-import { IOffer } from "../../../src/models/Offer";
+import { IOffer } from "$models/Offer";
 import { IVariables } from "./interfaces";
 
 export const withObligatoryData = (

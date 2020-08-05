@@ -1,4 +1,4 @@
-import { SecretaryEnumValues } from "../Admin/Interface";
+import { SecretaryEnumValues } from "$models/Admin/Interface";
 
 export const isSecretary = {
   validate: {

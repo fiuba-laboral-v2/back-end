@@ -1,16 +1,16 @@
 import { UniqueConstraintError } from "sequelize";
-import { CareerRepository } from "../../../src/models/Career";
-import { OfferRepository } from "../../../src/models/Offer";
-import { CompanyRepository } from "../../../src/models/Company";
-import { OfferNotFound } from "../../../src/models/Offer/Errors";
-import { OfferSection } from "../../../src/models";
-import { OfferCareer } from "../../../src/models";
-import { Offer } from "../../../src/models";
-import { CompanyGenerator, TCompanyGenerator } from "../../generators/Company";
-import { OfferGenerator, TOfferDataGenerator } from "../../generators/Offer";
-import { CareerGenerator, TCareerGenerator } from "../../generators/Career";
+import { CareerRepository } from "$models/Career";
+import { OfferRepository } from "$models/Offer";
+import { CompanyRepository } from "$models/Company";
+import { OfferNotFound } from "$models/Offer/Errors";
+import { OfferSection } from "$models";
+import { OfferCareer } from "$models";
+import { Offer } from "$models";
+import { CompanyGenerator, TCompanyGenerator } from "$generators/Company";
+import { OfferGenerator, TOfferDataGenerator } from "$generators/Offer";
+import { CareerGenerator, TCareerGenerator } from "$generators/Career";
 import { omit } from "lodash";
-import { UserRepository } from "../../../src/models/User";
+import { UserRepository } from "$models/User";
 
 describe("OfferRepository", () => {
   let companies: TCompanyGenerator;

@@ -1,8 +1,8 @@
 import { DatabaseError, ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
-import { Company, CompanyPhoneNumber } from "../../../src/models";
-import { CompanyRepository } from "../../../src/models/Company";
-import { CompanyPhoneNumberRepository } from "../../../src/models/CompanyPhoneNumber";
-import { UserRepository } from "../../../src/models/User";
+import { Company, CompanyPhoneNumber } from "$models";
+import { CompanyRepository } from "$models/Company";
+import { CompanyPhoneNumberRepository } from "$models/CompanyPhoneNumber";
+import { UserRepository } from "$models/User";
 import { UserMocks } from "../User/mocks";
 import { companyMocks } from "../Company/mocks";
 

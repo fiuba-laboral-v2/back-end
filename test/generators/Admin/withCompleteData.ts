@@ -1,5 +1,5 @@
-import { ISaveAdmin } from "../../../src/models/Admin";
-import { Secretary } from "../../../src/models/Admin/Interface";
+import { ISaveAdmin } from "$models/Admin";
+import { Secretary } from "$models/Admin/Interface";
 
 export const withCompleteData = (index: number, secretary: Secretary): ISaveAdmin => ({
   user: {

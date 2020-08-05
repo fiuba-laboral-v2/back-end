@@ -1,10 +1,10 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
-import { UserRepository } from "../../../../src/models/User";
-import { CompanyRepository } from "../../../../src/models/Company";
-import { AuthenticationError } from "../../../../src/graphql/Errors";
-import { testClientFactory } from "../../../mocks/testClientFactory";
-import { AuthConfig } from "../../../../src/config/AuthConfig";
+import { UserRepository } from "$models/User";
+import { CompanyRepository } from "$models/Company";
+import { AuthenticationError } from "$graphql/Errors";
+import { testClientFactory } from "$mocks/testClientFactory";
+import { AuthConfig } from "$config/AuthConfig";
 
 const LOGOUT = gql`
     mutation {

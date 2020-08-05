@@ -1,19 +1,19 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
-import { CareerRepository } from "../../../../src/models/Career";
-import { CompanyRepository } from "../../../../src/models/Company";
-import { JobApplicationRepository } from "../../../../src/models/JobApplication";
-import { UserRepository } from "../../../../src/models/User";
-import { OfferNotFound } from "../../../../src/models/Offer/Errors";
-import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
-import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
-import { OfferGenerator, TOfferGenerator } from "../../../generators/Offer";
-import { userFactory } from "../../../mocks/user";
-import { testClientFactory } from "../../../mocks/testClientFactory";
+import { CareerRepository } from "$models/Career";
+import { CompanyRepository } from "$models/Company";
+import { JobApplicationRepository } from "$models/JobApplication";
+import { UserRepository } from "$models/User";
+import { OfferNotFound } from "$models/Offer/Errors";
+import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
+import { CareerGenerator, TCareerGenerator } from "$generators/Career";
+import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
+import { userFactory } from "$mocks/user";
+import { testClientFactory } from "$mocks/testClientFactory";
 import { ApolloServerTestClient } from "apollo-server-testing";
 import generateUuid from "uuid/v4";
-import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
-import { ExtensionAdminGenerator, TAdminGenerator } from "../../../generators/Admin";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
 
 const GET_OFFER_BY_UUID = gql`
   query ($uuid: ID!) {

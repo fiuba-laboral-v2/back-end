@@ -1,9 +1,9 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
-import { CompanyRepository } from "../../../../src/models/Company";
-import { UserRepository } from "../../../../src/models/User";
-import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
-import { CompanyGenerator, TCompanyDataGenerator } from "../../../generators/Company";
+import { CompanyRepository } from "$models/Company";
+import { UserRepository } from "$models/User";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { CompanyGenerator, TCompanyDataGenerator } from "$generators/Company";
 
 const SAVE_COMPANY_WITH_COMPLETE_DATA = gql`
   mutation (

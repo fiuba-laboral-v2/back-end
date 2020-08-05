@@ -1,7 +1,7 @@
 import { IUser, IUserEditable } from "./Interface";
 import { UserNotFoundError } from "./Errors";
 import { Transaction } from "sequelize/types";
-import { User } from "..";
+import { User } from "$models";
 
 export const UserRepository = {
   create: (attributes: IUser, transaction?: Transaction) =>

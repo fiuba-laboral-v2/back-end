@@ -1,5 +1,5 @@
-import { CompanyApprovalEvent } from "../../../../src/models";
-import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
+import { CompanyApprovalEvent } from "$models";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ValidationError } from "sequelize";
 import { UUID_REGEX } from "../../index";
 

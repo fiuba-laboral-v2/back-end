@@ -1,6 +1,6 @@
 import { GraphQLOffer } from "../Types/GraphQLOffer";
-import { ID, nonNull } from "../../fieldTypes";
-import { OfferRepository } from "../../../models/Offer";
+import { ID, nonNull } from "$graphql/fieldTypes";
+import { OfferRepository } from "$models/Offer";
 
 const getOfferByUuid = {
   type: GraphQLOffer,

@@ -1,10 +1,10 @@
 import { gql } from "apollo-server";
-import { CapabilityRepository } from "../../../../src/models/Capability";
+import { CapabilityRepository } from "$models/Capability";
 import { client } from "../../ApolloTestClient";
 
-import { testClientFactory } from "../../../mocks/testClientFactory";
+import { testClientFactory } from "$mocks/testClientFactory";
 
-import { AuthenticationError } from "../../../../src/graphql/Errors";
+import { AuthenticationError } from "$graphql/Errors";
 
 const GET_CAPABILITIES = gql`
     query {

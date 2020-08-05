@@ -1,9 +1,9 @@
 import { createTestClient } from "apollo-server-testing";
 import { apolloErrorConverter } from "../../src/FormatErrors";
-import { ICurrentUser } from "../../src/graphql/Context/graphqlContext";
+import { ICurrentUser } from "$graphql/Context/graphqlContext";
 import { DocumentNode } from "graphql";
 import { ApolloServer as Server } from "apollo-server-express";
-import { schema } from "../../src/graphql/Schema";
+import { schema } from "$graphql/Schema";
 import { expressContextMock, IExpressContext } from "./ExpressContext";
 
 export const testCurrentUserEmail = "test@test.test";

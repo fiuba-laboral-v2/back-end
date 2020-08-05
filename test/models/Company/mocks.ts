@@ -1,5 +1,5 @@
 import { UserMocks } from "../User/mocks";
-import { ICompany } from "../../../src/models/Company";
+import { ICompany } from "$models/Company";
 
 export const companyMocks = {
   companyDataWithoutUser: () => ({

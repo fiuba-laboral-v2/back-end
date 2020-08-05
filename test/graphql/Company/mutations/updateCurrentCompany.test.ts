@@ -1,12 +1,12 @@
 import { gql } from "apollo-server";
 
-import { testClientFactory } from "../../../mocks/testClientFactory";
+import { testClientFactory } from "$mocks/testClientFactory";
 
-import { CompanyRepository } from "../../../../src/models/Company";
-import { UserRepository } from "../../../../src/models/User";
+import { CompanyRepository } from "$models/Company";
+import { UserRepository } from "$models/User";
 
 import { client } from "../../ApolloTestClient";
-import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
+import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 const UPDATE_CURRENT_COMPANY = gql`
     mutation (

@@ -5,14 +5,14 @@ import {
   ValidationError
 } from "sequelize";
 import { InvalidCuitError, PhoneNumberWithLettersError } from "validations-fiuba-laboral-v2";
-import { CompanyRepository } from "../../../src/models/Company";
-import { UserRepository } from "../../../src/models/User";
-import { Admin } from "../../../src/models";
-import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
-import { CompanyGenerator, TCompanyDataGenerator } from "../../generators/Company";
-import { ExtensionAdminGenerator } from "../../generators/Admin";
+import { CompanyRepository } from "$models/Company";
+import { UserRepository } from "$models/User";
+import { Admin } from "$models";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { CompanyGenerator, TCompanyDataGenerator } from "$generators/Company";
+import { ExtensionAdminGenerator } from "$generators/Admin";
 import { UserMocks } from "../User/mocks";
-import { CompanyNotUpdatedError } from "../../../src/models/Company/Errors";
+import { CompanyNotUpdatedError } from "$models/Company/Errors";
 
 describe("CompanyRepository", () => {
   let companiesData: TCompanyDataGenerator;

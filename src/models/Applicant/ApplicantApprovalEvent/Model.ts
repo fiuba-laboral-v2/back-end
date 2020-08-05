@@ -1,8 +1,8 @@
 import { BelongsTo, Column, ForeignKey, Model, Table } from "sequelize-typescript";
 import { DATE, ENUM, HasOneGetAssociationMixin, UUID, UUIDV4 } from "sequelize";
-import { ApprovalStatus, approvalStatuses } from "../../ApprovalStatus";
-import { Admin, Applicant } from "../..";
-import { isApprovalStatus, isUuid } from "../../SequelizeModelValidators";
+import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
+import { Admin, Applicant } from "$models";
+import { isApprovalStatus, isUuid } from "$models/SequelizeModelValidators";
 
 @Table({ tableName: "ApplicantApprovalEvents" })
 export class ApplicantApprovalEvent extends Model<ApplicantApprovalEvent> {

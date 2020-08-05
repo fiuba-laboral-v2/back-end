@@ -1,13 +1,13 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
-import { CompanyRepository } from "../../../../src/models/Company";
-import { UserRepository } from "../../../../src/models/User";
-import { testClientFactory } from "../../../mocks/testClientFactory";
+import { CompanyRepository } from "$models/Company";
+import { UserRepository } from "$models/User";
+import { testClientFactory } from "$mocks/testClientFactory";
 
-import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
-import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
-import { userFactory } from "../../../mocks/user";
-import { ExtensionAdminGenerator, TAdminGenerator } from "../../../generators/Admin";
+import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { userFactory } from "$mocks/user";
+import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
 
 const GET_COMPANIES = gql`
   query {

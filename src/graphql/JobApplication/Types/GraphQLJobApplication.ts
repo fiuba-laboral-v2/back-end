@@ -1,9 +1,9 @@
 import { GraphQLObjectType } from "graphql";
 import { GraphQLDateTime } from "graphql-iso-date";
-import { nonNull, String } from "../../fieldTypes";
-import { JobApplication } from "../../../models";
-import { GraphQLApplicant } from "../../Applicant/Types/GraphQLApplicant";
-import { GraphQLOffer } from "../../Offer/Types/GraphQLOffer";
+import { nonNull, String } from "$graphql/fieldTypes";
+import { JobApplication } from "$models";
+import { GraphQLApplicant } from "$graphql/Applicant/Types/GraphQLApplicant";
+import { GraphQLOffer } from "$graphql/Offer/Types/GraphQLOffer";
 
 export const GraphQLJobApplication = new GraphQLObjectType<JobApplication>({
   name: "JobApplication",

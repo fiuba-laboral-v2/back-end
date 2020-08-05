@@ -1,5 +1,5 @@
 import { AdminTaskType } from "./Model";
-import { ApprovalStatus } from "../ApprovalStatus";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export interface IAdminTasksFilter {
   adminTaskTypes: AdminTaskType[];

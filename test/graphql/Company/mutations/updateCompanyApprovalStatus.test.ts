@@ -1,17 +1,17 @@
 import { gql } from "apollo-server";
 import { ApolloServerTestClient as TestClient } from "apollo-server-testing";
 import { client } from "../../ApolloTestClient";
-import { testClientFactory } from "../../../mocks/testClientFactory";
-import { CompanyGenerator } from "../../../generators/Company";
-import { CompanyRepository } from "../../../../src/models/Company";
-import { Company } from "../../../../src/models";
+import { testClientFactory } from "$mocks/testClientFactory";
+import { CompanyGenerator } from "$generators/Company";
+import { CompanyRepository } from "$models/Company";
+import { Company } from "$models";
 import {
   CompanyApprovalEventRepository
-} from "../../../../src/models/Company/CompanyApprovalEvent";
-import { UserRepository } from "../../../../src/models/User";
-import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
-import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
-import { CompanyNotUpdatedError } from "../../../../src/models/Company/Errors";
+} from "$models/Company/CompanyApprovalEvent";
+import { UserRepository } from "$models/User";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
+import { CompanyNotUpdatedError } from "$models/Company/Errors";
 
 const UPDATE_COMPANY_APPROVAL_STATUS = gql`
     mutation (

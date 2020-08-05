@@ -1,16 +1,16 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 
-import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
+import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
-import { CareerRepository } from "../../../../src/models/Career";
-import { UserRepository } from "../../../../src/models/User";
+import { CareerRepository } from "$models/Career";
+import { UserRepository } from "$models/User";
 
-import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
-import { testClientFactory } from "../../../mocks/testClientFactory";
-import { userFactory } from "../../../mocks/user";
-import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
-import { ExtensionAdminGenerator, TAdminGenerator } from "../../../generators/Admin";
+import { CareerGenerator, TCareerGenerator } from "$generators/Career";
+import { testClientFactory } from "$mocks/testClientFactory";
+import { userFactory } from "$mocks/user";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
 
 const GET_APPLICANTS = gql`
     query getApplicants {

@@ -1,5 +1,5 @@
 import { GraphQLInputObjectType } from "graphql";
-import { nonNull, String } from "../../fieldTypes";
+import { nonNull, String } from "$graphql/fieldTypes";
 
 export const GraphQLUserCreateInput = new GraphQLInputObjectType({
   name: "UserInput",

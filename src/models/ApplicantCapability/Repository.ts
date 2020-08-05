@@ -1,6 +1,6 @@
 import { Transaction } from "sequelize";
-import { CapabilityRepository } from "../Capability";
-import { Applicant, ApplicantCapability } from "..";
+import { CapabilityRepository } from "$models/Capability";
+import { Applicant, ApplicantCapability } from "$models";
 
 export const ApplicantCapabilityRepository = {
   update: async (

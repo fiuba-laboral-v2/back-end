@@ -1,4 +1,4 @@
-import { isUser } from "../Rules";
+import { isUser } from "$graphql/Rules";
 
 export const capabilitiesPermissions = {
   Query: {

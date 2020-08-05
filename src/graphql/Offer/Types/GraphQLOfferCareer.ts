@@ -1,5 +1,5 @@
 import { GraphQLInputObjectType } from "graphql";
-import { ID, nonNull } from "../../fieldTypes";
+import { ID, nonNull } from "$graphql/fieldTypes";
 
 const GraphQLOfferCareerInput = new GraphQLInputObjectType({
   name: "OfferCareerInput",

@@ -1,4 +1,4 @@
-import { Applicant, JobApplication, Offer } from "..";
+import { Applicant, JobApplication, Offer } from "$models";
 
 export const JobApplicationRepository = {
   apply: async (applicantUuid: string, offer: Offer) =>

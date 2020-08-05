@@ -29,9 +29,9 @@ import {
   JobApplication,
   Section,
   User
-} from "..";
-import { ApprovalStatus, approvalStatuses } from "../ApprovalStatus";
-import { isApprovalStatus } from "../SequelizeModelValidators";
+} from "$models";
+import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
+import { isApprovalStatus } from "$models/SequelizeModelValidators";
 
 @Table({ tableName: "Applicants" })
 export class Applicant extends Model<Applicant> {

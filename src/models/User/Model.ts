@@ -10,7 +10,7 @@ import {
 } from "sequelize-typescript";
 import { compare, hashSync } from "bcrypt";
 import { HasOneGetAssociationMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
-import { Admin, Applicant, Company, CompanyUser } from "..";
+import { Admin, Applicant, Company, CompanyUser } from "$models";
 import { validateEmail, validateName, validatePassword } from "validations-fiuba-laboral-v2";
 
 @Table

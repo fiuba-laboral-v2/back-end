@@ -1,10 +1,10 @@
-import { findAdminTasksQuery } from "../../../src/models/AdminTask/findAdminTasksQuery";
-import { AdminTaskType } from "../../../src/models/AdminTask";
+import { findAdminTasksQuery } from "$models/AdminTask/findAdminTasksQuery";
+import { AdminTaskType } from "$models/AdminTask";
 import {
   AdminTaskTypesIsEmptyError,
   StatusesIsEmptyError
-} from "../../../src/models/AdminTask/Errors";
-import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
+} from "$models/AdminTask/Errors";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
 describe("findAdminTasksQuery", () => {
 

@@ -1,6 +1,6 @@
-import { Boolean } from "../../fieldTypes";
-import { Context } from "../../Context/graphqlContext";
-import { AuthConfig } from "../../../config/AuthConfig";
+import { Boolean } from "$graphql/fieldTypes";
+import { Context } from "$graphql/Context/graphqlContext";
+import { AuthConfig } from "$config/AuthConfig";
 
 export const logout = {
   type: Boolean,

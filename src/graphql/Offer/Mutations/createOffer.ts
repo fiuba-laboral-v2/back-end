@@ -1,9 +1,9 @@
 import { GraphQLOffer } from "../Types/GraphQLOffer";
 import { GraphQLOfferCareerInput } from "../Types/GraphQLOfferCareer";
 import { GraphQLOfferSectionInput } from "../Types/GraphQLOfferSection";
-import { IOffer, OfferRepository } from "../../../models/Offer";
-import { ICompanyUser } from "../../Context";
-import { Int, List, nonNull, String } from "../../fieldTypes";
+import { IOffer, OfferRepository } from "$models/Offer";
+import { ICompanyUser } from "$graphql/Context";
+import { Int, List, nonNull, String } from "$graphql/fieldTypes";
 
 export const createOffer = {
   type: GraphQLOffer,

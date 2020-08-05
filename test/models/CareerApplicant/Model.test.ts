@@ -1,5 +1,5 @@
-import { CareerRepository } from "../../../src/models/Career";
-import { ApplicantCareer, Career } from "../../../src/models";
+import { CareerRepository } from "$models/Career";
+import { ApplicantCareer, Career } from "$models";
 import { NumberIsTooLargeError, NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
 
 describe("ApplicantCareer", () => {
