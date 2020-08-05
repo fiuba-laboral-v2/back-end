@@ -8,6 +8,7 @@ import {
 import { compare, hashSync } from "bcrypt";
 import { HasOneGetAssociationMixin, INTEGER, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
 import { Admin, Applicant, Company, CompanyUser } from "..";
+import { isOptional } from "../SequelizeModelValidators";
 import {
   validateEmail,
   validateName,
@@ -44,7 +45,7 @@ export class User extends Model<User> {
     allowNull: true,
     unique: true,
     type: INTEGER,
-    validate: { validateDni }
+    ...isOptional(validateDni)
   })
   public dni: number;
 
