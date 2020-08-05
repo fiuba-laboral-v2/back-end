@@ -5,7 +5,8 @@ import { User } from "../../../src/models";
 import {
   InvalidEmailError,
   NameWithDigitsError,
-  PasswordWithoutDigitsError
+  PasswordWithoutDigitsError,
+  InvalidDniError
 } from "validations-fiuba-laboral-v2";
 
 describe("User", () => {
@@ -66,7 +67,10 @@ describe("User", () => {
         name: "name",
         surname: 22
       });
-      await expect(user.validate()).rejects.toThrow(NameWithDigitsError.buildMessage());
+      await expect(user.validate()).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        NameWithDigitsError.buildMessage())
+      ;
     });
 
     it("throws an error if name is null", async () => {
@@ -100,7 +104,42 @@ describe("User", () => {
         surname: "surname"
       });
 
-      await expect(user.validate()).rejects.toThrow(InvalidEmailError.buildMessage(email));
+      await expect(user.validate()).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        InvalidEmailError.buildMessage(email)
+      );
+    });
+
+    it("throws an error if dni has more than nine digits", async () => {
+      const dniWithMoreThanNineNumber = 99999999999999;
+      const user = new User({
+        email: "email@gmail.com",
+        dni: dniWithMoreThanNineNumber,
+        password: "somethingVerySecret123",
+        name: "name",
+        surname: "surname"
+      });
+
+      await expect(user.validate()).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        InvalidDniError.buildMessage(dniWithMoreThanNineNumber)
+      );
+    });
+
+    it("throws an error if dni has less than nine digits", async () => {
+      const dniWithLessThanNineNumber = 11;
+      const user = new User({
+        email: "email@gmail.com",
+        dni: dniWithLessThanNineNumber,
+        password: "somethingVerySecret123",
+        name: "name",
+        surname: "surname"
+      });
+
+      await expect(user.validate()).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        InvalidDniError.buildMessage(dniWithLessThanNineNumber)
+      );
     });
   });
 

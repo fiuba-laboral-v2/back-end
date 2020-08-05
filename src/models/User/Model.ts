@@ -9,7 +9,12 @@ import {
 import { compare, hashSync } from "bcrypt";
 import { HasOneGetAssociationMixin, INTEGER, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
 import { Admin, Applicant, Company, CompanyUser } from "..";
-import { validateEmail, validateName, validatePassword } from "validations-fiuba-laboral-v2";
+import {
+  validateEmail,
+  validateName,
+  validatePassword,
+  validateDni
+} from "validations-fiuba-laboral-v2";
 
 @Table({ tableName: "Users" })
 export class User extends Model<User> {
@@ -40,7 +45,8 @@ export class User extends Model<User> {
   @Column({
     allowNull: true,
     unique: true,
-    type: INTEGER
+    type: INTEGER,
+    validate: { validateDni }
   })
   public dni: number;
 

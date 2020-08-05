@@ -60,7 +60,7 @@
     "sequelize-cli": "6.2.0",
     "sequelize-typescript": "1",
     "typescript-logging": "0.6.4",
-    "validations-fiuba-laboral-v2": "1.0.19"
+    "validations-fiuba-laboral-v2": "github::fiuba-laboral-v2/validations#1eb3c8802dc9ebdb8fe1ff502c9048e52fa7135b"
   },
   "devDependencies": {
     "@babel/core": "7.0.0",
