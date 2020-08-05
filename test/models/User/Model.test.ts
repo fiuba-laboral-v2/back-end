@@ -48,6 +48,21 @@ describe("User", () => {
   });
 
   describe("Errors", () => {
+    const expectToThrowErrorWithDni = async (dni: number) => {
+      const user = new User({
+        email: "email@gmail.com",
+        dni,
+        password: "somethingVerySecret123",
+        name: "name",
+        surname: "surname"
+      });
+
+      await expect(user.validate()).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        InvalidDniError.buildMessage(dni)
+      );
+    };
+
     it("throws an error if name has a digit", async () => {
       const user = new User({
         uuid: generateUuid(),
@@ -111,35 +126,11 @@ describe("User", () => {
     });
 
     it("throws an error if dni has more than nine digits", async () => {
-      const dniWithMoreThanNineNumber = 99999999999999;
-      const user = new User({
-        email: "email@gmail.com",
-        dni: dniWithMoreThanNineNumber,
-        password: "somethingVerySecret123",
-        name: "name",
-        surname: "surname"
-      });
-
-      await expect(user.validate()).rejects.toThrowErrorWithMessage(
-        ValidationError,
-        InvalidDniError.buildMessage(dniWithMoreThanNineNumber)
-      );
+      await expectToThrowErrorWithDni(99999999999999);
     });
 
     it("throws an error if dni has less than nine digits", async () => {
-      const dniWithLessThanNineNumber = 11;
-      const user = new User({
-        email: "email@gmail.com",
-        dni: dniWithLessThanNineNumber,
-        password: "somethingVerySecret123",
-        name: "name",
-        surname: "surname"
-      });
-
-      await expect(user.validate()).rejects.toThrowErrorWithMessage(
-        ValidationError,
-        InvalidDniError.buildMessage(dniWithLessThanNineNumber)
-      );
+      await expectToThrowErrorWithDni(11);
     });
   });
 
