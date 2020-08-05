@@ -1,1 +1,1 @@
-export { OfferApprovalEventRepository } from "./Repository";
+export { OfferApprovalEvent } from "./Model";
