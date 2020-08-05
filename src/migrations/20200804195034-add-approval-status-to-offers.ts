@@ -1,7 +1,7 @@
 import { QueryInterface } from "sequelize";
 
 export = {
-  up: async (queryInterface: QueryInterface) =>{
+  up: async (queryInterface: QueryInterface) => {
     await queryInterface.addColumn(
       "Offers",
       "extensionApprovalStatus",
@@ -22,7 +22,7 @@ export = {
       }
     );
   },
-  down: async (queryInterface: QueryInterface) =>{
+  down: async (queryInterface: QueryInterface) => {
     await queryInterface.removeColumn("Offers", "extensionApprovalStatus");
     return queryInterface.removeColumn("Offers", "graduadosApprovalStatus");
   }
