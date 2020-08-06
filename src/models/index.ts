@@ -15,5 +15,6 @@ export { CompanyPhoto } from "./CompanyPhoto/Model";
 export { Offer } from "./Offer/Model";
 export { OfferSection } from "./Offer/OfferSection/Model";
 export { OfferCareer } from "./Offer/OfferCareer/Model";
+export { OfferApprovalEvent } from "./Offer/OfferApprovalEvent/Model";
 export { User } from "./User/Model";
 export { CompanyUser } from "./CompanyUser/Model";
