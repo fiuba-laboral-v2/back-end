@@ -1,6 +1,7 @@
 import { UniqueConstraintError, ValidationError } from "sequelize";
 import { UserRepository } from "$models/User/Repository";
 import { UserNotFoundError } from "$models/User";
+import { UUID_REGEX } from "../index";
 import {
   InvalidEmailError,
   PasswordWithoutDigitsError,
@@ -20,12 +21,24 @@ describe("UserRepository", () => {
       };
       const user = await UserRepository.create(userAttributes);
 
-      expect(user.uuid).not.toBeNull();
       expect(user).toEqual(expect.objectContaining({
+        uuid: expect.stringMatching(UUID_REGEX),
         email: userAttributes.email,
         name: userAttributes.name,
         surname: userAttributes.surname
       }));
+    });
+
+    it("creates a user with a dni", async () => {
+      const dni = 30288888;
+      const user = await UserRepository.create({
+        email: "asd@qwe.com",
+        password: "AValidPassword123",
+        dni,
+        name: "Sebastian",
+        surname: "Blanco"
+      });
+      expect(user.dni).toEqual(dni);
     });
 
     it("throws an error if password is invalid", async () => {
@@ -66,6 +79,29 @@ describe("UserRepository", () => {
           password: "somethingVerySecret123",
           name: "name",
           surname: "surname"
+        })
+      ).rejects.toThrowErrorWithMessage(
+        UniqueConstraintError,
+        "Validation error"
+      );
+    });
+
+    it("throws an error when creating an user with an existing dni", async () => {
+      const dni = 39207888;
+      await UserRepository.create({
+        email: "robert_johnson@gmail.com",
+        password: "somethingVerySecret123",
+        name: "Robert",
+        dni,
+        surname: "Johnson"
+      });
+      await expect(
+        UserRepository.create({
+          email: "eddie_boyd@gmail.com",
+          password: "somethingVerySecret123",
+          name: "Eddie",
+          dni,
+          surname: "Boyd"
         })
       ).rejects.toThrowErrorWithMessage(
         UniqueConstraintError,

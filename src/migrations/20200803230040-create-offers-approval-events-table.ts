@@ -1,5 +1,4 @@
-import { QueryInterface, UUID, DATE, ENUM } from "sequelize";
-import { approvalStatuses } from "../models/ApprovalStatus";
+import { QueryInterface, UUID, DATE } from "sequelize";
 
 export = {
   up: (queryInterface: QueryInterface) =>
@@ -25,7 +24,7 @@ export = {
         },
         status: {
           allowNull: false,
-          type: ENUM<string>({ values: approvalStatuses })
+          type: "approval_status"
         },
         createdAt: {
           allowNull: false,
