@@ -32,6 +32,17 @@ describe("User", () => {
     expect(user.dni).toBeUndefined();
   });
 
+  it("instantiates a user with no password", async () => {
+    const user = new User({
+      email: "asd@qwe.com",
+      dni: 39207888,
+      name: "name",
+      surname: "surname"
+    });
+    await expect(user.validate()).resolves.not.toThrow();
+    expect(user.password).toBeUndefined();
+  });
+
   it("instantiates a valid user with a very long name", async () => {
     const params = {
       email: "asd@qwe.com",

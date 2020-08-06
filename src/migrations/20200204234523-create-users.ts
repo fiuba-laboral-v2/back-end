@@ -18,7 +18,7 @@ export = {
           type: INTEGER
         },
         password: {
-          allowNull: false,
+          allowNull: true,
           type: STRING
         },
         name: {

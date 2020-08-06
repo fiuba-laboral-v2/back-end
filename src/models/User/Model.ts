@@ -20,6 +20,7 @@ import {
 export class User extends Model<User> {
   @BeforeCreate
   public static beforeCreateHook(user: User): void {
+    if (!user.password) return;
     user.setPassword(user.password);
   }
 
@@ -50,7 +51,7 @@ export class User extends Model<User> {
   public dni: number;
 
   @Column({
-    allowNull: false,
+    allowNull: true,
     type: STRING
   })
   public password: string;

@@ -41,6 +41,15 @@ describe("UserRepository", () => {
       expect(user.dni).toEqual(dni);
     });
 
+    it("creates a user with no password", async () => {
+      const user = await UserRepository.create({
+        email: "asd@qwe.com",
+        name: "Sebastian",
+        surname: "Blanco"
+      });
+      expect(user.password).toBeNull();
+    });
+
     it("throws an error if password is invalid", async () => {
       await expect(UserRepository.create({
         email: "asd@qwe.com",
