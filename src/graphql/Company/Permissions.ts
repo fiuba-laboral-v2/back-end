@@ -1,5 +1,5 @@
-import { isAdmin, isCompanyUser } from "../Rules";
-import { isApprovedApplicant } from "../Rules/isApprovedApplicant";
+import { isAdmin, isCompanyUser } from "$graphql/Rules";
+import { isApprovedApplicant } from "$graphql/Rules/isApprovedApplicant";
 import { or } from "graphql-shield";
 
 export const companyPermissions = {

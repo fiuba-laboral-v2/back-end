@@ -1,7 +1,7 @@
 import { GraphQLUnionType } from "graphql";
-import { GraphQLCompany } from "../../Company/Types/GraphQLCompany";
-import { GraphQLApplicant } from "../../Applicant/Types/GraphQLApplicant";
-import { Applicant, Company } from "../../../models";
+import { GraphQLCompany } from "$graphql/Company/Types/GraphQLCompany";
+import { GraphQLApplicant } from "$graphql/Applicant/Types/GraphQLApplicant";
+import { Applicant, Company } from "$models";
 
 export const GraphQLAdminTask = new GraphQLUnionType({
   name: "AdminTask",

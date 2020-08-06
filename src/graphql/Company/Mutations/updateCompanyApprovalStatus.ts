@@ -1,9 +1,9 @@
-import { ID, nonNull } from "../../fieldTypes";
-import { CompanyRepository } from "../../../models/Company";
+import { ID, nonNull } from "$graphql/fieldTypes";
+import { CompanyRepository } from "$models/Company";
 import { GraphQLCompany } from "../Types/GraphQLCompany";
-import { IAdminUser } from "../../Context";
-import { GraphQLApprovalStatus } from "../../ApprovalStatus/Types/GraphQLApprovalStatus";
-import { ApprovalStatus } from "../../../models/ApprovalStatus";
+import { IAdminUser } from "$graphql/Context";
+import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export const updateCompanyApprovalStatus = {
   type: GraphQLCompany,

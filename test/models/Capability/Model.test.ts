@@ -1,5 +1,5 @@
 import { ValidationError } from "sequelize";
-import { Capability } from "../../../src/models";
+import { Capability } from "$models";
 
 describe("Capability", () => {
   it("create a valid capability", async () => {

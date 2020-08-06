@@ -1,12 +1,12 @@
-import { AdminRepository } from "../../../src/models/Admin";
-import { UserRepository } from "../../../src/models/User";
+import { AdminRepository } from "$models/Admin";
+import { UserRepository } from "$models/User";
 import { UniqueConstraintError } from "sequelize";
 import {
   ExtensionAdminGenerator,
   GraduadosAdminGenerator,
   TAdminDataGenerator
-} from "../../generators/Admin";
-import { AdminNotFoundError } from "../../../src/models/Admin/Errors";
+} from "$generators/Admin";
+import { AdminNotFoundError } from "$models/Admin/Errors";
 
 describe("AdminRepository", () => {
   let extensionAdminsData: TAdminDataGenerator;

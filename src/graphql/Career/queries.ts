@@ -1,9 +1,9 @@
 import { GraphQLCareer } from "./Types/Career";
-import { ID, List, nonNull } from "../fieldTypes";
+import { ID, List, nonNull } from "$graphql/fieldTypes";
 import {
   CareerRepository,
   CareerSerializer
-} from "../../models/Career";
+} from "$models/Career";
 
 const careerQueries = {
   getCareerByCode: {

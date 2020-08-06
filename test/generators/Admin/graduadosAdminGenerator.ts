@@ -1,5 +1,5 @@
 import { withCompleteData } from "./withCompleteData";
-import { AdminRepository, Secretary } from "../../../src/models/Admin";
+import { AdminRepository, Secretary } from "$models/Admin";
 import { TAdminGenerator, TAdminDataGenerator } from ".";
 
 export const GraduadosAdminGenerator = {

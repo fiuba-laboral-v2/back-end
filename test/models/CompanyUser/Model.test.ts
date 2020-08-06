@@ -1,4 +1,4 @@
-import { CompanyUser } from "../../../src/models";
+import { CompanyUser } from "$models";
 import { ValidationError } from "sequelize";
 import generateUuid from "uuid/v4";
 

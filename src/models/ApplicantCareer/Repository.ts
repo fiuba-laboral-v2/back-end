@@ -1,7 +1,7 @@
-import { IApplicantCareer } from "../Applicant";
+import { IApplicantCareer } from "$models/Applicant";
 import { ApplicantCareerNotFound } from "./Errors";
 import { Transaction } from "sequelize";
-import { Applicant, ApplicantCareer } from "..";
+import { Applicant, ApplicantCareer } from "$models";
 
 export const ApplicantCareersRepository = {
   findByApplicantAndCareer: async (applicantUuid: string, careerCode: string) => {

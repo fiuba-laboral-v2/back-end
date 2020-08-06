@@ -1,4 +1,4 @@
-import { AdminRepository, Secretary } from "../../../src/models/Admin";
+import { AdminRepository, Secretary } from "$models/Admin";
 import { TAdminGenerator, TAdminDataGenerator } from ".";
 import { withCompleteData } from "./withCompleteData";
 

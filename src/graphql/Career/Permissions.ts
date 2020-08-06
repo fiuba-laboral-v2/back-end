@@ -1,4 +1,4 @@
-import { isAdmin, isUser } from "../Rules";
+import { isAdmin, isUser } from "$graphql/Rules";
 
 export const careersPermissions = {
   Query: {

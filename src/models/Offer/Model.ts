@@ -19,8 +19,8 @@ import {
 } from "sequelize";
 import { Career, Company, OfferCareer, OfferSection, OfferApprovalEvent } from "..";
 import { validateIntegerInRange, validateSalaryRange } from "validations-fiuba-laboral-v2";
-import { approvalStatuses, ApprovalStatus } from "../ApprovalStatus";
-import { isApprovalStatus } from "../SequelizeModelValidators";
+import { approvalStatuses, ApprovalStatus } from "$models/ApprovalStatus";
+import { isApprovalStatus } from "$models/SequelizeModelValidators";
 
 @Table({
   tableName: "Offers",

@@ -1,6 +1,6 @@
 import { BelongsTo, Column, ForeignKey, Model, Table } from "sequelize-typescript";
-import { Applicant } from "../..";
 import { INTEGER, TEXT, UUID, UUIDV4 } from "sequelize";
+import { Applicant } from "$models";
 
 @Table({ tableName: "Sections" })
 export class Section extends Model<Section> {

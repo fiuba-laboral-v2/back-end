@@ -1,6 +1,6 @@
 import { Transaction } from "sequelize";
-import { Offer } from "../..";
-import { ApprovalStatus } from "../../ApprovalStatus";
+import { Offer } from "$models";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export interface ICreateOfferApprovalEvent {
   adminUserUuid: string;

@@ -1,13 +1,13 @@
-import { CompanyRepository } from "../../../../src/models/Company";
-import { UserRepository } from "../../../../src/models/User";
-import { Admin } from "../../../../src/models";
-import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
+import { CompanyRepository } from "$models/Company";
+import { UserRepository } from "$models/User";
+import { Admin } from "$models";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 import {
   CompanyApprovalEventRepository
-} from "../../../../src/models/Company/CompanyApprovalEvent";
+} from "$models/Company/CompanyApprovalEvent";
 import { ForeignKeyConstraintError } from "sequelize";
-import { CompanyGenerator, TCompanyGenerator } from "../../../generators/Company";
-import { ExtensionAdminGenerator, TAdminGenerator } from "../../../generators/Admin";
+import { CompanyGenerator, TCompanyGenerator } from "$generators/Company";
+import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
 
 describe("CompanyApprovalEventRepository", () => {
   let companies: TCompanyGenerator;

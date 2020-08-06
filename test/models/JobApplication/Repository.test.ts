@@ -1,12 +1,12 @@
 import { ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
-import { CompanyRepository } from "../../../src/models/Company";
-import { OfferRepository } from "../../../src/models/Offer";
-import { JobApplicationRepository } from "../../../src/models/JobApplication";
-import { JobApplication } from "../../../src/models";
-import { UserRepository } from "../../../src/models/User";
-import { CompanyGenerator, TCompanyGenerator } from "../../generators/Company";
-import { ApplicantGenerator, TApplicantGenerator } from "../../generators/Applicant";
-import { OfferGenerator, TOfferGenerator } from "../../generators/Offer";
+import { CompanyRepository } from "$models/Company";
+import { OfferRepository } from "$models/Offer";
+import { JobApplicationRepository } from "$models/JobApplication";
+import { JobApplication } from "$models";
+import { UserRepository } from "$models/User";
+import { CompanyGenerator, TCompanyGenerator } from "$generators/Company";
+import { ApplicantGenerator, TApplicantGenerator } from "$generators/Applicant";
+import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
 
 describe("JobApplicationRepository", () => {
   let companies: TCompanyGenerator;

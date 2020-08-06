@@ -23,7 +23,7 @@ import {
   OfferApprovalEvent,
   Section,
   User
-} from "../models";
+} from "$models";
 
 const models = [
   Admin,

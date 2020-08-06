@@ -1,15 +1,15 @@
 import { ForeignKeyConstraintError } from "sequelize";
-import { ApplicantRepository } from "../../../../src/models/Applicant";
-import { UserRepository } from "../../../../src/models/User";
-import { AdminRepository } from "../../../../src/models/Admin";
-import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
+import { ApplicantRepository } from "$models/Applicant";
+import { UserRepository } from "$models/User";
+import { AdminRepository } from "$models/Admin";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 import {
   ApplicantApprovalEventRepository,
   ICreateApplicantApprovalEvent
-} from "../../../../src/models/Applicant/ApplicantApprovalEvent";
+} from "$models/Applicant/ApplicantApprovalEvent";
 
-import { ExtensionAdminGenerator, TAdminGenerator } from "../../../generators/Admin";
-import { ApplicantGenerator, TApplicantGenerator } from "../../../generators/Applicant";
+import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
+import { ApplicantGenerator, TApplicantGenerator } from "$generators/Applicant";
 import { UUID_REGEX } from "../../index";
 
 describe("ApplicantApprovalEventRepository", () => {

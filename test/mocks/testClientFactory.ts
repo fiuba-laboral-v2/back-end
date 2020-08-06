@@ -1,10 +1,10 @@
 import { userFactory } from "./user";
 import { IApplicantAttributes, ICompanyAttributes, IUserProps } from "./interfaces";
-import { User } from "../../src/models";
-import { CompanyRepository } from "../../src/models/Company";
+import { User } from "$models";
+import { CompanyRepository } from "$models/Company";
 import { client } from "../graphql/ApolloTestClient";
 import { IExpressContext } from "../graphql/ExpressContext";
-import { ApplicantRepository } from "../../src/models/Applicant";
+import { ApplicantRepository } from "$models/Applicant";
 
 const createApolloClient = (
   user: User,

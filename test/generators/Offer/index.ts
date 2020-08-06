@@ -1,9 +1,9 @@
 import { withObligatoryData } from "./withObligatoryData";
 import { withOneSection } from "./withOneSection";
-import { IOffer, OfferRepository } from "../../../src/models/Offer";
-import { Offer } from "../../../src/models";
-import { IOfferCareer } from "../../../src/models/Offer/OfferCareer";
-import { IOfferSection } from "../../../src/models/Offer/OfferSection";
+import { IOffer, OfferRepository } from "$models/Offer";
+import { Offer } from "$models";
+import { IOfferCareer } from "$models/Offer/OfferCareer";
+import { IOfferSection } from "$models/Offer/OfferSection";
 import { GenericGenerator, TGenericGenerator } from "../GenericGenerator";
 
 export interface IOfferInput {

@@ -1,5 +1,5 @@
 import { ICreateCompanyApprovalEvent } from "./Interfaces";
-import { CompanyApprovalEvent } from "../..";
+import { CompanyApprovalEvent } from "$models";
 
 export const CompanyApprovalEventRepository = {
   create: async ({ adminUserUuid, company, status, transaction }: ICreateCompanyApprovalEvent) =>

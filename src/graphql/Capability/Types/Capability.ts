@@ -1,5 +1,5 @@
 import { GraphQLObjectType } from "graphql";
-import { ID, nonNull, String } from "../../fieldTypes";
+import { ID, nonNull, String } from "$graphql/fieldTypes";
 
 export const GraphQLCapability = new GraphQLObjectType({
   name: "Capability",

@@ -1,5 +1,5 @@
 import { Transaction } from "sequelize";
-import { ApprovalStatus } from "../../ApprovalStatus";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export interface ICreateApplicantApprovalEvent {
   adminUserUuid: string;

@@ -1,5 +1,5 @@
-import { TranslationRepository } from "../../../src/models/Translation";
-import { MissingTranslationError } from "../../../src/models/Translation/Errors";
+import { TranslationRepository } from "$models/Translation";
+import { MissingTranslationError } from "$models/Translation/Errors";
 
 describe("TranslationRepository", () => {
   it("get an array with the key - values of the path", () => {

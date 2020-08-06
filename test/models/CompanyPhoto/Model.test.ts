@@ -1,5 +1,5 @@
-import { CompanyPhotoRepository } from "../../../src/models/CompanyPhoto";
-import { CompanyPhoto } from "../../../src/models";
+import { CompanyPhotoRepository } from "$models/CompanyPhoto";
+import { CompanyPhoto } from "$models";
 
 describe("CompanyPhoto", () => {
   beforeEach(() => CompanyPhotoRepository.truncate());

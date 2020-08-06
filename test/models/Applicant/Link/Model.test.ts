@@ -1,6 +1,6 @@
 import { ValidationError } from "sequelize";
-import { Applicant, ApplicantLink } from "../../../../src/models";
-import { UserRepository } from "../../../../src/models/User";
+import { Applicant, ApplicantLink } from "$models";
+import { UserRepository } from "$models/User";
 
 describe("ApplicantLink", () => {
   let applicant: Applicant;

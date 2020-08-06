@@ -1,6 +1,6 @@
 import { UniqueConstraintError, ValidationError } from "sequelize";
-import { UserRepository } from "../../../src/models/User/Repository";
-import { UserNotFoundError } from "../../../src/models/User";
+import { UserRepository } from "$models/User/Repository";
+import { UserNotFoundError } from "$models/User";
 import { UUID_REGEX } from "../index";
 import {
   InvalidEmailError,

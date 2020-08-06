@@ -1,20 +1,20 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 
-import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
+import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
-import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
-import { Admin } from "../../../../src/models";
-import { CareerRepository } from "../../../../src/models/Career";
-import { CompanyRepository } from "../../../../src/models/Company";
-import { UserRepository } from "../../../../src/models/User";
-import { OfferRepository } from "../../../../src/models/Offer";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { Admin } from "$models";
+import { CareerRepository } from "$models/Career";
+import { CompanyRepository } from "$models/Company";
+import { UserRepository } from "$models/User";
+import { OfferRepository } from "$models/Offer";
 
-import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
-import { CompanyGenerator, TCompanyGenerator } from "../../../generators/Company";
-import { OfferGenerator, TOfferGenerator } from "../../../generators/Offer";
-import { ExtensionAdminGenerator } from "../../../generators/Admin";
-import { testClientFactory } from "../../../mocks/testClientFactory";
+import { CareerGenerator, TCareerGenerator } from "$generators/Career";
+import { CompanyGenerator, TCompanyGenerator } from "$generators/Company";
+import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
+import { ExtensionAdminGenerator } from "$generators/Admin";
+import { testClientFactory } from "$mocks/testClientFactory";
 
 const GET_MY_OFFERS = gql`
   query {

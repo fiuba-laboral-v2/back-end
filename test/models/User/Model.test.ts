@@ -1,7 +1,7 @@
 import { ValidationError } from "sequelize";
 import generateUuid from "uuid/v4";
+import { User } from "$models";
 import { UUID_REGEX } from "../index";
-import { User } from "../../../src/models";
 import {
   InvalidEmailError,
   NameWithDigitsError,

@@ -1,16 +1,16 @@
-import { CompanyRepository } from "../../../src/models/Company";
-import { UserRepository } from "../../../src/models/User";
+import { CompanyRepository } from "$models/Company";
+import { UserRepository } from "$models/User";
 import {
   AdminTask,
   AdminTaskType,
   AdminTaskRepository
-} from "../../../src/models/AdminTask";
-import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
-import { Admin, Applicant, Company } from "../../../src/models";
+} from "$models/AdminTask";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { Admin, Applicant, Company } from "$models";
 
-import { ExtensionAdminGenerator } from "../../generators/Admin";
-import { ApplicantGenerator } from "../../generators/Applicant";
-import { CompanyGenerator } from "../../generators/Company";
+import { ExtensionAdminGenerator } from "$generators/Admin";
+import { ApplicantGenerator } from "$generators/Applicant";
+import { CompanyGenerator } from "$generators/Company";
 
 describe("AdminTaskRepository", () => {
   let admin: Admin;

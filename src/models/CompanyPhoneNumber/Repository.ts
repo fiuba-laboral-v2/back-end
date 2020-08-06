@@ -1,5 +1,5 @@
 import { Transaction } from "sequelize";
-import { Company, CompanyPhoneNumber } from "..";
+import { Company, CompanyPhoneNumber } from "$models";
 
 export const CompanyPhoneNumberRepository = {
   create: (phoneNumber: string, company: Company) =>

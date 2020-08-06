@@ -1,6 +1,6 @@
 import { GraphQLObjectType } from "graphql";
-import { ID, nonNull } from "../../fieldTypes";
-import { Admin } from "../../../models";
+import { ID, nonNull } from "$graphql/fieldTypes";
+import { Admin } from "$models";
 
 export const GraphQLAdmin = new GraphQLObjectType<Admin>({
   name: "Admin",
