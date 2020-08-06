@@ -1,6 +1,15 @@
 import { RequestBodyBuilder } from "../../../../src/services/FiubaUsers";
+import { validate } from "fast-xml-parser";
 
 describe("RequestBodyBuilder", () => {
+  it("returns a valid request body for the api", async () => {
+    const requestBody = RequestBodyBuilder.buildAuthenticate({
+      username: "username",
+      password: "password"
+    });
+    expect(validate(requestBody)).toBe(true);
+  });
+
   it("builds the request body for the api", async () => {
     const username = "username";
     const password = "password";

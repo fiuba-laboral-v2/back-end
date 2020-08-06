@@ -60,7 +60,7 @@
     "sequelize-cli": "6.2.0",
     "sequelize-typescript": "1",
     "typescript-logging": "0.6.4",
-    "validations-fiuba-laboral-v2": "1.0.19"
+    "validations-fiuba-laboral-v2": "1.0.20"
   },
   "devDependencies": {
     "@babel/core": "7.0.0",
@@ -112,6 +112,7 @@
     "db:test:drop": "NODE_ENV=test node_modules/.bin/sequelize db:drop",
     "db:all:migrate": "yarn build-migrations && sequelize db:migrate && NODE_ENV=test sequelize db:migrate",
     "db:all:reboot": "yarn db:drop && yarn db:test:drop && yarn db:create && yarn db:test:create && yarn db:all:migrate && yarn db:seed:all",
+    "db:reboot": "yarn db:drop && yarn db:create  && yarn db:migrate && yarn db:seed:all",
     "pm2:start": "yarn build && pm2 startOrRestart --no-daemon config/process.yml --env staging",
     "db:start": "docker-compose up -d fiuba-laboral-v2-backend-database-postgres",
     "db:up": "docker-compose up fiuba-laboral-v2-backend-database-postgres",

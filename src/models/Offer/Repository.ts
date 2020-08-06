@@ -44,17 +44,17 @@ export const OfferRepository = {
 
     return offer;
   },
-  findAll: async ({ createdBeforeThan }: { createdBeforeThan?: string }) => {
+  findAll: async ({ updatedBeforeThan }: { updatedBeforeThan?: string }) => {
     const limit = 2;
     const result = await Offer.findAll({
-      ...(createdBeforeThan && {
+      ...(updatedBeforeThan && {
         where: {
-          createdAt: {
-            [Op.lt]: createdBeforeThan
+          updatedAt: {
+            [Op.lt]: updatedBeforeThan
           }
         }
       }),
-      order: [["createdAt", "DESC"]],
+      order: [["updatedAt", "DESC"]],
       limit: limit
     });
     return {

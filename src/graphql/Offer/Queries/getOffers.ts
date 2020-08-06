@@ -17,12 +17,12 @@ const getOffers = {
     })
   }),
   args: {
-    createdBeforeThan: {
+    updatedBeforeThan: {
       type: GraphQLDateTime
     }
   },
-  resolve: (_: undefined, { createdBeforeThan }: { createdBeforeThan?: string }) =>
-    OfferRepository.findAll({ createdBeforeThan })
+  resolve: (_: undefined, { updatedBeforeThan }: { updatedBeforeThan?: string }) =>
+    OfferRepository.findAll({ updatedBeforeThan })
 };
 
 export { getOffers };
