@@ -9,14 +9,25 @@ const getModelByTableName = (tableName: string) =>
 
 export const AdminTaskRepository = {
   find: async (filter: IAdminTasksFilter) => {
-    if (filter.adminTaskTypes.length === 0) return [];
-    if (filter.statuses.length === 0) return [];
-    const rows = await Database.query(findAdminTasksQuery(filter), { type: "SELECT" });
-    return rows.map((row: object) => {
-      const tableName = row[TABLE_NAME_COLUMN];
-      const modelClass = getModelByTableName(tableName);
-      if (!modelClass) throw new Error(`Invalid table name: ${tableName}`);
-      return new modelClass(row);
-    });
+    if (filter.adminTaskTypes.length === 0 || filter.statuses.length === 0) {
+      return {
+        shouldFetchMore: false,
+        tasks: []
+      };
+    }
+    const limit = 2;
+    const rows = await Database.query(
+      findAdminTasksQuery({ ...filter, limit }),
+      { type: "SELECT" }
+    );
+    return {
+      shouldFetchMore: rows.length === limit,
+      tasks: rows.slice(0, limit - 1).map((row: object) => {
+        const tableName = row[TABLE_NAME_COLUMN];
+        const modelClass = getModelByTableName(tableName);
+        if (!modelClass) throw new Error(`Invalid table name: ${tableName}`);
+        return new modelClass(row);
+      })
+    };
   }
 };

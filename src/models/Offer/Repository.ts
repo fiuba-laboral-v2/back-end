@@ -44,8 +44,9 @@ export const OfferRepository = {
 
     return offer;
   },
-  findAll: ({ createdBeforeThan }: { createdBeforeThan?: string }) =>
-    Offer.findAll({
+  findAll: async ({ createdBeforeThan }: { createdBeforeThan?: string }) => {
+    const limit = 2;
+    const result = await Offer.findAll({
       ...(createdBeforeThan && {
         where: {
           createdAt: {
@@ -54,8 +55,13 @@ export const OfferRepository = {
         }
       }),
       order: [["createdAt", "DESC"]],
-      limit: 10
-    }),
+      limit: limit
+    });
+    return {
+      shouldFetchMore: result.length === limit,
+      offers: result.slice(0, limit - 1)
+    };
+  },
   findByCompanyUuid: (companyUuid: string) =>
     Offer.findAll({ where: { companyUuid } }),
   truncate: () => Offer.truncate({ cascade: true })

@@ -4,4 +4,5 @@ import { ApprovalStatus } from "../ApprovalStatus";
 export interface IAdminTasksFilter {
   adminTaskTypes: AdminTaskType[];
   statuses: ApprovalStatus[];
+  updatedBeforeThan?: Date;
 }
