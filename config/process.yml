@@ -1,11 +1,11 @@
 apps:
   - script: ./dist/src/index.js 
     name: 'fiuba-laboral-v2-back-end'
-    node_args: '-r ts-node/register -r tsconfig-paths/register'
+    node_args: '-r ./tsconfig-paths-bootstrap.js'
     instances: max
     exec_mode: cluster
     watch: true
-    max_memory_restart: 750M
+    max_memory_restart: 250M
     env:
       NODE_ENV: development
     env_production:
