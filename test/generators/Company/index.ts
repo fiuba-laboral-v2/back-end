@@ -1,10 +1,10 @@
 import { withMinimumData } from "./withMinimumData";
 import { completeData } from "./completeData";
 import { GenericGenerator, TGenericGenerator } from "../GenericGenerator";
-import { CompanyRepository, ICompany } from "../../../src/models/Company";
+import { CompanyRepository, ICompany } from "$models/Company";
 import { CustomGenerator } from "../types";
-import { Admin, Company } from "../../../src/models";
-import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
+import { Admin, Company } from "$models";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export type TCompanyGenerator = CustomGenerator<Promise<Company>>;
 export type TUpdateCompanyGenerator = TGenericGenerator<Promise<Company>, IUpdatedWithStatus>;

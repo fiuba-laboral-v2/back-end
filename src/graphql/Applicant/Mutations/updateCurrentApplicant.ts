@@ -1,11 +1,11 @@
-import { Int, List, String } from "../../fieldTypes";
+import { Int, List, String } from "$graphql/fieldTypes";
 import { GraphQLApplicant } from "../Types/GraphQLApplicant";
 import { GraphQLCareerCredits } from "../Types/CareerCredits";
 import { GraphQLSectionInput } from "../Types/Section";
-import { GraphQLUserUpdateInput } from "../../User/Types/GraphQLUserUpdateInput";
-import { ApplicantRepository, IApplicantEditable } from "../../../models/Applicant";
+import { GraphQLUserUpdateInput } from "$graphql/User/Types/GraphQLUserUpdateInput";
+import { ApplicantRepository, IApplicantEditable } from "$models/Applicant";
 import { GraphQLLinkInput } from "../Types/Link";
-import { IApplicantUser } from "../../Context";
+import { IApplicantUser } from "$graphql/Context";
 
 const updateCurrentApplicant = {
   type: GraphQLApplicant,

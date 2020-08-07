@@ -1,8 +1,8 @@
-import { ApplicantRepository } from "../../../../src/models/Applicant";
-import { SectionRepository } from "../../../../src/models/Applicant/Section";
+import { ApplicantRepository } from "$models/Applicant";
+import { SectionRepository } from "$models/Applicant/Section";
 import { lorem, random } from "faker";
-import { UserRepository } from "../../../../src/models/User";
-import { Applicant, Section } from "../../../../src/models";
+import { UserRepository } from "$models/User";
+import { Applicant, Section } from "$models";
 
 describe("Section model", () => {
   let applicant: Applicant;

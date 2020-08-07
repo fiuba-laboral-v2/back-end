@@ -1,5 +1,5 @@
 import { Column, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript";
-import { Applicant, Capability } from "..";
+import { Applicant, Capability } from "$models";
 
 @Table({ tableName: "ApplicantsCapabilities" })
 export class ApplicantCapability extends Model<ApplicantCapability> {

@@ -1,5 +1,5 @@
 import { AllowNull, Column, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript";
-import { Company, User } from "..";
+import { Company, User } from "$models";
 
 @Table
 export class CompanyUser extends Model<CompanyUser> {

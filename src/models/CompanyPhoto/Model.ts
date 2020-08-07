@@ -1,6 +1,6 @@
 import { AllowNull, BelongsTo, Column, ForeignKey, Model, Table } from "sequelize-typescript";
 import { TEXT, UUID, UUIDV4 } from "sequelize";
-import { Company } from "..";
+import { Company } from "$models";
 
 @Table
 export class CompanyPhoto extends Model<CompanyPhoto> {

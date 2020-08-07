@@ -1,6 +1,6 @@
-import { List } from "../../fieldTypes";
+import { List } from "$graphql/fieldTypes";
 import { GraphQLCompany } from "../Types/GraphQLCompany";
-import { CompanyRepository } from "../../../models/Company";
+import { CompanyRepository } from "$models/Company";
 
 export const getCompanies = {
   type: List(GraphQLCompany),

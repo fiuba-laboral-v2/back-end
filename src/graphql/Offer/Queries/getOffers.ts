@@ -1,6 +1,6 @@
 import { GraphQLOffer } from "../Types/GraphQLOffer";
-import { OfferRepository } from "../../../models/Offer";
-import { Boolean, List, nonNull } from "../../fieldTypes";
+import { OfferRepository } from "$models/Offer";
+import { Boolean, List, nonNull } from "$graphql/fieldTypes";
 import { GraphQLDateTime } from "graphql-iso-date";
 import { GraphQLObjectType } from "graphql";
 

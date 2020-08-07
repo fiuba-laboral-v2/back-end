@@ -1,7 +1,7 @@
-import { List, nonNull, String } from "../../fieldTypes";
-import { CompanyRepository, ICompany } from "../../../models/Company";
+import { List, nonNull, String } from "$graphql/fieldTypes";
+import { CompanyRepository, ICompany } from "$models/Company";
 import { GraphQLCompany } from "../Types/GraphQLCompany";
-import { GraphQLUserCreateInput } from "../../User/Types/GraphQLUserCreateInput";
+import { GraphQLUserCreateInput } from "$graphql/User/Types/GraphQLUserCreateInput";
 
 export const createCompany = {
   type: GraphQLCompany,

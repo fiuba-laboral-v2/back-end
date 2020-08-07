@@ -1,10 +1,10 @@
 import { company, internet, lorem, random } from "faker";
 import { cuitGenerator } from "../generators/Company/cuitGenerator";
 
-import { UserRepository } from "../../src/models/User";
-import { AdminRepository, Secretary } from "../../src/models/Admin";
-import { ApplicantRepository } from "../../src/models/Applicant";
-import { CompanyRepository } from "../../src/models/Company";
+import { UserRepository } from "$models/User";
+import { AdminRepository, Secretary } from "$models/Admin";
+import { ApplicantRepository } from "$models/Applicant";
+import { CompanyRepository } from "$models/Company";
 import { IApplicantAttributes, ICompanyAttributes, IUserProps } from "./interfaces";
 
 export const userFactory = {

@@ -1,9 +1,9 @@
-import { Database } from "../../config/Database";
+import { Database } from "$config/Database";
 import { IOffer } from "./";
 import { IOfferSection } from "./OfferSection";
 import { IOfferCareer } from "./OfferCareer";
 import { OfferNotFound } from "./Errors";
-import { Offer, OfferCareer, OfferSection } from "..";
+import { Offer, OfferCareer, OfferSection } from "$models";
 import { Op } from "sequelize";
 
 export const OfferRepository = {

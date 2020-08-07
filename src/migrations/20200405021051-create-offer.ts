@@ -36,6 +36,16 @@ export = {
           allowNull: false,
           type: INTEGER
         },
+        extensionApprovalStatus: {
+          allowNull: false,
+          type: "approval_status",
+          defaultValue: "pending"
+        },
+        graduadosApprovalStatus: {
+          allowNull: false,
+          type: "approval_status",
+          defaultValue: "pending"
+        },
         createdAt: {
           allowNull: false,
           type: DATE

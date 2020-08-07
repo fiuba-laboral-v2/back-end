@@ -1,6 +1,6 @@
 import { GraphQLApplicant } from "../Types/GraphQLApplicant";
-import { nonNull, ID } from "../../fieldTypes";
-import { ApplicantRepository } from "../../../models/Applicant";
+import { nonNull, ID } from "$graphql/fieldTypes";
+import { ApplicantRepository } from "$models/Applicant";
 
 const getApplicant = {
   type: GraphQLApplicant,

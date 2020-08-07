@@ -1,5 +1,5 @@
 import { Transaction } from "sequelize";
-import { Company, CompanyUser, User } from "..";
+import { Company, CompanyUser, User } from "$models";
 
 export const CompanyUserRepository = {
   create: (company: Company, user: User, transaction?: Transaction) => {

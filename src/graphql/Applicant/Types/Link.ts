@@ -1,5 +1,5 @@
 import { GraphQLInputObjectType, GraphQLObjectType } from "graphql";
-import { nonNull, String } from "../../fieldTypes";
+import { nonNull, String } from "$graphql/fieldTypes";
 
 const GraphQLLinkInput = new GraphQLInputObjectType({
   name: "LinkInput",

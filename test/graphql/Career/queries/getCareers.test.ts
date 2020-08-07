@@ -1,9 +1,9 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 
-import { CareerRepository } from "../../../../src/models/Career";
-import { CareerGenerator, TCareerDataGenerator } from "../../../generators/Career";
-import { testClientFactory } from "../../../mocks/testClientFactory";
+import { CareerRepository } from "$models/Career";
+import { CareerGenerator, TCareerDataGenerator } from "$generators/Career";
+import { testClientFactory } from "$mocks/testClientFactory";
 
 const GET_CAREERS = gql`
     query getCareers {

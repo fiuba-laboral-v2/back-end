@@ -1,4 +1,4 @@
-import { approvalStatuses } from "../ApprovalStatus";
+import { approvalStatuses } from "$models/ApprovalStatus";
 
 export const isApprovalStatus = {
   validate: {

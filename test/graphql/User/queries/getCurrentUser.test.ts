@@ -1,7 +1,7 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
-import { UserRepository } from "../../../../src/models/User";
-import { testClientFactory } from "../../../mocks/testClientFactory";
+import { UserRepository } from "$models/User";
+import { testClientFactory } from "$mocks/testClientFactory";
 
 const GET_CURRENT_USER = gql`
   query {

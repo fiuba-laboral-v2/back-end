@@ -1,6 +1,6 @@
-import { groupTableNamesByColumn } from "../../../src/models/AdminTask/groupTableNamesByColumn";
-import { ADMIN_TASK_MODELS } from "../../../src/models/AdminTask";
-import { Applicant, Company } from "../../../src/models";
+import { groupTableNamesByColumn } from "$models/AdminTask/groupTableNamesByColumn";
+import { ADMIN_TASK_MODELS } from "$models/AdminTask";
+import { Applicant, Company } from "$models";
 
 describe("groupTableNamesByColumn", () => {
 

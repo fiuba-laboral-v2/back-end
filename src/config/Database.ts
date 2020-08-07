@@ -20,9 +20,10 @@ import {
   Offer,
   OfferCareer,
   OfferSection,
+  OfferApprovalEvent,
   Section,
   User
-} from "../models";
+} from "$models";
 
 const models = [
   Admin,
@@ -43,6 +44,7 @@ const models = [
   Offer,
   OfferSection,
   OfferCareer,
+  OfferApprovalEvent,
   User
 ];
 

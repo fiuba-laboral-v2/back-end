@@ -1,7 +1,7 @@
 import { ICareer } from "./index";
 import { Op } from "sequelize";
-import { ApplicantCareer, Career } from "..";
-import { Database } from "../../config/Database";
+import { ApplicantCareer, Career } from "$models";
+import { Database } from "$config/Database";
 
 import { CareersNotFound } from "./Errors/CareersNotFound";
 

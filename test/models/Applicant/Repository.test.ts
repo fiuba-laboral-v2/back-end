@@ -1,16 +1,16 @@
 import { DatabaseError, ForeignKeyConstraintError, ValidationError } from "sequelize";
-import { CareerRepository } from "../../../src/models/Career";
-import { ApplicantRepository, IApplicantEditable } from "../../../src/models/Applicant";
-import { Admin, Applicant } from "../../../src/models";
-import { ApplicantCareersRepository } from "../../../src/models/ApplicantCareer";
-import { UserRepository } from "../../../src/models/User";
-import { CapabilityRepository } from "../../../src/models/Capability";
-import { ApplicantNotFound, ApplicantNotUpdatedError } from "../../../src/models/Applicant/Errors";
-import { ApplicantGenerator, TApplicantDataGenerator } from "../../generators/Applicant";
-import { CareerGenerator, TCareerGenerator } from "../../generators/Career";
-import { ExtensionAdminGenerator } from "../../generators/Admin";
+import { CareerRepository } from "$models/Career";
+import { ApplicantRepository, IApplicantEditable } from "$models/Applicant";
+import { Admin, Applicant } from "$models";
+import { ApplicantCareersRepository } from "$models/ApplicantCareer";
+import { UserRepository } from "$models/User";
+import { CapabilityRepository } from "$models/Capability";
+import { ApplicantNotFound, ApplicantNotUpdatedError } from "$models/Applicant/Errors";
+import { ApplicantGenerator, TApplicantDataGenerator } from "$generators/Applicant";
+import { CareerGenerator, TCareerGenerator } from "$generators/Career";
+import { ExtensionAdminGenerator } from "$generators/Admin";
 import { internet, random } from "faker";
-import { ApprovalStatus, approvalStatuses } from "../../../src/models/ApprovalStatus";
+import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
 
 describe("ApplicantRepository", () => {
   let applicantsMinimumData: TApplicantDataGenerator;

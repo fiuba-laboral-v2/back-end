@@ -2,7 +2,7 @@ import { ADMIN_TASK_MODELS, AdminTaskModelsType, AdminTaskType, TABLE_NAME_COLUM
 import { IAdminTasksFilter } from "./Interfaces";
 import { AdminTaskTypesIsEmptyError, StatusesIsEmptyError } from "./Errors";
 import { groupTableNamesByColumn } from "./groupTableNamesByColumn";
-import { ApprovalStatus } from "../ApprovalStatus";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
 const getStatusWhereClause = (statuses: ApprovalStatus[]) =>
   statuses.map(status => `"AdminTask"."approvalStatus" = '${status}'`).join(" OR ");

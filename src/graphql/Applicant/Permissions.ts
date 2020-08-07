@@ -1,6 +1,6 @@
-import { isAdmin, isApplicant, isUser } from "../Rules";
+import { isAdmin, isApplicant, isUser } from "$graphql/Rules";
 import { or } from "graphql-shield";
-import { isApprovedApplicant } from "../Rules/isApprovedApplicant";
+import { isApprovedApplicant } from "$graphql/Rules/isApprovedApplicant";
 
 export const applicantPermissions = {
   Query: {
