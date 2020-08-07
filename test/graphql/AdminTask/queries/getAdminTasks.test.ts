@@ -3,7 +3,7 @@ import { ApolloServerTestClient } from "apollo-server-testing";
 
 import { CompanyRepository } from "$models/Company";
 import {
-  AdminTask,
+  AdminTask, AdminTaskRepository,
   AdminTaskType,
   IAdminTasksFilter
 } from "$models/AdminTask";
@@ -16,15 +16,18 @@ import { ExtensionAdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { testClientFactory } from "$mocks/testClientFactory";
+import { withItemsPerPage } from "$config/PaginationConfig";
 
 const GET_ADMIN_TASKS = gql`
   query GetAdminTasks(
     $adminTaskTypes: [AdminTaskType]!,
-    $statuses: [ApprovalStatus]!
+    $statuses: [ApprovalStatus]!,
+    $updatedBeforeThan: DateTime
   ) {
     getAdminTasks(
       adminTaskTypes: $adminTaskTypes,
-      statuses: $statuses
+      statuses: $statuses,
+      updatedBeforeThan: $updatedBeforeThan
     ) {
       tasks {
         ... on Company {
@@ -49,6 +52,7 @@ describe("getAdminTasks", () => {
   let approvedApplicant: Applicant;
   let rejectedApplicant: Applicant;
   let pendingApplicant: Applicant;
+  let allTasksByDescUpdatedAt: AdminTask[];
 
   beforeAll(async () => {
     await UserRepository.truncate();
@@ -63,6 +67,15 @@ describe("getAdminTasks", () => {
     rejectedApplicant = await applicants.next({ status: ApprovalStatus.rejected, admin }).value;
     approvedApplicant = await applicants.next({ status: ApprovalStatus.approved, admin }).value;
     pendingApplicant = await applicants.next().value;
+
+    allTasksByDescUpdatedAt = [
+      rejectedCompany,
+      approvedCompany,
+      pendingCompany,
+      rejectedApplicant,
+      approvedApplicant,
+      pendingApplicant
+    ].sort(task => -task.updatedAt);
   });
 
   const getAdminTasks = async (filter: IAdminTasksFilter) => {
@@ -163,6 +176,27 @@ describe("getAdminTasks", () => {
     ]);
     expect(result.tasks).toBeSortedBy({ key: "updatedAt", order: "desc" });
     expect(result.shouldFetchMore).toEqual(false);
+  });
+
+  it("limits to itemsPerPage results", () => {
+    const itemsPerPage = 6;
+    return withItemsPerPage({ itemsPerPage }, async () => {
+      const lastTaskIndex = 3;
+      const result = await getAdminTasks({
+        adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
+        statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
+        updatedBeforeThan: allTasksByDescUpdatedAt[lastTaskIndex].updatedAt.toISOString()
+      });
+      expect(result.shouldFetchMore).toEqual(false);
+      expect(
+        result.tasks
+          .map(task => task.uuid)
+      ).toEqual(
+        allTasksByDescUpdatedAt
+          .map(task => task.uuid)
+          .slice(lastTaskIndex + 1, lastTaskIndex + 1 + itemsPerPage)
+      );
+    });
   });
 
   describe("when the variables are incorrect", () => {
