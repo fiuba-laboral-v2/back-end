@@ -190,8 +190,7 @@ describe("UserRepository", () => {
             email: "email@gmail.com",
             dni: 39888888,
             name: "name",
-            surname: "surname",
-            password: null as any
+            surname: "surname"
           })
         ).rejects.toThrowErrorWithMessage(
           MissingPasswordError,

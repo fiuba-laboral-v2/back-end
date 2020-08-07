@@ -21,14 +21,7 @@ export const UserRepository = {
 
     const isFiubaUser = await FiubaUsersService.authenticate({ dni, password });
     if (!isFiubaUser) throw new Error(`The user with DNI: ${dni} does not exist as a Fiuba user`);
-
-    return User.create(
-      {
-        dni,
-        ...attributes
-      },
-      { transaction }
-    );
+    return User.create({ dni, ...attributes }, { transaction });
   },
   validateCredentials: async (user: User, password: string) => {
     // TODO: Esto es temporal. En el próximo pr la idea es loguear al usuario de
