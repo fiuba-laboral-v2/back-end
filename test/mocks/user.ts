@@ -31,22 +31,19 @@ export const userFactory = {
     {
       careers, password, capabilities
     }: IApplicantAttributes = { careers: [], capabilities: [], password: null }
-  ) => {
-    const padron = random.number();
-    return ApplicantRepository.create({
-      padron,
-      description: random.words(),
-      careers: careers || [],
-      capabilities: capabilities || [],
-      user: {
-        dni: 99999999 - padron,
-        email: internet.email(),
-        password: password || "AValidPassword123",
-        name: "Bruno",
-        surname: "Diaz"
-      }
-    });
-  },
+  ) => ApplicantRepository.create({
+    padron: random.number(),
+    description: random.words(),
+    careers: careers || [],
+    capabilities: capabilities || [],
+    user: {
+      dni: random.number({ min: 10000000, max: 99999999 }),
+      email: internet.email(),
+      password: password || "AValidPassword123",
+      name: "Bruno",
+      surname: "Diaz"
+    }
+  }),
   company: ({ photos, user }: ICompanyAttributes = {}) =>
     CompanyRepository.create({
       cuit: cuitGenerator(),
