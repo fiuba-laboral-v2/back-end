@@ -1,3 +1,3 @@
 export { UserRepository } from "./Repository";
-export { IUser, IUserEditable } from "./Interface";
+export * from "./Interface";
 export { UserNotFoundError } from "./Errors";

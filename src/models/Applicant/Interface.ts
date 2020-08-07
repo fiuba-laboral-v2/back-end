@@ -16,6 +16,10 @@ export interface IApplicant {
   user: IUser;
 }
 
+export interface ICreateApplicant extends IApplicant {
+  user: ICreateUser;
+}
+
 export interface IApplicantEditable {
   uuid: string;
   user?: IUserEditable;
