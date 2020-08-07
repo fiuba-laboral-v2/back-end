@@ -1,6 +1,6 @@
 import { GraphQLOffer } from "../Types/GraphQLOffer";
-import { OfferRepository } from "../../../models/Offer";
-import { List } from "../../fieldTypes";
+import { OfferRepository } from "$models/Offer";
+import { List } from "$graphql/fieldTypes";
 import { GraphQLDateTime } from "graphql-iso-date";
 
 const getOffers = {

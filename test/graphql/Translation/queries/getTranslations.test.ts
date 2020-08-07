@@ -1,6 +1,6 @@
 import { gql } from "apollo-server";
 import { executeQuery } from "../../ApolloTestClient";
-import { MissingTranslationError } from "../../../../src/models/Translation/Errors";
+import { MissingTranslationError } from "$models/Translation/Errors";
 
 const query = gql`
   query getTranslations($translationGroup: String!) {

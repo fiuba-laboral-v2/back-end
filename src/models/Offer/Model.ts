@@ -14,10 +14,13 @@ import {
   INTEGER,
   TEXT,
   UUID,
-  UUIDV4
+  UUIDV4,
+  ENUM
 } from "sequelize";
-import { Career, Company, OfferCareer, OfferSection } from "..";
+import { Career, Company, OfferCareer, OfferSection, OfferApprovalEvent } from "..";
 import { validateIntegerInRange, validateSalaryRange } from "validations-fiuba-laboral-v2";
+import { approvalStatuses, ApprovalStatus } from "$models/ApprovalStatus";
+import { isApprovalStatus } from "$models/SequelizeModelValidators";
 
 @Table({
   tableName: "Offers",
@@ -58,6 +61,22 @@ export class Offer extends Model<Offer> {
   })
   public description: string;
 
+  @Column({
+    allowNull: false,
+    type: ENUM<string>({ values: approvalStatuses }),
+    defaultValue: ApprovalStatus.pending,
+    ...isApprovalStatus
+  })
+  public extensionApprovalStatus: ApprovalStatus;
+
+  @Column({
+    allowNull: false,
+    type: ENUM<string>({ values: approvalStatuses }),
+    defaultValue: ApprovalStatus.pending,
+    ...isApprovalStatus
+  })
+  public graduadosApprovalStatus: ApprovalStatus;
+
   @Is("hoursPerDay", validateIntegerInRange({ min: { value: 0, include: false } }))
   @Column({
     allowNull: false,
@@ -85,7 +104,11 @@ export class Offer extends Model<Offer> {
   @BelongsToMany(() => Career, () => OfferCareer)
   public careers: Career[];
 
+  @HasMany(() => OfferApprovalEvent)
+  public approvalEvents: OfferApprovalEvent;
+
   public getCompany: HasOneGetAssociationMixin<Company>;
   public getSections: HasManyGetAssociationsMixin<OfferSection>;
   public getCareers: HasManyGetAssociationsMixin<Career>;
+  public getApprovalEvents: HasManyGetAssociationsMixin<OfferApprovalEvent>;
 }

@@ -1,5 +1,5 @@
 import { ValidationError } from "sequelize";
-import { Career } from "../../../src/models";
+import { Career } from "$models";
 import { NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
 
 describe("Career", () => {

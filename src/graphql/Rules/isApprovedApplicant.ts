@@ -1,10 +1,10 @@
 import { chain } from "graphql-shield";
 import { IApplicantUser } from "../Context";
 import { UnauthorizedError } from "../Errors";
-import { ApprovalStatus } from "../../models/ApprovalStatus";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 import { isApplicant } from "./isApplicant";
 import { rule } from "./rule";
-import { ApplicantRepository } from "../../models/Applicant";
+import { ApplicantRepository } from "$models/Applicant";
 
 const applicantIsApproved = rule(async (
   parent,

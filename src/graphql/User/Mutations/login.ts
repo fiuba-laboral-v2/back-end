@@ -1,9 +1,9 @@
-import { Boolean, nonNull, String } from "../../fieldTypes";
-import { IUser, UserRepository } from "../../../models/User";
+import { Boolean, nonNull, String } from "$graphql/fieldTypes";
+import { IUser, UserRepository } from "$models/User";
 import { JWT } from "../../../JWT";
-import { Context } from "../../Context/graphqlContext";
+import { Context } from "$graphql/Context/graphqlContext";
 import { BadCredentialsError } from "../Errors";
-import { AuthConfig } from "../../../config/AuthConfig";
+import { AuthConfig } from "$config/AuthConfig";
 
 export const login = {
   type: Boolean,

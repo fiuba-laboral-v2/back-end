@@ -1,13 +1,13 @@
 import { gql } from "apollo-server";
 import { client, executeMutation } from "../../ApolloTestClient";
-import { User } from "../../../../src/models";
-import { UserRepository } from "../../../../src/models/User";
-import { CompanyRepository } from "../../../../src/models/Company";
-import { userFactory } from "../../../mocks/user";
+import { User } from "$models";
+import { UserRepository } from "$models/User";
+import { CompanyRepository } from "$models/Company";
+import { userFactory } from "$mocks/user";
 import { JWT } from "../../../../src/JWT";
-import { BadCredentialsError } from "../../../../src/graphql/User/Errors";
-import { UserNotFoundError } from "../../../../src/models/User/Errors";
-import { AuthConfig } from "../../../../src/config/AuthConfig";
+import { BadCredentialsError } from "$graphql/User/Errors";
+import { UserNotFoundError } from "$models/User/Errors";
+import { AuthConfig } from "$config/AuthConfig";
 
 const LOGIN = gql`
   mutation ($email: String!, $password: String!) {

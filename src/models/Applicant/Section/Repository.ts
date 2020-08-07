@@ -1,4 +1,4 @@
-import { Applicant, Section } from "../..";
+import { Applicant, Section } from "$models";
 import { TSection } from "../Interface";
 import { Transaction } from "sequelize";
 

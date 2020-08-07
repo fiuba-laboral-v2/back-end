@@ -1,8 +1,8 @@
 import { ApolloError, gql } from "apollo-server";
-import { CareerRepository } from "../../../../src/models/Career";
-import { CareerGenerator, TCareerDataGenerator } from "../../../generators/Career";
-import { testClientFactory } from "../../../mocks/testClientFactory";
-import { UnauthorizedError } from "../../../../src/graphql/Errors";
+import { CareerRepository } from "$models/Career";
+import { CareerGenerator, TCareerDataGenerator } from "$generators/Career";
+import { testClientFactory } from "$mocks/testClientFactory";
+import { UnauthorizedError } from "$graphql/Errors";
 
 const SAVE_CAREER = gql`
   mutation SaveCareer($code: ID!, $description: String!, $credits: Int!) {

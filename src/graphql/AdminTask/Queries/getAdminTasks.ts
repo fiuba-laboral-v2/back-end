@@ -1,8 +1,8 @@
-import { List, nonNull } from "../../fieldTypes";
-import { AdminTaskRepository, IAdminTasksFilter } from "../../../models/AdminTask";
+import { List, nonNull } from "$graphql/fieldTypes";
+import { AdminTaskRepository, IAdminTasksFilter } from "$models/AdminTask";
 import { GraphQLAdminTask } from "../Types/GraphQLAdminTask";
 import { GraphQLAdminTaskType } from "../Types/GraphQLAdminTaskType";
-import { GraphQLApprovalStatus } from "../../ApprovalStatus/Types/GraphQLApprovalStatus";
+import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
 
 export const getAdminTasks = {
   type: nonNull(List(GraphQLAdminTask)),

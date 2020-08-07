@@ -1,13 +1,13 @@
-import { Database } from "../../config/Database";
+import { Database } from "$config/Database";
 import { ICompany, ICompanyEditable } from "./index";
-import { CompanyPhotoRepository } from "../CompanyPhoto";
-import { CompanyPhoneNumberRepository } from "../CompanyPhoneNumber";
+import { CompanyPhotoRepository } from "$models/CompanyPhoto";
+import { CompanyPhoneNumberRepository } from "$models/CompanyPhoneNumber";
 import { CompanyNotFoundError, CompanyNotUpdatedError } from "./Errors";
-import { UserRepository } from "../User";
-import { ApprovalStatus } from "../ApprovalStatus";
-import { CompanyUserRepository } from "../CompanyUser";
+import { UserRepository } from "$models/User";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { CompanyUserRepository } from "$models/CompanyUser";
 import { CompanyApprovalEventRepository } from "./CompanyApprovalEvent";
-import { Company } from "..";
+import { Company } from "$models";
 
 export const CompanyRepository = {
   create: (

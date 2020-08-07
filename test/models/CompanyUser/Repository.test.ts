@@ -1,9 +1,9 @@
-import { CompanyRepository } from "../../../src/models/Company";
-import { UserRepository } from "../../../src/models/User";
-import { Company, User } from "../../../src/models";
+import { CompanyRepository } from "$models/Company";
+import { UserRepository } from "$models/User";
+import { Company, User } from "$models";
 import { UserMocks } from "../User/mocks";
 import { companyMocks } from "../Company/mocks";
-import { CompanyUserRepository } from "../../../src/models/CompanyUser/Repository";
+import { CompanyUserRepository } from "$models/CompanyUser/Repository";
 import { ForeignKeyConstraintError } from "sequelize";
 
 describe("CompanyRepository", () => {

@@ -1,10 +1,10 @@
 import { GraphQLCareer } from "./Types/Career";
-import { Int, nonNull, String, ID } from "../fieldTypes";
+import { Int, nonNull, String, ID } from "$graphql/fieldTypes";
 import {
   ICareer,
   CareerRepository,
   CareerSerializer
-} from "../../models/Career";
+} from "$models/Career";
 
 const careerMutations = {
   saveCareer: {

@@ -6,8 +6,8 @@ import {
   Table
 } from "sequelize-typescript";
 import { compare, hashSync } from "bcrypt";
-import { HasOneGetAssociationMixin, INTEGER, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
-import { Admin, Applicant, Company, CompanyUser } from "..";
+import { HasOneGetAssociationMixin, STRING, TEXT, UUID, UUIDV4, INTEGER } from "sequelize";
+import { Admin, Applicant, Company, CompanyUser } from "$models";
 import { optional } from "../SequelizeModelValidators";
 import {
   validateEmail,

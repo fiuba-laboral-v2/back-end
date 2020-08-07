@@ -1,8 +1,8 @@
-import { nonNull, String } from "../../fieldTypes";
+import { nonNull, String } from "$graphql/fieldTypes";
 import { GraphQLJobApplication } from "../Types/GraphQLJobApplication";
-import { JobApplicationRepository } from "../../../models/JobApplication";
-import { OfferRepository } from "../../../models/Offer";
-import { IApplicantUser } from "../../Context";
+import { JobApplicationRepository } from "$models/JobApplication";
+import { OfferRepository } from "$models/Offer";
+import { IApplicantUser } from "$graphql/Context";
 
 export const saveJobApplication = {
   type: GraphQLJobApplication,

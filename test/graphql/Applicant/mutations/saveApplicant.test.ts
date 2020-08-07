@@ -1,12 +1,12 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 
-import { UserRepository } from "../../../../src/models/User";
-import { CareerRepository } from "../../../../src/models/Career";
-import { Career } from "../../../../src/models";
+import { UserRepository } from "$models/User";
+import { CareerRepository } from "$models/Career";
+import { Career } from "$models";
 
-import { ApplicantGenerator, TApplicantDataGenerator } from "../../../generators/Applicant";
-import { CareerGenerator } from "../../../generators/Career";
+import { ApplicantGenerator, TApplicantDataGenerator } from "$generators/Applicant";
+import { CareerGenerator } from "$generators/Career";
 
 const SAVE_APPLICANT_WITH_COMPLETE_DATA = gql`
   mutation SaveApplicant(

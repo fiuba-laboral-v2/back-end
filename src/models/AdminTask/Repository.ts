@@ -1,4 +1,4 @@
-import { Database } from "../../config/Database";
+import { Database } from "$config/Database";
 import { find } from "lodash";
 import { findAdminTasksQuery } from "./findAdminTasksQuery";
 import { ADMIN_TASK_MODELS, TABLE_NAME_COLUMN } from "./Model";

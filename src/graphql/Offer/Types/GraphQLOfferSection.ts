@@ -1,5 +1,5 @@
 import { GraphQLInputObjectType, GraphQLObjectType } from "graphql";
-import { nonNull, String, ID, Int } from "../../fieldTypes";
+import { nonNull, String, ID, Int } from "$graphql/fieldTypes";
 
 const GraphQLOfferSectionInput = new GraphQLInputObjectType({
   name: "OfferSectionInput",

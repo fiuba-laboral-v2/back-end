@@ -1,19 +1,19 @@
 import { gql } from "apollo-server";
 
-import { CareerRepository } from "../../../../src/models/Career";
-import { CompanyRepository } from "../../../../src/models/Company";
-import { OfferRepository } from "../../../../src/models/Offer";
-import { UserRepository } from "../../../../src/models/User";
+import { CareerRepository } from "$models/Career";
+import { CompanyRepository } from "$models/Company";
+import { OfferRepository } from "$models/Offer";
+import { UserRepository } from "$models/User";
 
-import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
-import { CompanyGenerator, TCompanyGenerator } from "../../../generators/Company";
-import { OfferGenerator, TOfferDataGenerator } from "../../../generators/Offer";
-import { testClientFactory } from "../../../mocks/testClientFactory";
-import { UnauthorizedError } from "../../../../src/graphql/Errors";
-import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
-import { ExtensionAdminGenerator, TAdminGenerator } from "../../../generators/Admin";
+import { CareerGenerator, TCareerGenerator } from "$generators/Career";
+import { CompanyGenerator, TCompanyGenerator } from "$generators/Company";
+import { OfferGenerator, TOfferDataGenerator } from "$generators/Offer";
+import { testClientFactory } from "$mocks/testClientFactory";
+import { UnauthorizedError } from "$graphql/Errors";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
 import { range } from "lodash";
-import { Offer } from "../../../../src/models";
+import { Offer } from "$models";
 
 const GET_OFFERS = gql`
   query ($updatedBeforeThan: DateTime) {

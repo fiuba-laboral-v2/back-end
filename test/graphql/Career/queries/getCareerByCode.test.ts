@@ -1,12 +1,12 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 
-import { CareerRepository } from "../../../../src/models/Career";
-import { CareersNotFound } from "../../../../src/models/Career/Errors/CareersNotFound";
-import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
-import { testClientFactory } from "../../../mocks/testClientFactory";
+import { CareerRepository } from "$models/Career";
+import { CareersNotFound } from "$models/Career/Errors/CareersNotFound";
+import { CareerGenerator, TCareerGenerator } from "$generators/Career";
+import { testClientFactory } from "$mocks/testClientFactory";
 
-import { AuthenticationError } from "../../../../src/graphql/Errors";
+import { AuthenticationError } from "$graphql/Errors";
 
 const GET_CAREER_BY_CODE = gql`
   query GetCareerByCode($code: ID!) {

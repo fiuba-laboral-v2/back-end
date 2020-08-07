@@ -1,6 +1,6 @@
 import { GraphQLCompany } from "../Types/GraphQLCompany";
-import { ID, nonNull } from "../../fieldTypes";
-import { CompanyRepository } from "../../../models/Company";
+import { ID, nonNull } from "$graphql/fieldTypes";
+import { CompanyRepository } from "$models/Company";
 
 export const getCompanyByUuid = {
   type: GraphQLCompany,

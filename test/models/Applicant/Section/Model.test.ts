@@ -1,5 +1,5 @@
 import { ValidationError } from "sequelize";
-import { Section } from "../../../../src/models";
+import { Section } from "$models";
 import { lorem, random } from "faker";
 
 describe("Section model", () => {

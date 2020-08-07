@@ -1,5 +1,5 @@
 import { BelongsToMany, Column, Model, Table } from "sequelize-typescript";
-import { Applicant, ApplicantCapability } from "..";
+import { Applicant, ApplicantCapability } from "$models";
 import { CITEXT, UUID, UUIDV4 } from "sequelize";
 
 @Table({ tableName: "Capabilities" })

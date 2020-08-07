@@ -1,14 +1,14 @@
 import { GraphQLObjectType } from "graphql";
 import { GraphQLDateTime } from "graphql-iso-date";
-import { ID, Int, List, nonNull, String } from "../../fieldTypes";
-import { GraphQLUser } from "../../User/Types/GraphQLUser";
-import { GraphQLCapability } from "../../Capability/Types/Capability";
+import { ID, Int, List, nonNull, String } from "$graphql/fieldTypes";
+import { GraphQLUser } from "$graphql/User/Types/GraphQLUser";
+import { GraphQLCapability } from "$graphql/Capability/Types/Capability";
 import { GraphQLApplicantCareer } from "./ApplicantCareers";
 import { GraphQLSection } from "./Section";
 import { GraphQLLink } from "./Link";
-import { Applicant } from "../../../models";
-import { ApplicantCareersSerializer } from "../../../models/ApplicantCareer";
-import { GraphQLApprovalStatus } from "../../ApprovalStatus/Types/GraphQLApprovalStatus";
+import { Applicant } from "$models";
+import { ApplicantCareersSerializer } from "$models/ApplicantCareer";
+import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
 
 export const GraphQLApplicant = new GraphQLObjectType<Applicant>({
   name: "Applicant",

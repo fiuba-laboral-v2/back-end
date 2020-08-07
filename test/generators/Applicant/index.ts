@@ -1,9 +1,9 @@
 import { withMinimumData } from "./withMinimumData";
-import { IApplicant, ApplicantRepository } from "../../../src/models/Applicant";
+import { IApplicant, ApplicantRepository } from "$models/Applicant";
 import { CustomGenerator } from "../types";
 import { GenericGenerator, TGenericGenerator } from "../GenericGenerator";
-import { Admin, Applicant } from "../../../src/models";
-import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
+import { Admin, Applicant } from "$models";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export type TApplicantGenerator = CustomGenerator<Promise<Applicant>>;
 export type TUpdateApplicantGenerator = TGenericGenerator<Promise<Applicant>, IUpdatedWithStatus>;

@@ -1,5 +1,5 @@
 import { UniqueConstraintError } from "sequelize";
-import { CapabilityRepository } from "../../../src/models/Capability";
+import { CapabilityRepository } from "$models/Capability";
 
 describe("CapabilityRepository", () => {
   beforeEach(() => CapabilityRepository.truncate());

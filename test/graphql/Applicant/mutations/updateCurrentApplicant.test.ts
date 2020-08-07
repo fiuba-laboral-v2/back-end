@@ -1,12 +1,12 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 
-import { CareerRepository } from "../../../../src/models/Career";
-import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
-import { testClientFactory } from "../../../mocks/testClientFactory";
+import { CareerRepository } from "$models/Career";
+import { CareerGenerator, TCareerGenerator } from "$generators/Career";
+import { testClientFactory } from "$mocks/testClientFactory";
 
-import { UserRepository } from "../../../../src/models/User/Repository";
-import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
+import { UserRepository } from "$models/User/Repository";
+import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 const UPDATE_CURRENT_APPLICANT = gql`
   mutation updateCurrentApplicant(

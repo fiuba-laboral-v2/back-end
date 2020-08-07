@@ -1,4 +1,4 @@
-import { RequestBodyBuilder } from "../../../../src/services/FiubaUsers";
+import { RequestBodyBuilder } from "$services/FiubaUsers";
 import { validate } from "fast-xml-parser";
 
 describe("RequestBodyBuilder", () => {

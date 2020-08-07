@@ -1,17 +1,17 @@
 import { gql } from "apollo-server";
 import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist/createTestClient";
 
-import { ApplicantNotUpdatedError, ApplicantRepository } from "../../../../src/models/Applicant";
-import { Applicant } from "../../../../src/models";
+import { ApplicantNotUpdatedError, ApplicantRepository } from "$models/Applicant";
+import { Applicant } from "$models";
 import {
   ApplicantApprovalEventRepository
-} from "../../../../src/models/Applicant/ApplicantApprovalEvent";
-import { UserRepository } from "../../../../src/models/User";
-import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
-import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
+} from "$models/Applicant/ApplicantApprovalEvent";
+import { UserRepository } from "$models/User";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
-import { ApplicantGenerator, TApplicantGenerator } from "../../../generators/Applicant";
-import { testClientFactory } from "../../../mocks/testClientFactory";
+import { ApplicantGenerator, TApplicantGenerator } from "$generators/Applicant";
+import { testClientFactory } from "$mocks/testClientFactory";
 import { client } from "../../ApolloTestClient";
 
 const UPDATE_APPLICANT_APPROVAL_STATUS = gql`

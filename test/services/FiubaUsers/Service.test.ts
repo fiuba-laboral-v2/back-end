@@ -2,7 +2,7 @@ import {
   FiubaUsersService,
   InvalidEmptyUsernameError,
   InvalidEmptyPasswordError
-} from "../../../src/services/FiubaUsers";
+} from "$services/FiubaUsers";
 
 describe("FiubaUsersService", () => {
   it("throws an error if the username is empty", async () => {

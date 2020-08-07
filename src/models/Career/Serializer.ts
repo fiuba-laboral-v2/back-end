@@ -1,4 +1,4 @@
-import { Career } from "..";
+import { Career } from "$models";
 
 import pick from "lodash/pick";
 

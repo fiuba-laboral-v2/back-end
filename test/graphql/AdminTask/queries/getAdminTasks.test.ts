@@ -1,21 +1,21 @@
 import { gql } from "apollo-server";
 import { ApolloServerTestClient } from "apollo-server-testing";
 
-import { CompanyRepository } from "../../../../src/models/Company";
+import { CompanyRepository } from "$models/Company";
 import {
   AdminTask,
   AdminTaskType,
   IAdminTasksFilter
-} from "../../../../src/models/AdminTask";
-import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
-import { UserRepository } from "../../../../src/models/User";
-import { Admin, Applicant, Company } from "../../../../src/models";
-import { UnauthorizedError } from "../../../../src/graphql/Errors";
+} from "$models/AdminTask";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { UserRepository } from "$models/User";
+import { Admin, Applicant, Company } from "$models";
+import { UnauthorizedError } from "$graphql/Errors";
 
-import { ExtensionAdminGenerator } from "../../../generators/Admin";
-import { CompanyGenerator } from "../../../generators/Company";
-import { ApplicantGenerator } from "../../../generators/Applicant";
-import { testClientFactory } from "../../../mocks/testClientFactory";
+import { ExtensionAdminGenerator } from "$generators/Admin";
+import { CompanyGenerator } from "$generators/Company";
+import { ApplicantGenerator } from "$generators/Applicant";
+import { testClientFactory } from "$mocks/testClientFactory";
 
 const GET_ADMIN_TASKS = gql`
   query GetAdminTasks(

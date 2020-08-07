@@ -1,6 +1,6 @@
-import { Database } from "../../config/Database";
+import { Database } from "$config/Database";
 import { ISaveAdmin } from "./Interface";
-import { UserRepository } from "../User";
+import { UserRepository } from "$models/User";
 import { AdminNotFoundError } from "./Errors";
 import { Admin } from "..";
 

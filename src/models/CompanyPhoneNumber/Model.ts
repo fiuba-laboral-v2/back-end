@@ -1,7 +1,7 @@
 import { BelongsTo, Column, ForeignKey, Is, Model, Table } from "sequelize-typescript";
 import { validatePhoneNumber } from "validations-fiuba-laboral-v2";
 import { STRING, UUID } from "sequelize";
-import { Company } from "..";
+import { Company } from "$models";
 
 @Table
 export class CompanyPhoneNumber extends Model<CompanyPhoneNumber> {

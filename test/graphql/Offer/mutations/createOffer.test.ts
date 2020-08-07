@@ -1,17 +1,17 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 
-import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
-import { OfferGenerator, TOfferDataGenerator } from "../../../generators/Offer";
-import { ExtensionAdminGenerator } from "../../../generators/Admin";
-import { testClientFactory } from "../../../mocks/testClientFactory";
+import { CareerGenerator, TCareerGenerator } from "$generators/Career";
+import { OfferGenerator, TOfferDataGenerator } from "$generators/Offer";
+import { ExtensionAdminGenerator } from "$generators/Admin";
+import { testClientFactory } from "$mocks/testClientFactory";
 
-import { CareerRepository } from "../../../../src/models/Career";
-import { CompanyRepository } from "../../../../src/models/Company";
-import { UserRepository } from "../../../../src/models/User";
-import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
-import { Admin } from "../../../../src/models";
-import { AuthenticationError, UnauthorizedError } from "../../../../src/graphql/Errors";
+import { CareerRepository } from "$models/Career";
+import { CompanyRepository } from "$models/Company";
+import { UserRepository } from "$models/User";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { Admin } from "$models";
+import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
     mutation createOffer(

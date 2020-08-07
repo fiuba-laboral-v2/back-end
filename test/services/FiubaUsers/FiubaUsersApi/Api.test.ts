@@ -3,8 +3,8 @@ import {
   AuthenticateFaultError,
   AuthenticateUnknownError,
   FiubaUsersApi
-} from "../../../../src/services/FiubaUsers";
-import { FiubaUsersServiceConfig } from "../../../../src/config";
+} from "$services/FiubaUsers";
+import { FiubaUsersServiceConfig } from "$config/services";
 import { RequestBodyMock } from "./RequestBodyMock";
 import { parse } from "fast-xml-parser";
 

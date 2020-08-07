@@ -1,5 +1,5 @@
 import { GraphQLObjectType } from "graphql";
-import { Int, nonNull, String, ID } from "../../fieldTypes";
+import { Int, nonNull, String, ID } from "$graphql/fieldTypes";
 
 const GraphQLApplicantCareer = new GraphQLObjectType({
   name: "ApplicantCareer",

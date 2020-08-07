@@ -1,18 +1,18 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 
-import { CareerRepository } from "../../../../src/models/Career";
-import { ApplicantNotFound } from "../../../../src/models/Applicant/Errors/ApplicantNotFound";
-import { AuthenticationError } from "../../../../src/graphql/Errors";
+import { CareerRepository } from "$models/Career";
+import { ApplicantNotFound } from "$models/Applicant/Errors/ApplicantNotFound";
+import { AuthenticationError } from "$graphql/Errors";
 
-import { CareerGenerator, TCareerGenerator } from "../../../generators/Career";
-import { testClientFactory } from "../../../mocks/testClientFactory";
+import { CareerGenerator, TCareerGenerator } from "$generators/Career";
+import { testClientFactory } from "$mocks/testClientFactory";
 import generateUuid from "uuid/v4";
-import { UserRepository } from "../../../../src/models/User";
-import { ApplicantGenerator, TApplicantGenerator } from "../../../generators/Applicant";
-import { ApprovalStatus } from "../../../../src/models/ApprovalStatus";
-import { ApplicantRepository } from "../../../../src/models/Applicant";
-import { ExtensionAdminGenerator, TAdminGenerator } from "../../../generators/Admin";
+import { UserRepository } from "$models/User";
+import { ApplicantGenerator, TApplicantGenerator } from "$generators/Applicant";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { ApplicantRepository } from "$models/Applicant";
+import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
 
 const GET_APPLICANT = gql`
   query GetApplicant($uuid: ID!) {

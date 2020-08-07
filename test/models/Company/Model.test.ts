@@ -1,6 +1,6 @@
 import { ValidationError } from "sequelize";
-import { Company } from "../../../src/models";
-import { ApprovalStatus } from "../../../src/models/ApprovalStatus";
+import { Company } from "$models";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 import { UUID_REGEX } from "../index";
 import {
   EmptyNameError,
