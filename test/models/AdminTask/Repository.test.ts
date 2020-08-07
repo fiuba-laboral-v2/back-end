@@ -7,6 +7,7 @@ import { Admin, Applicant, Company } from "$models";
 import { ExtensionAdminGenerator } from "$generators/Admin";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { CompanyGenerator } from "$generators/Company";
+import { withItemsPerPage } from "$config/PaginationConfig";
 
 describe("AdminTaskRepository", () => {
   let admin: Admin;
@@ -16,6 +17,7 @@ describe("AdminTaskRepository", () => {
   let approvedApplicant: Applicant;
   let rejectedApplicant: Applicant;
   let pendingApplicant: Applicant;
+  let allTasksByDescUpdatedAt: AdminTask[];
 
   beforeAll(async () => {
     await UserRepository.truncate();
@@ -30,6 +32,15 @@ describe("AdminTaskRepository", () => {
     rejectedApplicant = await applicants.next({ status: ApprovalStatus.rejected, admin }).value;
     approvedApplicant = await applicants.next({ status: ApprovalStatus.approved, admin }).value;
     pendingApplicant = await applicants.next().value;
+
+    allTasksByDescUpdatedAt = [
+      rejectedCompany,
+      approvedCompany,
+      pendingCompany,
+      rejectedApplicant,
+      approvedApplicant,
+      pendingApplicant
+    ].sort(task => -task.updatedAt);
   });
 
   const expectToFindAdminTasksWithStatuses = async (
@@ -141,5 +152,26 @@ describe("AdminTaskRepository", () => {
     ]);
     expect(result.tasks).toBeSortedBy({ key: "updatedAt", order: "desc" });
     expect(result.shouldFetchMore).toEqual(false);
+  });
+
+  it("limits to itemsPerPage results", () => {
+    const itemsPerPage = 3;
+    return withItemsPerPage({ itemsPerPage }, async () => {
+      const lastTaskIndex = 1;
+      const result = await AdminTaskRepository.find({
+        adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
+        statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
+        updatedBeforeThan: allTasksByDescUpdatedAt[lastTaskIndex].updatedAt
+      });
+      expect(result.shouldFetchMore).toEqual(true);
+      expect(
+        result.tasks
+          .map(task => task.uuid)
+      ).toEqual(
+        allTasksByDescUpdatedAt
+          .map(task => task.uuid)
+          .slice(lastTaskIndex + 1, lastTaskIndex + 1 + itemsPerPage)
+      );
+    });
   });
 });
