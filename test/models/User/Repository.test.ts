@@ -2,7 +2,7 @@ import { UniqueConstraintError, ValidationError } from "sequelize";
 import { UserRepository } from "$models/User/Repository";
 import { UserNotFoundError } from "$models/User";
 import { FiubaUsersService } from "$services";
-import { MissingDniError } from "$models/User/Errors";
+import { MissingDniError, MissingPasswordError } from "$models/User/Errors";
 import { UUID_REGEX } from "../index";
 import {
   InvalidEmailError,
@@ -192,8 +192,8 @@ describe("UserRepository", () => {
             surname: "surname"
           })
         ).rejects.toThrowErrorWithMessage(
-          Error,
-          "Password must be given to authenticate"
+          MissingPasswordError,
+          MissingPasswordError.buildMessage()
         );
       });
     });
