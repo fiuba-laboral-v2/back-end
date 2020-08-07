@@ -1,21 +1,9 @@
-import { GraphQLOffer } from "../Types/GraphQLOffer";
 import { OfferRepository } from "$models/Offer";
-import { Boolean, List, nonNull } from "$graphql/fieldTypes";
 import { GraphQLDateTime } from "graphql-iso-date";
-import { GraphQLObjectType } from "graphql";
+import { GraphQLPaginatedOffers } from "$graphql/Offer/Types/GraphQLPaginatedOffers";
 
 const getOffers = {
-  type: new GraphQLObjectType({
-    name: "PaginatedOffers",
-    fields: () => ({
-      shouldFetchMore: {
-        type: nonNull(Boolean)
-      },
-      offers: {
-        type: List(GraphQLOffer)
-      }
-    })
-  }),
+  type: GraphQLPaginatedOffers,
   args: {
     updatedBeforeThan: {
       type: GraphQLDateTime
