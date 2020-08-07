@@ -256,14 +256,17 @@ describe("OfferRepository", () => {
   });
 
   describe("Find all", () => {
-    const allOffers: Offer[] = [];
+    let allOffersByDescUpdatedAt: Offer[] = [];
 
     beforeAll(async () => {
       OfferRepository.truncate();
       const { uuid: companyUuid } = await companies.next().value;
       for (const _ of range(8)) {
-        allOffers.push(await OfferRepository.create(offersData.next({ companyUuid }).value));
+        allOffersByDescUpdatedAt.push(
+          await OfferRepository.create(offersData.next({ companyUuid }).value)
+        );
       }
+      allOffersByDescUpdatedAt = allOffersByDescUpdatedAt.sort(offer => -offer.updatedAt);
     });
 
     it("sorts by updatedAt DESC, limits to itemsPerPage results", () => {
@@ -275,10 +278,28 @@ describe("OfferRepository", () => {
           result.offers
             .map(offer => offer.uuid)
         ).toEqual(
-          allOffers
-            .sort(offer => -offer.updatedAt)
+          allOffersByDescUpdatedAt
             .map(offer => offer.uuid)
             .slice(0, itemsPerPage)
+        );
+      });
+    });
+
+    it("gives last results, indicates that there are no earlier offers to fetch", () => {
+      const itemsPerPage = 3;
+      return withItemsPerPage({ itemsPerPage }, async () => {
+        const lastOfferIndex = 5;
+        const result = await OfferRepository.findAll({
+          updatedBeforeThan: allOffersByDescUpdatedAt[lastOfferIndex].updatedAt
+        });
+        expect(result.shouldFetchMore).toEqual(false);
+        expect(
+          result.offers
+            .map(offer => offer.uuid)
+        ).toEqual(
+          allOffersByDescUpdatedAt
+            .map(offer => offer.uuid)
+            .slice(lastOfferIndex + 1, allOffersByDescUpdatedAt.length)
         );
       });
     });
