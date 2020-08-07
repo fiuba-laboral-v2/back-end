@@ -22,6 +22,6 @@ export interface IFiubaUsersApiErrorResponse {
 }
 
 export interface ICredentials {
-  username: string;
+  dni: number;
   password: string;
 }

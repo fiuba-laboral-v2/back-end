@@ -9,12 +9,12 @@ import { RequestBodyMock } from "./RequestBodyMock";
 import { parse } from "fast-xml-parser";
 
 const invalidCredentials = {
-  username: "badUsername",
+  dni: 39200000,
   password: "badPassword"
 };
 
 const validCredentials = {
-  username: "goodUsername",
+  dni: 39207988,
   password: "goodPassword"
 };
 

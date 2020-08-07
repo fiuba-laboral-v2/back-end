@@ -1,6 +1,7 @@
 import { UniqueConstraintError, ValidationError } from "sequelize";
 import { UserRepository } from "../../../src/models/User/Repository";
 import { UserNotFoundError } from "../../../src/models/User";
+import { FiubaUsersService } from "../../../src/services/FiubaUsers";
 import { UUID_REGEX } from "../index";
 import {
   InvalidEmailError,
@@ -130,6 +131,69 @@ describe("UserRepository", () => {
         PasswordWithoutDigitsError,
         "La contraseña debe contener numeros"
       );
+    });
+
+    describe("createFiubaUser", () => {
+      it("creates a valid user Fiuba user", async () => {
+        const attributes = {
+          email: "email@gmail.com",
+          dni: 39207888,
+          password: "somethingVerySecret123",
+          name: "name",
+          surname: "surname"
+        };
+        const user = await UserRepository.createFiubaUser(attributes);
+        expect(user).toEqual(expect.objectContaining({
+          uuid: expect.stringMatching(UUID_REGEX),
+          ...attributes,
+          password: null
+        }));
+      });
+
+      it("throws an error if the FiubaService authentication returns false", async () => {
+        const fiubaUsersServiceMock = jest.spyOn(FiubaUsersService, "authenticate");
+        fiubaUsersServiceMock.mockReturnValue(Promise.resolve(false));
+        await expect(
+          UserRepository.createFiubaUser({
+            email: "email@gmail.com",
+            dni: 39207888,
+            password: "somethingVerySecret123",
+            name: "name",
+            surname: "surname"
+          })
+        ).rejects.toThrowErrorWithMessage(
+          Error,
+          `The user with DNI: ${39207888} does not exist as a Fiuba user`
+        );
+      });
+
+      it("throws an error if no dni is provided", async () => {
+        await expect(
+          UserRepository.createFiubaUser({
+            email: "email@gmail.com",
+            password: "somethingVerySecret123",
+            name: "name",
+            surname: "surname"
+          })
+        ).rejects.toThrowErrorWithMessage(
+          Error,
+          "Fiuba user should have a DNI"
+        );
+      });
+
+      it("throws an error if no password is provided", async () => {
+        await expect(
+          UserRepository.createFiubaUser({
+            email: "email@gmail.com",
+            dni: 39888888,
+            name: "name",
+            surname: "surname"
+          })
+        ).rejects.toThrowErrorWithMessage(
+          Error,
+          "Password must be given to authenticate"
+        );
+      });
     });
   });
 
