@@ -97,4 +97,10 @@ export class User extends Model<User> {
   public passwordMatches(password) {
     return compare(password, this.password);
   }
+
+  public async isFiubaUser() {
+    const applicant = await this.getApplicant();
+    const admin = await this.getAdmin();
+    return applicant || admin;
+  }
 }

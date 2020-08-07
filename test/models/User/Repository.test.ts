@@ -1,7 +1,8 @@
 import { UniqueConstraintError, ValidationError } from "sequelize";
 import { UserRepository } from "$models/User/Repository";
 import { UserNotFoundError } from "$models/User";
-import { FiubaUsersService } from "../../../src/services/FiubaUsers";
+import { FiubaUsersService } from "$services";
+import { MissingDniError } from "$models/User/Errors";
 import { UUID_REGEX } from "../index";
 import {
   InvalidEmailError,
@@ -152,7 +153,7 @@ describe("UserRepository", () => {
 
       it("throws an error if the FiubaService authentication returns false", async () => {
         const fiubaUsersServiceMock = jest.spyOn(FiubaUsersService, "authenticate");
-        fiubaUsersServiceMock.mockReturnValue(Promise.resolve(false));
+        fiubaUsersServiceMock.mockResolvedValueOnce(Promise.resolve(false));
         await expect(
           UserRepository.createFiubaUser({
             email: "email@gmail.com",
@@ -165,6 +166,7 @@ describe("UserRepository", () => {
           Error,
           `The user with DNI: ${39207888} does not exist as a Fiuba user`
         );
+        fiubaUsersServiceMock.mockClear();
       });
 
       it("throws an error if no dni is provided", async () => {
@@ -176,8 +178,8 @@ describe("UserRepository", () => {
             surname: "surname"
           })
         ).rejects.toThrowErrorWithMessage(
-          Error,
-          "Fiuba user should have a DNI"
+          MissingDniError,
+          MissingDniError.buildMessage()
         );
       });
 

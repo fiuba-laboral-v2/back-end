@@ -11,6 +11,7 @@ import { CareerGenerator, TCareerGenerator } from "$generators/Career";
 import { ExtensionAdminGenerator } from "$generators/Admin";
 import { internet, random } from "faker";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
+import { FiubaUsersService } from "$services/FiubaUsers";
 
 describe("ApplicantRepository", () => {
   let applicantsMinimumData: TApplicantDataGenerator;
@@ -95,17 +96,28 @@ describe("ApplicantRepository", () => {
       expect(section).toEqual(expect.objectContaining({ title: "title", text: "text" }));
     });
 
-    describe("Transactions", () => {
-      it("rollbacks transaction and throws error if no padron is given", async () => {
-        const applicantData = applicantsMinimumData.next().value;
-        delete applicantData.padron;
-        await expect(
-          ApplicantRepository.create(applicantData)
-        ).rejects.toThrowErrorWithMessage(
-          ValidationError,
-          "notNull Violation: Applicant.padron cannot be null"
-        );
-      });
+    it("throws an error if no padron is given", async () => {
+      const applicantData = applicantsMinimumData.next().value;
+      delete applicantData.padron;
+      await expect(
+        ApplicantRepository.create(applicantData)
+      ).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        "notNull Violation: Applicant.padron cannot be null"
+      );
+    });
+
+    it("throws an error if the FiubaService authentication returns false", async () => {
+      const fiubaUsersServiceMock = jest.spyOn(FiubaUsersService, "authenticate");
+      fiubaUsersServiceMock.mockResolvedValueOnce(Promise.resolve(false));
+
+      const applicantData = applicantsMinimumData.next().value;
+      await expect(
+        ApplicantRepository.create(applicantData)
+      ).rejects.toThrowErrorWithMessage(
+        Error,
+        `The user with DNI: ${applicantData.user.dni} does not exist as a Fiuba user`
+      );
     });
   });
 

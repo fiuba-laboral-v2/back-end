@@ -5,6 +5,7 @@ export const withMinimumData = (index: number): IApplicant => ({
   description: `description${index + 1}`,
   careers: [],
   user: {
+    dni: 10000000 + index,
     email: `applicant${index}@mail.com`,
     password: "ASDqfdsfsdfwe234",
     name: "applicantName",

@@ -1,8 +1,9 @@
 import { IUser, IUserEditable } from "./Interface";
-import { UserNotFoundError } from "./Errors";
+import { UserNotFoundError, MissingDniError } from "./Errors";
 import { Transaction } from "sequelize/types";
-import { FiubaUsersService } from "../../services/FiubaUsers";
+import { FiubaUsersService } from "$services";
 import { User } from "$models";
+import { BadCredentialsError } from "$graphql/User/Errors";
 
 export const UserRepository = {
   create: (attributes: IUser, transaction?: Transaction) =>
@@ -15,7 +16,7 @@ export const UserRepository = {
     }: IUser,
     transaction?: Transaction
   ) => {
-    if (!dni) throw new Error("Fiuba user should have a DNI");
+    if (!dni) throw new MissingDniError();
     if (!password) throw new Error("Password must be given to authenticate");
 
     const isFiubaUser = await FiubaUsersService.authenticate({ dni, password });
@@ -28,6 +29,17 @@ export const UserRepository = {
       },
       { transaction }
       );
+  },
+  validateFiubaUserCredentials: async (user: User, password: string) => {
+    const valid = FiubaUsersService.authenticate({ dni: user.dni, password });
+    if (!valid) throw new BadCredentialsError();
+  },
+  validateCredentials: async (user: User, password: string) => {
+    if (await user.isFiubaUser()) {
+      return UserRepository.validateFiubaUserCredentials(user, password);
+    }
+    const valid = await user.passwordMatches(password);
+    if (!valid) throw new BadCredentialsError();
   },
   findByEmail: async (email: string) => {
     const user = await User.findOne({ where: { email } });

@@ -20,7 +20,7 @@ export const ApplicantRepository = {
       user
     }: IApplicant
   ) => Database.transaction(async transaction => {
-    const { uuid: userUuid } = await UserRepository.create(user, transaction);
+    const { uuid: userUuid } = await UserRepository.createFiubaUser(user, transaction);
     const applicant = await Applicant.create(
       { padron, description, userUuid: userUuid },
       { transaction }
