@@ -35,6 +35,8 @@ export const UserRepository = {
     if (!valid) throw new BadCredentialsError();
   },
   validateCredentials: async (user: User, password: string) => {
+    // TODO: Esto es temporal. En el próximo pr la idea es loguear al usuario de
+    //  FIUBA con dni y mejorar el código y testearlo
     if (await user.isFiubaUser()) {
       return UserRepository.validateFiubaUserCredentials(user, password);
     }
