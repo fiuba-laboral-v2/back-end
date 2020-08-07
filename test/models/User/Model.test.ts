@@ -1,6 +1,7 @@
 import { ValidationError } from "sequelize";
 import generateUuid from "uuid/v4";
 import { User } from "$models";
+import { MissingDniError } from "$models/User/Errors";
 import { UUID_REGEX } from "../index";
 import {
   InvalidEmailError,
@@ -21,7 +22,7 @@ describe("User", () => {
     await expect(user.validate()).resolves.not.toThrow();
   });
 
-  it("instantiates a user with no dni", async () => {
+  it("instantiates a valid user with no dni", async () => {
     const user = new User({
       email: "asd@qwe.com",
       password: "somethingVerySecret123",
@@ -30,6 +31,17 @@ describe("User", () => {
     });
     await expect(user.validate()).resolves.not.toThrow();
     expect(user.dni).toBeUndefined();
+  });
+
+  it("instantiates a valid fiuba user", async () => {
+    const user = new User({
+      email: "asd@qwe.com",
+      dni: 39207914,
+      name: "name",
+      surname: "surname"
+    });
+    expect(user.isFiubaUser()).toBe(true);
+    expect(() => user.validateFiubaUser()).not.toThrow();
   });
 
   it("instantiates a user with no password", async () => {
@@ -74,6 +86,25 @@ describe("User", () => {
       );
     };
 
+    const expectToThrowErrorForMissingFields = async (fields: string[], message: string) => {
+      const attributes = {
+        uuid: generateUuid(),
+        dni: 39207888,
+        email: "asd@qwe.com",
+        password: "somethingVerySecret123",
+        name: "name",
+        surname: "surname"
+      };
+      fields.map(field => delete attributes[field]);
+      const user = new User(attributes);
+      await expect(
+        user.validate()
+      ).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        message
+      );
+    };
+
     it("throws an error if name has a digit", async () => {
       const user = new User({
         uuid: generateUuid(),
@@ -100,25 +131,17 @@ describe("User", () => {
     });
 
     it("throws an error if name is null", async () => {
-      const user = new User({
-        uuid: generateUuid(),
-        email: "asd@qwe.com",
-        password: "somethingVerySecret123",
-        name: null,
-        surname: "surname"
-      });
-      await expect(user.validate()).rejects.toThrow(ValidationError);
+      await expectToThrowErrorForMissingFields(
+        ["name"],
+        "notNull Violation: User.name cannot be null"
+      );
     });
 
     it("throws an error if surname is null", async () => {
-      const user = new User({
-        uuid: generateUuid(),
-        email: "asd@qwe.com",
-        password: "somethingVerySecret123",
-        name: "name",
-        surname: null
-      });
-      await expect(user.validate()).rejects.toThrow(ValidationError);
+      await expectToThrowErrorForMissingFields(
+        ["surname"],
+        "notNull Violation: User.surname cannot be null"
+      );
     });
 
     it("throws an error if email format is invalid", async () => {
@@ -134,6 +157,10 @@ describe("User", () => {
         ValidationError,
         InvalidEmailError.buildMessage(email)
       );
+    });
+
+    it("throws an error if the user has no password and no dni", async () => {
+      await expectToThrowErrorForMissingFields(["password", "dni"], MissingDniError.buildMessage());
     });
 
     it("throws an error if dni has more than nine digits", async () => {

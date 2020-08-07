@@ -46,6 +46,7 @@ describe("UserRepository", () => {
     it("creates a user with no password", async () => {
       const user = await UserRepository.create({
         email: "asd@qwe.com",
+        dni: 39207913,
         name: "Sebastian",
         surname: "Blanco"
       });

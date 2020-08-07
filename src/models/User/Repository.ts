@@ -30,17 +30,15 @@ export const UserRepository = {
       { transaction }
     );
   },
-  validateFiubaUserCredentials: async (user: User, password: string) => {
-    const valid = FiubaUsersService.authenticate({ dni: user.dni, password });
-    if (!valid) throw new BadCredentialsError();
-  },
   validateCredentials: async (user: User, password: string) => {
     // TODO: Esto es temporal. En el próximo pr la idea es loguear al usuario de
     //  FIUBA con dni y mejorar el código y testearlo
-    if (await user.isFiubaUser()) {
-      return UserRepository.validateFiubaUserCredentials(user, password);
+    let valid;
+    if (user.isFiubaUser()) {
+      valid = await FiubaUsersService.authenticate({ dni: user.dni, password });
+    } else {
+      valid = await user.passwordMatches(password);
     }
-    const valid = await user.passwordMatches(password);
     if (!valid) throw new BadCredentialsError();
   },
   findByEmail: async (email: string) => {
