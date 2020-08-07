@@ -28,7 +28,7 @@ export const UserRepository = {
         ...attributes
       },
       { transaction }
-      );
+    );
   },
   validateFiubaUserCredentials: async (user: User, password: string) => {
     const valid = FiubaUsersService.authenticate({ dni: user.dni, password });
