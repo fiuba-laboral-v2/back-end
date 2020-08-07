@@ -3,6 +3,7 @@ import { find } from "lodash";
 import { findAdminTasksQuery } from "./findAdminTasksQuery";
 import { ADMIN_TASK_MODELS, TABLE_NAME_COLUMN } from "./Model";
 import { IAdminTasksFilter } from "./Interfaces";
+import { PaginationConfig } from "$config/PaginationConfig";
 
 const getModelByTableName = (tableName: string) =>
   find(ADMIN_TASK_MODELS, ["tableName", tableName]);
@@ -15,14 +16,14 @@ export const AdminTaskRepository = {
         tasks: []
       };
     }
-    const limit = 2;
+    const limit = PaginationConfig().itemsPerPage + 1;
     const rows = await Database.query(
-      findAdminTasksQuery({ ...filter, limit }),
+      findAdminTasksQuery({ ...filter, limit: limit }),
       { type: "SELECT" }
     );
     return {
       shouldFetchMore: rows.length === limit,
-      tasks: rows.slice(0, limit - 1).map((row: object) => {
+      tasks: rows.slice(0, PaginationConfig().itemsPerPage).map((row: object) => {
         const tableName = row[TABLE_NAME_COLUMN];
         const modelClass = getModelByTableName(tableName);
         if (!modelClass) throw new Error(`Invalid table name: ${tableName}`);

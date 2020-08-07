@@ -3,14 +3,13 @@ import { CareerRepository } from "$models/Career";
 import { OfferRepository } from "$models/Offer";
 import { CompanyRepository } from "$models/Company";
 import { OfferNotFound } from "$models/Offer/Errors";
-import { OfferSection } from "$models";
-import { OfferCareer } from "$models";
-import { Offer } from "$models";
+import { Offer, OfferCareer, OfferSection } from "$models";
 import { CompanyGenerator, TCompanyGenerator } from "$generators/Company";
 import { OfferGenerator, TOfferDataGenerator } from "$generators/Offer";
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
-import { omit } from "lodash";
+import { omit, range } from "lodash";
 import { UserRepository } from "$models/User";
+import { withItemsPerPage } from "$config/PaginationConfig";
 
 describe("OfferRepository", () => {
   let companies: TCompanyGenerator;
@@ -252,6 +251,35 @@ describe("OfferRepository", () => {
         expect(await OfferSection.findAll()).toHaveLength(1);
         await OfferRepository.truncate();
         expect(await OfferSection.findAll()).toHaveLength(0);
+      });
+    });
+  });
+
+  describe("Find all", () => {
+    const allOffers: Offer[] = [];
+
+    beforeAll(async () => {
+      OfferRepository.truncate();
+      const { uuid: companyUuid } = await companies.next().value;
+      for (const _ of range(8)) {
+        allOffers.push(await OfferRepository.create(offersData.next({ companyUuid }).value));
+      }
+    });
+
+    it("sorts by updatedAt DESC, limits to itemsPerPage results", () => {
+      const itemsPerPage = 5;
+      return withItemsPerPage({ itemsPerPage }, async () => {
+        const result = await OfferRepository.findAll({});
+        expect(result.shouldFetchMore).toEqual(true);
+        expect(
+          result.offers
+            .map(offer => offer.uuid)
+        ).toEqual(
+          allOffers
+            .sort(offer => -offer.updatedAt)
+            .map(offer => offer.uuid)
+            .slice(0, itemsPerPage)
+        );
       });
     });
   });

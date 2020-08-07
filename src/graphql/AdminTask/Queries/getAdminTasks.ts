@@ -3,11 +3,21 @@ import { AdminTaskRepository, IAdminTasksFilter } from "$models/AdminTask";
 import { GraphQLAdminTaskType } from "../Types/GraphQLAdminTaskType";
 import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
 import { GraphQLDateTime } from "graphql-iso-date";
-import { GraphQLObjectType } from "graphql";
 import { GraphQLAdminTask } from "../Types/GraphQLAdminTask";
+import { GraphQLObjectType } from "graphql";
 
 export const getAdminTasks = {
-  type: nonNull(List(GraphQLAdminTask)),
+  type: new GraphQLObjectType({
+    name: "PaginatedAdminTasks",
+    fields: () => ({
+      shouldFetchMore: {
+        type: nonNull(Boolean)
+      },
+      tasks: {
+        type: nonNull(List(nonNull(GraphQLAdminTask)))
+      }
+    })
+  }),
   args: {
     adminTaskTypes: {
       type: nonNull(List(GraphQLAdminTaskType))
