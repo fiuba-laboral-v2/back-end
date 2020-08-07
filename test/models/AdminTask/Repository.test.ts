@@ -1,10 +1,6 @@
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
-import {
-  AdminTask,
-  AdminTaskType,
-  AdminTaskRepository
-} from "$models/AdminTask";
+import { AdminTask, AdminTaskRepository, AdminTaskType } from "$models/AdminTask";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Admin, Applicant, Company } from "$models";
 
@@ -44,9 +40,10 @@ describe("AdminTaskRepository", () => {
       adminTaskTypes: adminTasks.map(adminTask => adminTask.constructor.name) as any,
       statuses: statuses
     });
-    expect(result).toEqual(expect.arrayContaining(
+    expect(result.tasks).toEqual(expect.arrayContaining(
       adminTasks.map(adminTask => expect.objectContaining(adminTask.toJSON()))
     ));
+    expect(result.shouldFetchMore).toEqual(false);
   };
 
   it("returns an empty array if no statuses are provided", async () => {
@@ -54,7 +51,7 @@ describe("AdminTaskRepository", () => {
       adminTaskTypes: [AdminTaskType.Applicant],
       statuses: []
     });
-    expect(result).toEqual([]);
+    expect(result).toEqual({ tasks: [], shouldFetchMore: false });
   });
 
   it("returns an empty array if no adminTaskTypes are provided", async () => {
@@ -62,7 +59,7 @@ describe("AdminTaskRepository", () => {
       adminTaskTypes: [],
       statuses: [ApprovalStatus.pending]
     });
-    expect(result).toEqual([]);
+    expect(result).toEqual({ tasks: [], shouldFetchMore: false });
   });
 
   it("returns an empty array if no adminTaskTypes and statuses are provided", async () => {
@@ -70,7 +67,7 @@ describe("AdminTaskRepository", () => {
       adminTaskTypes: [],
       statuses: []
     });
-    expect(result).toEqual([]);
+    expect(result).toEqual({ tasks: [], shouldFetchMore: false });
   });
 
   it("returns only pending companies", async () => {
@@ -134,7 +131,7 @@ describe("AdminTaskRepository", () => {
       adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected]
     });
-    expect(result.map(adminTask => adminTask.uuid)).toEqual([
+    expect(result.tasks.map(adminTask => adminTask.uuid)).toEqual([
       pendingApplicant.uuid,
       approvedApplicant.uuid,
       rejectedApplicant.uuid,
@@ -142,6 +139,7 @@ describe("AdminTaskRepository", () => {
       approvedCompany.uuid,
       rejectedCompany.uuid
     ]);
-    expect(result).toBeSortedBy({ key: "updatedAt", order: "desc" });
+    expect(result.tasks).toBeSortedBy({ key: "updatedAt", order: "desc" });
+    expect(result.shouldFetchMore).toEqual(false);
   });
 });
