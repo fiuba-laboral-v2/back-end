@@ -19,21 +19,24 @@ import { testClientFactory } from "$mocks/testClientFactory";
 
 const GET_ADMIN_TASKS = gql`
   query GetAdminTasks(
-      $adminTaskTypes: [AdminTaskType]!,
-      $statuses: [ApprovalStatus]!
+    $adminTaskTypes: [AdminTaskType]!,
+    $statuses: [ApprovalStatus]!
   ) {
-      getAdminTasks(
-          adminTaskTypes: $adminTaskTypes,
-          statuses: $statuses
-      ) {
-      ... on Company {
-        __typename
-        uuid
+    getAdminTasks(
+      adminTaskTypes: $adminTaskTypes,
+      statuses: $statuses
+    ) {
+      tasks {
+        ... on Company {
+          __typename
+          uuid
+        }
+        ... on Applicant {
+          __typename
+          uuid
+        }
       }
-      ... on Applicant {
-        __typename
-        uuid
-      }
+      shouldFetchMore
     }
   }
 `;
@@ -80,11 +83,12 @@ describe("getAdminTasks", () => {
       adminTaskTypes: adminTasks.map(adminTask => adminTask.constructor.name) as any,
       statuses: statuses
     });
-    expect(result).toEqual(expect.arrayContaining(
+    expect(result.tasks).toEqual(expect.arrayContaining(
       adminTasks.map(adminTask => expect.objectContaining({
         uuid: adminTask.uuid
       }))
     ));
+    expect(result.shouldFetchMore).toEqual(false);
   };
 
   it("returns an empty array if no adminTaskTypes are provided", async () => {
@@ -92,7 +96,7 @@ describe("getAdminTasks", () => {
       adminTaskTypes: [],
       statuses: [ApprovalStatus.pending]
     });
-    expect(result).toEqual([]);
+    expect(result).toEqual({ tasks: [], shouldFetchMore: false });
   });
 
   it("returns only pending companies", async () => {
@@ -149,7 +153,7 @@ describe("getAdminTasks", () => {
       adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected]
     });
-    expect(result.map(adminTask => adminTask.uuid)).toEqual([
+    expect(result.tasks.map(adminTask => adminTask.uuid)).toEqual([
       pendingApplicant.uuid,
       approvedApplicant.uuid,
       rejectedApplicant.uuid,
@@ -157,7 +161,8 @@ describe("getAdminTasks", () => {
       approvedCompany.uuid,
       rejectedCompany.uuid
     ]);
-    expect(result).toBeSortedBy({ key: "updatedAt", order: "desc" });
+    expect(result.tasks).toBeSortedBy({ key: "updatedAt", order: "desc" });
+    expect(result.shouldFetchMore).toEqual(false);
   });
 
   describe("when the variables are incorrect", () => {
