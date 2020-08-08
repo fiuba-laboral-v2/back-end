@@ -5,6 +5,7 @@ import { IOfferCareer } from "./OfferCareer";
 import { OfferNotFound } from "./Errors";
 import { Offer, OfferCareer, OfferSection } from "$models";
 import { Op } from "sequelize";
+import { ICreateOffer } from "$models/Offer/Interface";
 
 export const OfferRepository = {
   create: (
@@ -12,7 +13,7 @@ export const OfferRepository = {
       careers = [],
       sections = [],
       ...attributes
-    }: IOffer) => {
+    }: ICreateOffer) => {
     const offer = new Offer(attributes);
     return OfferRepository.save(offer, sections, careers);
   },
