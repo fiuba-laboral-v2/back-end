@@ -56,11 +56,11 @@ export const OfferRepository = {
         }
       }),
       order: [["updatedAt", "DESC"]],
-      limit: limit
+      limit
     });
     return {
       shouldFetchMore: result.length === limit,
-      offers: result.slice(0, PaginationConfig().itemsPerPage)
+      offers: result.slice(0, limit - 1)
     };
   },
   findByCompanyUuid: (companyUuid: string) =>
