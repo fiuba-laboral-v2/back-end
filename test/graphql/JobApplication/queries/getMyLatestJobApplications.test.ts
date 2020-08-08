@@ -41,7 +41,7 @@ describe("getMyLatestJobApplications", () => {
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
-    applicant = await ApplicantGenerator.instance.withMinimumData().next().value;
+    applicant = await ApplicantGenerator.instance.withMinimumData();
     offers = await OfferGenerator.instance.withObligatoryData();
     admin = await ExtensionAdminGenerator.instance().next().value;
   });

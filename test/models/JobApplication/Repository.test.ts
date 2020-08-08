@@ -5,25 +5,23 @@ import { JobApplicationRepository } from "$models/JobApplication";
 import { JobApplication } from "$models";
 import { UserRepository } from "$models/User";
 import { CompanyGenerator, TCompanyGenerator } from "$generators/Company";
-import { ApplicantGenerator, TApplicantGenerator } from "$generators/Applicant";
+import { ApplicantGenerator } from "$generators/Applicant";
 import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
 
 describe("JobApplicationRepository", () => {
   let companies: TCompanyGenerator;
-  let applicants: TApplicantGenerator;
   let offers: TOfferGenerator;
 
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     companies = CompanyGenerator.instance.withMinimumData();
-    applicants = ApplicantGenerator.instance.withMinimumData();
     offers = await OfferGenerator.instance.withObligatoryData();
   });
 
   describe("Apply", () => {
     it("should apply to a new jobApplication", async () => {
-      const applicant = await applicants.next().value;
+      const applicant = await ApplicantGenerator.instance.withMinimumData();
       const company = await companies.next().value;
       const offer = await offers.next({ companyUuid: company.uuid }).value;
       const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
@@ -36,10 +34,10 @@ describe("JobApplicationRepository", () => {
     });
 
     it("should create four valid jobApplications for for the same offer", async () => {
-      const applicant1 = await applicants.next().value;
-      const applicant2 = await applicants.next().value;
-      const applicant3 = await applicants.next().value;
-      const applicant4 = await applicants.next().value;
+      const applicant1 = await ApplicantGenerator.instance.withMinimumData();
+      const applicant2 = await ApplicantGenerator.instance.withMinimumData();
+      const applicant3 = await ApplicantGenerator.instance.withMinimumData();
+      const applicant4 = await ApplicantGenerator.instance.withMinimumData();
       const company = await companies.next().value;
       const offer = await offers.next({ companyUuid: company.uuid }).value;
       await expect(
@@ -66,7 +64,7 @@ describe("JobApplicationRepository", () => {
     });
 
     it("should throw an error if given offerUuid that does not exist", async () => {
-      const { uuid: applicantUuid } = await applicants.next().value;
+      const { uuid: applicantUuid } = await ApplicantGenerator.instance.withMinimumData();
       const jobApplication = new JobApplication({
         offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
         applicantUuid
@@ -81,7 +79,7 @@ describe("JobApplicationRepository", () => {
     });
 
     it("should throw an error if jobApplication already exists", async () => {
-      const applicant = await applicants.next().value;
+      const applicant = await ApplicantGenerator.instance.withMinimumData();
       const company = await companies.next().value;
       const offer = await offers.next({ companyUuid: company.uuid }).value;
       await JobApplicationRepository.apply(applicant.uuid, offer);
@@ -93,7 +91,7 @@ describe("JobApplicationRepository", () => {
 
   describe("Associations", () => {
     it("should get Applicant and offer from a jobApplication", async () => {
-      const applicant = await applicants.next().value;
+      const applicant = await ApplicantGenerator.instance.withMinimumData();
       const company = await companies.next().value;
       const offer = await offers.next({ companyUuid: company.uuid }).value;
       const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
@@ -103,7 +101,7 @@ describe("JobApplicationRepository", () => {
     });
 
     it("should get all applicant's jobApplications", async () => {
-      const applicant = await applicants.next().value;
+      const applicant = await ApplicantGenerator.instance.withMinimumData();
       const company = await companies.next().value;
       const offer = await offers.next({ companyUuid: company.uuid }).value;
       const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
@@ -115,7 +113,7 @@ describe("JobApplicationRepository", () => {
 
   describe("hasApplied", () => {
     it("should return true if applicant applied for offer", async () => {
-      const applicant = await applicants.next().value;
+      const applicant = await ApplicantGenerator.instance.withMinimumData();
       const company = await companies.next().value;
       const offer = await offers.next({ companyUuid: company.uuid }).value;
       await JobApplicationRepository.apply(applicant.uuid, offer);
@@ -123,7 +121,7 @@ describe("JobApplicationRepository", () => {
     });
 
     it("should return false if applicant has not applied to the offer", async () => {
-      const applicant = await applicants.next().value;
+      const applicant = await ApplicantGenerator.instance.withMinimumData();
       const company = await companies.next().value;
       const offer = await offers.next({ companyUuid: company.uuid }).value;
       expect(await JobApplicationRepository.hasApplied(applicant, offer)).toBe(false);
@@ -132,7 +130,7 @@ describe("JobApplicationRepository", () => {
 
   describe("findLatestByCompanyUuid", () => {
     it ("returns the only application for my company", async () => {
-      const applicant = await applicants.next().value;
+      const applicant = await ApplicantGenerator.instance.withMinimumData();
       const company = await companies.next().value;
       const offer = await offers.next({ companyUuid: company.uuid }).value;
       await JobApplicationRepository.apply(applicant.uuid, offer);
@@ -157,7 +155,7 @@ describe("JobApplicationRepository", () => {
     });
 
     it ("returns the latest job applications first for my company", async () => {
-      const applicant = await applicants.next().value;
+      const applicant = await ApplicantGenerator.instance.withMinimumData();
       const myCompany = await companies.next().value;
       const anotherCompany = await companies.next().value;
       const myOffer1 = await offers.next({ companyUuid: myCompany.uuid }).value;
@@ -186,7 +184,7 @@ describe("JobApplicationRepository", () => {
 
   describe("Delete cascade", () => {
     const createJobApplication = async () => {
-      const applicant = await applicants.next().value;
+      const applicant = await ApplicantGenerator.instance.withMinimumData();
       const company = await companies.next().value;
       const offer = await offers.next({ companyUuid: company.uuid }).value;
       return JobApplicationRepository.apply(applicant.uuid, offer);

@@ -10,7 +10,7 @@ import { UserRepository } from "$models/User";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
-import { ApplicantGenerator, TApplicantGenerator } from "$generators/Applicant";
+import { ApplicantGenerator } from "$generators/Applicant";
 import { TestClientGenerator } from "$generators/TestClient";
 import { client } from "../../ApolloTestClient";
 
@@ -24,12 +24,9 @@ const UPDATE_APPLICANT_APPROVAL_STATUS = gql`
 `;
 
 describe("updateCompanyApprovalStatus", () => {
-  let applicants: TApplicantGenerator;
-
   beforeAll(async () => {
     await UserRepository.truncate();
     await ApplicantRepository.truncate();
-    applicants = ApplicantGenerator.instance.withMinimumData();
   });
 
   beforeEach(() => ApplicantApprovalEventRepository.truncate());
@@ -41,7 +38,7 @@ describe("updateCompanyApprovalStatus", () => {
     });
 
   const updateApplicantWithStatus = async (newStatus: ApprovalStatus) => {
-    const applicant = await applicants.next().value;
+    const applicant = await ApplicantGenerator.instance.withMinimumData();
     const { admin, apolloClient } = await TestClientGenerator.admin();
     const dataToUpdate = { uuid: applicant.uuid, approvalStatus: newStatus };
     const { data, errors } = await performMutation(apolloClient, dataToUpdate);
@@ -88,7 +85,7 @@ describe("updateCompanyApprovalStatus", () => {
     let applicant: Applicant;
 
     beforeAll(async () => {
-      applicant = await applicants.next().value;
+      applicant = await ApplicantGenerator.instance.withMinimumData();
     });
 
     it("returns an error if no uuid is provided", async () => {

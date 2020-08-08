@@ -51,15 +51,14 @@ describe("getAdminTasks", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     const companies = await CompanyGenerator.instance.updatedWithStatus();
-    const applicants = await ApplicantGenerator.instance.updatedWithStatus();
     admin = await ExtensionAdminGenerator.instance().next().value;
-
+    const applicantsGenerator = ApplicantGenerator.instance.updatedWithStatus;
     rejectedCompany = await companies.next({ status: ApprovalStatus.rejected, admin }).value;
     approvedCompany = await companies.next({ status: ApprovalStatus.approved, admin }).value;
     pendingCompany = await companies.next().value;
-    rejectedApplicant = await applicants.next({ status: ApprovalStatus.rejected, admin }).value;
-    approvedApplicant = await applicants.next({ status: ApprovalStatus.approved, admin }).value;
-    pendingApplicant = await applicants.next().value;
+    rejectedApplicant = await applicantsGenerator({ status: ApprovalStatus.rejected, admin });
+    approvedApplicant = await applicantsGenerator({ status: ApprovalStatus.approved, admin });
+    pendingApplicant = await applicantsGenerator();
   });
 
   const getAdminTasks = async (filter: IAdminTasksFilter) => {
