@@ -2,7 +2,7 @@ import { UniqueConstraintError, ValidationError } from "sequelize";
 import { UserRepository } from "$models/User/Repository";
 import { UserNotFoundError } from "$models/User";
 import { FiubaUsersService } from "$services";
-import { MissingDniError, MissingPasswordError } from "$models/User/Errors";
+import { InvalidEmptyUsernameError } from "$services/FiubaUsers";
 import { UUID_REGEX } from "../index";
 import {
   InvalidEmailError,
@@ -121,7 +121,7 @@ describe("UserRepository", () => {
       );
     });
 
-    it("checks for password validity before creation", async () => {
+    it("throws an error if the password has no digits", async () => {
       await expect(
         UserRepository.create({
           email: "asd@qwe.com",
@@ -136,7 +136,7 @@ describe("UserRepository", () => {
     });
 
     describe("createFiubaUser", () => {
-      it("creates a valid user Fiuba user", async () => {
+      it("creates a valid Fiuba user", async () => {
         const attributes = {
           email: "email@gmail.com",
           dni: 39207888,
@@ -167,34 +167,20 @@ describe("UserRepository", () => {
           Error,
           `The user with DNI: ${39207888} does not exist as a Fiuba user`
         );
-        fiubaUsersServiceMock.mockClear();
       });
 
-      it("throws an error if no dni is provided", async () => {
+      it("throws an error if dni is invalid", async () => {
         await expect(
           UserRepository.createFiubaUser({
+            dni: 0,
             email: "email@gmail.com",
             password: "somethingVerySecret123",
             name: "name",
             surname: "surname"
           })
         ).rejects.toThrowErrorWithMessage(
-          MissingDniError,
-          MissingDniError.buildMessage()
-        );
-      });
-
-      it("throws an error if no password is provided", async () => {
-        await expect(
-          UserRepository.createFiubaUser({
-            email: "email@gmail.com",
-            dni: 39888888,
-            name: "name",
-            surname: "surname"
-          })
-        ).rejects.toThrowErrorWithMessage(
-          MissingPasswordError,
-          MissingPasswordError.buildMessage()
+          InvalidEmptyUsernameError,
+          InvalidEmptyUsernameError.buildMessage()
         );
       });
     });

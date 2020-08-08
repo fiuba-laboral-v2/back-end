@@ -1,6 +1,6 @@
-import { IApplicant } from "$models/Applicant";
+import { ICreateApplicant } from "$models/Applicant";
 
-export const withMinimumData = (index: number): IApplicant => ({
+export const withMinimumData = (index: number): ICreateApplicant => ({
   padron: index + 1,
   description: `description${index + 1}`,
   careers: [],

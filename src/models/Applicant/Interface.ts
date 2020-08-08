@@ -1,5 +1,5 @@
 import { TLink } from "./Link/Interface";
-import { IUser, IUserEditable } from "../User";
+import { ICreateFiubaUser, IUser, IUserEditable } from "../User";
 
 export interface IApplicantCareer {
   code: string;
@@ -17,7 +17,7 @@ export interface IApplicant {
 }
 
 export interface ICreateApplicant extends IApplicant {
-  user: ICreateUser;
+  user: ICreateFiubaUser;
 }
 
 export interface IApplicantEditable {

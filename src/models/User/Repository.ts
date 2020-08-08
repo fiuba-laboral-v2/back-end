@@ -1,5 +1,5 @@
-import { IUser, IUserEditable } from "./Interface";
-import { UserNotFoundError, MissingDniError, MissingPasswordError } from "./Errors";
+import { ICreateFiubaUser, IUser, IUserEditable } from "./Interface";
+import { UserNotFoundError } from "./Errors";
 import { Transaction } from "sequelize/types";
 import { FiubaUsersService } from "$services";
 import { User } from "$models";
@@ -9,16 +9,9 @@ export const UserRepository = {
   create: (attributes: IUser, transaction?: Transaction) =>
     User.create(attributes, { transaction }),
   createFiubaUser: async (
-    {
-      dni,
-      password,
-      ...attributes
-    }: IUser,
+    { dni, password, ...attributes }: ICreateFiubaUser,
     transaction?: Transaction
   ) => {
-    if (!dni) throw new MissingDniError();
-    if (!password) throw new MissingPasswordError();
-
     const isFiubaUser = await FiubaUsersService.authenticate({ dni, password });
     if (!isFiubaUser) throw new Error(`The user with DNI: ${dni} does not exist as a Fiuba user`);
     return User.create({ dni, ...attributes }, { transaction });

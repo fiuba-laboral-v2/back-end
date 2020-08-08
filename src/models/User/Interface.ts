@@ -7,6 +7,11 @@ export interface IUser {
   password?: string;
 }
 
+export interface ICreateFiubaUser extends IUser {
+  dni: number;
+  password: string;
+}
+
 export interface IUserEditable {
   uuid?: string;
   name?: string;
