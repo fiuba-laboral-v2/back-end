@@ -44,7 +44,7 @@ describe("User", () => {
     expect(() => user.validateFiubaUser()).not.toThrow();
   });
 
-  it("instantiates a user with no password", async () => {
+  it("instantiates a user with no password when a dni is given", async () => {
     const user = new User({
       email: "asd@qwe.com",
       dni: 39207888,
