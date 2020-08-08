@@ -1,10 +1,8 @@
-import { company, internet, lorem, random } from "faker";
-import { cuitGenerator } from "../generators/Company/cuitGenerator";
+import { internet, random } from "faker";
 
 import { UserRepository } from "$models/User";
 import { AdminRepository, Secretary } from "$models/Admin";
-import { CompanyRepository } from "$models/Company";
-import { ICompanyAttributes, IUserProps } from "./interfaces";
+import { IUserProps } from "./interfaces";
 
 export const userFactory = {
   user: ({ password }: IUserProps = {}) =>
@@ -25,21 +23,5 @@ export const userFactory = {
         surname: "Diaz"
       },
       secretary: Secretary.extension
-    }),
-  company: ({ photos, user }: ICompanyAttributes = {}) =>
-    CompanyRepository.create({
-      cuit: cuitGenerator(),
-      companyName: "Cachito y Asociados",
-      slogan: company.catchPhrase(),
-      description: lorem.paragraph(),
-      website: internet.url(),
-      email: internet.email(),
-      photos,
-      user: {
-        email: internet.email(),
-        password: user?.password || "AValidPassword123",
-        name: "Bruno",
-        surname: "Diaz"
-      }
     })
 };

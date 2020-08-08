@@ -1,5 +1,5 @@
-import { withMinimumData } from "./withMinimumData";
-import { completeData } from "./completeData";
+import { withMinimumData, WithMinimumInputData } from "./withMinimumData";
+import { completeData, WithCompleteInputData } from "./completeData";
 import { CompanyRepository } from "$models/Company";
 import { Admin } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
@@ -16,18 +16,26 @@ export const CompanyGenerator = {
     return CompanyGenerator.index;
   },
   instance: {
-    withMinimumData: () =>
-      CompanyRepository.create(withMinimumData(CompanyGenerator.getIndex())),
-    withCompleteData: () =>
-      CompanyRepository.create(completeData(CompanyGenerator.getIndex())),
+    withMinimumData: (variables?: WithMinimumInputData) =>
+      CompanyRepository.create(withMinimumData({
+        index: CompanyGenerator.getIndex(),
+        ...variables
+      })),
+    withCompleteData: (variables?: WithCompleteInputData) =>
+      CompanyRepository.create(completeData({
+        index: CompanyGenerator.getIndex(),
+        ...variables
+      })),
     updatedWithStatus: async (variables?: IUpdatedWithStatus) => {
-      const company = await CompanyRepository.create(withMinimumData(CompanyGenerator.getIndex()));
+      const company = await CompanyRepository.create(withMinimumData({
+        index: CompanyGenerator.getIndex()
+      }));
       if (!variables) return company;
       const { admin, status } = variables;
       return CompanyRepository.updateApprovalStatus(admin.userUuid, company.uuid, status);
     }
   },
   data: {
-    completeData: () => completeData(CompanyGenerator.getIndex())
+    completeData: () => completeData({ index: CompanyGenerator.getIndex() })
   }
 };

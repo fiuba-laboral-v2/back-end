@@ -5,7 +5,7 @@ import { client } from "../../ApolloTestClient";
 import { TestClientGenerator } from "$generators/TestClient";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
-import { userFactory } from "$mocks/user";
+import { CompanyGenerator } from "$generators/Company";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import generateUuid from "uuid/v4";
 
@@ -44,12 +44,13 @@ describe("getCompanyByUuid", () => {
   });
 
   it("finds a company given its uuid", async () => {
-    const company = await userFactory.company();
+    const company = await CompanyGenerator.instance.withCompleteData();
     const { apolloClient } = await TestClientGenerator.admin();
     const response = await apolloClient.query({
       query: query,
       variables: { uuid: company.uuid }
     });
+    const phoneNumbers = await company.getPhoneNumbers();
     expect(response.errors).toBeUndefined();
     expect(response.data).toEqual({
       getCompanyByUuid: {
@@ -63,7 +64,7 @@ describe("getCompanyByUuid", () => {
         createdAt: company.createdAt.toISOString(),
         updatedAt: company.updatedAt.toISOString(),
         approvalStatus: company.approvalStatus,
-        phoneNumbers: expect.arrayContaining((await company.getPhoneNumbers())),
+        phoneNumbers: expect.arrayContaining(phoneNumbers.map(({ phoneNumber }) => phoneNumber)),
         photos: expect.arrayContaining((await company.getPhotos())),
         users: expect.arrayContaining((await company.getUsers()).map(
           ({ uuid, email, name, surname }) => ({ uuid, email, name, surname })
@@ -92,7 +93,7 @@ describe("getCompanyByUuid", () => {
   });
 
   it("find a company with photos with an empty array", async () => {
-    const company = await userFactory.company({ photos: [] });
+    const company = await CompanyGenerator.instance.withCompleteData({ photos: [] });
     const { apolloClient } = await TestClientGenerator.admin();
     const { data, errors } = await apolloClient.query({
       query: query,

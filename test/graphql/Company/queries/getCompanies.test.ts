@@ -3,10 +3,10 @@ import { client } from "../../ApolloTestClient";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
 import { TestClientGenerator } from "$generators/TestClient";
+import { CompanyGenerator } from "$generators/Company";
 
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { userFactory } from "$mocks/user";
 import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
 
 const GET_COMPANIES = gql`
@@ -30,7 +30,7 @@ describe("getCompanies", () => {
   });
 
   it("returns all companies", async () => {
-    const company = await userFactory.company();
+    const company = await CompanyGenerator.instance.withCompleteData();
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.approved,

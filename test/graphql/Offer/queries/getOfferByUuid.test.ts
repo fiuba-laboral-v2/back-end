@@ -8,6 +8,7 @@ import { OfferNotFound } from "$models/Offer/Errors";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
 import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
+import { CompanyGenerator } from "$generators/Company";
 import { userFactory } from "$mocks/user";
 import { TestClientGenerator } from "$generators/TestClient";
 import { ApolloServerTestClient } from "apollo-server-testing";
@@ -142,7 +143,7 @@ describe("getOfferByUuid", () => {
           admin: await admins.next().value
         }
       });
-      const company = await userFactory.company();
+      const company = await CompanyGenerator.instance.withCompleteData();
       const { offer } = await createOffer(company);
       await JobApplicationRepository.apply(applicant.uuid, offer);
 
@@ -167,7 +168,7 @@ describe("getOfferByUuid", () => {
           admin: await admins.next().value
         }
       });
-      const company = await userFactory.company();
+      const company = await CompanyGenerator.instance.withCompleteData();
       const { offer: { uuid } } = await createOffer(company);
       const { data, errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
@@ -202,7 +203,7 @@ describe("getOfferByUuid", () => {
           email: user.email
         }
       });
-      const company = await userFactory.company();
+      const company = await CompanyGenerator.instance.withCompleteData();
       const { offer: { uuid } } = await createOffer(company);
 
       const { errors } = await apolloClient.query({
@@ -215,7 +216,7 @@ describe("getOfferByUuid", () => {
 
     it("returns an error if there is no current user", async () => {
       const apolloClient = client.loggedOut();
-      const company = await userFactory.company();
+      const company = await CompanyGenerator.instance.withCompleteData();
 
       const { offer: { uuid } } = await createOffer(company);
       const { errors } = await apolloClient.query({

@@ -5,6 +5,7 @@ import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { userFactory } from "$mocks/user";
 import { ApplicantGenerator } from "$generators/Applicant";
+import { CompanyGenerator } from "$generators/Company";
 import { JWT } from "../../../../src/JWT";
 import { BadCredentialsError } from "$graphql/User/Errors";
 import { UserNotFoundError } from "$models/User/Errors";
@@ -87,7 +88,7 @@ describe("login", () => {
 
   it("returns a token for a company user", async () => {
     const password = "AValidPassword2";
-    const company = await userFactory.company({ user: { password } });
+    const company = await CompanyGenerator.instance.withMinimumData({ user: { password } });
     const [user] = await company.getUsers();
     await testToken({
       user,

@@ -8,7 +8,7 @@ export const withCompleteData = (
     user
   }: IWithCompleteData
 ) => ({
-  cuit: cuitGenerator(index + 1),
+  cuit: cuitGenerator(100 * index),
   companyName: "companyName",
   user: {
     email: `companyTestClient${index}@mail.com`,

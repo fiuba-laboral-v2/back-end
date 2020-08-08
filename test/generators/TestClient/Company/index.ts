@@ -1,5 +1,5 @@
 import { withCompleteData } from "./witCompleteData";
-import { ICompanyAttributes } from "../../interfaces";
+import { ICompanyAttributes } from "$generators/interfaces";
 import { createApolloTestClient } from "../createApolloTestClient";
 import { CompanyRepository } from "$models/Company";
 
