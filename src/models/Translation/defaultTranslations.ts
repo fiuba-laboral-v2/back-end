@@ -18,8 +18,8 @@ export const defaultTranslations = {
   applicantSignUp: [
     { key: "title", value: "Crear tu cuenta" },
     { key: "email", value: "Email" },
+    { key: "dni", value: "DNI" },
     { key: "password", value: "Contraseña" },
-    { key: "passwordConfirm", value: "Confirmar contraseña" },
     { key: "name", value: "Nombre" },
     { key: "surname", value: "Apellido" },
     { key: "padron", value: "Padron" },
