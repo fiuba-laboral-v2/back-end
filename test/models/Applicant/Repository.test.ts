@@ -9,9 +9,10 @@ import { ApplicantNotFound, ApplicantNotUpdatedError } from "$models/Applicant/E
 import { FiubaUserNotFoundError } from "$models/User/Errors";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
-import { ExtensionAdminGenerator } from "$generators/Admin";
+import { AdminGenerator } from "$generators/Admin";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
 import { FiubaUsersService } from "$services/FiubaUsers";
+import { Secretary } from "$models/Admin";
 
 describe("ApplicantRepository", () => {
   let careers: TCareerGenerator;
@@ -596,7 +597,7 @@ describe("ApplicantRepository", () => {
   describe("updateApprovalStatus", () => {
     let admin: Admin;
     beforeAll(async () => {
-      admin = await ExtensionAdminGenerator.instance();
+      admin = await AdminGenerator.instance(Secretary.extension);
     });
 
     const expectSuccessfulApplicantStatusUpdate = async (

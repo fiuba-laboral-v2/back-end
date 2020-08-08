@@ -13,8 +13,9 @@ import { OfferRepository } from "$models/Offer";
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
 import { CompanyGenerator } from "$generators/Company";
 import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
-import { ExtensionAdminGenerator } from "$generators/Admin";
+import { AdminGenerator } from "$generators/Admin";
 import { TestClientGenerator } from "$generators/TestClient";
+import { Secretary } from "$models/Admin";
 
 const GET_MY_OFFERS = gql`
   query {
@@ -35,7 +36,7 @@ describe("getMyOffers", () => {
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
     offers = await OfferGenerator.instance.withObligatoryData();
-    admin = await ExtensionAdminGenerator.instance();
+    admin = await AdminGenerator.instance(Secretary.extension);
   });
 
   describe("when offers exists", () => {

@@ -5,12 +5,13 @@ import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { UserGenerator } from "$generators/User";
 import { ApplicantGenerator } from "$generators/Applicant";
-import { ExtensionAdminGenerator } from "$generators/Admin";
+import { AdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
 import { JWT } from "../../../../src/JWT";
 import { BadCredentialsError } from "$graphql/User/Errors";
 import { UserNotFoundError } from "$models/User/Errors";
 import { AuthConfig } from "$config/AuthConfig";
+import { Secretary } from "$models/Admin";
 
 const LOGIN = gql`
   mutation ($email: String!, $password: String!) {
@@ -106,7 +107,7 @@ describe("login", () => {
 
   it("returns a token for an admin", async () => {
     const password = "AValidPassword3";
-    const admin = await ExtensionAdminGenerator.instance({ password });
+    const admin = await AdminGenerator.instance(Secretary.extension, { password });
     const user = await admin.getUser();
     await testToken({
       user,

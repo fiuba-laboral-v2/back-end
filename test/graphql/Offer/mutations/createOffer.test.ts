@@ -3,7 +3,7 @@ import { client } from "../../ApolloTestClient";
 
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
 import { OfferGenerator, TOfferDataGenerator } from "$generators/Offer";
-import { ExtensionAdminGenerator } from "$generators/Admin";
+import { AdminGenerator } from "$generators/Admin";
 import { TestClientGenerator } from "$generators/TestClient";
 
 import { CareerRepository } from "$models/Career";
@@ -12,6 +12,7 @@ import { UserRepository } from "$models/User";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Admin } from "$models";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
+import { Secretary } from "$models/Admin";
 
 const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
     mutation createOffer(
@@ -101,7 +102,7 @@ describe("createOffer", () => {
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
     offers = OfferGenerator.data.withObligatoryData();
-    admin = await ExtensionAdminGenerator.instance();
+    admin = await AdminGenerator.instance(Secretary.extension);
   });
 
   describe("when the input values are valid", () => {

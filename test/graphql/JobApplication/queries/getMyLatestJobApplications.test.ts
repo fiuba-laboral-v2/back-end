@@ -10,9 +10,10 @@ import { JobApplicationRepository } from "$models/JobApplication";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
-import { ExtensionAdminGenerator } from "$generators/Admin";
+import { AdminGenerator } from "$generators/Admin";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { TestClientGenerator } from "$generators/TestClient";
+import { Secretary } from "$models/Admin";
 
 const GET_MY_LATEST_JOB_APPLICATIONS = gql`
     query getMyLatestJobApplications {
@@ -43,7 +44,7 @@ describe("getMyLatestJobApplications", () => {
     await CompanyRepository.truncate();
     applicant = await ApplicantGenerator.instance.withMinimumData();
     offers = await OfferGenerator.instance.withObligatoryData();
-    admin = await ExtensionAdminGenerator.instance();
+    admin = await AdminGenerator.instance(Secretary.extension);
   });
 
   describe("when the input is valid", () => {
