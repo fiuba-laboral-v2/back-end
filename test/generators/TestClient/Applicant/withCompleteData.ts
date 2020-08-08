@@ -1,5 +1,6 @@
 import { ISaveApplicant } from "$models/Applicant";
 import { IApplicantAttributes } from "$generators/interfaces";
+import { DniGenerator } from "$generators/DNI";
 
 export const withCompleteData = (
   {
@@ -14,7 +15,7 @@ export const withCompleteData = (
   careers: careers || [],
   capabilities: capabilities || [],
   user: {
-    dni: 20000000 + index,
+    dni: DniGenerator.generate(),
     email: `applicantTestClient${index}@mail.com`,
     password: password || "ASDqfdsfsdfwe234",
     name: "applicantName",

@@ -1,5 +1,5 @@
-import { cuitGenerator } from "$generators/Company/cuitGenerator";
 import { ICompanyAttributes } from "$generators/interfaces";
+import { CuitGenerator } from "$generators/Cuit";
 
 export const withCompleteData = (
   {
@@ -8,7 +8,7 @@ export const withCompleteData = (
     user
   }: IWithCompleteData
 ) => ({
-  cuit: cuitGenerator(100 * index),
+  cuit: CuitGenerator.generate(),
   companyName: "companyName",
   user: {
     email: `companyTestClient${index}@mail.com`,

@@ -10,7 +10,6 @@ import { FiubaUserNotFoundError } from "$models/User/Errors";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
 import { ExtensionAdminGenerator } from "$generators/Admin";
-import { internet, random } from "faker";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
 import { FiubaUsersService } from "$services/FiubaUsers";
 
@@ -460,11 +459,11 @@ describe("ApplicantRepository", () => {
       const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       const linksData = [
         {
-          name: random.word(),
-          url: internet.url()
+          name: "LinkedIn",
+          url: "https://www.linkedin.com/in/dylan-alvarez-89430b88/"
         },
         {
-          name: "github",
+          name: "GitHub",
           url: "https://github.com"
         }
       ];
@@ -474,12 +473,12 @@ describe("ApplicantRepository", () => {
       ).toEqual(expect.arrayContaining(linksData));
       const newLinksData = [
         {
-          name: "github",
+          name: "GitHub",
           url: "https://github.com"
         },
         {
-          name: "new name",
-          url: internet.url()
+          name: "Google",
+          url: "http://www.google.com"
         }
       ];
       const updatedApplicant = await ApplicantRepository.update({ uuid, links: newLinksData });
@@ -494,12 +493,12 @@ describe("ApplicantRepository", () => {
         uuid,
         links: [
           {
-            name: random.word(),
-            url: internet.url()
+            name: "GitHub",
+            url: "https://github.com"
           },
           {
-            name: "new name",
-            url: internet.url()
+            name: "Google",
+            url: "http://www.google.com"
           }
         ]
       });

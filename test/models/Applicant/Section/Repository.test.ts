@@ -1,6 +1,5 @@
 import { ApplicantRepository } from "$models/Applicant";
 import { SectionRepository } from "$models/Applicant/Section";
-import { lorem, random } from "faker";
 import { UserRepository } from "$models/User";
 import { Applicant, Section } from "$models";
 
@@ -27,8 +26,8 @@ describe("Section model", () => {
 
   it("should create a valid section with a title and a text", async () => {
     const sectionData = {
-      title: random.words(),
-      text: lorem.paragraphs(),
+      title: "And all shootin some b-ball outside of the school",
+      text: "When a couple of guys who were up to no good\nStarted making trouble in my",
       displayOrder: 1
     };
 
@@ -82,8 +81,8 @@ describe("Section model", () => {
 
   it("should update a valid section", async () => {
     const params = [{
-      title: random.words(),
-      text: lorem.paragraphs(),
+      title: "I got in one little fight and my mom got scared",
+      text: "She said 'You're movin' with your auntie and uncle in Bel Air'\nI begged and pleaded",
       displayOrder: 1
     }];
 
@@ -112,13 +111,13 @@ describe("Section model", () => {
   it("should update the sections given and deleting the rest of applicant sections", async () => {
     const params = [
       {
-        title: random.words(),
-        text: lorem.paragraphs(),
+        title: "with her day after day",
+        text: "But she packed my suit case and sent me on my way\nShe gave me a kiss",
         displayOrder: 1
       },
       {
-        title: random.words(),
-        text: lorem.paragraphs(),
+        title: "and then she gave me my ticket",
+        text: "I put my Walkman on and said, 'I might as well kick it'.\nFirst class, yo",
         displayOrder: 2
       }
     ];
