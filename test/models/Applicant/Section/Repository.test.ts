@@ -2,6 +2,7 @@ import { ApplicantRepository } from "$models/Applicant";
 import { SectionRepository } from "$models/Applicant/Section";
 import { UserRepository } from "$models/User";
 import { Applicant, Section } from "$models";
+import { DniGenerator } from "$generators/DNI";
 
 describe("Section model", () => {
   let applicant: Applicant;
@@ -10,7 +11,7 @@ describe("Section model", () => {
     await UserRepository.truncate();
     applicant = await ApplicantRepository.create({
       user: {
-        dni: 39207999,
+        dni: DniGenerator.generate(),
         email: "sblanco@yahoo.com",
         password: "fdmgkfHGH4353",
         name: "Bruno",
