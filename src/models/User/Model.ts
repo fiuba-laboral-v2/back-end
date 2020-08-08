@@ -1,14 +1,9 @@
-import {
-  BeforeCreate,
-  Column,
-  HasOne,
-  Model,
-  Table
-} from "sequelize-typescript";
+import { Model, BeforeCreate, Column, HasOne, Table } from "sequelize-typescript";
 import { compare, hashSync } from "bcrypt";
 import { HasOneGetAssociationMixin, STRING, TEXT, UUID, UUIDV4, INTEGER } from "sequelize";
 import { Admin, Applicant, Company, CompanyUser } from "$models";
-import { optional } from "../SequelizeModelValidators";
+import { MissingDniError } from "./Errors";
+import { optional } from "$models/SequelizeModelValidators";
 import {
   validateEmail,
   validateName,
@@ -16,10 +11,16 @@ import {
   validateDni
 } from "validations-fiuba-laboral-v2";
 
-@Table({ tableName: "Users" })
+@Table({
+  tableName: "Users",
+  validate: {
+    validateUser(this: User) { this.validateUser(); }
+  }
+})
 export class User extends Model<User> {
   @BeforeCreate
   public static beforeCreateHook(user: User): void {
+    if (!user.password) return;
     user.setPassword(user.password);
   }
 
@@ -50,7 +51,7 @@ export class User extends Model<User> {
   public dni: number;
 
   @Column({
-    allowNull: false,
+    allowNull: true,
     type: STRING
   })
   public password: string;
@@ -95,5 +96,14 @@ export class User extends Model<User> {
 
   public passwordMatches(password) {
     return compare(password, this.password);
+  }
+
+  public validateUser() {
+    if (!this.isFiubaUser()) return;
+    if (!this.dni) throw new MissingDniError();
+  }
+
+  public isFiubaUser() {
+    return !this.password;
   }
 }

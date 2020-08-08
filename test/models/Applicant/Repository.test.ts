@@ -6,11 +6,13 @@ import { ApplicantCareersRepository } from "$models/ApplicantCareer";
 import { UserRepository } from "$models/User";
 import { CapabilityRepository } from "$models/Capability";
 import { ApplicantNotFound, ApplicantNotUpdatedError } from "$models/Applicant/Errors";
+import { FiubaUserNotFoundError } from "$models/User/Errors";
 import { ApplicantGenerator, TApplicantDataGenerator } from "$generators/Applicant";
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
 import { ExtensionAdminGenerator } from "$generators/Admin";
 import { internet, random } from "faker";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
+import { FiubaUsersService } from "$services/FiubaUsers";
 
 describe("ApplicantRepository", () => {
   let applicantsMinimumData: TApplicantDataGenerator;
@@ -95,17 +97,28 @@ describe("ApplicantRepository", () => {
       expect(section).toEqual(expect.objectContaining({ title: "title", text: "text" }));
     });
 
-    describe("Transactions", () => {
-      it("rollbacks transaction and throws error if no padron is given", async () => {
-        const applicantData = applicantsMinimumData.next().value;
-        delete applicantData.padron;
-        await expect(
-          ApplicantRepository.create(applicantData)
-        ).rejects.toThrowErrorWithMessage(
-          ValidationError,
-          "notNull Violation: Applicant.padron cannot be null"
-        );
-      });
+    it("throws an error if no padron is given", async () => {
+      const applicantData = applicantsMinimumData.next().value;
+      delete applicantData.padron;
+      await expect(
+        ApplicantRepository.create(applicantData)
+      ).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        "notNull Violation: Applicant.padron cannot be null"
+      );
+    });
+
+    it("throws an error if the FiubaService authentication returns false", async () => {
+      const fiubaUsersServiceMock = jest.spyOn(FiubaUsersService, "authenticate");
+      fiubaUsersServiceMock.mockResolvedValueOnce(Promise.resolve(false));
+
+      const applicantData = applicantsMinimumData.next().value;
+      await expect(
+        ApplicantRepository.create(applicantData)
+      ).rejects.toThrowErrorWithMessage(
+        FiubaUserNotFoundError,
+        FiubaUserNotFoundError.buildMessage(applicantData.user.dni)
+      );
     });
   });
 

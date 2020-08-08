@@ -1,6 +1,8 @@
 import { UniqueConstraintError, ValidationError } from "sequelize";
 import { UserRepository } from "$models/User/Repository";
-import { UserNotFoundError } from "$models/User";
+import { UserNotFoundError, FiubaUserNotFoundError } from "$models/User";
+import { FiubaUsersService } from "$services";
+import { InvalidEmptyUsernameError } from "$services/FiubaUsers";
 import { UUID_REGEX } from "../index";
 import {
   InvalidEmailError,
@@ -39,6 +41,16 @@ describe("UserRepository", () => {
         surname: "Blanco"
       });
       expect(user.dni).toEqual(dni);
+    });
+
+    it("creates a user with no password", async () => {
+      const user = await UserRepository.create({
+        email: "asd@qwe.com",
+        dni: 39207913,
+        name: "Sebastian",
+        surname: "Blanco"
+      });
+      expect(user.password).toBeNull();
     });
 
     it("throws an error if password is invalid", async () => {
@@ -109,7 +121,7 @@ describe("UserRepository", () => {
       );
     });
 
-    it("checks for password validity before creation", async () => {
+    it("throws an error if the password has no digits", async () => {
       await expect(
         UserRepository.create({
           email: "asd@qwe.com",
@@ -121,6 +133,57 @@ describe("UserRepository", () => {
         PasswordWithoutDigitsError,
         "La contraseña debe contener numeros"
       );
+    });
+
+    describe("createFiubaUser", () => {
+      it("creates a valid Fiuba user", async () => {
+        const attributes = {
+          email: "email@gmail.com",
+          dni: 39207888,
+          password: "somethingVerySecret123",
+          name: "name",
+          surname: "surname"
+        };
+        const user = await UserRepository.createFiubaUser(attributes);
+        expect(user).toEqual(expect.objectContaining({
+          uuid: expect.stringMatching(UUID_REGEX),
+          ...attributes,
+          password: null
+        }));
+      });
+
+      it("throws an error if the FiubaService authentication returns false", async () => {
+        const fiubaUsersServiceMock = jest.spyOn(FiubaUsersService, "authenticate");
+        fiubaUsersServiceMock.mockResolvedValueOnce(Promise.resolve(false));
+        const dni = 39207888;
+        await expect(
+          UserRepository.createFiubaUser({
+            email: "email@gmail.com",
+            dni,
+            password: "somethingVerySecret123",
+            name: "name",
+            surname: "surname"
+          })
+        ).rejects.toThrowErrorWithMessage(
+          FiubaUserNotFoundError,
+          FiubaUserNotFoundError.buildMessage(dni)
+        );
+      });
+
+      it("throws an error if dni is invalid", async () => {
+        await expect(
+          UserRepository.createFiubaUser({
+            dni: 0,
+            email: "email@gmail.com",
+            password: "somethingVerySecret123",
+            name: "name",
+            surname: "surname"
+          })
+        ).rejects.toThrowErrorWithMessage(
+          InvalidEmptyUsernameError,
+          InvalidEmptyUsernameError.buildMessage()
+        );
+      });
     });
   });
 

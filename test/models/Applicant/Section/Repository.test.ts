@@ -11,6 +11,7 @@ describe("Section model", () => {
     await UserRepository.truncate();
     applicant = await ApplicantRepository.create({
       user: {
+        dni: 39207999,
         email: "sblanco@yahoo.com",
         password: "fdmgkfHGH4353",
         name: "Bruno",

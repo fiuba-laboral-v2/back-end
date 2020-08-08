@@ -10,11 +10,11 @@ export const FiubaUsersApi = {
     "Content-Type": "text/xml,",
     "charset": "UTF-8"
   }),
-  authenticate: async ({ username, password }: ICredentials) => {
+  authenticate: async ({ dni, password }: ICredentials) => {
     const httpResponse = await fetch(FiubaUsersServiceConfig.url, {
       method: "POST",
       headers: FiubaUsersApi.headers(),
-      body: RequestBodyBuilder.buildAuthenticate({ username, password })
+      body: RequestBodyBuilder.buildAuthenticate({ dni, password })
     });
     if (httpResponse.status === 200) {
       const response: IFiubaUsersApiSuccessResponse = parse(await httpResponse.text());

@@ -7,6 +7,7 @@ import { Career } from "$models";
 
 import { ApplicantGenerator, TApplicantDataGenerator } from "$generators/Applicant";
 import { CareerGenerator } from "$generators/Career";
+import { UUID_REGEX } from "$test/models";
 
 const SAVE_APPLICANT_WITH_COMPLETE_DATA = gql`
   mutation SaveApplicant(
@@ -27,6 +28,7 @@ const SAVE_APPLICANT_WITH_COMPLETE_DATA = gql`
       user {
         uuid
         email
+        dni
         name
         surname
       }
@@ -61,6 +63,7 @@ const SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA = gql`
       user {
         uuid
         email
+        dni
         name
         surname
       }
@@ -98,9 +101,10 @@ describe("saveApplicant", () => {
         }
       });
       expect(errors).toBeUndefined();
-      expect(data!.saveApplicant.user).toHaveProperty("uuid");
       expect(data!.saveApplicant).toMatchObject({
         user: {
+          uuid: expect.stringMatching(UUID_REGEX),
+          dni: applicantData.user.dni,
           email: applicantData.user.email,
           name: applicantData.user.name,
           surname: applicantData.user.surname
@@ -127,10 +131,11 @@ describe("saveApplicant", () => {
         }
       });
       expect(errors).toBeUndefined();
-      expect(data!.saveApplicant.user).toHaveProperty("uuid");
       expect(data!.saveApplicant).toMatchObject(
         {
           user: {
+            uuid: expect.stringMatching(UUID_REGEX),
+            dni: applicantData.user.dni,
             email: applicantData.user.email,
             name: applicantData.user.name,
             surname: applicantData.user.surname
