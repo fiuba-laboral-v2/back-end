@@ -1,4 +1,4 @@
-import { withCompleteData } from "./witCompleteData";
+import { withCompleteData } from "./withCompleteData";
 import { ICompanyAttributes } from "$generators/interfaces";
 import { createApolloTestClient } from "../createApolloTestClient";
 import { CompanyRepository } from "$models/Company";
