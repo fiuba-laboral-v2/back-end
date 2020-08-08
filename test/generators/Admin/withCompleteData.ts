@@ -1,13 +1,13 @@
 import { ISaveAdmin } from "$models/Admin";
 import { Secretary } from "$models/Admin/Interface";
-import { IUserTestClientAttributes } from "$generators/interfaces";
+import { IUserGeneratorAttributes } from "$generators/interfaces";
 
 export const withCompleteData = (
   {
     index,
     secretary,
     password
-  }: IAdminData
+  }: IAdminGeneratorAttributes
 ): ISaveAdmin => ({
   user: {
     email: `${secretary}admin${index}@mail.com`,
@@ -18,9 +18,7 @@ export const withCompleteData = (
   secretary
 });
 
-export interface IAdminData extends AdminInputData {
+export interface IAdminGeneratorAttributes extends IUserGeneratorAttributes {
   index: number;
   secretary: Secretary;
 }
-
-export type AdminInputData = Omit<IUserTestClientAttributes, "expressContext">;

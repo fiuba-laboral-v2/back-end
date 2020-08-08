@@ -1,4 +1,4 @@
-import { ICompanyTestClientAttributes } from "$generators/interfaces";
+import { ICompanyGeneratorAttributes } from "$generators/interfaces";
 import { CuitGenerator } from "$generators/Cuit";
 
 export const withMinimumData = (
@@ -17,9 +17,6 @@ export const withMinimumData = (
   }
 });
 
-interface IWithMinimumData extends WithMinimumInputData {
+interface IWithMinimumData extends ICompanyGeneratorAttributes {
   index: number;
 }
-
-export type WithMinimumInputData =
-  Omit<ICompanyTestClientAttributes, "expressContext" | "status">;

@@ -1,5 +1,5 @@
 import { ISaveApplicant } from "$models/Applicant";
-import { IApplicantTestClientAttributes } from "$generators/interfaces";
+import { IApplicantGeneratorAttributes } from "$generators/interfaces";
 import { DniGenerator } from "$generators/DNI";
 
 export const withCompleteData = (
@@ -23,7 +23,6 @@ export const withCompleteData = (
   }
 });
 
-interface IWithCompleteData
-  extends Omit<IApplicantTestClientAttributes, "expressContext" | "status"> {
+interface IWithCompleteData extends IApplicantGeneratorAttributes {
   index: number;
 }

@@ -1,5 +1,5 @@
 import { ISaveApplicant } from "$models/Applicant";
-import { IApplicantTestClientAttributes } from "$generators/interfaces";
+import { IApplicantGeneratorAttributes } from "$generators/interfaces";
 import { DniGenerator } from "$generators/DNI";
 
 export const withMinimumData = (
@@ -27,4 +27,4 @@ export interface IApplicantData extends IApplicantInputData {
   index: number;
 }
 
-export type IApplicantInputData = Omit<IApplicantTestClientAttributes, "expressContext" | "status">;
+export type IApplicantInputData = IApplicantGeneratorAttributes;

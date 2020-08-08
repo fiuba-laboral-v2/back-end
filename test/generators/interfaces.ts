@@ -3,6 +3,21 @@ import { Admin } from "$models";
 import { IExpressContext } from "../graphql/ExpressContext";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
+export interface ICompanyGeneratorAttributes {
+  user?: { password?: string };
+  photos?: string[];
+}
+
+export interface IApplicantGeneratorAttributes {
+  careers?: IApplicantCareer [];
+  capabilities?: string[];
+  password?: string | null;
+}
+
+export interface IUserGeneratorAttributes {
+  password?: string;
+}
+
 export interface ITestClientAttributes {
   expressContext?: IExpressContext;
 }
@@ -12,19 +27,18 @@ interface ITestClientApprovalAttributes {
   admin: Admin;
 }
 
-export interface IUserTestClientAttributes extends ITestClientAttributes {
-  password?: string;
+interface ITestClientApprovalStatus {
+  status?: ITestClientApprovalAttributes;
 }
 
-export interface ICompanyTestClientAttributes extends ITestClientAttributes {
-  status?: ITestClientApprovalAttributes;
-  user?: { password?: string };
-  photos?: string[];
+export interface IUserTestClientAttributes
+  extends ITestClientAttributes, IUserGeneratorAttributes {
 }
 
-export interface IApplicantTestClientAttributes extends ITestClientAttributes {
-  status?: ITestClientApprovalAttributes;
-  careers?: IApplicantCareer [];
-  capabilities?: string[];
-  password?: string | null;
+export interface ICompanyTestClientAttributes
+  extends ITestClientAttributes, ICompanyGeneratorAttributes, ITestClientApprovalStatus {
+}
+
+export interface IApplicantTestClientAttributes
+  extends ITestClientAttributes, IApplicantGeneratorAttributes, ITestClientApprovalStatus {
 }
