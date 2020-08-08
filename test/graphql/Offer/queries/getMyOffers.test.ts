@@ -14,7 +14,7 @@ import { CareerGenerator, TCareerGenerator } from "$generators/Career";
 import { CompanyGenerator, TCompanyGenerator } from "$generators/Company";
 import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
 import { ExtensionAdminGenerator } from "$generators/Admin";
-import { testClientFactory } from "$mocks/testClientFactory";
+import { TestClientGenerator } from "$generators/TestClient";
 
 const GET_MY_OFFERS = gql`
   query {
@@ -54,7 +54,7 @@ describe("getMyOffers", () => {
     };
 
     it("returns only the offers that the company made", async () => {
-      const { apolloClient, company } = await testClientFactory.company({
+      const { apolloClient, company } = await TestClientGenerator.company({
         status: {
           admin,
           approvalStatus: ApprovalStatus.approved
@@ -76,7 +76,7 @@ describe("getMyOffers", () => {
   describe("when no offers exists", () => {
     it("returns no offers when no offers were created", async () => {
       await OfferRepository.truncate();
-      const { apolloClient } = await testClientFactory.company({
+      const { apolloClient } = await TestClientGenerator.company({
         status: {
           admin,
           approvalStatus: ApprovalStatus.approved
@@ -100,14 +100,14 @@ describe("getMyOffers", () => {
     });
 
     it("returns an error if current user is not a companyUser", async () => {
-      const { apolloClient } = await testClientFactory.user();
+      const { apolloClient } = await TestClientGenerator.user();
       const { errors } = await apolloClient.query({ query: GET_MY_OFFERS });
 
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("returns an error if company has pending status", async () => {
-      const { apolloClient } = await testClientFactory.company({
+      const { apolloClient } = await TestClientGenerator.company({
         status: {
           admin,
           approvalStatus: ApprovalStatus.pending
@@ -118,7 +118,7 @@ describe("getMyOffers", () => {
     });
 
     it("returns an error if company has rejected status", async () => {
-      const { apolloClient } = await testClientFactory.company({
+      const { apolloClient } = await TestClientGenerator.company({
         status: {
           admin,
           approvalStatus: ApprovalStatus.rejected

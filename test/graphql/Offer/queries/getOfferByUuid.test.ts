@@ -9,7 +9,7 @@ import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
 import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
 import { userFactory } from "$mocks/user";
-import { testClientFactory } from "$mocks/testClientFactory";
+import { TestClientGenerator } from "$generators/TestClient";
 import { ApolloServerTestClient } from "apollo-server-testing";
 import generateUuid from "uuid/v4";
 import { ApprovalStatus } from "$models/ApprovalStatus";
@@ -83,7 +83,7 @@ describe("getOfferByUuid", () => {
 
   describe("when and offer exists", () => {
     it("finds an offer by uuid", async () => {
-      const { company, apolloClient } = await testClientFactory.company({
+      const { company, apolloClient } = await TestClientGenerator.company({
         status: {
           approvalStatus: ApprovalStatus.approved,
           admin: await admins.next().value
@@ -95,6 +95,7 @@ describe("getOfferByUuid", () => {
         variables: { uuid: offer.uuid }
       });
       expect(errors).toBeUndefined();
+      const phoneNumbers = await company.getPhoneNumbers();
       expect(data!.getOfferByUuid).toMatchObject(
         {
           uuid: offer.uuid,
@@ -127,7 +128,7 @@ describe("getOfferByUuid", () => {
             logo: company.logo,
             website: company.website,
             email: company.email,
-            phoneNumbers: await company.getPhoneNumbers(),
+            phoneNumbers: phoneNumbers.map(phoneNumber => phoneNumber.phoneNumber),
             photos: await company.getPhotos()
           }
         }
@@ -135,7 +136,7 @@ describe("getOfferByUuid", () => {
     });
 
     it("finds an offer with hasApplied in true", async () => {
-      const { applicant, apolloClient } = await testClientFactory.applicant({
+      const { applicant, apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
           admin: await admins.next().value
@@ -160,7 +161,7 @@ describe("getOfferByUuid", () => {
     });
 
     it("finds an offer with hasApplied in false", async () => {
-      const { apolloClient } = await testClientFactory.applicant({
+      const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
           admin: await admins.next().value
@@ -184,7 +185,7 @@ describe("getOfferByUuid", () => {
 
   describe("when no offer exists", () => {
     it("throws and error if no offer exist", async () => {
-      const { apolloClient } = await testClientFactory.admin();
+      const { apolloClient } = await TestClientGenerator.admin();
       const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       const { errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID,
@@ -236,9 +237,9 @@ describe("getOfferByUuid", () => {
           });
           expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
         };
-        await expectUnauthorized(await testClientFactory.company());
-        await expectUnauthorized(await testClientFactory.applicant());
-        await expectUnauthorized(await testClientFactory.user());
+        await expectUnauthorized(await TestClientGenerator.company());
+        await expectUnauthorized(await TestClientGenerator.applicant());
+        await expectUnauthorized(await TestClientGenerator.user());
       }
     );
   });

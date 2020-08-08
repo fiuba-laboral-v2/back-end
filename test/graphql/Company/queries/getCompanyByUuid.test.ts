@@ -2,7 +2,7 @@ import { gql } from "apollo-server";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
 import { client } from "../../ApolloTestClient";
-import { testClientFactory } from "$mocks/testClientFactory";
+import { TestClientGenerator } from "$generators/TestClient";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
 import { userFactory } from "$mocks/user";
@@ -45,7 +45,7 @@ describe("getCompanyByUuid", () => {
 
   it("finds a company given its uuid", async () => {
     const company = await userFactory.company();
-    const { apolloClient } = await testClientFactory.admin();
+    const { apolloClient } = await TestClientGenerator.admin();
     const response = await apolloClient.query({
       query: query,
       variables: { uuid: company.uuid }
@@ -73,7 +73,7 @@ describe("getCompanyByUuid", () => {
   });
 
   it("returns error if the Company does not exists", async () => {
-    const { apolloClient } = await testClientFactory.applicant({
+    const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.approved,
         admin: await admins.next().value
@@ -93,7 +93,7 @@ describe("getCompanyByUuid", () => {
 
   it("find a company with photos with an empty array", async () => {
     const company = await userFactory.company({ photos: [] });
-    const { apolloClient } = await testClientFactory.admin();
+    const { apolloClient } = await TestClientGenerator.admin();
     const { data, errors } = await apolloClient.query({
       query: query,
       variables: { uuid: company.uuid }
@@ -111,7 +111,7 @@ describe("getCompanyByUuid", () => {
   });
 
   it("returns an error if user is from a company", async () => {
-    const { apolloClient } = await testClientFactory.company();
+    const { apolloClient } = await TestClientGenerator.company();
     const { errors } = await apolloClient.query({
       query: query,
       variables: { uuid: generateUuid() }
@@ -120,7 +120,7 @@ describe("getCompanyByUuid", () => {
   });
 
   it("returns an error if user is a pending applicant", async () => {
-    const { apolloClient } = await testClientFactory.applicant();
+    const { apolloClient } = await TestClientGenerator.applicant();
     const { errors } = await apolloClient.query({
       query: query,
       variables: { uuid: generateUuid() }
@@ -129,7 +129,7 @@ describe("getCompanyByUuid", () => {
   });
 
   it("returns an error if user is a rejected applicant", async () => {
-    const { apolloClient } = await testClientFactory.applicant({
+    const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.rejected,
         admin: await admins.next().value

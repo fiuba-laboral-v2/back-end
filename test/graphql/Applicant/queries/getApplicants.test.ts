@@ -7,7 +7,7 @@ import { CareerRepository } from "$models/Career";
 import { UserRepository } from "$models/User";
 
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
-import { testClientFactory } from "$mocks/testClientFactory";
+import { TestClientGenerator } from "$generators/TestClient";
 import { userFactory } from "$mocks/user";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
@@ -58,7 +58,7 @@ describe("getApplicants", () => {
 
   describe("when no applicant exists", () => {
     it("fetches an empty array of applicants", async () => {
-      const { apolloClient } = await testClientFactory.admin();
+      const { apolloClient } = await TestClientGenerator.admin();
       const { data, errors } = await apolloClient.query({ query: GET_APPLICANTS });
       expect(errors).toBeUndefined();
       expect(data!.getApplicants).toEqual([]);
@@ -73,7 +73,7 @@ describe("getApplicants", () => {
         user,
         applicant,
         apolloClient
-      } = await testClientFactory.applicant({
+      } = await TestClientGenerator.applicant({
         careers: applicantCareer,
         status: {
           approvalStatus: ApprovalStatus.approved,
@@ -112,7 +112,7 @@ describe("getApplicants", () => {
       const {
         applicant: firstApplicant,
         apolloClient
-      } = await testClientFactory.applicant({
+      } = await TestClientGenerator.applicant({
         careers: applicantCareersData,
         capabilities: ["Go"],
         status: {
@@ -173,13 +173,13 @@ describe("getApplicants", () => {
     });
 
     it("returns an error if current user is pending applicant", async () => {
-      const { apolloClient } = await testClientFactory.applicant();
+      const { apolloClient } = await TestClientGenerator.applicant();
       const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("returns an error if current user is rejected applicant", async () => {
-      const { apolloClient } = await testClientFactory.applicant({
+      const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.rejected,
           admin: await admins.next().value
@@ -190,7 +190,7 @@ describe("getApplicants", () => {
     });
 
     it("returns an error if current user is from company", async () => {
-      const { apolloClient } = await testClientFactory.company();
+      const { apolloClient } = await TestClientGenerator.company();
       const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });

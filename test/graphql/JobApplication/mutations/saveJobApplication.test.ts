@@ -8,9 +8,9 @@ import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
 import { companyMocks } from "$test/models/Company/mocks";
-import { testClientFactory } from "$mocks/testClientFactory";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
+import { TestClientGenerator } from "$generators/TestClient";
 import generateUuid from "uuid/v4";
 
 const SAVE_JOB_APPLICATION = gql`
@@ -37,7 +37,7 @@ describe("saveJobApplication", () => {
 
   describe("when the input is valid", () => {
     it("should create a new job application", async () => {
-      const { applicant, apolloClient } = await testClientFactory.applicant({
+      const { applicant, apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
           admin: await admins.next().value
@@ -62,7 +62,7 @@ describe("saveJobApplication", () => {
 
   describe("Errors", () => {
     it("returns an error if no offerUuid is provided", async () => {
-      const { apolloClient } = await testClientFactory.user();
+      const { apolloClient } = await TestClientGenerator.user();
       const { errors } = await apolloClient.mutate({ mutation: SAVE_JOB_APPLICATION });
       expect(errors![0].constructor.name).toEqual(ApolloError.name);
     });
@@ -79,7 +79,7 @@ describe("saveJobApplication", () => {
     });
 
     it("returns an error if current user is not an applicant", async () => {
-      const { apolloClient } = await testClientFactory.user();
+      const { apolloClient } = await TestClientGenerator.user();
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
         variables: { offerUuid: generateUuid() }
@@ -88,7 +88,7 @@ describe("saveJobApplication", () => {
     });
 
     it("returns an error if current user is a company", async () => {
-      const { apolloClient } = await testClientFactory.company();
+      const { apolloClient } = await TestClientGenerator.company();
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
         variables: { offerUuid: generateUuid() }
@@ -97,7 +97,7 @@ describe("saveJobApplication", () => {
     });
 
     it("returns an error if current user is an admin", async () => {
-      const { apolloClient } = await testClientFactory.admin();
+      const { apolloClient } = await TestClientGenerator.admin();
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
         variables: { offerUuid: generateUuid() }
@@ -106,7 +106,7 @@ describe("saveJobApplication", () => {
     });
 
     it("returns an error if current user is a pending applicant", async () => {
-      const { apolloClient } = await testClientFactory.applicant();
+      const { apolloClient } = await TestClientGenerator.applicant();
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
         variables: { offerUuid: generateUuid() }
@@ -115,7 +115,7 @@ describe("saveJobApplication", () => {
     });
 
     it("returns an error if current user is a rejected applicant", async () => {
-      const { apolloClient } = await testClientFactory.applicant({
+      const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.rejected,
           admin: await admins.next().value
@@ -129,7 +129,7 @@ describe("saveJobApplication", () => {
     });
 
     it("returns an error if the application already exist", async () => {
-      const { apolloClient } = await testClientFactory.applicant({
+      const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
           admin: await admins.next().value
@@ -151,7 +151,7 @@ describe("saveJobApplication", () => {
     });
 
     it("returns an error if the offer does not exist", async () => {
-      const { apolloClient } = await testClientFactory.applicant({
+      const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
           admin: await admins.next().value

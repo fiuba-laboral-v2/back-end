@@ -1,7 +1,7 @@
 import { ApolloError, gql } from "apollo-server";
 import { CareerRepository } from "$models/Career";
 import { CareerGenerator, TCareerDataGenerator } from "$generators/Career";
-import { testClientFactory } from "$mocks/testClientFactory";
+import { TestClientGenerator } from "$generators/TestClient";
 import { UnauthorizedError } from "$graphql/Errors";
 
 const SAVE_CAREER = gql`
@@ -23,7 +23,7 @@ describe("saveCareer", () => {
   });
 
   it("creates the career model", async () => {
-    const { apolloClient } = await testClientFactory.admin();
+    const { apolloClient } = await TestClientGenerator.admin();
     const params = careersData.next().value;
     const { data, errors } = await apolloClient.mutate({
       mutation: SAVE_CAREER,
@@ -41,7 +41,7 @@ describe("saveCareer", () => {
 
   describe("Errors", () => {
     it("should throw an if the description is not provided", async () => {
-      const { apolloClient } = await testClientFactory.admin();
+      const { apolloClient } = await TestClientGenerator.admin();
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_CAREER,
         variables: { code: "3", credits: 250 }
@@ -50,7 +50,7 @@ describe("saveCareer", () => {
     });
 
     it("should throw an if career already exists", async () => {
-      const { apolloClient } = await testClientFactory.admin();
+      const { apolloClient } = await TestClientGenerator.admin();
       const params = careersData.next().value;
       await apolloClient.mutate({ mutation: SAVE_CAREER, variables: params });
       const { errors } = await apolloClient.mutate({ mutation: SAVE_CAREER, variables: params });
@@ -60,14 +60,14 @@ describe("saveCareer", () => {
     });
 
     it("throws an error if user is from a company", async () => {
-      const { apolloClient } = await testClientFactory.company();
+      const { apolloClient } = await TestClientGenerator.company();
       const params = careersData.next().value;
       const { errors } = await apolloClient.mutate({ mutation: SAVE_CAREER, variables: params });
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("throws an error if user is an applicant", async () => {
-      const { apolloClient } = await testClientFactory.applicant();
+      const { apolloClient } = await TestClientGenerator.applicant();
       const params = careersData.next().value;
       const { errors } = await apolloClient.mutate({ mutation: SAVE_CAREER, variables: params });
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });

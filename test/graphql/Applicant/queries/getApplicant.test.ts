@@ -6,7 +6,7 @@ import { ApplicantNotFound } from "$models/Applicant/Errors/ApplicantNotFound";
 import { AuthenticationError } from "$graphql/Errors";
 
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
-import { testClientFactory } from "$mocks/testClientFactory";
+import { TestClientGenerator } from "$generators/TestClient";
 import generateUuid from "uuid/v4";
 import { UserRepository } from "$models/User";
 import { ApplicantGenerator, TApplicantGenerator } from "$generators/Applicant";
@@ -62,7 +62,7 @@ describe("getApplicant", () => {
         user,
         applicant,
         apolloClient
-      } = await testClientFactory.applicant({ careers: applicantCareer });
+      } = await TestClientGenerator.applicant({ careers: applicantCareer });
 
       const { data, errors } = await apolloClient.query({
         query: GET_APPLICANT,
@@ -92,7 +92,7 @@ describe("getApplicant", () => {
     });
 
     it("returns the applicant's default approvalStatus", async () => {
-      const { apolloClient } = await testClientFactory.user();
+      const { apolloClient } = await TestClientGenerator.user();
       const applicant = await applicants.next().value;
       const { data } = await apolloClient.query({
         query: GET_APPLICANT,
@@ -102,7 +102,7 @@ describe("getApplicant", () => {
     });
 
     it("returns the applicant's modified approvalStatus", async () => {
-      const { apolloClient } = await testClientFactory.user();
+      const { apolloClient } = await TestClientGenerator.user();
       const applicant = await applicants.next().value;
       const admin = await admins.next().value;
       await ApplicantRepository.updateApprovalStatus(
@@ -120,7 +120,7 @@ describe("getApplicant", () => {
 
   describe("when the applicant doesn't exists", () => {
     it("returns an error if the applicant does not exist", async () => {
-      const { apolloClient } = await testClientFactory.user();
+      const { apolloClient } = await TestClientGenerator.user();
 
       const uuid = generateUuid();
       const { errors } = await apolloClient.query({

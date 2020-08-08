@@ -2,7 +2,7 @@ import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
-import { testClientFactory } from "$mocks/testClientFactory";
+import { TestClientGenerator } from "$generators/TestClient";
 
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
@@ -31,7 +31,7 @@ describe("getCompanies", () => {
 
   it("returns all companies", async () => {
     const company = await userFactory.company();
-    const { apolloClient } = await testClientFactory.applicant({
+    const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.approved,
         admin: await admins.next().value
@@ -56,25 +56,25 @@ describe("getCompanies", () => {
     });
 
     it("returns an error if the user is from a company", async () => {
-      const { apolloClient } = await testClientFactory.company();
+      const { apolloClient } = await TestClientGenerator.company();
       const { errors } = await apolloClient.query({ query: GET_COMPANIES });
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("returns an error if the user is an admin", async () => {
-      const { apolloClient } = await testClientFactory.admin();
+      const { apolloClient } = await TestClientGenerator.admin();
       const { errors } = await apolloClient.query({ query: GET_COMPANIES });
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("returns an error if the user is a pending applicant", async () => {
-      const { apolloClient } = await testClientFactory.applicant();
+      const { apolloClient } = await TestClientGenerator.applicant();
       const { errors } = await apolloClient.query({ query: GET_COMPANIES });
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("returns an error if the user is a rejected applicant", async () => {
-      const { apolloClient } = await testClientFactory.applicant({
+      const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.rejected,
           admin: await admins.next().value

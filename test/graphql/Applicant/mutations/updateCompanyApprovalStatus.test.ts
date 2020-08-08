@@ -11,7 +11,7 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 import { ApplicantGenerator, TApplicantGenerator } from "$generators/Applicant";
-import { testClientFactory } from "$mocks/testClientFactory";
+import { TestClientGenerator } from "$generators/TestClient";
 import { client } from "../../ApolloTestClient";
 
 const UPDATE_APPLICANT_APPROVAL_STATUS = gql`
@@ -42,7 +42,7 @@ describe("updateCompanyApprovalStatus", () => {
 
   const updateApplicantWithStatus = async (newStatus: ApprovalStatus) => {
     const applicant = await applicants.next().value;
-    const { admin, apolloClient } = await testClientFactory.admin();
+    const { admin, apolloClient } = await TestClientGenerator.admin();
     const dataToUpdate = { uuid: applicant.uuid, approvalStatus: newStatus };
     const { data, errors } = await performMutation(apolloClient, dataToUpdate);
     return { data, errors, admin, applicant };
@@ -92,7 +92,7 @@ describe("updateCompanyApprovalStatus", () => {
     });
 
     it("returns an error if no uuid is provided", async () => {
-      const { apolloClient } = await testClientFactory.admin();
+      const { apolloClient } = await TestClientGenerator.admin();
       const dataToUpdate = { approvalStatus: ApprovalStatus.approved };
       const { errors } = await performMutation(apolloClient, dataToUpdate);
       expect(errors).not.toBeUndefined();
@@ -106,14 +106,14 @@ describe("updateCompanyApprovalStatus", () => {
     });
 
     it("returns an error if the current user is from a company", async () => {
-      const { apolloClient } = await testClientFactory.company();
+      const { apolloClient } = await TestClientGenerator.company();
       const dataToUpdate = { uuid: applicant.uuid, approvalStatus: ApprovalStatus.approved };
       const { errors } = await performMutation(apolloClient, dataToUpdate);
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("returns an error if the current user is an applicant", async () => {
-      const { apolloClient } = await testClientFactory.applicant();
+      const { apolloClient } = await TestClientGenerator.applicant();
       const dataToUpdate = { uuid: applicant.uuid, approvalStatus: ApprovalStatus.approved };
       const { errors } = await performMutation(apolloClient, dataToUpdate);
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
@@ -121,7 +121,7 @@ describe("updateCompanyApprovalStatus", () => {
 
     it("returns an error if the applicant does not exists", async () => {
       const nonExistentApplicantUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
-      const { apolloClient } = await testClientFactory.admin();
+      const { apolloClient } = await TestClientGenerator.admin();
       const { errors } = await performMutation(
         apolloClient,
         {
@@ -133,7 +133,7 @@ describe("updateCompanyApprovalStatus", () => {
     });
 
     it("returns an error if the approvalStatus is invalid", async () => {
-      const { apolloClient } = await testClientFactory.admin();
+      const { apolloClient } = await TestClientGenerator.admin();
       const dataToUpdate = { uuid: applicant.uuid, approvalStatus: "invalidApprovalStatus" };
       const { errors } = await performMutation(apolloClient, dataToUpdate);
       expect(errors).not.toBeUndefined();

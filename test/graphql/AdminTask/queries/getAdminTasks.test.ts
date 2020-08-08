@@ -15,7 +15,7 @@ import { UnauthorizedError } from "$graphql/Errors";
 import { ExtensionAdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
 import { ApplicantGenerator } from "$generators/Applicant";
-import { testClientFactory } from "$mocks/testClientFactory";
+import { TestClientGenerator } from "$generators/TestClient";
 
 const GET_ADMIN_TASKS = gql`
   query GetAdminTasks(
@@ -63,7 +63,7 @@ describe("getAdminTasks", () => {
   });
 
   const getAdminTasks = async (filter: IAdminTasksFilter) => {
-    const { apolloClient } = await testClientFactory.admin();
+    const { apolloClient } = await TestClientGenerator.admin();
     const { errors, data } = await apolloClient.query({
       query: GET_ADMIN_TASKS,
       variables: filter
@@ -162,7 +162,7 @@ describe("getAdminTasks", () => {
 
   describe("when the variables are incorrect", () => {
     it("returns an error if no filter is provided", async () => {
-      const { apolloClient } = await testClientFactory.admin();
+      const { apolloClient } = await TestClientGenerator.admin();
       const { errors } = await apolloClient.query({
         query: GET_ADMIN_TASKS,
         variables: {}
@@ -186,15 +186,15 @@ describe("getAdminTasks", () => {
     };
 
     it("throws an error to plain users", async () => {
-      await testForbiddenAccess(await testClientFactory.user());
+      await testForbiddenAccess(await TestClientGenerator.user());
     });
 
     it("throws an error to company users", async () => {
-      await testForbiddenAccess(await testClientFactory.company());
+      await testForbiddenAccess(await TestClientGenerator.company());
     });
 
     it("throws an error to applicants", async () => {
-      await testForbiddenAccess(await testClientFactory.applicant());
+      await testForbiddenAccess(await TestClientGenerator.applicant());
     });
   });
 });
