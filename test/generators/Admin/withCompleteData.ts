@@ -1,6 +1,6 @@
 import { ISaveAdmin } from "$models/Admin";
 import { Secretary } from "$models/Admin/Interface";
-import { IUserProps } from "$generators/interfaces";
+import { IUserTestClientAttributes } from "$generators/interfaces";
 
 export const withCompleteData = (
   {
@@ -23,4 +23,4 @@ export interface IAdminData extends AdminInputData {
   secretary: Secretary;
 }
 
-export type AdminInputData = Omit<IUserProps, "expressContext">;
+export type AdminInputData = Omit<IUserTestClientAttributes, "expressContext">;

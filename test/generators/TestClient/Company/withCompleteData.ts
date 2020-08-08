@@ -1,4 +1,4 @@
-import { ICompanyAttributes } from "$generators/interfaces";
+import { ICompanyTestClientAttributes } from "$generators/interfaces";
 import { CuitGenerator } from "$generators/Cuit";
 
 export const withCompleteData = (
@@ -25,6 +25,7 @@ export const withCompleteData = (
   photos: photos || []
 });
 
-interface IWithCompleteData extends Omit<ICompanyAttributes, "expressContext" | "status"> {
+interface IWithCompleteData
+  extends Omit<ICompanyTestClientAttributes, "expressContext" | "status"> {
   index: number;
 }

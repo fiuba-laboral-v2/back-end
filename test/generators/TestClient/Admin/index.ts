@@ -1,10 +1,12 @@
-import { IUserProps } from "../../interfaces";
+import { IUserTestClientAttributes } from "../../interfaces";
 import { createApolloTestClient } from "../createApolloTestClient";
-import { AdminRepository } from "$models/Admin";
-import { Secretary } from "$models/Admin";
+import { AdminRepository, Secretary } from "$models/Admin";
 import { DniGenerator } from "$generators/DNI";
 
-export const adminTestClient = async (index: number, { password, expressContext }: IUserProps) => {
+export const adminTestClient = async (
+  index: number,
+  { password, expressContext }: IUserTestClientAttributes
+) => {
   const admin = await AdminRepository.create({
     user: {
       dni: DniGenerator.generate(),

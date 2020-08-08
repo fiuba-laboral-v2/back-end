@@ -1,8 +1,11 @@
-import { IUserProps } from "../../interfaces";
+import { IUserTestClientAttributes } from "../../interfaces";
 import { createApolloTestClient } from "../createApolloTestClient";
 import { UserRepository } from "$models/User";
 
-export const userTestClient = async (index: number, { password, expressContext }: IUserProps) => {
+export const userTestClient = async (
+  index: number,
+  { password, expressContext }: IUserTestClientAttributes
+) => {
   const user = await UserRepository.create({
     email: `userTestClient${index}@mail.com`,
     password: password || "ASDqfdsfsdfwe234",

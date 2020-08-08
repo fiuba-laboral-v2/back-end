@@ -1,11 +1,11 @@
 import { withCompleteData } from "./withCompleteData";
-import { ICompanyAttributes } from "$generators/interfaces";
+import { ICompanyTestClientAttributes } from "$generators/interfaces";
 import { createApolloTestClient } from "../createApolloTestClient";
 import { CompanyRepository } from "$models/Company";
 
 export const companyTestClient = async (
   index: number,
-  { status, photos, expressContext, user: userAttributes }: ICompanyAttributes
+  { status, photos, expressContext, user: userAttributes }: ICompanyTestClientAttributes
 ) => {
   let company = await CompanyRepository.create(withCompleteData({
     index,

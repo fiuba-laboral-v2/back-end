@@ -1,11 +1,11 @@
-import { IApplicantAttributes } from "$generators/interfaces";
+import { IApplicantTestClientAttributes } from "$generators/interfaces";
 import { ApplicantRepository } from "$models/Applicant";
 import { withCompleteData } from "$generators/TestClient/Applicant/withCompleteData";
 import { createApolloTestClient } from "$generators/TestClient/createApolloTestClient";
 
 export const applicantTestClient = async (
   index: number,
-  { status, expressContext, ...applicantAttributes }: IApplicantAttributes
+  { status, expressContext, ...applicantAttributes }: IApplicantTestClientAttributes
 ) => {
   let applicant = await ApplicantRepository.create(withCompleteData({
     index,

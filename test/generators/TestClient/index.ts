@@ -2,8 +2,11 @@ import { applicantTestClient } from "./Applicant";
 import { userTestClient } from "./User";
 import { companyTestClient } from "./Company";
 import { adminTestClient } from "./Admin";
-import { IApplicantAttributes, ICompanyAttributes } from "$generators/interfaces";
-import { IUserProps } from "../interfaces";
+import {
+  IApplicantTestClientAttributes,
+  ICompanyTestClientAttributes
+} from "$generators/interfaces";
+import { IUserTestClientAttributes } from "../interfaces";
 
 export const TestClientGenerator = {
   index: 0,
@@ -11,12 +14,12 @@ export const TestClientGenerator = {
     TestClientGenerator.index += 1;
     return TestClientGenerator.index;
   },
-  user: async (attributes: IUserProps = {}) =>
+  user: async (attributes: IUserTestClientAttributes = {}) =>
     userTestClient(TestClientGenerator.getIndex(), attributes),
-  admin: async (attributes: IUserProps = {}) =>
+  admin: async (attributes: IUserTestClientAttributes = {}) =>
     adminTestClient(TestClientGenerator.getIndex(), attributes),
-  applicant: async (attributes: IApplicantAttributes = {}) =>
+  applicant: async (attributes: IApplicantTestClientAttributes = {}) =>
     applicantTestClient(TestClientGenerator.getIndex(), attributes),
-  company: async (attributes: ICompanyAttributes = {}) =>
+  company: async (attributes: ICompanyTestClientAttributes = {}) =>
     companyTestClient(TestClientGenerator.getIndex(), attributes)
 };

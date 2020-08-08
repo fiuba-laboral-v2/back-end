@@ -1,5 +1,5 @@
 import { withMinimumData } from "./withMinimumData";
-import { ICompanyAttributes } from "$generators/interfaces";
+import { ICompanyTestClientAttributes } from "$generators/interfaces";
 
 export const completeData = (
   {
@@ -22,4 +22,4 @@ interface IWithCompleteData extends WithCompleteInputData {
   index: number;
 }
 
-export type WithCompleteInputData = Omit<ICompanyAttributes, "expressContext" | "status">;
+export type WithCompleteInputData = Omit<ICompanyTestClientAttributes, "expressContext" | "status">;
