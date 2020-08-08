@@ -8,7 +8,7 @@ export const withMinimumData = (
     capabilities,
     careers
   }: IApplicantData
-): ICreateApplicant => ({
+): ISaveApplicant => ({
   padron: index + 1,
   description: `description${index + 1}`,
   careers: careers || [],

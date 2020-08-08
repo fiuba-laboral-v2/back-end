@@ -1,4 +1,4 @@
-import { ICreateApplicant } from "$models/Applicant";
+import { ISaveApplicant } from "$models/Applicant";
 import { IApplicantAttributes } from "$generators/interfaces";
 
 export const withCompleteData = (
@@ -8,7 +8,7 @@ export const withCompleteData = (
     capabilities,
     careers
   }: IWithCompleteData
-): ICreateApplicant => ({
+): ISaveApplicant => ({
   padron: index + 1,
   description: `description${index + 1}`,
   careers: careers || [],
