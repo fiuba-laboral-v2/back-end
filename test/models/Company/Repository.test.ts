@@ -9,22 +9,20 @@ import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
 import { Admin } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { CompanyGenerator, TCompanyDataGenerator } from "$generators/Company";
+import { CompanyGenerator } from "$generators/Company";
 import { ExtensionAdminGenerator } from "$generators/Admin";
 import { UserMocks } from "../User/mocks";
 import { CompanyNotUpdatedError } from "$models/Company/Errors";
 
 describe("CompanyRepository", () => {
-  let companiesData: TCompanyDataGenerator;
 
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
-    companiesData = await CompanyGenerator.data.completeData();
   });
 
   it("creates a new company", async () => {
-    const companyCompleteData = companiesData.next().value;
+    const companyCompleteData = CompanyGenerator.data.completeData();
     const company = await CompanyRepository.create(companyCompleteData);
     expect(company).toEqual(expect.objectContaining({
       cuit: companyCompleteData.cuit,
@@ -44,13 +42,13 @@ describe("CompanyRepository", () => {
   });
 
   it("creates a company in a pending approval status as default", async () => {
-    const companyCompleteData = companiesData.next().value;
+    const companyCompleteData = CompanyGenerator.data.completeData();
     const company = await CompanyRepository.create(companyCompleteData);
     expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
   });
 
   it("creates a valid company with a logo with more than 255 characters", async () => {
-    const companyCompleteData = companiesData.next().value;
+    const companyCompleteData = CompanyGenerator.data.completeData();
     const company = await CompanyRepository.create({
       ...companyCompleteData,
       logo: `data:image/jpeg;base64,/9j/${"4AAQSkZBAAD/4gKgUNDX1BS".repeat(200)}AgICAgIA==`
@@ -59,14 +57,14 @@ describe("CompanyRepository", () => {
   });
 
   it("should create a valid company with a large description", async () => {
-    const companyCompleteData = companiesData.next().value;
+    const companyCompleteData = CompanyGenerator.data.completeData();
     await expect(
       CompanyRepository.create({ ...companyCompleteData, description: "word".repeat(300) })
     ).resolves.not.toThrow();
   });
 
   it("throws an error if new company has an already existing cuit", async () => {
-    const companyCompleteData = companiesData.next().value;
+    const companyCompleteData = CompanyGenerator.data.completeData();
     const cuit = companyCompleteData.cuit;
     await CompanyRepository.create(companyCompleteData);
     await expect(
@@ -99,7 +97,7 @@ describe("CompanyRepository", () => {
   });
 
   it("retrieve by uuid", async () => {
-    const companyCompleteData = companiesData.next().value;
+    const companyCompleteData = CompanyGenerator.data.completeData();
     const company = await CompanyRepository.create(companyCompleteData);
     const expectedCompany = await CompanyRepository.findByUuid(company.uuid);
     expect(expectedCompany).not.toBeNull();
@@ -120,7 +118,7 @@ describe("CompanyRepository", () => {
   it("retrieve all Companies", async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
-    const companyCompleteData = companiesData.next().value;
+    const companyCompleteData = CompanyGenerator.data.completeData();
     const company = await CompanyRepository.create(companyCompleteData);
     const expectedCompanies = await CompanyRepository.findAll();
     expect(expectedCompanies).not.toBeNull();
@@ -131,7 +129,7 @@ describe("CompanyRepository", () => {
   });
 
   it("throws an error if phoneNumbers are invalid", async () => {
-    const companyCompleteData = companiesData.next().value;
+    const companyCompleteData = CompanyGenerator.data.completeData();
     await expect(
       CompanyRepository.create(
         {
@@ -146,7 +144,7 @@ describe("CompanyRepository", () => {
   });
 
   it("throws an error if phoneNumbers are duplicated", async () => {
-    const companyCompleteData = companiesData.next().value;
+    const companyCompleteData = CompanyGenerator.data.completeData();
     await expect(
       CompanyRepository.create(
         {
@@ -158,7 +156,7 @@ describe("CompanyRepository", () => {
   });
 
   it("deletes a company", async () => {
-    const companyCompleteData = companiesData.next().value;
+    const companyCompleteData = CompanyGenerator.data.completeData();
     const { uuid } = await CompanyRepository.create(companyCompleteData);
     expect(await CompanyRepository.findByUuid(uuid)).not.toBeNull();
     await CompanyRepository.truncate();
@@ -167,7 +165,7 @@ describe("CompanyRepository", () => {
 
   describe("Update", () => {
     it("updates only company attributes", async () => {
-      const companyCompleteData = companiesData.next().value;
+      const companyCompleteData = CompanyGenerator.data.completeData();
       const { uuid } = await CompanyRepository.create(companyCompleteData);
       const dataToUpdate = {
         cuit: "30711311773",
@@ -183,7 +181,7 @@ describe("CompanyRepository", () => {
     });
 
     it("throws an error if cuit is invalid", async () => {
-      const companyCompleteData = companiesData.next().value;
+      const companyCompleteData = CompanyGenerator.data.completeData();
       const { uuid } = await CompanyRepository.create(companyCompleteData);
       await expect(
         CompanyRepository.update({ uuid, cuit: "invalidCuit" })
@@ -195,11 +193,11 @@ describe("CompanyRepository", () => {
     let admin: Admin;
 
     beforeAll(async () => {
-      admin = await ExtensionAdminGenerator.instance().next().value;
+      admin = await ExtensionAdminGenerator.instance();
     });
 
     it("approves company only by an admin and create new event", async () => {
-      const company = await CompanyRepository.create(companiesData.next().value);
+      const company = await CompanyRepository.create(CompanyGenerator.data.completeData());
       expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
       const approvedCompany = await CompanyRepository.updateApprovalStatus(
         admin.userUuid,
@@ -217,7 +215,7 @@ describe("CompanyRepository", () => {
     });
 
     it("rejects company only by an admin and create new event", async () => {
-      const company = await CompanyRepository.create(companiesData.next().value);
+      const company = await CompanyRepository.create(CompanyGenerator.data.completeData());
       expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
       const approvedCompany = await CompanyRepository.updateApprovalStatus(
         admin.userUuid,
@@ -235,7 +233,7 @@ describe("CompanyRepository", () => {
     });
 
     it("throws an error if status is invalid and not change the company", async () => {
-      const company = await CompanyRepository.create(companiesData.next().value);
+      const company = await CompanyRepository.create(CompanyGenerator.data.completeData());
       expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
       await expect(
         CompanyRepository.updateApprovalStatus(
@@ -255,7 +253,7 @@ describe("CompanyRepository", () => {
     });
 
     it("throws an error if admin does not exist", async () => {
-      const company = await CompanyRepository.create(companiesData.next().value);
+      const company = await CompanyRepository.create(CompanyGenerator.data.completeData());
       const nonExistentAdminUserUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       await expect(
         CompanyRepository.updateApprovalStatus(
@@ -298,7 +296,7 @@ describe("CompanyRepository", () => {
     });
 
     it("throws an error if admin userUuid has an invalid format", async () => {
-      const company = await CompanyRepository.create(companiesData.next().value);
+      const company = await CompanyRepository.create(CompanyGenerator.data.completeData());
       await expect(
         CompanyRepository.updateApprovalStatus(
           "invalidUuid",

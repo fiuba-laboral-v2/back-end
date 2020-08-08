@@ -2,12 +2,12 @@ import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
-import { testClientFactory } from "$mocks/testClientFactory";
+import { TestClientGenerator } from "$generators/TestClient";
+import { CompanyGenerator } from "$generators/Company";
 
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { userFactory } from "$mocks/user";
-import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
+import { ExtensionAdminGenerator } from "$generators/Admin";
 
 const GET_COMPANIES = gql`
   query {
@@ -19,10 +19,7 @@ const GET_COMPANIES = gql`
 `;
 
 describe("getCompanies", () => {
-  let admins: TAdminGenerator;
-
   beforeAll(() => {
-    admins = ExtensionAdminGenerator.instance();
     return Promise.all([
       CompanyRepository.truncate(),
       UserRepository.truncate()
@@ -30,11 +27,11 @@ describe("getCompanies", () => {
   });
 
   it("returns all companies", async () => {
-    const company = await userFactory.company();
-    const { apolloClient } = await testClientFactory.applicant({
+    const company = await CompanyGenerator.instance.withCompleteData();
+    const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.approved,
-        admin: await admins.next().value
+        admin: await ExtensionAdminGenerator.instance()
       }
     });
     const response = await apolloClient.query({ query: GET_COMPANIES });
@@ -56,28 +53,28 @@ describe("getCompanies", () => {
     });
 
     it("returns an error if the user is from a company", async () => {
-      const { apolloClient } = await testClientFactory.company();
+      const { apolloClient } = await TestClientGenerator.company();
       const { errors } = await apolloClient.query({ query: GET_COMPANIES });
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("returns an error if the user is an admin", async () => {
-      const { apolloClient } = await testClientFactory.admin();
+      const { apolloClient } = await TestClientGenerator.admin();
       const { errors } = await apolloClient.query({ query: GET_COMPANIES });
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("returns an error if the user is a pending applicant", async () => {
-      const { apolloClient } = await testClientFactory.applicant();
+      const { apolloClient } = await TestClientGenerator.applicant();
       const { errors } = await apolloClient.query({ query: GET_COMPANIES });
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("returns an error if the user is a rejected applicant", async () => {
-      const { apolloClient } = await testClientFactory.applicant({
+      const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.rejected,
-          admin: await admins.next().value
+          admin: await ExtensionAdminGenerator.instance()
         }
       });
       const { errors } = await apolloClient.query({ query: GET_COMPANIES });

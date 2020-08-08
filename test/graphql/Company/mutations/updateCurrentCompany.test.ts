@@ -1,6 +1,6 @@
 import { gql } from "apollo-server";
 
-import { testClientFactory } from "$mocks/testClientFactory";
+import { TestClientGenerator } from "$generators/TestClient";
 
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
@@ -45,7 +45,7 @@ describe("updateCurrentCompany", () => {
 
   describe("When the update succeeds", () => {
     it("update all company attributes", async () => {
-      const { apolloClient } = await testClientFactory.company();
+      const { apolloClient } = await TestClientGenerator.company();
       const dataToUpdate = {
         companyName: "Devartis SA",
         slogan: "new slogan",
@@ -76,7 +76,7 @@ describe("updateCurrentCompany", () => {
     });
 
     it("throws an error if current user is not a company user", async () => {
-      const { apolloClient } = await testClientFactory.user();
+      const { apolloClient } = await TestClientGenerator.user();
       const dataToUpdate = { companyName: "new company name" };
       const { errors } = await apolloClient.mutate({
         mutation: UPDATE_CURRENT_COMPANY,

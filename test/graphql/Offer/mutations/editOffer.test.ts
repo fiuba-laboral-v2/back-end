@@ -1,11 +1,11 @@
 import { gql } from "apollo-server";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
-import { testClientFactory } from "$mocks/testClientFactory";
+import { TestClientGenerator } from "$generators/TestClient";
 import { OfferRepository } from "$models/Offer";
 import { OfferGenerator, TOfferDataGenerator } from "$generators/Offer";
 import { client } from "../../ApolloTestClient";
-import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
+import { ExtensionAdminGenerator } from "$generators/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import generateUuid from "uuid/v4";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
@@ -40,19 +40,17 @@ const EDIT_OFFER = gql`
 
 describe("editOffer", () => {
   let offersData: TOfferDataGenerator;
-  let admins: TAdminGenerator;
 
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     offersData = OfferGenerator.data.withObligatoryData();
-    admins = ExtensionAdminGenerator.instance();
   });
 
   it("edits an offer successfully", async () => {
-    const { apolloClient, company } = await testClientFactory.company({
+    const { apolloClient, company } = await TestClientGenerator.company({
       status: {
-        admin: await admins.next().value,
+        admin: await ExtensionAdminGenerator.instance(),
         approvalStatus: ApprovalStatus.approved
       }
     });
@@ -69,9 +67,9 @@ describe("editOffer", () => {
   });
 
   it("throws an error when the offer uuid is not found", async () => {
-    const { apolloClient, company } = await testClientFactory.company({
+    const { apolloClient, company } = await TestClientGenerator.company({
       status: {
-        admin: await admins.next().value,
+        admin: await ExtensionAdminGenerator.instance(),
         approvalStatus: ApprovalStatus.approved
       }
     });
@@ -84,7 +82,7 @@ describe("editOffer", () => {
   });
 
   it("throws an error when the user does not belong to a company", async () => {
-    const { apolloClient } = await testClientFactory.applicant();
+    const { apolloClient } = await TestClientGenerator.applicant();
     const attributes = offersData.next({
       companyUuid: "ca2c5210-cb79-4026-9a26-1eb7a4159e72"
     }).value;
@@ -96,7 +94,7 @@ describe("editOffer", () => {
   });
 
   it("throws an error when the user does not belong to an approved company", async () => {
-    const { apolloClient } = await testClientFactory.company();
+    const { apolloClient } = await TestClientGenerator.company();
     const { errors } = await apolloClient.mutate({
       mutation: EDIT_OFFER,
       variables: { ...offersData.next().value, uuid: generateUuid() }

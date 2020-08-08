@@ -6,12 +6,12 @@ import { OfferRepository } from "$models/Offer";
 import { UserRepository } from "$models/User";
 
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
-import { CompanyGenerator, TCompanyGenerator } from "$generators/Company";
+import { CompanyGenerator } from "$generators/Company";
 import { OfferGenerator, TOfferDataGenerator } from "$generators/Offer";
-import { testClientFactory } from "$mocks/testClientFactory";
+import { TestClientGenerator } from "$generators/TestClient";
 import { UnauthorizedError } from "$graphql/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
+import { ExtensionAdminGenerator } from "$generators/Admin";
 import { range } from "lodash";
 import { Offer } from "$models";
 
@@ -25,15 +25,13 @@ const GET_OFFERS = gql`
 
 describe("getOffers", () => {
   let careers: TCareerGenerator;
-  let companies: TCompanyGenerator;
   let offersData: TOfferDataGenerator;
-  let admins: TAdminGenerator;
 
   const approvedApplicantTestClient = async () => {
-    const { apolloClient } = await testClientFactory.applicant({
+    const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.approved,
-        admin: await admins.next().value
+        admin: await ExtensionAdminGenerator.instance()
       }
     });
     return apolloClient;
@@ -44,16 +42,14 @@ describe("getOffers", () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
-    companies = CompanyGenerator.instance.withMinimumData();
     offersData = OfferGenerator.data.withObligatoryData();
-    admins = ExtensionAdminGenerator.instance();
   });
 
   describe("when offers exists", () => {
     let offer1: Offer;
     let offer2: Offer;
     const createOffers = async () => {
-      const { uuid: companyUuid } = await companies.next().value;
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const career1 = await careers.next().value;
       const career2 = await careers.next().value;
       offer1 = await OfferRepository.create({
@@ -153,22 +149,22 @@ describe("getOffers", () => {
   });
 
   it("returns an error when the user is from a company", async () => {
-    const { apolloClient } = await testClientFactory.company();
+    const { apolloClient } = await TestClientGenerator.company();
     const { errors } = await apolloClient.query({ query: GET_OFFERS });
     expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
   });
 
   it("returns an error when the user is an admin", async () => {
-    const { apolloClient } = await testClientFactory.admin();
+    const { apolloClient } = await TestClientGenerator.admin();
     const { errors } = await apolloClient.query({ query: GET_OFFERS });
     expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
   });
 
   it("returns an error when the user is a rejected applicant", async () => {
-    const { apolloClient } = await testClientFactory.applicant({
+    const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.rejected,
-        admin: await admins.next().value
+        admin: await ExtensionAdminGenerator.instance()
       }
     });
     const { errors } = await apolloClient.query({ query: GET_OFFERS });
@@ -176,7 +172,7 @@ describe("getOffers", () => {
   });
 
   it("returns an error when the user is a pending applicant", async () => {
-    const { apolloClient } = await testClientFactory.applicant();
+    const { apolloClient } = await TestClientGenerator.applicant();
     const { errors } = await apolloClient.query({ query: GET_OFFERS });
     expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
   });

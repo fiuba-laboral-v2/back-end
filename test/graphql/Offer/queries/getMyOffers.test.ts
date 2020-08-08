@@ -11,10 +11,10 @@ import { UserRepository } from "$models/User";
 import { OfferRepository } from "$models/Offer";
 
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
-import { CompanyGenerator, TCompanyGenerator } from "$generators/Company";
+import { CompanyGenerator } from "$generators/Company";
 import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
 import { ExtensionAdminGenerator } from "$generators/Admin";
-import { testClientFactory } from "$mocks/testClientFactory";
+import { TestClientGenerator } from "$generators/TestClient";
 
 const GET_MY_OFFERS = gql`
   query {
@@ -26,7 +26,6 @@ const GET_MY_OFFERS = gql`
 
 describe("getMyOffers", () => {
   let careers: TCareerGenerator;
-  let companies: TCompanyGenerator;
   let offers: TOfferGenerator;
   let admin: Admin;
 
@@ -35,9 +34,8 @@ describe("getMyOffers", () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
-    companies = CompanyGenerator.instance.withMinimumData();
     offers = await OfferGenerator.instance.withObligatoryData();
-    admin = await ExtensionAdminGenerator.instance().next().value;
+    admin = await ExtensionAdminGenerator.instance();
   });
 
   describe("when offers exists", () => {
@@ -45,7 +43,7 @@ describe("getMyOffers", () => {
     let offer2;
 
     const createOffers = async (companyUuid: string) => {
-      const { uuid } = await companies.next().value;
+      const { uuid } = await CompanyGenerator.instance.withMinimumData();
       const career1 = await careers.next().value;
       const career2 = await careers.next().value;
       offer1 = await offers.next({ companyUuid, careers: [{ careerCode: career1.code }] }).value;
@@ -54,7 +52,7 @@ describe("getMyOffers", () => {
     };
 
     it("returns only the offers that the company made", async () => {
-      const { apolloClient, company } = await testClientFactory.company({
+      const { apolloClient, company } = await TestClientGenerator.company({
         status: {
           admin,
           approvalStatus: ApprovalStatus.approved
@@ -76,7 +74,7 @@ describe("getMyOffers", () => {
   describe("when no offers exists", () => {
     it("returns no offers when no offers were created", async () => {
       await OfferRepository.truncate();
-      const { apolloClient } = await testClientFactory.company({
+      const { apolloClient } = await TestClientGenerator.company({
         status: {
           admin,
           approvalStatus: ApprovalStatus.approved
@@ -100,14 +98,14 @@ describe("getMyOffers", () => {
     });
 
     it("returns an error if current user is not a companyUser", async () => {
-      const { apolloClient } = await testClientFactory.user();
+      const { apolloClient } = await TestClientGenerator.user();
       const { errors } = await apolloClient.query({ query: GET_MY_OFFERS });
 
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("returns an error if company has pending status", async () => {
-      const { apolloClient } = await testClientFactory.company({
+      const { apolloClient } = await TestClientGenerator.company({
         status: {
           admin,
           approvalStatus: ApprovalStatus.pending
@@ -118,7 +116,7 @@ describe("getMyOffers", () => {
     });
 
     it("returns an error if company has rejected status", async () => {
-      const { apolloClient } = await testClientFactory.company({
+      const { apolloClient } = await TestClientGenerator.company({
         status: {
           admin,
           approvalStatus: ApprovalStatus.rejected

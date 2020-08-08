@@ -11,19 +11,19 @@ export interface IUserProps extends IClientFactory {
   password?: string;
 }
 
-interface ICompanyApproval {
+interface IApproval {
   approvalStatus: ApprovalStatus;
   admin: Admin;
 }
 
 export interface ICompanyAttributes extends IClientFactory {
-  status?: ICompanyApproval;
+  status?: IApproval;
   user?: IUserProps;
   photos?: string[];
 }
 
 export interface IApplicantAttributes extends IClientFactory {
-  status?: ICompanyApproval;
+  status?: IApproval;
   careers?: IApplicantCareer [];
   capabilities?: string[];
   password?: string | null;

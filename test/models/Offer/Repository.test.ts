@@ -6,14 +6,13 @@ import { OfferNotFound } from "$models/Offer/Errors";
 import { OfferSection } from "$models";
 import { OfferCareer } from "$models";
 import { Offer } from "$models";
-import { CompanyGenerator, TCompanyGenerator } from "$generators/Company";
+import { CompanyGenerator } from "$generators/Company";
 import { OfferGenerator, TOfferDataGenerator } from "$generators/Offer";
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
 import { omit } from "lodash";
 import { UserRepository } from "$models/User";
 
 describe("OfferRepository", () => {
-  let companies: TCompanyGenerator;
   let careersGenerator: TCareerGenerator;
   let offersData: TOfferDataGenerator;
 
@@ -21,7 +20,6 @@ describe("OfferRepository", () => {
     await CareerRepository.truncate();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
-    companies = CompanyGenerator.instance.withMinimumData();
     careersGenerator = CareerGenerator.instance();
     offersData = OfferGenerator.data.withObligatoryData();
   });
@@ -34,14 +32,14 @@ describe("OfferRepository", () => {
 
   describe("Create", () => {
     it("creates a new offer", async () => {
-      const { uuid: companyUuid } = await companies.next().value;
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const offerProps = offersData.next({ companyUuid }).value;
       const offer = await OfferRepository.create(offerProps);
       expect(offer).toEqual(expect.objectContaining(offerProps));
     });
 
     it("creates a new offer with one section", async () => {
-      const { uuid: companyUuid } = await companies.next().value;
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const attributes = offersData.next({ companyUuid }).value;
       const offer = await OfferRepository.create({ ...attributes, sections: [sectionData] });
       expect(offer).toEqual(expect.objectContaining(attributes));
@@ -50,7 +48,7 @@ describe("OfferRepository", () => {
     });
 
     it("creates a new offer with one career", async () => {
-      const { uuid: companyUuid } = await companies.next().value;
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const { code: careerCode } = await careersGenerator.next().value;
       const attributes = offersData.next({ companyUuid, careers: [{ careerCode }] }).value;
       const offer = await OfferRepository.create(attributes);
@@ -62,7 +60,7 @@ describe("OfferRepository", () => {
     });
 
     it("creates a new offer with one career and one section", async () => {
-      const { uuid: companyUuid } = await companies.next().value;
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const { code: careerCode } = await careersGenerator.next().value;
       const careerData = { careerCode };
       const attributes = offersData.next({ companyUuid, careers: [careerData] }).value;
@@ -91,7 +89,7 @@ describe("OfferRepository", () => {
 
       it("throws error if section has no title and not create the offer", async () => {
         await CompanyRepository.truncate();
-        const { uuid: companyUuid } = await companies.next().value;
+        const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
         const attributes = offersData.next({
           companyUuid,
           sections: [{
@@ -106,7 +104,7 @@ describe("OfferRepository", () => {
 
       it("throws error if career is invalid and not create the offer", async () => {
         await CompanyRepository.truncate();
-        const { uuid: companyUuid } = await companies.next().value;
+        const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
         const careerCode = null as any;
         const attributes = offersData.next({ companyUuid, careers: [{ careerCode }] }).value;
         await expect(OfferRepository.create(attributes)).rejects.toThrow();
@@ -116,7 +114,7 @@ describe("OfferRepository", () => {
       });
 
       it("throws an error if adding and existing career to one offer", async () => {
-        const { uuid: companyUuid } = await companies.next().value;
+        const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
         const { code } = await careersGenerator.next().value;
         const offerCareersData = [{ careerCode: code }, { careerCode: code }];
         const attributes = offersData.next({ companyUuid, careers: offerCareersData }).value;
@@ -129,7 +127,7 @@ describe("OfferRepository", () => {
       });
 
       it("throws an error if two sections have the same display order", async () => {
-        const { uuid: companyUuid } = await companies.next().value;
+        const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
         const attributes = offersData.next({ companyUuid, sections: [sectionData] }).value;
         const { uuid: offerUuid } = await OfferRepository.create(attributes);
         await expect(
@@ -144,7 +142,7 @@ describe("OfferRepository", () => {
 
   describe("Update", () => {
     it("updates successfully", async () => {
-      const { uuid: companyUuid } = await companies.next().value;
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const attributes = offersData.next({ companyUuid }).value;
       const { uuid } = await OfferRepository.create(attributes);
       const newSalary = attributes.maximumSalary + 100;
@@ -169,7 +167,7 @@ describe("OfferRepository", () => {
 
   describe("Get", () => {
     it("should get the only offer by uuid", async () => {
-      const { uuid: companyUuid } = await companies.next().value;
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const offerProps = offersData.next({ companyUuid }).value;
       const { uuid: offerUuid } = await OfferRepository.create(offerProps);
       const offer = await OfferRepository.findByUuid(offerUuid);
@@ -177,7 +175,7 @@ describe("OfferRepository", () => {
     });
 
     it("should get the only offer by companyUuid", async () => {
-      const { uuid: companyUuid } = await companies.next().value;
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const offerProps = offersData.next({ companyUuid }).value;
       await OfferRepository.create(offerProps);
       const [offer] = await OfferRepository.findByCompanyUuid(companyUuid);
@@ -193,7 +191,7 @@ describe("OfferRepository", () => {
 
   describe("Delete", () => {
     it("deletes all offers if all companies are deleted", async () => {
-      const { uuid: companyUuid } = await companies.next().value;
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const offer = await OfferRepository.create(offersData.next({ companyUuid }).value);
       await CompanyRepository.truncate();
       await expect(OfferRepository.findByUuid(offer.uuid)).rejects.toThrow(OfferNotFound);
@@ -201,7 +199,7 @@ describe("OfferRepository", () => {
 
     it("deletes all offersCareers if all offers are deleted", async () => {
       await OfferRepository.truncate();
-      const { uuid: companyUuid } = await companies.next().value;
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const { code: careerCode } = await careersGenerator.next().value;
       await OfferRepository.create(offersData.next({
         companyUuid,
@@ -215,7 +213,7 @@ describe("OfferRepository", () => {
     it("deletes all offersCareers and offer if all companies are deleted", async () => {
       await CareerRepository.truncate();
       await CompanyRepository.truncate();
-      const { uuid: companyUuid } = await companies.next().value;
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const { code: careerCode } = await careersGenerator.next().value;
       await OfferRepository.create(offersData.next({
         companyUuid,
@@ -230,7 +228,7 @@ describe("OfferRepository", () => {
     describe("OfferSections", () => {
       it("deletes all sections if all offers are deleted", async () => {
         await CompanyRepository.truncate();
-        const { uuid: companyUuid } = await companies.next().value;
+        const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
         await OfferRepository.create(offersData.next({
           companyUuid,
           sections: [sectionData]
@@ -243,7 +241,7 @@ describe("OfferRepository", () => {
 
       it("deletes all sections and offer if all companies are deleted", async () => {
         await CompanyRepository.truncate();
-        const { uuid: companyUuid } = await companies.next().value;
+        const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
         await OfferRepository.create(offersData.next({
           companyUuid,
           sections: [sectionData]

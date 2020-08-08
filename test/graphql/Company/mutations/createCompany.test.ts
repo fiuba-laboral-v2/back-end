@@ -3,7 +3,7 @@ import { client } from "../../ApolloTestClient";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { CompanyGenerator, TCompanyDataGenerator } from "$generators/Company";
+import { CompanyGenerator } from "$generators/Company";
 
 const SAVE_COMPANY_WITH_COMPLETE_DATA = gql`
   mutation (
@@ -55,17 +55,15 @@ const SAVE_COMPANY_WITH_MINIMUM_DATA = gql`
 `;
 
 describe("createCompany", () => {
-  let companiesData: TCompanyDataGenerator;
 
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
-    companiesData = CompanyGenerator.data.completeData();
   });
 
   describe("When the creation succeeds", () => {
     it("create company", async () => {
-      const { user, ...companyData } = companiesData.next().value;
+      const { user, ...companyData } = CompanyGenerator.data.completeData();
       const response = await client.loggedOut().mutate({
         mutation: SAVE_COMPANY_WITH_COMPLETE_DATA,
         variables: { user, ...companyData }
@@ -83,7 +81,7 @@ describe("createCompany", () => {
     });
 
     it("creates company with only obligatory data", async () => {
-      const { user, cuit, companyName } = companiesData.next().value;
+      const { user, cuit, companyName } = CompanyGenerator.data.completeData();
       const response = await client.loggedOut().mutate({
         mutation: SAVE_COMPANY_WITH_MINIMUM_DATA,
         variables: { user, cuit, companyName }
@@ -96,7 +94,7 @@ describe("createCompany", () => {
 
   describe("when the creation errors", () => {
     it("throws an error if the company with its cuit already exist", async () => {
-      const companyData = companiesData.next().value;
+      const companyData = CompanyGenerator.data.completeData();
       const cuit = companyData.cuit;
       await client.loggedOut().mutate({
         mutation: SAVE_COMPANY_WITH_MINIMUM_DATA,
@@ -105,7 +103,7 @@ describe("createCompany", () => {
       const { errors } = await client.loggedOut().mutate({
         mutation: SAVE_COMPANY_WITH_MINIMUM_DATA,
         variables: {
-          ...companiesData.next().value,
+          ...CompanyGenerator.data.completeData(),
           cuit
         }
       });

@@ -3,7 +3,7 @@ import { client } from "../../ApolloTestClient";
 
 import { CareerRepository } from "$models/Career";
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
-import { testClientFactory } from "$mocks/testClientFactory";
+import { TestClientGenerator } from "$generators/TestClient";
 
 import { UserRepository } from "$models/User/Repository";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
@@ -68,7 +68,7 @@ describe("updateCurrentApplicant", () => {
   });
 
   it("should update all possible data deleting all previous values", async () => {
-    const { applicant, user, apolloClient } = await testClientFactory.applicant();
+    const { applicant, user, apolloClient } = await TestClientGenerator.applicant();
     const newCareer = await careers.next().value;
     const dataToUpdate = {
       user: {
@@ -176,7 +176,7 @@ describe("updateCurrentApplicant", () => {
     });
 
     it("should return an error if current user is not an applicant", async () => {
-      const { apolloClient } = await testClientFactory.user();
+      const { apolloClient } = await TestClientGenerator.user();
 
       const dataToUpdate = {
         user: {

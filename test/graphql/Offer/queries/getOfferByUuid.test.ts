@@ -8,12 +8,13 @@ import { OfferNotFound } from "$models/Offer/Errors";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
 import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
-import { userFactory } from "$mocks/user";
-import { testClientFactory } from "$mocks/testClientFactory";
+import { CompanyGenerator } from "$generators/Company";
+import { UserGenerator } from "$generators/User";
+import { TestClientGenerator } from "$generators/TestClient";
 import { ApolloServerTestClient } from "apollo-server-testing";
 import generateUuid from "uuid/v4";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
+import { ExtensionAdminGenerator } from "$generators/Admin";
 
 const GET_OFFER_BY_UUID = gql`
   query ($uuid: ID!) {
@@ -63,7 +64,6 @@ const GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION = gql`
 describe("getOfferByUuid", () => {
   let careers: TCareerGenerator;
   let offers: TOfferGenerator;
-  let admins: TAdminGenerator;
 
   beforeAll(async () => {
     await CompanyRepository.truncate();
@@ -71,7 +71,6 @@ describe("getOfferByUuid", () => {
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
     offers = await OfferGenerator.instance.withOneSection();
-    admins = ExtensionAdminGenerator.instance();
   });
 
   const createOffer = async company => {
@@ -83,10 +82,10 @@ describe("getOfferByUuid", () => {
 
   describe("when and offer exists", () => {
     it("finds an offer by uuid", async () => {
-      const { company, apolloClient } = await testClientFactory.company({
+      const { company, apolloClient } = await TestClientGenerator.company({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await admins.next().value
+          admin: await ExtensionAdminGenerator.instance()
         }
       });
       const { offer, career } = await createOffer(company);
@@ -95,6 +94,7 @@ describe("getOfferByUuid", () => {
         variables: { uuid: offer.uuid }
       });
       expect(errors).toBeUndefined();
+      const phoneNumbers = await company.getPhoneNumbers();
       expect(data!.getOfferByUuid).toMatchObject(
         {
           uuid: offer.uuid,
@@ -127,7 +127,7 @@ describe("getOfferByUuid", () => {
             logo: company.logo,
             website: company.website,
             email: company.email,
-            phoneNumbers: await company.getPhoneNumbers(),
+            phoneNumbers: phoneNumbers.map(phoneNumber => phoneNumber.phoneNumber),
             photos: await company.getPhotos()
           }
         }
@@ -135,13 +135,13 @@ describe("getOfferByUuid", () => {
     });
 
     it("finds an offer with hasApplied in true", async () => {
-      const { applicant, apolloClient } = await testClientFactory.applicant({
+      const { applicant, apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await admins.next().value
+          admin: await ExtensionAdminGenerator.instance()
         }
       });
-      const company = await userFactory.company();
+      const company = await CompanyGenerator.instance.withCompleteData();
       const { offer } = await createOffer(company);
       await JobApplicationRepository.apply(applicant.uuid, offer);
 
@@ -160,13 +160,13 @@ describe("getOfferByUuid", () => {
     });
 
     it("finds an offer with hasApplied in false", async () => {
-      const { apolloClient } = await testClientFactory.applicant({
+      const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await admins.next().value
+          admin: await ExtensionAdminGenerator.instance()
         }
       });
-      const company = await userFactory.company();
+      const company = await CompanyGenerator.instance.withCompleteData();
       const { offer: { uuid } } = await createOffer(company);
       const { data, errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
@@ -184,7 +184,7 @@ describe("getOfferByUuid", () => {
 
   describe("when no offer exists", () => {
     it("throws and error if no offer exist", async () => {
-      const { apolloClient } = await testClientFactory.admin();
+      const { apolloClient } = await TestClientGenerator.admin();
       const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       const { errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID,
@@ -194,14 +194,14 @@ describe("getOfferByUuid", () => {
     });
 
     it("returns an error if the current user is not an applicant", async () => {
-      const user = await userFactory.user();
+      const user = await UserGenerator.instance();
       const apolloClient = client.loggedIn({
         currentUser: {
           uuid: user.uuid,
           email: user.email
         }
       });
-      const company = await userFactory.company();
+      const company = await CompanyGenerator.instance.withCompleteData();
       const { offer: { uuid } } = await createOffer(company);
 
       const { errors } = await apolloClient.query({
@@ -214,7 +214,7 @@ describe("getOfferByUuid", () => {
 
     it("returns an error if there is no current user", async () => {
       const apolloClient = client.loggedOut();
-      const company = await userFactory.company();
+      const company = await CompanyGenerator.instance.withCompleteData();
 
       const { offer: { uuid } } = await createOffer(company);
       const { errors } = await apolloClient.query({
@@ -236,9 +236,9 @@ describe("getOfferByUuid", () => {
           });
           expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
         };
-        await expectUnauthorized(await testClientFactory.company());
-        await expectUnauthorized(await testClientFactory.applicant());
-        await expectUnauthorized(await testClientFactory.user());
+        await expectUnauthorized(await TestClientGenerator.company());
+        await expectUnauthorized(await TestClientGenerator.applicant());
+        await expectUnauthorized(await TestClientGenerator.user());
       }
     );
   });

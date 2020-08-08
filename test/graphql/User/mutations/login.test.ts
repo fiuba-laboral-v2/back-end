@@ -3,7 +3,10 @@ import { client, executeMutation } from "../../ApolloTestClient";
 import { User } from "$models";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
-import { userFactory } from "$mocks/user";
+import { UserGenerator } from "$generators/User";
+import { ApplicantGenerator } from "$generators/Applicant";
+import { ExtensionAdminGenerator } from "$generators/Admin";
+import { CompanyGenerator } from "$generators/Company";
 import { JWT } from "../../../../src/JWT";
 import { BadCredentialsError } from "$graphql/User/Errors";
 import { UserNotFoundError } from "$models/User/Errors";
@@ -56,7 +59,7 @@ describe("login", () => {
 
   it("sets the cookie for a user", async () => {
     const password = "AValidPassword0";
-    const user = await userFactory.user({ password });
+    const user = await UserGenerator.instance({ password });
     await testToken({
       user,
       password,
@@ -69,7 +72,7 @@ describe("login", () => {
 
   it("sets the cookie for an applicant user", async () => {
     const password = "AValidPassword1";
-    const applicant = await userFactory.applicant({ password });
+    const applicant = await ApplicantGenerator.instance.withMinimumData({ password });
     const user = await applicant.getUser();
     await testToken({
       user,
@@ -86,7 +89,7 @@ describe("login", () => {
 
   it("returns a token for a company user", async () => {
     const password = "AValidPassword2";
-    const company = await userFactory.company({ user: { password } });
+    const company = await CompanyGenerator.instance.withMinimumData({ user: { password } });
     const [user] = await company.getUsers();
     await testToken({
       user,
@@ -103,7 +106,7 @@ describe("login", () => {
 
   it("returns a token for an admin", async () => {
     const password = "AValidPassword3";
-    const admin = await userFactory.admin({ password });
+    const admin = await ExtensionAdminGenerator.instance({ password });
     const user = await admin.getUser();
     await testToken({
       user,

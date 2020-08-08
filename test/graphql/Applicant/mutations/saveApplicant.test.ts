@@ -5,7 +5,7 @@ import { UserRepository } from "$models/User";
 import { CareerRepository } from "$models/Career";
 import { Career } from "$models";
 
-import { ApplicantGenerator, TApplicantDataGenerator } from "$generators/Applicant";
+import { ApplicantGenerator } from "$generators/Applicant";
 import { CareerGenerator } from "$generators/Career";
 import { UUID_REGEX } from "$test/models";
 
@@ -79,19 +79,17 @@ const SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA = gql`
 `;
 
 describe("saveApplicant", () => {
-  let applicantsData: TApplicantDataGenerator;
   let career: Career;
 
   beforeAll(async () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
-    applicantsData = ApplicantGenerator.data.minimum();
     career = await CareerGenerator.instance().next().value;
   });
 
   describe("when the input is valid", () => {
     it("creates a new applicant", async () => {
-      const applicantData = applicantsData.next().value;
+      const applicantData = ApplicantGenerator.data.minimum();
 
       const { data, errors } = await client.loggedOut().mutate({
         mutation: SAVE_APPLICANT_WITH_COMPLETE_DATA,
@@ -122,7 +120,7 @@ describe("saveApplicant", () => {
     });
 
     it("creates applicant with only obligatory data", async () => {
-      const applicantData = applicantsData.next().value;
+      const applicantData = ApplicantGenerator.data.minimum();
       const { data, errors } = await client.loggedOut().mutate({
         mutation: SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA,
         variables: {
@@ -157,7 +155,7 @@ describe("saveApplicant", () => {
 
   describe("Errors", () => {
     it("should throw and error if the user exists", async () => {
-      const applicantData = applicantsData.next().value;
+      const applicantData = ApplicantGenerator.data.minimum();
       await UserRepository.create(applicantData.user);
       const { errors } = await client.loggedOut().mutate({
         mutation: SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA,
