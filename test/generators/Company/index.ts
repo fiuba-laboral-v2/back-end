@@ -1,20 +1,24 @@
 import { withMinimumData } from "./withMinimumData";
 import { completeData } from "./completeData";
 import { GenericGenerator, TGenericGenerator } from "../GenericGenerator";
-import { CompanyRepository, ICompany } from "$models/Company";
+import { CompanyRepository } from "$models/Company";
 import { CustomGenerator } from "../types";
 import { Admin, Company } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export type TCompanyGenerator = CustomGenerator<Promise<Company>>;
 export type TUpdateCompanyGenerator = TGenericGenerator<Promise<Company>, IUpdatedWithStatus>;
-export type TCompanyDataGenerator = CustomGenerator<ICompany>;
 interface IUpdatedWithStatus {
   admin: Admin;
   status: ApprovalStatus;
 }
 
 export const CompanyGenerator = {
+  index: 0,
+  getIndex: () => {
+    CompanyGenerator.index += 1;
+    return CompanyGenerator.index;
+  },
   instance: {
     withMinimumData: function*(): TCompanyGenerator {
       let index = 0;
@@ -44,12 +48,6 @@ export const CompanyGenerator = {
     }
   },
   data: {
-    completeData: function*(): TCompanyDataGenerator {
-      let index = 0;
-      while (true) {
-        yield completeData(index);
-        index++;
-      }
-    }
+    completeData: () => completeData(CompanyGenerator.getIndex())
   }
 };
