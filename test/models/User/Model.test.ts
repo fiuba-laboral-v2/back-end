@@ -41,7 +41,7 @@ describe("User", () => {
       surname: "surname"
     });
     expect(user.isFiubaUser()).toBe(true);
-    expect(() => user.validateFiubaUser()).not.toThrow();
+    expect(() => user.validateUser()).not.toThrow();
   });
 
   it("instantiates a user with no password when a dni is given", async () => {
