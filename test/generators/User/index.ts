@@ -2,9 +2,9 @@ import { UserRepository } from "$models/User";
 import { IUserProps } from "$generators/interfaces";
 
 export const UserGenerator = {
-  index: Number.MAX_SAFE_INTEGER,
+  index: 0,
   getIndex: () => {
-    UserGenerator.index -= 1;
+    UserGenerator.index += 1;
     return UserGenerator.index;
   },
   instance: ({ password }: Omit<IUserProps, "expressContext"> = {}) => {

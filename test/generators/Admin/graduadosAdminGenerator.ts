@@ -2,9 +2,9 @@ import { withCompleteData, AdminInputData } from "./withCompleteData";
 import { AdminRepository, Secretary } from "$models/Admin";
 
 export const GraduadosAdminGenerator = {
-  index: Number.MAX_SAFE_INTEGER,
+  index: 0,
   getIndex: () => {
-    GraduadosAdminGenerator.index -= 1;
+    GraduadosAdminGenerator.index += 1;
     return GraduadosAdminGenerator.index;
   },
   instance: (variables?: AdminInputData) =>

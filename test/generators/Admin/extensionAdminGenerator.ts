@@ -2,9 +2,9 @@ import { AdminRepository, Secretary } from "$models/Admin";
 import { withCompleteData, AdminInputData } from "./withCompleteData";
 
 export const ExtensionAdminGenerator = {
-  index: Number.MAX_SAFE_INTEGER,
+  index: 0,
   getIndex: () => {
-    ExtensionAdminGenerator.index -= 1;
+    ExtensionAdminGenerator.index += 1;
     return ExtensionAdminGenerator.index;
   },
   instance: (variables?: AdminInputData) =>
