@@ -8,4 +8,4 @@ export const GraphQLEnumType = (config: GraphQLEnumTypeProps) => new Enum({
     return values;
   })()
 });
-type GraphQLEnumTypeProps = Omit<GraphQLEnumTypeConfig, "values"> & { values: string[]; };
+type GraphQLEnumTypeProps = GraphQLEnumTypeConfig & { values: string[] };
