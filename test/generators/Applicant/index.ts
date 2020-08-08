@@ -1,5 +1,5 @@
 import { withMinimumData } from "./withMinimumData";
-import { ICreateApplicant, ApplicantRepository } from "$models/Applicant";
+import { ISaveApplicant, ApplicantRepository } from "$models/Applicant";
 import { CustomGenerator } from "../types";
 import { GenericGenerator, TGenericGenerator } from "../GenericGenerator";
 import { Admin, Applicant } from "$models";
@@ -7,7 +7,7 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export type TApplicantGenerator = CustomGenerator<Promise<Applicant>>;
 export type TUpdateApplicantGenerator = TGenericGenerator<Promise<Applicant>, IUpdatedWithStatus>;
-export type TApplicantDataGenerator = CustomGenerator<ICreateApplicant>;
+export type TApplicantDataGenerator = CustomGenerator<ISaveApplicant>;
 interface IUpdatedWithStatus {
   admin: Admin;
   status: ApprovalStatus;

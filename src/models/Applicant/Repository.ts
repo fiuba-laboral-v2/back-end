@@ -1,4 +1,4 @@
-import { ICreateApplicant, IApplicantEditable } from "./index";
+import { ISaveApplicant, IApplicantEditable } from "./index";
 import { ApplicantNotFound, ApplicantNotUpdatedError } from "./Errors";
 import { Database } from "../../config/Database";
 import { ApplicantCareersRepository } from "../ApplicantCareer";
@@ -18,7 +18,7 @@ export const ApplicantRepository = {
       careers: applicantCareers = [],
       capabilities = [],
       user
-    }: ICreateApplicant
+    }: ISaveApplicant
   ) => Database.transaction(async transaction => {
     const { uuid: userUuid } = await UserRepository.createFiubaUser(user, transaction);
     const applicant = await Applicant.create(

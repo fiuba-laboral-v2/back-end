@@ -16,7 +16,7 @@ export interface IApplicant {
   user: IUser;
 }
 
-export interface ICreateApplicant extends IApplicant {
+export interface ISaveApplicant extends IApplicant {
   user: ICreateFiubaUser;
 }
 
