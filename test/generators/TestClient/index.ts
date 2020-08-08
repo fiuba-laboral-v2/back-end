@@ -2,8 +2,8 @@ import { applicantTestClient } from "./Applicant";
 import { userTestClient } from "./User";
 import { companyTestClient } from "./Company";
 import { adminTestClient } from "./Admin";
-import { IApplicantAttributes, ICompanyAttributes } from "$mocks/interfaces";
-import { IUserProps } from "./interfaces";
+import { IApplicantAttributes, ICompanyAttributes } from "$generators/interfaces";
+import { IUserProps } from "../interfaces";
 
 export const TestClientGenerator = {
   index: 0,

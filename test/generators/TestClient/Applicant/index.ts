@@ -1,4 +1,4 @@
-import { IApplicantAttributes } from "$mocks/interfaces";
+import { IApplicantAttributes } from "$generators/interfaces";
 import { ApplicantRepository } from "$models/Applicant";
 import { withCompleteData } from "$generators/TestClient/Applicant/withCompleteData";
 import { createApolloTestClient } from "$generators/TestClient/createApolloTestClient";

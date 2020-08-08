@@ -1,4 +1,4 @@
-import { IUserProps } from "../interfaces";
+import { IUserProps } from "../../interfaces";
 import { createApolloTestClient } from "../createApolloTestClient";
 import { UserRepository } from "$models/User";
 

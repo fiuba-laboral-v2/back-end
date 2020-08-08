@@ -3,9 +3,8 @@ import { cuitGenerator } from "../generators/Company/cuitGenerator";
 
 import { UserRepository } from "$models/User";
 import { AdminRepository, Secretary } from "$models/Admin";
-import { ApplicantRepository } from "$models/Applicant";
 import { CompanyRepository } from "$models/Company";
-import { IApplicantAttributes, ICompanyAttributes, IUserProps } from "./interfaces";
+import { ICompanyAttributes, IUserProps } from "./interfaces";
 
 export const userFactory = {
   user: ({ password }: IUserProps = {}) =>
@@ -27,23 +26,6 @@ export const userFactory = {
       },
       secretary: Secretary.extension
     }),
-  applicant: (
-    {
-      careers, password, capabilities
-    }: IApplicantAttributes = { careers: [], capabilities: [], password: null }
-  ) => ApplicantRepository.create({
-    padron: random.number(),
-    description: random.words(),
-    careers: careers || [],
-    capabilities: capabilities || [],
-    user: {
-      dni: random.number({ min: 10000000, max: 99999999 }),
-      email: internet.email(),
-      password: password || "AValidPassword123",
-      name: "Bruno",
-      surname: "Diaz"
-    }
-  }),
   company: ({ photos, user }: ICompanyAttributes = {}) =>
     CompanyRepository.create({
       cuit: cuitGenerator(),

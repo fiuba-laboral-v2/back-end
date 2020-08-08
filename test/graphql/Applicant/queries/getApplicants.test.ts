@@ -5,12 +5,12 @@ import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 import { CareerRepository } from "$models/Career";
 import { UserRepository } from "$models/User";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
 import { TestClientGenerator } from "$generators/TestClient";
-import { userFactory } from "$mocks/user";
-import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
+import { ApplicantGenerator } from "$generators/Applicant";
 
 const GET_APPLICANTS = gql`
     query getApplicants {
@@ -120,7 +120,7 @@ describe("getApplicants", () => {
           admin: await admins.next().value
         }
       });
-      const secondApplicant = await userFactory.applicant({
+      const secondApplicant = await ApplicantGenerator.instance.withMinimumData({
         careers: applicantCareersData,
         capabilities: ["Go"]
       });

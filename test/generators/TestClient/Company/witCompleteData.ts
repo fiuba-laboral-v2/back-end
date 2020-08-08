@@ -1,5 +1,5 @@
 import { cuitGenerator } from "$generators/Company/cuitGenerator";
-import { ICompanyAttributes } from "$generators/TestClient/interfaces";
+import { ICompanyAttributes } from "$generators/interfaces";
 
 export const withCompleteData = (
   {

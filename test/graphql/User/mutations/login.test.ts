@@ -4,6 +4,7 @@ import { User } from "$models";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { userFactory } from "$mocks/user";
+import { ApplicantGenerator } from "$generators/Applicant";
 import { JWT } from "../../../../src/JWT";
 import { BadCredentialsError } from "$graphql/User/Errors";
 import { UserNotFoundError } from "$models/User/Errors";
@@ -69,7 +70,7 @@ describe("login", () => {
 
   it("sets the cookie for an applicant user", async () => {
     const password = "AValidPassword1";
-    const applicant = await userFactory.applicant({ password });
+    const applicant = await ApplicantGenerator.instance.withMinimumData({ password });
     const user = await applicant.getUser();
     await testToken({
       user,

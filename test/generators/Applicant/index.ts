@@ -1,4 +1,4 @@
-import { withMinimumData } from "./withMinimumData";
+import { withMinimumData, IApplicantInputData } from "./withMinimumData";
 import { ApplicantRepository } from "$models/Applicant";
 import { Admin } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
@@ -15,11 +15,14 @@ export const ApplicantGenerator = {
     return ApplicantGenerator.index;
   },
   instance: {
-    withMinimumData: () =>
-      ApplicantRepository.create(withMinimumData(ApplicantGenerator.getIndex())),
+    withMinimumData: (variables?: IApplicantInputData) =>
+      ApplicantRepository.create(withMinimumData({
+        index: ApplicantGenerator.getIndex(),
+        ...variables
+      })),
     updatedWithStatus: async (variables?: IUpdatedWithStatus) => {
       const applicant = await ApplicantRepository.create(
-        withMinimumData(ApplicantGenerator.getIndex())
+        withMinimumData({ index: ApplicantGenerator.getIndex() })
       );
       if (!variables) return applicant;
       const { admin, status } = variables;
@@ -27,6 +30,6 @@ export const ApplicantGenerator = {
     }
   },
   data: {
-    minimum: () => withMinimumData(ApplicantGenerator.getIndex())
+    minimum: () => withMinimumData({ index: ApplicantGenerator.getIndex() })
   }
 };

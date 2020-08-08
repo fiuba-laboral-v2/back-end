@@ -1,6 +1,6 @@
 import { IApplicantCareer } from "$models/Applicant";
 import { Admin } from "$models";
-import { IExpressContext } from "../../graphql/ExpressContext";
+import { IExpressContext } from "../graphql/ExpressContext";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export interface IClientFactory {

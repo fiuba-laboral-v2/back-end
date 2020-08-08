@@ -1,5 +1,5 @@
 import { ICreateApplicant } from "$models/Applicant";
-import { IApplicantAttributes } from "../interfaces";
+import { IApplicantAttributes } from "$generators/interfaces";
 
 export const withCompleteData = (
   {
