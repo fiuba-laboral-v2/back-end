@@ -1,5 +1,6 @@
 import { gql } from "apollo-server";
 import { CapabilityRepository } from "$models/Capability";
+import { UserRepository } from "$models/User";
 import { client } from "../../ApolloTestClient";
 
 import { TestClientGenerator } from "$generators/TestClient";
@@ -16,7 +17,8 @@ const GET_CAPABILITIES = gql`
 `;
 
 describe("getCapabilities", () => {
-  beforeAll(() => {
+  beforeAll(async () => {
+    await UserRepository.truncate();
     return CapabilityRepository.truncate();
   });
 

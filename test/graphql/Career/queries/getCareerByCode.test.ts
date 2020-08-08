@@ -2,6 +2,7 @@ import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 
 import { CareerRepository } from "$models/Career";
+import { UserRepository } from "$models/User";
 import { CareersNotFound } from "$models/Career/Errors/CareersNotFound";
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
 import { TestClientGenerator } from "$generators/TestClient";
@@ -23,6 +24,7 @@ describe("getCareerByCode", () => {
 
   beforeAll(async () => {
     await CareerRepository.truncate();
+    await UserRepository.truncate();
     careers = CareerGenerator.instance();
   });
 

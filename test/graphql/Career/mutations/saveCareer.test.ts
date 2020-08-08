@@ -1,5 +1,7 @@
 import { ApolloError, gql } from "apollo-server";
 import { CareerRepository } from "$models/Career";
+import { UserRepository } from "$models/User";
+import { CompanyRepository } from "$models/Company";
 import { CareerGenerator, TCareerDataGenerator } from "$generators/Career";
 import { TestClientGenerator } from "$generators/TestClient";
 import { UnauthorizedError } from "$graphql/Errors";
@@ -19,6 +21,8 @@ describe("saveCareer", () => {
 
   beforeAll(async () => {
     await CareerRepository.truncate();
+    await CompanyRepository.truncate();
+    await UserRepository.truncate();
     careersData = CareerGenerator.data();
   });
 
