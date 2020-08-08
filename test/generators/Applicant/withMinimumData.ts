@@ -1,4 +1,4 @@
-import { ICreateApplicant } from "$models/Applicant";
+import { ISaveApplicant } from "$models/Applicant";
 import { IApplicantAttributes } from "$generators/interfaces";
 
 export const withMinimumData = (

@@ -41,10 +41,10 @@ describe("User", () => {
       surname: "surname"
     });
     expect(user.isFiubaUser()).toBe(true);
-    expect(() => user.validateFiubaUser()).not.toThrow();
+    expect(() => user.validateUser()).not.toThrow();
   });
 
-  it("instantiates a user with no password", async () => {
+  it("instantiates a user with no password when a dni is given", async () => {
     const user = new User({
       email: "asd@qwe.com",
       dni: 39207888,

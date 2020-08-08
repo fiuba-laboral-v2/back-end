@@ -2,7 +2,7 @@ import { Int, List, nonNull, String } from "$graphql/fieldTypes";
 import { GraphQLApplicant } from "../Types/GraphQLApplicant";
 import { GraphQLCareerCredits } from "../Types/CareerCredits";
 
-import { ICreateApplicant, ApplicantRepository } from "$models/Applicant";
+import { ISaveApplicant, ApplicantRepository } from "$models/Applicant";
 import { GraphQLUserCreateInput } from "$graphql/User/Types/GraphQLUserCreateInput";
 
 const saveApplicant = {
@@ -24,7 +24,7 @@ const saveApplicant = {
       type: nonNull(GraphQLUserCreateInput)
     }
   },
-  resolve: (_: undefined, props: ICreateApplicant) => ApplicantRepository.create(props)
+  resolve: (_: undefined, props: ISaveApplicant) => ApplicantRepository.create(props)
 };
 
 export { saveApplicant };

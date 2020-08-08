@@ -14,9 +14,7 @@ import {
 @Table({
   tableName: "Users",
   validate: {
-    validateFiubaUser(this: User) {
-      this.validateFiubaUser();
-    }
+    validateUser(this: User) { this.validateUser(); }
   }
 })
 export class User extends Model<User> {
@@ -100,7 +98,7 @@ export class User extends Model<User> {
     return compare(password, this.password);
   }
 
-  public validateFiubaUser() {
+  public validateUser() {
     if (!this.isFiubaUser()) return;
     if (!this.dni) throw new MissingDniError();
   }
