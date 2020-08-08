@@ -9,7 +9,7 @@ export const GraphQLPaginatedOffers = new GraphQLObjectType({
       type: nonNull(Boolean)
     },
     offers: {
-      type: List(GraphQLOffer)
+      type: nonNull(List(nonNull(GraphQLOffer)))
     }
   })
 });
