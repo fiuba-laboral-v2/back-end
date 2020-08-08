@@ -6,23 +6,21 @@ import {
   CompanyApprovalEventRepository
 } from "$models/Company/CompanyApprovalEvent";
 import { ForeignKeyConstraintError } from "sequelize";
-import { CompanyGenerator, TCompanyGenerator } from "$generators/Company";
+import { CompanyGenerator } from "$generators/Company";
 import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
 
 describe("CompanyApprovalEventRepository", () => {
-  let companies: TCompanyGenerator;
   let admins: TAdminGenerator;
 
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
-    companies = CompanyGenerator.instance.withCompleteData();
     admins = ExtensionAdminGenerator.instance();
   });
 
   describe("create", () => {
     const expectValidCreation = async (status: ApprovalStatus) => {
-      const company = await companies.next().value;
+      const company = await CompanyGenerator.instance.withCompleteData();
       const admin = await admins.next().value;
       const adminUserUuid = admin.userUuid;
       const event = await CompanyApprovalEventRepository.create({ adminUserUuid, company, status });
@@ -44,7 +42,7 @@ describe("CompanyApprovalEventRepository", () => {
     });
 
     it("throws an error if userUuid does not belong to an admin", async () => {
-      const company = await companies.next().value;
+      const company = await CompanyGenerator.instance.withCompleteData();
       const [userCompany] = await company.getUsers();
       const { userUuid: adminUserUuid } = new Admin({ userUuid: userCompany.uuid });
       const status = ApprovalStatus.approved;
@@ -58,7 +56,7 @@ describe("CompanyApprovalEventRepository", () => {
     });
 
     it("gets company and admin by association", async () => {
-      const company = await companies.next().value;
+      const company = await CompanyGenerator.instance.withCompleteData();
       const admin = await admins.next().value;
       const status = ApprovalStatus.approved;
       const adminUserUuid = admin.userUuid;
@@ -70,7 +68,7 @@ describe("CompanyApprovalEventRepository", () => {
 
   describe("Delete cascade", () => {
     const createCompanyApprovalEvent = async () => {
-      const company = await companies.next().value;
+      const company = await CompanyGenerator.instance.withCompleteData();
       const { userUuid: adminUserUuid } = await admins.next().value;
       const status = ApprovalStatus.approved;
       return CompanyApprovalEventRepository.create({ adminUserUuid, company, status });

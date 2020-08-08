@@ -6,7 +6,7 @@ import { OfferRepository } from "$models/Offer";
 import { UserRepository } from "$models/User";
 
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
-import { CompanyGenerator, TCompanyGenerator } from "$generators/Company";
+import { CompanyGenerator } from "$generators/Company";
 import { OfferGenerator, TOfferDataGenerator } from "$generators/Offer";
 import { TestClientGenerator } from "$generators/TestClient";
 import { UnauthorizedError } from "$graphql/Errors";
@@ -25,7 +25,6 @@ const GET_OFFERS = gql`
 
 describe("getOffers", () => {
   let careers: TCareerGenerator;
-  let companies: TCompanyGenerator;
   let offersData: TOfferDataGenerator;
   let admins: TAdminGenerator;
 
@@ -44,7 +43,6 @@ describe("getOffers", () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
-    companies = CompanyGenerator.instance.withMinimumData();
     offersData = OfferGenerator.data.withObligatoryData();
     admins = ExtensionAdminGenerator.instance();
   });
@@ -53,7 +51,7 @@ describe("getOffers", () => {
     let offer1: Offer;
     let offer2: Offer;
     const createOffers = async () => {
-      const { uuid: companyUuid } = await companies.next().value;
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const career1 = await careers.next().value;
       const career2 = await careers.next().value;
       offer1 = await OfferRepository.create({

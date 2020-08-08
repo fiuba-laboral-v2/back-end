@@ -20,20 +20,10 @@ export const CompanyGenerator = {
     return CompanyGenerator.index;
   },
   instance: {
-    withMinimumData: function*(): TCompanyGenerator {
-      let index = 0;
-      while (true) {
-        yield CompanyRepository.create(withMinimumData(index));
-        index++;
-      }
-    },
-    withCompleteData: function*(): TCompanyGenerator {
-      let index = 0;
-      while (true) {
-        yield CompanyRepository.create(completeData(index));
-        index++;
-      }
-    },
+    withMinimumData: () =>
+      CompanyRepository.create(withMinimumData(CompanyGenerator.getIndex())),
+    withCompleteData: () =>
+      CompanyRepository.create(completeData(CompanyGenerator.getIndex())),
     updatedWithStatus: async ():  Promise<TUpdateCompanyGenerator> => {
       const generator = GenericGenerator<Promise<Company>, IUpdatedWithStatus>(
         async (index, variables) => {

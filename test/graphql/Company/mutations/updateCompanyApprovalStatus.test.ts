@@ -34,7 +34,7 @@ describe("updateCompanyApprovalStatus", () => {
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
-    company = await CompanyGenerator.instance.withMinimumData().next().value;
+    company = await CompanyGenerator.instance.withMinimumData();
   });
 
   beforeEach(() => CompanyApprovalEventRepository.truncate());
