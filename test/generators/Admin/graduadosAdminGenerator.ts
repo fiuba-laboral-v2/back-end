@@ -1,20 +1,16 @@
 import { withCompleteData } from "./withCompleteData";
 import { AdminRepository, Secretary } from "$models/Admin";
-import { TAdminGenerator, TAdminDataGenerator } from ".";
 
 export const GraduadosAdminGenerator = {
-  instance: function*(): TAdminGenerator {
-    let index = Number.MAX_SAFE_INTEGER;
-    while (true) {
-      yield AdminRepository.create(withCompleteData(index, Secretary.graduados));
-      index--;
-    }
+  index: Number.MAX_SAFE_INTEGER,
+  getIndex: () => {
+    GraduadosAdminGenerator.index -= 1;
+    return GraduadosAdminGenerator.index;
   },
-  data: function*(): TAdminDataGenerator {
-    let index = Number.MAX_SAFE_INTEGER;
-    while (true) {
-      yield withCompleteData(index, Secretary.graduados);
-      index--;
-    }
-  }
+  instance: () =>
+    AdminRepository.create(withCompleteData(
+      GraduadosAdminGenerator.getIndex(),
+      Secretary.graduados)
+    ),
+  data: () => withCompleteData(GraduadosAdminGenerator.getIndex(), Secretary.graduados)
 };

@@ -8,21 +8,18 @@ import {
   ICreateApplicantApprovalEvent
 } from "$models/Applicant/ApplicantApprovalEvent";
 
-import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
+import { ExtensionAdminGenerator } from "$generators/Admin";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { UUID_REGEX } from "../../index";
 
 describe("ApplicantApprovalEventRepository", () => {
-  let admins: TAdminGenerator;
-
   beforeAll(async () => {
     await UserRepository.truncate();
-    admins = ExtensionAdminGenerator.instance();
   });
 
   const expectToCreateAValidInstanceWithAStatus = async (status: ApprovalStatus) => {
     const applicant = await ApplicantGenerator.instance.withMinimumData();
-    const admin = await admins.next().value;
+    const admin = await ExtensionAdminGenerator.instance();
     const applicantApprovalEventAttributes: ICreateApplicantApprovalEvent = {
       adminUserUuid: admin.userUuid,
       applicantUuid: applicant.uuid,
@@ -53,7 +50,7 @@ describe("ApplicantApprovalEventRepository", () => {
 
   it("gets applicant by association", async () => {
     const applicant = await ApplicantGenerator.instance.withMinimumData();
-    const admin = await admins.next().value;
+    const admin = await ExtensionAdminGenerator.instance();
     const applicantApprovalEvent = await ApplicantApprovalEventRepository.create({
       adminUserUuid: admin.userUuid,
       applicantUuid: applicant.uuid,
@@ -64,7 +61,7 @@ describe("ApplicantApprovalEventRepository", () => {
 
   it("gets admin by association", async () => {
     const applicant = await ApplicantGenerator.instance.withMinimumData();
-    const admin = await admins.next().value;
+    const admin = await ExtensionAdminGenerator.instance();
     const applicantApprovalEvent = await ApplicantApprovalEventRepository.create({
       adminUserUuid: admin.userUuid,
       applicantUuid: applicant.uuid,
@@ -91,7 +88,7 @@ describe("ApplicantApprovalEventRepository", () => {
 
   it("throws an error if the applicantUuid does not belongs to an applicant", async () => {
     const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
-    const admin = await admins.next().value;
+    const admin = await ExtensionAdminGenerator.instance();
     await expect(
       ApplicantApprovalEventRepository.create({
         adminUserUuid: admin.userUuid,
@@ -106,7 +103,7 @@ describe("ApplicantApprovalEventRepository", () => {
   });
   describe("Delete cascade", () => {
     const createApplicantApprovalEvent = async () => {
-      const admin = await admins.next().value;
+      const admin = await ExtensionAdminGenerator.instance();
       const applicant = await ApplicantGenerator.instance.withMinimumData();
       return ApplicantApprovalEventRepository.create({
         adminUserUuid: admin.userUuid,

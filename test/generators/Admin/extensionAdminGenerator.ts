@@ -1,20 +1,15 @@
 import { AdminRepository, Secretary } from "$models/Admin";
-import { TAdminGenerator, TAdminDataGenerator } from ".";
 import { withCompleteData } from "./withCompleteData";
 
 export const ExtensionAdminGenerator = {
-  instance: function*(): TAdminGenerator {
-    let index = 0;
-    while (true) {
-      yield AdminRepository.create(withCompleteData(index, Secretary.extension));
-      index++;
-    }
+  index: Number.MAX_SAFE_INTEGER,
+  getIndex: () => {
+    ExtensionAdminGenerator.index -= 1;
+    return ExtensionAdminGenerator.index;
   },
-  data: function*(): TAdminDataGenerator {
-    let index = 0;
-    while (true) {
-      yield withCompleteData(index, Secretary.extension);
-      index++;
-    }
-  }
+  instance: () =>
+    AdminRepository.create(
+      withCompleteData(ExtensionAdminGenerator.getIndex(), Secretary.extension)
+    ),
+  data: () => withCompleteData(ExtensionAdminGenerator.getIndex(), Secretary.extension)
 };

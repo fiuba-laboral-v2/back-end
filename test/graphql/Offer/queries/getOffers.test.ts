@@ -11,7 +11,7 @@ import { OfferGenerator, TOfferDataGenerator } from "$generators/Offer";
 import { TestClientGenerator } from "$generators/TestClient";
 import { UnauthorizedError } from "$graphql/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
+import { ExtensionAdminGenerator } from "$generators/Admin";
 import { range } from "lodash";
 import { Offer } from "$models";
 
@@ -26,13 +26,12 @@ const GET_OFFERS = gql`
 describe("getOffers", () => {
   let careers: TCareerGenerator;
   let offersData: TOfferDataGenerator;
-  let admins: TAdminGenerator;
 
   const approvedApplicantTestClient = async () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.approved,
-        admin: await admins.next().value
+        admin: await ExtensionAdminGenerator.instance()
       }
     });
     return apolloClient;
@@ -44,7 +43,6 @@ describe("getOffers", () => {
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
     offersData = OfferGenerator.data.withObligatoryData();
-    admins = ExtensionAdminGenerator.instance();
   });
 
   describe("when offers exists", () => {
@@ -166,7 +164,7 @@ describe("getOffers", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.rejected,
-        admin: await admins.next().value
+        admin: await ExtensionAdminGenerator.instance()
       }
     });
     const { errors } = await apolloClient.query({ query: GET_OFFERS });

@@ -7,7 +7,7 @@ import { CompanyGenerator } from "$generators/Company";
 
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
+import { ExtensionAdminGenerator } from "$generators/Admin";
 
 const GET_COMPANIES = gql`
   query {
@@ -19,10 +19,7 @@ const GET_COMPANIES = gql`
 `;
 
 describe("getCompanies", () => {
-  let admins: TAdminGenerator;
-
   beforeAll(() => {
-    admins = ExtensionAdminGenerator.instance();
     return Promise.all([
       CompanyRepository.truncate(),
       UserRepository.truncate()
@@ -34,7 +31,7 @@ describe("getCompanies", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.approved,
-        admin: await admins.next().value
+        admin: await ExtensionAdminGenerator.instance()
       }
     });
     const response = await apolloClient.query({ query: GET_COMPANIES });
@@ -77,7 +74,7 @@ describe("getCompanies", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.rejected,
-          admin: await admins.next().value
+          admin: await ExtensionAdminGenerator.instance()
         }
       });
       const { errors } = await apolloClient.query({ query: GET_COMPANIES });

@@ -12,7 +12,7 @@ import { UserRepository } from "$models/User";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ApplicantRepository } from "$models/Applicant";
-import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
+import { ExtensionAdminGenerator } from "$generators/Admin";
 
 const GET_APPLICANT = gql`
   query GetApplicant($uuid: ID!) {
@@ -43,13 +43,11 @@ const GET_APPLICANT = gql`
 
 describe("getApplicant", () => {
   let careers: TCareerGenerator;
-  let admins: TAdminGenerator;
 
   beforeAll(async () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
-    admins = ExtensionAdminGenerator.instance();
   });
 
   describe("when the applicant exists", () => {
@@ -102,7 +100,7 @@ describe("getApplicant", () => {
     it("returns the applicant's modified approvalStatus", async () => {
       const { apolloClient } = await TestClientGenerator.user();
       const applicant = await ApplicantGenerator.instance.withMinimumData();
-      const admin = await admins.next().value;
+      const admin = await ExtensionAdminGenerator.instance();
       await ApplicantRepository.updateApprovalStatus(
         admin.userUuid,
         applicant.uuid,

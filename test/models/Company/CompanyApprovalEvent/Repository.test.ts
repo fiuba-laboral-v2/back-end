@@ -7,21 +7,18 @@ import {
 } from "$models/Company/CompanyApprovalEvent";
 import { ForeignKeyConstraintError } from "sequelize";
 import { CompanyGenerator } from "$generators/Company";
-import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
+import { ExtensionAdminGenerator } from "$generators/Admin";
 
 describe("CompanyApprovalEventRepository", () => {
-  let admins: TAdminGenerator;
-
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
-    admins = ExtensionAdminGenerator.instance();
   });
 
   describe("create", () => {
     const expectValidCreation = async (status: ApprovalStatus) => {
       const company = await CompanyGenerator.instance.withCompleteData();
-      const admin = await admins.next().value;
+      const admin = await ExtensionAdminGenerator.instance();
       const adminUserUuid = admin.userUuid;
       const event = await CompanyApprovalEventRepository.create({ adminUserUuid, company, status });
       expect(event.userUuid).toEqual(admin.userUuid);
@@ -57,7 +54,7 @@ describe("CompanyApprovalEventRepository", () => {
 
     it("gets company and admin by association", async () => {
       const company = await CompanyGenerator.instance.withCompleteData();
-      const admin = await admins.next().value;
+      const admin = await ExtensionAdminGenerator.instance();
       const status = ApprovalStatus.approved;
       const adminUserUuid = admin.userUuid;
       const event = await CompanyApprovalEventRepository.create({ adminUserUuid, company, status });
@@ -69,7 +66,7 @@ describe("CompanyApprovalEventRepository", () => {
   describe("Delete cascade", () => {
     const createCompanyApprovalEvent = async () => {
       const company = await CompanyGenerator.instance.withCompleteData();
-      const { userUuid: adminUserUuid } = await admins.next().value;
+      const { userUuid: adminUserUuid } = await ExtensionAdminGenerator.instance();
       const status = ApprovalStatus.approved;
       return CompanyApprovalEventRepository.create({ adminUserUuid, company, status });
     };

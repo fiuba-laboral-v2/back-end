@@ -4,7 +4,7 @@ import { UserRepository } from "$models/User";
 import { client } from "../../ApolloTestClient";
 import { TestClientGenerator } from "$generators/TestClient";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
-import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
+import { ExtensionAdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import generateUuid from "uuid/v4";
@@ -35,12 +35,9 @@ const query = gql`
 `;
 
 describe("getCompanyByUuid", () => {
-  let admins: TAdminGenerator;
-
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
-    admins = ExtensionAdminGenerator.instance();
   });
 
   it("finds a company given its uuid", async () => {
@@ -77,7 +74,7 @@ describe("getCompanyByUuid", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.approved,
-        admin: await admins.next().value
+        admin: await ExtensionAdminGenerator.instance()
       }
     });
     const notExistentUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
@@ -133,7 +130,7 @@ describe("getCompanyByUuid", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.rejected,
-        admin: await admins.next().value
+        admin: await ExtensionAdminGenerator.instance()
       }
     });
     const { errors } = await apolloClient.query({

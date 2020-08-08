@@ -1,26 +1,17 @@
 import { AdminRepository } from "$models/Admin";
 import { UserRepository } from "$models/User";
 import { UniqueConstraintError } from "sequelize";
-import {
-  ExtensionAdminGenerator,
-  GraduadosAdminGenerator,
-  TAdminDataGenerator
-} from "$generators/Admin";
+import { ExtensionAdminGenerator, GraduadosAdminGenerator } from "$generators/Admin";
 import { AdminNotFoundError } from "$models/Admin/Errors";
 
 describe("AdminRepository", () => {
-  let extensionAdminsData: TAdminDataGenerator;
-  let graduadosAdminsData: TAdminDataGenerator;
-
   beforeAll(async () => {
     await UserRepository.truncate();
-    extensionAdminsData = ExtensionAdminGenerator.data();
-    graduadosAdminsData = GraduadosAdminGenerator.data();
   });
 
   describe("create", () => {
     it("creates a valid Admin of extension", async () => {
-      const adminAttributes = extensionAdminsData.next().value;
+      const adminAttributes = ExtensionAdminGenerator.data();
       const admin = await AdminRepository.create(adminAttributes);
       expect(await admin.getUser()).toEqual(expect.objectContaining({
         ...adminAttributes.user,
@@ -32,7 +23,7 @@ describe("AdminRepository", () => {
     });
 
     it("creates a valid Admin of graduados", async () => {
-      const adminAttributes = graduadosAdminsData.next().value;
+      const adminAttributes = GraduadosAdminGenerator.data();
       const admin = await AdminRepository.create(adminAttributes);
       expect(await admin.getUser()).toEqual(expect.objectContaining({
         ...adminAttributes.user,
@@ -44,7 +35,7 @@ describe("AdminRepository", () => {
     });
 
     it("throws error if admin already exists and rollback transaction", async () => {
-      const adminAttributes = extensionAdminsData.next().value;
+      const adminAttributes = ExtensionAdminGenerator.data();
       await AdminRepository.create(adminAttributes);
       const numberOfAdmins = await AdminRepository.findAll();
       await expect(
@@ -59,7 +50,7 @@ describe("AdminRepository", () => {
 
   describe("findByUserUuid", () => {
     it("returns an admin of extension by userUuid", async () => {
-      const extensionAdminAttributes = extensionAdminsData.next().value;
+      const extensionAdminAttributes = ExtensionAdminGenerator.data();
       const { userUuid: userExtensionUuid } = await AdminRepository.create(
         extensionAdminAttributes
       );
@@ -69,7 +60,7 @@ describe("AdminRepository", () => {
     });
 
     it("returns an admin of graduados by userUuid", async () => {
-      const graduadosAdminAttributes = graduadosAdminsData.next().value;
+      const graduadosAdminAttributes = GraduadosAdminGenerator.data();
       const { userUuid: userGraduadosUuid } = await AdminRepository.create(
         graduadosAdminAttributes
       );
@@ -90,9 +81,9 @@ describe("AdminRepository", () => {
 
   describe("cascade", () => {
     it("deletes all admins if users tables is truncated", async () => {
-      await AdminRepository.create(extensionAdminsData.next().value);
-      await AdminRepository.create(extensionAdminsData.next().value);
-      await AdminRepository.create(extensionAdminsData.next().value);
+      await AdminRepository.create(ExtensionAdminGenerator.data());
+      await AdminRepository.create(ExtensionAdminGenerator.data());
+      await AdminRepository.create(ExtensionAdminGenerator.data());
       expect((await AdminRepository.findAll()).length).toBeGreaterThan(0);
       await UserRepository.truncate();
       expect(await AdminRepository.findAll()).toHaveLength(0);

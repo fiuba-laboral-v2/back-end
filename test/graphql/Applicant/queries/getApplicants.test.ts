@@ -9,7 +9,7 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
 import { TestClientGenerator } from "$generators/TestClient";
-import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
+import { ExtensionAdminGenerator } from "$generators/Admin";
 import { ApplicantGenerator } from "$generators/Applicant";
 
 const GET_APPLICANTS = gql`
@@ -47,13 +47,11 @@ const GET_APPLICANTS = gql`
 
 describe("getApplicants", () => {
   let careers: TCareerGenerator;
-  let admins: TAdminGenerator;
 
   beforeAll(async () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
-    admins = ExtensionAdminGenerator.instance();
   });
 
   describe("when no applicant exists", () => {
@@ -77,7 +75,7 @@ describe("getApplicants", () => {
         careers: applicantCareer,
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await admins.next().value
+          admin: await ExtensionAdminGenerator.instance()
         }
       });
 
@@ -117,7 +115,7 @@ describe("getApplicants", () => {
         capabilities: ["Go"],
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await admins.next().value
+          admin: await ExtensionAdminGenerator.instance()
         }
       });
       const secondApplicant = await ApplicantGenerator.instance.withMinimumData({
@@ -182,7 +180,7 @@ describe("getApplicants", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.rejected,
-          admin: await admins.next().value
+          admin: await ExtensionAdminGenerator.instance()
         }
       });
       const { errors } = await apolloClient.query({ query: GET_APPLICANTS });

@@ -5,7 +5,7 @@ import { TestClientGenerator } from "$generators/TestClient";
 import { OfferRepository } from "$models/Offer";
 import { OfferGenerator, TOfferDataGenerator } from "$generators/Offer";
 import { client } from "../../ApolloTestClient";
-import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
+import { ExtensionAdminGenerator } from "$generators/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import generateUuid from "uuid/v4";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
@@ -40,19 +40,17 @@ const EDIT_OFFER = gql`
 
 describe("editOffer", () => {
   let offersData: TOfferDataGenerator;
-  let admins: TAdminGenerator;
 
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     offersData = OfferGenerator.data.withObligatoryData();
-    admins = ExtensionAdminGenerator.instance();
   });
 
   it("edits an offer successfully", async () => {
     const { apolloClient, company } = await TestClientGenerator.company({
       status: {
-        admin: await admins.next().value,
+        admin: await ExtensionAdminGenerator.instance(),
         approvalStatus: ApprovalStatus.approved
       }
     });
@@ -71,7 +69,7 @@ describe("editOffer", () => {
   it("throws an error when the offer uuid is not found", async () => {
     const { apolloClient, company } = await TestClientGenerator.company({
       status: {
-        admin: await admins.next().value,
+        admin: await ExtensionAdminGenerator.instance(),
         approvalStatus: ApprovalStatus.approved
       }
     });

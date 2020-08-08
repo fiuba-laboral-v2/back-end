@@ -14,7 +14,7 @@ import { TestClientGenerator } from "$generators/TestClient";
 import { ApolloServerTestClient } from "apollo-server-testing";
 import generateUuid from "uuid/v4";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
+import { ExtensionAdminGenerator } from "$generators/Admin";
 
 const GET_OFFER_BY_UUID = gql`
   query ($uuid: ID!) {
@@ -64,7 +64,6 @@ const GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION = gql`
 describe("getOfferByUuid", () => {
   let careers: TCareerGenerator;
   let offers: TOfferGenerator;
-  let admins: TAdminGenerator;
 
   beforeAll(async () => {
     await CompanyRepository.truncate();
@@ -72,7 +71,6 @@ describe("getOfferByUuid", () => {
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
     offers = await OfferGenerator.instance.withOneSection();
-    admins = ExtensionAdminGenerator.instance();
   });
 
   const createOffer = async company => {
@@ -87,7 +85,7 @@ describe("getOfferByUuid", () => {
       const { company, apolloClient } = await TestClientGenerator.company({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await admins.next().value
+          admin: await ExtensionAdminGenerator.instance()
         }
       });
       const { offer, career } = await createOffer(company);
@@ -140,7 +138,7 @@ describe("getOfferByUuid", () => {
       const { applicant, apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await admins.next().value
+          admin: await ExtensionAdminGenerator.instance()
         }
       });
       const company = await CompanyGenerator.instance.withCompleteData();
@@ -165,7 +163,7 @@ describe("getOfferByUuid", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await admins.next().value
+          admin: await ExtensionAdminGenerator.instance()
         }
       });
       const company = await CompanyGenerator.instance.withCompleteData();

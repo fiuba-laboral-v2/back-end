@@ -9,7 +9,7 @@ import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
 import { companyMocks } from "$test/models/Company/mocks";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
+import { ExtensionAdminGenerator } from "$generators/Admin";
 import { TestClientGenerator } from "$generators/TestClient";
 import generateUuid from "uuid/v4";
 
@@ -25,14 +25,12 @@ const SAVE_JOB_APPLICATION = gql`
 describe("saveJobApplication", () => {
   let company;
   let offers: TOfferGenerator;
-  let admins: TAdminGenerator;
 
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     company = await CompanyRepository.create(companyMocks.companyData());
     offers = await OfferGenerator.instance.withObligatoryData();
-    admins = ExtensionAdminGenerator.instance();
   });
 
   describe("when the input is valid", () => {
@@ -40,7 +38,7 @@ describe("saveJobApplication", () => {
       const { applicant, apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await admins.next().value
+          admin: await ExtensionAdminGenerator.instance()
         }
       });
       const offer = await offers.next({ companyUuid: company.uuid }).value;
@@ -118,7 +116,7 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.rejected,
-          admin: await admins.next().value
+          admin: await ExtensionAdminGenerator.instance()
         }
       });
       const { errors } = await apolloClient.mutate({
@@ -132,7 +130,7 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await admins.next().value
+          admin: await ExtensionAdminGenerator.instance()
         }
       });
       const offer = await offers.next({ companyUuid: company.uuid }).value;
@@ -154,7 +152,7 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await admins.next().value
+          admin: await ExtensionAdminGenerator.instance()
         }
       });
       const { errors } = await apolloClient.mutate({

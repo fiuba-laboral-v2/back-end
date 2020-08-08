@@ -25,7 +25,7 @@ describe("AdminTaskRepository", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     const companiesGenerator = CompanyGenerator.instance.updatedWithStatus;
-    admin = await ExtensionAdminGenerator.instance().next().value;
+    admin = await ExtensionAdminGenerator.instance();
     const applicantsGenerator = ApplicantGenerator.instance.updatedWithStatus;
 
     rejectedCompany = await companiesGenerator({ status: ApprovalStatus.rejected, admin });

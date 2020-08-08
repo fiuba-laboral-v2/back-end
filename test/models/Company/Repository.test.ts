@@ -193,7 +193,7 @@ describe("CompanyRepository", () => {
     let admin: Admin;
 
     beforeAll(async () => {
-      admin = await ExtensionAdminGenerator.instance().next().value;
+      admin = await ExtensionAdminGenerator.instance();
     });
 
     it("approves company only by an admin and create new event", async () => {
