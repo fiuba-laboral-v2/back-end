@@ -9,7 +9,7 @@ import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
 import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
 import { CompanyGenerator } from "$generators/Company";
-import { userFactory } from "$mocks/user";
+import { UserGenerator } from "$generators/User";
 import { TestClientGenerator } from "$generators/TestClient";
 import { ApolloServerTestClient } from "apollo-server-testing";
 import generateUuid from "uuid/v4";
@@ -194,7 +194,7 @@ describe("getOfferByUuid", () => {
     });
 
     it("returns an error if the current user is not an applicant", async () => {
-      const user = await userFactory.user();
+      const user = await UserGenerator.instance();
       const apolloClient = client.loggedIn({
         currentUser: {
           uuid: user.uuid,

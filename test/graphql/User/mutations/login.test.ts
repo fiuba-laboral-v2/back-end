@@ -3,7 +3,7 @@ import { client, executeMutation } from "../../ApolloTestClient";
 import { User } from "$models";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
-import { userFactory } from "$mocks/user";
+import { UserGenerator } from "$generators/User";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { ExtensionAdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
@@ -59,7 +59,7 @@ describe("login", () => {
 
   it("sets the cookie for a user", async () => {
     const password = "AValidPassword0";
-    const user = await userFactory.user({ password });
+    const user = await UserGenerator.instance({ password });
     await testToken({
       user,
       password,
