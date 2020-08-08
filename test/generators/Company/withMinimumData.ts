@@ -22,4 +22,4 @@ interface IWithMinimumData extends WithMinimumInputData {
 }
 
 export type WithMinimumInputData =
-  Omit<ICompanyTestClientAttributes, "expressContext" | "status" | "photos">;
+  Omit<ICompanyTestClientAttributes, "expressContext" | "status">;

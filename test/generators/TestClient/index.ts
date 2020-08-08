@@ -9,17 +9,12 @@ import {
 import { IUserTestClientAttributes } from "../interfaces";
 
 export const TestClientGenerator = {
-  index: 0,
-  getIndex: () => {
-    TestClientGenerator.index += 1;
-    return TestClientGenerator.index;
-  },
   user: async (attributes: IUserTestClientAttributes = {}) =>
-    userTestClient(TestClientGenerator.getIndex(), attributes),
+    userTestClient(attributes),
   admin: async (attributes: IUserTestClientAttributes = {}) =>
-    adminTestClient(TestClientGenerator.getIndex(), attributes),
+    adminTestClient(attributes),
   applicant: async (attributes: IApplicantTestClientAttributes = {}) =>
-    applicantTestClient(TestClientGenerator.getIndex(), attributes),
+    applicantTestClient(attributes),
   company: async (attributes: ICompanyTestClientAttributes = {}) =>
-    companyTestClient(TestClientGenerator.getIndex(), attributes)
+    companyTestClient(attributes)
 };

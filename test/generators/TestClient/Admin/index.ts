@@ -1,22 +1,12 @@
 import { IUserTestClientAttributes } from "../../interfaces";
 import { createApolloTestClient } from "../createApolloTestClient";
-import { AdminRepository, Secretary } from "$models/Admin";
-import { DniGenerator } from "$generators/DNI";
+import { Secretary } from "$models/Admin";
+import { AdminGenerator } from "$generators/Admin";
 
 export const adminTestClient = async (
-  index: number,
   { password, expressContext }: IUserTestClientAttributes
 ) => {
-  const admin = await AdminRepository.create({
-    user: {
-      dni: DniGenerator.generate(),
-      email: `adminTestClient${index}@mail.com`,
-      password: password || "ASDqfdsfsdfwe234",
-      name: "adminName",
-      surname: "adminSurname"
-    },
-    secretary: Secretary.extension
-  });
+  const admin = await AdminGenerator.instance(Secretary.graduados, { password });
   const user = await admin.getUser();
   const adminContext = { admin: { userUuid: admin.userUuid } };
   const apolloClient = createApolloTestClient(user, expressContext, adminContext);

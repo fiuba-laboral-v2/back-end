@@ -1,17 +1,15 @@
-import { withCompleteData } from "./withCompleteData";
 import { ICompanyTestClientAttributes } from "$generators/interfaces";
 import { createApolloTestClient } from "../createApolloTestClient";
 import { CompanyRepository } from "$models/Company";
+import { CompanyGenerator } from "$generators/Company";
 
 export const companyTestClient = async (
-  index: number,
   { status, photos, expressContext, user: userAttributes }: ICompanyTestClientAttributes
 ) => {
-  let company = await CompanyRepository.create(withCompleteData({
-    index,
+  let company = await CompanyGenerator.instance.withMinimumData({
     photos,
     user: userAttributes
-  }));
+  });
   const [user] = await company.getUsers();
   const companyContext = { company: { uuid: company.uuid } };
   const apolloClient = createApolloTestClient(user, expressContext, companyContext);
