@@ -1,5 +1,5 @@
 import { ICreateFiubaUser, IUser, IUserEditable } from "./Interface";
-import { UserNotFoundError } from "./Errors";
+import { UserNotFoundError, FiubaUserNotFoundError } from "./Errors";
 import { Transaction } from "sequelize/types";
 import { FiubaUsersService } from "$services";
 import { User } from "$models";
@@ -13,7 +13,7 @@ export const UserRepository = {
     transaction?: Transaction
   ) => {
     const isFiubaUser = await FiubaUsersService.authenticate({ dni, password });
-    if (!isFiubaUser) throw new Error(`The user with DNI: ${dni} does not exist as a Fiuba user`);
+    if (!isFiubaUser) throw new FiubaUserNotFoundError(dni);
     return User.create({ dni, ...attributes }, { transaction });
   },
   validateCredentials: async (user: User, password: string) => {

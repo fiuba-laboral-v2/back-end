@@ -6,6 +6,7 @@ import { ApplicantCareersRepository } from "$models/ApplicantCareer";
 import { UserRepository } from "$models/User";
 import { CapabilityRepository } from "$models/Capability";
 import { ApplicantNotFound, ApplicantNotUpdatedError } from "$models/Applicant/Errors";
+import { FiubaUserNotFoundError } from "$models/User/Errors";
 import { ApplicantGenerator, TApplicantDataGenerator } from "$generators/Applicant";
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
 import { ExtensionAdminGenerator } from "$generators/Admin";
@@ -115,8 +116,8 @@ describe("ApplicantRepository", () => {
       await expect(
         ApplicantRepository.create(applicantData)
       ).rejects.toThrowErrorWithMessage(
-        Error,
-        `The user with DNI: ${applicantData.user.dni} does not exist as a Fiuba user`
+        FiubaUserNotFoundError,
+        FiubaUserNotFoundError.buildMessage(applicantData.user.dni)
       );
     });
   });

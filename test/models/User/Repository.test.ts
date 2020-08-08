@@ -1,6 +1,6 @@
 import { UniqueConstraintError, ValidationError } from "sequelize";
 import { UserRepository } from "$models/User/Repository";
-import { UserNotFoundError } from "$models/User";
+import { UserNotFoundError, FiubaUserNotFoundError } from "$models/User";
 import { FiubaUsersService } from "$services";
 import { InvalidEmptyUsernameError } from "$services/FiubaUsers";
 import { UUID_REGEX } from "../index";
@@ -155,17 +155,18 @@ describe("UserRepository", () => {
       it("throws an error if the FiubaService authentication returns false", async () => {
         const fiubaUsersServiceMock = jest.spyOn(FiubaUsersService, "authenticate");
         fiubaUsersServiceMock.mockResolvedValueOnce(Promise.resolve(false));
+        const dni = 39207888;
         await expect(
           UserRepository.createFiubaUser({
             email: "email@gmail.com",
-            dni: 39207888,
+            dni,
             password: "somethingVerySecret123",
             name: "name",
             surname: "surname"
           })
         ).rejects.toThrowErrorWithMessage(
-          Error,
-          `The user with DNI: ${39207888} does not exist as a Fiuba user`
+          FiubaUserNotFoundError,
+          FiubaUserNotFoundError.buildMessage(dni)
         );
       });
 
