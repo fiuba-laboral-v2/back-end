@@ -14,7 +14,7 @@ export const FiubaUsersApi = {
     const httpResponse = await fetch(FiubaUsersServiceConfig.url, {
       method: "POST",
       headers: FiubaUsersApi.headers(),
-      body: RequestBodyBuilder.buildAuthenticate({ dni: dni, password })
+      body: RequestBodyBuilder.buildAuthenticate({ dni, password })
     });
     if (httpResponse.status === 200) {
       const response: IFiubaUsersApiSuccessResponse = parse(await httpResponse.text());
