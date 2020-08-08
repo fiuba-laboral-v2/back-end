@@ -1,5 +1,5 @@
 import { AdminRepository, Secretary } from "$models/Admin";
-import { withCompleteData } from "./withCompleteData";
+import { withCompleteData, AdminInputData } from "./withCompleteData";
 
 export const ExtensionAdminGenerator = {
   index: Number.MAX_SAFE_INTEGER,
@@ -7,9 +7,16 @@ export const ExtensionAdminGenerator = {
     ExtensionAdminGenerator.index -= 1;
     return ExtensionAdminGenerator.index;
   },
-  instance: () =>
+  instance: (variables?: AdminInputData) =>
     AdminRepository.create(
-      withCompleteData(ExtensionAdminGenerator.getIndex(), Secretary.extension)
+      withCompleteData({
+        index: ExtensionAdminGenerator.getIndex(),
+        secretary: Secretary.extension,
+        ...variables
+      })
     ),
-  data: () => withCompleteData(ExtensionAdminGenerator.getIndex(), Secretary.extension)
+  data: () => withCompleteData({
+    index: ExtensionAdminGenerator.getIndex(),
+    secretary: Secretary.extension
+  })
 };

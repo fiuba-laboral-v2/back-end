@@ -1,4 +1,4 @@
-import { withCompleteData } from "./withCompleteData";
+import { withCompleteData, AdminInputData } from "./withCompleteData";
 import { AdminRepository, Secretary } from "$models/Admin";
 
 export const GraduadosAdminGenerator = {
@@ -7,10 +7,14 @@ export const GraduadosAdminGenerator = {
     GraduadosAdminGenerator.index -= 1;
     return GraduadosAdminGenerator.index;
   },
-  instance: () =>
-    AdminRepository.create(withCompleteData(
-      GraduadosAdminGenerator.getIndex(),
-      Secretary.graduados)
-    ),
-  data: () => withCompleteData(GraduadosAdminGenerator.getIndex(), Secretary.graduados)
+  instance: (variables?: AdminInputData) =>
+    AdminRepository.create(withCompleteData({
+      index: GraduadosAdminGenerator.getIndex(),
+      secretary: Secretary.graduados,
+      ...variables
+    })),
+  data: () => withCompleteData({
+    index: GraduadosAdminGenerator.getIndex(),
+    secretary: Secretary.graduados
+  })
 };

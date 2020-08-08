@@ -5,6 +5,7 @@ import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { userFactory } from "$mocks/user";
 import { ApplicantGenerator } from "$generators/Applicant";
+import { ExtensionAdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
 import { JWT } from "../../../../src/JWT";
 import { BadCredentialsError } from "$graphql/User/Errors";
@@ -105,7 +106,7 @@ describe("login", () => {
 
   it("returns a token for an admin", async () => {
     const password = "AValidPassword3";
-    const admin = await userFactory.admin({ password });
+    const admin = await ExtensionAdminGenerator.instance({ password });
     const user = await admin.getUser();
     await testToken({
       user,
