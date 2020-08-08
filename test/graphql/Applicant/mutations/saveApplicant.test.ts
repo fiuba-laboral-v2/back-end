@@ -104,6 +104,7 @@ describe("saveApplicant", () => {
       expect(data!.saveApplicant).toMatchObject({
         user: {
           uuid: expect.stringMatching(UUID_REGEX),
+          dni: applicantData.user.dni,
           email: applicantData.user.email,
           name: applicantData.user.name,
           surname: applicantData.user.surname
