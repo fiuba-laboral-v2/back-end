@@ -4,7 +4,7 @@ const PRODUCTION_ITEMS_PER_PAGE = 50;
 const DEVELOPMENT_ITEMS_PER_PAGE = 1;
 const TEST_ITEMS_PER_PAGE = 10000;
 
-const PaginationConfigForAllEnvironments = {
+export const PaginationConfig: IPaginationConfig = {
   production: {
     itemsPerPage: () => PRODUCTION_ITEMS_PER_PAGE
   },
@@ -20,10 +20,7 @@ const PaginationConfigForAllEnvironments = {
   test_travis: {
     itemsPerPage: () => TEST_ITEMS_PER_PAGE
   }
-};
-
-export const PaginationConfig: IPaginationConfig =
-  PaginationConfigForAllEnvironments[Environment.NODE_ENV];
+}[Environment.NODE_ENV];
 
 interface IPaginationConfig {
   itemsPerPage: () => number;
