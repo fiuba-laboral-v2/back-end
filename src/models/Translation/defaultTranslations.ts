@@ -1,4 +1,9 @@
 export const defaultTranslations = {
+  userFields: [
+    { key: "email", value: "Email" },
+    { key: "name", value: "Nombre" },
+    { key: "surname", value: "Apellido" }
+  ],
   register: [
     { key: "registerAsCompany", value: "Registrarme como empresa" },
     { key: "registerAsApplicant", value: "Registrarme como alumno" }
@@ -17,14 +22,13 @@ export const defaultTranslations = {
   ],
   applicantSignUp: [
     { key: "title", value: "Crear tu cuenta" },
-    { key: "email", value: "Email" },
-    { key: "dni", value: "DNI" },
-    { key: "password", value: "Contraseña" },
-    { key: "name", value: "Nombre" },
-    { key: "surname", value: "Apellido" },
     { key: "padron", value: "Padron" },
     { key: "careersTitle", value: "Elegí tu carrera" },
     { key: "submit", value: "Guardar" }
+  ],
+  applicantCredentialsFields: [
+    { key: "dni", value: "DNI" },
+    { key: "password", value: "Contraseña" }
   ],
   careersDetail: [
     { key: "careersTitle", value: "Carreras" },
@@ -64,12 +68,11 @@ export const defaultTranslations = {
   ],
   companySignUp: [
     { key: "title", value: "Crear tu cuenta" },
-    { key: "email", value: "Email" },
-    { key: "password", value: "Contraseña" },
-    { key: "passwordConfirm", value: "Confirmar contraseña" },
-    { key: "name", value: "Nombre" },
-    { key: "surname", value: "Apellido" },
     { key: "submit", value: "Guardar" }
+  ],
+  companyCredentialsFields: [
+    { key: "password", value: "Contraseña" },
+    { key: "passwordConfirm", value: "Confirmar contraseña" }
   ],
   companiesList: [
     { key: "title", value: "Empresas" }
