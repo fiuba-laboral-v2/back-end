@@ -4,10 +4,11 @@ import { UserRepository } from "$models/User";
 import { client } from "../../ApolloTestClient";
 import { TestClientGenerator } from "$generators/TestClient";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
-import { ExtensionAdminGenerator } from "$generators/Admin";
+import { AdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import generateUuid from "uuid/v4";
+import { Secretary } from "$models/Admin";
 
 const query = gql`
   query ($uuid: ID!) {
@@ -74,7 +75,7 @@ describe("getCompanyByUuid", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.approved,
-        admin: await ExtensionAdminGenerator.instance()
+        admin: await AdminGenerator.instance(Secretary.extension)
       }
     });
     const notExistentUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
@@ -130,7 +131,7 @@ describe("getCompanyByUuid", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.rejected,
-        admin: await ExtensionAdminGenerator.instance()
+        admin: await AdminGenerator.instance(Secretary.extension)
       }
     });
     const { errors } = await apolloClient.query({

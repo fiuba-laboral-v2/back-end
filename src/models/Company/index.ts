@@ -1,2 +1,2 @@
 export { CompanyRepository } from "./Repository";
-export { ICompany, ICompanyEditable } from "./Interface";
+export { ICompany, IUpdateCompany } from "./Interface";

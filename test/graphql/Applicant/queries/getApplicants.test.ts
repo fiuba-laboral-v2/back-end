@@ -9,8 +9,10 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
 import { TestClientGenerator } from "$generators/TestClient";
-import { ExtensionAdminGenerator } from "$generators/Admin";
+import { AdminGenerator } from "$generators/Admin";
 import { ApplicantGenerator } from "$generators/Applicant";
+import { Secretary } from "$models/Admin";
+import { Admin } from "$models";
 
 const GET_APPLICANTS = gql`
     query getApplicants {
@@ -47,11 +49,13 @@ const GET_APPLICANTS = gql`
 
 describe("getApplicants", () => {
   let careers: TCareerGenerator;
+  let admin: Admin;
 
   beforeAll(async () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
+    admin = await AdminGenerator.instance(Secretary.extension);
   });
 
   describe("when no applicant exists", () => {
@@ -73,10 +77,7 @@ describe("getApplicants", () => {
         apolloClient
       } = await TestClientGenerator.applicant({
         careers: applicantCareer,
-        status: {
-          approvalStatus: ApprovalStatus.approved,
-          admin: await ExtensionAdminGenerator.instance()
-        }
+        status: { approvalStatus: ApprovalStatus.approved, admin }
       });
 
       const { data, errors } = await apolloClient.query({ query: GET_APPLICANTS });
@@ -113,10 +114,7 @@ describe("getApplicants", () => {
       } = await TestClientGenerator.applicant({
         careers: applicantCareersData,
         capabilities: ["Go"],
-        status: {
-          approvalStatus: ApprovalStatus.approved,
-          admin: await ExtensionAdminGenerator.instance()
-        }
+        status: { approvalStatus: ApprovalStatus.approved, admin }
       });
       const secondApplicant = await ApplicantGenerator.instance.withMinimumData({
         careers: applicantCareersData,
@@ -178,10 +176,7 @@ describe("getApplicants", () => {
 
     it("returns an error if current user is rejected applicant", async () => {
       const { apolloClient } = await TestClientGenerator.applicant({
-        status: {
-          approvalStatus: ApprovalStatus.rejected,
-          admin: await ExtensionAdminGenerator.instance()
-        }
+        status: { approvalStatus: ApprovalStatus.rejected, admin }
       });
       const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });

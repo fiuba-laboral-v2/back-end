@@ -1,10 +1,11 @@
 import { RequestBodyBuilder } from "$services/FiubaUsers";
 import { validate } from "fast-xml-parser";
+import { DniGenerator } from "$generators/DNI";
 
 describe("RequestBodyBuilder", () => {
   it("returns a valid request body for the api", async () => {
     const requestBody = RequestBodyBuilder.buildAuthenticate({
-      dni: 39207911,
+      dni: DniGenerator.generate(),
       password: "password"
     });
     expect(validate(requestBody)).toBe(true);

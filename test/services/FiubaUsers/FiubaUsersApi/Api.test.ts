@@ -7,14 +7,15 @@ import {
 import { FiubaUsersServiceConfig } from "$config/services";
 import { RequestBodyMock } from "./RequestBodyMock";
 import { parse } from "fast-xml-parser";
+import { DniGenerator } from "$generators/DNI";
 
 const invalidCredentials = {
-  dni: 39200000,
+  dni: DniGenerator.generate(),
   password: "badPassword"
 };
 
 const validCredentials = {
-  dni: 39207988,
+  dni: DniGenerator.generate(),
   password: "goodPassword"
 };
 

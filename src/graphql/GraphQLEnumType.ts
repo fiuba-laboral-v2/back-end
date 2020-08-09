@@ -1,11 +1,15 @@
-import { GraphQLEnumType as Enum, GraphQLEnumTypeConfig } from "graphql";
+import { GraphQLEnumType as Enum } from "graphql";
 
-export const GraphQLEnumType = (config: GraphQLEnumTypeProps) => new Enum({
-  ...config,
+export const GraphQLEnumType = ({ possibleValues, name }: IGraphQLEnumTypeConfig) => new Enum({
+  name,
   values: (() => {
     const values = {};
-    config.values.forEach(status => values[status] = { value: status });
+    possibleValues.forEach(status => values[status] = { value: status });
     return values;
   })()
 });
-type GraphQLEnumTypeProps = Omit<GraphQLEnumTypeConfig, "values"> & { values: string[]; };
+
+interface IGraphQLEnumTypeConfig {
+  name: string;
+  possibleValues: string[];
+}

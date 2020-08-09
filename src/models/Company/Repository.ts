@@ -1,5 +1,5 @@
 import { Database } from "$config/Database";
-import { ICompany, ICompanyEditable } from "./index";
+import { ICompany, IUpdateCompany } from "./index";
 import { CompanyPhotoRepository } from "$models/CompanyPhoto";
 import { CompanyPhoneNumberRepository } from "$models/CompanyPhoneNumber";
 import { CompanyNotFoundError, CompanyNotUpdatedError } from "./Errors";
@@ -31,7 +31,7 @@ export const CompanyRepository = {
       phoneNumbers,
       photos,
       ...companyAttributes
-    }: ICompanyEditable
+    }: IUpdateCompany
   ) => {
     const [, [updatedCompany]] = await Company.update(companyAttributes, {
       where: { uuid },

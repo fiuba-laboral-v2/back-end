@@ -7,7 +7,8 @@ import {
 } from "$models/Company/CompanyApprovalEvent";
 import { ForeignKeyConstraintError } from "sequelize";
 import { CompanyGenerator } from "$generators/Company";
-import { ExtensionAdminGenerator } from "$generators/Admin";
+import { AdminGenerator } from "$generators/Admin";
+import { Secretary } from "$models/Admin";
 
 describe("CompanyApprovalEventRepository", () => {
   beforeAll(async () => {
@@ -18,7 +19,7 @@ describe("CompanyApprovalEventRepository", () => {
   describe("create", () => {
     const expectValidCreation = async (status: ApprovalStatus) => {
       const company = await CompanyGenerator.instance.withCompleteData();
-      const admin = await ExtensionAdminGenerator.instance();
+      const admin = await AdminGenerator.instance(Secretary.extension);
       const adminUserUuid = admin.userUuid;
       const event = await CompanyApprovalEventRepository.create({ adminUserUuid, company, status });
       expect(event.userUuid).toEqual(admin.userUuid);
@@ -54,7 +55,7 @@ describe("CompanyApprovalEventRepository", () => {
 
     it("gets company and admin by association", async () => {
       const company = await CompanyGenerator.instance.withCompleteData();
-      const admin = await ExtensionAdminGenerator.instance();
+      const admin = await AdminGenerator.instance(Secretary.extension);
       const status = ApprovalStatus.approved;
       const adminUserUuid = admin.userUuid;
       const event = await CompanyApprovalEventRepository.create({ adminUserUuid, company, status });
@@ -66,7 +67,7 @@ describe("CompanyApprovalEventRepository", () => {
   describe("Delete cascade", () => {
     const createCompanyApprovalEvent = async () => {
       const company = await CompanyGenerator.instance.withCompleteData();
-      const { userUuid: adminUserUuid } = await ExtensionAdminGenerator.instance();
+      const { userUuid: adminUserUuid } = await AdminGenerator.instance(Secretary.extension);
       const status = ApprovalStatus.approved;
       return CompanyApprovalEventRepository.create({ adminUserUuid, company, status });
     };

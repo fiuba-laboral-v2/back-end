@@ -1,5 +1,5 @@
-import { cuitGenerator } from "./cuitGenerator";
-import { ICompanyAttributes } from "$generators/interfaces";
+import { ICompanyGeneratorAttributes } from "$generators/interfaces";
+import { CuitGenerator } from "$generators/Cuit";
 
 export const withMinimumData = (
   {
@@ -7,7 +7,7 @@ export const withMinimumData = (
     user
   }: IWithMinimumData
 ) => ({
-  cuit: cuitGenerator(index),
+  cuit: CuitGenerator.generate(),
   companyName: "companyName",
   user: {
     email: `company${index}@mail.com`,
@@ -17,8 +17,6 @@ export const withMinimumData = (
   }
 });
 
-interface IWithMinimumData extends WithMinimumInputData {
+interface IWithMinimumData extends ICompanyGeneratorAttributes {
   index: number;
 }
-
-export type WithMinimumInputData = Omit<ICompanyAttributes, "expressContext" | "status" | "photos">;

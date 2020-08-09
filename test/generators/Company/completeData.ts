@@ -1,5 +1,5 @@
 import { withMinimumData } from "./withMinimumData";
-import { ICompanyAttributes } from "$generators/interfaces";
+import { ICompanyGeneratorAttributes } from "$generators/interfaces";
 
 export const completeData = (
   {
@@ -18,8 +18,6 @@ export const completeData = (
   photos: photos || []
 });
 
-interface IWithCompleteData extends WithCompleteInputData {
+interface IWithCompleteData extends ICompanyGeneratorAttributes {
   index: number;
 }
-
-export type WithCompleteInputData = Omit<ICompanyAttributes, "expressContext" | "status">;

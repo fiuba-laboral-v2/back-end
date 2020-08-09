@@ -1,6 +1,5 @@
 import { ValidationError } from "sequelize";
 import { Section } from "$models";
-import { lorem, random } from "faker";
 
 describe("Section model", () => {
   const applicantUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
@@ -8,8 +7,8 @@ describe("Section model", () => {
   it("should create a valid section with a title and a text", async () => {
     const params = {
       applicantUuid: applicantUuid,
-      title: random.words(),
-      text: lorem.paragraphs(),
+      title: "Random words",
+      text: "Now, this is a story all about how\nMy life got flipped-turned upside down",
       displayOrder: 1
     };
     const section = new Section(params);
@@ -23,20 +22,26 @@ describe("Section model", () => {
   });
 
   it("should throw an error if no title is provided", async () => {
-    const section = new Section({ applicantUuid: applicantUuid, text: lorem.paragraphs() });
-
+    const section = new Section({
+      applicantUuid: applicantUuid,
+      text: "And I'd like to take a minute\nJust sit right there"
+    });
     await expect(section.validate()).rejects.toThrow(ValidationError);
   });
 
   it("should throw an error if no text is provided", async () => {
-    const section = new Section({ applicantUuid: applicantUuid, title: random.words() });
-
+    const section = new Section({
+      applicantUuid: applicantUuid,
+      title: "I'll tell you how I became the prince of a town called Bel Air"
+    });
     await expect(section.validate()).rejects.toThrow(ValidationError);
   });
 
   it("should throw an error if no applicantUuid is provided", async () => {
-    const section = new Section({ title: random.words(), description: lorem.paragraphs() });
-
+    const section = new Section({
+      title: "In west Philadelphia born and raised",
+      description: "On the playground was where I spent most of my days\nChillin out maxin relaxin"
+    });
     await expect(section.save()).rejects.toThrow(ValidationError);
   });
 });

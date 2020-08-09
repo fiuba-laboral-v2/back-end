@@ -14,7 +14,8 @@ import { TestClientGenerator } from "$generators/TestClient";
 import { ApolloServerTestClient } from "apollo-server-testing";
 import generateUuid from "uuid/v4";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { ExtensionAdminGenerator } from "$generators/Admin";
+import { AdminGenerator } from "$generators/Admin";
+import { Secretary } from "$models/Admin";
 
 const GET_OFFER_BY_UUID = gql`
   query ($uuid: ID!) {
@@ -85,7 +86,7 @@ describe("getOfferByUuid", () => {
       const { company, apolloClient } = await TestClientGenerator.company({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await ExtensionAdminGenerator.instance()
+          admin: await AdminGenerator.instance(Secretary.extension)
         }
       });
       const { offer, career } = await createOffer(company);
@@ -138,7 +139,7 @@ describe("getOfferByUuid", () => {
       const { applicant, apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await ExtensionAdminGenerator.instance()
+          admin: await AdminGenerator.instance(Secretary.extension)
         }
       });
       const company = await CompanyGenerator.instance.withCompleteData();
@@ -163,7 +164,7 @@ describe("getOfferByUuid", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await ExtensionAdminGenerator.instance()
+          admin: await AdminGenerator.instance(Secretary.extension)
         }
       });
       const company = await CompanyGenerator.instance.withCompleteData();

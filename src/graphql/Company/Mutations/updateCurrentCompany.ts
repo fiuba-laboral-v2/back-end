@@ -1,7 +1,8 @@
 import { List, String } from "$graphql/fieldTypes";
-import { CompanyRepository, ICompanyEditable } from "$models/Company";
+import { CompanyRepository } from "$models/Company";
 import { GraphQLCompany } from "../Types/GraphQLCompany";
 import { ICompanyUser } from "$graphql/Context";
+import { ICreateCompany } from "$models/Company/Interface";
 
 export const updateCurrentCompany = {
   type: GraphQLCompany,
@@ -33,7 +34,7 @@ export const updateCurrentCompany = {
   },
   resolve: (
     _: undefined,
-    args: Omit<ICompanyEditable, "uuid">,
+    attributes: ICreateCompany,
     { currentUser }: { currentUser: ICompanyUser }
-  ) => CompanyRepository.update({ uuid: currentUser.company.uuid, ...args })
+  ) => CompanyRepository.update({ uuid: currentUser.company.uuid, ...attributes })
 };

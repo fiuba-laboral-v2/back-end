@@ -10,9 +10,10 @@ import { UserRepository } from "$models/User";
 import { Admin } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { CompanyGenerator } from "$generators/Company";
-import { ExtensionAdminGenerator } from "$generators/Admin";
+import { AdminGenerator } from "$generators/Admin";
 import { UserMocks } from "../User/mocks";
 import { CompanyNotUpdatedError } from "$models/Company/Errors";
+import { Secretary } from "$models/Admin";
 
 describe("CompanyRepository", () => {
 
@@ -193,7 +194,7 @@ describe("CompanyRepository", () => {
     let admin: Admin;
 
     beforeAll(async () => {
-      admin = await ExtensionAdminGenerator.instance();
+      admin = await AdminGenerator.instance(Secretary.extension);
     });
 
     it("approves company only by an admin and create new event", async () => {

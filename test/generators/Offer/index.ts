@@ -1,10 +1,11 @@
 import { withObligatoryData } from "./withObligatoryData";
 import { withOneSection } from "./withOneSection";
-import { IOffer, OfferRepository } from "$models/Offer";
+import { OfferRepository } from "$models/Offer";
 import { Offer } from "$models";
 import { IOfferCareer } from "$models/Offer/OfferCareer";
 import { IOfferSection } from "$models/Offer/OfferSection";
 import { GenericGenerator, TGenericGenerator } from "../GenericGenerator";
+import { IOfferAttributes } from "$models/Offer/Interface";
 
 export interface IOfferInput {
   companyUuid: string;
@@ -13,7 +14,7 @@ export interface IOfferInput {
 }
 
 export type TOfferGenerator = TGenericGenerator<Promise<Offer>, IOfferInput>;
-export type TOfferDataGenerator = TGenericGenerator<IOffer, IOfferInput>;
+export type TOfferDataGenerator = TGenericGenerator<IOfferAttributes, IOfferInput>;
 
 export const OfferGenerator = {
   instance: {
@@ -36,7 +37,7 @@ export const OfferGenerator = {
   },
   data: {
     withObligatoryData: (): TOfferDataGenerator => {
-      const generator = GenericGenerator<IOffer, IOfferInput>(
+      const generator = GenericGenerator<IOfferAttributes, IOfferInput>(
         (index, variables) =>
           withObligatoryData({ index, ...variables })
       );
