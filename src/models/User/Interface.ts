@@ -4,6 +4,11 @@ export interface IUser {
   surname: string;
   email: string;
   dni?: number;
+  password?: string;
+}
+
+export interface ICreateFiubaUser extends IUser {
+  dni: number;
   password: string;
 }
 

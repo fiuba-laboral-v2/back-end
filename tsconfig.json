@@ -2,17 +2,42 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "$models/*": [ "src/models/*" ],
-      "$models": [ "src/models" ],
-      "$graphql/*": [ "src/graphql/*" ],
-      "$graphql": [ "src/graphql" ],
-      "$config/*": [ "src/config/*" ],
-      "$libs/*": [ "src/libs/*" ],
-      "$migrations/*": [ "src/migrations/*" ],
-      "$services/*": [ "src/services/*" ],
-      "$test/*": [ "test/*" ],
-      "$generators/*": [ "test/generators/*" ],
-      "$mocks/*": [ "test/mocks/*" ]
+      "$models/*": [
+        "src/models/*"
+      ],
+      "$models": [
+        "src/models"
+      ],
+      "$graphql/*": [
+        "src/graphql/*"
+      ],
+      "$graphql": [
+        "src/graphql"
+      ],
+      "$config/*": [
+        "src/config/*"
+      ],
+      "$libs/*": [
+        "src/libs/*"
+      ],
+      "$migrations/*": [
+        "src/migrations/*"
+      ],
+      "$services/*": [
+        "src/services/*"
+      ],
+      "$services": [
+        "src/services"
+      ],
+      "$test/*": [
+        "test/*"
+      ],
+      "$generators/*": [
+        "test/generators/*"
+      ],
+      "$mocks/*": [
+        "test/mocks/*"
+      ]
     },
     "outDir": "./dist",
     "resolveJsonModule": true,

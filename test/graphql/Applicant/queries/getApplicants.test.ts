@@ -5,12 +5,12 @@ import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 import { CareerRepository } from "$models/Career";
 import { UserRepository } from "$models/User";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
-import { testClientFactory } from "$mocks/testClientFactory";
-import { userFactory } from "$mocks/user";
-import { ApprovalStatus } from "$models/ApprovalStatus";
-import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
+import { TestClientGenerator } from "$generators/TestClient";
+import { ExtensionAdminGenerator } from "$generators/Admin";
+import { ApplicantGenerator } from "$generators/Applicant";
 
 const GET_APPLICANTS = gql`
     query getApplicants {
@@ -47,18 +47,16 @@ const GET_APPLICANTS = gql`
 
 describe("getApplicants", () => {
   let careers: TCareerGenerator;
-  let admins: TAdminGenerator;
 
   beforeAll(async () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
-    admins = ExtensionAdminGenerator.instance();
   });
 
   describe("when no applicant exists", () => {
     it("fetches an empty array of applicants", async () => {
-      const { apolloClient } = await testClientFactory.admin();
+      const { apolloClient } = await TestClientGenerator.admin();
       const { data, errors } = await apolloClient.query({ query: GET_APPLICANTS });
       expect(errors).toBeUndefined();
       expect(data!.getApplicants).toEqual([]);
@@ -73,11 +71,11 @@ describe("getApplicants", () => {
         user,
         applicant,
         apolloClient
-      } = await testClientFactory.applicant({
+      } = await TestClientGenerator.applicant({
         careers: applicantCareer,
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await admins.next().value
+          admin: await ExtensionAdminGenerator.instance()
         }
       });
 
@@ -112,15 +110,15 @@ describe("getApplicants", () => {
       const {
         applicant: firstApplicant,
         apolloClient
-      } = await testClientFactory.applicant({
+      } = await TestClientGenerator.applicant({
         careers: applicantCareersData,
         capabilities: ["Go"],
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await admins.next().value
+          admin: await ExtensionAdminGenerator.instance()
         }
       });
-      const secondApplicant = await userFactory.applicant({
+      const secondApplicant = await ApplicantGenerator.instance.withMinimumData({
         careers: applicantCareersData,
         capabilities: ["Go"]
       });
@@ -173,16 +171,16 @@ describe("getApplicants", () => {
     });
 
     it("returns an error if current user is pending applicant", async () => {
-      const { apolloClient } = await testClientFactory.applicant();
+      const { apolloClient } = await TestClientGenerator.applicant();
       const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("returns an error if current user is rejected applicant", async () => {
-      const { apolloClient } = await testClientFactory.applicant({
+      const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.rejected,
-          admin: await admins.next().value
+          admin: await ExtensionAdminGenerator.instance()
         }
       });
       const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
@@ -190,7 +188,7 @@ describe("getApplicants", () => {
     });
 
     it("returns an error if current user is from company", async () => {
-      const { apolloClient } = await testClientFactory.company();
+      const { apolloClient } = await TestClientGenerator.company();
       const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });

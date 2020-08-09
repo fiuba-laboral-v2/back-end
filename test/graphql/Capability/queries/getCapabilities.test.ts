@@ -1,8 +1,9 @@
 import { gql } from "apollo-server";
 import { CapabilityRepository } from "$models/Capability";
+import { UserRepository } from "$models/User";
 import { client } from "../../ApolloTestClient";
 
-import { testClientFactory } from "$mocks/testClientFactory";
+import { TestClientGenerator } from "$generators/TestClient";
 
 import { AuthenticationError } from "$graphql/Errors";
 
@@ -16,12 +17,13 @@ const GET_CAPABILITIES = gql`
 `;
 
 describe("getCapabilities", () => {
-  beforeAll(() => {
+  beforeAll(async () => {
+    await UserRepository.truncate();
     return CapabilityRepository.truncate();
   });
 
   it("brings all capabilities in the database", async () => {
-    const { apolloClient } = await testClientFactory.user();
+    const { apolloClient } = await TestClientGenerator.user();
     const [java, python, ruby] = await Promise.all(
       ["java", "python", "ruby"].map(description =>
         CapabilityRepository.create({ description: description })

@@ -4,7 +4,7 @@ import { client } from "../../ApolloTestClient";
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
 import { OfferGenerator, TOfferDataGenerator } from "$generators/Offer";
 import { ExtensionAdminGenerator } from "$generators/Admin";
-import { testClientFactory } from "$mocks/testClientFactory";
+import { TestClientGenerator } from "$generators/TestClient";
 
 import { CareerRepository } from "$models/Career";
 import { CompanyRepository } from "$models/Company";
@@ -101,12 +101,12 @@ describe("createOffer", () => {
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
     offers = OfferGenerator.data.withObligatoryData();
-    admin = await ExtensionAdminGenerator.instance().next().value;
+    admin = await ExtensionAdminGenerator.instance();
   });
 
   describe("when the input values are valid", () => {
     it("creates a new offer with only obligatory data", async () => {
-      const { apolloClient, company } = await testClientFactory.company({
+      const { apolloClient, company } = await TestClientGenerator.company({
         status: {
           admin,
           approvalStatus: ApprovalStatus.approved
@@ -134,7 +134,7 @@ describe("createOffer", () => {
     });
 
     it("creates a new offer with one section and one career", async () => {
-      const { apolloClient, company } = await testClientFactory.company({
+      const { apolloClient, company } = await TestClientGenerator.company({
         status: {
           admin,
           approvalStatus: ApprovalStatus.approved
@@ -166,7 +166,7 @@ describe("createOffer", () => {
 
   describe("when the input values are invalid", () => {
     it("throws an error if no title is provided", async () => {
-      const { apolloClient, company } = await testClientFactory.company({
+      const { apolloClient, company } = await TestClientGenerator.company({
         status: {
           admin,
           approvalStatus: ApprovalStatus.approved
@@ -185,7 +185,7 @@ describe("createOffer", () => {
     });
 
     it("throws an error if no user is logged in", async () => {
-      const { company } = await testClientFactory.company({
+      const { company } = await TestClientGenerator.company({
         status: {
           admin,
           approvalStatus: ApprovalStatus.approved
@@ -203,8 +203,8 @@ describe("createOffer", () => {
     });
 
     it("throws an error if the current user is not a company", async () => {
-      const { company } = await testClientFactory.company();
-      const { apolloClient } = await testClientFactory.applicant();
+      const { company } = await TestClientGenerator.company();
+      const { apolloClient } = await TestClientGenerator.applicant();
       const { companyUuid, ...createOfferAttributes } = offers.next({
         companyUuid: company.uuid
       }).value;
@@ -216,7 +216,7 @@ describe("createOffer", () => {
     });
 
     it("returns an error if the company has pending approval status", async () => {
-      const { apolloClient, company } = await testClientFactory.company({
+      const { apolloClient, company } = await TestClientGenerator.company({
         status: {
           admin,
           approvalStatus: ApprovalStatus.pending
@@ -233,7 +233,7 @@ describe("createOffer", () => {
     });
 
     it("returns an error if the company has rejected approval status", async () => {
-      const { apolloClient, company } = await testClientFactory.company({
+      const { apolloClient, company } = await TestClientGenerator.company({
         status: {
           admin,
           approvalStatus: ApprovalStatus.rejected

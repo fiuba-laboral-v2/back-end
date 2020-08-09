@@ -12,7 +12,7 @@ import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
 import { ExtensionAdminGenerator } from "$generators/Admin";
 import { ApplicantGenerator } from "$generators/Applicant";
-import { testClientFactory } from "$mocks/testClientFactory";
+import { TestClientGenerator } from "$generators/TestClient";
 
 const GET_MY_LATEST_JOB_APPLICATIONS = gql`
     query getMyLatestJobApplications {
@@ -41,14 +41,14 @@ describe("getMyLatestJobApplications", () => {
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
-    applicant = await ApplicantGenerator.instance.withMinimumData().next().value;
+    applicant = await ApplicantGenerator.instance.withMinimumData();
     offers = await OfferGenerator.instance.withObligatoryData();
-    admin = await ExtensionAdminGenerator.instance().next().value;
+    admin = await ExtensionAdminGenerator.instance();
   });
 
   describe("when the input is valid", () => {
     it("returns all my company jobApplications", async () => {
-      const { apolloClient, company } = await testClientFactory.company({
+      const { apolloClient, company } = await TestClientGenerator.company({
         status: {
           admin,
           approvalStatus: ApprovalStatus.approved
@@ -95,7 +95,7 @@ describe("getMyLatestJobApplications", () => {
     });
 
     it("returns an error if current user is not a companyUser", async () => {
-      const { apolloClient } = await testClientFactory.user();
+      const { apolloClient } = await TestClientGenerator.user();
       const { errors } = await apolloClient.query({
         query: GET_MY_LATEST_JOB_APPLICATIONS
       });
@@ -104,7 +104,7 @@ describe("getMyLatestJobApplications", () => {
     });
 
     it("returns an error if the company has pending status", async () => {
-      const { apolloClient } = await testClientFactory.company({
+      const { apolloClient } = await TestClientGenerator.company({
         status: {
           admin,
           approvalStatus: ApprovalStatus.pending
@@ -118,7 +118,7 @@ describe("getMyLatestJobApplications", () => {
     });
 
     it("returns an error if the company has rejected status", async () => {
-      const { apolloClient } = await testClientFactory.company({
+      const { apolloClient } = await TestClientGenerator.company({
         status: {
           admin,
           approvalStatus: ApprovalStatus.rejected

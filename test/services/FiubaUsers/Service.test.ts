@@ -1,14 +1,14 @@
 import {
   FiubaUsersService,
-  InvalidEmptyUsernameError,
-  InvalidEmptyPasswordError
+  InvalidEmptyPasswordError,
+  InvalidEmptyUsernameError
 } from "$services/FiubaUsers";
 
 describe("FiubaUsersService", () => {
   it("throws an error if the username is empty", async () => {
     await expect(
       FiubaUsersService.authenticate({
-        username: "",
+        dni: 0,
         password: "password"
       })
     ).rejects.toThrowErrorWithMessage(
@@ -20,7 +20,7 @@ describe("FiubaUsersService", () => {
   it("throws an error if the password is empty", async () => {
     await expect(
       FiubaUsersService.authenticate({
-        username: "username",
+        dni: 39207999,
         password: ""
       })
     ).rejects.toThrowErrorWithMessage(
@@ -31,7 +31,7 @@ describe("FiubaUsersService", () => {
 
   it("always returns true in the test environment", async () => {
     expect(
-      await FiubaUsersService.authenticate({ username: "username", password: "password" })
+      await FiubaUsersService.authenticate({ dni: 39208888, password: "password" })
     ).toBe(true);
   });
 });

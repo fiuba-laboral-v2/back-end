@@ -1,7 +1,8 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 import { UserRepository } from "$models/User";
-import { testClientFactory } from "$mocks/testClientFactory";
+import { CompanyRepository } from "$models/Company";
+import { TestClientGenerator } from "$generators/TestClient";
 
 const GET_CURRENT_USER = gql`
   query {
@@ -25,12 +26,13 @@ const GET_CURRENT_USER = gql`
 `;
 
 describe("getCurrentUser", () => {
-  beforeAll(() => {
-    return UserRepository.truncate();
+  beforeAll(async () => {
+    await UserRepository.truncate();
+    return CompanyRepository.truncate();
   });
 
   it("returns current user if it's set in context", async () => {
-    const { user, apolloClient } = await testClientFactory.user();
+    const { user, apolloClient } = await TestClientGenerator.user();
     const { data, errors } = await apolloClient.query({ query: GET_CURRENT_USER });
     expect(errors).toBeUndefined();
     expect(data?.getCurrentUser).toEqual(
@@ -46,7 +48,7 @@ describe("getCurrentUser", () => {
   });
 
   it("returns current admin user if it's set in context", async () => {
-    const { admin, user, apolloClient } = await testClientFactory.admin();
+    const { admin, user, apolloClient } = await TestClientGenerator.admin();
     const { data, errors } = await apolloClient.query({ query: GET_CURRENT_USER });
     expect(errors).toBeUndefined();
     expect(data?.getCurrentUser).toEqual(
@@ -64,7 +66,7 @@ describe("getCurrentUser", () => {
   });
 
   it("returns current user applicant if it's set", async () => {
-    const { applicant, user, apolloClient } = await testClientFactory.applicant();
+    const { applicant, user, apolloClient } = await TestClientGenerator.applicant();
     const { data, errors } = await apolloClient.query({ query: GET_CURRENT_USER });
     expect(errors).toBeUndefined();
     expect(data?.getCurrentUser).toEqual(
@@ -82,7 +84,7 @@ describe("getCurrentUser", () => {
   });
 
   it("returns current company user if it's set", async () => {
-    const { company, user, apolloClient } = await testClientFactory.company();
+    const { company, user, apolloClient } = await TestClientGenerator.company();
     const { data, errors } = await apolloClient.query({ query: GET_CURRENT_USER });
     expect(errors).toBeUndefined();
     expect(data?.getCurrentUser).toEqual(

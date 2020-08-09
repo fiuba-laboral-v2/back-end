@@ -6,28 +6,28 @@ import { ApplicantCareersRepository } from "$models/ApplicantCareer";
 import { UserRepository } from "$models/User";
 import { CapabilityRepository } from "$models/Capability";
 import { ApplicantNotFound, ApplicantNotUpdatedError } from "$models/Applicant/Errors";
-import { ApplicantGenerator, TApplicantDataGenerator } from "$generators/Applicant";
+import { FiubaUserNotFoundError } from "$models/User/Errors";
+import { ApplicantGenerator } from "$generators/Applicant";
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
 import { ExtensionAdminGenerator } from "$generators/Admin";
 import { internet, random } from "faker";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
+import { FiubaUsersService } from "$services/FiubaUsers";
 
 describe("ApplicantRepository", () => {
-  let applicantsMinimumData: TApplicantDataGenerator;
   let careers: TCareerGenerator;
 
   beforeAll(async () => {
     await UserRepository.truncate();
     await CareerRepository.truncate();
     await CapabilityRepository.truncate();
-    applicantsMinimumData = ApplicantGenerator.data.minimum();
     careers = CareerGenerator.instance();
   });
 
   describe("Create", () => {
     it("creates a new applicant", async () => {
       const career = await careers.next().value;
-      const applicantData = applicantsMinimumData.next().value;
+      const applicantData = ApplicantGenerator.data.minimum();
       const applicant = await ApplicantRepository.create({
         ...applicantData,
         careers: [{ creditsCount: career.credits - 10, code: career.code }],
@@ -59,19 +59,19 @@ describe("ApplicantRepository", () => {
       const career = await careers.next().value;
       const applicantCareer = { code: career.code, creditsCount: career.credits - 10 };
       await ApplicantRepository.create({
-        ...applicantsMinimumData.next().value,
+        ...ApplicantGenerator.data.minimum(),
         careers: [applicantCareer]
       });
       await expect(
         ApplicantRepository.create({
-          ...applicantsMinimumData.next().value,
+          ...ApplicantGenerator.data.minimum(),
           careers: [applicantCareer]
         })
       ).resolves.not.toThrow(ApplicantNotFound);
     });
 
     it("creates an applicant without a career and without capabilities", async () => {
-      const applicantData = applicantsMinimumData.next().value;
+      const applicantData = ApplicantGenerator.data.minimum();
       const savedApplicant = await ApplicantRepository.create(applicantData);
       const applicant = await ApplicantRepository.findByUuid(savedApplicant.uuid);
       expect((await applicant.getCareers())).toHaveLength(0);
@@ -79,7 +79,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("creates an applicant with capabilities", async () => {
-      const applicantData = applicantsMinimumData.next().value;
+      const applicantData = ApplicantGenerator.data.minimum();
       const applicant = await ApplicantRepository.create({
         ...applicantData,
         capabilities: ["Python"]
@@ -89,29 +89,40 @@ describe("ApplicantRepository", () => {
     });
 
     it("creates applicant with a valid section with a title and a text", async () => {
-      const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       await applicant.createSection({ title: "title", text: "text" });
       const [section] = await applicant.getSections();
       expect(section).toEqual(expect.objectContaining({ title: "title", text: "text" }));
     });
 
-    describe("Transactions", () => {
-      it("rollbacks transaction and throws error if no padron is given", async () => {
-        const applicantData = applicantsMinimumData.next().value;
-        delete applicantData.padron;
-        await expect(
-          ApplicantRepository.create(applicantData)
-        ).rejects.toThrowErrorWithMessage(
-          ValidationError,
-          "notNull Violation: Applicant.padron cannot be null"
-        );
-      });
+    it("throws an error if no padron is given", async () => {
+      const applicantData = ApplicantGenerator.data.minimum();
+      delete applicantData.padron;
+      await expect(
+        ApplicantRepository.create(applicantData)
+      ).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        "notNull Violation: Applicant.padron cannot be null"
+      );
+    });
+
+    it("throws an error if the FiubaService authentication returns false", async () => {
+      const fiubaUsersServiceMock = jest.spyOn(FiubaUsersService, "authenticate");
+      fiubaUsersServiceMock.mockResolvedValueOnce(Promise.resolve(false));
+
+      const applicantData = ApplicantGenerator.data.minimum();
+      await expect(
+        ApplicantRepository.create(applicantData)
+      ).rejects.toThrowErrorWithMessage(
+        FiubaUserNotFoundError,
+        FiubaUserNotFoundError.buildMessage(applicantData.user.dni)
+      );
     });
   });
 
   describe("Get", () => {
     it("retrieves applicant by padron", async () => {
-      const applicantData = applicantsMinimumData.next().value;
+      const applicantData = ApplicantGenerator.data.minimum();
       const career = await careers.next().value;
       await ApplicantRepository.create({
         ...applicantData,
@@ -145,7 +156,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("retrieves applicant by uuid", async () => {
-      const applicantData = applicantsMinimumData.next().value;
+      const applicantData = ApplicantGenerator.data.minimum();
       const career = await careers.next().value;
       const { uuid } = await ApplicantRepository.create({
         ...applicantData,
@@ -177,7 +188,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("throws ApplicantNotFound if the applicant doesn't exists", async () => {
-      const { padron } = applicantsMinimumData.next().value;
+      const { padron } = ApplicantGenerator.data.minimum();
       await expect(ApplicantRepository.findByPadron(padron)).rejects.toThrow(ApplicantNotFound);
     });
   });
@@ -186,7 +197,7 @@ describe("ApplicantRepository", () => {
     it("updates all props", async () => {
       const { code, credits } = await careers.next().value;
       const { uuid } = await ApplicantRepository.create({
-        ...applicantsMinimumData.next().value,
+        ...ApplicantGenerator.data.minimum(),
         careers: [{ code, creditsCount: credits - 1 }]
       });
       const newCareer = await careers.next().value;
@@ -248,7 +259,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("updates name", async () => {
-      const { uuid } = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       const newProps: IApplicantEditable = {
         uuid,
         user: {
@@ -262,7 +273,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("updates surname", async () => {
-      const { uuid } = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       const newProps: IApplicantEditable = {
         uuid,
         user: {
@@ -275,7 +286,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("updates description", async () => {
-      const { uuid } = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       const newProps: IApplicantEditable = {
         uuid,
         description: "newDescription"
@@ -288,7 +299,7 @@ describe("ApplicantRepository", () => {
 
     it("updates by adding new capabilities", async () => {
       const applicant = await ApplicantRepository.create({
-        ...applicantsMinimumData.next().value,
+        ...ApplicantGenerator.data.minimum(),
         capabilities: ["CSS", "clojure"]
       });
 
@@ -310,7 +321,7 @@ describe("ApplicantRepository", () => {
 
     it("updates by deleting all capabilities if none is provided", async () => {
       const applicant = await ApplicantRepository.create({
-        ...applicantsMinimumData.next().value,
+        ...ApplicantGenerator.data.minimum(),
         capabilities: ["CSS", "clojure"]
       });
 
@@ -323,7 +334,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("updates by keeping only the new careers", async () => {
-      const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       const firstCareer = await careers.next().value;
       const secondCareer = await careers.next().value;
       const newProps: IApplicantEditable = {
@@ -373,7 +384,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("updates by keeping only the new sections", async () => {
-      const { uuid } = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       const sectionsData = [
         {
           title: "myTitle",
@@ -427,7 +438,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("updates deleting all sections if none is provided", async () => {
-      const { uuid } = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       const sectionsData = [
         {
           title: "myTitle",
@@ -446,7 +457,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("updates by keeping only the new links", async () => {
-      const { uuid } = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       const linksData = [
         {
           name: random.word(),
@@ -478,7 +489,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("updates by deleting all links if none is provided", async () => {
-      const { uuid } = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       const applicant = await ApplicantRepository.update({
         uuid,
         links: [
@@ -498,7 +509,7 @@ describe("ApplicantRepository", () => {
 
     it("does not throw an error when adding an existing capability", async () => {
       const { uuid } = await ApplicantRepository.create({
-        ...applicantsMinimumData.next().value,
+        ...ApplicantGenerator.data.minimum(),
         capabilities: ["GO"]
       });
       await expect(
@@ -509,7 +520,7 @@ describe("ApplicantRepository", () => {
     it("updates credits count of applicant careers", async () => {
       const career = await careers.next().value;
       const { uuid } = await ApplicantRepository.create({
-        ...applicantsMinimumData.next().value,
+        ...ApplicantGenerator.data.minimum(),
         careers: [{ code: career.code, creditsCount: career.credits - 1 }]
       });
       const newApplicantCareerData = [
@@ -530,7 +541,7 @@ describe("ApplicantRepository", () => {
     it("updates by deleting all applicant careers if none is provided", async () => {
       const career = await careers.next().value;
       const applicant = await ApplicantRepository.create({
-        ...applicantsMinimumData.next().value,
+        ...ApplicantGenerator.data.minimum(),
         careers: [{ code: career.code, creditsCount: career.credits - 1 }]
       });
       const newApplicantCareerData = [{ code: career.code, creditsCount: 100 }];
@@ -542,7 +553,7 @@ describe("ApplicantRepository", () => {
 
     describe("with wrong parameters", () => {
       it("does not update if two sections have the same displayOrder", async () => {
-        const { uuid } = await ApplicantRepository.create(applicantsMinimumData.next().value);
+        const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
         const sectionsData = [
           {
             title: "myTitle",
@@ -586,7 +597,7 @@ describe("ApplicantRepository", () => {
   describe("updateApprovalStatus", () => {
     let admin: Admin;
     beforeAll(async () => {
-      admin = await ExtensionAdminGenerator.instance().next().value;
+      admin = await ExtensionAdminGenerator.instance();
     });
 
     const expectSuccessfulApplicantStatusUpdate = async (
@@ -601,7 +612,7 @@ describe("ApplicantRepository", () => {
     };
 
     const expectApplicantWithApprovalStatus = async (approvalStatus: ApprovalStatus) => {
-      const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       const approvedApplicant = await expectSuccessfulApplicantStatusUpdate(
         applicant,
         approvalStatus
@@ -610,7 +621,7 @@ describe("ApplicantRepository", () => {
     };
 
     const expectStatusUpdateToCreateOneEvent = async (approvalStatus: ApprovalStatus) => {
-      const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       const approvedApplicant = await expectSuccessfulApplicantStatusUpdate(
         applicant,
         approvalStatus
@@ -625,7 +636,7 @@ describe("ApplicantRepository", () => {
     };
 
     it("creates an applicant with a pending status", async () => {
-      const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       expect(applicant.approvalStatus).toEqual(ApprovalStatus.pending);
     });
 
@@ -650,7 +661,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("creates four events by changing four times the applicant status", async () => {
-      const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       await expectSuccessfulApplicantStatusUpdate(applicant, ApprovalStatus.pending);
       await expectSuccessfulApplicantStatusUpdate(applicant, ApprovalStatus.approved);
       await expectSuccessfulApplicantStatusUpdate(applicant, ApprovalStatus.rejected);
@@ -682,7 +693,7 @@ describe("ApplicantRepository", () => {
 
     it("throws an error if admin does not exist", async () => {
       const nonExistentAdminUserUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
-      const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       await expect(
         ApplicantRepository.updateApprovalStatus(
           nonExistentAdminUserUuid,
@@ -724,7 +735,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("throws an error if adminUserUuid has invalid format", async () => {
-      const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       await expect(
         ApplicantRepository.updateApprovalStatus(
           "InvalidFormat",
@@ -738,7 +749,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("throws an error if status is not part of the enum values", async () => {
-      const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       await expect(
         ApplicantRepository.updateApprovalStatus(
           admin.userUuid,
@@ -752,7 +763,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("does not update applicant status if it throws an error", async () => {
-      const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       await expect(
         ApplicantRepository.updateApprovalStatus(
           admin.userUuid,
@@ -766,7 +777,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("does not create an event for the applicant if it throws an error", async () => {
-      const applicant = await ApplicantRepository.create(applicantsMinimumData.next().value);
+      const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       await expect(
         ApplicantRepository.updateApprovalStatus(
           admin.userUuid,

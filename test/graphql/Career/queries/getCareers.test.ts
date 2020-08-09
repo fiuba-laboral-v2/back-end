@@ -2,8 +2,9 @@ import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 
 import { CareerRepository } from "$models/Career";
+import { UserRepository } from "$models/User";
 import { CareerGenerator, TCareerDataGenerator } from "$generators/Career";
-import { testClientFactory } from "$mocks/testClientFactory";
+import { TestClientGenerator } from "$generators/TestClient";
 
 const GET_CAREERS = gql`
     query getCareers {
@@ -20,11 +21,12 @@ describe("getCareers", () => {
 
   beforeAll(async () => {
     await CareerRepository.truncate();
+    await UserRepository.truncate();
     careersData = CareerGenerator.data();
   });
 
   it("gets all careers using the code", async () => {
-    const { apolloClient } = await testClientFactory.user();
+    const { apolloClient } = await TestClientGenerator.user();
     const career = await CareerRepository.create(careersData.next().value);
 
     const { data, errors } = await apolloClient.query({ query: GET_CAREERS });

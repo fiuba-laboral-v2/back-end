@@ -1,8 +1,7 @@
 import { Boolean, nonNull, String } from "$graphql/fieldTypes";
-import { IUser, UserRepository } from "$models/User";
+import { UserRepository } from "$models/User";
 import { JWT } from "../../../JWT";
 import { Context } from "$graphql/Context/graphqlContext";
-import { BadCredentialsError } from "../Errors";
 import { AuthConfig } from "$config/AuthConfig";
 
 export const login = {
@@ -17,14 +16,18 @@ export const login = {
   },
   resolve: async (
     _: undefined,
-    { email, password }: IUser,
+    { email, password }: ILogin,
     { res: expressResponse }: Context
   ) => {
     const user = await UserRepository.findByEmail(email);
-    const valid = await user.passwordMatches(password);
-    if (!valid) throw new BadCredentialsError();
+    await UserRepository.validateCredentials(user, password);
 
     const token = await JWT.createToken(user);
     expressResponse.cookie(AuthConfig.cookieName, token, AuthConfig.cookieOptions);
   }
 };
+
+interface ILogin {
+  email: string;
+  password: string;
+}

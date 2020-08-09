@@ -6,13 +6,13 @@ import { ApplicantNotFound } from "$models/Applicant/Errors/ApplicantNotFound";
 import { AuthenticationError } from "$graphql/Errors";
 
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
-import { testClientFactory } from "$mocks/testClientFactory";
+import { TestClientGenerator } from "$generators/TestClient";
 import generateUuid from "uuid/v4";
 import { UserRepository } from "$models/User";
-import { ApplicantGenerator, TApplicantGenerator } from "$generators/Applicant";
+import { ApplicantGenerator } from "$generators/Applicant";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ApplicantRepository } from "$models/Applicant";
-import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
+import { ExtensionAdminGenerator } from "$generators/Admin";
 
 const GET_APPLICANT = gql`
   query GetApplicant($uuid: ID!) {
@@ -43,15 +43,11 @@ const GET_APPLICANT = gql`
 
 describe("getApplicant", () => {
   let careers: TCareerGenerator;
-  let applicants: TApplicantGenerator;
-  let admins: TAdminGenerator;
 
   beforeAll(async () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
     careers = CareerGenerator.instance();
-    applicants = await ApplicantGenerator.instance.withMinimumData();
-    admins = ExtensionAdminGenerator.instance();
   });
 
   describe("when the applicant exists", () => {
@@ -62,7 +58,7 @@ describe("getApplicant", () => {
         user,
         applicant,
         apolloClient
-      } = await testClientFactory.applicant({ careers: applicantCareer });
+      } = await TestClientGenerator.applicant({ careers: applicantCareer });
 
       const { data, errors } = await apolloClient.query({
         query: GET_APPLICANT,
@@ -92,8 +88,8 @@ describe("getApplicant", () => {
     });
 
     it("returns the applicant's default approvalStatus", async () => {
-      const { apolloClient } = await testClientFactory.user();
-      const applicant = await applicants.next().value;
+      const { apolloClient } = await TestClientGenerator.user();
+      const applicant = await ApplicantGenerator.instance.withMinimumData();
       const { data } = await apolloClient.query({
         query: GET_APPLICANT,
         variables: { uuid: applicant.uuid }
@@ -102,9 +98,9 @@ describe("getApplicant", () => {
     });
 
     it("returns the applicant's modified approvalStatus", async () => {
-      const { apolloClient } = await testClientFactory.user();
-      const applicant = await applicants.next().value;
-      const admin = await admins.next().value;
+      const { apolloClient } = await TestClientGenerator.user();
+      const applicant = await ApplicantGenerator.instance.withMinimumData();
+      const admin = await ExtensionAdminGenerator.instance();
       await ApplicantRepository.updateApprovalStatus(
         admin.userUuid,
         applicant.uuid,
@@ -120,7 +116,7 @@ describe("getApplicant", () => {
 
   describe("when the applicant doesn't exists", () => {
     it("returns an error if the applicant does not exist", async () => {
-      const { apolloClient } = await testClientFactory.user();
+      const { apolloClient } = await TestClientGenerator.user();
 
       const uuid = generateUuid();
       const { errors } = await apolloClient.query({

@@ -3,7 +3,7 @@ import { client } from "../../ApolloTestClient";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { AuthenticationError } from "$graphql/Errors";
-import { testClientFactory } from "$mocks/testClientFactory";
+import { TestClientGenerator } from "$generators/TestClient";
 import { AuthConfig } from "$config/AuthConfig";
 
 const LOGOUT = gql`
@@ -29,7 +29,7 @@ describe("logout", () => {
 
   it("logouts an user setting empty cookie", async () => {
     const expressContext = createExpressContext();
-    const { apolloClient } = await testClientFactory.user({ expressContext });
+    const { apolloClient } = await TestClientGenerator.user({ expressContext });
     const { errors } = await apolloClient.mutate({ mutation: LOGOUT });
     expect(errors).toBeUndefined();
     expectCookieToBeRemoved(expressContext);
@@ -37,7 +37,7 @@ describe("logout", () => {
 
   it("logouts an applicant setting empty cookie", async () => {
     const expressContext = createExpressContext();
-    const { apolloClient } = await testClientFactory.applicant({ expressContext });
+    const { apolloClient } = await TestClientGenerator.applicant({ expressContext });
     const { errors } = await apolloClient.mutate({ mutation: LOGOUT });
     expect(errors).toBeUndefined();
     expectCookieToBeRemoved(expressContext);
@@ -45,7 +45,7 @@ describe("logout", () => {
 
   it("logouts a company user setting empty cookie", async () => {
     const expressContext = createExpressContext();
-    const { apolloClient } = await testClientFactory.company({ expressContext });
+    const { apolloClient } = await TestClientGenerator.company({ expressContext });
     const { errors } = await apolloClient.mutate({ mutation: LOGOUT });
     expect(errors).toBeUndefined();
     expectCookieToBeRemoved(expressContext);

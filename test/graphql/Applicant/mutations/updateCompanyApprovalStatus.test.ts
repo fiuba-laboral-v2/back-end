@@ -3,15 +3,13 @@ import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist
 
 import { ApplicantNotUpdatedError, ApplicantRepository } from "$models/Applicant";
 import { Applicant } from "$models";
-import {
-  ApplicantApprovalEventRepository
-} from "$models/Applicant/ApplicantApprovalEvent";
+import { ApplicantApprovalEventRepository } from "$models/Applicant/ApplicantApprovalEvent";
 import { UserRepository } from "$models/User";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
-import { ApplicantGenerator, TApplicantGenerator } from "$generators/Applicant";
-import { testClientFactory } from "$mocks/testClientFactory";
+import { ApplicantGenerator } from "$generators/Applicant";
+import { TestClientGenerator } from "$generators/TestClient";
 import { client } from "../../ApolloTestClient";
 
 const UPDATE_APPLICANT_APPROVAL_STATUS = gql`
@@ -24,12 +22,9 @@ const UPDATE_APPLICANT_APPROVAL_STATUS = gql`
 `;
 
 describe("updateCompanyApprovalStatus", () => {
-  let applicants: TApplicantGenerator;
-
   beforeAll(async () => {
     await UserRepository.truncate();
     await ApplicantRepository.truncate();
-    applicants = ApplicantGenerator.instance.withMinimumData();
   });
 
   beforeEach(() => ApplicantApprovalEventRepository.truncate());
@@ -41,8 +36,8 @@ describe("updateCompanyApprovalStatus", () => {
     });
 
   const updateApplicantWithStatus = async (newStatus: ApprovalStatus) => {
-    const applicant = await applicants.next().value;
-    const { admin, apolloClient } = await testClientFactory.admin();
+    const applicant = await ApplicantGenerator.instance.withMinimumData();
+    const { admin, apolloClient } = await TestClientGenerator.admin();
     const dataToUpdate = { uuid: applicant.uuid, approvalStatus: newStatus };
     const { data, errors } = await performMutation(apolloClient, dataToUpdate);
     return { data, errors, admin, applicant };
@@ -88,11 +83,11 @@ describe("updateCompanyApprovalStatus", () => {
     let applicant: Applicant;
 
     beforeAll(async () => {
-      applicant = await applicants.next().value;
+      applicant = await ApplicantGenerator.instance.withMinimumData();
     });
 
     it("returns an error if no uuid is provided", async () => {
-      const { apolloClient } = await testClientFactory.admin();
+      const { apolloClient } = await TestClientGenerator.admin();
       const dataToUpdate = { approvalStatus: ApprovalStatus.approved };
       const { errors } = await performMutation(apolloClient, dataToUpdate);
       expect(errors).not.toBeUndefined();
@@ -106,14 +101,14 @@ describe("updateCompanyApprovalStatus", () => {
     });
 
     it("returns an error if the current user is from a company", async () => {
-      const { apolloClient } = await testClientFactory.company();
+      const { apolloClient } = await TestClientGenerator.company();
       const dataToUpdate = { uuid: applicant.uuid, approvalStatus: ApprovalStatus.approved };
       const { errors } = await performMutation(apolloClient, dataToUpdate);
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("returns an error if the current user is an applicant", async () => {
-      const { apolloClient } = await testClientFactory.applicant();
+      const { apolloClient } = await TestClientGenerator.applicant();
       const dataToUpdate = { uuid: applicant.uuid, approvalStatus: ApprovalStatus.approved };
       const { errors } = await performMutation(apolloClient, dataToUpdate);
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
@@ -121,7 +116,7 @@ describe("updateCompanyApprovalStatus", () => {
 
     it("returns an error if the applicant does not exists", async () => {
       const nonExistentApplicantUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
-      const { apolloClient } = await testClientFactory.admin();
+      const { apolloClient } = await TestClientGenerator.admin();
       const { errors } = await performMutation(
         apolloClient,
         {
@@ -133,7 +128,7 @@ describe("updateCompanyApprovalStatus", () => {
     });
 
     it("returns an error if the approvalStatus is invalid", async () => {
-      const { apolloClient } = await testClientFactory.admin();
+      const { apolloClient } = await TestClientGenerator.admin();
       const dataToUpdate = { uuid: applicant.uuid, approvalStatus: "invalidApprovalStatus" };
       const { errors } = await performMutation(apolloClient, dataToUpdate);
       expect(errors).not.toBeUndefined();

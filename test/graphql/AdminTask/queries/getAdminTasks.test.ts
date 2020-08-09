@@ -11,7 +11,7 @@ import { UnauthorizedError } from "$graphql/Errors";
 import { ExtensionAdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
 import { ApplicantGenerator } from "$generators/Applicant";
-import { testClientFactory } from "$mocks/testClientFactory";
+import { TestClientGenerator } from "$generators/TestClient";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 
 const GET_ADMIN_TASKS = gql`
@@ -53,16 +53,15 @@ describe("getAdminTasks", () => {
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
-    const companies = await CompanyGenerator.instance.updatedWithStatus();
-    const applicants = await ApplicantGenerator.instance.updatedWithStatus();
-    admin = await ExtensionAdminGenerator.instance().next().value;
-
-    rejectedCompany = await companies.next({ status: ApprovalStatus.rejected, admin }).value;
-    approvedCompany = await companies.next({ status: ApprovalStatus.approved, admin }).value;
-    pendingCompany = await companies.next().value;
-    rejectedApplicant = await applicants.next({ status: ApprovalStatus.rejected, admin }).value;
-    approvedApplicant = await applicants.next({ status: ApprovalStatus.approved, admin }).value;
-    pendingApplicant = await applicants.next().value;
+    const companiesGenerator = CompanyGenerator.instance.updatedWithStatus;
+    admin = await ExtensionAdminGenerator.instance();
+    const applicantsGenerator = ApplicantGenerator.instance.updatedWithStatus;
+    rejectedCompany = await companiesGenerator({ status: ApprovalStatus.rejected, admin });
+    approvedCompany = await companiesGenerator({ status: ApprovalStatus.approved, admin });
+    pendingCompany = await companiesGenerator();
+    rejectedApplicant = await applicantsGenerator({ status: ApprovalStatus.rejected, admin });
+    approvedApplicant = await applicantsGenerator({ status: ApprovalStatus.approved, admin });
+    pendingApplicant = await applicantsGenerator();
 
     allTasksByDescUpdatedAt = [
       rejectedCompany,
@@ -75,7 +74,7 @@ describe("getAdminTasks", () => {
   });
 
   const getAdminTasks = async (filter: IAdminTasksFilter) => {
-    const { apolloClient } = await testClientFactory.admin();
+    const { apolloClient } = await TestClientGenerator.admin();
     const { errors, data } = await apolloClient.query({
       query: GET_ADMIN_TASKS,
       variables: filter
@@ -196,7 +195,7 @@ describe("getAdminTasks", () => {
 
   describe("when the variables are incorrect", () => {
     it("returns an error if no filter is provided", async () => {
-      const { apolloClient } = await testClientFactory.admin();
+      const { apolloClient } = await TestClientGenerator.admin();
       const { errors } = await apolloClient.query({
         query: GET_ADMIN_TASKS,
         variables: {}
@@ -220,15 +219,15 @@ describe("getAdminTasks", () => {
     };
 
     it("throws an error to plain users", async () => {
-      await testForbiddenAccess(await testClientFactory.user());
+      await testForbiddenAccess(await TestClientGenerator.user());
     });
 
     it("throws an error to company users", async () => {
-      await testForbiddenAccess(await testClientFactory.company());
+      await testForbiddenAccess(await TestClientGenerator.company());
     });
 
     it("throws an error to applicants", async () => {
-      await testForbiddenAccess(await testClientFactory.applicant());
+      await testForbiddenAccess(await TestClientGenerator.applicant());
     });
   });
 });
