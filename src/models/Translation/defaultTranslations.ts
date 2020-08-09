@@ -18,13 +18,15 @@ export const defaultTranslations = {
   applicantSignUp: [
     { key: "title", value: "Crear tu cuenta" },
     { key: "email", value: "Email" },
-    { key: "dni", value: "DNI" },
-    { key: "password", value: "Contraseña" },
     { key: "name", value: "Nombre" },
     { key: "surname", value: "Apellido" },
     { key: "padron", value: "Padron" },
     { key: "careersTitle", value: "Elegí tu carrera" },
     { key: "submit", value: "Guardar" }
+  ],
+  applicantCredentialsFields: [
+    { key: "dni", value: "DNI" },
+    { key: "password", value: "Contraseña" }
   ],
   careersDetail: [
     { key: "careersTitle", value: "Carreras" },
