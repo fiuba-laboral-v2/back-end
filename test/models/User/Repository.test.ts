@@ -32,18 +32,6 @@ describe("UserRepository", () => {
       }));
     });
 
-    it("creates a user with a dni", async () => {
-      const dni = 30288888;
-      const user = await UserRepository.create({
-        email: "asd@qwe.com",
-        password: "AValidPassword123",
-        dni,
-        name: "Sebastian",
-        surname: "Blanco"
-      });
-      expect(user.dni).toEqual(dni);
-    });
-
     it("creates a user with no password", async () => {
       const user = await UserRepository.create({
         email: "asd@qwe.com",
@@ -100,7 +88,7 @@ describe("UserRepository", () => {
     });
 
     it("throws an error when creating an user with an existing dni", async () => {
-      const dni = 39207888;
+      const dni = "39207888";
       await UserRepository.create({
         email: "robert_johnson@gmail.com",
         password: "somethingVerySecret123",
@@ -156,7 +144,7 @@ describe("UserRepository", () => {
       it("throws an error if the FiubaService authentication returns false", async () => {
         const fiubaUsersServiceMock = jest.spyOn(FiubaUsersService, "authenticate");
         fiubaUsersServiceMock.mockResolvedValueOnce(Promise.resolve(false));
-        const dni = 39207888;
+        const dni = "39207888";
         await expect(
           UserRepository.createFiubaUser({
             email: "email@gmail.com",
@@ -171,10 +159,10 @@ describe("UserRepository", () => {
         );
       });
 
-      it("throws an error if dni is invalid", async () => {
+      it("throws an error if dni is empty", async () => {
         await expect(
           UserRepository.createFiubaUser({
-            dni: 0,
+            dni: "",
             email: "email@gmail.com",
             password: "somethingVerySecret123",
             name: "name",

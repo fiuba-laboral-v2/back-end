@@ -9,7 +9,7 @@ describe("FiubaUsersService", () => {
   it("throws an error if the username is empty", async () => {
     await expect(
       FiubaUsersService.authenticate({
-        dni: 0,
+        dni: "",
         password: "password"
       })
     ).rejects.toThrowErrorWithMessage(

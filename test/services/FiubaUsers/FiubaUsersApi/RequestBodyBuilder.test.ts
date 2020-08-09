@@ -12,16 +12,16 @@ describe("RequestBodyBuilder", () => {
   });
 
   it("builds the request body for the api", async () => {
-    const username = 39207911;
+    const dni = "39207911";
     const password = "password";
-    const requestBody = RequestBodyBuilder.buildAuthenticate({ dni: username, password });
+    const requestBody = RequestBodyBuilder.buildAuthenticate({ dni, password });
     expect(requestBody).toEqualIgnoringSpacing(`
       <?xml version="1.0" encoding="utf-8"?>
       <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
         <SOAP-ENV:Header/>
         <SOAP-ENV:Body>
           <Autenticar>
-            <userid>${username}</userid>
+            <userid>${dni}</userid>
             <password>${password}</password>
           </Autenticar>
         </SOAP-ENV:Body>

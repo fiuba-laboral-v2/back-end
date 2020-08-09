@@ -4,7 +4,6 @@ import { User } from "$models";
 import { MissingDniError } from "$models/User/Errors";
 import { UUID_REGEX } from "../index";
 import {
-  InvalidDniError,
   InvalidEmailError,
   NameWithDigitsError,
   PasswordWithoutDigitsError
@@ -72,21 +71,6 @@ describe("User", () => {
   });
 
   describe("Errors", () => {
-    const expectToThrowErrorWithDni = async (dni: number) => {
-      const user = new User({
-        email: "email@gmail.com",
-        dni,
-        password: "somethingVerySecret123",
-        name: "name",
-        surname: "surname"
-      });
-
-      await expect(user.validate()).rejects.toThrowErrorWithMessage(
-        ValidationError,
-        InvalidDniError.buildMessage(dni)
-      );
-    };
-
     const expectToThrowErrorForMissingFields = async (fields: string[], message: string) => {
       const attributes = {
         uuid: generateUuid(),
@@ -162,14 +146,6 @@ describe("User", () => {
 
     it("throws an error if the user has no password and no dni", async () => {
       await expectToThrowErrorForMissingFields(["password", "dni"], MissingDniError.buildMessage());
-    });
-
-    it("throws an error if dni has more than nine digits", async () => {
-      await expectToThrowErrorWithDni(99999999999999);
-    });
-
-    it("throws an error if dni has less than nine digits", async () => {
-      await expectToThrowErrorWithDni(11);
     });
   });
 
