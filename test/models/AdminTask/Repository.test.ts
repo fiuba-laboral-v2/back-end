@@ -7,7 +7,7 @@ import { Admin, Applicant, Company } from "$models";
 import { ExtensionAdminGenerator } from "$generators/Admin";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { CompanyGenerator } from "$generators/Company";
-import { withItemsPerPage } from "$config/PaginationConfig";
+import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 
 describe("AdminTaskRepository", () => {
   let admin: Admin;
@@ -154,24 +154,23 @@ describe("AdminTaskRepository", () => {
     expect(result.shouldFetchMore).toEqual(false);
   });
 
-  it("limits to itemsPerPage results", () => {
+  it("limits to itemsPerPage results", async () => {
     const itemsPerPage = 3;
-    return withItemsPerPage({ itemsPerPage }, async () => {
-      const lastTaskIndex = 1;
-      const result = await AdminTaskRepository.find({
-        adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
-        statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
-        updatedBeforeThan: allTasksByDescUpdatedAt[lastTaskIndex].updatedAt
-      });
-      expect(result.shouldFetchMore).toEqual(true);
-      expect(
-        result.tasks
-          .map(task => task.uuid)
-      ).toEqual(
-        allTasksByDescUpdatedAt
-          .map(task => task.uuid)
-          .slice(lastTaskIndex + 1, lastTaskIndex + 1 + itemsPerPage)
-      );
+    mockItemsPerPage(itemsPerPage);
+    const lastTaskIndex = 1;
+    const result = await AdminTaskRepository.find({
+      adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
+      statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
+      updatedBeforeThan: allTasksByDescUpdatedAt[lastTaskIndex].updatedAt
     });
+    expect(result.shouldFetchMore).toEqual(true);
+    expect(
+      result.tasks
+        .map(task => task.uuid)
+    ).toEqual(
+      allTasksByDescUpdatedAt
+        .map(task => task.uuid)
+        .slice(lastTaskIndex + 1, lastTaskIndex + 1 + itemsPerPage)
+    );
   });
 });

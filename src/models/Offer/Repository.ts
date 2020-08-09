@@ -46,7 +46,7 @@ export const OfferRepository = {
     return offer;
   },
   findAll: async ({ updatedBeforeThan }: { updatedBeforeThan?: string }) => {
-    const limit = PaginationConfig().itemsPerPage + 1;
+    const limit = PaginationConfig.itemsPerPage() + 1;
     const result = await Offer.findAll({
       ...(updatedBeforeThan && {
         where: {

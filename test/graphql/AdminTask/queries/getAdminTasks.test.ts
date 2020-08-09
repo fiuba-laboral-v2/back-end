@@ -12,7 +12,7 @@ import { ExtensionAdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { testClientFactory } from "$mocks/testClientFactory";
-import { withItemsPerPage } from "$config/PaginationConfig";
+import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 
 const GET_ADMIN_TASKS = gql`
   query GetAdminTasks(
@@ -174,25 +174,24 @@ describe("getAdminTasks", () => {
     expect(result.shouldFetchMore).toEqual(false);
   });
 
-  it("limits to itemsPerPage results", () => {
+  it("limits to itemsPerPage results", async () => {
     const itemsPerPage = 6;
-    return withItemsPerPage({ itemsPerPage }, async () => {
-      const lastTaskIndex = 3;
-      const result = await getAdminTasks({
-        adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
-        statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
-        updatedBeforeThan: allTasksByDescUpdatedAt[lastTaskIndex].updatedAt.toISOString()
-      });
-      expect(result.shouldFetchMore).toEqual(false);
-      expect(
-        result.tasks
-          .map(task => task.uuid)
-      ).toEqual(
-        allTasksByDescUpdatedAt
-          .map(task => task.uuid)
-          .slice(lastTaskIndex + 1, lastTaskIndex + 1 + itemsPerPage)
-      );
+    mockItemsPerPage(itemsPerPage);
+    const lastTaskIndex = 3;
+    const result = await getAdminTasks({
+      adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
+      statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
+      updatedBeforeThan: allTasksByDescUpdatedAt[lastTaskIndex].updatedAt.toISOString()
     });
+    expect(result.shouldFetchMore).toEqual(false);
+    expect(
+      result.tasks
+        .map(task => task.uuid)
+    ).toEqual(
+      allTasksByDescUpdatedAt
+        .map(task => task.uuid)
+        .slice(lastTaskIndex + 1, lastTaskIndex + 1 + itemsPerPage)
+    );
   });
 
   describe("when the variables are incorrect", () => {

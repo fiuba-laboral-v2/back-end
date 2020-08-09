@@ -16,7 +16,7 @@ export const AdminTaskRepository = {
         tasks: []
       };
     }
-    const limit = PaginationConfig().itemsPerPage + 1;
+    const limit = PaginationConfig.itemsPerPage() + 1;
     const rows = await Database.query(
       findAdminTasksQuery({ ...filter, limit: limit }),
       { type: "SELECT" }

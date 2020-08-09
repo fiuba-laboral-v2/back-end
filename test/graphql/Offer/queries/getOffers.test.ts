@@ -14,7 +14,7 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ExtensionAdminGenerator, TAdminGenerator } from "$generators/Admin";
 import { range } from "lodash";
 import { Offer } from "$models";
-import { withItemsPerPage } from "$config/PaginationConfig";
+import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 
 const GET_OFFERS = gql`
   query ($updatedBeforeThan: DateTime) {
@@ -145,16 +145,15 @@ describe("getOffers", () => {
         const apolloClient = await approvedApplicantTestClient();
 
         const itemsPerPage = 10;
-        return withItemsPerPage({ itemsPerPage }, async () => {
-          const { data } = await apolloClient.query({ query: GET_OFFERS });
-          expect(data!.getOffers.offers.map(offer => offer.uuid)).toEqual(
-            [
-              offer1.uuid,
-              ...newOffersByDescUpdatedAt.slice(0, itemsPerPage - 1).map(offer => offer.uuid)
-            ]
-          );
-          expect(data!.getOffers.shouldFetchMore).toEqual(true);
-        });
+        mockItemsPerPage(itemsPerPage);
+        const { data } = await apolloClient.query({ query: GET_OFFERS });
+        expect(data!.getOffers.offers.map(offer => offer.uuid)).toEqual(
+          [
+            offer1.uuid,
+            ...newOffersByDescUpdatedAt.slice(0, itemsPerPage - 1).map(offer => offer.uuid)
+          ]
+        );
+        expect(data!.getOffers.shouldFetchMore).toEqual(true);
       });
 
       it("gets the next 3 offers", async () => {
@@ -166,20 +165,19 @@ describe("getOffers", () => {
 
         const itemsPerPage = 3;
         const lastOfferIndex = 9;
-        return withItemsPerPage({ itemsPerPage }, async () => {
-          const { data } = await apolloClient.query({
-            query: GET_OFFERS,
-            variables: {
-              updatedBeforeThan: offersByDescUpdatedAt[lastOfferIndex].updatedAt.toISOString()
-            }
-          });
-          expect(data!.getOffers.offers.map(offer => offer.uuid)).toEqual(
-            offersByDescUpdatedAt
-              .slice(lastOfferIndex + 1, lastOfferIndex + 1 + itemsPerPage)
-              .map(offer => offer.uuid)
-          );
-          expect(data!.getOffers.shouldFetchMore).toEqual(true);
+        mockItemsPerPage(itemsPerPage);
+        const { data } = await apolloClient.query({
+          query: GET_OFFERS,
+          variables: {
+            updatedBeforeThan: offersByDescUpdatedAt[lastOfferIndex].updatedAt.toISOString()
+          }
         });
+        expect(data!.getOffers.offers.map(offer => offer.uuid)).toEqual(
+          offersByDescUpdatedAt
+            .slice(lastOfferIndex + 1, lastOfferIndex + 1 + itemsPerPage)
+            .map(offer => offer.uuid)
+        );
+        expect(data!.getOffers.shouldFetchMore).toEqual(true);
       });
     });
   });

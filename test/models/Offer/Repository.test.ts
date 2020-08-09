@@ -9,7 +9,7 @@ import { OfferGenerator, TOfferDataGenerator } from "$generators/Offer";
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
 import { omit, range } from "lodash";
 import { UserRepository } from "$models/User";
-import { withItemsPerPage } from "$config/PaginationConfig";
+import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 
 describe("OfferRepository", () => {
   let companies: TCompanyGenerator;
@@ -269,39 +269,36 @@ describe("OfferRepository", () => {
       allOffersByDescUpdatedAt = allOffersByDescUpdatedAt.sort(offer => -offer.updatedAt);
     });
 
-    it("sorts by updatedAt DESC, limits to itemsPerPage results", () => {
+    it("sorts by updatedAt DESC, limits to itemsPerPage results", async () => {
       const itemsPerPage = 5;
-      return withItemsPerPage({ itemsPerPage }, async () => {
-        const result = await OfferRepository.findAll({});
-        expect(result.shouldFetchMore).toEqual(true);
-        expect(
-          result.offers
-            .map(offer => offer.uuid)
-        ).toEqual(
-          allOffersByDescUpdatedAt
-            .map(offer => offer.uuid)
-            .slice(0, itemsPerPage)
-        );
-      });
+      mockItemsPerPage(itemsPerPage);
+      const result = await OfferRepository.findAll({});
+      expect(result.shouldFetchMore).toEqual(true);
+      expect(
+        result.offers
+          .map(offer => offer.uuid)
+      ).toEqual(
+        allOffersByDescUpdatedAt
+          .map(offer => offer.uuid)
+          .slice(0, itemsPerPage)
+      );
     });
 
-    it("gives last results, indicates that there are no earlier offers to fetch", () => {
-      const itemsPerPage = 3;
-      return withItemsPerPage({ itemsPerPage }, async () => {
-        const lastOfferIndex = 5;
-        const result = await OfferRepository.findAll({
-          updatedBeforeThan: allOffersByDescUpdatedAt[lastOfferIndex].updatedAt
-        });
-        expect(result.shouldFetchMore).toEqual(false);
-        expect(
-          result.offers
-            .map(offer => offer.uuid)
-        ).toEqual(
-          allOffersByDescUpdatedAt
-            .map(offer => offer.uuid)
-            .slice(lastOfferIndex + 1, allOffersByDescUpdatedAt.length)
-        );
+    it("gives last results, indicates that there are no earlier offers to fetch", async () => {
+      mockItemsPerPage(3);
+      const lastOfferIndex = 5;
+      const result = await OfferRepository.findAll({
+        updatedBeforeThan: allOffersByDescUpdatedAt[lastOfferIndex].updatedAt
       });
+      expect(result.shouldFetchMore).toEqual(false);
+      expect(
+        result.offers
+          .map(offer => offer.uuid)
+      ).toEqual(
+        allOffersByDescUpdatedAt
+          .map(offer => offer.uuid)
+          .slice(lastOfferIndex + 1, allOffersByDescUpdatedAt.length)
+      );
     });
   });
 });
