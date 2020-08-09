@@ -2,7 +2,7 @@ import { Int, List, nonNull, String } from "$graphql/fieldTypes";
 import { GraphQLApplicant } from "../Types/GraphQLApplicant";
 import { GraphQLCareerCredits } from "../Types/CareerCredits";
 
-import { ISaveApplicant, ApplicantRepository } from "$models/Applicant";
+import { ApplicantRepository, ISaveApplicant } from "$models/Applicant";
 import { GraphQLUserCreateInput } from "$graphql/User/Types/GraphQLUserCreateInput";
 
 const saveApplicant = {

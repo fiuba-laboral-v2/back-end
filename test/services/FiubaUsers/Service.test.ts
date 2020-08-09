@@ -1,7 +1,7 @@
 import {
   FiubaUsersService,
-  InvalidEmptyUsernameError,
-  InvalidEmptyPasswordError
+  InvalidEmptyPasswordError,
+  InvalidEmptyUsernameError
 } from "$services/FiubaUsers";
 import { DniGenerator } from "$generators/DNI";
 

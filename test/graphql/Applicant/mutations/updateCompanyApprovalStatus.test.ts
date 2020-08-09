@@ -3,9 +3,7 @@ import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist
 
 import { ApplicantNotUpdatedError, ApplicantRepository } from "$models/Applicant";
 import { Applicant } from "$models";
-import {
-  ApplicantApprovalEventRepository
-} from "$models/Applicant/ApplicantApprovalEvent";
+import { ApplicantApprovalEventRepository } from "$models/Applicant/ApplicantApprovalEvent";
 import { UserRepository } from "$models/User";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";

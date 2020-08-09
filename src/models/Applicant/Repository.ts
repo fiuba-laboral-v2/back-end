@@ -1,4 +1,4 @@
-import { ISaveApplicant, IApplicantEditable } from "./index";
+import { IApplicantEditable, ISaveApplicant } from "./index";
 import { ApplicantNotFound, ApplicantNotUpdatedError } from "./Errors";
 import { Database } from "../../config/Database";
 import { ApplicantCareersRepository } from "../ApplicantCareer";

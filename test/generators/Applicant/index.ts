@@ -1,4 +1,4 @@
-import { withMinimumData, IApplicantInputData } from "./withMinimumData";
+import { IApplicantInputData, withMinimumData } from "./withMinimumData";
 import { ApplicantRepository } from "$models/Applicant";
 import { Admin } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";

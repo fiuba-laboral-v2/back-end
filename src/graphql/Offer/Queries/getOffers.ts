@@ -1,10 +1,9 @@
-import { GraphQLOffer } from "../Types/GraphQLOffer";
 import { OfferRepository } from "$models/Offer";
-import { List } from "$graphql/fieldTypes";
 import { GraphQLDateTime } from "graphql-iso-date";
+import { GraphQLPaginatedOffers } from "$graphql/Offer/Types/GraphQLPaginatedOffers";
 
 const getOffers = {
-  type: List(GraphQLOffer),
+  type: GraphQLPaginatedOffers,
   args: {
     updatedBeforeThan: {
       type: GraphQLDateTime

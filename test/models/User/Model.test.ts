@@ -4,10 +4,10 @@ import { User } from "$models";
 import { MissingDniError } from "$models/User/Errors";
 import { UUID_REGEX } from "../index";
 import {
+  InvalidDniError,
   InvalidEmailError,
   NameWithDigitsError,
-  PasswordWithoutDigitsError,
-  InvalidDniError
+  PasswordWithoutDigitsError
 } from "validations-fiuba-laboral-v2";
 import { DniGenerator } from "$generators/DNI";
 

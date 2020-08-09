@@ -1,7 +1,7 @@
-import { IFiubaUsersApiSuccessResponse, ICredentials } from "../Interfaces";
+import { ICredentials, IFiubaUsersApiSuccessResponse } from "../Interfaces";
 import { FiubaUsersServiceConfig } from "../../../config/services";
 import { RequestBodyBuilder } from "./RequestBodyBuilder";
-import { AuthenticateUnknownError, AuthenticateFaultError } from "../Errors";
+import { AuthenticateFaultError, AuthenticateUnknownError } from "../Errors";
 import { parse } from "fast-xml-parser";
 import "isomorphic-fetch";
 

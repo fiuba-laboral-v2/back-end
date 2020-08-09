@@ -5,6 +5,7 @@ import { IOfferCareer } from "./OfferCareer";
 import { OfferNotFound } from "./Errors";
 import { Offer, OfferCareer, OfferSection } from "$models";
 import { Op } from "sequelize";
+import { PaginationConfig } from "$config/PaginationConfig";
 import { ICreateOffer } from "$models/Offer/Interface";
 
 export const OfferRepository = {
@@ -45,8 +46,9 @@ export const OfferRepository = {
 
     return offer;
   },
-  findAll: ({ updatedBeforeThan }: { updatedBeforeThan?: string }) =>
-    Offer.findAll({
+  findAll: async ({ updatedBeforeThan }: { updatedBeforeThan?: string }) => {
+    const limit = PaginationConfig.itemsPerPage() + 1;
+    const result = await Offer.findAll({
       ...(updatedBeforeThan && {
         where: {
           updatedAt: {
@@ -55,8 +57,13 @@ export const OfferRepository = {
         }
       }),
       order: [["updatedAt", "DESC"]],
-      limit: 10
-    }),
+      limit
+    });
+    return {
+      shouldFetchMore: result.length === limit,
+      offers: result.slice(0, limit - 1)
+    };
+  },
   findByCompanyUuid: (companyUuid: string) =>
     Offer.findAll({ where: { companyUuid } }),
   truncate: () => Offer.truncate({ cascade: true })

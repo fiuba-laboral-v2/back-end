@@ -9,9 +9,11 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 describe("findAdminTasksQuery", () => {
 
   const expectToReturnSQLQueryOfAllAdminTasksWithStatus = (status: ApprovalStatus) => {
+    const limit = 15;
     const query = findAdminTasksQuery({
       adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
-      statuses: [status]
+      statuses: [status],
+      limit
     });
     const expectedQuery = `
       WITH "AdminTask" AS
@@ -38,16 +40,19 @@ describe("findAdminTasksQuery", () => {
           )
         )
       SELECT * FROM "AdminTask"
-      WHERE "AdminTask"."approvalStatus" = '${status}'
+      WHERE ("AdminTask"."approvalStatus" = '${status}')
       ORDER BY "AdminTask"."updatedAt" DESC
+      LIMIT ${limit}
     `;
     expect(query).toEqualIgnoringSpacing(expectedQuery);
   };
 
   const expectToReturnSQLQueryOfCompaniesWithStatus = (status: ApprovalStatus) => {
+    const limit = 50;
     const query = findAdminTasksQuery({
       adminTaskTypes: [AdminTaskType.Company],
-      statuses: [status]
+      statuses: [status],
+      limit
     });
     const expectedQuery = `
       WITH "AdminTask" AS
@@ -68,16 +73,19 @@ describe("findAdminTasksQuery", () => {
           FROM (SELECT *, 'Companies' AS "tableNameColumn" FROM "Companies") AS Companies
         )
       SELECT * FROM "AdminTask"
-      WHERE "AdminTask"."approvalStatus" = '${status}'
+      WHERE ("AdminTask"."approvalStatus" = '${status}')
       ORDER BY "AdminTask"."updatedAt" DESC
+      LIMIT ${limit}
     `;
     expect(query).toEqualIgnoringSpacing(expectedQuery);
   };
 
   const expectToReturnSQLQueryOfApplicantsWithStatus = (status: ApprovalStatus) => {
+    const limit = 75;
     const query = findAdminTasksQuery({
       adminTaskTypes: [AdminTaskType.Applicant],
-      statuses: [status]
+      statuses: [status],
+      limit
     });
     const expectedQuery = `
       WITH "AdminTask" AS
@@ -94,8 +102,9 @@ describe("findAdminTasksQuery", () => {
           FROM (SELECT *, 'Applicants' AS "tableNameColumn" FROM "Applicants") AS Applicants
         )
       SELECT * FROM "AdminTask"
-      WHERE "AdminTask"."approvalStatus" = '${status}'
+      WHERE ("AdminTask"."approvalStatus" = '${status}')
       ORDER BY "AdminTask"."updatedAt" DESC
+      LIMIT ${limit}
     `;
     expect(query).toEqualIgnoringSpacing(expectedQuery);
   };
@@ -104,7 +113,8 @@ describe("findAdminTasksQuery", () => {
     expect(
       () => findAdminTasksQuery({
         adminTaskTypes: [],
-        statuses: [ApprovalStatus.pending]
+        statuses: [ApprovalStatus.pending],
+        limit: 100
       })
     ).toThrowErrorWithMessage(
       AdminTaskTypesIsEmptyError,
@@ -116,7 +126,8 @@ describe("findAdminTasksQuery", () => {
     expect(
       () => findAdminTasksQuery({
         adminTaskTypes: [AdminTaskType.Applicant],
-        statuses: []
+        statuses: [],
+        limit: 150
       })
     ).toThrowErrorWithMessage(
       StatusesIsEmptyError,
@@ -161,9 +172,11 @@ describe("findAdminTasksQuery", () => {
   });
 
   it("returns an sql query of adminTasks in all statuses", async () => {
+    const limit = 200;
     const query = findAdminTasksQuery({
       adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
-      statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected]
+      statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
+      limit
     });
     const expectedQuery = `
       WITH "AdminTask" AS
@@ -190,18 +203,69 @@ describe("findAdminTasksQuery", () => {
           )
         )
       SELECT * FROM "AdminTask"
-      WHERE "AdminTask"."approvalStatus" = 'pending'
-            OR "AdminTask"."approvalStatus" = 'approved'
-            OR "AdminTask"."approvalStatus" = 'rejected'
+      WHERE (
+        "AdminTask"."approvalStatus" = 'pending'
+        OR "AdminTask"."approvalStatus" = 'approved'
+        OR "AdminTask"."approvalStatus" = 'rejected'
+      )
       ORDER BY "AdminTask"."updatedAt" DESC
+      LIMIT ${limit}
+    `;
+    expect(query).toEqualIgnoringSpacing(expectedQuery);
+  });
+
+  it("optionally filters by maximum updatedAt (not inclusive)", async () => {
+    const limit = 205;
+    const query = findAdminTasksQuery({
+      adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
+      statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
+      updatedBeforeThan: new Date("1995-12-17T03:24:00Z"),
+      limit
+    });
+    const expectedQuery = `
+      WITH "AdminTask" AS
+        (
+          SELECT
+            COALESCE(Companies."uuid",Applicants."uuid") AS "uuid",
+            COALESCE(Companies."cuit") AS "cuit",
+            COALESCE(Companies."companyName") AS "companyName",
+            COALESCE(Companies."slogan") AS "slogan",
+            COALESCE(Companies."description",Applicants."description") AS "description",
+            COALESCE(Companies."logo") AS "logo",
+            COALESCE(Companies."website") AS "website",
+            COALESCE(Companies."email") AS "email",
+            COALESCE(Companies."approvalStatus",Applicants."approvalStatus") AS "approvalStatus",
+            COALESCE(Companies."createdAt",Applicants."createdAt") AS "createdAt",
+            COALESCE(Companies."updatedAt",Applicants."updatedAt") AS "updatedAt",
+            COALESCE(Companies."tableNameColumn",Applicants."tableNameColumn") AS "tableNameColumn",
+            COALESCE(Applicants."padron") AS "padron",
+            COALESCE(Applicants."userUuid") AS "userUuid"
+          FROM (
+            (SELECT *, 'Companies' AS "tableNameColumn" FROM "Companies") AS Companies
+            FULL OUTER JOIN
+            (SELECT *, 'Applicants' AS "tableNameColumn" FROM "Applicants") AS Applicants ON FALSE
+          )
+        )
+      SELECT * FROM "AdminTask"
+      WHERE (
+        "AdminTask"."approvalStatus" = 'pending'
+        OR "AdminTask"."approvalStatus" = 'approved'
+        OR "AdminTask"."approvalStatus" = 'rejected'
+      ) AND (
+        "AdminTask"."updatedAt" < '1995-12-17T03:24:00.000Z'
+      )
+      ORDER BY "AdminTask"."updatedAt" DESC
+      LIMIT ${limit}
     `;
     expect(query).toEqualIgnoringSpacing(expectedQuery);
   });
 
   it("returns an sql query of adminTasks in approved and rejected statuses", async () => {
+    const limit = 210;
     const query = findAdminTasksQuery({
       adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
-      statuses: [ApprovalStatus.approved, ApprovalStatus.rejected]
+      statuses: [ApprovalStatus.approved, ApprovalStatus.rejected],
+      limit
     });
     const expectedQuery = `
       WITH "AdminTask" AS
@@ -228,9 +292,12 @@ describe("findAdminTasksQuery", () => {
           )
         )
       SELECT * FROM "AdminTask"
-      WHERE "AdminTask"."approvalStatus" = 'approved'
-            OR "AdminTask"."approvalStatus" = 'rejected'
+      WHERE (
+        "AdminTask"."approvalStatus" = 'approved'
+        OR "AdminTask"."approvalStatus" = 'rejected'
+      )
       ORDER BY "AdminTask"."updatedAt" DESC
+      LIMIT ${limit}
     `;
     expect(query).toEqualIgnoringSpacing(expectedQuery);
   });

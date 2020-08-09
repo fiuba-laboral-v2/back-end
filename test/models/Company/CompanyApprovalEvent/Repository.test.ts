@@ -2,9 +2,7 @@ import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
 import { Admin } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import {
-  CompanyApprovalEventRepository
-} from "$models/Company/CompanyApprovalEvent";
+import { CompanyApprovalEventRepository } from "$models/Company/CompanyApprovalEvent";
 import { ForeignKeyConstraintError } from "sequelize";
 import { CompanyGenerator } from "$generators/Company";
 import { AdminGenerator } from "$generators/Admin";

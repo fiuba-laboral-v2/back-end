@@ -5,9 +5,7 @@ import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyGenerator } from "$generators/Company";
 import { CompanyRepository } from "$models/Company";
 import { Company } from "$models";
-import {
-  CompanyApprovalEventRepository
-} from "$models/Company/CompanyApprovalEvent";
+import { CompanyApprovalEventRepository } from "$models/Company/CompanyApprovalEvent";
 import { UserRepository } from "$models/User";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";

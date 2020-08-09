@@ -1,6 +1,6 @@
 import { UniqueConstraintError, ValidationError } from "sequelize";
 import { UserRepository } from "$models/User/Repository";
-import { UserNotFoundError, FiubaUserNotFoundError } from "$models/User";
+import { FiubaUserNotFoundError, UserNotFoundError } from "$models/User";
 import { FiubaUsersService } from "$services";
 import { InvalidEmptyUsernameError } from "$services/FiubaUsers";
 import { UUID_REGEX } from "../index";

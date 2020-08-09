@@ -1,10 +1,10 @@
 import { GraphQLOffer } from "../Types/GraphQLOffer";
 import { OfferRepository } from "$models/Offer";
-import { List } from "$graphql/fieldTypes";
+import { List, nonNull } from "$graphql/fieldTypes";
 import { ICompanyUser } from "src/graphql/Context";
 
 const getMyOffers = {
-  type: List(GraphQLOffer),
+  type: nonNull(List(nonNull(GraphQLOffer))),
   resolve: (
     _: undefined,
     __: undefined,

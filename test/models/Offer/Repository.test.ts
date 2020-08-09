@@ -3,14 +3,13 @@ import { CareerRepository } from "$models/Career";
 import { OfferRepository } from "$models/Offer";
 import { CompanyRepository } from "$models/Company";
 import { OfferNotFound } from "$models/Offer/Errors";
-import { OfferSection } from "$models";
-import { OfferCareer } from "$models";
-import { Offer } from "$models";
+import { Offer, OfferCareer, OfferSection } from "$models";
 import { CompanyGenerator } from "$generators/Company";
 import { OfferGenerator, TOfferDataGenerator } from "$generators/Offer";
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
-import { omit } from "lodash";
+import { omit, range } from "lodash";
 import { UserRepository } from "$models/User";
+import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 
 describe("OfferRepository", () => {
   let careersGenerator: TCareerGenerator;
@@ -251,6 +250,53 @@ describe("OfferRepository", () => {
         await OfferRepository.truncate();
         expect(await OfferSection.findAll()).toHaveLength(0);
       });
+    });
+  });
+
+  describe("Find all", () => {
+    let allOffersByDescUpdatedAt: Offer[] = [];
+
+    beforeAll(async () => {
+      OfferRepository.truncate();
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      for (const _ of range(8)) {
+        allOffersByDescUpdatedAt.push(
+          await OfferRepository.create(offersData.next({ companyUuid }).value)
+        );
+      }
+      allOffersByDescUpdatedAt = allOffersByDescUpdatedAt.sort(offer => -offer.updatedAt);
+    });
+
+    it("sorts by updatedAt DESC, limits to itemsPerPage results", async () => {
+      const itemsPerPage = 5;
+      mockItemsPerPage(itemsPerPage);
+      const result = await OfferRepository.findAll({});
+      expect(result.shouldFetchMore).toEqual(true);
+      expect(
+        result.offers
+          .map(offer => offer.uuid)
+      ).toEqual(
+        allOffersByDescUpdatedAt
+          .map(offer => offer.uuid)
+          .slice(0, itemsPerPage)
+      );
+    });
+
+    it("gives last results, indicates that there are no earlier offers to fetch", async () => {
+      mockItemsPerPage(3);
+      const lastOfferIndex = 5;
+      const result = await OfferRepository.findAll({
+        updatedBeforeThan: allOffersByDescUpdatedAt[lastOfferIndex].updatedAt
+      });
+      expect(result.shouldFetchMore).toEqual(false);
+      expect(
+        result.offers
+          .map(offer => offer.uuid)
+      ).toEqual(
+        allOffersByDescUpdatedAt
+          .map(offer => offer.uuid)
+          .slice(lastOfferIndex + 1, allOffersByDescUpdatedAt.length)
+      );
     });
   });
 });

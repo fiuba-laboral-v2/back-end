@@ -1,5 +1,5 @@
 import { ICreateFiubaUser, IUser, IUserEditable } from "./Interface";
-import { UserNotFoundError, FiubaUserNotFoundError } from "./Errors";
+import { FiubaUserNotFoundError, UserNotFoundError } from "./Errors";
 import { Transaction } from "sequelize/types";
 import { FiubaUsersService } from "$services";
 import { User } from "$models";

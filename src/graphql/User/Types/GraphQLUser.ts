@@ -1,5 +1,5 @@
 import { GraphQLObjectType } from "graphql";
-import { ID, nonNull, String, Int } from "$graphql/fieldTypes";
+import { ID, Int, nonNull, String } from "$graphql/fieldTypes";
 import { User } from "$models";
 import { GraphQLAdmin } from "$graphql/Admin/Types/GraphQLAdmin";
 import { GraphQLApplicant } from "$graphql/Applicant/Types/GraphQLApplicant";

@@ -1,16 +1,20 @@
-import {
-  ADMIN_TASK_MODELS,
-  AdminTaskType,
-  AdminTaskModelsType,
-  TABLE_NAME_COLUMN
-} from "./Model";
+import { ADMIN_TASK_MODELS, AdminTaskModelsType, AdminTaskType, TABLE_NAME_COLUMN } from "./Model";
 import { IAdminTasksFilter } from "./Interfaces";
 import { AdminTaskTypesIsEmptyError, StatusesIsEmptyError } from "./Errors";
 import { groupTableNamesByColumn } from "./groupTableNamesByColumn";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
-const getWhereClause = (statuses: ApprovalStatus[]) =>
+const getStatusWhereClause = (statuses: ApprovalStatus[]) =>
   statuses.map(status => `"AdminTask"."approvalStatus" = '${status}'`).join(" OR ");
+
+const getUpdatedAtWhereClause = (updatedBeforeThan?: Date) =>
+  updatedBeforeThan && `"AdminTask"."updatedAt" < '${updatedBeforeThan.toISOString()}'`;
+
+const getWhereClause = (statuses: ApprovalStatus[], updatedBeforeThan?: Date) =>
+  [
+    getStatusWhereClause(statuses),
+    getUpdatedAtWhereClause(updatedBeforeThan)
+  ].filter(clause => clause).map(clause => `(${clause})`).join(" AND ");
 
 const getRowsToSelect = (adminTaskModelsTypes: AdminTaskModelsType[]) => {
   const tablesByColumn: object = groupTableNamesByColumn(adminTaskModelsTypes);
@@ -52,15 +56,18 @@ const findAdminTasksByTypeQuery = (adminTaskTypes: AdminTaskType[]) => {
 export const findAdminTasksQuery = (
   {
     adminTaskTypes,
-    statuses
-  }: IAdminTasksFilter
+    statuses,
+    updatedBeforeThan,
+    limit
+  }: IAdminTasksFilter & { limit: number }
 ) => {
   if (adminTaskTypes.length === 0) throw new AdminTaskTypesIsEmptyError();
   if (statuses.length === 0) throw new StatusesIsEmptyError();
   return `
     WITH "AdminTask" AS (${findAdminTasksByTypeQuery(adminTaskTypes)})
     SELECT * FROM "AdminTask"
-    WHERE ${getWhereClause(statuses)}
+    WHERE ${getWhereClause(statuses, updatedBeforeThan)}
     ORDER BY "AdminTask"."updatedAt" DESC
+    LIMIT ${limit}
   `;
 };
