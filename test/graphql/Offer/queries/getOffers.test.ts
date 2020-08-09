@@ -11,9 +11,10 @@ import { OfferGenerator, TOfferDataGenerator } from "$generators/Offer";
 import { TestClientGenerator } from "$generators/TestClient";
 import { UnauthorizedError } from "$graphql/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { ExtensionAdminGenerator } from "$generators/Admin";
+import { AdminGenerator } from "$generators/Admin";
 import { range } from "lodash";
 import { Offer } from "$models";
+import { Secretary } from "$models/Admin";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 
 const GET_OFFERS = gql`
@@ -35,7 +36,7 @@ describe("getOffers", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.approved,
-        admin: await ExtensionAdminGenerator.instance()
+        admin: await AdminGenerator.instance(Secretary.extension)
       }
     });
     return apolloClient;
@@ -211,7 +212,7 @@ describe("getOffers", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.rejected,
-        admin: await ExtensionAdminGenerator.instance()
+        admin: await AdminGenerator.instance(Secretary.extension)
       }
     });
     const { errors } = await apolloClient.query({ query: GET_OFFERS });

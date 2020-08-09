@@ -3,5 +3,5 @@ import { AdminTaskType } from "$models/AdminTask";
 
 export const GraphQLAdminTaskType = GraphQLEnumType({
   name: "AdminTaskType",
-  values: Object.keys(AdminTaskType)
+  possibleValues: Object.keys(AdminTaskType)
 });

@@ -12,7 +12,8 @@ import { UserRepository } from "$models/User";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ApplicantRepository } from "$models/Applicant";
-import { ExtensionAdminGenerator } from "$generators/Admin";
+import { AdminGenerator } from "$generators/Admin";
+import { Secretary } from "$models/Admin";
 
 const GET_APPLICANT = gql`
   query GetApplicant($uuid: ID!) {
@@ -100,7 +101,7 @@ describe("getApplicant", () => {
     it("returns the applicant's modified approvalStatus", async () => {
       const { apolloClient } = await TestClientGenerator.user();
       const applicant = await ApplicantGenerator.instance.withMinimumData();
-      const admin = await ExtensionAdminGenerator.instance();
+      const admin = await AdminGenerator.instance(Secretary.extension);
       await ApplicantRepository.updateApprovalStatus(
         admin.userUuid,
         applicant.uuid,

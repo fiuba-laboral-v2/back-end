@@ -4,10 +4,11 @@ import { AdminTask, AdminTaskRepository, AdminTaskType } from "$models/AdminTask
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Admin, Applicant, Company } from "$models";
 
-import { ExtensionAdminGenerator } from "$generators/Admin";
+import { AdminGenerator } from "$generators/Admin";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { CompanyGenerator } from "$generators/Company";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
+import { Secretary } from "$models/Admin";
 
 describe("AdminTaskRepository", () => {
   let admin: Admin;
@@ -23,7 +24,7 @@ describe("AdminTaskRepository", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     const companiesGenerator = CompanyGenerator.instance.updatedWithStatus;
-    admin = await ExtensionAdminGenerator.instance();
+    admin = await AdminGenerator.instance(Secretary.extension);
     const applicantsGenerator = ApplicantGenerator.instance.updatedWithStatus;
 
     rejectedCompany = await companiesGenerator({ status: ApprovalStatus.rejected, admin });

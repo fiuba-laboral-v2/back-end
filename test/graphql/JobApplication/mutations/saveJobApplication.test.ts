@@ -9,9 +9,10 @@ import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
 import { companyMocks } from "$test/models/Company/mocks";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { ExtensionAdminGenerator } from "$generators/Admin";
+import { AdminGenerator } from "$generators/Admin";
 import { TestClientGenerator } from "$generators/TestClient";
 import generateUuid from "uuid/v4";
+import { Secretary } from "$models/Admin";
 
 const SAVE_JOB_APPLICATION = gql`
   mutation saveJobApplication($offerUuid: String!) {
@@ -38,7 +39,7 @@ describe("saveJobApplication", () => {
       const { applicant, apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await ExtensionAdminGenerator.instance()
+          admin: await AdminGenerator.instance(Secretary.extension)
         }
       });
       const offer = await offers.next({ companyUuid: company.uuid }).value;
@@ -116,7 +117,7 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.rejected,
-          admin: await ExtensionAdminGenerator.instance()
+          admin: await AdminGenerator.instance(Secretary.extension)
         }
       });
       const { errors } = await apolloClient.mutate({
@@ -130,7 +131,7 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await ExtensionAdminGenerator.instance()
+          admin: await AdminGenerator.instance(Secretary.extension)
         }
       });
       const offer = await offers.next({ companyUuid: company.uuid }).value;
@@ -152,7 +153,7 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await ExtensionAdminGenerator.instance()
+          admin: await AdminGenerator.instance(Secretary.extension)
         }
       });
       const { errors } = await apolloClient.mutate({

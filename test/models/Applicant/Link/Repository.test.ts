@@ -1,37 +1,23 @@
 import { DatabaseError, UniqueConstraintError, ValidationError } from "sequelize";
 import { Applicant, ApplicantLink } from "$models";
 import { ApplicantLinkRepository } from "$models/Applicant/Link";
-import { internet, random } from "faker";
 import { UserRepository } from "$models/User";
-
-const createApplicant = async () => {
-  const { uuid: userUuid } = await UserRepository.create({
-    email: internet.email(),
-    password: "SavePassword123",
-    name: "Bruno",
-    surname: "Diaz"
-  });
-  return Applicant.create({
-    userUuid: userUuid,
-    padron: 1,
-    description: random.words()
-  });
-};
+import { ApplicantGenerator } from "$generators/Applicant";
 
 describe("ApplicantLinkRepository", () => {
   let applicant: Applicant;
 
   beforeEach(async () => {
     await UserRepository.truncate();
-    applicant = await createApplicant();
+    applicant = await ApplicantGenerator.instance.withMinimumData();
   });
 
   beforeEach(() => ApplicantLink.truncate({ cascade: true }));
 
   it("creates a valid link with a name and a url", async () => {
     const params = {
-      name: random.word(),
-      url: internet.url()
+      name: "Google",
+      url: "https://www.google.com/"
     };
     await ApplicantLinkRepository.update([params], applicant);
 
@@ -66,7 +52,7 @@ describe("ApplicantLinkRepository", () => {
   });
 
   it("should allow 2 different applicants to have the same url", async () => {
-    const secondApplicant = await createApplicant();
+    const secondApplicant = await ApplicantGenerator.instance.withMinimumData();
     const params = {
       name: "Google",
       url: "www.google.com"
@@ -83,7 +69,7 @@ describe("ApplicantLinkRepository", () => {
   });
 
   it("thows an error if an applicantUuid has duplicated links name", async () => {
-    const oneName = random.word();
+    const oneName = "LinkedIn";
 
     await expect(
       ApplicantLinkRepository.update(
@@ -97,7 +83,7 @@ describe("ApplicantLinkRepository", () => {
   });
 
   it("thows an error if an applicantUuid has duplicated links url", async () => {
-    const url = internet.url();
+    const url = "https://www.linkedin.com/in/dylan-alvarez-89430b88/";
 
     await expect(
       ApplicantLinkRepository.update(

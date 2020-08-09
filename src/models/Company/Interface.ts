@@ -13,8 +13,7 @@ export interface ICompany {
   user: IUser;
 }
 
-export interface ICompanyEditable {
-  uuid: string;
+export interface ICreateCompany {
   cuit?: string;
   companyName?: string;
   slogan?: string;
@@ -24,4 +23,8 @@ export interface ICompanyEditable {
   email?: string;
   phoneNumbers?: string[];
   photos?: string[];
+}
+
+export interface IUpdateCompany extends ICreateCompany {
+  uuid: string;
 }

@@ -1,5 +1,5 @@
 import { UserRepository } from "$models/User";
-import { IUserProps } from "$generators/interfaces";
+import { IUserGeneratorAttributes } from "$generators/interfaces";
 
 export const UserGenerator = {
   index: 0,
@@ -7,7 +7,7 @@ export const UserGenerator = {
     UserGenerator.index += 1;
     return UserGenerator.index;
   },
-  instance: ({ password }: Omit<IUserProps, "expressContext"> = {}) => {
+  instance: ({ password }: IUserGeneratorAttributes = {}) => {
     const index = UserGenerator.getIndex();
     return UserRepository.create({
       email: `userTestClient${index}@mail.com`,

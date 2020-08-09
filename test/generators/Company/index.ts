@@ -1,8 +1,9 @@
-import { withMinimumData, WithMinimumInputData } from "./withMinimumData";
-import { completeData, WithCompleteInputData } from "./completeData";
+import { withMinimumData } from "./withMinimumData";
+import { completeData } from "./completeData";
 import { CompanyRepository } from "$models/Company";
 import { Admin } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { ICompanyGeneratorAttributes } from "$generators/interfaces";
 
 interface IUpdatedWithStatus {
   admin: Admin;
@@ -16,12 +17,12 @@ export const CompanyGenerator = {
     return CompanyGenerator.index;
   },
   instance: {
-    withMinimumData: (variables?: WithMinimumInputData) =>
+    withMinimumData: (variables?: ICompanyGeneratorAttributes) =>
       CompanyRepository.create(withMinimumData({
         index: CompanyGenerator.getIndex(),
         ...variables
       })),
-    withCompleteData: (variables?: WithCompleteInputData) =>
+    withCompleteData: (variables?: ICompanyGeneratorAttributes) =>
       CompanyRepository.create(completeData({
         index: CompanyGenerator.getIndex(),
         ...variables

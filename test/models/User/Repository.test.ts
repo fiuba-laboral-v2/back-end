@@ -9,6 +9,7 @@ import {
   PasswordWithoutDigitsError,
   PasswordWithoutUppercaseError
 } from "validations-fiuba-laboral-v2";
+import { DniGenerator } from "$generators/DNI";
 
 describe("UserRepository", () => {
   beforeEach(() => UserRepository.truncate());
@@ -46,7 +47,7 @@ describe("UserRepository", () => {
     it("creates a user with no password", async () => {
       const user = await UserRepository.create({
         email: "asd@qwe.com",
-        dni: 39207913,
+        dni: DniGenerator.generate(),
         name: "Sebastian",
         surname: "Blanco"
       });
@@ -139,7 +140,7 @@ describe("UserRepository", () => {
       it("creates a valid Fiuba user", async () => {
         const attributes = {
           email: "email@gmail.com",
-          dni: 39207888,
+          dni: DniGenerator.generate(),
           password: "somethingVerySecret123",
           name: "name",
           surname: "surname"

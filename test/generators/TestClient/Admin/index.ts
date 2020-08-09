@@ -1,18 +1,12 @@
-import { IUserProps } from "../../interfaces";
+import { IUserTestClientAttributes } from "../../interfaces";
 import { createApolloTestClient } from "../createApolloTestClient";
-import { AdminRepository, Secretary } from "$models/Admin";
+import { Secretary } from "$models/Admin";
+import { AdminGenerator } from "$generators/Admin";
 
-export const adminTestClient = async (index: number, { password, expressContext }: IUserProps) => {
-  const admin = await AdminRepository.create({
-    user: {
-      dni: 30000000 + index,
-      email: `adminTestClient${index}@mail.com`,
-      password: password || "ASDqfdsfsdfwe234",
-      name: "adminName",
-      surname: "adminSurname"
-    },
-    secretary: Secretary.extension
-  });
+export const adminTestClient = async (
+  { password, expressContext }: IUserTestClientAttributes
+) => {
+  const admin = await AdminGenerator.instance(Secretary.graduados, { password });
   const user = await admin.getUser();
   const adminContext = { admin: { userUuid: admin.userUuid } };
   const apolloClient = createApolloTestClient(user, expressContext, adminContext);

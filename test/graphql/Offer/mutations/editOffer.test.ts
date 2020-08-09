@@ -5,11 +5,12 @@ import { TestClientGenerator } from "$generators/TestClient";
 import { OfferRepository } from "$models/Offer";
 import { OfferGenerator, TOfferDataGenerator } from "$generators/Offer";
 import { client } from "../../ApolloTestClient";
-import { ExtensionAdminGenerator } from "$generators/Admin";
+import { AdminGenerator } from "$generators/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import generateUuid from "uuid/v4";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { OfferNotFound } from "$models/Offer/Errors";
+import { Secretary } from "$models/Admin";
 
 const EDIT_OFFER = gql`
     mutation editOffer(
@@ -50,7 +51,7 @@ describe("editOffer", () => {
   it("edits an offer successfully", async () => {
     const { apolloClient, company } = await TestClientGenerator.company({
       status: {
-        admin: await ExtensionAdminGenerator.instance(),
+        admin: await AdminGenerator.instance(Secretary.extension),
         approvalStatus: ApprovalStatus.approved
       }
     });
@@ -69,7 +70,7 @@ describe("editOffer", () => {
   it("throws an error when the offer uuid is not found", async () => {
     const { apolloClient, company } = await TestClientGenerator.company({
       status: {
-        admin: await ExtensionAdminGenerator.instance(),
+        admin: await AdminGenerator.instance(Secretary.extension),
         approvalStatus: ApprovalStatus.approved
       }
     });

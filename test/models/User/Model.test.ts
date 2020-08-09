@@ -9,12 +9,13 @@ import {
   NameWithDigitsError,
   PasswordWithoutDigitsError
 } from "validations-fiuba-laboral-v2";
+import { DniGenerator } from "$generators/DNI";
 
 describe("User", () => {
   it("instantiates a valid user", async () => {
     const user = new User({
       email: "asd@qwe.com",
-      dni: 39207999,
+      dni: DniGenerator.generate(),
       password: "somethingVerySecret123",
       name: "name",
       surname: "surname"
@@ -36,7 +37,7 @@ describe("User", () => {
   it("instantiates a valid fiuba user", async () => {
     const user = new User({
       email: "asd@qwe.com",
-      dni: 39207914,
+      dni: DniGenerator.generate(),
       name: "name",
       surname: "surname"
     });
@@ -47,7 +48,7 @@ describe("User", () => {
   it("instantiates a user with no password when a dni is given", async () => {
     const user = new User({
       email: "asd@qwe.com",
-      dni: 39207888,
+      dni: DniGenerator.generate(),
       name: "name",
       surname: "surname"
     });
@@ -89,7 +90,7 @@ describe("User", () => {
     const expectToThrowErrorForMissingFields = async (fields: string[], message: string) => {
       const attributes = {
         uuid: generateUuid(),
-        dni: 39207888,
+        dni: DniGenerator.generate(),
         email: "asd@qwe.com",
         password: "somethingVerySecret123",
         name: "name",
