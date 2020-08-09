@@ -67,11 +67,13 @@ export const defaultTranslations = {
   companySignUp: [
     { key: "title", value: "Crear tu cuenta" },
     { key: "email", value: "Email" },
-    { key: "password", value: "Contraseña" },
-    { key: "passwordConfirm", value: "Confirmar contraseña" },
     { key: "name", value: "Nombre" },
     { key: "surname", value: "Apellido" },
     { key: "submit", value: "Guardar" }
+  ],
+  companyCredentialsFields: [
+    { key: "password", value: "Contraseña" },
+    { key: "passwordConfirm", value: "Confirmar contraseña" }
   ],
   companiesList: [
     { key: "title", value: "Empresas" }
