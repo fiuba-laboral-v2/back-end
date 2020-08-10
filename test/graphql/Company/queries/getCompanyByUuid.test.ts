@@ -27,6 +27,7 @@ const query = gql`
       photos
       users {
         uuid
+        dni
         email
         name
         surname
@@ -48,8 +49,9 @@ describe("getCompanyByUuid", () => {
       query: query,
       variables: { uuid: company.uuid }
     });
-    const phoneNumbers = await company.getPhoneNumbers();
     expect(response.errors).toBeUndefined();
+    const phoneNumbers = await company.getPhoneNumbers();
+    const users = await company.getUsers();
     expect(response.data).toEqual({
       getCompanyByUuid: {
         cuit: company.cuit,
@@ -64,8 +66,8 @@ describe("getCompanyByUuid", () => {
         approvalStatus: company.approvalStatus,
         phoneNumbers: expect.arrayContaining(phoneNumbers.map(({ phoneNumber }) => phoneNumber)),
         photos: expect.arrayContaining((await company.getPhotos())),
-        users: expect.arrayContaining((await company.getUsers()).map(
-          ({ uuid, email, name, surname }) => ({ uuid, email, name, surname })
+        users: expect.arrayContaining(users.map(({ uuid, email, dni, name, surname }) =>
+            ({ uuid, email, dni, name, surname })
         ))
       }
     });
