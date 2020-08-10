@@ -8,9 +8,10 @@ import { DniGenerator } from "$generators/DNI";
 
 describe("FiubaUsersService", () => {
   const expectToReturnTrueForEnvironment = async (environment: string) => {
-    Object.defineProperty(Environment, "NODE_ENV", {
-      get: () => environment
-    });
+    jest.mock(
+      "$config/Environment",
+      () => ({ Environment: { NODE_ENV: environment } })
+    );
     expect(
       await FiubaUsersService.authenticate({ dni: DniGenerator.generate(), password: "password" })
     ).toBe(true);
