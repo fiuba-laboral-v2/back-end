@@ -15,13 +15,13 @@ describe("CredentialsFactory", () => {
   });
 
   describe("create", () => {
-    it("returns the Fiuba User generator", async () => {
+    it("returns the FiubaUserCredentials", async () => {
       const applicant = await ApplicantGenerator.instance.withMinimumData();
       const user = await applicant.getUser();
       expect(CredentialsFactory.create(user)).toBeInstanceOf(FiubaUserCredentials);
     });
 
-    it("returns the CompanyUser User generator", async () => {
+    it("returns the CompanyUserCredentials", async () => {
       const company = await CompanyGenerator.instance.withMinimumData();
       const [user] = await company.getUsers();
       expect(CredentialsFactory.create(user)).toBeInstanceOf(CompanyUserCredentials);
