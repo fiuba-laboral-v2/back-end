@@ -3,20 +3,9 @@ import {
   InvalidEmptyPasswordError,
   InvalidEmptyUsernameError
 } from "$services/FiubaUsers";
-import { Environment } from "$config/Environment";
 import { DniGenerator } from "$generators/DNI";
 
 describe("FiubaUsersService", () => {
-  const expectToReturnTrueForEnvironment = async (environment: string) => {
-    jest.mock(
-      "$config/Environment",
-      () => ({ Environment: { NODE_ENV: environment } })
-    );
-    expect(
-      await FiubaUsersService.authenticate({ dni: DniGenerator.generate(), password: "password" })
-    ).toBe(true);
-  };
-
   it("throws an error if the username is empty", async () => {
     await expect(
       FiubaUsersService.authenticate({
@@ -45,13 +34,5 @@ describe("FiubaUsersService", () => {
     expect(
       await FiubaUsersService.authenticate({ dni: DniGenerator.generate(), password: "password" })
     ).toBe(true);
-  });
-
-  it("always returns true in the test_travis environment", async () => {
-    await expectToReturnTrueForEnvironment(Environment.TEST_TRAVIS);
-  });
-
-  it("always returns true in the development environment", async () => {
-    await expectToReturnTrueForEnvironment(Environment.DEVELOPMENT);
   });
 });
