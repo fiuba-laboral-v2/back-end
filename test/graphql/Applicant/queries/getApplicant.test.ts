@@ -5,7 +5,7 @@ import { CareerRepository } from "$models/Career";
 import { ApplicantNotFound } from "$models/Applicant/Errors/ApplicantNotFound";
 import { AuthenticationError } from "$graphql/Errors";
 
-import { CareerGenerator, TCareerGenerator } from "$generators/Career";
+import { CareerGenerator } from "$generators/Career";
 import { TestClientGenerator } from "$generators/TestClient";
 import generateUuid from "uuid/v4";
 import { UserRepository } from "$models/User";
@@ -43,17 +43,14 @@ const GET_APPLICANT = gql`
 `;
 
 describe("getApplicant", () => {
-  let careers: TCareerGenerator;
-
   beforeAll(async () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
-    careers = CareerGenerator.instance();
   });
 
   describe("when the applicant exists", () => {
     it("fetches the applicant", async () => {
-      const career = await careers.next().value;
+      const career = await CareerGenerator.instance();
       const applicantCareer = [{ code: career.code, creditsCount: 150 }];
       const {
         user,

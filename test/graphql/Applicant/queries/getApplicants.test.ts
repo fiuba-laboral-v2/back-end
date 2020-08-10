@@ -8,7 +8,7 @@ import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
-import { CareerGenerator, TCareerGenerator } from "$generators/Career";
+import { CareerGenerator } from "$generators/Career";
 import { TestClientGenerator } from "$generators/TestClient";
 import { AdminGenerator } from "$generators/Admin";
 import { ApplicantGenerator } from "$generators/Applicant";
@@ -49,14 +49,12 @@ const GET_APPLICANTS = gql`
 `;
 
 describe("getApplicants", () => {
-  let careers: TCareerGenerator;
   let admin: Admin;
 
   beforeAll(async () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
     await CompanyRepository.truncate();
-    careers = CareerGenerator.instance();
     admin = await AdminGenerator.instance(Secretary.extension);
   });
 
@@ -71,7 +69,7 @@ describe("getApplicants", () => {
 
   describe("when applicants exists", () => {
     it("fetches the existing applicant", async () => {
-      const newCareer = await careers.next().value;
+      const newCareer = await CareerGenerator.instance();
       const applicantCareer = [{ code: newCareer.code, creditsCount: 150 }];
       const {
         user,
@@ -108,7 +106,7 @@ describe("getApplicants", () => {
     });
 
     it("allows an applicant user to fetch all applicants", async () => {
-      const newCareer = await careers.next().value;
+      const newCareer = await CareerGenerator.instance();
       const applicantCareersData = [{ code: newCareer.code, creditsCount: 150 }];
       const {
         applicant: firstApplicant,

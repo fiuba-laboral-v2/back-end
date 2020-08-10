@@ -1,20 +1,17 @@
 import { CareerRepository, Errors } from "$models/Career";
-import { CareerGenerator, TCareerDataGenerator } from "$generators/Career";
+import { CareerGenerator } from "$generators/Career";
 import { Career } from "$models";
 
 describe("CareerRepository", () => {
-  let careersData: TCareerDataGenerator;
-
   beforeAll(async () => {
     await CareerRepository.truncate();
-    careersData = CareerGenerator.data();
   });
 
   beforeEach(async () => await Career.truncate({ cascade: true }));
 
   it("deletes all asked Careers", async () => {
-    const career = await CareerRepository.create(careersData.next().value);
-    const secondaryCareer = await CareerRepository.create(careersData.next().value);
+    const career = await CareerRepository.create(CareerGenerator.data());
+    const secondaryCareer = await CareerRepository.create(CareerGenerator.data());
 
     await CareerRepository.deleteByCode(secondaryCareer.code);
     const expectedCareers = await CareerRepository.findAll();
@@ -26,7 +23,7 @@ describe("CareerRepository", () => {
   });
 
   it("create a new career", async () => {
-    const careerData = careersData.next().value;
+    const careerData = CareerGenerator.data();
     const career = await CareerRepository.create(careerData);
     expect(career.code).toEqual(careerData.code);
     expect(career.description).toEqual(careerData.description);
@@ -34,7 +31,7 @@ describe("CareerRepository", () => {
   });
 
   it("retrieve all Careers", async () => {
-    const career = await CareerRepository.create(careersData.next().value);
+    const career = await CareerRepository.create(CareerGenerator.data());
 
     const expectedCareers = await CareerRepository.findAll();
     expect(expectedCareers).not.toBeNull();
@@ -44,9 +41,9 @@ describe("CareerRepository", () => {
   });
 
   it("retrieve all asked Careers", async () => {
-    const careerData = careersData.next().value;
-    const secondCareerData = careersData.next().value;
-    const thirdCareerData = careersData.next().value;
+    const careerData = CareerGenerator.data();
+    const secondCareerData = CareerGenerator.data();
+    const thirdCareerData = CareerGenerator.data();
     const career = await CareerRepository.create(careerData);
     const secondaryCareer = await CareerRepository.create(secondCareerData);
     await CareerRepository.create(thirdCareerData);
@@ -61,7 +58,7 @@ describe("CareerRepository", () => {
   });
 
   it("throws CareersNotFound if the career doesn't exists", async () => {
-    const careerData = careersData.next().value;
+    const careerData = CareerGenerator.data();
     await expect(
       CareerRepository.findByCode(careerData.code)
     ).rejects.toThrow(Errors.CareersNotFound);

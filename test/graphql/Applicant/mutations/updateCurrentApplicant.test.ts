@@ -2,7 +2,7 @@ import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 
 import { CareerRepository } from "$models/Career";
-import { CareerGenerator, TCareerGenerator } from "$generators/Career";
+import { CareerGenerator } from "$generators/Career";
 import { TestClientGenerator } from "$generators/TestClient";
 
 import { UserRepository } from "$models/User/Repository";
@@ -59,17 +59,14 @@ const UPDATE_CURRENT_APPLICANT = gql`
 `;
 
 describe("updateCurrentApplicant", () => {
-  let careers: TCareerGenerator;
-
   beforeAll(async () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
-    careers = CareerGenerator.instance();
   });
 
   it("should update all possible data deleting all previous values", async () => {
     const { applicant, user, apolloClient } = await TestClientGenerator.applicant();
-    const newCareer = await careers.next().value;
+    const newCareer = await CareerGenerator.instance();
     const dataToUpdate = {
       user: {
         name: "newName",

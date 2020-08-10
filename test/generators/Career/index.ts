@@ -1,20 +1,12 @@
-import { ICareer, CareerRepository } from "$models/Career";
-import { careerGenerator } from "./careerGenerator";
+import { CareerRepository } from "$models/Career";
 import { careerData } from "./careerData";
-import { CustomGenerator } from "../types";
-import { Career } from "$models";
-
-export type TCareerGenerator = CustomGenerator<Promise<Career>>;
-export type TCareerDataGenerator = CustomGenerator<ICareer>;
 
 export const CareerGenerator = {
-  instance: (): TCareerGenerator => (
-    careerGenerator<Promise<Career>>(
-      (index: number) => CareerRepository.create(careerData(index))
-    )
-  ),
-  data: (): TCareerDataGenerator =>
-    careerGenerator<ICareer>(
-      (index: number) => (careerData(index))
-    )
+  index: 0,
+  getIndex: () => {
+    CareerGenerator.index += 1;
+    return CareerGenerator.index;
+  },
+  instance: () => CareerRepository.create(careerData(CareerGenerator.getIndex())),
+  data: () => careerData(CareerGenerator.getIndex())
 };
