@@ -5,6 +5,7 @@ import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 import { CareerRepository } from "$models/Career";
 import { UserRepository } from "$models/User";
+import { CompanyRepository } from "$models/Company";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
 import { CareerGenerator, TCareerGenerator } from "$generators/Career";
@@ -54,6 +55,7 @@ describe("getApplicants", () => {
   beforeAll(async () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
+    await CompanyRepository.truncate();
     careers = CareerGenerator.instance();
     admin = await AdminGenerator.instance(Secretary.extension);
   });
