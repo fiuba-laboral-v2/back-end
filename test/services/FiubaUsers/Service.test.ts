@@ -73,5 +73,6 @@ describe("FiubaUsersService", () => {
       FiubaUsersServiceFetchError,
       FiubaUsersServiceFetchError.buildMessage()
     );
+    fetchMock.restore();
   });
 });
