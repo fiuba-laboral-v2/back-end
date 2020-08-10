@@ -1,6 +1,6 @@
 export class FiubaUsersServiceFetchError extends Error {
   public static buildMessage() {
-    return "Fiuba service has a connection problem";
+    return "Connection with FIUBA service was lost";
   }
 
   constructor() {
