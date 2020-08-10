@@ -14,15 +14,15 @@ describe("CompanyUserCredentials", () => {
     it("does not throw an error if the companyUser has valid credentials", async () => {
       const company = await CompanyGenerator.instance.withMinimumData();
       const [user] = await company.getUsers();
-      const credentials = new CompanyUserCredentials();
-      expect(() => credentials.validate(user)).not.toThrow();
+      const credentials = new CompanyUserCredentials(user);
+      expect(() => credentials.validate()).not.toThrow();
     });
 
     it("throws an error if the user is an applicant", async () => {
       const applicant = await ApplicantGenerator.instance.withMinimumData();
       const user = await applicant.getUser();
-      const credentials = new CompanyUserCredentials();
-      expect(() => credentials.validate(user)).toThrow();
+      const credentials = new CompanyUserCredentials(user);
+      expect(() => credentials.validate()).toThrow();
     });
   });
 });

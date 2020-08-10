@@ -10,7 +10,7 @@ import { validateEmail, validateName, validatePassword } from "validations-fiuba
   tableName: "Users",
   validate: {
     validateUser(this: User) {
-      this.credentials.validate(this);
+      this.credentials.validate();
     }
   }
 })

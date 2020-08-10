@@ -7,7 +7,7 @@ export class FiubaUserCredentials extends Credentials {
     return !user.password;
   }
 
-  public validate(user: User) {
-    if (!user.dni) throw new MissingDniError();
+  public validate() {
+    if (!this.user.dni) throw new MissingDniError();
   }
 }

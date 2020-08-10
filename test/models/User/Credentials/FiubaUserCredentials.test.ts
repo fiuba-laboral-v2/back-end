@@ -28,24 +28,23 @@ describe("FiubaUserCredentials", () => {
     it("does not throw an error if the applicant has valid credentials", async () => {
       const applicant = await ApplicantGenerator.instance.withMinimumData();
       const user = await applicant.getUser();
-      const credentials = new FiubaUserCredentials();
-      expect(() => credentials.validate(user)).not.toThrow();
+      const credentials = new FiubaUserCredentials(user);
+      expect(() => credentials.validate()).not.toThrow();
     });
 
     it("throws an error if the applicant has no dni", async () => {
-      const password = "verySecurePassword101";
-      const applicant = await ApplicantGenerator.instance.withMinimumData({ password });
+      const applicant = await ApplicantGenerator.instance.withMinimumData();
       const user = await applicant.getUser();
       user.dni = undefined as any;
-      const credentials = new FiubaUserCredentials();
-      expect(() => credentials.validate(user)).toThrow(MissingDniError);
+      const credentials = new FiubaUserCredentials(user);
+      expect(() => credentials.validate()).toThrow(MissingDniError);
     });
 
     it("throws an error if user is from a company", async () => {
       const company = await CompanyGenerator.instance.withMinimumData();
       const [user] = await company.getUsers();
-      const credentials = new FiubaUserCredentials();
-      expect(() => credentials.validate(user)).toThrow(MissingDniError);
+      const credentials = new FiubaUserCredentials(user);
+      expect(() => credentials.validate()).toThrow(MissingDniError);
     });
   });
 });

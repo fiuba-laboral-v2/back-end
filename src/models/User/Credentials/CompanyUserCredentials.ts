@@ -6,7 +6,7 @@ export class CompanyUserCredentials extends Credentials {
     return !!user.password;
   }
 
-  public validate(user: User) {
-    if (!user.password) throw new Error("");
+  public validate() {
+    if (!this.user.password) throw new Error("");
   }
 }
