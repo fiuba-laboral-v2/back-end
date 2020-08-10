@@ -1,21 +1,20 @@
 import { BeforeCreate, Column, HasOne, Model, Table } from "sequelize-typescript";
 import { compare, hashSync } from "bcrypt";
-import { HasOneGetAssociationMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
+import { BuildOptions, HasOneGetAssociationMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
 import { Admin, Applicant, Company, CompanyUser } from "$models";
 import { MissingDniError } from "./Errors";
-import { CredentialsValidator } from "./CredentialsValidator";
+import { Credentials, CredentialsFactory } from "./Credentials";
 import { validateEmail, validateName, validatePassword } from "validations-fiuba-laboral-v2";
 
 @Table({
   tableName: "Users",
   validate: {
     validateUser(this: User) {
-      CredentialsValidator.validate(this);
+      this.credentials.validate(this);
     }
   }
 })
 export class User extends Model<User> {
-
   @BeforeCreate
   public static beforeCreateHook(user: User): void {
     if (!user.password) return;
@@ -75,9 +74,16 @@ export class User extends Model<User> {
   @HasOne(() => Admin, "userUuid")
   public admin: Admin;
 
+  public credentials: Credentials;
+
   public getApplicant: HasOneGetAssociationMixin<Applicant>;
   public getCompanyUser: HasOneGetAssociationMixin<CompanyUser>;
   public getAdmin: HasOneGetAssociationMixin<Admin>;
+
+  constructor(values?: object, options?: BuildOptions) {
+    super(values, options);
+    this.credentials = CredentialsFactory.create(this);
+  }
 
   public async getCompany() {
     const companyUser = await this.getCompanyUser();
