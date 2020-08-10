@@ -1,5 +1,5 @@
 import { CompanyUserCredentials } from "$models/User/Credentials/CompanyUserCredentials";
-import { UserRepository } from "$models/User";
+import { MissingPasswordError, UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CompanyGenerator } from "$generators/Company";
 import { ApplicantGenerator } from "$generators/Applicant";
@@ -22,7 +22,10 @@ describe("CompanyUserCredentials", () => {
       const applicant = await ApplicantGenerator.instance.withMinimumData();
       const user = await applicant.getUser();
       const credentials = new CompanyUserCredentials(user);
-      expect(() => credentials.validate()).toThrow();
+      expect(() => credentials.validate()).toThrowErrorWithMessage(
+        MissingPasswordError,
+        MissingPasswordError.buildMessage()
+      );
     });
   });
 });

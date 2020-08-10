@@ -1,5 +1,6 @@
 import { User } from "$models";
 import { Credentials } from "./Model";
+import { MissingPasswordError } from "../Errors";
 
 export class CompanyUserCredentials extends Credentials {
   public static accept(user: User) {
@@ -7,6 +8,6 @@ export class CompanyUserCredentials extends Credentials {
   }
 
   public validate() {
-    if (!this.user.password) throw new Error("");
+    if (!this.user.password) throw new MissingPasswordError();
   }
 }
