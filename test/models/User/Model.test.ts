@@ -2,6 +2,8 @@ import { ValidationError } from "sequelize";
 import generateUuid from "uuid/v4";
 import { User } from "$models";
 import { MissingDniError } from "$models/User/Errors";
+import { FiubaUserCredentials } from "$models/User/Credentials/FiubaUserCredentials";
+import { CompanyUserCredentials } from "$models/User/Credentials/CompanyUserCredentials";
 import { UUID_REGEX } from "../index";
 import {
   InvalidEmailError,
@@ -22,6 +24,17 @@ describe("User", () => {
     await expect(user.validate()).resolves.not.toThrow();
   });
 
+  it("returns the Company user credentials if a password is provided", async () => {
+    const user = new User({
+      email: "asd@qwe.com",
+      dni: DniGenerator.generate(),
+      password: "somethingVerySecret123",
+      name: "name",
+      surname: "surname"
+    });
+    expect(user.credentials).toBeInstanceOf(CompanyUserCredentials);
+  });
+
   it("instantiates a valid user with no dni", async () => {
     const user = new User({
       email: "asd@qwe.com",
@@ -31,28 +44,6 @@ describe("User", () => {
     });
     await expect(user.validate()).resolves.not.toThrow();
     expect(user.dni).toBeUndefined();
-  });
-
-  it("instantiates a valid fiuba user", async () => {
-    const user = new User({
-      email: "asd@qwe.com",
-      dni: DniGenerator.generate(),
-      name: "name",
-      surname: "surname"
-    });
-    expect(user.isFiubaUser()).toBe(true);
-    expect(() => user.validateUser()).not.toThrow();
-  });
-
-  it("instantiates a user with no password when a dni is given", async () => {
-    const user = new User({
-      email: "asd@qwe.com",
-      dni: DniGenerator.generate(),
-      name: "name",
-      surname: "surname"
-    });
-    await expect(user.validate()).resolves.not.toThrow();
-    expect(user.password).toBeUndefined();
   });
 
   it("instantiates a valid user with a very long name", async () => {
@@ -68,6 +59,40 @@ describe("User", () => {
       uuid: expect.stringMatching(UUID_REGEX),
       ...params
     }));
+  });
+
+  describe("FiubaUser", () => {
+    it("instantiates a valid fiuba user", async () => {
+      const user = new User({
+        email: "asd@qwe.com",
+        dni: DniGenerator.generate(),
+        name: "name",
+        surname: "surname"
+      });
+      expect(user.isFiubaUser()).toBe(true);
+      await expect(user.validate()).resolves.not.toThrow();
+    });
+
+    it("returns the fiuba user credentials if no password is provided", async () => {
+      const user = new User({
+        email: "asd@qwe.com",
+        dni: DniGenerator.generate(),
+        name: "name",
+        surname: "surname"
+      });
+      expect(user.credentials).toBeInstanceOf(FiubaUserCredentials);
+    });
+
+    it("instantiates a user with no password when a dni is given", async () => {
+      const user = new User({
+        email: "asd@qwe.com",
+        dni: DniGenerator.generate(),
+        name: "name",
+        surname: "surname"
+      });
+      await expect(user.validate()).resolves.not.toThrow();
+      expect(user.password).toBeUndefined();
+    });
   });
 
   describe("Errors", () => {
