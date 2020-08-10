@@ -3,13 +3,14 @@ import { compare, hashSync } from "bcrypt";
 import { HasOneGetAssociationMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
 import { Admin, Applicant, Company, CompanyUser } from "$models";
 import { MissingDniError } from "./Errors";
+import { CredentialsValidator } from "./CredentialsValidator";
 import { validateEmail, validateName, validatePassword } from "validations-fiuba-laboral-v2";
 
 @Table({
   tableName: "Users",
   validate: {
     validateUser(this: User) {
-      this.validateUser();
+      CredentialsValidator.validate(this);
     }
   }
 })
