@@ -3,7 +3,6 @@ import { ApplicantCareer, Career } from "$models";
 import { CareerGenerator } from "$generators/Career";
 import { NumberIsTooLargeError, NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
 import { ValidationError } from "sequelize";
-
 describe("ApplicantCareer", () => {
   let career: Career;
 
@@ -13,13 +12,19 @@ describe("ApplicantCareer", () => {
   });
 
   it("instantiates a valid applicantCareer", async () => {
-    const applicantCareer = new ApplicantCareer({
+    const attributes = {
       careerCode: career.code,
       applicantUuid: "sarasa",
       creditsCount: 12,
       graduate: true
-    });
+    };
+    const applicantCareer = new ApplicantCareer(attributes);
     await expect(applicantCareer.validate()).resolves.not.toThrow();
+    expect(applicantCareer).toEqual(expect.objectContaining({
+      ...attributes,
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date)
+    }));
   });
 
   it("instantiates a applicantCareer with graduate as false by default", async () => {
