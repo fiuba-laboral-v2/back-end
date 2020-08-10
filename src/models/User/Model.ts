@@ -2,7 +2,6 @@ import { BeforeCreate, Column, HasOne, Model, Table } from "sequelize-typescript
 import { compare, hashSync } from "bcrypt";
 import { BuildOptions, HasOneGetAssociationMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
 import { Admin, Applicant, Company, CompanyUser } from "$models";
-import { MissingDniError } from "./Errors";
 import { Credentials, CredentialsFactory } from "./Credentials";
 import { validateEmail, validateName, validatePassword } from "validations-fiuba-laboral-v2";
 
@@ -98,11 +97,6 @@ export class User extends Model<User> {
 
   public passwordMatches(password) {
     return compare(password, this.password);
-  }
-
-  public validateUser() {
-    if (!this.isFiubaUser()) return;
-    if (!this.dni) throw new MissingDniError();
   }
 
   public isFiubaUser() {
