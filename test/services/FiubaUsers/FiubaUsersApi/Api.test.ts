@@ -94,12 +94,9 @@ describe("FiubaUsersApi", () => {
   });
 
   it("throws an error if the service has a connection error", async () => {
-    fetchMock.mock(
-      { url: FiubaUsersServiceConfig.url, method: "POST" },
-      { throws: new FetchError("message", "type") }
-    );
+    stubRequest({ throws: new FetchError("message", "type") });
     await expect(
-      FiubaUsersApi.authenticate({ dni: DniGenerator.generate(), password: "password" })
+      FiubaUsersApi.authenticate(validCredentials)
     ).rejects.toThrowErrorWithMessage(
       FiubaUsersServiceFetchError,
       FiubaUsersServiceFetchError.buildMessage()
