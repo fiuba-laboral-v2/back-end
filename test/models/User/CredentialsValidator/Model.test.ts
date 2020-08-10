@@ -18,24 +18,40 @@ describe("CredentialsValidator", () => {
     await CompanyRepository.truncate();
   });
 
-  it("returns the Fiuba User generator", async () => {
-    const applicant = await ApplicantGenerator.instance.withMinimumData();
-    const user = await applicant.getUser();
-    expect(CredentialsValidator.getValidator(user)).toBe(FiubaUserCredentialsValidator);
+  describe("getValidator", () => {
+    it("returns the Fiuba User generator", async () => {
+      const applicant = await ApplicantGenerator.instance.withMinimumData();
+      const user = await applicant.getUser();
+      expect(CredentialsValidator.getValidator(user)).toBe(FiubaUserCredentialsValidator);
+    });
+
+    it("returns the CompanyUSer User generator", async () => {
+      const company = await CompanyGenerator.instance.withMinimumData();
+      const [user] = await company.getUsers();
+      expect(CredentialsValidator.getValidator(user)).toBe(CompanyUserCredentialsValidator);
+    });
+
+    it("throws an error for a user that is not from Fiuba or a company", async () => {
+      const user = await UserGenerator.instance();
+      jest.spyOn(CompanyUserCredentialsValidator, "accept").mockReturnValueOnce(false);
+      jest.spyOn(FiubaUserCredentialsValidator, "accept").mockReturnValueOnce(false);
+      expect(
+        () => CredentialsValidator.getValidator(user)
+      ).toThrow("No validator for user credentials was found");
+    });
   });
 
-  it("returns the CompanyUSer User generator", async () => {
-    const company = await CompanyGenerator.instance.withMinimumData();
-    const [user] = await company.getUsers();
-    expect(CredentialsValidator.getValidator(user)).toBe(CompanyUserCredentialsValidator);
-  });
+  describe("validate", () => {
+    it("does not throw an error if the applicant has valid credentials", async () => {
+      const applicant = await ApplicantGenerator.instance.withMinimumData();
+      const user = await applicant.getUser();
+      expect(() => CredentialsValidator.validate(user)).not.toThrow();
+    });
 
-  it("throws an error for a user that is not from Fiuba or a company", async () => {
-    const user = await UserGenerator.instance();
-    jest.spyOn(CompanyUserCredentialsValidator, "accept").mockReturnValueOnce(false);
-    jest.spyOn(FiubaUserCredentialsValidator, "accept").mockReturnValueOnce(false);
-    expect(
-      () => CredentialsValidator.getValidator(user)
-    ).toThrow("No validator for user credentials was found");
+    it("does not throw an error if the companyUser has valid credentials", async () => {
+      const company = await CompanyGenerator.instance.withMinimumData();
+      const [user] = await company.getUsers();
+      expect(() => CredentialsValidator.validate(user)).not.toThrow();
+    });
   });
 });
