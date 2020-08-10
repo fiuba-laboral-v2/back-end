@@ -7,7 +7,7 @@ import { InvalidEmptyPasswordError, InvalidEmptyUsernameError } from "./Errors";
 export const FiubaUsersService = {
   authenticate: async ({ dni, password }: ICredentials) => {
     if (password.length === 0) throw new InvalidEmptyPasswordError();
-    if (!dni) throw new InvalidEmptyUsernameError();
+    if (dni.length === 0) throw new InvalidEmptyUsernameError();
 
     if (Environment.NODE_ENV === Environment.DEVELOPMENT) return true;
     if (Environment.NODE_ENV === Environment.TEST) return true;

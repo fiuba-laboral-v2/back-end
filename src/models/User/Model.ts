@@ -1,15 +1,9 @@
 import { BeforeCreate, Column, HasOne, Model, Table } from "sequelize-typescript";
 import { compare, hashSync } from "bcrypt";
-import { HasOneGetAssociationMixin, INTEGER, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
+import { HasOneGetAssociationMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
 import { Admin, Applicant, Company, CompanyUser } from "$models";
 import { MissingDniError } from "./Errors";
-import { optional } from "$models/SequelizeModelValidators";
-import {
-  validateDni,
-  validateEmail,
-  validateName,
-  validatePassword
-} from "validations-fiuba-laboral-v2";
+import { validateEmail, validateName, validatePassword } from "validations-fiuba-laboral-v2";
 
 @Table({
   tableName: "Users",
@@ -53,10 +47,9 @@ export class User extends Model<User> {
   @Column({
     allowNull: true,
     unique: true,
-    type: INTEGER,
-    ...optional(validateDni)
+    type: STRING
   })
-  public dni: number;
+  public dni: string;
 
   @Column({
     allowNull: false,

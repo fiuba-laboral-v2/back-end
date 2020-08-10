@@ -3,12 +3,12 @@ export interface IUser {
   name: string;
   surname: string;
   email: string;
-  dni?: number;
+  dni?: string;
   password?: string;
 }
 
 export interface ICreateFiubaUser extends IUser {
-  dni: number;
+  dni: string;
   password: string;
 }
 
