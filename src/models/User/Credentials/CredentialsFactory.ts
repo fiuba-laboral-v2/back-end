@@ -6,8 +6,8 @@ const VALIDATORS = [CompanyUserCredentials, FiubaUserCredentials];
 
 export const CredentialsFactory = {
   create(user: User) {
-    const validator = VALIDATORS.find(v => v.accept(user));
-    if (!validator) throw new Error("No validator for user credentials was found");
-    return new validator(user);
+    const Validator = VALIDATORS.find(v => v.accept(user));
+    if (!Validator) throw new Error("No validator for user credentials was found");
+    return new Validator(user);
   }
 };
