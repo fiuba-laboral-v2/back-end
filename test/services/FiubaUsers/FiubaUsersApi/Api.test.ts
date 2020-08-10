@@ -21,18 +21,14 @@ const validCredentials = {
   password: "goodPassword"
 };
 
-const stubRequest = ({ status, body, throws }: MockResponseObject) =>
+const stubRequest = (mockResponse: MockResponseObject) =>
   fetchMock.mock(
     {
       url: FiubaUsersServiceConfig.url,
       method: "POST",
       headers: FiubaUsersApi.headers()
     },
-    {
-      status: status,
-      body,
-      throws
-    }
+    mockResponse
   );
 
 describe("FiubaUsersApi", () => {
