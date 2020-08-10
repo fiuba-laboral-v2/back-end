@@ -2,7 +2,12 @@ import { FiubaUsersApi } from "./FiubaUsersApi";
 import { Environment } from "../../config";
 import "isomorphic-fetch";
 import { ICredentials } from "./Interfaces";
-import { InvalidEmptyPasswordError, InvalidEmptyUsernameError } from "./Errors";
+import {
+  InvalidEmptyPasswordError,
+  InvalidEmptyUsernameError,
+  FiubaUsersServiceFetchError
+} from "./Errors";
+import { FetchError } from "node-fetch";
 
 export const FiubaUsersService = {
   authenticate: async ({ dni, password }: ICredentials) => {
@@ -12,6 +17,11 @@ export const FiubaUsersService = {
     if (Environment.NODE_ENV === Environment.DEVELOPMENT) return true;
     if (Environment.NODE_ENV === Environment.TEST) return true;
     if (Environment.NODE_ENV === Environment.TEST_TRAVIS) return true;
-    return FiubaUsersApi.authenticate({ dni, password });
+    try {
+      return FiubaUsersApi.authenticate({ dni, password });
+    } catch (error) {
+      if (error instanceof FetchError) throw new FiubaUsersServiceFetchError();
+      throw error;
+    }
   }
 };
