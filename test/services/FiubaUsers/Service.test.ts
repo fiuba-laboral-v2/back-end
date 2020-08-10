@@ -1,13 +1,10 @@
 import {
-  FiubaUsersApi,
-  FiubaUsersService, FiubaUsersServiceFetchError,
+  FiubaUsersService,
   InvalidEmptyPasswordError,
   InvalidEmptyUsernameError
 } from "$services/FiubaUsers";
 import { Environment } from "$config/Environment";
-import fetchMock from "fetch-mock";
 import { DniGenerator } from "$generators/DNI";
-import { FiubaUsersServiceConfig } from "$config/services";
 
 describe("FiubaUsersService", () => {
   const expectToReturnTrueForEnvironment = async (environment: string) => {
@@ -53,26 +50,5 @@ describe("FiubaUsersService", () => {
 
   it("always returns true in the test_travis environment", async () => {
     await expectToReturnTrueForEnvironment(Environment.TEST_TRAVIS);
-  });
-
-  it("throws an error if the service has a connection error", async () => {
-    fetchMock.mock(
-      {
-        url: FiubaUsersServiceConfig.url,
-        method: "POST",
-        headers: FiubaUsersApi.headers()
-      },
-      {
-        throws: new FiubaUsersServiceFetchError()
-      }
-    );
-    Environment.NODE_ENV = Environment.STAGING;
-    await expect(
-      FiubaUsersService.authenticate({ dni: DniGenerator.generate(), password: "password" })
-    ).rejects.toThrowErrorWithMessage(
-      FiubaUsersServiceFetchError,
-      FiubaUsersServiceFetchError.buildMessage()
-    );
-    fetchMock.restore();
   });
 });

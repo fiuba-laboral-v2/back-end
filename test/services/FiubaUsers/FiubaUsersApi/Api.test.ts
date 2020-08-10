@@ -1,13 +1,15 @@
-import fetchMock from "fetch-mock";
+import fetchMock, { MockResponseObject } from "fetch-mock";
 import {
   AuthenticateFaultError,
   AuthenticateUnknownError,
-  FiubaUsersApi
+  FiubaUsersApi,
+  FiubaUsersServiceFetchError
 } from "$services/FiubaUsers";
 import { FiubaUsersServiceConfig } from "$config/services";
 import { RequestBodyMock } from "./RequestBodyMock";
 import { parse } from "fast-xml-parser";
 import { DniGenerator } from "$generators/DNI";
+import { FetchError } from "node-fetch";
 
 const invalidCredentials = {
   dni: DniGenerator.generate(),
@@ -19,7 +21,7 @@ const validCredentials = {
   password: "goodPassword"
 };
 
-const stubRequest = ({ status, response }: { status: number; response: string }) =>
+const stubRequest = ({ status, body, throws }: MockResponseObject) =>
   fetchMock.mock(
     {
       url: FiubaUsersServiceConfig.url,
@@ -28,7 +30,8 @@ const stubRequest = ({ status, response }: { status: number; response: string })
     },
     {
       status: status,
-      body: response
+      body,
+      throws
     }
   );
 
@@ -38,7 +41,7 @@ describe("FiubaUsersApi", () => {
   it("returns false if the credentials are incorrect", async () => {
     const { authenticateSuccessResponse } = RequestBodyMock;
     const isValid = false;
-    stubRequest({ status: 200, response: authenticateSuccessResponse({ isValid }) });
+    stubRequest({ status: 200, body: authenticateSuccessResponse({ isValid }) });
     expect(
       await FiubaUsersApi.authenticate(invalidCredentials)
     ).toBe(isValid);
@@ -47,7 +50,7 @@ describe("FiubaUsersApi", () => {
   it("returns true if the credentials are correct", async () => {
     const { authenticateSuccessResponse } = RequestBodyMock;
     const isValid = true;
-    stubRequest({ status: 200, response: authenticateSuccessResponse({ isValid }) });
+    stubRequest({ status: 200, body: authenticateSuccessResponse({ isValid }) });
     expect(
       await FiubaUsersApi.authenticate(validCredentials)
     ).toBe(isValid);
@@ -57,7 +60,7 @@ describe("FiubaUsersApi", () => {
     const errorMessage = "error in msg parsing: XML error parsing SOAP payload on line 1: required";
     stubRequest({
       status: 500,
-      response: RequestBodyMock.authenticateErrorResponse(errorMessage)
+      body: RequestBodyMock.authenticateErrorResponse(errorMessage)
     });
     await expect(
       FiubaUsersApi.authenticate(validCredentials)
@@ -70,7 +73,7 @@ describe("FiubaUsersApi", () => {
     );
     stubRequest({
       status: 500,
-      response: responseError
+      body: responseError
     });
     await expect(
       FiubaUsersApi.authenticate(validCredentials)
@@ -81,12 +84,25 @@ describe("FiubaUsersApi", () => {
   });
 
   it("throws unknown error if status code is different from 200 or 500", async () => {
-    stubRequest({ status: 401, response: "" });
+    stubRequest({ status: 401, body: "" });
     await expect(
       FiubaUsersApi.authenticate(validCredentials)
     ).rejects.toThrowErrorWithMessage(
       AuthenticateUnknownError,
       AuthenticateUnknownError.buildMessage(parse(""))
+    );
+  });
+
+  it("throws an error if the service has a connection error", async () => {
+    fetchMock.mock(
+      { url: FiubaUsersServiceConfig.url, method: "POST" },
+      { throws: new FetchError("message", "type") }
+    );
+    await expect(
+      FiubaUsersApi.authenticate({ dni: DniGenerator.generate(), password: "password" })
+    ).rejects.toThrowErrorWithMessage(
+      FiubaUsersServiceFetchError,
+      FiubaUsersServiceFetchError.buildMessage()
     );
   });
 });
