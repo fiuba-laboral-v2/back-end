@@ -10,21 +10,14 @@ import { DniGenerator } from "$generators/DNI";
 import { FiubaUsersServiceConfig } from "$config/services";
 
 describe("FiubaUsersService", () => {
-  const mockEnvironment = (environment: string) => {
-    Object.defineProperty(Environment, "NODE_ENV", {
-      get: jest.fn(() => environment),
-      configurable: true
-    });
-  };
-
   const expectToReturnTrueForEnvironment = async (environment: string) => {
-    mockEnvironment(environment);
+    Environment.NODE_ENV = environment;
     expect(
       await FiubaUsersService.authenticate({ dni: DniGenerator.generate(), password: "password" })
     ).toBe(true);
   };
 
-  afterAll(() => mockEnvironment(Environment.TEST));
+  afterEach(() => Environment.NODE_ENV = Environment.TEST);
 
   it("throws an error if the username is empty", async () => {
     await expect(
@@ -73,7 +66,7 @@ describe("FiubaUsersService", () => {
         throws: new FiubaUsersServiceFetchError()
       }
     );
-    mockEnvironment(Environment.STAGING);
+    Environment.NODE_ENV = Environment.STAGING;
     await expect(
       FiubaUsersService.authenticate({ dni: DniGenerator.generate(), password: "password" })
     ).rejects.toThrowErrorWithMessage(
