@@ -5,6 +5,7 @@ import { ApplicantNotUpdatedError, ApplicantRepository } from "$models/Applicant
 import { Applicant } from "$models";
 import { ApplicantApprovalEventRepository } from "$models/Applicant/ApplicantApprovalEvent";
 import { UserRepository } from "$models/User";
+import { CompanyRepository } from "$models/Company";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
@@ -25,6 +26,7 @@ describe("updateCompanyApprovalStatus", () => {
   beforeAll(async () => {
     await UserRepository.truncate();
     await ApplicantRepository.truncate();
+    await CompanyRepository.truncate();
   });
 
   beforeEach(() => ApplicantApprovalEventRepository.truncate());

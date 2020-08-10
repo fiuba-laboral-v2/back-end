@@ -34,6 +34,8 @@ describe("CredentialsValidator", () => {
     const user = await UserGenerator.instance();
     jest.spyOn(CompanyUserCredentialsValidator, "accept").mockReturnValueOnce(false);
     jest.spyOn(FiubaUserCredentialsValidator, "accept").mockReturnValueOnce(false);
-    expect(() => CredentialsValidator.getValidator(user)).toThrow();
+    expect(
+      () => CredentialsValidator.getValidator(user)
+    ).toThrow("No validator for user credentials was found");
   });
 });
