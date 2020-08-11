@@ -17,7 +17,7 @@ describe("ApplicantCareer", () => {
       careerCode: career.code,
       applicantUuid: "sarasa",
       creditsCount: 12,
-      graduate: true
+      isGraduate: true
     };
     const applicantCareer = new ApplicantCareer(attributes);
     await expect(applicantCareer.validate()).resolves.not.toThrow();
@@ -28,13 +28,13 @@ describe("ApplicantCareer", () => {
     }));
   });
 
-  it("instantiates a applicantCareer with graduate as false by default", async () => {
+  it("instantiates a applicantCareer with isGraduate as false by default", async () => {
     const applicantCareer = new ApplicantCareer({
       careerCode: career.code,
       applicantUuid: "sarasa",
       creditsCount: 12
     });
-    expect(applicantCareer.graduate).toBe(false);
+    expect(applicantCareer.isGraduate).toBe(false);
   });
 
   it("throws an error if creditsCount is negative", async () => {

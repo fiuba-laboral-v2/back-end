@@ -43,7 +43,7 @@ export class ApplicantCareer extends Model<ApplicantCareer> {
     type: BOOLEAN,
     defaultValue: false
   })
-  public graduate: boolean;
+  public isGraduate: boolean;
 
   @Column({
     allowNull: false,

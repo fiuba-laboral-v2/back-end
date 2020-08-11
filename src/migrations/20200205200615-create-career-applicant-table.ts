@@ -23,7 +23,7 @@ export = {
             defaultValue: 0,
             type: INTEGER
           },
-          graduate: {
+          isGraduate: {
             allowNull: false,
             defaultValue: false,
             type: BOOLEAN
