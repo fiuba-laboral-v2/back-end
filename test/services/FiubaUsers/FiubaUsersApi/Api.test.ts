@@ -79,6 +79,19 @@ describe("FiubaUsersApi", () => {
     );
   });
 
+  it("throws error when the service is unavailable", async () => {
+    stubRequest({
+      status: 500,
+      body: "unavailable"
+    });
+    await expect(
+      FiubaUsersApi.authenticate(validCredentials)
+    ).rejects.toThrowErrorWithMessage(
+      AuthenticateFaultError,
+      AuthenticateFaultError.buildMessage(parse("unavailable"))
+    );
+  });
+
   it("throws unknown error if status code is different from 200 or 500", async () => {
     stubRequest({ status: 401, body: "" });
     await expect(
