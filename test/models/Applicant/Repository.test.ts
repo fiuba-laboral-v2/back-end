@@ -8,25 +8,22 @@ import { CapabilityRepository } from "$models/Capability";
 import { ApplicantNotFound, ApplicantNotUpdatedError } from "$models/Applicant/Errors";
 import { FiubaUserNotFoundError } from "$models/User/Errors";
 import { ApplicantGenerator } from "$generators/Applicant";
-import { CareerGenerator, TCareerGenerator } from "$generators/Career";
+import { CareerGenerator } from "$generators/Career";
 import { AdminGenerator } from "$generators/Admin";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
 import { FiubaUsersService } from "$services/FiubaUsers";
 import { Secretary } from "$models/Admin";
 
 describe("ApplicantRepository", () => {
-  let careers: TCareerGenerator;
-
   beforeAll(async () => {
     await UserRepository.truncate();
     await CareerRepository.truncate();
     await CapabilityRepository.truncate();
-    careers = CareerGenerator.instance();
   });
 
   describe("Create", () => {
     it("creates a new applicant", async () => {
-      const career = await careers.next().value;
+      const career = await CareerGenerator.instance();
       const applicantData = ApplicantGenerator.data.minimum();
       const applicant = await ApplicantRepository.create({
         ...applicantData,
@@ -56,7 +53,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("creates two valid applicant in the same career", async () => {
-      const career = await careers.next().value;
+      const career = await CareerGenerator.instance();
       const applicantCareer = { code: career.code, creditsCount: career.credits - 10 };
       await ApplicantRepository.create({
         ...ApplicantGenerator.data.minimum(),
@@ -123,7 +120,7 @@ describe("ApplicantRepository", () => {
   describe("Get", () => {
     it("retrieves applicant by padron", async () => {
       const applicantData = ApplicantGenerator.data.minimum();
-      const career = await careers.next().value;
+      const career = await CareerGenerator.instance();
       await ApplicantRepository.create({
         ...applicantData,
         careers: [{ creditsCount: career.credits - 10, code: career.code }],
@@ -157,7 +154,7 @@ describe("ApplicantRepository", () => {
 
     it("retrieves applicant by uuid", async () => {
       const applicantData = ApplicantGenerator.data.minimum();
-      const career = await careers.next().value;
+      const career = await CareerGenerator.instance();
       const { uuid } = await ApplicantRepository.create({
         ...applicantData,
         careers: [{ creditsCount: career.credits - 10, code: career.code }],
@@ -195,12 +192,12 @@ describe("ApplicantRepository", () => {
 
   describe("Update", () => {
     it("updates all props", async () => {
-      const { code, credits } = await careers.next().value;
+      const { code, credits } = await CareerGenerator.instance();
       const { uuid } = await ApplicantRepository.create({
         ...ApplicantGenerator.data.minimum(),
         careers: [{ code, creditsCount: credits - 1 }]
       });
-      const newCareer = await careers.next().value;
+      const newCareer = await CareerGenerator.instance();
       const newProps: IApplicantEditable = {
         uuid,
         user: {
@@ -335,8 +332,8 @@ describe("ApplicantRepository", () => {
 
     it("updates by keeping only the new careers", async () => {
       const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
-      const firstCareer = await careers.next().value;
-      const secondCareer = await careers.next().value;
+      const firstCareer = await CareerGenerator.instance();
+      const secondCareer = await CareerGenerator.instance();
       const newProps: IApplicantEditable = {
         uuid: applicant.uuid,
         careers: [
@@ -359,7 +356,7 @@ describe("ApplicantRepository", () => {
         secondCareer.code
       ]));
 
-      const thirdCareer = await careers.next().value;
+      const thirdCareer = await CareerGenerator.instance();
       const updatedProps: IApplicantEditable = {
         uuid: applicant.uuid,
         careers: [
@@ -518,7 +515,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("updates credits count of applicant careers", async () => {
-      const career = await careers.next().value;
+      const career = await CareerGenerator.instance();
       const { uuid } = await ApplicantRepository.create({
         ...ApplicantGenerator.data.minimum(),
         careers: [{ code: career.code, creditsCount: career.credits - 1 }]
@@ -539,7 +536,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("updates by deleting all applicant careers if none is provided", async () => {
-      const career = await careers.next().value;
+      const career = await CareerGenerator.instance();
       const applicant = await ApplicantRepository.create({
         ...ApplicantGenerator.data.minimum(),
         careers: [{ code: career.code, creditsCount: career.credits - 1 }]

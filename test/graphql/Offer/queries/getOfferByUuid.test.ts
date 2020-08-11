@@ -6,7 +6,7 @@ import { JobApplicationRepository } from "$models/JobApplication";
 import { UserRepository } from "$models/User";
 import { OfferNotFound } from "$models/Offer/Errors";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
-import { CareerGenerator, TCareerGenerator } from "$generators/Career";
+import { CareerGenerator } from "$generators/Career";
 import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
 import { CompanyGenerator } from "$generators/Company";
 import { UserGenerator } from "$generators/User";
@@ -63,19 +63,17 @@ const GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION = gql`
 `;
 
 describe("getOfferByUuid", () => {
-  let careers: TCareerGenerator;
   let offers: TOfferGenerator;
 
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await UserRepository.truncate();
-    careers = CareerGenerator.instance();
     offers = await OfferGenerator.instance.withOneSection();
   });
 
   const createOffer = async company => {
-    const career = await careers.next().value;
+    const career = await CareerGenerator.instance();
     const careerCode = career.code;
     const offer = await offers.next({ companyUuid: company.uuid, careers: [{ careerCode }] }).value;
     return { offer, career, company };

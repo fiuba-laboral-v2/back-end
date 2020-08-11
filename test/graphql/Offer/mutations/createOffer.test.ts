@@ -1,7 +1,7 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 
-import { CareerGenerator, TCareerGenerator } from "$generators/Career";
+import { CareerGenerator } from "$generators/Career";
 import { OfferGenerator, TOfferDataGenerator } from "$generators/Offer";
 import { AdminGenerator } from "$generators/Admin";
 import { TestClientGenerator } from "$generators/TestClient";
@@ -92,7 +92,6 @@ const SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA = gql`
 `;
 
 describe("createOffer", () => {
-  let careers: TCareerGenerator;
   let offers: TOfferDataGenerator;
   let admin: Admin;
 
@@ -100,7 +99,6 @@ describe("createOffer", () => {
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await UserRepository.truncate();
-    careers = CareerGenerator.instance();
     offers = OfferGenerator.data.withObligatoryData();
     admin = await AdminGenerator.instance(Secretary.extension);
   });
@@ -141,7 +139,7 @@ describe("createOffer", () => {
           approvalStatus: ApprovalStatus.approved
         }
       });
-      const { code } = await careers.next().value;
+      const { code } = await CareerGenerator.instance();
 
       const { companyUuid, ...createOfferAttributes } = offers.next({
         companyUuid: company.uuid

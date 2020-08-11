@@ -84,7 +84,7 @@ describe("saveApplicant", () => {
   beforeAll(async () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
-    career = await CareerGenerator.instance().next().value;
+    career = await CareerGenerator.instance();
   });
 
   describe("when the input is valid", () => {

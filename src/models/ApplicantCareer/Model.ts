@@ -1,6 +1,6 @@
 import { BelongsTo, Column, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript";
 import { Applicant, Career } from "$models";
-import { HasOneGetAssociationMixin, INTEGER } from "sequelize";
+import { HasOneGetAssociationMixin, INTEGER, BOOLEAN, DATE } from "sequelize";
 import { validateIntegerInRange } from "validations-fiuba-laboral-v2";
 
 @Table({
@@ -22,10 +22,6 @@ import { validateIntegerInRange } from "validations-fiuba-laboral-v2";
   }
 })
 export class ApplicantCareer extends Model<ApplicantCareer> {
-  public defaultScope: {
-    exclude: ["createdAt", "updatedAt"]
-  };
-
   @ForeignKey(() => Career)
   @PrimaryKey
   @Column
@@ -41,6 +37,27 @@ export class ApplicantCareer extends Model<ApplicantCareer> {
     type: INTEGER
   })
   public creditsCount: number;
+
+  @Column({
+    allowNull: false,
+    type: BOOLEAN,
+    defaultValue: false
+  })
+  public isGraduate: boolean;
+
+  @Column({
+    allowNull: false,
+    type: DATE,
+    defaultValue: new Date()
+  })
+  public createdAt: Date;
+
+  @Column({
+    allowNull: false,
+    type: DATE,
+    defaultValue: new Date()
+  })
+  public updatedAt: Date;
 
   @BelongsTo(() => Career, "careerCode")
   public career: Career;

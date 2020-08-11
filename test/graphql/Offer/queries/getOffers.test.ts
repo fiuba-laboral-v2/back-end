@@ -5,7 +5,7 @@ import { CompanyRepository } from "$models/Company";
 import { OfferRepository } from "$models/Offer";
 import { UserRepository } from "$models/User";
 
-import { CareerGenerator, TCareerGenerator } from "$generators/Career";
+import { CareerGenerator } from "$generators/Career";
 import { CompanyGenerator } from "$generators/Company";
 import { OfferGenerator, TOfferDataGenerator } from "$generators/Offer";
 import { TestClientGenerator } from "$generators/TestClient";
@@ -29,7 +29,6 @@ const GET_OFFERS = gql`
 `;
 
 describe("getOffers", () => {
-  let careers: TCareerGenerator;
   let offersData: TOfferDataGenerator;
 
   const approvedApplicantTestClient = async () => {
@@ -46,7 +45,6 @@ describe("getOffers", () => {
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await UserRepository.truncate();
-    careers = CareerGenerator.instance();
     offersData = OfferGenerator.data.withObligatoryData();
   });
 
@@ -55,8 +53,8 @@ describe("getOffers", () => {
     let offer2: Offer;
     const createOffers = async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const career1 = await careers.next().value;
-      const career2 = await careers.next().value;
+      const career1 = await CareerGenerator.instance();
+      const career2 = await CareerGenerator.instance();
       offer1 = await OfferRepository.create({
         ...offersData.next({ companyUuid }).value,
         careers: [{ careerCode: career1.code }]

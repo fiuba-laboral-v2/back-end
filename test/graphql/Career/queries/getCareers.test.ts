@@ -3,7 +3,7 @@ import { client } from "../../ApolloTestClient";
 
 import { CareerRepository } from "$models/Career";
 import { UserRepository } from "$models/User";
-import { CareerGenerator, TCareerDataGenerator } from "$generators/Career";
+import { CareerGenerator } from "$generators/Career";
 import { TestClientGenerator } from "$generators/TestClient";
 
 const GET_CAREERS = gql`
@@ -17,17 +17,14 @@ const GET_CAREERS = gql`
 `;
 
 describe("getCareers", () => {
-  let careersData: TCareerDataGenerator;
-
   beforeAll(async () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
-    careersData = CareerGenerator.data();
   });
 
   it("gets all careers using the code", async () => {
     const { apolloClient } = await TestClientGenerator.user();
-    const career = await CareerRepository.create(careersData.next().value);
+    const career = await CareerRepository.create(CareerGenerator.data());
 
     const { data, errors } = await apolloClient.query({ query: GET_CAREERS });
     expect(errors).toBeUndefined();

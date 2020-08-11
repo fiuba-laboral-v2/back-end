@@ -1,4 +1,4 @@
-import { DATE, INTEGER, QueryInterface, STRING, UUID } from "sequelize";
+import { QueryInterface, DATE, INTEGER, STRING, UUID, BOOLEAN } from "sequelize";
 
 export = {
   up: (queryInterface: QueryInterface) => {
@@ -22,6 +22,11 @@ export = {
             allowNull: false,
             defaultValue: 0,
             type: INTEGER
+          },
+          isGraduate: {
+            allowNull: false,
+            defaultValue: false,
+            type: BOOLEAN
           },
           createdAt: {
             allowNull: false,
