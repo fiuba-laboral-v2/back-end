@@ -3,6 +3,7 @@ import { ApplicantCareer, Career } from "$models";
 import { CareerGenerator } from "$generators/Career";
 import { NumberIsTooLargeError, NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
 import { ValidationError } from "sequelize";
+
 describe("ApplicantCareer", () => {
   let career: Career;
 
