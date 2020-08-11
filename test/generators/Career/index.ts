@@ -7,6 +7,6 @@ export const CareerGenerator = {
     CareerGenerator.index += 1;
     return CareerGenerator.index;
   },
-  instance: () => CareerRepository.create(careerData(CareerGenerator.getIndex())),
+  instance: () => CareerRepository.create(CareerGenerator.data()),
   data: () => careerData(CareerGenerator.getIndex())
 };
