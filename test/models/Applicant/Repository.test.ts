@@ -107,7 +107,7 @@ describe("ApplicantRepository", () => {
       );
     });
 
-    it("throws an error it is not specified if the applicant is graduated", async () => {
+    it("throws an error it is not specified if the applicant is a graduate", async () => {
       const career = await CareerGenerator.instance();
       const applicantData = {
         ...ApplicantGenerator.data.minimum(),

@@ -140,7 +140,7 @@ describe("saveApplicant", () => {
     });
   });
 
-  it("returns an error if it is not specified if the applicant is graduated", async () => {
+  it("returns an error if it is not specified if the applicant is a graduate", async () => {
     const applicantData = ApplicantGenerator.data.minimum();
 
     const { errors } = await client.loggedOut().mutate({
