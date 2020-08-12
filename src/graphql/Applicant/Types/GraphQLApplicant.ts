@@ -3,7 +3,7 @@ import { GraphQLDateTime } from "graphql-iso-date";
 import { ID, Int, List, nonNull, String } from "$graphql/fieldTypes";
 import { GraphQLUser } from "$graphql/User/Types/GraphQLUser";
 import { GraphQLCapability } from "$graphql/Capability/Types/Capability";
-import { GraphQLApplicantCareer } from "./ApplicantCareers";
+import { GraphQLApplicantCareer } from "./GraphQLApplicantCareer";
 import { GraphQLSection } from "./Section";
 import { GraphQLLink } from "./Link";
 import { Applicant } from "$models";

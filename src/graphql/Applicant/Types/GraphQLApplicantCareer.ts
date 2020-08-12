@@ -1,7 +1,7 @@
 import { GraphQLObjectType } from "graphql";
 import { Int, nonNull, String, ID } from "$graphql/fieldTypes";
 
-const GraphQLApplicantCareer = new GraphQLObjectType({
+export const GraphQLApplicantCareer = new GraphQLObjectType({
   name: "ApplicantCareer",
   fields: () => ({
     code: {
@@ -18,5 +18,3 @@ const GraphQLApplicantCareer = new GraphQLObjectType({
     }
   })
 });
-
-export { GraphQLApplicantCareer };
