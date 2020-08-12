@@ -44,6 +44,7 @@ const UPDATE_CURRENT_APPLICANT = gql`
         description
         credits
         creditsCount
+        isGraduate
       }
       sections {
         title
@@ -116,7 +117,8 @@ describe("updateCurrentApplicant", () => {
       description: dataToUpdate.description,
       careers: [expect.objectContaining({
         code: dataToUpdate.careers[0].code,
-        creditsCount: dataToUpdate.careers[0].creditsCount
+        creditsCount: dataToUpdate.careers[0].creditsCount,
+        isGraduate: dataToUpdate.careers[0].isGraduate
       })],
       sections: dataToUpdate.sections,
       links: dataToUpdate.links

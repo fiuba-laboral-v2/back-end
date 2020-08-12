@@ -43,6 +43,7 @@ const SAVE_APPLICANT_WITH_COMPLETE_DATA = gql`
         description
         credits
         creditsCount
+        isGraduate
       }
     }
   }
@@ -73,6 +74,7 @@ const SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA = gql`
         description
         credits
         creditsCount
+        isGraduate
       }
     }
   }
@@ -111,12 +113,13 @@ describe("saveApplicant", () => {
         padron: applicantData.padron
       });
       expect(data!.saveApplicant).toHaveProperty("capabilities");
-      expect(data!.saveApplicant.careers).toMatchObject([{
+      expect(data!.saveApplicant.careers).toEqual([expect.objectContaining({
         code: career.code,
         credits: career.credits,
         description: career.description,
-        creditsCount: career.credits - 1
-      }]);
+        creditsCount: career.credits - 1,
+        isGraduate: true
+      })]);
     });
 
     it("creates applicant with only obligatory data", async () => {
@@ -147,7 +150,8 @@ describe("saveApplicant", () => {
         code: career.code,
         credits: career.credits,
         description: career.description,
-        creditsCount: career.credits - 1
+        creditsCount: career.credits - 1,
+        isGraduate: false
       }]);
     });
   });
