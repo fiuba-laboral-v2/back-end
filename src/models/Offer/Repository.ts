@@ -7,6 +7,7 @@ import { Offer, OfferCareer, OfferSection } from "$models";
 import { Op } from "sequelize";
 import { PaginationConfig } from "$config/PaginationConfig";
 import { ICreateOffer } from "$models/Offer/Interface";
+import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 
 export const OfferRepository = {
   create: (
@@ -46,17 +47,27 @@ export const OfferRepository = {
 
     return offer;
   },
-  findAll: async ({ updatedBeforeThan }: { updatedBeforeThan?: string }) => {
+  findAll: async ({ updatedBeforeThan }: { updatedBeforeThan?: IPaginatedInput }) => {
     const limit = PaginationConfig.itemsPerPage() + 1;
     const result = await Offer.findAll({
       ...(updatedBeforeThan && {
         where: {
-          updatedAt: {
-            [Op.lt]: updatedBeforeThan
-          }
+          [Op.or]: [
+            {
+              updatedAt: {
+                [Op.lt]: updatedBeforeThan.dateTime
+              }
+            },
+            {
+              updatedAt: updatedBeforeThan.dateTime,
+              uuid: {
+                [Op.lt]: updatedBeforeThan.uuid
+              }
+            }
+          ]
         }
       }),
-      order: [["updatedAt", "DESC"]],
+      order: [["updatedAt", "DESC"], ["uuid", "DESC"]],
       limit
     });
     return {

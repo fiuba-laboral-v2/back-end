@@ -283,8 +283,12 @@ describe("OfferRepository", () => {
     it("gives last results, indicates that there are no earlier offers to fetch", async () => {
       mockItemsPerPage(3);
       const lastOfferIndex = 5;
+      const lastOffer = allOffersByDescUpdatedAt[lastOfferIndex];
       const result = await OfferRepository.findAll({
-        updatedBeforeThan: allOffersByDescUpdatedAt[lastOfferIndex].updatedAt
+        updatedBeforeThan: {
+          dateTime: lastOffer.updatedAt,
+          uuid: lastOffer.uuid
+        }
       });
       expect(result.shouldFetchMore).toEqual(false);
       expect(
