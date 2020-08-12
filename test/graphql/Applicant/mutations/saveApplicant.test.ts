@@ -43,6 +43,7 @@ const SAVE_APPLICANT_WITH_COMPLETE_DATA = gql`
         description
         credits
         creditsCount
+        isGraduate
       }
     }
   }
@@ -73,6 +74,7 @@ const SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA = gql`
         description
         credits
         creditsCount
+        isGraduate
       }
     }
   }
@@ -95,7 +97,7 @@ describe("saveApplicant", () => {
         mutation: SAVE_APPLICANT_WITH_COMPLETE_DATA,
         variables: {
           ...applicantData,
-          careers: [{ code: career.code, creditsCount: career.credits - 1 }]
+          careers: [{ code: career.code, creditsCount: career.credits - 1, isGraduate: true }]
         }
       });
       expect(errors).toBeUndefined();
@@ -111,12 +113,13 @@ describe("saveApplicant", () => {
         padron: applicantData.padron
       });
       expect(data!.saveApplicant).toHaveProperty("capabilities");
-      expect(data!.saveApplicant.careers).toMatchObject([{
+      expect(data!.saveApplicant.careers).toEqual([expect.objectContaining({
         code: career.code,
         credits: career.credits,
         description: career.description,
-        creditsCount: career.credits - 1
-      }]);
+        creditsCount: career.credits - 1,
+        isGraduate: true
+      })]);
     });
 
     it("creates applicant with only obligatory data", async () => {
@@ -125,7 +128,7 @@ describe("saveApplicant", () => {
         mutation: SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA,
         variables: {
           ...applicantData,
-          careers: [{ code: career.code, creditsCount: career.credits - 1 }]
+          careers: [{ code: career.code, creditsCount: career.credits - 1, isGraduate: false }]
         }
       });
       expect(errors).toBeUndefined();
@@ -141,29 +144,42 @@ describe("saveApplicant", () => {
           padron: applicantData.padron
         }
       );
-      expect(data!.saveApplicant).toHaveProperty("careers");
       expect(data!.saveApplicant).not.toHaveProperty("capabilities");
       expect(data!.saveApplicant).not.toHaveProperty("description");
       expect(data!.saveApplicant.careers).toMatchObject([{
         code: career.code,
         credits: career.credits,
         description: career.description,
-        creditsCount: career.credits - 1
+        creditsCount: career.credits - 1,
+        isGraduate: false
       }]);
     });
   });
 
-  describe("Errors", () => {
-    it("should throw and error if the user exists", async () => {
-      const applicantData = ApplicantGenerator.data.minimum();
-      await UserRepository.create(applicantData.user);
-      const { errors } = await client.loggedOut().mutate({
-        mutation: SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA,
-        variables: applicantData
-      });
-      expect(errors![0].extensions!.data).toEqual(
-        { errorType: "UserEmailAlreadyExistsError" }
-      );
+  it("returns an error if it is not specified if the applicant is a graduate", async () => {
+    const applicantData = ApplicantGenerator.data.minimum();
+
+    const { errors } = await client.loggedOut().mutate({
+      mutation: SAVE_APPLICANT_WITH_COMPLETE_DATA,
+      variables: {
+        ...applicantData,
+        careers: [{ code: career.code, creditsCount: career.credits - 1 }]
+      }
     });
+    expect(errors).not.toBeUndefined();
+  });
+
+  it("returns an error if the user exists", async () => {
+    const applicantData = ApplicantGenerator.data.minimum();
+    await UserRepository.create(applicantData.user);
+    const { errors } = await client.loggedOut().mutate({
+      mutation: SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA,
+      variables: applicantData
+    });
+    expect(
+      errors![0].extensions!.data
+    ).toEqual(
+      { errorType: "UserEmailAlreadyExistsError" }
+    );
   });
 });

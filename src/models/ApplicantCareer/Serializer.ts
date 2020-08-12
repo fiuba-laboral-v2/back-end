@@ -7,7 +7,8 @@ export const ApplicantCareersSerializer = {
       code: applicantCareer.careerCode,
       description: description,
       credits: credits,
-      creditsCount: applicantCareer.creditsCount
+      creditsCount: applicantCareer.creditsCount,
+      isGraduate: applicantCareer.isGraduate
     };
   }
 };

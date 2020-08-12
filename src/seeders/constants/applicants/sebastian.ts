@@ -53,6 +53,7 @@ export const sebastian = {
       careerCode: careerCodes.IngenieriaInformatica,
       applicantUuid: uuids.sebastian.applicant,
       creditsCount: 216,
+      isGraduate: false,
       createdAt: new Date(),
       updatedAt: new Date()
     }

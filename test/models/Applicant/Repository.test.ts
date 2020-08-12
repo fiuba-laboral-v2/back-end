@@ -27,7 +27,7 @@ describe("ApplicantRepository", () => {
       const applicantData = ApplicantGenerator.data.minimum();
       const applicant = await ApplicantRepository.create({
         ...applicantData,
-        careers: [{ creditsCount: career.credits - 10, code: career.code }],
+        careers: [{ creditsCount: career.credits - 10, code: career.code, isGraduate: true }],
         capabilities: ["Python"]
       });
       const [applicantCareer] = await applicant.getCareers();
@@ -54,7 +54,11 @@ describe("ApplicantRepository", () => {
 
     it("creates two valid applicant in the same career", async () => {
       const career = await CareerGenerator.instance();
-      const applicantCareer = { code: career.code, creditsCount: career.credits - 10 };
+      const applicantCareer = {
+        code: career.code,
+        creditsCount: career.credits - 10,
+        isGraduate: false
+      };
       await ApplicantRepository.create({
         ...ApplicantGenerator.data.minimum(),
         careers: [applicantCareer]
@@ -103,6 +107,25 @@ describe("ApplicantRepository", () => {
       );
     });
 
+    it("throws an error it is not specified if the applicant is a graduate", async () => {
+      const career = await CareerGenerator.instance();
+      const applicantData = {
+        ...ApplicantGenerator.data.minimum(),
+        careers: [{
+          code: career.code,
+          creditsCount: career.credits - 10,
+          isGraduate: false
+        }]
+      };
+      delete applicantData.careers[0].isGraduate;
+      await expect(
+        ApplicantRepository.create(applicantData)
+      ).rejects.toThrowErrorWithMessage(
+        DatabaseError,
+        "null value in column \"isGraduate\" violates not-null constraint"
+      );
+    });
+
     it("throws an error if the FiubaService authentication returns false", async () => {
       const fiubaUsersServiceMock = jest.spyOn(FiubaUsersService, "authenticate");
       fiubaUsersServiceMock.mockResolvedValueOnce(Promise.resolve(false));
@@ -123,7 +146,7 @@ describe("ApplicantRepository", () => {
       const career = await CareerGenerator.instance();
       await ApplicantRepository.create({
         ...applicantData,
-        careers: [{ creditsCount: career.credits - 10, code: career.code }],
+        careers: [{ creditsCount: career.credits - 10, code: career.code, isGraduate: false }],
         capabilities: ["Node"]
       });
 
@@ -157,7 +180,7 @@ describe("ApplicantRepository", () => {
       const career = await CareerGenerator.instance();
       const { uuid } = await ApplicantRepository.create({
         ...applicantData,
-        careers: [{ creditsCount: career.credits - 10, code: career.code }],
+        careers: [{ creditsCount: career.credits - 10, code: career.code, isGraduate: true }],
         capabilities: ["GO"]
       });
       const applicant = await ApplicantRepository.findByUuid(uuid);
@@ -195,7 +218,7 @@ describe("ApplicantRepository", () => {
       const { code, credits } = await CareerGenerator.instance();
       const { uuid } = await ApplicantRepository.create({
         ...ApplicantGenerator.data.minimum(),
-        careers: [{ code, creditsCount: credits - 1 }]
+        careers: [{ code, creditsCount: credits - 1, isGraduate: true }]
       });
       const newCareer = await CareerGenerator.instance();
       const newProps: IApplicantEditable = {
@@ -209,7 +232,8 @@ describe("ApplicantRepository", () => {
         careers: [
           {
             code: newCareer.code,
-            creditsCount: 8
+            creditsCount: 8,
+            isGraduate: false
           }
         ],
         sections: [
@@ -227,32 +251,25 @@ describe("ApplicantRepository", () => {
         ]
       };
       const applicant = await ApplicantRepository.update(newProps);
+      const applicantCareers = await applicant.getApplicantCareers();
+      const capabilities = await applicant.getCapabilities();
       const user = await applicant.getUser();
-      const capabilitiesDescription = [
-        ...newProps.capabilities!,
-        ...(await applicant.getCapabilities()).map(capability => capability.description)
-      ];
-      const careersCodes = [
-        ...(await applicant.getCareers()).map(career => career.code),
-        newCareer.code
-      ];
       expect(applicant).toMatchObject({
         description: newProps.description
       });
 
-      expect(user).toMatchObject({
-        name: newProps.user!.name,
-        surname: newProps.user!.surname
-      });
+      expect(user).toMatchObject(newProps.user!);
 
       expect(
-        (await applicant.getCapabilities()).map(capability => capability.description)
+        capabilities.map(c => c.description)
       ).toEqual(expect.arrayContaining(
-        capabilitiesDescription
+        newProps.capabilities!
       ));
-      expect(
-        (await applicant.getCareers()).map(aCareer => aCareer.code)
-      ).toEqual(expect.arrayContaining(careersCodes));
+      expect(applicantCareers).toEqual([expect.objectContaining({
+        careerCode: newProps.careers![0].code,
+        creditsCount: newProps.careers![0].creditsCount,
+        isGraduate: newProps.careers![0].isGraduate
+      })]);
     });
 
     it("updates name", async () => {
@@ -289,9 +306,7 @@ describe("ApplicantRepository", () => {
         description: "newDescription"
       };
       const applicant = await ApplicantRepository.update(newProps);
-      expect(applicant).toEqual(expect.objectContaining({
-        description: newProps.description
-      }));
+      expect(applicant.description).toEqual(newProps.description);
     });
 
     it("updates by adding new capabilities", async () => {
@@ -299,10 +314,11 @@ describe("ApplicantRepository", () => {
         ...ApplicantGenerator.data.minimum(),
         capabilities: ["CSS", "clojure"]
       });
-
       expect(
-        (await applicant.getCapabilities()).map(capability => capability.description)
-      ).toEqual(expect.arrayContaining(["CSS", "clojure"]));
+        (await applicant.getCapabilities()).map(c => c.description)
+      ).toEqual(expect.arrayContaining(
+        ["CSS", "clojure"]
+      ));
 
       const changeOneProps: IApplicantEditable = {
         uuid: applicant.uuid,
@@ -311,8 +327,10 @@ describe("ApplicantRepository", () => {
 
       await ApplicantRepository.update(changeOneProps);
       expect(
-        (await applicant.getCapabilities()).map(capability => capability.description)
-      ).toEqual(expect.arrayContaining(["Python", "clojure"]));
+        (await applicant.getCapabilities()).map(c => c.description)
+      ).toEqual(expect.arrayContaining(
+        ["Python", "clojure"]
+      ));
 
     });
 
@@ -324,10 +342,12 @@ describe("ApplicantRepository", () => {
 
       expect(
         (await applicant.getCapabilities()).map(capability => capability.description)
-      ).toEqual(expect.arrayContaining(["CSS", "clojure"]));
+      ).toEqual(expect.arrayContaining(
+        ["CSS", "clojure"]
+      ));
 
       await ApplicantRepository.update({ uuid: applicant.uuid });
-      expect((await applicant.getCapabilities()).length).toEqual(0);
+      expect((await applicant.getCapabilities())).toHaveLength(0);
     });
 
     it("updates by keeping only the new careers", async () => {
@@ -339,11 +359,13 @@ describe("ApplicantRepository", () => {
         careers: [
           {
             code: firstCareer.code,
-            creditsCount: 8
+            creditsCount: 8,
+            isGraduate: false
           },
           {
             code: secondCareer.code,
-            creditsCount: 10
+            creditsCount: 10,
+            isGraduate: false
           }
         ]
       };
@@ -362,11 +384,13 @@ describe("ApplicantRepository", () => {
         careers: [
           {
             code: thirdCareer.code,
-            creditsCount: 8
+            creditsCount: 8,
+            isGraduate: false
           },
           {
             code: secondCareer.code,
-            creditsCount: 10
+            creditsCount: 10,
+            isGraduate: false
           }
         ]
       };
@@ -518,12 +542,13 @@ describe("ApplicantRepository", () => {
       const career = await CareerGenerator.instance();
       const { uuid } = await ApplicantRepository.create({
         ...ApplicantGenerator.data.minimum(),
-        careers: [{ code: career.code, creditsCount: career.credits - 1 }]
+        careers: [{ code: career.code, creditsCount: career.credits - 1, isGraduate: true }]
       });
       const newApplicantCareerData = [
         {
           code: career.code,
-          creditsCount: 100
+          creditsCount: 100,
+          isGraduate: true
         }
       ];
       await ApplicantRepository.update({ uuid, careers: newApplicantCareerData });
@@ -539,9 +564,9 @@ describe("ApplicantRepository", () => {
       const career = await CareerGenerator.instance();
       const applicant = await ApplicantRepository.create({
         ...ApplicantGenerator.data.minimum(),
-        careers: [{ code: career.code, creditsCount: career.credits - 1 }]
+        careers: [{ code: career.code, creditsCount: career.credits - 1, isGraduate: true }]
       });
-      const newApplicantCareerData = [{ code: career.code, creditsCount: 100 }];
+      const newApplicantCareerData = [{ code: career.code, creditsCount: 100, isGraduate: true }];
       await ApplicantRepository.update({ uuid: applicant.uuid, careers: newApplicantCareerData });
       expect((await applicant.getCareers()).length).toEqual(1);
       await ApplicantRepository.update({ uuid: applicant.uuid });

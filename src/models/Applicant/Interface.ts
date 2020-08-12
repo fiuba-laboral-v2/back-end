@@ -4,6 +4,7 @@ import { ICreateFiubaUser, IUser, IUserEditable } from "../User";
 export interface IApplicantCareer {
   code: string;
   creditsCount: number;
+  isGraduate: boolean;
 }
 
 export interface IApplicant {

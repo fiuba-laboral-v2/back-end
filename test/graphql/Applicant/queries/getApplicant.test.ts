@@ -51,7 +51,7 @@ describe("getApplicant", () => {
   describe("when the applicant exists", () => {
     it("fetches the applicant", async () => {
       const career = await CareerGenerator.instance();
-      const applicantCareer = [{ code: career.code, creditsCount: 150 }];
+      const applicantCareer = [{ code: career.code, creditsCount: 150, isGraduate: true }];
       const {
         user,
         applicant,
@@ -75,8 +75,7 @@ describe("getApplicant", () => {
         createdAt: applicant.createdAt.toISOString(),
         updatedAt: applicant.updatedAt.toISOString()
       });
-      expect(data!.getApplicant).toHaveProperty("capabilities");
-      expect(data!.getApplicant).toHaveProperty("careers");
+      expect(data!.getApplicant.capabilities).toHaveLength(0);
       expect(data!.getApplicant.careers[0]).toMatchObject({
         code: career.code,
         credits: career.credits,

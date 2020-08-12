@@ -28,20 +28,24 @@ describe("ApplicantCareer", () => {
     }));
   });
 
-  it("instantiates a applicantCareer with isGraduate as false by default", async () => {
+  it("throws and error if no isGraduate is provided", async () => {
     const applicantCareer = new ApplicantCareer({
       careerCode: career.code,
       applicantUuid: "sarasa",
       creditsCount: 12
     });
-    expect(applicantCareer.isGraduate).toBe(false);
+    await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      "notNull Violation: ApplicantCareer.isGraduate cannot be null"
+    );
   });
 
   it("throws an error if creditsCount is negative", async () => {
     const applicantCareer = new ApplicantCareer({
       careerCode: career.code,
       applicantUuid: "sarasa",
-      creditsCount: -12
+      creditsCount: -12,
+      isGraduate: false
     });
     await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -53,7 +57,8 @@ describe("ApplicantCareer", () => {
     const applicantCareer = new ApplicantCareer({
       careerCode: career.code,
       applicantUuid: "sarasa",
-      creditsCount: career.credits + 12
+      creditsCount: career.credits + 12,
+      isGraduate: false
     });
     await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -65,7 +70,8 @@ describe("ApplicantCareer", () => {
     const applicantCareer = new ApplicantCareer({
       careerCode: career.code,
       applicantUuid: "sarasa",
-      creditsCount: career.credits
+      creditsCount: career.credits,
+      isGraduate: true
     });
     await expect(applicantCareer.validate()).resolves.not.toThrow();
   });
