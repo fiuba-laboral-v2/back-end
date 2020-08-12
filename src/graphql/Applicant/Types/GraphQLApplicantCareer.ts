@@ -1,17 +1,20 @@
 import { GraphQLObjectType } from "graphql";
-import { Int, nonNull, String, ID, Boolean } from "$graphql/fieldTypes";
+import { Int, nonNull, ID, Boolean } from "$graphql/fieldTypes";
+import { ApplicantCareer } from "$models";
+import { GraphQLCareer } from "$graphql/Career/Types/Career";
 
-export const GraphQLApplicantCareer = new GraphQLObjectType({
+export const GraphQLApplicantCareer = new GraphQLObjectType<ApplicantCareer>({
   name: "ApplicantCareer",
   fields: () => ({
-    code: {
+    careerCode: {
       type: nonNull(ID)
     },
-    description: {
-      type: nonNull(String)
+    applicantUuid: {
+      type: nonNull(ID)
     },
-    credits: {
-      type: Int
+    career: {
+      type: nonNull(GraphQLCareer),
+      resolve: applicantCareer => applicantCareer.getCareer()
     },
     creditsCount: {
       type: nonNull(Int)

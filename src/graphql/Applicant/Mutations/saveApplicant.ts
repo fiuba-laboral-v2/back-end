@@ -1,6 +1,6 @@
 import { Int, List, nonNull, String } from "$graphql/fieldTypes";
 import { GraphQLApplicant } from "../Types/GraphQLApplicant";
-import { GraphQLCareerCredits } from "../Types/GraphQLCareerCredits";
+import { GraphQLApplicantCareerInput } from "../Types/GraphQLApplicantCareerInput";
 
 import { ApplicantRepository, ISaveApplicant } from "$models/Applicant";
 import { GraphQLUserCreateInput } from "$graphql/User/Types/GraphQLUserCreateInput";
@@ -15,7 +15,7 @@ const saveApplicant = {
       type: String
     },
     careers: {
-      type: nonNull(List(GraphQLCareerCredits))
+      type: nonNull(List(GraphQLApplicantCareerInput))
     },
     capabilities: {
       type: List(String)

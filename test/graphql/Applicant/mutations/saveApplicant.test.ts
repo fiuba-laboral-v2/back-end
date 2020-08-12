@@ -13,7 +13,7 @@ const SAVE_APPLICANT_WITH_COMPLETE_DATA = gql`
   mutation SaveApplicant(
       $user: UserInput!,
       $padron: Int!,
-      $careers: [CareerCredits]!,
+      $careers: [ApplicantCareerInput]!,
       $description: String,
       $capabilities: [String]
     ) {
@@ -39,9 +39,12 @@ const SAVE_APPLICANT_WITH_COMPLETE_DATA = gql`
         description
       }
       careers {
-        code
-        description
-        credits
+        careerCode
+        career {
+          code
+          description
+          credits
+        }
         creditsCount
         isGraduate
       }
@@ -50,31 +53,15 @@ const SAVE_APPLICANT_WITH_COMPLETE_DATA = gql`
 `;
 
 const SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA = gql`
-  mutation SaveApplicant (
-      $user: UserInput!,
-      $padron: Int!,
-      $careers: [CareerCredits]!
-  ) {
-    saveApplicant(
-        user: $user,
-        padron: $padron,
-        careers: $careers
-    ) {
+  mutation SaveApplicant ($user: UserInput!,$padron: Int!,$careers: [ApplicantCareerInput]!) {
+    saveApplicant(user: $user,padron: $padron,careers: $careers) {
       uuid
       user {
-        uuid
         email
-        dni
-        name
-        surname
       }
       padron
       careers {
-        code
-        description
-        credits
-        creditsCount
-        isGraduate
+        careerCode
       }
     }
   }
@@ -92,16 +79,21 @@ describe("saveApplicant", () => {
   describe("when the input is valid", () => {
     it("creates a new applicant", async () => {
       const applicantData = ApplicantGenerator.data.minimum();
-
+      const applicantCareerData = {
+        code: career.code,
+        creditsCount: career.credits - 1,
+        isGraduate: true
+      };
       const { data, errors } = await client.loggedOut().mutate({
         mutation: SAVE_APPLICANT_WITH_COMPLETE_DATA,
         variables: {
           ...applicantData,
-          careers: [{ code: career.code, creditsCount: career.credits - 1, isGraduate: true }]
+          careers: [applicantCareerData]
         }
       });
       expect(errors).toBeUndefined();
-      expect(data!.saveApplicant).toMatchObject({
+      expect(data!.saveApplicant).toEqual({
+        uuid: expect.stringMatching(UUID_REGEX),
         user: {
           uuid: expect.stringMatching(UUID_REGEX),
           dni: applicantData.user.dni,
@@ -110,49 +102,41 @@ describe("saveApplicant", () => {
           surname: applicantData.user.surname
         },
         description: applicantData.description,
-        padron: applicantData.padron
+        padron: applicantData.padron,
+        capabilities: [],
+        careers: [{
+          career: {
+            code: career.code,
+            description: career.description,
+            credits: career.credits
+          },
+          careerCode: applicantCareerData.code,
+          creditsCount: applicantCareerData.creditsCount,
+          isGraduate: applicantCareerData.isGraduate
+        }]
       });
-      expect(data!.saveApplicant).toHaveProperty("capabilities");
-      expect(data!.saveApplicant.careers).toEqual([expect.objectContaining({
-        code: career.code,
-        credits: career.credits,
-        description: career.description,
-        creditsCount: career.credits - 1,
-        isGraduate: true
-      })]);
     });
 
     it("creates applicant with only obligatory data", async () => {
       const applicantData = ApplicantGenerator.data.minimum();
-      const { data, errors } = await client.loggedOut().mutate({
-        mutation: SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA,
-        variables: {
-          ...applicantData,
-          careers: [{ code: career.code, creditsCount: career.credits - 1, isGraduate: false }]
-        }
-      });
-      expect(errors).toBeUndefined();
-      expect(data!.saveApplicant).toMatchObject(
-        {
-          user: {
-            uuid: expect.stringMatching(UUID_REGEX),
-            dni: applicantData.user.dni,
-            email: applicantData.user.email,
-            name: applicantData.user.name,
-            surname: applicantData.user.surname
-          },
-          padron: applicantData.padron
-        }
-      );
-      expect(data!.saveApplicant).not.toHaveProperty("capabilities");
-      expect(data!.saveApplicant).not.toHaveProperty("description");
-      expect(data!.saveApplicant.careers).toMatchObject([{
+      const applicantCareerData = {
         code: career.code,
-        credits: career.credits,
-        description: career.description,
         creditsCount: career.credits - 1,
         isGraduate: false
-      }]);
+      };
+      const { data, errors } = await client.loggedOut().mutate({
+        mutation: SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA,
+        variables: { ...applicantData, careers: [applicantCareerData] }
+      });
+      expect(errors).toBeUndefined();
+      expect(data!.saveApplicant).toEqual(
+        {
+          uuid: expect.stringMatching(UUID_REGEX),
+          user: { email: applicantData.user.email },
+          padron: applicantData.padron,
+          careers: [{ careerCode: applicantCareerData.code }]
+        }
+      );
     });
   });
 

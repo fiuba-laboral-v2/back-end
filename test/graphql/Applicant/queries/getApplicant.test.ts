@@ -33,10 +33,14 @@ const GET_APPLICANT = gql`
         description
       }
       careers {
-        code
-        description
-        credits
+        careerCode
+        career {
+          code
+          description
+          credits
+        }
         creditsCount
+        isGraduate
       }
     }
   }
@@ -51,12 +55,12 @@ describe("getApplicant", () => {
   describe("when the applicant exists", () => {
     it("fetches the applicant", async () => {
       const career = await CareerGenerator.instance();
-      const applicantCareer = [{ code: career.code, creditsCount: 150, isGraduate: true }];
+      const applicantCareerData = { code: career.code, creditsCount: 150, isGraduate: true };
       const {
         user,
         applicant,
         apolloClient
-      } = await TestClientGenerator.applicant({ careers: applicantCareer });
+      } = await TestClientGenerator.applicant({ careers: [applicantCareerData] });
 
       const { data, errors } = await apolloClient.query({
         query: GET_APPLICANT,
@@ -76,12 +80,16 @@ describe("getApplicant", () => {
         updatedAt: applicant.updatedAt.toISOString()
       });
       expect(data!.getApplicant.capabilities).toHaveLength(0);
-      expect(data!.getApplicant.careers[0]).toMatchObject({
-        code: career.code,
-        credits: career.credits,
-        description: career.description,
-        creditsCount: applicantCareer[0].creditsCount
-      });
+      expect(data!.getApplicant.careers[0]).toEqual(expect.objectContaining({
+        career: {
+          code: career.code,
+          description: career.description,
+          credits: career.credits
+        },
+        careerCode: applicantCareerData.code,
+        creditsCount: applicantCareerData.creditsCount,
+        isGraduate: applicantCareerData.isGraduate
+      }));
     });
 
     it("returns the applicant's default approvalStatus", async () => {
