@@ -107,6 +107,25 @@ describe("ApplicantRepository", () => {
       );
     });
 
+    it("throws an error it is not specified if the applicant is graduated", async () => {
+      const career = await CareerGenerator.instance();
+      const applicantData = {
+        ...ApplicantGenerator.data.minimum(),
+        careers: [{
+          code: career.code,
+          creditsCount: career.credits - 10,
+          isGraduate: false
+        }]
+      };
+      delete applicantData.careers[0].isGraduate;
+      await expect(
+        ApplicantRepository.create(applicantData)
+      ).rejects.toThrowErrorWithMessage(
+        DatabaseError,
+        "null value in column \"isGraduate\" violates not-null constraint"
+      );
+    });
+
     it("throws an error if the FiubaService authentication returns false", async () => {
       const fiubaUsersServiceMock = jest.spyOn(FiubaUsersService, "authenticate");
       fiubaUsersServiceMock.mockResolvedValueOnce(Promise.resolve(false));

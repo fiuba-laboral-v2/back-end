@@ -156,17 +156,30 @@ describe("saveApplicant", () => {
     });
   });
 
-  describe("Errors", () => {
-    it("should throw and error if the user exists", async () => {
-      const applicantData = ApplicantGenerator.data.minimum();
-      await UserRepository.create(applicantData.user);
-      const { errors } = await client.loggedOut().mutate({
-        mutation: SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA,
-        variables: applicantData
-      });
-      expect(errors![0].extensions!.data).toEqual(
-        { errorType: "UserEmailAlreadyExistsError" }
-      );
+  it("returns an error if it is not specified if the applicant is graduated", async () => {
+    const applicantData = ApplicantGenerator.data.minimum();
+
+    const { errors } = await client.loggedOut().mutate({
+      mutation: SAVE_APPLICANT_WITH_COMPLETE_DATA,
+      variables: {
+        ...applicantData,
+        careers: [{ code: career.code, creditsCount: career.credits - 1 }]
+      }
     });
+    expect(errors).not.toBeUndefined();
+  });
+
+  it("returns an error if the user exists", async () => {
+    const applicantData = ApplicantGenerator.data.minimum();
+    await UserRepository.create(applicantData.user);
+    const { errors } = await client.loggedOut().mutate({
+      mutation: SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA,
+      variables: applicantData
+    });
+    expect(
+      errors![0].extensions!.data
+    ).toEqual(
+      { errorType: "UserEmailAlreadyExistsError" }
+    );
   });
 });
