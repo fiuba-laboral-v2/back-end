@@ -2,6 +2,7 @@ import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 
 import { CareerRepository } from "$models/Career";
+import { CompanyRepository } from "$models/Company";
 import { CareerGenerator } from "$generators/Career";
 import { TestClientGenerator } from "$generators/TestClient";
 
@@ -61,6 +62,7 @@ describe("updateCurrentApplicant", () => {
   beforeAll(async () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
+    await CompanyRepository.truncate();
   });
 
   it("updates all possible data deleting all previous values", async () => {

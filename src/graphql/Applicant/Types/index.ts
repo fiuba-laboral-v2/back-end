@@ -1,5 +1,5 @@
 import { GraphQLApplicant } from "./GraphQLApplicant";
-import { GraphQLCareerCredits } from "./CareerCredits";
+import { GraphQLCareerCredits } from "./GraphQLCareerCredits";
 import { GraphQLApplicantCareer } from "./ApplicantCareers";
 import { GraphQLSectionInput, GraphQLSection } from "./Section";
 import { GraphQLLinkInput, GraphQLLink } from "./Link";

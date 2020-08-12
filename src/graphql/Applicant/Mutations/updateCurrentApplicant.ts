@@ -1,6 +1,6 @@
 import { Int, List, String } from "$graphql/fieldTypes";
 import { GraphQLApplicant } from "../Types/GraphQLApplicant";
-import { GraphQLCareerCredits } from "../Types/CareerCredits";
+import { GraphQLCareerCredits } from "../Types/GraphQLCareerCredits";
 import { GraphQLSectionInput } from "../Types/Section";
 import { GraphQLUserUpdateInput } from "$graphql/User/Types/GraphQLUserUpdateInput";
 import { ApplicantRepository, IApplicantEditable } from "$models/Applicant";
