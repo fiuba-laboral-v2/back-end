@@ -7,7 +7,6 @@ import { GraphQLApplicantCareer } from "./GraphQLApplicantCareer";
 import { GraphQLSection } from "./Section";
 import { GraphQLLink } from "./Link";
 import { Applicant } from "$models";
-import { ApplicantCareersSerializer } from "$models/ApplicantCareer";
 import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
 
 export const GraphQLApplicant = new GraphQLObjectType<Applicant>({
@@ -37,12 +36,7 @@ export const GraphQLApplicant = new GraphQLObjectType<Applicant>({
     },
     careers: {
       type: nonNull(List(GraphQLApplicantCareer)),
-      resolve: async applicant => {
-        const applicantCareers = await applicant.getApplicantCareers();
-        return Promise.all(applicantCareers.map(applicantCareer =>
-          ApplicantCareersSerializer.serialize(applicantCareer)
-        ));
-      }
+      resolve: async applicant => applicant.getApplicantCareers()
     },
     capabilities: {
       type: nonNull(List(GraphQLCapability)),

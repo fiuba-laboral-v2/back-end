@@ -40,9 +40,12 @@ const UPDATE_CURRENT_APPLICANT = gql`
         description
       }
       careers {
-        code
-        description
-        credits
+        careerCode
+        career {
+          code
+          description
+          credits
+        }
         creditsCount
         isGraduate
       }
@@ -115,11 +118,16 @@ describe("updateCurrentApplicant", () => {
         surname: dataToUpdate.user.surname
       },
       description: dataToUpdate.description,
-      careers: [expect.objectContaining({
-        code: dataToUpdate.careers[0].code,
+      careers: [{
+        career: {
+          code: newCareer.code,
+          description: newCareer.description,
+          credits: newCareer.credits
+        },
+        careerCode: dataToUpdate.careers[0].code,
         creditsCount: dataToUpdate.careers[0].creditsCount,
         isGraduate: dataToUpdate.careers[0].isGraduate
-      })],
+      }],
       sections: dataToUpdate.sections,
       links: dataToUpdate.links
     }));

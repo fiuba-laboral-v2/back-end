@@ -16,36 +16,40 @@ import { Secretary } from "$models/Admin";
 import { Admin } from "$models";
 
 const GET_APPLICANTS = gql`
-    query getApplicants {
-        getApplicants {
+  query getApplicants {
+    getApplicants {
+        uuid
+        user {
+          email
+          name
+          surname
+        }
+        padron
+        description
+        capabilities {
             uuid
-            user {
-              email
-              name
-              surname
-            }
-            padron
             description
-            capabilities {
-                uuid
-                description
-            }
-            careers {
-                code
-                description
-                credits
-                creditsCount
-            }
-            sections {
-              title
-              text
-            }
-            links {
-              name
-              url
-            }
+        }
+        careers {
+          careerCode
+          career {
+            code
+            description
+            credits
+          }
+          creditsCount
+          isGraduate
+        }
+        sections {
+          title
+          text
+        }
+        links {
+          name
+          url
         }
     }
+  }
 `;
 
 describe("getApplicants", () => {
@@ -70,13 +74,13 @@ describe("getApplicants", () => {
   describe("when applicants exists", () => {
     it("fetches the existing applicant", async () => {
       const newCareer = await CareerGenerator.instance();
-      const applicantCareer = [{ code: newCareer.code, creditsCount: 150, isGraduate: true }];
+      const applicantCareer = { code: newCareer.code, creditsCount: 150, isGraduate: true };
       const {
         user,
         applicant,
         apolloClient
       } = await TestClientGenerator.applicant({
-        careers: applicantCareer,
+        careers: [applicantCareer],
         status: { approvalStatus: ApprovalStatus.approved, admin }
       });
 
@@ -85,7 +89,8 @@ describe("getApplicants", () => {
       expect(errors).toBeUndefined();
       const [career] = await applicant.getCareers();
       const capabilities = await applicant.getCapabilities();
-      expect(data!.getApplicants[0]).toMatchObject({
+      expect(data!.getApplicants).toEqual(expect.arrayContaining([{
+        uuid: applicant.uuid,
         user: {
           email: user.email,
           name: user.name,
@@ -95,29 +100,33 @@ describe("getApplicants", () => {
         description: applicant.description,
         capabilities: capabilities.map(({ uuid, description }) => ({ uuid, description })),
         careers: [{
-          code: career.code,
-          description: career.description,
-          credits: career.credits,
-          creditsCount: applicantCareer[0].creditsCount
+          career: {
+            code: career.code,
+            description: career.description,
+            credits: career.credits
+          },
+          careerCode: applicantCareer.code,
+          creditsCount: applicantCareer.creditsCount,
+          isGraduate: applicantCareer.isGraduate
         }],
         sections: [],
         links: []
-      });
+      }]));
     });
 
     it("allows an applicant user to fetch all applicants", async () => {
       const newCareer = await CareerGenerator.instance();
-      const applicantCareersData = [{ code: newCareer.code, creditsCount: 150, isGraduate: false }];
+      const applicantCareerData = { code: newCareer.code, creditsCount: 150, isGraduate: false };
       const {
         applicant: firstApplicant,
         apolloClient
       } = await TestClientGenerator.applicant({
-        careers: applicantCareersData,
+        careers: [applicantCareerData],
         capabilities: ["Go"],
         status: { approvalStatus: ApprovalStatus.approved, admin }
       });
       const secondApplicant = await ApplicantGenerator.instance.withMinimumData({
-        careers: applicantCareersData,
+        careers: [applicantCareerData],
         capabilities: ["Go"]
       });
       const applicants = [firstApplicant, secondApplicant];
@@ -129,7 +138,6 @@ describe("getApplicants", () => {
         applicants.map(async applicant => {
           const user = await applicant.getUser();
           const capabilities = await applicant.getCapabilities();
-          const applicantCareers = await applicant.getApplicantCareers();
           return {
             uuid: applicant.uuid,
             user: {
@@ -139,17 +147,16 @@ describe("getApplicants", () => {
             },
             padron: applicant.padron,
             description: applicant.description,
-            careers: await Promise.all(
-              applicantCareers.map(async applicantCareer => {
-                const { code, description, credits } = await applicantCareer.getCareer();
-                return {
-                  code,
-                  description,
-                  creditsCount: applicantCareer.creditsCount,
-                  credits
-                };
-              })
-            ),
+            careers: [{
+              career: {
+                code: newCareer.code,
+                description: newCareer.description,
+                credits: newCareer.credits
+              },
+              careerCode: applicantCareerData.code,
+              creditsCount: applicantCareerData.creditsCount,
+              isGraduate: applicantCareerData.isGraduate
+            }],
             capabilities: capabilities.map(({ uuid, description }) => ({ uuid, description })),
             links: [],
             sections: []
