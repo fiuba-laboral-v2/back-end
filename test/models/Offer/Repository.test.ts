@@ -271,7 +271,7 @@ describe("OfferRepository", () => {
       const result = await OfferRepository.findAll({});
       expect(result.shouldFetchMore).toEqual(true);
       expect(
-        result.offers
+        result.results
           .map(offer => offer.uuid)
       ).toEqual(
         allOffersByDescUpdatedAt
@@ -288,7 +288,7 @@ describe("OfferRepository", () => {
       });
       expect(result.shouldFetchMore).toEqual(false);
       expect(
-        result.offers
+        result.results
           .map(offer => offer.uuid)
       ).toEqual(
         allOffersByDescUpdatedAt

@@ -20,7 +20,7 @@ import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 const GET_OFFERS = gql`
   query ($updatedBeforeThan: DateTime) {
     getOffers(updatedBeforeThan: $updatedBeforeThan) {
-      offers {
+      results {
         uuid
       }
       shouldFetchMore
@@ -70,14 +70,14 @@ describe("getOffers", () => {
     it("returns two offers if two offers were created", async () => {
       const apolloClient = await approvedApplicantTestClient();
       const { data } = await apolloClient.query({ query: GET_OFFERS });
-      expect(data!.getOffers.offers).toHaveLength(2);
+      expect(data!.getOffers.results).toHaveLength(2);
       expect(data!.getOffers.shouldFetchMore).toEqual(false);
     });
 
     it("returns two offers sorted by updatedAt", async () => {
       const apolloClient = await approvedApplicantTestClient();
       const { data } = await apolloClient.query({ query: GET_OFFERS });
-      expect(data!.getOffers.offers).toMatchObject(
+      expect(data!.getOffers.results).toMatchObject(
         [
           { uuid: offer2.uuid },
           { uuid: offer1.uuid }
@@ -94,7 +94,7 @@ describe("getOffers", () => {
           updatedBeforeThan: offer2.updatedAt.toISOString()
         }
       });
-      expect(data!.getOffers.offers).toMatchObject(
+      expect(data!.getOffers.results).toMatchObject(
         [
           { uuid: offer1.uuid }
         ]
@@ -112,7 +112,7 @@ describe("getOffers", () => {
           updatedBeforeThan: offer1.updatedAt.toISOString()
         }
       });
-      expect(data!.getOffers.offers).toMatchObject(
+      expect(data!.getOffers.results).toMatchObject(
         [
           { uuid: offer2.uuid }
         ]
@@ -142,7 +142,7 @@ describe("getOffers", () => {
         const itemsPerPage = 10;
         mockItemsPerPage(itemsPerPage);
         const { data } = await apolloClient.query({ query: GET_OFFERS });
-        expect(data!.getOffers.offers.map(offer => offer.uuid)).toEqual(
+        expect(data!.getOffers.results.map(offer => offer.uuid)).toEqual(
           [
             offer1.uuid,
             ...newOffersByDescUpdatedAt.slice(0, itemsPerPage - 1).map(offer => offer.uuid)
@@ -167,7 +167,7 @@ describe("getOffers", () => {
             updatedBeforeThan: offersByDescUpdatedAt[lastOfferIndex].updatedAt.toISOString()
           }
         });
-        expect(data!.getOffers.offers.map(offer => offer.uuid)).toEqual(
+        expect(data!.getOffers.results.map(offer => offer.uuid)).toEqual(
           offersByDescUpdatedAt
             .slice(lastOfferIndex + 1, lastOfferIndex + 1 + itemsPerPage)
             .map(offer => offer.uuid)
@@ -189,7 +189,7 @@ describe("getOffers", () => {
       const { data, errors } = await apolloClient.query({ query: GET_OFFERS });
 
       expect(errors).toBeUndefined();
-      expect(data!.getOffers.offers).toHaveLength(0);
+      expect(data!.getOffers.results).toHaveLength(0);
       expect(data!.getOffers.shouldFetchMore).toEqual(false);
     });
   });
