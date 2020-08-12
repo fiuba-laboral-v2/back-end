@@ -70,7 +70,7 @@ describe("getApplicants", () => {
   describe("when applicants exists", () => {
     it("fetches the existing applicant", async () => {
       const newCareer = await CareerGenerator.instance();
-      const applicantCareer = [{ code: newCareer.code, creditsCount: 150 }];
+      const applicantCareer = [{ code: newCareer.code, creditsCount: 150, isGraduate: true }];
       const {
         user,
         applicant,
@@ -107,7 +107,7 @@ describe("getApplicants", () => {
 
     it("allows an applicant user to fetch all applicants", async () => {
       const newCareer = await CareerGenerator.instance();
-      const applicantCareersData = [{ code: newCareer.code, creditsCount: 150 }];
+      const applicantCareersData = [{ code: newCareer.code, creditsCount: 150, isGraduate: false }];
       const {
         applicant: firstApplicant,
         apolloClient

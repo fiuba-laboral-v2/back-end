@@ -95,7 +95,7 @@ describe("saveApplicant", () => {
         mutation: SAVE_APPLICANT_WITH_COMPLETE_DATA,
         variables: {
           ...applicantData,
-          careers: [{ code: career.code, creditsCount: career.credits - 1 }]
+          careers: [{ code: career.code, creditsCount: career.credits - 1, isGraduate: true }]
         }
       });
       expect(errors).toBeUndefined();
@@ -125,7 +125,7 @@ describe("saveApplicant", () => {
         mutation: SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA,
         variables: {
           ...applicantData,
-          careers: [{ code: career.code, creditsCount: career.credits - 1 }]
+          careers: [{ code: career.code, creditsCount: career.credits - 1, isGraduate: false }]
         }
       });
       expect(errors).toBeUndefined();
@@ -141,7 +141,6 @@ describe("saveApplicant", () => {
           padron: applicantData.padron
         }
       );
-      expect(data!.saveApplicant).toHaveProperty("careers");
       expect(data!.saveApplicant).not.toHaveProperty("capabilities");
       expect(data!.saveApplicant).not.toHaveProperty("description");
       expect(data!.saveApplicant.careers).toMatchObject([{

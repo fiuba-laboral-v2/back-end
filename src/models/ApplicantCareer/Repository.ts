@@ -22,7 +22,8 @@ export const ApplicantCareersRepository = {
       {
         careerCode: applicantCareer.code,
         applicantUuid: applicant.uuid,
-        creditsCount: applicantCareer.creditsCount
+        creditsCount: applicantCareer.creditsCount,
+        isGraduate: applicantCareer.isGraduate
       }
       ))
       ,
@@ -35,9 +36,7 @@ export const ApplicantCareersRepository = {
     transaction?: Transaction
   ) => {
     await ApplicantCareer.destroy({
-      where: {
-        applicantUuid: applicant.uuid
-      },
+      where: { applicantUuid: applicant.uuid },
       transaction
     });
 
@@ -46,7 +45,8 @@ export const ApplicantCareersRepository = {
         ({
           careerCode: applicantCareer.code,
           applicantUuid: applicant.uuid,
-          creditsCount: applicantCareer.creditsCount
+          creditsCount: applicantCareer.creditsCount,
+          isGraduate: applicantCareer.isGraduate
         })
       ),
       { transaction }

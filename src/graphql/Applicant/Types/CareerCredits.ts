@@ -1,7 +1,7 @@
 import { GraphQLInputObjectType } from "graphql";
-import { Int, nonNull, String } from "$graphql/fieldTypes";
+import { Int, nonNull, String, Boolean } from "$graphql/fieldTypes";
 
-const GraphQLCareerCredits = new GraphQLInputObjectType({
+export const GraphQLCareerCredits = new GraphQLInputObjectType({
   name: "CareerCredits",
   fields: () => ({
     code: {
@@ -9,8 +9,9 @@ const GraphQLCareerCredits = new GraphQLInputObjectType({
     },
     creditsCount: {
       type: nonNull(Int)
+    },
+    isGraduate: {
+      type: nonNull(Boolean)
     }
   })
 });
-
-export { GraphQLCareerCredits };

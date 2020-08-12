@@ -25,7 +25,6 @@ export = {
           },
           isGraduate: {
             allowNull: false,
-            defaultValue: false,
             type: BOOLEAN
           },
           createdAt: {
