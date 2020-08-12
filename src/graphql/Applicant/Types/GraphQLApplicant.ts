@@ -40,20 +40,15 @@ export const GraphQLApplicant = new GraphQLObjectType<Applicant>({
     },
     capabilities: {
       type: nonNull(List(GraphQLCapability)),
-      resolve: async applicant =>
-        (await applicant.getCapabilities()).map(({ uuid, description }) => ({ uuid, description }))
+      resolve: applicant => applicant.getCapabilities()
     },
     sections: {
       type: nonNull(List(GraphQLSection)),
-      resolve: async applicant =>
-        (await applicant.getSections()).map(({ uuid, title, text, displayOrder }) =>
-          ({ uuid, title, text, displayOrder })
-        )
+      resolve: applicant => applicant.getSections()
     },
     links: {
       type: nonNull(List(GraphQLLink)),
-      resolve: async applicant =>
-        (await applicant.getLinks()).map(({ name, url }) => ({ name, url }))
+      resolve: applicant => applicant.getLinks()
     }
   })
 });
