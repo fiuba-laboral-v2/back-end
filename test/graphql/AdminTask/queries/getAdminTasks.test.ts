@@ -19,7 +19,7 @@ const GET_ADMIN_TASKS = gql`
   query GetAdminTasks(
     $adminTaskTypes: [AdminTaskType]!,
     $statuses: [ApprovalStatus]!,
-    $updatedBeforeThan: DateTime
+    $updatedBeforeThan: PaginatedInput
   ) {
     getAdminTasks(
       adminTaskTypes: $adminTaskTypes,
@@ -178,10 +178,14 @@ describe("getAdminTasks", () => {
     const itemsPerPage = 6;
     mockItemsPerPage(itemsPerPage);
     const lastTaskIndex = 3;
+    const lastTask = allTasksByDescUpdatedAt[lastTaskIndex];
     const result = await getAdminTasks({
       adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
-      updatedBeforeThan: allTasksByDescUpdatedAt[lastTaskIndex].updatedAt.toISOString()
+      updatedBeforeThan: {
+        dateTime: lastTask.updatedAt.toISOString(),
+        uuid: lastTask.uuid
+      }
     });
     expect(result.shouldFetchMore).toEqual(false);
     expect(

@@ -41,7 +41,7 @@ describe("findAdminTasksQuery", () => {
         )
       SELECT * FROM "AdminTask"
       WHERE ("AdminTask"."approvalStatus" = '${status}')
-      ORDER BY "AdminTask"."updatedAt" DESC
+      ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
       LIMIT ${limit}
     `;
     expect(query).toEqualIgnoringSpacing(expectedQuery);
@@ -74,7 +74,7 @@ describe("findAdminTasksQuery", () => {
         )
       SELECT * FROM "AdminTask"
       WHERE ("AdminTask"."approvalStatus" = '${status}')
-      ORDER BY "AdminTask"."updatedAt" DESC
+      ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
       LIMIT ${limit}
     `;
     expect(query).toEqualIgnoringSpacing(expectedQuery);
@@ -103,7 +103,7 @@ describe("findAdminTasksQuery", () => {
         )
       SELECT * FROM "AdminTask"
       WHERE ("AdminTask"."approvalStatus" = '${status}')
-      ORDER BY "AdminTask"."updatedAt" DESC
+      ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
       LIMIT ${limit}
     `;
     expect(query).toEqualIgnoringSpacing(expectedQuery);
@@ -208,7 +208,7 @@ describe("findAdminTasksQuery", () => {
         OR "AdminTask"."approvalStatus" = 'approved'
         OR "AdminTask"."approvalStatus" = 'rejected'
       )
-      ORDER BY "AdminTask"."updatedAt" DESC
+      ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
       LIMIT ${limit}
     `;
     expect(query).toEqualIgnoringSpacing(expectedQuery);
@@ -216,10 +216,14 @@ describe("findAdminTasksQuery", () => {
 
   it("optionally filters by maximum updatedAt (not inclusive)", async () => {
     const limit = 205;
+    const uuid = "6b228e77-9e8e-4438-872e-f3714a5842da";
     const query = findAdminTasksQuery({
       adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
-      updatedBeforeThan: new Date("1995-12-17T03:24:00Z"),
+      updatedBeforeThan: {
+        dateTime: new Date("1995-12-17T03:24:00Z"),
+        uuid
+      },
       limit
     });
     const expectedQuery = `
@@ -252,9 +256,14 @@ describe("findAdminTasksQuery", () => {
         OR "AdminTask"."approvalStatus" = 'approved'
         OR "AdminTask"."approvalStatus" = 'rejected'
       ) AND (
-        "AdminTask"."updatedAt" < '1995-12-17T03:24:00.000Z'
+        (
+          "AdminTask"."updatedAt" < '1995-12-17T03:24:00.000Z'
+        ) OR (
+          "AdminTask"."updatedAt" = '1995-12-17T03:24:00.000Z'
+          AND "AdminTask"."uuid" < '${uuid}'
+        )
       )
-      ORDER BY "AdminTask"."updatedAt" DESC
+      ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
       LIMIT ${limit}
     `;
     expect(query).toEqualIgnoringSpacing(expectedQuery);
@@ -296,7 +305,7 @@ describe("findAdminTasksQuery", () => {
         "AdminTask"."approvalStatus" = 'approved'
         OR "AdminTask"."approvalStatus" = 'rejected'
       )
-      ORDER BY "AdminTask"."updatedAt" DESC
+      ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
       LIMIT ${limit}
     `;
     expect(query).toEqualIgnoringSpacing(expectedQuery);

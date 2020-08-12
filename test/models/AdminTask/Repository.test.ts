@@ -159,10 +159,14 @@ describe("AdminTaskRepository", () => {
     const itemsPerPage = 3;
     mockItemsPerPage(itemsPerPage);
     const lastTaskIndex = 1;
+    const lastTask = allTasksByDescUpdatedAt[lastTaskIndex];
     const result = await AdminTaskRepository.find({
       adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
-      updatedBeforeThan: allTasksByDescUpdatedAt[lastTaskIndex].updatedAt
+      updatedBeforeThan: {
+        dateTime: lastTask.updatedAt,
+        uuid: lastTask.uuid
+      }
     });
     expect(result.shouldFetchMore).toEqual(true);
     expect(

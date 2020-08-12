@@ -15,6 +15,6 @@ export const GraphQLPaginatedInput = new GraphQLInputObjectType({
 });
 
 export interface IPaginatedInput {
-  dateTime: string;
+  dateTime: Date;
   uuid: string;
 }

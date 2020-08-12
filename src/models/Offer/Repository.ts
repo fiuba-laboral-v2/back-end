@@ -55,11 +55,11 @@ export const OfferRepository = {
           [Op.or]: [
             {
               updatedAt: {
-                [Op.lt]: updatedBeforeThan.dateTime
+                [Op.lt]: updatedBeforeThan.dateTime.toISOString()
               }
             },
             {
-              updatedAt: updatedBeforeThan.dateTime,
+              updatedAt: updatedBeforeThan.dateTime.toISOString(),
               uuid: {
                 [Op.lt]: updatedBeforeThan.uuid
               }
