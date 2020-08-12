@@ -13,7 +13,7 @@ export const AdminTaskRepository = {
     if (filter.adminTaskTypes.length === 0 || filter.statuses.length === 0) {
       return {
         shouldFetchMore: false,
-        tasks: []
+        results: []
       };
     }
     const limit = PaginationConfig.itemsPerPage() + 1;
@@ -23,7 +23,7 @@ export const AdminTaskRepository = {
     );
     return {
       shouldFetchMore: rows.length === limit,
-      tasks: rows.slice(0, limit - 1).map((row: object) => {
+      results: rows.slice(0, limit - 1).map((row: object) => {
         const tableName = row[TABLE_NAME_COLUMN];
         const modelClass = getModelByTableName(tableName);
         if (!modelClass) throw new Error(`Invalid table name: ${tableName}`);

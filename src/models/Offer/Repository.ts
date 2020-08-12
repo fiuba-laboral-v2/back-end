@@ -61,7 +61,7 @@ export const OfferRepository = {
     });
     return {
       shouldFetchMore: result.length === limit,
-      offers: result.slice(0, limit - 1)
+      results: result.slice(0, limit - 1)
     };
   },
   findByCompanyUuid: (companyUuid: string) =>

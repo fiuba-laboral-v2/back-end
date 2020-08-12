@@ -52,7 +52,7 @@ describe("AdminTaskRepository", () => {
       adminTaskTypes: adminTasks.map(adminTask => adminTask.constructor.name) as any,
       statuses: statuses
     });
-    expect(result.tasks).toEqual(expect.arrayContaining(
+    expect(result.results).toEqual(expect.arrayContaining(
       adminTasks.map(adminTask => expect.objectContaining(adminTask.toJSON()))
     ));
     expect(result.shouldFetchMore).toEqual(false);
@@ -63,7 +63,7 @@ describe("AdminTaskRepository", () => {
       adminTaskTypes: [AdminTaskType.Applicant],
       statuses: []
     });
-    expect(result).toEqual({ tasks: [], shouldFetchMore: false });
+    expect(result).toEqual({ results: [], shouldFetchMore: false });
   });
 
   it("returns an empty array if no adminTaskTypes are provided", async () => {
@@ -71,7 +71,7 @@ describe("AdminTaskRepository", () => {
       adminTaskTypes: [],
       statuses: [ApprovalStatus.pending]
     });
-    expect(result).toEqual({ tasks: [], shouldFetchMore: false });
+    expect(result).toEqual({ results: [], shouldFetchMore: false });
   });
 
   it("returns an empty array if no adminTaskTypes and statuses are provided", async () => {
@@ -79,7 +79,7 @@ describe("AdminTaskRepository", () => {
       adminTaskTypes: [],
       statuses: []
     });
-    expect(result).toEqual({ tasks: [], shouldFetchMore: false });
+    expect(result).toEqual({ results: [], shouldFetchMore: false });
   });
 
   it("returns only pending companies", async () => {
@@ -143,7 +143,7 @@ describe("AdminTaskRepository", () => {
       adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected]
     });
-    expect(result.tasks.map(adminTask => adminTask.uuid)).toEqual([
+    expect(result.results.map(adminTask => adminTask.uuid)).toEqual([
       pendingApplicant.uuid,
       approvedApplicant.uuid,
       rejectedApplicant.uuid,
@@ -151,7 +151,7 @@ describe("AdminTaskRepository", () => {
       approvedCompany.uuid,
       rejectedCompany.uuid
     ]);
-    expect(result.tasks).toBeSortedBy({ key: "updatedAt", order: "desc" });
+    expect(result.results).toBeSortedBy({ key: "updatedAt", order: "desc" });
     expect(result.shouldFetchMore).toEqual(false);
   });
 
@@ -166,7 +166,7 @@ describe("AdminTaskRepository", () => {
     });
     expect(result.shouldFetchMore).toEqual(true);
     expect(
-      result.tasks
+      result.results
         .map(task => task.uuid)
     ).toEqual(
       allTasksByDescUpdatedAt
