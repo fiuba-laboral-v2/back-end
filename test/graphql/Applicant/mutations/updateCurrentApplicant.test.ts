@@ -14,7 +14,7 @@ const UPDATE_CURRENT_APPLICANT = gql`
     $padron: Int,
     $user: UserUpdateInput,
     $description: String,
-    $careers: [CareerCredits],
+    $careers: [ApplicantCareerInput],
     $capabilities: [String],
     $sections: [SectionInput],
     $links: [LinkInput]

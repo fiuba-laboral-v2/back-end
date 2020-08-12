@@ -13,7 +13,7 @@ const SAVE_APPLICANT_WITH_COMPLETE_DATA = gql`
   mutation SaveApplicant(
       $user: UserInput!,
       $padron: Int!,
-      $careers: [CareerCredits]!,
+      $careers: [ApplicantCareerInput]!,
       $description: String,
       $capabilities: [String]
     ) {
@@ -53,7 +53,7 @@ const SAVE_APPLICANT_WITH_COMPLETE_DATA = gql`
 `;
 
 const SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA = gql`
-  mutation SaveApplicant ($user: UserInput!,$padron: Int!,$careers: [CareerCredits]!) {
+  mutation SaveApplicant ($user: UserInput!,$padron: Int!,$careers: [ApplicantCareerInput]!) {
     saveApplicant(user: $user,padron: $padron,careers: $careers) {
       uuid
       user {
