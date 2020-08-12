@@ -36,7 +36,7 @@ export const GraphQLApplicant = new GraphQLObjectType<Applicant>({
     },
     careers: {
       type: nonNull(List(GraphQLApplicantCareer)),
-      resolve: async applicant => applicant.getApplicantCareers()
+      resolve: applicant => applicant.getApplicantCareers()
     },
     capabilities: {
       type: nonNull(List(GraphQLCapability)),
