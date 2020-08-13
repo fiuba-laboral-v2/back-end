@@ -2,7 +2,7 @@ import { DatabaseError, ForeignKeyConstraintError, ValidationError } from "seque
 import { CareerRepository } from "$models/Career";
 import { ApplicantRepository, IApplicantEditable } from "$models/Applicant";
 import { Admin, Applicant } from "$models";
-import { ApplicantCareersRepository } from "$models/ApplicantCareer";
+import { ApplicantCareersRepository } from "$models/Applicant/ApplicantCareer";
 import { UserRepository } from "$models/User";
 import { CapabilityRepository } from "$models/Capability";
 import { ApplicantNotFound, ApplicantNotUpdatedError } from "$models/Applicant/Errors";

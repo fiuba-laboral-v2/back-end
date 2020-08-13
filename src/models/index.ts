@@ -5,7 +5,7 @@ export { Section } from "./Applicant/Section/Model";
 export { ApplicantLink } from "./Applicant/Link/Model";
 export { JobApplication } from "./JobApplication/Model";
 export { Career } from "./Career/Model";
-export { ApplicantCareer } from "./ApplicantCareer/Model";
+export { ApplicantCareer } from "./Applicant/ApplicantCareer/Model";
 export { Capability } from "./Capability/Model";
 export { ApplicantCapability } from "./ApplicantCapability/Model";
 export { Company } from "./Company/Model";
