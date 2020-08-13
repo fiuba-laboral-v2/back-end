@@ -1,3 +1,4 @@
+import { DatabaseError } from "sequelize";
 import { ApplicantCareersRepository } from "$models/Applicant/ApplicantCareer";
 import { UserRepository } from "$models/User";
 import { CareerRepository } from "$models/Career";
@@ -42,6 +43,47 @@ describe("ApplicantCareersRepository", () => {
       ).rejects.toThrowErrorWithMessage(
         ApplicantCareerNotFound,
         ApplicantCareerNotFound.buildMessage(applicantUuid, careerCode)
+      );
+    });
+  });
+
+  describe("bulkCreate", () => {
+    it("creates two applicantCareers", async () => {
+      const career1 = await CareerGenerator.instance();
+      const career2 = await CareerGenerator.instance();
+      const applicant = await ApplicantGenerator.instance.withMinimumData();
+      const applicantCareersData1 = {
+        careerCode: career1.code,
+        isGraduate: true
+      };
+      const applicantCareersData2 = {
+        careerCode: career2.code,
+        isGraduate: false,
+        approvedSubjectCount: 20,
+        approvedYearCount: 3
+      };
+      const applicantCareers = await ApplicantCareersRepository.bulkCreate(
+        [applicantCareersData1, applicantCareersData2],
+        applicant
+      );
+      expect(applicantCareers).toEqual([
+        expect.objectContaining(applicantCareersData1),
+        expect.objectContaining(applicantCareersData2)
+      ]);
+    });
+
+    it("throws an error if one of the applicantCareers data has no isGraduate", async () => {
+      const { code: careerCode } = await CareerGenerator.instance();
+      const applicant = await ApplicantGenerator.instance.withMinimumData();
+      const applicantCareersData = [
+        { careerCode, isGraduate: true },
+        { careerCode, isGraduate: null as any }
+      ];
+      await expect(
+        ApplicantCareersRepository.bulkCreate(applicantCareersData, applicant)
+      ).rejects.toThrowErrorWithMessage(
+        DatabaseError,
+        "null value in column \"isGraduate\" violates not-null constraint"
       );
     });
   });
