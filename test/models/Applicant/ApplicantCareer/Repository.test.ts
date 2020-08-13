@@ -11,14 +11,38 @@ describe("ApplicantCareersRepository", () => {
     await CareerRepository.truncate();
   });
 
-  it("throws an error if the applicantCareer does not exists", async () => {
-    const { uuid: applicantUuid } = await ApplicantGenerator.instance.withMinimumData();
-    const { code: careerCode } = await CareerGenerator.instance();
-    await expect(
-      ApplicantCareersRepository.findByApplicantAndCareer(applicantUuid, careerCode)
-    ).rejects.toThrowErrorWithMessage(
-      ApplicantCareerNotFound,
-      ApplicantCareerNotFound.buildMessage(applicantUuid, careerCode)
-    );
+  describe("findByApplicantAndCareer", () => {
+    it("returns an applicantCareer", async () => {
+      const { code: careerCode } = await CareerGenerator.instance();
+      const { uuid: applicantUuid } = await ApplicantGenerator.instance.withMinimumData({
+        careers: [{
+          careerCode,
+          isGraduate: true
+        }]
+      });
+      const applicantCareer = await ApplicantCareersRepository.findByApplicantAndCareer(
+        applicantUuid,
+        careerCode
+      );
+      expect(applicantCareer).toEqual(expect.objectContaining({
+        careerCode,
+        isGraduate: true,
+        approvedYearCount: null,
+        approvedSubjectCount: null,
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date)
+      }));
+    });
+
+    it("throws an error if the applicantCareer does not exists", async () => {
+      const { uuid: applicantUuid } = await ApplicantGenerator.instance.withMinimumData();
+      const { code: careerCode } = await CareerGenerator.instance();
+      await expect(
+        ApplicantCareersRepository.findByApplicantAndCareer(applicantUuid, careerCode)
+      ).rejects.toThrowErrorWithMessage(
+        ApplicantCareerNotFound,
+        ApplicantCareerNotFound.buildMessage(applicantUuid, careerCode)
+      );
+    });
   });
 });
