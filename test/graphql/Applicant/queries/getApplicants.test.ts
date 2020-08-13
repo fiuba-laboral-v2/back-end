@@ -37,7 +37,8 @@ const GET_APPLICANTS = gql`
             description
             credits
           }
-          creditsCount
+          approvedSubjectCount
+          approvedYearCount
           isGraduate
         }
         sections {
@@ -74,7 +75,7 @@ describe("getApplicants", () => {
   describe("when applicants exists", () => {
     it("fetches the existing applicant", async () => {
       const newCareer = await CareerGenerator.instance();
-      const applicantCareer = { code: newCareer.code, creditsCount: 150, isGraduate: true };
+      const applicantCareer = { careerCode: newCareer.code, isGraduate: true };
       const {
         user,
         applicant,
@@ -105,9 +106,9 @@ describe("getApplicants", () => {
             description: career.description,
             credits: career.credits
           },
-          careerCode: applicantCareer.code,
-          creditsCount: applicantCareer.creditsCount,
-          isGraduate: applicantCareer.isGraduate
+          ...applicantCareer,
+          approvedSubjectCount: null,
+          approvedYearCount: null
         }],
         sections: [],
         links: []
@@ -116,7 +117,12 @@ describe("getApplicants", () => {
 
     it("allows an applicant user to fetch all applicants", async () => {
       const newCareer = await CareerGenerator.instance();
-      const applicantCareerData = { code: newCareer.code, creditsCount: 150, isGraduate: false };
+      const applicantCareerData = {
+        careerCode: newCareer.code,
+        approvedSubjectCount: 20,
+        approvedYearCount: 3,
+        isGraduate: false
+      };
       const {
         applicant: firstApplicant,
         apolloClient
@@ -153,9 +159,7 @@ describe("getApplicants", () => {
                 description: newCareer.description,
                 credits: newCareer.credits
               },
-              careerCode: applicantCareerData.code,
-              creditsCount: applicantCareerData.creditsCount,
-              isGraduate: applicantCareerData.isGraduate
+              ...applicantCareerData
             }],
             capabilities: capabilities.map(({ uuid, description }) => ({ uuid, description })),
             links: [],

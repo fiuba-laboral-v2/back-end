@@ -1,38 +1,26 @@
-import { CareerRepository } from "$models/Career";
-import { ApplicantCareer, Career } from "$models";
-import { CareerGenerator } from "$generators/Career";
-import { NumberIsTooLargeError, NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
+import { ApplicantCareer } from "$models";
+import { NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
 import { ValidationError } from "sequelize";
 
 describe("ApplicantCareer", () => {
-  let career: Career;
-
-  beforeAll(async () => {
-    await CareerRepository.truncate();
-    career = await CareerGenerator.instance();
-  });
-
-  it("instantiates a valid applicantCareer", async () => {
-    const attributes = {
-      careerCode: career.code,
-      applicantUuid: "sarasa",
-      creditsCount: 12,
-      isGraduate: true
-    };
-    const applicantCareer = new ApplicantCareer(attributes);
-    await expect(applicantCareer.validate()).resolves.not.toThrow();
-    expect(applicantCareer).toEqual(expect.objectContaining({
-      ...attributes,
-      createdAt: expect.any(Date),
-      updatedAt: expect.any(Date)
-    }));
+  it("throws and error if applicantUuid has invalid format", async () => {
+    const applicantCareer = new ApplicantCareer({
+      careerCode: "10",
+      applicantUuid: "invalidUuidFormat",
+      isGraduate: false
+    });
+    await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      "Validation error: uuid has invalid format"
+    );
   });
 
   it("throws and error if no isGraduate is provided", async () => {
     const applicantCareer = new ApplicantCareer({
-      careerCode: career.code,
-      applicantUuid: "sarasa",
-      creditsCount: 12
+      careerCode: "10",
+      applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+      approvedYearCount: 5,
+      approvedSubjectCount: 20
     });
     await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -40,39 +28,123 @@ describe("ApplicantCareer", () => {
     );
   });
 
-  it("throws an error if creditsCount is negative", async () => {
-    const applicantCareer = new ApplicantCareer({
-      careerCode: career.code,
-      applicantUuid: "sarasa",
-      creditsCount: -12,
-      isGraduate: false
+  describe("graduated applicant", () => {
+    it("instantiates an applicantCareer for a student", async () => {
+      const attributes = {
+        careerCode: "10",
+        applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+        approvedYearCount: 5,
+        approvedSubjectCount: 20,
+        isGraduate: false
+      };
+      const applicantCareer = new ApplicantCareer(attributes);
+      await expect(applicantCareer.validate()).resolves.not.toThrow();
+      expect(applicantCareer).toEqual(expect.objectContaining({
+        ...attributes,
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date)
+      }));
     });
-    await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
-      ValidationError,
-      NumberIsTooSmallError.buildMessage(0, true)
-    );
+
+    it("throws error if approvedSubjectCount or approvedYearCount are provided", async () => {
+      const applicantCareer = new ApplicantCareer({
+        careerCode: "10",
+        applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+        approvedYearCount: 5,
+        approvedSubjectCount: 20,
+        isGraduate: true
+      });
+      await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        "approvedSubjectCount and approvedYearCount should not be present if isGraduate is true"
+      );
+    });
   });
 
-  it("throws an error if creditsCount is bigger than its careers credits", async () => {
-    const applicantCareer = new ApplicantCareer({
-      careerCode: career.code,
-      applicantUuid: "sarasa",
-      creditsCount: career.credits + 12,
-      isGraduate: false
+  describe("not graduated applicant", () => {
+    it("instantiates an applicantCareer for a student", async () => {
+      const attributes = {
+        careerCode: "10",
+        applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+        approvedYearCount: 3,
+        approvedSubjectCount: 20,
+        isGraduate: false
+      };
+      const applicantCareer = new ApplicantCareer(attributes);
+      await expect(applicantCareer.validate()).resolves.not.toThrow();
+      expect(applicantCareer).toEqual(expect.objectContaining({
+        ...attributes,
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date)
+      }));
     });
-    await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
-      ValidationError,
-      NumberIsTooLargeError.buildMessage(career.credits, true)
-    );
-  });
 
-  it("does not throw an error if creditsCount is the same as its careers credits", async () => {
-    const applicantCareer = new ApplicantCareer({
-      careerCode: career.code,
-      applicantUuid: "sarasa",
-      creditsCount: career.credits,
-      isGraduate: true
+    it("throws an error if approvedYearCount is negative", async () => {
+      const applicantCareer = new ApplicantCareer({
+        careerCode: "10",
+        applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+        approvedYearCount: -12,
+        approvedSubjectCount: 20,
+        isGraduate: false
+      });
+      await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        NumberIsTooSmallError.buildMessage(0, false)
+      );
     });
-    await expect(applicantCareer.validate()).resolves.not.toThrow();
+
+    it("throws an error if approvedYearCount is zero", async () => {
+      const applicantCareer = new ApplicantCareer({
+        careerCode: "10",
+        applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+        approvedYearCount: 0,
+        approvedSubjectCount: 20,
+        isGraduate: false
+      });
+      await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        NumberIsTooSmallError.buildMessage(0, false)
+      );
+    });
+
+    it("throws an error if approvedSubjectCount is negative", async () => {
+      const applicantCareer = new ApplicantCareer({
+        careerCode: "10",
+        applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+        approvedYearCount: 12,
+        approvedSubjectCount: -20,
+        isGraduate: false
+      });
+      await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        NumberIsTooSmallError.buildMessage(0, true)
+      );
+    });
+
+    it("throws an error if no approvedSubjectCount is provided", async () => {
+      const applicantCareer = new ApplicantCareer({
+        careerCode: "10",
+        applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+        approvedYearCount: 12,
+        isGraduate: false
+      });
+      await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        "approvedSubjectCount and approvedYearCount are mandatory if isGraduate is false"
+      );
+    });
+
+    it("throws an error if no approvedYearCount is provided", async () => {
+      const applicantCareer = new ApplicantCareer({
+        careerCode: "10",
+        applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+        approvedSubjectCount: 20,
+        isGraduate: false
+      });
+      await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        "approvedSubjectCount and approvedYearCount are mandatory if isGraduate is false"
+      );
+    });
   });
 });

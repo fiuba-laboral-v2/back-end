@@ -4,11 +4,14 @@ import { Int, nonNull, String, Boolean } from "$graphql/fieldTypes";
 export const GraphQLApplicantCareerInput = new GraphQLInputObjectType({
   name: "ApplicantCareerInput",
   fields: () => ({
-    code: {
+    careerCode: {
       type: nonNull(String)
     },
-    creditsCount: {
-      type: nonNull(Int)
+    approvedSubjectCount: {
+      type: Int
+    },
+    approvedYearCount: {
+      type: Int
     },
     isGraduate: {
       type: nonNull(Boolean)

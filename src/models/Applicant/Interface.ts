@@ -2,8 +2,9 @@ import { TLink } from "./Link/Interface";
 import { ICreateFiubaUser, IUser, IUserEditable } from "../User";
 
 export interface IApplicantCareer {
-  code: string;
-  creditsCount: number;
+  careerCode: string;
+  approvedYearCount?: number;
+  approvedSubjectCount?: number;
   isGraduate: boolean;
 }
 

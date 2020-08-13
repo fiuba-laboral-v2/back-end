@@ -18,9 +18,12 @@ export = {
             references: { model: "Applicants", key: "uuid" },
             onDelete: "CASCADE"
           },
-          creditsCount: {
-            allowNull: false,
-            defaultValue: 0,
+          approvedYearCount: {
+            allowNull: true,
+            type: INTEGER
+          },
+          approvedSubjectCount: {
+            allowNull: true,
             type: INTEGER
           },
           isGraduate: {

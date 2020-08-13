@@ -39,7 +39,8 @@ const GET_APPLICANT = gql`
           description
           credits
         }
-        creditsCount
+        approvedSubjectCount
+        approvedYearCount
         isGraduate
       }
     }
@@ -55,7 +56,7 @@ describe("getApplicant", () => {
   describe("when the applicant exists", () => {
     it("fetches the applicant", async () => {
       const career = await CareerGenerator.instance();
-      const applicantCareerData = { code: career.code, creditsCount: 150, isGraduate: true };
+      const applicantCareerData = { careerCode: career.code, isGraduate: true };
       const {
         user,
         applicant,
@@ -80,16 +81,14 @@ describe("getApplicant", () => {
         updatedAt: applicant.updatedAt.toISOString()
       });
       expect(data!.getApplicant.capabilities).toHaveLength(0);
-      expect(data!.getApplicant.careers[0]).toEqual(expect.objectContaining({
+      expect(data!.getApplicant.careers).toEqual([expect.objectContaining({
         career: {
           code: career.code,
           description: career.description,
           credits: career.credits
         },
-        careerCode: applicantCareerData.code,
-        creditsCount: applicantCareerData.creditsCount,
-        isGraduate: applicantCareerData.isGraduate
-      }));
+        ...applicantCareerData
+      })]);
     });
 
     it("returns the applicant's default approvalStatus", async () => {

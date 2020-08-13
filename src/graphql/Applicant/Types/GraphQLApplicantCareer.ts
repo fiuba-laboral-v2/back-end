@@ -16,8 +16,11 @@ export const GraphQLApplicantCareer = new GraphQLObjectType<ApplicantCareer>({
       type: nonNull(GraphQLCareer),
       resolve: applicantCareer => applicantCareer.getCareer()
     },
-    creditsCount: {
-      type: nonNull(Int)
+    approvedSubjectCount: {
+      type: Int
+    },
+    approvedYearCount: {
+      type: Int
     },
     isGraduate: {
       type: nonNull(Boolean)

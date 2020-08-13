@@ -46,7 +46,8 @@ const UPDATE_CURRENT_APPLICANT = gql`
           description
           credits
         }
-        creditsCount
+        approvedSubjectCount
+        approvedYearCount
         isGraduate
       }
       sections {
@@ -82,9 +83,10 @@ describe("updateCurrentApplicant", () => {
       capabilities: ["CSS", "clojure"],
       careers: [
         {
-          code: newCareer.code,
-          creditsCount: 8,
-          isGraduate: true
+          careerCode: newCareer.code,
+          approvedSubjectCount: 20,
+          approvedYearCount: 3,
+          isGraduate: false
         }
       ],
       sections: [
@@ -124,9 +126,7 @@ describe("updateCurrentApplicant", () => {
           description: newCareer.description,
           credits: newCareer.credits
         },
-        careerCode: dataToUpdate.careers[0].code,
-        creditsCount: dataToUpdate.careers[0].creditsCount,
-        isGraduate: dataToUpdate.careers[0].isGraduate
+        ...dataToUpdate.careers[0]
       }],
       sections: dataToUpdate.sections,
       links: dataToUpdate.links
@@ -139,6 +139,22 @@ describe("updateCurrentApplicant", () => {
   });
 
   describe("Errors", () => {
+    it("returns an error if approvedYearCount is a number for a graduated", async () => {
+      const { apolloClient } = await TestClientGenerator.applicant();
+      const { code: careerCode } = await CareerGenerator.instance();
+      const { errors } = await apolloClient.mutate({
+        mutation: UPDATE_CURRENT_APPLICANT,
+        variables: {
+          careers: [{
+            careerCode,
+            approvedYearCount: 3,
+            isGraduate: true
+          }]
+        }
+      });
+
+      expect(errors).not.toBeUndefined();
+    });
     it("returns an error if there is no current user", async () => {
       const apolloClient = client.loggedOut();
 

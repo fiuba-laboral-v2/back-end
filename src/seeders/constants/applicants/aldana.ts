@@ -72,7 +72,6 @@ export const aldana = {
     {
       careerCode: careerCodes.IngenieriaInformatica,
       applicantUuid: uuids.aldana.applicant,
-      creditsCount: 56,
       isGraduate: true,
       createdAt: new Date(),
       updatedAt: new Date()

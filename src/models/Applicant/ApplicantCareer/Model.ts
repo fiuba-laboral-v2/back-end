@@ -1,42 +1,52 @@
 import { BelongsTo, Column, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript";
 import { Applicant, Career } from "$models";
-import { HasOneGetAssociationMixin, INTEGER, BOOLEAN, DATE } from "sequelize";
+import { HasOneGetAssociationMixin, INTEGER, BOOLEAN, DATE, UUID, STRING } from "sequelize";
+import { isUuid, optional } from "$models/SequelizeModelValidators";
 import { validateIntegerInRange } from "validations-fiuba-laboral-v2";
 
 @Table({
   tableName: "ApplicantCareers",
   validate: {
-    async validateCreditsCount(this: ApplicantCareer) {
-      const validate = validateIntegerInRange({
-        min: {
-          value: 0,
-          include: true
-        },
-        max: {
-          value: (await this.getCareer()).credits,
-          include: true
-        }
-      });
-      validate(this.creditsCount);
+    validateApplicantCareer(this: ApplicantCareer) {
+      this.validateApplicantCareer();
     }
   }
 })
 export class ApplicantCareer extends Model<ApplicantCareer> {
   @ForeignKey(() => Career)
   @PrimaryKey
-  @Column
+  @Column({
+    allowNull: false,
+    type: STRING,
+    references: { model: Career.tableName, key: "code" },
+    onDelete: "CASCADE"
+  })
   public careerCode: string;
 
   @ForeignKey(() => Applicant)
   @PrimaryKey
-  @Column
+  @Column({
+    allowNull: false,
+    type: UUID,
+    references: { model: Applicant.tableName, key: "uuid" },
+    onDelete: "CASCADE",
+    ...isUuid
+  })
   public applicantUuid: string;
 
   @Column({
-    allowNull: false,
-    type: INTEGER
+    allowNull: true,
+    type: INTEGER,
+    ...optional(validateIntegerInRange({ min: { value: 0, include: false } }))
   })
-  public creditsCount: number;
+  public approvedYearCount: number;
+
+  @Column({
+    allowNull: true,
+    type: INTEGER,
+    ...optional(validateIntegerInRange({ min: { value: 0, include: true } }))
+  })
+  public approvedSubjectCount: number;
 
   @Column({
     allowNull: false,
@@ -66,4 +76,18 @@ export class ApplicantCareer extends Model<ApplicantCareer> {
 
   public getCareer!: HasOneGetAssociationMixin<Career>;
   public getApplicant!: HasOneGetAssociationMixin<Applicant>;
+
+  public validateApplicantCareer() {
+    if (this.isGraduate) {
+      if (!this.approvedSubjectCount && !this.approvedYearCount) return;
+      throw new Error(
+        "approvedSubjectCount and approvedYearCount should not be present if isGraduate is true"
+      );
+    } else {
+      if (this.approvedSubjectCount && this.approvedYearCount) return;
+      throw new Error(
+        "approvedSubjectCount and approvedYearCount are mandatory if isGraduate is false"
+      );
+    }
+  }
 }

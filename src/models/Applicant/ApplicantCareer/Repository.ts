@@ -6,7 +6,7 @@ import { Applicant, ApplicantCareer } from "$models";
 export const ApplicantCareersRepository = {
   findByApplicantAndCareer: async (applicantUuid: string, careerCode: string) => {
     const applicantCareer = await ApplicantCareer.findOne({
-      where: { applicantUuid: applicantUuid, careerCode: careerCode }
+      where: { applicantUuid, careerCode }
     });
     if (!applicantCareer) throw new ApplicantCareerNotFound(applicantUuid, careerCode);
 
@@ -14,44 +14,22 @@ export const ApplicantCareersRepository = {
   },
   bulkCreate: async (
     applicantCareers: IApplicantCareer[],
-    applicant: Applicant,
+    { uuid: applicantUuid }: Applicant,
     transaction?: Transaction
-  ) => {
-    return ApplicantCareer.bulkCreate(
-      applicantCareers.map(applicantCareer => (
-      {
-        careerCode: applicantCareer.code,
-        applicantUuid: applicant.uuid,
-        creditsCount: applicantCareer.creditsCount,
-        isGraduate: applicantCareer.isGraduate
-      }
-      ))
-      ,
-      { transaction }
-    );
-  },
+  ) => ApplicantCareer.bulkCreate(
+    applicantCareers.map(applicantCareer => ({ ...applicantCareer, applicantUuid })),
+    { transaction }
+  ),
   update: async (
     applicantCareers: IApplicantCareer[],
-    applicant: Applicant,
+    { uuid: applicantUuid }: Applicant,
     transaction?: Transaction
   ) => {
-    await ApplicantCareer.destroy({
-      where: { applicantUuid: applicant.uuid },
-      transaction
-    });
-
+    await ApplicantCareer.destroy({ where: { applicantUuid }, transaction });
     return ApplicantCareer.bulkCreate(
-      applicantCareers.map(applicantCareer =>
-        ({
-          careerCode: applicantCareer.code,
-          applicantUuid: applicant.uuid,
-          creditsCount: applicantCareer.creditsCount,
-          isGraduate: applicantCareer.isGraduate
-        })
-      ),
-      { transaction }
+      applicantCareers.map(applicantCareer => ({ ...applicantCareer, applicantUuid })),
+      { transaction, validate: true }
     );
   },
-  truncate: async () =>
-    ApplicantCareer.truncate({ cascade: true })
+  truncate: async () => ApplicantCareer.truncate({ cascade: true })
 };
