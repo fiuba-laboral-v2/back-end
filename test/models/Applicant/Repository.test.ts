@@ -14,6 +14,10 @@ import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
 import { FiubaUsersService } from "$services/FiubaUsers";
 import { Secretary } from "$models/Admin";
 import { UUID_REGEX } from "$test/models";
+import {
+  ForbiddenApprovedYearCountError,
+  MissingApprovedSubjectCountError
+} from "$models/Applicant/ApplicantCareer/Errors";
 
 describe("ApplicantRepository", () => {
   beforeAll(async () => {
@@ -550,7 +554,7 @@ describe("ApplicantRepository", () => {
     });
 
     describe("with wrong parameters", () => {
-      it("throws an error if approvedYearCount is a number for a graduated", async () => {
+      it("throws an error if approvedYearCount is present for a graduated", async () => {
         const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
         const { code: careerCode } = await CareerGenerator.instance();
         const dataToUpdate = {
@@ -565,18 +569,18 @@ describe("ApplicantRepository", () => {
           ApplicantRepository.update(dataToUpdate)
         ).rejects.toThrowBulkRecordErrorIncluding([{
           errorClass: ValidationError,
-          message: "approvedSubjectCount and approvedYearCount should not be " +
-            "present if isGraduate is true"
+          message: ForbiddenApprovedYearCountError.buildMessage()
         }]);
       });
 
-      it("throws an error on missing properties for a non graduated", async () => {
+      it("throws an error if approvedSubjectCount is missing for a non graduate", async () => {
         const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
         const { code: careerCode } = await CareerGenerator.instance();
         const dataToUpdate = {
           uuid,
           careers: [{
             careerCode,
+            approvedYearCount: 3,
             isGraduate: false
           }]
         };
@@ -584,8 +588,7 @@ describe("ApplicantRepository", () => {
           ApplicantRepository.update(dataToUpdate)
         ).rejects.toThrowBulkRecordErrorIncluding([{
           errorClass: ValidationError,
-          message: "approvedSubjectCount and approvedYearCount are mandatory " +
-            "if isGraduate is false"
+          message: MissingApprovedSubjectCountError.buildMessage()
         }]);
       });
 

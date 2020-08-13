@@ -1,6 +1,12 @@
 import { ApplicantCareer } from "$models";
 import { NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
 import { ValidationError } from "sequelize";
+import {
+  ForbiddenApprovedSubjectCountError,
+  ForbiddenApprovedYearCountError,
+  MissingApprovedSubjectCountError,
+  MissingApprovedYearCountError
+} from "$models/Applicant/ApplicantCareer/Errors";
 
 describe("ApplicantCareer", () => {
   it("throws and error if applicantUuid has invalid format", async () => {
@@ -29,13 +35,11 @@ describe("ApplicantCareer", () => {
   });
 
   describe("graduated applicant", () => {
-    it("instantiates an applicantCareer for a student", async () => {
+    it("instantiates an applicantCareer for a graduate", async () => {
       const attributes = {
         careerCode: "10",
         applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
-        approvedYearCount: 5,
-        approvedSubjectCount: 20,
-        isGraduate: false
+        isGraduate: true
       };
       const applicantCareer = new ApplicantCareer(attributes);
       await expect(applicantCareer.validate()).resolves.not.toThrow();
@@ -46,17 +50,29 @@ describe("ApplicantCareer", () => {
       }));
     });
 
-    it("throws error if approvedSubjectCount or approvedYearCount are provided", async () => {
+    it("throws an error if approvedSubjectCount is provided", async () => {
       const applicantCareer = new ApplicantCareer({
         careerCode: "10",
         applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
-        approvedYearCount: 5,
         approvedSubjectCount: 20,
         isGraduate: true
       });
       await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
         ValidationError,
-        "approvedSubjectCount and approvedYearCount should not be present if isGraduate is true"
+        ForbiddenApprovedSubjectCountError.buildMessage()
+      );
+    });
+
+    it("throws error if approvedYearCount is provided", async () => {
+      const applicantCareer = new ApplicantCareer({
+        careerCode: "10",
+        applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+        approvedYearCount: 5,
+        isGraduate: true
+      });
+      await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        ForbiddenApprovedYearCountError.buildMessage()
       );
     });
   });
@@ -130,7 +146,7 @@ describe("ApplicantCareer", () => {
       });
       await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
         ValidationError,
-        "approvedSubjectCount and approvedYearCount are mandatory if isGraduate is false"
+        MissingApprovedSubjectCountError.buildMessage()
       );
     });
 
@@ -143,7 +159,7 @@ describe("ApplicantCareer", () => {
       });
       await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
         ValidationError,
-        "approvedSubjectCount and approvedYearCount are mandatory if isGraduate is false"
+        MissingApprovedYearCountError.buildMessage()
       );
     });
   });

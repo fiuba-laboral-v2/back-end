@@ -1,5 +1,11 @@
 import { BelongsTo, Column, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript";
 import { Applicant, Career } from "$models";
+import {
+  MissingApprovedSubjectCountError,
+  MissingApprovedYearCountError,
+  ForbiddenApprovedSubjectCountError,
+  ForbiddenApprovedYearCountError
+} from "./Errors";
 import { HasOneGetAssociationMixin, INTEGER, BOOLEAN, DATE, UUID, STRING } from "sequelize";
 import { isUuid, optional } from "$models/SequelizeModelValidators";
 import { validateIntegerInRange } from "validations-fiuba-laboral-v2";
@@ -79,15 +85,11 @@ export class ApplicantCareer extends Model<ApplicantCareer> {
 
   public validateApplicantCareer() {
     if (this.isGraduate) {
-      if (!this.approvedSubjectCount && !this.approvedYearCount) return;
-      throw new Error(
-        "approvedSubjectCount and approvedYearCount should not be present if isGraduate is true"
-      );
+      if (this.approvedSubjectCount) throw new ForbiddenApprovedSubjectCountError();
+      if (this.approvedYearCount) throw new ForbiddenApprovedYearCountError();
     } else {
-      if (this.approvedSubjectCount && this.approvedYearCount) return;
-      throw new Error(
-        "approvedSubjectCount and approvedYearCount are mandatory if isGraduate is false"
-      );
+      if (!this.approvedSubjectCount) throw new MissingApprovedSubjectCountError();
+      if (!this.approvedYearCount) throw new MissingApprovedYearCountError();
     }
   }
 }
