@@ -46,11 +46,13 @@ describe("AdminTaskRepository", () => {
 
   const expectToFindAdminTasksWithStatuses = async (
     adminTasks: AdminTask[],
-    statuses: ApprovalStatus[]
+    statuses: ApprovalStatus[],
+    secretary: Secretary
   ) => {
     const result = await AdminTaskRepository.find({
       adminTaskTypes: adminTasks.map(adminTask => adminTask.constructor.name) as any,
-      statuses: statuses
+      statuses,
+      secretary
     });
     expect(result.results).toEqual(expect.arrayContaining(
       adminTasks.map(adminTask => expect.objectContaining(adminTask.toJSON()))
@@ -61,7 +63,8 @@ describe("AdminTaskRepository", () => {
   it("returns an empty array if no statuses are provided", async () => {
     const result = await AdminTaskRepository.find({
       adminTaskTypes: [AdminTaskType.Applicant],
-      statuses: []
+      statuses: [],
+      secretary: admin.secretary
     });
     expect(result).toEqual({ results: [], shouldFetchMore: false });
   });
@@ -69,7 +72,8 @@ describe("AdminTaskRepository", () => {
   it("returns an empty array if no adminTaskTypes are provided", async () => {
     const result = await AdminTaskRepository.find({
       adminTaskTypes: [],
-      statuses: [ApprovalStatus.pending]
+      statuses: [ApprovalStatus.pending],
+      secretary: admin.secretary
     });
     expect(result).toEqual({ results: [], shouldFetchMore: false });
   });
@@ -77,7 +81,8 @@ describe("AdminTaskRepository", () => {
   it("returns an empty array if no adminTaskTypes and statuses are provided", async () => {
     const result = await AdminTaskRepository.find({
       adminTaskTypes: [],
-      statuses: []
+      statuses: [],
+      secretary: admin.secretary
     });
     expect(result).toEqual({ results: [], shouldFetchMore: false });
   });
@@ -85,63 +90,72 @@ describe("AdminTaskRepository", () => {
   it("returns only pending companies", async () => {
     await expectToFindAdminTasksWithStatuses(
       [pendingCompany],
-      [ApprovalStatus.pending]
+      [ApprovalStatus.pending],
+      admin.secretary
     );
   });
 
   it("returns only approved companies", async () => {
     await expectToFindAdminTasksWithStatuses(
       [approvedCompany],
-      [ApprovalStatus.approved]
+      [ApprovalStatus.approved],
+      admin.secretary
     );
   });
 
   it("returns only rejected companies", async () => {
     await expectToFindAdminTasksWithStatuses(
       [rejectedCompany],
-      [ApprovalStatus.rejected]
+      [ApprovalStatus.rejected],
+      admin.secretary
     );
   });
 
   it("returns only pending applicants", async () => {
     await expectToFindAdminTasksWithStatuses(
       [pendingApplicant],
-      [ApprovalStatus.pending]
+      [ApprovalStatus.pending],
+      admin.secretary
     );
   });
 
   it("returns only approved applicants", async () => {
     await expectToFindAdminTasksWithStatuses(
       [approvedApplicant],
-      [ApprovalStatus.approved]
+      [ApprovalStatus.approved],
+      admin.secretary
     );
   });
 
   it("returns only rejected applicants", async () => {
     await expectToFindAdminTasksWithStatuses(
       [rejectedApplicant],
-      [ApprovalStatus.rejected]
+      [ApprovalStatus.rejected],
+      admin.secretary
     );
   });
 
   it("returns only pending applicants and companies", async () => {
     await expectToFindAdminTasksWithStatuses(
       [pendingCompany, pendingApplicant],
-      [ApprovalStatus.pending]
+      [ApprovalStatus.pending],
+      admin.secretary
     );
   });
 
   it("returns only approved and rejected applicants and companies", async () => {
     await expectToFindAdminTasksWithStatuses(
       [approvedCompany, rejectedCompany, approvedApplicant, rejectedApplicant],
-      [ApprovalStatus.approved, ApprovalStatus.rejected]
+      [ApprovalStatus.approved, ApprovalStatus.rejected],
+      admin.secretary
     );
   });
 
   it("sorts pending applicants and companies by updatedAt in any status", async () => {
     const result = await AdminTaskRepository.find({
       adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
-      statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected]
+      statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
+      secretary: admin.secretary
     });
     expect(result.results.map(adminTask => adminTask.uuid)).toEqual([
       pendingApplicant.uuid,
@@ -162,7 +176,8 @@ describe("AdminTaskRepository", () => {
     const result = await AdminTaskRepository.find({
       adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
-      updatedBeforeThan: allTasksByDescUpdatedAt[lastTaskIndex].updatedAt
+      updatedBeforeThan: allTasksByDescUpdatedAt[lastTaskIndex].updatedAt,
+      secretary: admin.secretary
     });
     expect(result.shouldFetchMore).toEqual(true);
     expect(

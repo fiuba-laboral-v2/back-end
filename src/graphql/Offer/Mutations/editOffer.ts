@@ -36,7 +36,7 @@ export const editOffer = {
   },
   resolve: async (
     _: undefined,
-    attributes: IUpdateOffer,
+    attributes: Omit<IUpdateOffer, "companyUuid">,
     { currentUser }: { currentUser: ICompanyUser }
   ) => OfferRepository.update({ companyUuid: currentUser.company.uuid, ...attributes })
 };

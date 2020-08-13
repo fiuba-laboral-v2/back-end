@@ -1,18 +1,33 @@
 import { AdminTaskModelsType, TABLE_NAME_COLUMN } from "./Model";
 import { groupBy, mapValues } from "lodash";
+import { Secretary } from "$models/Admin/Interface";
+import { Offer } from "$models/Offer";
 
-const getColumns = model => [TABLE_NAME_COLUMN].concat(Object.keys(model.rawAttributes));
+const getColumns = (model: AdminTaskModelsType, secretary: Secretary) => {
+  let columns = Object.keys(model.rawAttributes);
+  const filterColumn = secretary === Secretary.graduados ?
+    "extensionApprovalStatus" : "graduadosApprovalStatus";
 
-const mapModelToTableNameColumnTuple = model =>
-  getColumns(model).map(column => ({ tableName: model.tableName, column }));
+  if (typeof model === typeof Offer) columns = columns.filter(column => column !== filterColumn);
+  return [TABLE_NAME_COLUMN].concat(columns);
+};
 
-const mapAllModelsToTableNameColumnTuple = (adminTaskModelsTypes: AdminTaskModelsType[]) =>
-  adminTaskModelsTypes.map(model => mapModelToTableNameColumnTuple(model)).flat();
+const mapModelToTableNameColumnTuple = (model: AdminTaskModelsType, secretary: Secretary) =>
+  getColumns(model, secretary).map(column => ({ tableName: model.tableName, column }));
 
-const groupByColumns = (adminTaskModelsTypes: AdminTaskModelsType[]) =>
-  groupBy(mapAllModelsToTableNameColumnTuple(adminTaskModelsTypes), "column");
+const mapAllModelsToTableNameColumnTuple = (
+  adminTaskModelsTypes: AdminTaskModelsType[],
+  secretary: Secretary
+) =>
+  adminTaskModelsTypes.map(model => mapModelToTableNameColumnTuple(model, secretary)).flat();
 
-export const groupTableNamesByColumn = (adminTaskModelsTypes: AdminTaskModelsType[]) =>
-  mapValues(groupByColumns(adminTaskModelsTypes), columnTableObjects =>
+const groupByColumns = (adminTaskModelsTypes: AdminTaskModelsType[], secretary: Secretary) =>
+  groupBy(mapAllModelsToTableNameColumnTuple(adminTaskModelsTypes, secretary), "column");
+
+export const groupTableNamesByColumn = (
+  adminTaskModelsTypes: AdminTaskModelsType[],
+  secretary: Secretary
+) =>
+  mapValues(groupByColumns(adminTaskModelsTypes, secretary), columnTableObjects =>
     columnTableObjects.map(columnTableObject => columnTableObject.tableName)
 );

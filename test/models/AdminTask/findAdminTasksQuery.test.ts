@@ -5,42 +5,69 @@ import {
   StatusesIsEmptyError
 } from "$models/AdminTask/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { Secretary } from "$models/Admin";
 
 describe("findAdminTasksQuery", () => {
+  const secretaryColumn = (secretary: Secretary) =>
+    secretary === Secretary.graduados ? "graduadosApprovalStatus" : "extensionApprovalStatus";
 
-  const expectToReturnSQLQueryOfAllAdminTasksWithStatus = (status: ApprovalStatus) => {
+  const expectToReturnSQLQueryOfAllAdminTasksWithStatus = (
+    status: ApprovalStatus | ApprovalStatus[],
+    secretary: Secretary,
+    updatedBeforeThan?: Date
+  ) => {
     const limit = 15;
+    const statuses = Array.isArray(status) ? status : [status];
     const query = findAdminTasksQuery({
-      adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
-      statuses: [status],
-      limit
+      adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company, AdminTaskType.Offer],
+      statuses,
+      limit,
+      secretary,
+      ...(updatedBeforeThan && { updatedBeforeThan })
     });
+
+    const whereStatus = statuses
+      .map(selectedStatus => `"AdminTask"."approvalStatus" = '${selectedStatus}'`)
+      .join(" OR ");
+    const whereUpdatedBeforeThan = updatedBeforeThan ?
+      ` AND ("AdminTask"."updatedAt" < '${updatedBeforeThan.toISOString()}')` : "";
+
     const expectedQuery = `
-      WITH "AdminTask" AS
-        (
-          SELECT
-            COALESCE(Companies."uuid",Applicants."uuid") AS "uuid",
-            COALESCE(Companies."cuit") AS "cuit",
-            COALESCE(Companies."companyName") AS "companyName",
-            COALESCE(Companies."slogan") AS "slogan",
-            COALESCE(Companies."description",Applicants."description") AS "description",
-            COALESCE(Companies."logo") AS "logo",
-            COALESCE(Companies."website") AS "website",
-            COALESCE(Companies."email") AS "email",
-            COALESCE(Companies."approvalStatus",Applicants."approvalStatus") AS "approvalStatus",
-            COALESCE(Companies."createdAt",Applicants."createdAt") AS "createdAt",
-            COALESCE(Companies."updatedAt",Applicants."updatedAt") AS "updatedAt",
-            COALESCE(Companies."tableNameColumn",Applicants."tableNameColumn") AS "tableNameColumn",
-            COALESCE(Applicants."padron") AS "padron",
-            COALESCE(Applicants."userUuid") AS "userUuid"
-          FROM (
-            (SELECT *, 'Companies' AS "tableNameColumn" FROM "Companies") AS Companies
-            FULL OUTER JOIN
-            (SELECT *, 'Applicants' AS "tableNameColumn" FROM "Applicants") AS Applicants ON FALSE
-          )
-        )
+    WITH "AdminTask" AS (
+      SELECT COALESCE (
+        Applicants."tableNameColumn",Companies."tableNameColumn",Offers."tableNameColumn"
+      ) AS "tableNameColumn",
+      COALESCE ( Applicants."uuid",Companies."uuid",Offers."uuid" ) AS "uuid",
+      COALESCE ( Applicants."padron" ) AS "padron",
+      COALESCE (
+        Applicants."description",Companies."description",Offers."description"
+      ) AS "description",
+      COALESCE ( Applicants."userUuid" ) AS "userUuid",
+      COALESCE ( Applicants."approvalStatus",Companies."approvalStatus" ) AS "approvalStatus",
+      COALESCE ( Applicants."createdAt",Companies."createdAt",Offers."createdAt" ) AS "createdAt",
+      COALESCE ( Applicants."updatedAt",Companies."updatedAt",Offers."updatedAt" ) AS "updatedAt",
+      COALESCE ( Companies."cuit" ) AS "cuit",
+      COALESCE ( Companies."companyName" ) AS "companyName",
+      COALESCE ( Companies."slogan" ) AS "slogan",
+      COALESCE ( Companies."logo" ) AS "logo",
+      COALESCE ( Companies."website" ) AS "website",
+      COALESCE ( Companies."email" ) AS "email",
+      COALESCE ( Offers."companyUuid" ) AS "companyUuid",
+      COALESCE ( Offers."title" ) AS "title",
+      COALESCE ( Offers."${secretaryColumn(secretary)}" ) AS "${secretaryColumn(secretary)}",
+      COALESCE ( Offers."hoursPerDay" ) AS "hoursPerDay",
+      COALESCE ( Offers."minimumSalary" ) AS "minimumSalary",
+      COALESCE ( Offers."maximumSalary" ) AS "maximumSalary"
+      FROM ((
+        SELECT *, 'Applicants' AS "tableNameColumn" FROM "Applicants"
+      ) AS Applicants FULL OUTER JOIN (
+        SELECT *, 'Companies' AS "tableNameColumn" FROM "Companies"
+      ) AS Companies ON FALSE FULL OUTER JOIN (
+        SELECT *, 'Offers' AS "tableNameColumn" FROM "Offers"
+      ) AS Offers ON FALSE)
+      )
       SELECT * FROM "AdminTask"
-      WHERE ("AdminTask"."approvalStatus" = '${status}')
+      WHERE (${whereStatus})${whereUpdatedBeforeThan}
       ORDER BY "AdminTask"."updatedAt" DESC
       LIMIT ${limit}
     `;
@@ -52,7 +79,8 @@ describe("findAdminTasksQuery", () => {
     const query = findAdminTasksQuery({
       adminTaskTypes: [AdminTaskType.Company],
       statuses: [status],
-      limit
+      limit,
+      secretary: Secretary.graduados
     });
     const expectedQuery = `
       WITH "AdminTask" AS
@@ -85,7 +113,8 @@ describe("findAdminTasksQuery", () => {
     const query = findAdminTasksQuery({
       adminTaskTypes: [AdminTaskType.Applicant],
       statuses: [status],
-      limit
+      limit,
+      secretary: Secretary.extension
     });
     const expectedQuery = `
       WITH "AdminTask" AS
@@ -109,12 +138,47 @@ describe("findAdminTasksQuery", () => {
     expect(query).toEqualIgnoringSpacing(expectedQuery);
   };
 
+  const expectToReturnSQLQueryOfOfferWithStatus = (
+    status: ApprovalStatus,
+    secretary: Secretary
+  ) => {
+    const limit = 75;
+    const query = findAdminTasksQuery({
+      adminTaskTypes: [AdminTaskType.Offer],
+      statuses: [status],
+      limit,
+      secretary
+    });
+    const expectedQuery = `
+      WITH "AdminTask" AS (
+        SELECT  COALESCE ( Offers."tableNameColumn" ) AS "tableNameColumn",
+          COALESCE ( Offers."uuid" ) AS "uuid",
+          COALESCE ( Offers."companyUuid" ) AS "companyUuid",
+          COALESCE ( Offers."title" ) AS "title",
+          COALESCE ( Offers."description" ) AS "description",
+          COALESCE ( Offers."${secretaryColumn(secretary)}" ) AS "${secretaryColumn(secretary)}",
+          COALESCE ( Offers."hoursPerDay" ) AS "hoursPerDay",
+          COALESCE ( Offers."minimumSalary" ) AS "minimumSalary",
+          COALESCE ( Offers."maximumSalary" ) AS "maximumSalary",
+          COALESCE ( Offers."createdAt" ) AS "createdAt",
+          COALESCE ( Offers."updatedAt" ) AS "updatedAt"
+        FROM (SELECT *, 'Offers' AS "tableNameColumn" FROM "Offers" ) AS Offers
+      )
+      SELECT * FROM "AdminTask"
+      WHERE ("AdminTask"."approvalStatus" = '${status}')
+      ORDER BY "AdminTask"."updatedAt" DESC
+      LIMIT ${limit}
+    `;
+    expect(query).toEqualIgnoringSpacing(expectedQuery);
+  };
+
   it("throws an error if no adminTaskTypes are provided", async () => {
     expect(
       () => findAdminTasksQuery({
         adminTaskTypes: [],
         statuses: [ApprovalStatus.pending],
-        limit: 100
+        limit: 100,
+        secretary: Secretary.graduados
       })
     ).toThrowErrorWithMessage(
       AdminTaskTypesIsEmptyError,
@@ -127,7 +191,8 @@ describe("findAdminTasksQuery", () => {
       () => findAdminTasksQuery({
         adminTaskTypes: [AdminTaskType.Applicant],
         statuses: [],
-        limit: 150
+        limit: 150,
+        secretary: Secretary.graduados
       })
     ).toThrowErrorWithMessage(
       StatusesIsEmptyError,
@@ -135,16 +200,28 @@ describe("findAdminTasksQuery", () => {
     );
   });
 
-  it("returns an sql query of adminTasks in pending status", async () => {
-    expectToReturnSQLQueryOfAllAdminTasksWithStatus(ApprovalStatus.pending);
+  it("returns an sql query of adminTasks in pending status for extension secretary", async () => {
+    expectToReturnSQLQueryOfAllAdminTasksWithStatus(ApprovalStatus.pending, Secretary.extension);
   });
 
-  it("returns an sql query of adminTasks in approved status", async () => {
-    expectToReturnSQLQueryOfAllAdminTasksWithStatus(ApprovalStatus.approved);
+  it("returns an sql query of adminTasks in pending status for graduados secretary", async () => {
+    expectToReturnSQLQueryOfAllAdminTasksWithStatus(ApprovalStatus.pending, Secretary.graduados);
   });
 
-  it("returns an sql query of adminTasks in rejected status", async () => {
-    expectToReturnSQLQueryOfAllAdminTasksWithStatus(ApprovalStatus.rejected);
+  it("returns an sql query of adminTasks in approved status for extension secretary", async () => {
+    expectToReturnSQLQueryOfAllAdminTasksWithStatus(ApprovalStatus.approved, Secretary.extension);
+  });
+
+  it("returns an sql query of adminTasks in approved status for graduados secretary", async () => {
+    expectToReturnSQLQueryOfAllAdminTasksWithStatus(ApprovalStatus.approved, Secretary.graduados);
+  });
+
+  it("returns an sql query of adminTasks in rejected status for extension secretary", async () => {
+    expectToReturnSQLQueryOfAllAdminTasksWithStatus(ApprovalStatus.rejected, Secretary.extension);
+  });
+
+  it("returns an sql query of adminTasks in rejected status for graduados secretary", async () => {
+    expectToReturnSQLQueryOfAllAdminTasksWithStatus(ApprovalStatus.rejected, Secretary.graduados);
   });
 
   it("returns an sql query of Companies in pending status", async () => {
@@ -171,134 +248,64 @@ describe("findAdminTasksQuery", () => {
     expectToReturnSQLQueryOfApplicantsWithStatus(ApprovalStatus.rejected);
   });
 
-  it("returns an sql query of adminTasks in all statuses", async () => {
-    const limit = 200;
-    const query = findAdminTasksQuery({
-      adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
-      statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
-      limit
-    });
-    const expectedQuery = `
-      WITH "AdminTask" AS
-        (
-          SELECT
-            COALESCE(Companies."uuid",Applicants."uuid") AS "uuid",
-            COALESCE(Companies."cuit") AS "cuit",
-            COALESCE(Companies."companyName") AS "companyName",
-            COALESCE(Companies."slogan") AS "slogan",
-            COALESCE(Companies."description",Applicants."description") AS "description",
-            COALESCE(Companies."logo") AS "logo",
-            COALESCE(Companies."website") AS "website",
-            COALESCE(Companies."email") AS "email",
-            COALESCE(Companies."approvalStatus",Applicants."approvalStatus") AS "approvalStatus",
-            COALESCE(Companies."createdAt",Applicants."createdAt") AS "createdAt",
-            COALESCE(Companies."updatedAt",Applicants."updatedAt") AS "updatedAt",
-            COALESCE(Companies."tableNameColumn",Applicants."tableNameColumn") AS "tableNameColumn",
-            COALESCE(Applicants."padron") AS "padron",
-            COALESCE(Applicants."userUuid") AS "userUuid"
-          FROM (
-            (SELECT *, 'Companies' AS "tableNameColumn" FROM "Companies") AS Companies
-            FULL OUTER JOIN
-            (SELECT *, 'Applicants' AS "tableNameColumn" FROM "Applicants") AS Applicants ON FALSE
-          )
-        )
-      SELECT * FROM "AdminTask"
-      WHERE (
-        "AdminTask"."approvalStatus" = 'pending'
-        OR "AdminTask"."approvalStatus" = 'approved'
-        OR "AdminTask"."approvalStatus" = 'rejected'
-      )
-      ORDER BY "AdminTask"."updatedAt" DESC
-      LIMIT ${limit}
-    `;
-    expect(query).toEqualIgnoringSpacing(expectedQuery);
+  it("returns an sql query of Offer in pending status for extension secretary", async () => {
+    expectToReturnSQLQueryOfOfferWithStatus(ApprovalStatus.pending, Secretary.extension);
+  });
+
+  it("returns an sql query of Offer in approved status for extension secretary", async () => {
+    expectToReturnSQLQueryOfOfferWithStatus(ApprovalStatus.approved, Secretary.extension);
+  });
+
+  it("returns an sql query of Offer in rejected status for extension secretary", async () => {
+    expectToReturnSQLQueryOfOfferWithStatus(ApprovalStatus.rejected, Secretary.extension);
+  });
+
+  it("returns an sql query of Offer in pending status for graduados secretary", async () => {
+    expectToReturnSQLQueryOfOfferWithStatus(ApprovalStatus.pending, Secretary.graduados);
+  });
+
+  it("returns an sql query of Offer in approved status for graduados secretary", async () => {
+    expectToReturnSQLQueryOfOfferWithStatus(ApprovalStatus.approved, Secretary.graduados);
+  });
+
+  it("returns an sql query of Offer in rejected status for graduados secretary", async () => {
+    expectToReturnSQLQueryOfOfferWithStatus(ApprovalStatus.rejected, Secretary.graduados);
+  });
+
+  it("returns an sql query of adminTasks in all statuses for graduados secretary", async () => {
+    const statuses = [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected];
+
+    expectToReturnSQLQueryOfAllAdminTasksWithStatus(statuses, Secretary.graduados);
+  });
+
+  it("returns an sql query of adminTasks in all statuses for extension secretary", async () => {
+    const statuses = [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected];
+
+    expectToReturnSQLQueryOfAllAdminTasksWithStatus(statuses, Secretary.extension);
   });
 
   it("optionally filters by maximum updatedAt (not inclusive)", async () => {
-    const limit = 205;
-    const query = findAdminTasksQuery({
-      adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
-      statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
-      updatedBeforeThan: new Date("1995-12-17T03:24:00Z"),
-      limit
-    });
-    const expectedQuery = `
-      WITH "AdminTask" AS
-        (
-          SELECT
-            COALESCE(Companies."uuid",Applicants."uuid") AS "uuid",
-            COALESCE(Companies."cuit") AS "cuit",
-            COALESCE(Companies."companyName") AS "companyName",
-            COALESCE(Companies."slogan") AS "slogan",
-            COALESCE(Companies."description",Applicants."description") AS "description",
-            COALESCE(Companies."logo") AS "logo",
-            COALESCE(Companies."website") AS "website",
-            COALESCE(Companies."email") AS "email",
-            COALESCE(Companies."approvalStatus",Applicants."approvalStatus") AS "approvalStatus",
-            COALESCE(Companies."createdAt",Applicants."createdAt") AS "createdAt",
-            COALESCE(Companies."updatedAt",Applicants."updatedAt") AS "updatedAt",
-            COALESCE(Companies."tableNameColumn",Applicants."tableNameColumn") AS "tableNameColumn",
-            COALESCE(Applicants."padron") AS "padron",
-            COALESCE(Applicants."userUuid") AS "userUuid"
-          FROM (
-            (SELECT *, 'Companies' AS "tableNameColumn" FROM "Companies") AS Companies
-            FULL OUTER JOIN
-            (SELECT *, 'Applicants' AS "tableNameColumn" FROM "Applicants") AS Applicants ON FALSE
-          )
-        )
-      SELECT * FROM "AdminTask"
-      WHERE (
-        "AdminTask"."approvalStatus" = 'pending'
-        OR "AdminTask"."approvalStatus" = 'approved'
-        OR "AdminTask"."approvalStatus" = 'rejected'
-      ) AND (
-        "AdminTask"."updatedAt" < '1995-12-17T03:24:00.000Z'
-      )
-      ORDER BY "AdminTask"."updatedAt" DESC
-      LIMIT ${limit}
-    `;
-    expect(query).toEqualIgnoringSpacing(expectedQuery);
+    const statuses = [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected];
+
+    expectToReturnSQLQueryOfAllAdminTasksWithStatus(
+      statuses, Secretary.extension,
+      new Date("1995-12-17T03:24:00Z")
+    );
   });
 
-  it("returns an sql query of adminTasks in approved and rejected statuses", async () => {
-    const limit = 210;
-    const query = findAdminTasksQuery({
-      adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
-      statuses: [ApprovalStatus.approved, ApprovalStatus.rejected],
-      limit
+  it(
+    "returns an sql query of adminTasks in approved and rejected statuses for extension secretary",
+    async () => {
+      const statuses = [ApprovalStatus.approved, ApprovalStatus.rejected];
+
+      expectToReturnSQLQueryOfAllAdminTasksWithStatus(statuses, Secretary.extension);
     });
-    const expectedQuery = `
-      WITH "AdminTask" AS
-        (
-          SELECT
-            COALESCE(Companies."uuid",Applicants."uuid") AS "uuid",
-            COALESCE(Companies."cuit") AS "cuit",
-            COALESCE(Companies."companyName") AS "companyName",
-            COALESCE(Companies."slogan") AS "slogan",
-            COALESCE(Companies."description",Applicants."description") AS "description",
-            COALESCE(Companies."logo") AS "logo",
-            COALESCE(Companies."website") AS "website",
-            COALESCE(Companies."email") AS "email",
-            COALESCE(Companies."approvalStatus",Applicants."approvalStatus") AS "approvalStatus",
-            COALESCE(Companies."createdAt",Applicants."createdAt") AS "createdAt",
-            COALESCE(Companies."updatedAt",Applicants."updatedAt") AS "updatedAt",
-            COALESCE(Companies."tableNameColumn",Applicants."tableNameColumn") AS "tableNameColumn",
-            COALESCE(Applicants."padron") AS "padron",
-            COALESCE(Applicants."userUuid") AS "userUuid"
-          FROM (
-            (SELECT *, 'Companies' AS "tableNameColumn" FROM "Companies") AS Companies
-            FULL OUTER JOIN
-            (SELECT *, 'Applicants' AS "tableNameColumn" FROM "Applicants") AS Applicants ON FALSE
-          )
-        )
-      SELECT * FROM "AdminTask"
-      WHERE (
-        "AdminTask"."approvalStatus" = 'approved'
-        OR "AdminTask"."approvalStatus" = 'rejected'
-      )
-      ORDER BY "AdminTask"."updatedAt" DESC
-      LIMIT ${limit}
-    `;
-    expect(query).toEqualIgnoringSpacing(expectedQuery);
-  });
+
+  it(
+    "returns an sql query of adminTasks in approved and rejected statuses for graduados secretary",
+    async () => {
+      const statuses = [ApprovalStatus.approved, ApprovalStatus.rejected];
+
+      expectToReturnSQLQueryOfAllAdminTasksWithStatus(statuses, Secretary.graduados);
+    });
 });

@@ -5,6 +5,8 @@ import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLAppr
 import { GraphQLDateTime } from "graphql-iso-date";
 import { GraphQLPaginatedResults } from "$graphql/Pagination/Types/GraphQLPaginatedResults";
 import { GraphQLAdminTask } from "$graphql/AdminTask/Types/GraphQLAdminTask";
+import { IAdminUser } from "$graphql/Context";
+import { Admin } from "$models";
 
 export const getAdminTasks = {
   type: GraphQLPaginatedResults(GraphQLAdminTask),
@@ -19,6 +21,13 @@ export const getAdminTasks = {
       type: GraphQLDateTime
     }
   },
-  resolve: (_: undefined, filter: IAdminTasksFilter) =>
-    AdminTaskRepository.find(filter)
+  resolve: async (
+    _: undefined,
+    filter: IAdminTasksFilter,
+    { currentUser }: { currentUser: IAdminUser }
+  ) => {
+    const admin = await Admin.findByPk<Admin>(currentUser.admin.userUuid);
+    if (!admin) return;
+    return AdminTaskRepository.find({ ...filter, secretary: admin.secretary });
+  }
 };

@@ -3,6 +3,7 @@ import { IAdminTasksFilter } from "./Interfaces";
 import { AdminTaskTypesIsEmptyError, StatusesIsEmptyError } from "./Errors";
 import { groupTableNamesByColumn } from "./groupTableNamesByColumn";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { Secretary } from "$models/Admin/Interface";
 
 const getStatusWhereClause = (statuses: ApprovalStatus[]) =>
   statuses.map(status => `"AdminTask"."approvalStatus" = '${status}'`).join(" OR ");
@@ -16,8 +17,8 @@ const getWhereClause = (statuses: ApprovalStatus[], updatedBeforeThan?: Date) =>
     getUpdatedAtWhereClause(updatedBeforeThan)
   ].filter(clause => clause).map(clause => `(${clause})`).join(" AND ");
 
-const getRowsToSelect = (adminTaskModelsTypes: AdminTaskModelsType[]) => {
-  const tablesByColumn: object = groupTableNamesByColumn(adminTaskModelsTypes);
+const getRowsToSelect = (adminTaskModelsTypes: AdminTaskModelsType[], secretary: Secretary) => {
+  const tablesByColumn: object = groupTableNamesByColumn(adminTaskModelsTypes, secretary);
   return Object.entries(tablesByColumn).map(([columnName, tableNames]) =>
     `COALESCE (
       ${tableNames.map(tableName => `${tableName}."${columnName}"`).join(",")}
@@ -45,10 +46,10 @@ const getAdminTaskModels = (adminTaskTypes: AdminTaskType[]) => {
   return ADMIN_TASK_MODELS.filter(model => modelNames.includes(model.name));
 };
 
-const findAdminTasksByTypeQuery = (adminTaskTypes: AdminTaskType[]) => {
+const findAdminTasksByTypeQuery = (adminTaskTypes: AdminTaskType[], secretary: Secretary) => {
   const adminTaskModelsTypes = getAdminTaskModels(adminTaskTypes);
   return `
-    SELECT ${getRowsToSelect(adminTaskModelsTypes)}
+    SELECT ${getRowsToSelect(adminTaskModelsTypes, secretary)}
     FROM ${getFullOuterJoin(adminTaskModelsTypes)}
   `;
 };
@@ -58,13 +59,14 @@ export const findAdminTasksQuery = (
     adminTaskTypes,
     statuses,
     updatedBeforeThan,
-    limit
+    limit,
+    secretary
   }: IAdminTasksFilter & { limit: number }
 ) => {
   if (adminTaskTypes.length === 0) throw new AdminTaskTypesIsEmptyError();
   if (statuses.length === 0) throw new StatusesIsEmptyError();
   return `
-    WITH "AdminTask" AS (${findAdminTasksByTypeQuery(adminTaskTypes)})
+    WITH "AdminTask" AS (${findAdminTasksByTypeQuery(adminTaskTypes, secretary)})
     SELECT * FROM "AdminTask"
     WHERE ${getWhereClause(statuses, updatedBeforeThan)}
     ORDER BY "AdminTask"."updatedAt" DESC
