@@ -46,7 +46,7 @@ describe("ApplicantCareersRepository", () => {
     });
   });
 
-  it("return no applicantCareers", async () => {
+  it("returns no applicantCareers", async () => {
     await ApplicantCareersRepository.truncate();
     expect(await ApplicantCareersRepository.findAll()).toEqual([]);
   });
