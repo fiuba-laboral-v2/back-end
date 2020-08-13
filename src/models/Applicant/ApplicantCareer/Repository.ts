@@ -31,5 +31,6 @@ export const ApplicantCareersRepository = {
       { transaction, validate: true }
     );
   },
+  findAll: () => ApplicantCareer.findAll(),
   truncate: async () => ApplicantCareer.truncate({ cascade: true })
 };
