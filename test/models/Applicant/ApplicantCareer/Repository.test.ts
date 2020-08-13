@@ -1,4 +1,4 @@
-import { DatabaseError } from "sequelize";
+import { DatabaseError, UniqueConstraintError } from "sequelize";
 import { ApplicantCareersRepository } from "$models/Applicant/ApplicantCareer";
 import { UserRepository } from "$models/User";
 import { CareerRepository } from "$models/Career";
@@ -70,6 +70,18 @@ describe("ApplicantCareersRepository", () => {
         expect.objectContaining(applicantCareersData1),
         expect.objectContaining(applicantCareersData2)
       ]);
+    });
+
+    it("throws an error if it already exists for the same career and applicant", async () => {
+      const { code: careerCode } = await CareerGenerator.instance();
+      const applicant = await ApplicantGenerator.instance.withMinimumData();
+      await ApplicantCareersRepository.bulkCreate([{ careerCode, isGraduate: true }], applicant);
+      await expect(
+        ApplicantCareersRepository.bulkCreate([{ careerCode, isGraduate: true }], applicant)
+      ).rejects.toThrowErrorWithMessage(
+        UniqueConstraintError,
+        "Validation error"
+      );
     });
 
     it("throws an error if one of the applicantCareers data has no isGraduate", async () => {
