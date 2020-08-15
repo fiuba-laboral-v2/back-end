@@ -8,3 +8,8 @@ export interface IAdminTasksFilter {
   updatedBeforeThan?: Date;
   secretary: Secretary;
 }
+
+export interface IStatusType {
+  includeCommon: boolean;
+  includeSecretary: boolean;
+}

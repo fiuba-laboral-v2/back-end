@@ -26,9 +26,12 @@ describe("findAdminTasksQuery", () => {
       ...(updatedBeforeThan && { updatedBeforeThan })
     });
 
-    const whereStatus = statuses
-      .map(selectedStatus => `"AdminTask"."approvalStatus" = '${selectedStatus}'`)
-      .join(" OR ");
+    const commonStatus = statuses
+      .map(selectedStatus => `"AdminTask"."approvalStatus" = '${selectedStatus}'`);
+    const offerStatus = statuses
+      .map(selectedStatus => `"AdminTask"."${secretaryColumn(secretary)}" = '${selectedStatus}'`);
+    const adminTaskWhereStatus = commonStatus.concat(offerStatus).join(" OR ");
+
     const whereUpdatedBeforeThan = updatedBeforeThan ?
       ` AND ("AdminTask"."updatedAt" < '${updatedBeforeThan.toISOString()}')` : "";
 
@@ -54,7 +57,8 @@ describe("findAdminTasksQuery", () => {
       COALESCE ( Companies."email" ) AS "email",
       COALESCE ( Offers."companyUuid" ) AS "companyUuid",
       COALESCE ( Offers."title" ) AS "title",
-      COALESCE ( Offers."${secretaryColumn(secretary)}" ) AS "${secretaryColumn(secretary)}",
+      COALESCE ( Offers."extensionApprovalStatus" ) AS "extensionApprovalStatus",
+      COALESCE ( Offers."graduadosApprovalStatus" ) AS "graduadosApprovalStatus",
       COALESCE ( Offers."hoursPerDay" ) AS "hoursPerDay",
       COALESCE ( Offers."minimumSalary" ) AS "minimumSalary",
       COALESCE ( Offers."maximumSalary" ) AS "maximumSalary"
@@ -67,7 +71,7 @@ describe("findAdminTasksQuery", () => {
       ) AS Offers ON FALSE)
       )
       SELECT * FROM "AdminTask"
-      WHERE (${whereStatus})${whereUpdatedBeforeThan}
+      WHERE (${adminTaskWhereStatus})${whereUpdatedBeforeThan}
       ORDER BY "AdminTask"."updatedAt" DESC
       LIMIT ${limit}
     `;
@@ -76,11 +80,12 @@ describe("findAdminTasksQuery", () => {
 
   const expectToReturnSQLQueryOfCompaniesWithStatus = (status: ApprovalStatus) => {
     const limit = 50;
+    const secretary = Secretary.graduados;
     const query = findAdminTasksQuery({
       adminTaskTypes: [AdminTaskType.Company],
       statuses: [status],
       limit,
-      secretary: Secretary.graduados
+      secretary
     });
     const expectedQuery = `
       WITH "AdminTask" AS
@@ -101,7 +106,9 @@ describe("findAdminTasksQuery", () => {
           FROM (SELECT *, 'Companies' AS "tableNameColumn" FROM "Companies") AS Companies
         )
       SELECT * FROM "AdminTask"
-      WHERE ("AdminTask"."approvalStatus" = '${status}')
+      WHERE (
+        "AdminTask"."approvalStatus" = '${status}'
+      )
       ORDER BY "AdminTask"."updatedAt" DESC
       LIMIT ${limit}
     `;
@@ -110,11 +117,12 @@ describe("findAdminTasksQuery", () => {
 
   const expectToReturnSQLQueryOfApplicantsWithStatus = (status: ApprovalStatus) => {
     const limit = 75;
+    const secretary = Secretary.graduados;
     const query = findAdminTasksQuery({
       adminTaskTypes: [AdminTaskType.Applicant],
       statuses: [status],
       limit,
-      secretary: Secretary.extension
+      secretary
     });
     const expectedQuery = `
       WITH "AdminTask" AS
@@ -131,7 +139,9 @@ describe("findAdminTasksQuery", () => {
           FROM (SELECT *, 'Applicants' AS "tableNameColumn" FROM "Applicants") AS Applicants
         )
       SELECT * FROM "AdminTask"
-      WHERE ("AdminTask"."approvalStatus" = '${status}')
+      WHERE (
+        "AdminTask"."approvalStatus" = '${status}'
+      )
       ORDER BY "AdminTask"."updatedAt" DESC
       LIMIT ${limit}
     `;
@@ -156,7 +166,8 @@ describe("findAdminTasksQuery", () => {
           COALESCE ( Offers."companyUuid" ) AS "companyUuid",
           COALESCE ( Offers."title" ) AS "title",
           COALESCE ( Offers."description" ) AS "description",
-          COALESCE ( Offers."${secretaryColumn(secretary)}" ) AS "${secretaryColumn(secretary)}",
+          COALESCE ( Offers."extensionApprovalStatus" ) AS "extensionApprovalStatus",
+          COALESCE ( Offers."graduadosApprovalStatus" ) AS "graduadosApprovalStatus",
           COALESCE ( Offers."hoursPerDay" ) AS "hoursPerDay",
           COALESCE ( Offers."minimumSalary" ) AS "minimumSalary",
           COALESCE ( Offers."maximumSalary" ) AS "maximumSalary",
@@ -165,7 +176,9 @@ describe("findAdminTasksQuery", () => {
         FROM (SELECT *, 'Offers' AS "tableNameColumn" FROM "Offers" ) AS Offers
       )
       SELECT * FROM "AdminTask"
-      WHERE ("AdminTask"."approvalStatus" = '${status}')
+      WHERE (
+        "AdminTask"."${secretaryColumn(secretary)}" = '${status}'
+      )
       ORDER BY "AdminTask"."updatedAt" DESC
       LIMIT ${limit}
     `;

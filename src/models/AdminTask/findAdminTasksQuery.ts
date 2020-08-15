@@ -1,24 +1,47 @@
 import { ADMIN_TASK_MODELS, AdminTaskModelsType, AdminTaskType, TABLE_NAME_COLUMN } from "./Model";
-import { IAdminTasksFilter } from "./Interfaces";
+import { IAdminTasksFilter, IStatusType } from "./Interfaces";
 import { AdminTaskTypesIsEmptyError, StatusesIsEmptyError } from "./Errors";
 import { groupTableNamesByColumn } from "./groupTableNamesByColumn";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin/Interface";
 
-const getStatusWhereClause = (statuses: ApprovalStatus[]) =>
-  statuses.map(status => `"AdminTask"."approvalStatus" = '${status}'`).join(" OR ");
+const getStatusWhereClause = (
+  statuses: ApprovalStatus[],
+  secretary: Secretary,
+  statusType: IStatusType
+) => {
+  const statusColumns: string[] = [];
+  if (statusType.includeCommon) {
+    statusColumns.push(...statuses.map(status => `"AdminTask"."approvalStatus" = '${status}'`));
+  }
+
+  if (statusType.includeSecretary) {
+    const secretaryStatusName = secretary === Secretary.graduados ?
+      "graduadosApprovalStatus" : "extensionApprovalStatus";
+    statusColumns.push(...statuses.map(
+      status => `"AdminTask"."${secretaryStatusName}" = '${status}'`
+    ));
+  }
+
+  return statusColumns.join(" OR ");
+};
 
 const getUpdatedAtWhereClause = (updatedBeforeThan?: Date) =>
   updatedBeforeThan && `"AdminTask"."updatedAt" < '${updatedBeforeThan.toISOString()}'`;
 
-const getWhereClause = (statuses: ApprovalStatus[], updatedBeforeThan?: Date) =>
+const getWhereClause = (
+  statuses: ApprovalStatus[],
+  secretary: Secretary,
+  statusType: IStatusType,
+  updatedBeforeThan?: Date
+) =>
   [
-    getStatusWhereClause(statuses),
+    getStatusWhereClause(statuses, secretary, statusType),
     getUpdatedAtWhereClause(updatedBeforeThan)
   ].filter(clause => clause).map(clause => `(${clause})`).join(" AND ");
 
-const getRowsToSelect = (adminTaskModelsTypes: AdminTaskModelsType[], secretary: Secretary) => {
-  const tablesByColumn: object = groupTableNamesByColumn(adminTaskModelsTypes, secretary);
+const getRowsToSelect = (adminTaskModelsTypes: AdminTaskModelsType[]) => {
+  const tablesByColumn: object = groupTableNamesByColumn(adminTaskModelsTypes);
   return Object.entries(tablesByColumn).map(([columnName, tableNames]) =>
     `COALESCE (
       ${tableNames.map(tableName => `${tableName}."${columnName}"`).join(",")}
@@ -46,10 +69,18 @@ const getAdminTaskModels = (adminTaskTypes: AdminTaskType[]) => {
   return ADMIN_TASK_MODELS.filter(model => modelNames.includes(model.name));
 };
 
-const findAdminTasksByTypeQuery = (adminTaskTypes: AdminTaskType[], secretary: Secretary) => {
+const incluedeStatus = (adminTaskTypes: AdminTaskType[]) => {
+  const commonStatus = adminTaskTypes.filter(type => type !== "Offer");
+  return {
+    includeCommon: commonStatus.length >= 1,
+    includeSecretary: adminTaskTypes.includes(AdminTaskType.Offer)
+  };
+};
+
+const findAdminTasksByTypeQuery = (adminTaskTypes: AdminTaskType[]) => {
   const adminTaskModelsTypes = getAdminTaskModels(adminTaskTypes);
   return `
-    SELECT ${getRowsToSelect(adminTaskModelsTypes, secretary)}
+    SELECT ${getRowsToSelect(adminTaskModelsTypes)}
     FROM ${getFullOuterJoin(adminTaskModelsTypes)}
   `;
 };
@@ -65,10 +96,11 @@ export const findAdminTasksQuery = (
 ) => {
   if (adminTaskTypes.length === 0) throw new AdminTaskTypesIsEmptyError();
   if (statuses.length === 0) throw new StatusesIsEmptyError();
+  const statusTypes = incluedeStatus(adminTaskTypes);
   return `
-    WITH "AdminTask" AS (${findAdminTasksByTypeQuery(adminTaskTypes, secretary)})
+    WITH "AdminTask" AS (${findAdminTasksByTypeQuery(adminTaskTypes)})
     SELECT * FROM "AdminTask"
-    WHERE ${getWhereClause(statuses, updatedBeforeThan)}
+    WHERE ${getWhereClause(statuses, secretary, statusTypes, updatedBeforeThan)}
     ORDER BY "AdminTask"."updatedAt" DESC
     LIMIT ${limit}
   `;
