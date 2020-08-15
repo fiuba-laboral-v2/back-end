@@ -258,10 +258,12 @@ describe("OfferRepository", () => {
     beforeAll(async () => {
       OfferRepository.truncate();
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      for (const _ of range(8)) {
+      for (const milliseconds of range(8)) {
+        MockDate.set(milliseconds);
         allOffersByDescUpdatedAt.push(
           await OfferRepository.create(offersData.next({ companyUuid }).value)
         );
+        MockDate.reset();
       }
       allOffersByDescUpdatedAt = allOffersByDescUpdatedAt.sort(offer => -offer.updatedAt);
     });
