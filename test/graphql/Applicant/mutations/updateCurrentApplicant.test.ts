@@ -139,7 +139,7 @@ describe("updateCurrentApplicant", () => {
   });
 
   describe("Errors", () => {
-    it("returns an error if currentCareerYear is a number for a graduated", async () => {
+    it("returns an error if currentCareerYear is a defined when isGraduate is true", async () => {
       const { apolloClient } = await TestClientGenerator.applicant();
       const { code: careerCode } = await CareerGenerator.instance();
       const { errors } = await apolloClient.mutate({
