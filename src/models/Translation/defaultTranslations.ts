@@ -34,7 +34,10 @@ export const defaultTranslations = {
     { key: "careersTitle", value: "Carreras" }
   ],
   careerSelector: [
-    { key: "career", value: "Carrera" }
+    { key: "career", value: "Carrera" },
+    { key: "isGraduate", value: "Graduado?" },
+    { key: "approvedSubjectCount", value: "Cuántas materias aprobaste? (sin incluir CBC)" },
+    { key: "currentCareerYear", value: "Qué año estás cursando? (sin incluir CBC)" }
   ],
   editOffer: [
     { key: "create", value: "Publicar oferta" },
