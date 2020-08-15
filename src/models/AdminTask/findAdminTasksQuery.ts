@@ -4,6 +4,7 @@ import { AdminTaskTypesIsEmptyError, StatusesIsEmptyError } from "./Errors";
 import { groupTableNamesByColumn } from "./groupTableNamesByColumn";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin/Interface";
+import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 
 const getStatusWhereClause = (
   statuses: ApprovalStatus[],
@@ -26,14 +27,24 @@ const getStatusWhereClause = (
   return statusColumns.join(" OR ");
 };
 
-const getUpdatedAtWhereClause = (updatedBeforeThan?: Date) =>
-  updatedBeforeThan && `"AdminTask"."updatedAt" < '${updatedBeforeThan.toISOString()}'`;
+const getUpdatedAtWhereClause = (updatedBeforeThan?: IPaginatedInput) => {
+  if (!updatedBeforeThan) return;
+  const updatedAtString = updatedBeforeThan.dateTime.toISOString();
+  return `
+    (
+      "AdminTask"."updatedAt" < '${updatedAtString}'
+    ) OR (
+      "AdminTask"."updatedAt" = '${updatedAtString}'
+      AND "AdminTask"."uuid" < '${updatedBeforeThan.uuid}'
+    )
+  `;
+};
 
 const getWhereClause = (
   statuses: ApprovalStatus[],
   secretary: Secretary,
   statusType: IStatusType,
-  updatedBeforeThan?: Date
+  updatedBeforeThan?: IPaginatedInput
 ) =>
   [
     getStatusWhereClause(statuses, secretary, statusType),
@@ -101,7 +112,7 @@ export const findAdminTasksQuery = (
     WITH "AdminTask" AS (${findAdminTasksByTypeQuery(adminTaskTypes)})
     SELECT * FROM "AdminTask"
     WHERE ${getWhereClause(statuses, secretary, statusTypes, updatedBeforeThan)}
-    ORDER BY "AdminTask"."updatedAt" DESC
+    ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
     LIMIT ${limit}
   `;
 };

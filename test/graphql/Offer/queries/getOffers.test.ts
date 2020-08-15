@@ -18,7 +18,7 @@ import { Secretary } from "$models/Admin";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 
 const GET_OFFERS = gql`
-  query ($updatedBeforeThan: DateTime) {
+  query ($updatedBeforeThan: PaginatedInput) {
     getOffers(updatedBeforeThan: $updatedBeforeThan) {
       results {
         uuid
@@ -91,7 +91,10 @@ describe("getOffers", () => {
       const { data } = await apolloClient.query({
         query: GET_OFFERS,
         variables: {
-          updatedBeforeThan: offer2.updatedAt.toISOString()
+          updatedBeforeThan: {
+            dateTime: offer2.updatedAt.toISOString(),
+            uuid: offer2.uuid
+          }
         }
       });
       expect(data!.getOffers.results).toMatchObject(
@@ -109,7 +112,10 @@ describe("getOffers", () => {
       const { data } = await apolloClient.query({
         query: GET_OFFERS,
         variables: {
-          updatedBeforeThan: offer1.updatedAt.toISOString()
+          updatedBeforeThan: {
+            dateTime: offer1.updatedAt.toISOString(),
+            uuid: offer1.uuid
+          }
         }
       });
       expect(data!.getOffers.results).toMatchObject(
@@ -161,10 +167,14 @@ describe("getOffers", () => {
         const itemsPerPage = 3;
         const lastOfferIndex = 9;
         mockItemsPerPage(itemsPerPage);
+        const lastOffer = offersByDescUpdatedAt[lastOfferIndex];
         const { data } = await apolloClient.query({
           query: GET_OFFERS,
           variables: {
-            updatedBeforeThan: offersByDescUpdatedAt[lastOfferIndex].updatedAt.toISOString()
+            updatedBeforeThan: {
+              dateTime: lastOffer.updatedAt.toISOString(),
+              uuid: lastOffer.uuid
+            }
           }
         });
         expect(data!.getOffers.results.map(offer => offer.uuid)).toEqual(

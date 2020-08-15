@@ -1,4 +1,4 @@
-import { IApplicantCareer } from "$models/Applicant";
+import { IApplicantCareer } from "$models/Applicant/ApplicantCareer";
 import { Admin } from "$models";
 import { IExpressContext } from "../graphql/ExpressContext";
 import { ApprovalStatus } from "$models/ApprovalStatus";

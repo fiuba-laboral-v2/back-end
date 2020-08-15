@@ -45,7 +45,8 @@ const SAVE_APPLICANT_WITH_COMPLETE_DATA = gql`
           description
           credits
         }
-        creditsCount
+        approvedSubjectCount
+        currentCareerYear
         isGraduate
       }
     }
@@ -80,9 +81,10 @@ describe("saveApplicant", () => {
     it("creates a new applicant", async () => {
       const applicantData = ApplicantGenerator.data.minimum();
       const applicantCareerData = {
-        code: career.code,
-        creditsCount: career.credits - 1,
-        isGraduate: true
+        careerCode: career.code,
+        approvedSubjectCount: 20,
+        currentCareerYear: 3,
+        isGraduate: false
       };
       const { data, errors } = await client.loggedOut().mutate({
         mutation: SAVE_APPLICANT_WITH_COMPLETE_DATA,
@@ -110,9 +112,7 @@ describe("saveApplicant", () => {
             description: career.description,
             credits: career.credits
           },
-          careerCode: applicantCareerData.code,
-          creditsCount: applicantCareerData.creditsCount,
-          isGraduate: applicantCareerData.isGraduate
+          ...applicantCareerData
         }]
       });
     });
@@ -120,9 +120,8 @@ describe("saveApplicant", () => {
     it("creates applicant with only obligatory data", async () => {
       const applicantData = ApplicantGenerator.data.minimum();
       const applicantCareerData = {
-        code: career.code,
-        creditsCount: career.credits - 1,
-        isGraduate: false
+        careerCode: career.code,
+        isGraduate: true
       };
       const { data, errors } = await client.loggedOut().mutate({
         mutation: SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA,
@@ -134,7 +133,7 @@ describe("saveApplicant", () => {
           uuid: expect.stringMatching(UUID_REGEX),
           user: { email: applicantData.user.email },
           padron: applicantData.padron,
-          careers: [{ careerCode: applicantCareerData.code }]
+          careers: [{ careerCode: applicantCareerData.careerCode }]
         }
       );
     });
@@ -147,7 +146,7 @@ describe("saveApplicant", () => {
       mutation: SAVE_APPLICANT_WITH_COMPLETE_DATA,
       variables: {
         ...applicantData,
-        careers: [{ code: career.code, creditsCount: career.credits - 1 }]
+        careers: [{ careerCode: career.code }]
       }
     });
     expect(errors).not.toBeUndefined();

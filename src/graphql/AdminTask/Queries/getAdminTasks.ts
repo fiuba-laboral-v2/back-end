@@ -2,11 +2,11 @@ import { List, nonNull } from "$graphql/fieldTypes";
 import { AdminTaskRepository, IAdminTasksFilter } from "$models/AdminTask";
 import { GraphQLAdminTaskType } from "../Types/GraphQLAdminTaskType";
 import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
-import { GraphQLDateTime } from "graphql-iso-date";
 import { GraphQLPaginatedResults } from "$graphql/Pagination/Types/GraphQLPaginatedResults";
 import { GraphQLAdminTask } from "$graphql/AdminTask/Types/GraphQLAdminTask";
 import { IAdminUser } from "$graphql/Context";
 import { AdminRepository } from "$models/Admin";
+import { GraphQLPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 
 export const getAdminTasks = {
   type: GraphQLPaginatedResults(GraphQLAdminTask),
@@ -18,7 +18,7 @@ export const getAdminTasks = {
       type: nonNull(List(GraphQLApprovalStatus))
     },
     updatedBeforeThan: {
-      type: GraphQLDateTime
+      type: GraphQLPaginatedInput
     }
   },
   resolve: async (

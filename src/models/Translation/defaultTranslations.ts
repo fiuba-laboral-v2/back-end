@@ -31,12 +31,10 @@ export const defaultTranslations = {
     { key: "password", value: "Contraseña" }
   ],
   careersDetail: [
-    { key: "careersTitle", value: "Carreras" },
-    { key: "creditsProgress", value: "% de los créditos aprobados" }
+    { key: "careersTitle", value: "Carreras" }
   ],
   careerSelector: [
-    { key: "career", value: "Carrera" },
-    { key: "credits", value: "Créditos aprobados" }
+    { key: "career", value: "Carrera" }
   ],
   editOffer: [
     { key: "create", value: "Publicar oferta" },

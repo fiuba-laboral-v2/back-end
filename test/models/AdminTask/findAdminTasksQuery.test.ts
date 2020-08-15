@@ -6,15 +6,26 @@ import {
 } from "$models/AdminTask/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
+import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 
 describe("findAdminTasksQuery", () => {
   const secretaryColumn = (secretary: Secretary) =>
     secretary === Secretary.graduados ? "graduadosApprovalStatus" : "extensionApprovalStatus";
 
+  const setUpdatedBeforeThan = ({ dateTime, uuid }: IPaginatedInput) => {
+    const whereClause: string[] = [];
+    if (!dateTime && !uuid) return "";
+    whereClause.push(`("AdminTask"."updatedAt" < '${dateTime.toISOString()}')`);
+    whereClause.push(
+      `("AdminTask"."updatedAt" = '${dateTime.toISOString()}' AND  "AdminTask"."uuid" < '${uuid}')`
+    );
+    return whereClause.join(" OR ");
+  };
+
   const expectToReturnSQLQueryOfAllAdminTasksWithStatus = (
     status: ApprovalStatus | ApprovalStatus[],
     secretary: Secretary,
-    updatedBeforeThan?: Date
+    updatedBeforeThan?: IPaginatedInput
   ) => {
     const limit = 15;
     const statuses = Array.isArray(status) ? status : [status];
@@ -33,7 +44,7 @@ describe("findAdminTasksQuery", () => {
     const adminTaskWhereStatus = commonStatus.concat(offerStatus).join(" OR ");
 
     const whereUpdatedBeforeThan = updatedBeforeThan ?
-      ` AND ("AdminTask"."updatedAt" < '${updatedBeforeThan.toISOString()}')` : "";
+      ` AND (${setUpdatedBeforeThan(updatedBeforeThan)})` : "";
 
     const expectedQuery = `
     WITH "AdminTask" AS (
@@ -72,7 +83,7 @@ describe("findAdminTasksQuery", () => {
       )
       SELECT * FROM "AdminTask"
       WHERE (${adminTaskWhereStatus})${whereUpdatedBeforeThan}
-      ORDER BY "AdminTask"."updatedAt" DESC
+      ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
       LIMIT ${limit}
     `;
     expect(query).toEqualIgnoringSpacing(expectedQuery);
@@ -106,10 +117,8 @@ describe("findAdminTasksQuery", () => {
           FROM (SELECT *, 'Companies' AS "tableNameColumn" FROM "Companies") AS Companies
         )
       SELECT * FROM "AdminTask"
-      WHERE (
-        "AdminTask"."approvalStatus" = '${status}'
-      )
-      ORDER BY "AdminTask"."updatedAt" DESC
+      WHERE ("AdminTask"."approvalStatus" = '${status}')
+      ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
       LIMIT ${limit}
     `;
     expect(query).toEqualIgnoringSpacing(expectedQuery);
@@ -139,10 +148,8 @@ describe("findAdminTasksQuery", () => {
           FROM (SELECT *, 'Applicants' AS "tableNameColumn" FROM "Applicants") AS Applicants
         )
       SELECT * FROM "AdminTask"
-      WHERE (
-        "AdminTask"."approvalStatus" = '${status}'
-      )
-      ORDER BY "AdminTask"."updatedAt" DESC
+      WHERE ("AdminTask"."approvalStatus" = '${status}')
+      ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
       LIMIT ${limit}
     `;
     expect(query).toEqualIgnoringSpacing(expectedQuery);
@@ -179,7 +186,7 @@ describe("findAdminTasksQuery", () => {
       WHERE (
         "AdminTask"."${secretaryColumn(secretary)}" = '${status}'
       )
-      ORDER BY "AdminTask"."updatedAt" DESC
+      ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
       LIMIT ${limit}
     `;
     expect(query).toEqualIgnoringSpacing(expectedQuery);
@@ -302,7 +309,7 @@ describe("findAdminTasksQuery", () => {
 
     expectToReturnSQLQueryOfAllAdminTasksWithStatus(
       statuses, Secretary.extension,
-      new Date("1995-12-17T03:24:00Z")
+      { dateTime: new Date("1995-12-17T03:24:00Z"), uuid: "ec45bb65-6076-45ea-b5e2-844334c3238e" }
     );
   });
 

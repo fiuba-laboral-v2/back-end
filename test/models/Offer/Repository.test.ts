@@ -10,6 +10,7 @@ import { CareerGenerator } from "$generators/Career";
 import { omit, range } from "lodash";
 import { UserRepository } from "$models/User";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
+import MockDate from "mockdate";
 
 describe("OfferRepository", () => {
   let offersData: TOfferDataGenerator;
@@ -257,10 +258,12 @@ describe("OfferRepository", () => {
     beforeAll(async () => {
       OfferRepository.truncate();
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      for (const _ of range(8)) {
+      for (const milliseconds of range(8)) {
+        MockDate.set(milliseconds);
         allOffersByDescUpdatedAt.push(
           await OfferRepository.create(offersData.next({ companyUuid }).value)
         );
+        MockDate.reset();
       }
       allOffersByDescUpdatedAt = allOffersByDescUpdatedAt.sort(offer => -offer.updatedAt);
     });
@@ -283,8 +286,12 @@ describe("OfferRepository", () => {
     it("gives last results, indicates that there are no earlier offers to fetch", async () => {
       mockItemsPerPage(3);
       const lastOfferIndex = 5;
+      const lastOffer = allOffersByDescUpdatedAt[lastOfferIndex];
       const result = await OfferRepository.findAll({
-        updatedBeforeThan: allOffersByDescUpdatedAt[lastOfferIndex].updatedAt
+        updatedBeforeThan: {
+          dateTime: lastOffer.updatedAt,
+          uuid: lastOffer.uuid
+        }
       });
       expect(result.shouldFetchMore).toEqual(false);
       expect(
@@ -294,6 +301,30 @@ describe("OfferRepository", () => {
         allOffersByDescUpdatedAt
           .map(offer => offer.uuid)
           .slice(lastOfferIndex + 1, allOffersByDescUpdatedAt.length)
+      );
+    });
+  });
+
+  describe("when there are offers with equal updatedAt", () => {
+    const offers: Offer[] = [];
+
+    beforeAll(async () => {
+      MockDate.set(new Date());
+      OfferRepository.truncate();
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      for (const _ of range(10)) {
+        offers.push(await OfferRepository.create(offersData.next({ companyUuid }).value));
+      }
+      MockDate.reset();
+    });
+
+    it("sorts by uuid", async () => {
+      const result = await OfferRepository.findAll({});
+      expect(result.shouldFetchMore).toEqual(false);
+      expect(
+        result.results.map(offer => offer.uuid)
+      ).toEqual(
+        offers.map(offer => offer.uuid).sort().reverse()
       );
     });
   });

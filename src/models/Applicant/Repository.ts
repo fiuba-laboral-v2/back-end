@@ -1,7 +1,7 @@
 import { IApplicantEditable, ISaveApplicant } from "./index";
 import { ApplicantNotFound, ApplicantNotUpdatedError } from "./Errors";
 import { Database } from "../../config/Database";
-import { ApplicantCareersRepository } from "../ApplicantCareer";
+import { ApplicantCareersRepository } from "./ApplicantCareer";
 import { ApplicantCapabilityRepository } from "../ApplicantCapability";
 import { ApplicantApprovalEventRepository } from "./ApplicantApprovalEvent";
 import { SectionRepository } from "./Section";

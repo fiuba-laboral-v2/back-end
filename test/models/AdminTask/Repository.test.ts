@@ -9,6 +9,8 @@ import { ApplicantGenerator } from "$generators/Applicant";
 import { CompanyGenerator } from "$generators/Company";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import { Secretary } from "$models/Admin";
+import MockDate from "mockdate";
+import { range } from "lodash";
 
 describe("AdminTaskRepository", () => {
   let admin: Admin;
@@ -173,10 +175,14 @@ describe("AdminTaskRepository", () => {
     const itemsPerPage = 3;
     mockItemsPerPage(itemsPerPage);
     const lastTaskIndex = 1;
+    const lastTask = allTasksByDescUpdatedAt[lastTaskIndex];
     const result = await AdminTaskRepository.find({
       adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
-      updatedBeforeThan: allTasksByDescUpdatedAt[lastTaskIndex].updatedAt,
+      updatedBeforeThan: {
+        dateTime: lastTask.updatedAt,
+        uuid: lastTask.uuid
+      },
       secretary: admin.secretary
     });
     expect(result.shouldFetchMore).toEqual(true);
@@ -188,5 +194,36 @@ describe("AdminTaskRepository", () => {
         .map(task => task.uuid)
         .slice(lastTaskIndex + 1, lastTaskIndex + 1 + itemsPerPage)
     );
+  });
+
+  describe("when there are tasks with equal updatedAt", () => {
+    let firstTask: AdminTask;
+    const companies: Company[] = [];
+
+    beforeAll(async () => {
+      firstTask = allTasksByDescUpdatedAt[allTasksByDescUpdatedAt.length - 1];
+      MockDate.set(firstTask.updatedAt - 1);
+      for (const _ of range(9)) {
+        companies.push(await CompanyGenerator.instance.updatedWithStatus());
+      }
+      MockDate.reset();
+    });
+
+    it("sorts by uuid", async () => {
+      const result = await AdminTaskRepository.find({
+        adminTaskTypes: [AdminTaskType.Company],
+        statuses: [ApprovalStatus.pending],
+        updatedBeforeThan: {
+          dateTime: firstTask.updatedAt,
+          uuid: firstTask.uuid
+        }
+      });
+      expect(result.shouldFetchMore).toEqual(false);
+      expect(
+        result.results.map(task => task.uuid)
+      ).toEqual(
+        companies.map(company => company.uuid).sort().reverse()
+      );
+    });
   });
 });
