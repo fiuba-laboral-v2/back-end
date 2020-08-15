@@ -2,9 +2,9 @@ import { BelongsTo, Column, ForeignKey, Model, PrimaryKey, Table } from "sequeli
 import { Applicant, Career } from "$models";
 import {
   MissingApprovedSubjectCountError,
-  MissingApprovedYearCountError,
+  MissingCurrentCareerYearError,
   ForbiddenApprovedSubjectCountError,
-  ForbiddenApprovedYearCountError
+  ForbiddenCurrentCareerYearError
 } from "./Errors";
 import { HasOneGetAssociationMixin, INTEGER, BOOLEAN, DATE, UUID, STRING } from "sequelize";
 import { isUuid, optional } from "$models/SequelizeModelValidators";
@@ -45,7 +45,7 @@ export class ApplicantCareer extends Model<ApplicantCareer> {
     type: INTEGER,
     ...optional(validateIntegerInRange({ min: { value: 0, include: false } }))
   })
-  public approvedYearCount: number;
+  public currentCareerYear: number;
 
   @Column({
     allowNull: true,
@@ -86,10 +86,10 @@ export class ApplicantCareer extends Model<ApplicantCareer> {
   public validateApplicantCareer() {
     if (this.isGraduate) {
       if (this.approvedSubjectCount) throw new ForbiddenApprovedSubjectCountError();
-      if (this.approvedYearCount) throw new ForbiddenApprovedYearCountError();
+      if (this.currentCareerYear) throw new ForbiddenCurrentCareerYearError();
     } else {
       if (!this.approvedSubjectCount) throw new MissingApprovedSubjectCountError();
-      if (!this.approvedYearCount) throw new MissingApprovedYearCountError();
+      if (!this.currentCareerYear) throw new MissingCurrentCareerYearError();
     }
   }
 }

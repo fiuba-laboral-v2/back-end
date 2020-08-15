@@ -47,7 +47,7 @@ const UPDATE_CURRENT_APPLICANT = gql`
           credits
         }
         approvedSubjectCount
-        approvedYearCount
+        currentCareerYear
         isGraduate
       }
       sections {
@@ -85,7 +85,7 @@ describe("updateCurrentApplicant", () => {
         {
           careerCode: newCareer.code,
           approvedSubjectCount: 20,
-          approvedYearCount: 3,
+          currentCareerYear: 3,
           isGraduate: false
         }
       ],
@@ -139,7 +139,7 @@ describe("updateCurrentApplicant", () => {
   });
 
   describe("Errors", () => {
-    it("returns an error if approvedYearCount is a number for a graduated", async () => {
+    it("returns an error if currentCareerYear is a number for a graduated", async () => {
       const { apolloClient } = await TestClientGenerator.applicant();
       const { code: careerCode } = await CareerGenerator.instance();
       const { errors } = await apolloClient.mutate({
@@ -147,7 +147,7 @@ describe("updateCurrentApplicant", () => {
         variables: {
           careers: [{
             careerCode,
-            approvedYearCount: 3,
+            currentCareerYear: 3,
             isGraduate: true
           }]
         }

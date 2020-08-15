@@ -15,7 +15,7 @@ import { FiubaUsersService } from "$services/FiubaUsers";
 import { Secretary } from "$models/Admin";
 import { UUID_REGEX } from "$test/models";
 import {
-  ForbiddenApprovedYearCountError,
+  ForbiddenCurrentCareerYearError,
   MissingApprovedSubjectCountError
 } from "$models/Applicant/ApplicantCareer/Errors";
 
@@ -212,7 +212,7 @@ describe("ApplicantRepository", () => {
           {
             careerCode: newCareer.code,
             approvedSubjectCount: 20,
-            approvedYearCount: 3,
+            currentCareerYear: 3,
             isGraduate: false
           }
         ],
@@ -336,13 +336,13 @@ describe("ApplicantRepository", () => {
           {
             careerCode: firstCareer.code,
             approvedSubjectCount: 20,
-            approvedYearCount: 3,
+            currentCareerYear: 3,
             isGraduate: false
           },
           {
             careerCode: secondCareer.code,
             approvedSubjectCount: 20,
-            approvedYearCount: 3,
+            currentCareerYear: 3,
             isGraduate: false
           }
         ]
@@ -514,20 +514,20 @@ describe("ApplicantRepository", () => {
       ).resolves.not.toThrow();
     });
 
-    it("updates approvedYearCount and approvedSubjectCount of applicant careers", async () => {
+    it("updates currentCareerYear and approvedSubjectCount of applicant careers", async () => {
       const career = await CareerGenerator.instance();
       const { uuid } = await ApplicantRepository.create({
         ...ApplicantGenerator.data.minimum(),
         careers: [{
           careerCode: career.code,
           isGraduate: false,
-          approvedYearCount: 2,
+          currentCareerYear: 2,
           approvedSubjectCount: 10
         }]
       });
       const newApplicantCareerData = {
         careerCode: career.code,
-        approvedYearCount: 3,
+        currentCareerYear: 3,
         approvedSubjectCount: 17,
         isGraduate: false
       };
@@ -554,14 +554,14 @@ describe("ApplicantRepository", () => {
     });
 
     describe("with wrong parameters", () => {
-      it("throws an error if approvedYearCount is present for a graduated", async () => {
+      it("throws an error if currentCareerYear is present for a graduated", async () => {
         const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
         const { code: careerCode } = await CareerGenerator.instance();
         const dataToUpdate = {
           uuid,
           careers: [{
             careerCode,
-            approvedYearCount: 3,
+            currentCareerYear: 3,
             isGraduate: true
           }]
         };
@@ -569,7 +569,7 @@ describe("ApplicantRepository", () => {
           ApplicantRepository.update(dataToUpdate)
         ).rejects.toThrowBulkRecordErrorIncluding([{
           errorClass: ValidationError,
-          message: ForbiddenApprovedYearCountError.buildMessage()
+          message: ForbiddenCurrentCareerYearError.buildMessage()
         }]);
       });
 
@@ -580,7 +580,7 @@ describe("ApplicantRepository", () => {
           uuid,
           careers: [{
             careerCode,
-            approvedYearCount: 3,
+            currentCareerYear: 3,
             isGraduate: false
           }]
         };

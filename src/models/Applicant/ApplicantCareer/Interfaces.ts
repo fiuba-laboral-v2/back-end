@@ -1,6 +1,6 @@
 export interface IApplicantCareer {
   careerCode: string;
-  approvedYearCount?: number;
+  currentCareerYear?: number;
   approvedSubjectCount?: number;
   isGraduate: boolean;
 }

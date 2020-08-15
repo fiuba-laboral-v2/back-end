@@ -10,7 +10,7 @@ export const GraphQLApplicantCareerInput = new GraphQLInputObjectType({
     approvedSubjectCount: {
       type: Int
     },
-    approvedYearCount: {
+    currentCareerYear: {
       type: Int
     },
     isGraduate: {

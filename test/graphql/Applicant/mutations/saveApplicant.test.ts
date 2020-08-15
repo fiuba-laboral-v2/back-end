@@ -46,7 +46,7 @@ const SAVE_APPLICANT_WITH_COMPLETE_DATA = gql`
           credits
         }
         approvedSubjectCount
-        approvedYearCount
+        currentCareerYear
         isGraduate
       }
     }
@@ -83,7 +83,7 @@ describe("saveApplicant", () => {
       const applicantCareerData = {
         careerCode: career.code,
         approvedSubjectCount: 20,
-        approvedYearCount: 3,
+        currentCareerYear: 3,
         isGraduate: false
       };
       const { data, errors } = await client.loggedOut().mutate({

@@ -28,7 +28,7 @@ describe("ApplicantCareersRepository", () => {
       expect(applicantCareer).toEqual(expect.objectContaining({
         careerCode,
         isGraduate: true,
-        approvedYearCount: null,
+        currentCareerYear: null,
         approvedSubjectCount: null,
         createdAt: expect.any(Date),
         updatedAt: expect.any(Date)
@@ -60,7 +60,7 @@ describe("ApplicantCareersRepository", () => {
         careerCode: career2.code,
         isGraduate: false,
         approvedSubjectCount: 20,
-        approvedYearCount: 3
+        currentCareerYear: 3
       };
       const applicantCareers = await ApplicantCareersRepository.bulkCreate(
         [applicantCareersData1, applicantCareersData2],

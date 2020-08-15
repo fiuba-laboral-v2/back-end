@@ -19,7 +19,7 @@ export const GraphQLApplicantCareer = new GraphQLObjectType<ApplicantCareer>({
     approvedSubjectCount: {
       type: Int
     },
-    approvedYearCount: {
+    currentCareerYear: {
       type: Int
     },
     isGraduate: {

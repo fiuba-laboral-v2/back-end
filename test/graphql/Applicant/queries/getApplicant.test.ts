@@ -40,7 +40,7 @@ const GET_APPLICANT = gql`
           credits
         }
         approvedSubjectCount
-        approvedYearCount
+        currentCareerYear
         isGraduate
       }
     }

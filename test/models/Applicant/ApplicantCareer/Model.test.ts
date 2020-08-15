@@ -3,9 +3,9 @@ import { NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
 import { ValidationError } from "sequelize";
 import {
   ForbiddenApprovedSubjectCountError,
-  ForbiddenApprovedYearCountError,
+  ForbiddenCurrentCareerYearError,
   MissingApprovedSubjectCountError,
-  MissingApprovedYearCountError
+  MissingCurrentCareerYearError
 } from "$models/Applicant/ApplicantCareer/Errors";
 
 describe("ApplicantCareer", () => {
@@ -25,7 +25,7 @@ describe("ApplicantCareer", () => {
     const applicantCareer = new ApplicantCareer({
       careerCode: "10",
       applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
-      approvedYearCount: 5,
+      currentCareerYear: 5,
       approvedSubjectCount: 20
     });
     await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
@@ -63,16 +63,16 @@ describe("ApplicantCareer", () => {
       );
     });
 
-    it("throws error if approvedYearCount is provided", async () => {
+    it("throws error if currentCareerYear is provided", async () => {
       const applicantCareer = new ApplicantCareer({
         careerCode: "10",
         applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
-        approvedYearCount: 5,
+        currentCareerYear: 5,
         isGraduate: true
       });
       await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
         ValidationError,
-        ForbiddenApprovedYearCountError.buildMessage()
+        ForbiddenCurrentCareerYearError.buildMessage()
       );
     });
   });
@@ -82,7 +82,7 @@ describe("ApplicantCareer", () => {
       const attributes = {
         careerCode: "10",
         applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
-        approvedYearCount: 3,
+        currentCareerYear: 3,
         approvedSubjectCount: 20,
         isGraduate: false
       };
@@ -95,11 +95,11 @@ describe("ApplicantCareer", () => {
       }));
     });
 
-    it("throws an error if approvedYearCount is negative", async () => {
+    it("throws an error if currentCareerYear is negative", async () => {
       const applicantCareer = new ApplicantCareer({
         careerCode: "10",
         applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
-        approvedYearCount: -12,
+        currentCareerYear: -12,
         approvedSubjectCount: 20,
         isGraduate: false
       });
@@ -109,11 +109,11 @@ describe("ApplicantCareer", () => {
       );
     });
 
-    it("throws an error if approvedYearCount is zero", async () => {
+    it("throws an error if currentCareerYear is zero", async () => {
       const applicantCareer = new ApplicantCareer({
         careerCode: "10",
         applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
-        approvedYearCount: 0,
+        currentCareerYear: 0,
         approvedSubjectCount: 20,
         isGraduate: false
       });
@@ -127,7 +127,7 @@ describe("ApplicantCareer", () => {
       const applicantCareer = new ApplicantCareer({
         careerCode: "10",
         applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
-        approvedYearCount: 12,
+        currentCareerYear: 12,
         approvedSubjectCount: -20,
         isGraduate: false
       });
@@ -141,7 +141,7 @@ describe("ApplicantCareer", () => {
       const applicantCareer = new ApplicantCareer({
         careerCode: "10",
         applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
-        approvedYearCount: 12,
+        currentCareerYear: 12,
         isGraduate: false
       });
       await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
@@ -150,7 +150,7 @@ describe("ApplicantCareer", () => {
       );
     });
 
-    it("throws an error if no approvedYearCount is provided", async () => {
+    it("throws an error if no currentCareerYear is provided", async () => {
       const applicantCareer = new ApplicantCareer({
         careerCode: "10",
         applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
@@ -159,7 +159,7 @@ describe("ApplicantCareer", () => {
       });
       await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
         ValidationError,
-        MissingApprovedYearCountError.buildMessage()
+        MissingCurrentCareerYearError.buildMessage()
       );
     });
   });

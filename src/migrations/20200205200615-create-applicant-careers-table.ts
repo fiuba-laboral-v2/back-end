@@ -18,7 +18,7 @@ export = {
             references: { model: "Applicants", key: "uuid" },
             onDelete: "CASCADE"
           },
-          approvedYearCount: {
+          currentCareerYear: {
             allowNull: true,
             type: INTEGER
           },

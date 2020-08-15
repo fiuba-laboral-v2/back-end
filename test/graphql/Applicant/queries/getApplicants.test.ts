@@ -38,7 +38,7 @@ const GET_APPLICANTS = gql`
             credits
           }
           approvedSubjectCount
-          approvedYearCount
+          currentCareerYear
           isGraduate
         }
         sections {
@@ -108,7 +108,7 @@ describe("getApplicants", () => {
           },
           ...applicantCareer,
           approvedSubjectCount: null,
-          approvedYearCount: null
+          currentCareerYear: null
         }],
         sections: [],
         links: []
@@ -120,7 +120,7 @@ describe("getApplicants", () => {
       const applicantCareerData = {
         careerCode: newCareer.code,
         approvedSubjectCount: 20,
-        approvedYearCount: 3,
+        currentCareerYear: 3,
         isGraduate: false
       };
       const {

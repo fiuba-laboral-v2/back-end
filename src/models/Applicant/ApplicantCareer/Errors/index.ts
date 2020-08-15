@@ -1,5 +1,5 @@
 export { ApplicantCareerNotFound } from "./ApplicantCareerNotFound";
 export { MissingApprovedSubjectCountError } from "./MissingApprovedSubjectCountError";
-export { MissingApprovedYearCountError } from "./MissingApprovedYearCountError";
-export { ForbiddenApprovedYearCountError } from "./ForbiddenApprovedYearCountError";
+export { MissingCurrentCareerYearError } from "./MissingCurrentCareerYearError";
+export { ForbiddenCurrentCareerYearError } from "./ForbiddenCurrentCareerYearError";
 export { ForbiddenApprovedSubjectCountError } from "./ForbiddenApprovedSubjectCountError";
