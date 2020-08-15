@@ -1,4 +1,4 @@
-import { IApplicantCareer } from "$models/Applicant";
+import { IApplicantCareer } from "$models/Applicant/ApplicantCareer";
 import { ApplicantCareerNotFound } from "./Errors";
 import { Transaction } from "sequelize";
 import { Applicant, ApplicantCareer } from "$models";

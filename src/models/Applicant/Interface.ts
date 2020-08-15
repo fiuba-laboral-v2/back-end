@@ -1,12 +1,6 @@
 import { TLink } from "./Link/Interface";
 import { ICreateFiubaUser, IUser, IUserEditable } from "../User";
-
-export interface IApplicantCareer {
-  careerCode: string;
-  approvedYearCount?: number;
-  approvedSubjectCount?: number;
-  isGraduate: boolean;
-}
+import { IApplicantCareer } from "./ApplicantCareer";
 
 export interface IApplicant {
   padron: number;
