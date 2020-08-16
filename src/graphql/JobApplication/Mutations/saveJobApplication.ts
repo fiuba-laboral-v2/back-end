@@ -8,8 +8,8 @@ export const saveJobApplication = {
   type: GraphQLJobApplication,
   args: {
     offerUuid: {
-      type: nonNull(String),
-    },
+      type: nonNull(String)
+    }
   },
   resolve: async (
     _: undefined,
@@ -18,5 +18,5 @@ export const saveJobApplication = {
   ) => {
     const offer = await OfferRepository.findByUuid(offerUuid);
     return JobApplicationRepository.apply(currentUser.applicant.uuid, offer);
-  },
+  }
 };

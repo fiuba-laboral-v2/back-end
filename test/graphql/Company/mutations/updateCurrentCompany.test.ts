@@ -54,11 +54,11 @@ describe("updateCurrentCompany", () => {
         description: "new description",
         logo: "",
         website: "http://www.new-site.com",
-        email: "old@devartis.com",
+        email: "old@devartis.com"
       };
       const { data, errors } = await apolloClient.mutate({
         mutation: UPDATE_CURRENT_COMPANY,
-        variables: dataToUpdate,
+        variables: dataToUpdate
       });
       expect(errors).toBeUndefined();
       expect(data!.updateCurrentCompany).toEqual(dataToUpdate);
@@ -71,11 +71,11 @@ describe("updateCurrentCompany", () => {
       const dataToUpdate = { companyName: "new company name" };
       const { errors } = await apolloClient.mutate({
         mutation: UPDATE_CURRENT_COMPANY,
-        variables: dataToUpdate,
+        variables: dataToUpdate
       });
 
       expect(errors![0].extensions!.data).toEqual({
-        errorType: AuthenticationError.name,
+        errorType: AuthenticationError.name
       });
     });
 
@@ -84,11 +84,11 @@ describe("updateCurrentCompany", () => {
       const dataToUpdate = { companyName: "new company name" };
       const { errors } = await apolloClient.mutate({
         mutation: UPDATE_CURRENT_COMPANY,
-        variables: dataToUpdate,
+        variables: dataToUpdate
       });
 
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
   });

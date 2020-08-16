@@ -15,7 +15,7 @@ export const CareerRepository = {
   },
   findByCodes: async (codes: string[]) => {
     const careers = await Career.findAll({
-      where: { code: { [Op.or]: codes } },
+      where: { code: { [Op.or]: codes } }
     });
     if (careers.length < codes.length) {
       throw new CareersNotFound(
@@ -36,9 +36,9 @@ export const CareerRepository = {
     Database.transaction(async transaction => {
       await ApplicantCareer.destroy({
         where: { careerCode: code },
-        transaction,
+        transaction
       });
       return Career.destroy({ where: { code }, transaction });
     }),
-  truncate: async () => Career.truncate({ cascade: true }),
+  truncate: async () => Career.truncate({ cascade: true })
 };

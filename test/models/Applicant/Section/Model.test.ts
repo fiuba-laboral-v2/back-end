@@ -9,7 +9,7 @@ describe("Section model", () => {
       applicantUuid: applicantUuid,
       title: "Random words",
       text: "Now, this is a story all about how\nMy life got flipped-turned upside down",
-      displayOrder: 1,
+      displayOrder: 1
     };
     const section = new Section(params);
 
@@ -17,14 +17,14 @@ describe("Section model", () => {
     expect(section).toMatchObject({
       title: params.title,
       text: params.text,
-      displayOrder: 1,
+      displayOrder: 1
     });
   });
 
   it("should throw an error if no title is provided", async () => {
     const section = new Section({
       applicantUuid: applicantUuid,
-      text: "And I'd like to take a minute\nJust sit right there",
+      text: "And I'd like to take a minute\nJust sit right there"
     });
     await expect(section.validate()).rejects.toThrow(ValidationError);
   });
@@ -32,7 +32,7 @@ describe("Section model", () => {
   it("should throw an error if no text is provided", async () => {
     const section = new Section({
       applicantUuid: applicantUuid,
-      title: "I'll tell you how I became the prince of a town called Bel Air",
+      title: "I'll tell you how I became the prince of a town called Bel Air"
     });
     await expect(section.validate()).rejects.toThrow(ValidationError);
   });
@@ -40,7 +40,7 @@ describe("Section model", () => {
   it("should throw an error if no applicantUuid is provided", async () => {
     const section = new Section({
       title: "In west Philadelphia born and raised",
-      description: "On the playground was where I spent most of my days\nChillin out maxin relaxin",
+      description: "On the playground was where I spent most of my days\nChillin out maxin relaxin"
     });
     await expect(section.save()).rejects.toThrow(ValidationError);
   });

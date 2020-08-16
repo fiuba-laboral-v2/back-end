@@ -5,7 +5,7 @@ import { AdminGenerator } from "$generators/Admin";
 
 export const adminTestClient = async ({ password, expressContext }: IUserTestClientAttributes) => {
   const admin = await AdminGenerator.instance(Secretary.graduados, {
-    password,
+    password
   });
   const user = await admin.getUser();
   const adminContext = { admin: { userUuid: admin.userUuid } };

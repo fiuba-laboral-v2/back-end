@@ -76,7 +76,7 @@ describe("updateCurrentApplicant", () => {
     const dataToUpdate = {
       user: {
         name: "newName",
-        surname: "newSurname",
+        surname: "newSurname"
       },
       padron: applicant.padron,
       description: "newDescription",
@@ -86,27 +86,27 @@ describe("updateCurrentApplicant", () => {
           careerCode: newCareer.code,
           approvedSubjectCount: 20,
           currentCareerYear: 3,
-          isGraduate: false,
-        },
+          isGraduate: false
+        }
       ],
       sections: [
         {
           title: "title",
           text: "description",
-          displayOrder: 1,
-        },
+          displayOrder: 1
+        }
       ],
       links: [
         {
           name: "my link",
-          url: "https://some.url",
-        },
-      ],
+          url: "https://some.url"
+        }
+      ]
     };
 
     const { data, errors } = await apolloClient.mutate({
       mutation: UPDATE_CURRENT_APPLICANT,
-      variables: dataToUpdate,
+      variables: dataToUpdate
     });
 
     expect(errors).toBeUndefined();
@@ -118,7 +118,7 @@ describe("updateCurrentApplicant", () => {
           uuid: user.uuid,
           email: user.email,
           name: dataToUpdate.user.name,
-          surname: dataToUpdate.user.surname,
+          surname: dataToUpdate.user.surname
         },
         description: dataToUpdate.description,
         careers: [
@@ -126,13 +126,13 @@ describe("updateCurrentApplicant", () => {
             career: {
               code: newCareer.code,
               description: newCareer.description,
-              credits: newCareer.credits,
+              credits: newCareer.credits
             },
-            ...dataToUpdate.careers[0],
-          },
+            ...dataToUpdate.careers[0]
+          }
         ],
         sections: dataToUpdate.sections,
-        links: dataToUpdate.links,
+        links: dataToUpdate.links
       })
     );
     expect(updatedApplicantData.capabilities.map(c => c.description)).toEqual(
@@ -151,10 +151,10 @@ describe("updateCurrentApplicant", () => {
             {
               careerCode,
               currentCareerYear: 3,
-              isGraduate: true,
-            },
-          ],
-        },
+              isGraduate: true
+            }
+          ]
+        }
       });
 
       expect(errors).not.toBeUndefined();
@@ -165,20 +165,20 @@ describe("updateCurrentApplicant", () => {
       const dataToUpdate = {
         user: {
           name: "newName",
-          surname: "newSurname",
+          surname: "newSurname"
         },
         padron: 1500,
         description: "newDescription",
-        capabilities: ["CSS", "clojure"],
+        capabilities: ["CSS", "clojure"]
       };
 
       const { errors } = await apolloClient.mutate({
         mutation: UPDATE_CURRENT_APPLICANT,
-        variables: dataToUpdate,
+        variables: dataToUpdate
       });
 
       expect(errors![0].extensions!.data).toEqual({
-        errorType: AuthenticationError.name,
+        errorType: AuthenticationError.name
       });
     });
 
@@ -188,20 +188,20 @@ describe("updateCurrentApplicant", () => {
       const dataToUpdate = {
         user: {
           name: "newName",
-          surname: "newSurname",
+          surname: "newSurname"
         },
         padron: 1500,
         description: "newDescription",
-        capabilities: ["CSS", "clojure"],
+        capabilities: ["CSS", "clojure"]
       };
 
       const { errors } = await apolloClient.mutate({
         mutation: UPDATE_CURRENT_APPLICANT,
-        variables: dataToUpdate,
+        variables: dataToUpdate
       });
 
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
 
@@ -209,11 +209,11 @@ describe("updateCurrentApplicant", () => {
       const { apolloClient } = await TestClientGenerator.company();
       const { errors } = await apolloClient.mutate({
         mutation: UPDATE_CURRENT_APPLICANT,
-        variables: { padron: 1500 },
+        variables: { padron: 1500 }
       });
 
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
   });

@@ -5,9 +5,9 @@ const GraphQLOfferCareerInput = new GraphQLInputObjectType({
   name: "OfferCareerInput",
   fields: () => ({
     careerCode: {
-      type: nonNull(ID),
-    },
-  }),
+      type: nonNull(ID)
+    }
+  })
 });
 
 export { GraphQLOfferCareerInput };

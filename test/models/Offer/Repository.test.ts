@@ -28,7 +28,7 @@ describe("OfferRepository", () => {
   const sectionData = {
     title: "title",
     text: "text",
-    displayOrder: 1,
+    displayOrder: 1
   };
 
   describe("Create", () => {
@@ -44,7 +44,7 @@ describe("OfferRepository", () => {
       const attributes = offersData.next({ companyUuid }).value;
       const offer = await OfferRepository.create({
         ...attributes,
-        sections: [sectionData],
+        sections: [sectionData]
       });
       expect(offer).toEqual(expect.objectContaining(attributes));
       const sections = await offer.getSections();
@@ -56,13 +56,13 @@ describe("OfferRepository", () => {
       const { code: careerCode } = await CareerGenerator.instance();
       const attributes = offersData.next({
         companyUuid,
-        careers: [{ careerCode }],
+        careers: [{ careerCode }]
       }).value;
       const offer = await OfferRepository.create(attributes);
       expect(offer).toEqual(expect.objectContaining(omit(attributes, ["careers"])));
       const careers = await offer.getCareers();
       expect(careers).toEqual([
-        expect.objectContaining({ code: attributes.careers![0].careerCode }),
+        expect.objectContaining({ code: attributes.careers![0].careerCode })
       ]);
     });
 
@@ -73,7 +73,7 @@ describe("OfferRepository", () => {
       const attributes = offersData.next({ companyUuid, careers: [careerData] }).value;
       const offer = await OfferRepository.create({
         ...attributes,
-        sections: [sectionData],
+        sections: [sectionData]
       });
       expect(offer).toEqual(expect.objectContaining(omit(attributes, ["sections", "careers"])));
       const careers = await offer.getCareers();
@@ -86,7 +86,7 @@ describe("OfferRepository", () => {
       it("throws error if offer has invalid companyUuid and not create the section", async () => {
         const attributes = offersData.next({
           companyUuid: null as any,
-          sections: [sectionData],
+          sections: [sectionData]
         }).value;
         await expect(OfferRepository.create(attributes)).rejects.toThrow(
           "notNull Violation: Offer.companyUuid cannot be null"
@@ -101,9 +101,9 @@ describe("OfferRepository", () => {
           sections: [
             {
               ...sectionData,
-              title: null as any,
-            },
-          ],
+              title: null as any
+            }
+          ]
         }).value;
         await expect(OfferRepository.create(attributes)).rejects.toThrow();
         expect(await OfferSection.findAll()).toHaveLength(0);
@@ -116,7 +116,7 @@ describe("OfferRepository", () => {
         const careerCode = null as any;
         const attributes = offersData.next({
           companyUuid,
-          careers: [{ careerCode }],
+          careers: [{ careerCode }]
         }).value;
         await expect(OfferRepository.create(attributes)).rejects.toThrow();
         expect(await OfferSection.findAll()).toHaveLength(0);
@@ -130,7 +130,7 @@ describe("OfferRepository", () => {
         const offerCareersData = [{ careerCode: code }, { careerCode: code }];
         const attributes = offersData.next({
           companyUuid,
-          careers: offerCareersData,
+          careers: offerCareersData
         }).value;
         await expect(OfferRepository.create(attributes)).rejects.toThrowErrorWithMessage(
           UniqueConstraintError,
@@ -142,7 +142,7 @@ describe("OfferRepository", () => {
         const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
         const attributes = offersData.next({
           companyUuid,
-          sections: [sectionData],
+          sections: [sectionData]
         }).value;
         const { uuid: offerUuid } = await OfferRepository.create(attributes);
         await expect(
@@ -161,7 +161,7 @@ describe("OfferRepository", () => {
       const newAttributes = {
         ...attributes,
         minimumSalary: newSalary,
-        maximumSalary: 2 * newSalary,
+        maximumSalary: 2 * newSalary
       };
       await OfferRepository.update({ ...newAttributes, uuid });
       expect((await OfferRepository.findByUuid(uuid)).minimumSalary).toEqual(newSalary);
@@ -173,7 +173,7 @@ describe("OfferRepository", () => {
       await expect(
         OfferRepository.update({
           ...offersData.next({ companyUuid }).value,
-          uuid: unknownOfferUuid,
+          uuid: unknownOfferUuid
         })
       ).rejects.toThrow(OfferNotFound);
     });
@@ -188,7 +188,7 @@ describe("OfferRepository", () => {
       const params = {
         uuid,
         secretary: Secretary.graduados,
-        status: newStatus,
+        status: newStatus
       };
       await OfferRepository.updateStatus(params);
 
@@ -203,7 +203,7 @@ describe("OfferRepository", () => {
       const params = {
         uuid,
         secretary: Secretary.extension,
-        status: newStatus,
+        status: newStatus
       };
       await OfferRepository.updateStatus(params);
 
@@ -216,7 +216,7 @@ describe("OfferRepository", () => {
       const params = {
         uuid: unknownOfferUuid,
         secretary: Secretary.graduados,
-        status: newStatus,
+        status: newStatus
       };
 
       await expect(OfferRepository.updateStatus(params)).rejects.toThrow(OfferNotFound);
@@ -230,7 +230,7 @@ describe("OfferRepository", () => {
       const params = {
         uuid,
         secretary: Secretary.extension,
-        status: newStatus,
+        status: newStatus
       };
 
       await expect(OfferRepository.updateStatus(params)).rejects.toThrowErrorWithMessage(
@@ -279,7 +279,7 @@ describe("OfferRepository", () => {
       await OfferRepository.create(
         offersData.next({
           companyUuid,
-          careers: [{ careerCode }],
+          careers: [{ careerCode }]
         }).value
       );
       expect(await OfferCareer.findAll()).toHaveLength(1);
@@ -295,7 +295,7 @@ describe("OfferRepository", () => {
       await OfferRepository.create(
         offersData.next({
           companyUuid,
-          careers: [{ careerCode }],
+          careers: [{ careerCode }]
         }).value
       );
 
@@ -311,7 +311,7 @@ describe("OfferRepository", () => {
         await OfferRepository.create(
           offersData.next({
             companyUuid,
-            sections: [sectionData],
+            sections: [sectionData]
           }).value
         );
 
@@ -326,7 +326,7 @@ describe("OfferRepository", () => {
         await OfferRepository.create(
           offersData.next({
             companyUuid,
-            sections: [sectionData],
+            sections: [sectionData]
           }).value
         );
 
@@ -370,8 +370,8 @@ describe("OfferRepository", () => {
       const result = await OfferRepository.findAll({
         updatedBeforeThan: {
           dateTime: lastOffer.updatedAt,
-          uuid: lastOffer.uuid,
-        },
+          uuid: lastOffer.uuid
+        }
       });
       expect(result.shouldFetchMore).toEqual(false);
       expect(result.results.map(offer => offer.uuid)).toEqual(

@@ -35,8 +35,8 @@ describe("getOffers", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.approved,
-        admin: await AdminGenerator.instance(Secretary.extension),
-      },
+        admin: await AdminGenerator.instance(Secretary.extension)
+      }
     });
     return apolloClient;
   };
@@ -57,11 +57,11 @@ describe("getOffers", () => {
       const career2 = await CareerGenerator.instance();
       offer1 = await OfferRepository.create({
         ...offersData.next({ companyUuid }).value,
-        careers: [{ careerCode: career1.code }],
+        careers: [{ careerCode: career1.code }]
       });
       offer2 = await OfferRepository.create({
         ...offersData.next({ companyUuid }).value,
-        careers: [{ careerCode: career2.code }],
+        careers: [{ careerCode: career2.code }]
       });
     };
 
@@ -88,9 +88,9 @@ describe("getOffers", () => {
         variables: {
           updatedBeforeThan: {
             dateTime: offer2.updatedAt.toISOString(),
-            uuid: offer2.uuid,
-          },
-        },
+            uuid: offer2.uuid
+          }
+        }
       });
       expect(data!.getOffers.results).toMatchObject([{ uuid: offer1.uuid }]);
       expect(data!.getOffers.shouldFetchMore).toEqual(false);
@@ -105,9 +105,9 @@ describe("getOffers", () => {
         variables: {
           updatedBeforeThan: {
             dateTime: offer1.updatedAt.toISOString(),
-            uuid: offer1.uuid,
-          },
-        },
+            uuid: offer1.uuid
+          }
+        }
       });
       expect(data!.getOffers.results).toMatchObject([{ uuid: offer2.uuid }]);
       expect(data!.getOffers.shouldFetchMore).toEqual(false);
@@ -121,7 +121,7 @@ describe("getOffers", () => {
           newOffersByDescUpdatedAt.push(
             await OfferRepository.create(
               offersData.next({
-                companyUuid: offer1.companyUuid,
+                companyUuid: offer1.companyUuid
               }).value
             )
           );
@@ -139,7 +139,7 @@ describe("getOffers", () => {
         const { data } = await apolloClient.query({ query: GET_OFFERS });
         expect(data!.getOffers.results.map(offer => offer.uuid)).toEqual([
           offer1.uuid,
-          ...newOffersByDescUpdatedAt.slice(0, itemsPerPage - 1).map(offer => offer.uuid),
+          ...newOffersByDescUpdatedAt.slice(0, itemsPerPage - 1).map(offer => offer.uuid)
         ]);
         expect(data!.getOffers.shouldFetchMore).toEqual(true);
       });
@@ -159,9 +159,9 @@ describe("getOffers", () => {
           variables: {
             updatedBeforeThan: {
               dateTime: lastOffer.updatedAt.toISOString(),
-              uuid: lastOffer.uuid,
-            },
-          },
+              uuid: lastOffer.uuid
+            }
+          }
         });
         expect(data!.getOffers.results.map(offer => offer.uuid)).toEqual(
           offersByDescUpdatedAt
@@ -178,7 +178,7 @@ describe("getOffers", () => {
       Promise.all([
         CompanyRepository.truncate(),
         CareerRepository.truncate(),
-        UserRepository.truncate(),
+        UserRepository.truncate()
       ])
     );
 
@@ -196,7 +196,7 @@ describe("getOffers", () => {
     const { apolloClient } = await TestClientGenerator.company();
     const { errors } = await apolloClient.query({ query: GET_OFFERS });
     expect(errors![0].extensions!.data).toEqual({
-      errorType: UnauthorizedError.name,
+      errorType: UnauthorizedError.name
     });
   });
 
@@ -204,7 +204,7 @@ describe("getOffers", () => {
     const { apolloClient } = await TestClientGenerator.admin();
     const { errors } = await apolloClient.query({ query: GET_OFFERS });
     expect(errors![0].extensions!.data).toEqual({
-      errorType: UnauthorizedError.name,
+      errorType: UnauthorizedError.name
     });
   });
 
@@ -212,12 +212,12 @@ describe("getOffers", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.rejected,
-        admin: await AdminGenerator.instance(Secretary.extension),
-      },
+        admin: await AdminGenerator.instance(Secretary.extension)
+      }
     });
     const { errors } = await apolloClient.query({ query: GET_OFFERS });
     expect(errors![0].extensions!.data).toEqual({
-      errorType: UnauthorizedError.name,
+      errorType: UnauthorizedError.name
     });
   });
 
@@ -225,7 +225,7 @@ describe("getOffers", () => {
     const { apolloClient } = await TestClientGenerator.applicant();
     const { errors } = await apolloClient.query({ query: GET_OFFERS });
     expect(errors![0].extensions!.data).toEqual({
-      errorType: UnauthorizedError.name,
+      errorType: UnauthorizedError.name
     });
   });
 });

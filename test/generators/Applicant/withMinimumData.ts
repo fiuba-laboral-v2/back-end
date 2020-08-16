@@ -6,7 +6,7 @@ export const withMinimumData = ({
   index,
   password,
   capabilities,
-  careers,
+  careers
 }: IApplicantData): ISaveApplicant => ({
   padron: index + 1,
   description: `description${index + 1}`,
@@ -17,8 +17,8 @@ export const withMinimumData = ({
     email: `applicant${index}@mail.com`,
     password: password || "ASDqfdsfsdfwe234",
     name: "applicantName",
-    surname: "applicantSurname",
-  },
+    surname: "applicantSurname"
+  }
 });
 
 export interface IApplicantData extends IApplicantInputData {

@@ -8,7 +8,7 @@ export class CompanyPhoto extends Model<CompanyPhoto> {
     allowNull: false,
     primaryKey: true,
     type: UUID,
-    defaultValue: UUIDV4,
+    defaultValue: UUIDV4
   })
   public uuid: string;
 

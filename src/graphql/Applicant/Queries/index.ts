@@ -3,7 +3,7 @@ import { getApplicants } from "./getApplicants";
 
 const applicantQueries = {
   getApplicant,
-  getApplicants,
+  getApplicants
 };
 
 export { applicantQueries };

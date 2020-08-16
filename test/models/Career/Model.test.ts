@@ -7,7 +7,7 @@ describe("Career", () => {
     const career = new Career({
       code: "10",
       description: "Ingeniería Informática",
-      credits: 100,
+      credits: 100
     });
 
     await expect(career.validate()).resolves.not.toThrow();
@@ -17,7 +17,7 @@ describe("Career", () => {
     const career: Career = new Career({
       code: "1",
       description: "Ingeniería Informática",
-      credits: 0,
+      credits: 0
     });
 
     await expect(career.validate()).rejects.toThrowErrorWithMessage(
@@ -30,7 +30,7 @@ describe("Career", () => {
     const career: Career = new Career({
       code: "1",
       description: "Ingeniería Informática",
-      credits: -54,
+      credits: -54
     });
 
     await expect(career.validate()).rejects.toThrowErrorWithMessage(
@@ -42,7 +42,7 @@ describe("Career", () => {
   it("throws an error if code is null", async () => {
     const career: Career = new Career({
       description: "Ingeniería Informática",
-      credits: 250,
+      credits: 250
     });
 
     await expect(career.validate()).rejects.toThrowErrorWithMessage(
@@ -55,7 +55,7 @@ describe("Career", () => {
     const career: Career = new Career({
       code: "1",
       description: null,
-      credits: 250,
+      credits: 250
     });
 
     await expect(career.validate()).rejects.toThrowErrorWithMessage(
@@ -67,7 +67,7 @@ describe("Career", () => {
   it("throws an error if credits is null", async () => {
     const career: Career = new Career({
       code: "1",
-      description: "Ingeniería Informática",
+      description: "Ingeniería Informática"
     });
 
     await expect(career.validate()).rejects.toThrowErrorWithMessage(

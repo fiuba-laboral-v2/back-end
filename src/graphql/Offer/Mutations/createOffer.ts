@@ -10,26 +10,26 @@ export const createOffer = {
   type: GraphQLOffer,
   args: {
     title: {
-      type: nonNull(String),
+      type: nonNull(String)
     },
     description: {
-      type: nonNull(String),
+      type: nonNull(String)
     },
     hoursPerDay: {
-      type: nonNull(Int),
+      type: nonNull(Int)
     },
     minimumSalary: {
-      type: nonNull(Int),
+      type: nonNull(Int)
     },
     maximumSalary: {
-      type: nonNull(Int),
+      type: nonNull(Int)
     },
     sections: {
-      type: List(GraphQLOfferSectionInput),
+      type: List(GraphQLOfferSectionInput)
     },
     careers: {
-      type: List(GraphQLOfferCareerInput),
-    },
+      type: List(GraphQLOfferCareerInput)
+    }
   },
   resolve: (
     _: undefined,
@@ -38,6 +38,6 @@ export const createOffer = {
   ) =>
     OfferRepository.create({
       ...attributes,
-      companyUuid: currentUser.company.uuid,
-    }),
+      companyUuid: currentUser.company.uuid
+    })
 };

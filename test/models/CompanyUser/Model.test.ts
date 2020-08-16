@@ -6,13 +6,13 @@ describe("CompanyUser", () => {
   it("needs to reference a company and a user", () =>
     expect(new CompanyUser().validate()).rejects.toThrowErrorWithMessage(ValidationError, [
       "notNull Violation: CompanyUser.companyUuid cannot be null",
-      "notNull Violation: CompanyUser.userUuid cannot be null",
+      "notNull Violation: CompanyUser.userUuid cannot be null"
     ]));
 
   it("needs to reference a company", async () =>
     expect(
       new CompanyUser({
-        userUuid: generateUuid(),
+        userUuid: generateUuid()
       }).validate()
     ).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -22,7 +22,7 @@ describe("CompanyUser", () => {
   it("needs to reference a user", async () =>
     expect(
       new CompanyUser({
-        companyUuid: generateUuid(),
+        companyUuid: generateUuid()
       }).validate()
     ).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -33,7 +33,7 @@ describe("CompanyUser", () => {
     expect(
       new CompanyUser({
         companyUuid: generateUuid(),
-        userUuid: generateUuid(),
+        userUuid: generateUuid()
       }).validate()
     ).resolves.not.toThrow());
 });

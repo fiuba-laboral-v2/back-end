@@ -13,7 +13,7 @@ describe("Admin", () => {
         userUuid,
         secretary: Secretary.extension,
         createdAt: expect.any(Date),
-        updatedAt: expect.any(Date),
+        updatedAt: expect.any(Date)
       })
     );
   });

@@ -77,7 +77,7 @@ describe("getOfferByUuid", () => {
     const careerCode = career.code;
     const offer = await offers.next({
       companyUuid: company.uuid,
-      careers: [{ careerCode }],
+      careers: [{ careerCode }]
     }).value;
     return { offer, career, company };
   };
@@ -87,13 +87,13 @@ describe("getOfferByUuid", () => {
       const { company, apolloClient } = await TestClientGenerator.company({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await AdminGenerator.instance(Secretary.extension),
-        },
+          admin: await AdminGenerator.instance(Secretary.extension)
+        }
       });
       const { offer, career } = await createOffer(company);
       const { data, errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID,
-        variables: { uuid: offer.uuid },
+        variables: { uuid: offer.uuid }
       });
       expect(errors).toBeUndefined();
       const phoneNumbers = await company.getPhoneNumbers();
@@ -109,14 +109,14 @@ describe("getOfferByUuid", () => {
           {
             code: career.code,
             description: career.description,
-            credits: career.credits,
-          },
+            credits: career.credits
+          }
         ],
         sections: (await offer.getSections()).map(section => ({
           uuid: section.uuid,
           title: section.title,
           text: section.text,
-          displayOrder: section.displayOrder,
+          displayOrder: section.displayOrder
         })),
         company: {
           cuit: company.cuit,
@@ -127,8 +127,8 @@ describe("getOfferByUuid", () => {
           website: company.website,
           email: company.email,
           phoneNumbers: phoneNumbers.map(phoneNumber => phoneNumber.phoneNumber),
-          photos: await company.getPhotos(),
-        },
+          photos: await company.getPhotos()
+        }
       });
     });
 
@@ -136,8 +136,8 @@ describe("getOfferByUuid", () => {
       const { applicant, apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await AdminGenerator.instance(Secretary.extension),
-        },
+          admin: await AdminGenerator.instance(Secretary.extension)
+        }
       });
       const company = await CompanyGenerator.instance.withCompleteData();
       const { offer } = await createOffer(company);
@@ -145,13 +145,13 @@ describe("getOfferByUuid", () => {
 
       const { data, errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
-        variables: { uuid: offer.uuid },
+        variables: { uuid: offer.uuid }
       });
 
       expect(errors).toBeUndefined();
       expect(data!.getOfferByUuid).toMatchObject({
         uuid: offer.uuid,
-        hasApplied: true,
+        hasApplied: true
       });
     });
 
@@ -159,21 +159,21 @@ describe("getOfferByUuid", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await AdminGenerator.instance(Secretary.extension),
-        },
+          admin: await AdminGenerator.instance(Secretary.extension)
+        }
       });
       const company = await CompanyGenerator.instance.withCompleteData();
       const {
-        offer: { uuid },
+        offer: { uuid }
       } = await createOffer(company);
       const { data, errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
-        variables: { uuid: uuid },
+        variables: { uuid: uuid }
       });
       expect(errors).toBeUndefined();
       expect(data!.getOfferByUuid).toMatchObject({
         uuid: uuid,
-        hasApplied: false,
+        hasApplied: false
       });
     });
   });
@@ -184,10 +184,10 @@ describe("getOfferByUuid", () => {
       const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       const { errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID,
-        variables: { uuid: randomUuid },
+        variables: { uuid: randomUuid }
       });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: OfferNotFound.name,
+        errorType: OfferNotFound.name
       });
     });
 
@@ -196,21 +196,21 @@ describe("getOfferByUuid", () => {
       const apolloClient = client.loggedIn({
         currentUser: {
           uuid: user.uuid,
-          email: user.email,
-        },
+          email: user.email
+        }
       });
       const company = await CompanyGenerator.instance.withCompleteData();
       const {
-        offer: { uuid },
+        offer: { uuid }
       } = await createOffer(company);
 
       const { errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
-        variables: { uuid: uuid },
+        variables: { uuid: uuid }
       });
 
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
 
@@ -219,29 +219,29 @@ describe("getOfferByUuid", () => {
       const company = await CompanyGenerator.instance.withCompleteData();
 
       const {
-        offer: { uuid },
+        offer: { uuid }
       } = await createOffer(company);
       const { errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
-        variables: { uuid: uuid },
+        variables: { uuid: uuid }
       });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: AuthenticationError.name,
+        errorType: AuthenticationError.name
       });
     });
 
     it("returns an error if the user is not admin, approved company or approved applicant", async () => {
       const expectUnauthorized = async ({
-        apolloClient,
+        apolloClient
       }: {
         apolloClient: ApolloServerTestClient;
       }) => {
         const { errors } = await apolloClient.query({
           query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
-          variables: { uuid: generateUuid() },
+          variables: { uuid: generateUuid() }
         });
         expect(errors![0].extensions!.data).toEqual({
-          errorType: UnauthorizedError.name,
+          errorType: UnauthorizedError.name
         });
       };
       await expectUnauthorized(await TestClientGenerator.company());

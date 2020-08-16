@@ -6,10 +6,10 @@ const getOfferByUuid = {
   type: GraphQLOffer,
   args: {
     uuid: {
-      type: nonNull(ID),
-    },
+      type: nonNull(ID)
+    }
   },
-  resolve: async (_: undefined, { uuid }: { uuid: string }) => OfferRepository.findByUuid(uuid),
+  resolve: async (_: undefined, { uuid }: { uuid: string }) => OfferRepository.findByUuid(uuid)
 };
 
 export { getOfferByUuid };

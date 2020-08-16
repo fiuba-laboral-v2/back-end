@@ -15,11 +15,11 @@ describe("Section model", () => {
         email: "sblanco@yahoo.com",
         password: "fdmgkfHGH4353",
         name: "Bruno",
-        surname: "Diaz",
+        surname: "Diaz"
       },
       careers: [],
       padron: 1,
-      description: "Batman",
+      description: "Batman"
     });
   });
 
@@ -29,7 +29,7 @@ describe("Section model", () => {
     const sectionData = {
       title: "And all shootin some b-ball outside of the school",
       text: "When a couple of guys who were up to no good\nStarted making trouble in my",
-      displayOrder: 1,
+      displayOrder: 1
     };
 
     await SectionRepository.update([sectionData], applicant);
@@ -40,7 +40,7 @@ describe("Section model", () => {
       applicantUuid: applicant.uuid,
       title: sectionData.title,
       text: sectionData.text,
-      displayOrder: 1,
+      displayOrder: 1
     });
   });
 
@@ -49,13 +49,13 @@ describe("Section model", () => {
       applicantUuid: applicant.uuid,
       title: "title",
       text: "text",
-      displayOrder: 1,
+      displayOrder: 1
     });
     const sectionWithSameDisplayOrder = new Section({
       applicantUuid: applicant.uuid,
       title: "another title",
       text: "another text",
-      displayOrder: 1,
+      displayOrder: 1
     });
     await expect(sectionWithSameDisplayOrder.save()).rejects.toThrow();
   });
@@ -64,12 +64,12 @@ describe("Section model", () => {
     const params = {
       title: "title",
       text: "text",
-      displayOrder: 1,
+      displayOrder: 1
     };
     const newParams = {
       title: "new title",
       text: "new text",
-      displayOrder: 1,
+      displayOrder: 1
     };
     await SectionRepository.update([params], applicant);
     const sections = await SectionRepository.update([newParams], applicant);
@@ -83,8 +83,8 @@ describe("Section model", () => {
         title: "I got in one little fight and my mom got scared",
         text:
           "She said 'You're movin' with your auntie and uncle in Bel Air'\nI begged and pleaded",
-        displayOrder: 1,
-      },
+        displayOrder: 1
+      }
     ];
 
     await SectionRepository.update(params, applicant);
@@ -95,8 +95,8 @@ describe("Section model", () => {
         uuid: firstSection.uuid,
         title: "New title",
         text: "New Text",
-        displayOrder: 1,
-      },
+        displayOrder: 1
+      }
     ];
 
     await SectionRepository.update(newParams, applicant);
@@ -107,7 +107,7 @@ describe("Section model", () => {
       applicantUuid: applicant.uuid,
       title: "New title",
       text: "New Text",
-      displayOrder: 1,
+      displayOrder: 1
     });
   });
 
@@ -116,13 +116,13 @@ describe("Section model", () => {
       {
         title: "with her day after day",
         text: "But she packed my suit case and sent me on my way\nShe gave me a kiss",
-        displayOrder: 1,
+        displayOrder: 1
       },
       {
         title: "and then she gave me my ticket",
         text: "I put my Walkman on and said, 'I might as well kick it'.\nFirst class, yo",
-        displayOrder: 2,
-      },
+        displayOrder: 2
+      }
     ];
 
     await SectionRepository.update(params, applicant);
@@ -133,13 +133,13 @@ describe("Section model", () => {
         uuid: firstSection.uuid,
         title: "New title",
         text: "New Text",
-        displayOrder: 1,
+        displayOrder: 1
       },
       {
         title: "third section",
         text: "new third section text",
-        displayOrder: 2,
-      },
+        displayOrder: 2
+      }
     ];
 
     await SectionRepository.update(newParams, applicant);

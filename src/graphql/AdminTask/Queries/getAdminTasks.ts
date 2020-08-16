@@ -12,14 +12,14 @@ export const getAdminTasks = {
   type: GraphQLPaginatedResults(GraphQLAdminTask),
   args: {
     adminTaskTypes: {
-      type: nonNull(List(GraphQLAdminTaskType)),
+      type: nonNull(List(GraphQLAdminTaskType))
     },
     statuses: {
-      type: nonNull(List(GraphQLApprovalStatus)),
+      type: nonNull(List(GraphQLApprovalStatus))
     },
     updatedBeforeThan: {
-      type: GraphQLPaginatedInput,
-    },
+      type: GraphQLPaginatedInput
+    }
   },
   resolve: async (
     _: undefined,
@@ -28,5 +28,5 @@ export const getAdminTasks = {
   ) => {
     const admin = await AdminRepository.findByUserUuid(currentUser.admin.userUuid);
     return AdminTaskRepository.find({ ...filter, secretary: admin.secretary });
-  },
+  }
 };

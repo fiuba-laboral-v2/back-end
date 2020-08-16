@@ -16,12 +16,12 @@ describe("AdminRepository", () => {
       expect(await admin.getUser()).toEqual(
         expect.objectContaining({
           ...adminAttributes.user,
-          password: expect.any(String),
+          password: expect.any(String)
         })
       );
       expect(admin).toEqual(
         expect.objectContaining({
-          secretary: adminAttributes.secretary,
+          secretary: adminAttributes.secretary
         })
       );
     });
@@ -32,12 +32,12 @@ describe("AdminRepository", () => {
       expect(await admin.getUser()).toEqual(
         expect.objectContaining({
           ...adminAttributes.user,
-          password: expect.any(String),
+          password: expect.any(String)
         })
       );
       expect(admin).toEqual(
         expect.objectContaining({
-          secretary: adminAttributes.secretary,
+          secretary: adminAttributes.secretary
         })
       );
     });

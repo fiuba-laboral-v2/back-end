@@ -4,7 +4,7 @@ import { ApplicantRepository } from "$models/Applicant";
 
 const getApplicants = {
   type: List(GraphQLApplicant),
-  resolve: () => ApplicantRepository.findAll(),
+  resolve: () => ApplicantRepository.findAll()
 };
 
 export { getApplicants };

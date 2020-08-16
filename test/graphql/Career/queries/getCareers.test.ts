@@ -32,8 +32,8 @@ describe("getCareers", () => {
       {
         code: career.code,
         credits: career.credits,
-        description: career.description,
-      },
+        description: career.description
+      }
     ]);
   });
 

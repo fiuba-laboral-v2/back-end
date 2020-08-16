@@ -11,5 +11,5 @@ export const applicantTypes = [
   GraphQLSectionInput,
   GraphQLSection,
   GraphQLLinkInput,
-  GraphQLLink,
+  GraphQLLink
 ];

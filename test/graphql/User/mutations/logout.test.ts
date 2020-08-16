@@ -19,12 +19,12 @@ describe("logout", () => {
   });
 
   const createExpressContext = () => ({
-    res: { cookie: jest.fn() },
+    res: { cookie: jest.fn() }
   });
 
   const expectCookieToBeRemoved = (expressContext: { res: { cookie: jest.Mock } }) =>
     expect(expressContext.res.cookie.mock.calls).toEqual([
-      [AuthConfig.cookieName, "", AuthConfig.cookieOptions],
+      [AuthConfig.cookieName, "", AuthConfig.cookieOptions]
     ]);
 
   it("logouts an user setting empty cookie", async () => {
@@ -38,7 +38,7 @@ describe("logout", () => {
   it("logouts an applicant setting empty cookie", async () => {
     const expressContext = createExpressContext();
     const { apolloClient } = await TestClientGenerator.applicant({
-      expressContext,
+      expressContext
     });
     const { errors } = await apolloClient.mutate({ mutation: LOGOUT });
     expect(errors).toBeUndefined();
@@ -48,7 +48,7 @@ describe("logout", () => {
   it("logouts a company user setting empty cookie", async () => {
     const expressContext = createExpressContext();
     const { apolloClient } = await TestClientGenerator.company({
-      expressContext,
+      expressContext
     });
     const { errors } = await apolloClient.mutate({ mutation: LOGOUT });
     expect(errors).toBeUndefined();
@@ -58,7 +58,7 @@ describe("logout", () => {
   it("returns an error if no logged user tries to log out", async () => {
     const { errors } = await client.loggedOut().mutate({ mutation: LOGOUT });
     expect(errors![0].extensions!.data).toEqual({
-      errorType: AuthenticationError.name,
+      errorType: AuthenticationError.name
     });
   });
 });

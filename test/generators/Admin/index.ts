@@ -13,12 +13,12 @@ export const AdminGenerator = {
       withCompleteData({
         index: AdminGenerator.getIndex(),
         secretary,
-        ...variables,
+        ...variables
       })
     ),
   data: (secretary: Secretary) =>
     withCompleteData({
       index: AdminGenerator.getIndex(),
-      secretary,
-    }),
+      secretary
+    })
 };

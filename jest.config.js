@@ -7,13 +7,13 @@ module.exports = {
   coveragePathIgnorePatterns: ["node_modules", "test", "config/Environment.ts"],
   globals: {
     "ts-jest": {
-      isolatedModules: true,
-    },
+      isolatedModules: true
+    }
   },
   watchPathIgnorePatterns: ["/node_modules/"],
   testPathIgnorePatterns: [".d.ts", ".js"],
   setupFilesAfterEnv: ["./test/config/jest.setup.ts"],
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
-    prefix: "<rootDir>/",
-  }),
+    prefix: "<rootDir>/"
+  })
 };

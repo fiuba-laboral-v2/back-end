@@ -15,7 +15,7 @@ export const devartis = {
     website: "https://www.devartis.com/",
     email: "info@devartis.com",
     createdAt: new Date(),
-    updatedAt: new Date(),
+    updatedAt: new Date()
   },
   photos: [
     {
@@ -23,14 +23,14 @@ export const devartis = {
       photo: "https://miro.medium.com/max/11520/1*Om-snCmpOoI5vehnF6FBlw.jpeg",
       companyUuid: uuids.companies.devartis,
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     },
     {
       uuid: "b928f0e6-92de-4bbf-93fe-1468f37a836d",
       photo: "https://pbs.twimg.com/media/EK_OWQEWwAIwDXr.jpg",
       companyUuid: uuids.companies.devartis,
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     },
     {
       uuid: "19566569-41ed-4246-93cc-8563358d9a7a",
@@ -39,22 +39,22 @@ export const devartis = {
         "convert?w=1049&h=381&fit=scale",
       companyUuid: uuids.companies.devartis,
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     },
     {
       uuid: "00054373-eb83-49ca-9957-e472979294bb",
       photo: "https://pbs.twimg.com/media/EK_OVsXXYAE-Y-p.jpg",
       companyUuid: uuids.companies.devartis,
       createdAt: new Date(),
-      updatedAt: new Date(),
-    },
+      updatedAt: new Date()
+    }
   ],
   phoneNumbers: [
     {
       phoneNumber: "1148567112",
       companyUuid: uuids.companies.devartis,
       createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ],
+      updatedAt: new Date()
+    }
+  ]
 };

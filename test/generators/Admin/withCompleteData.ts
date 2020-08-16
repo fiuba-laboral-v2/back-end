@@ -5,15 +5,15 @@ import { IUserGeneratorAttributes } from "$generators/interfaces";
 export const withCompleteData = ({
   index,
   secretary,
-  password,
+  password
 }: IAdminGeneratorAttributes): ISaveAdmin => ({
   user: {
     email: `${secretary}admin${index}@mail.com`,
     password: password || "ASDqfdsfsdfwe234",
     name: "adminName",
-    surname: "adminSurname",
+    surname: "adminSurname"
   },
-  secretary,
+  secretary
 });
 
 export interface IAdminGeneratorAttributes extends IUserGeneratorAttributes {

@@ -14,5 +14,5 @@ export const setupCustomMatchers = () =>
     toThrowBulkRecordErrorIncluding,
     toThrowErrorWithMessage,
     toBeSortedBy,
-    toEqualIgnoringSpacing,
+    toEqualIgnoringSpacing
   });

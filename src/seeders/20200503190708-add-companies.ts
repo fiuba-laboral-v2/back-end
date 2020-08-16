@@ -5,7 +5,7 @@ export = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.sequelize.transaction(async transaction => {
       await queryInterface.bulkInsert("Companies", [devartis.company, mercadoLibre.company], {
-        transaction,
+        transaction
       });
       await queryInterface.bulkInsert(
         "CompanyPhotos",
@@ -25,5 +25,5 @@ export = {
       await queryInterface.bulkDelete("CompanyPhoneNumbers", {}, { transaction });
       return queryInterface.bulkDelete("Companies", {}, { transaction });
     });
-  },
+  }
 };

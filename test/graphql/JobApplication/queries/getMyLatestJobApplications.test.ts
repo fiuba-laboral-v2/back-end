@@ -52,14 +52,14 @@ describe("getMyLatestJobApplications", () => {
       const { apolloClient, company } = await TestClientGenerator.company({
         status: {
           admin,
-          approvalStatus: ApprovalStatus.approved,
-        },
+          approvalStatus: ApprovalStatus.approved
+        }
       });
       const offer = await offers.next({ companyUuid: company.uuid }).value;
       const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
 
       const { data, errors } = await apolloClient.query({
-        query: GET_MY_LATEST_JOB_APPLICATIONS,
+        query: GET_MY_LATEST_JOB_APPLICATIONS
       });
 
       const user = await applicant.getUser();
@@ -69,16 +69,16 @@ describe("getMyLatestJobApplications", () => {
           createdAt: jobApplication.createdAt.toISOString(),
           offer: {
             uuid: offer.uuid,
-            title: offer.title,
+            title: offer.title
           },
           applicant: {
             uuid: applicant.uuid,
             user: {
               name: user.name,
-              surname: user.surname,
-            },
-          },
-        },
+              surname: user.surname
+            }
+          }
+        }
       ]);
     });
   });
@@ -87,22 +87,22 @@ describe("getMyLatestJobApplications", () => {
     it("return an error if there is no current user", async () => {
       const apolloClient = client.loggedOut();
       const { errors } = await apolloClient.query({
-        query: GET_MY_LATEST_JOB_APPLICATIONS,
+        query: GET_MY_LATEST_JOB_APPLICATIONS
       });
 
       expect(errors![0].extensions!.data).toEqual({
-        errorType: AuthenticationError.name,
+        errorType: AuthenticationError.name
       });
     });
 
     it("returns an error if current user is not a companyUser", async () => {
       const { apolloClient } = await TestClientGenerator.user();
       const { errors } = await apolloClient.query({
-        query: GET_MY_LATEST_JOB_APPLICATIONS,
+        query: GET_MY_LATEST_JOB_APPLICATIONS
       });
 
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
 
@@ -110,15 +110,15 @@ describe("getMyLatestJobApplications", () => {
       const { apolloClient } = await TestClientGenerator.company({
         status: {
           admin,
-          approvalStatus: ApprovalStatus.pending,
-        },
+          approvalStatus: ApprovalStatus.pending
+        }
       });
       const { errors } = await apolloClient.query({
-        query: GET_MY_LATEST_JOB_APPLICATIONS,
+        query: GET_MY_LATEST_JOB_APPLICATIONS
       });
 
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
 
@@ -126,15 +126,15 @@ describe("getMyLatestJobApplications", () => {
       const { apolloClient } = await TestClientGenerator.company({
         status: {
           admin,
-          approvalStatus: ApprovalStatus.rejected,
-        },
+          approvalStatus: ApprovalStatus.rejected
+        }
       });
       const { errors } = await apolloClient.query({
-        query: GET_MY_LATEST_JOB_APPLICATIONS,
+        query: GET_MY_LATEST_JOB_APPLICATIONS
       });
 
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
   });

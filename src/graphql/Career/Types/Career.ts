@@ -5,15 +5,15 @@ const GraphQLCareer = new GraphQLObjectType({
   name: "Career",
   fields: () => ({
     code: {
-      type: nonNull(ID),
+      type: nonNull(ID)
     },
     description: {
-      type: nonNull(String),
+      type: nonNull(String)
     },
     credits: {
-      type: Int,
-    },
-  }),
+      type: Int
+    }
+  })
 });
 
 export { GraphQLCareer };

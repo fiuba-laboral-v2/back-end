@@ -10,8 +10,8 @@ import { validateEmail, validateName, validatePassword } from "validations-fiuba
   validate: {
     validateUser(this: User) {
       this.validateUser();
-    },
-  },
+    }
+  }
 })
 export class User extends Model<User> {
   @BeforeCreate
@@ -23,7 +23,7 @@ export class User extends Model<User> {
   private static readonly bcryptSaltOrRounds = 10;
   @Column({
     allowNull: true,
-    type: STRING,
+    type: STRING
   })
   public password: string;
 
@@ -31,7 +31,7 @@ export class User extends Model<User> {
     allowNull: false,
     primaryKey: true,
     type: UUID,
-    defaultValue: UUIDV4,
+    defaultValue: UUIDV4
   })
   public uuid: string;
 
@@ -39,28 +39,28 @@ export class User extends Model<User> {
     allowNull: false,
     unique: true,
     type: STRING,
-    validate: { validateEmail },
+    validate: { validateEmail }
   })
   public email: string;
 
   @Column({
     allowNull: true,
     unique: true,
-    type: STRING,
+    type: STRING
   })
   public dni: string;
 
   @Column({
     allowNull: false,
     type: TEXT,
-    validate: { validateName },
+    validate: { validateName }
   })
   public name: string;
 
   @Column({
     allowNull: false,
     type: TEXT,
-    validate: { validateName },
+    validate: { validateName }
   })
   public surname: string;
 

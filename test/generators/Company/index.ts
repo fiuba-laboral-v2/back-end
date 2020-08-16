@@ -21,28 +21,28 @@ export const CompanyGenerator = {
       CompanyRepository.create(
         withMinimumData({
           index: CompanyGenerator.getIndex(),
-          ...variables,
+          ...variables
         })
       ),
     withCompleteData: (variables?: ICompanyGeneratorAttributes) =>
       CompanyRepository.create(
         completeData({
           index: CompanyGenerator.getIndex(),
-          ...variables,
+          ...variables
         })
       ),
     updatedWithStatus: async (variables?: IUpdatedWithStatus) => {
       const company = await CompanyRepository.create(
         withMinimumData({
-          index: CompanyGenerator.getIndex(),
+          index: CompanyGenerator.getIndex()
         })
       );
       if (!variables) return company;
       const { admin, status } = variables;
       return CompanyRepository.updateApprovalStatus(admin.userUuid, company.uuid, status);
-    },
+    }
   },
   data: {
-    completeData: () => completeData({ index: CompanyGenerator.getIndex() }),
-  },
+    completeData: () => completeData({ index: CompanyGenerator.getIndex() })
+  }
 };

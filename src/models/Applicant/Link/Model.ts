@@ -9,7 +9,7 @@ export class ApplicantLink extends Model<ApplicantLink> {
   @PrimaryKey
   @Column({
     allowNull: false,
-    type: UUID,
+    type: UUID
   })
   public applicantUuid: string;
 
@@ -19,14 +19,14 @@ export class ApplicantLink extends Model<ApplicantLink> {
   @PrimaryKey
   @Column({
     allowNull: false,
-    type: STRING,
+    type: STRING
   })
   public name: string;
 
   @Is(validateURL)
   @Column({
     allowNull: false,
-    type: STRING,
+    type: STRING
   })
   public url: string;
 }

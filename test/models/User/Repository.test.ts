@@ -7,7 +7,7 @@ import { UUID_REGEX } from "../index";
 import {
   InvalidEmailError,
   PasswordWithoutDigitsError,
-  PasswordWithoutUppercaseError,
+  PasswordWithoutUppercaseError
 } from "validations-fiuba-laboral-v2";
 import { DniGenerator } from "$generators/DNI";
 
@@ -20,7 +20,7 @@ describe("UserRepository", () => {
         email: "asd@qwe.com",
         password: "AValidPassword123",
         name: "Sebastian",
-        surname: "Blanco",
+        surname: "Blanco"
       };
       const user = await UserRepository.create(userAttributes);
 
@@ -29,7 +29,7 @@ describe("UserRepository", () => {
           uuid: expect.stringMatching(UUID_REGEX),
           email: userAttributes.email,
           name: userAttributes.name,
-          surname: userAttributes.surname,
+          surname: userAttributes.surname
         })
       );
     });
@@ -39,7 +39,7 @@ describe("UserRepository", () => {
         email: "asd@qwe.com",
         dni: DniGenerator.generate(),
         name: "Sebastian",
-        surname: "Blanco",
+        surname: "Blanco"
       });
       expect(user.password).toBeNull();
     });
@@ -50,7 +50,7 @@ describe("UserRepository", () => {
           email: "asd@qwe.com",
           password: "an invalid password",
           name: "Sebastian",
-          surname: "blanco",
+          surname: "blanco"
         })
       ).rejects.toThrowErrorWithMessage(
         PasswordWithoutUppercaseError,
@@ -64,7 +64,7 @@ describe("UserRepository", () => {
           email: "asd@qwecom",
           password: "AValidPassword123",
           name: "Sebastian",
-          surname: "blanco",
+          surname: "blanco"
         })
       ).rejects.toThrowErrorWithMessage(
         ValidationError,
@@ -78,14 +78,14 @@ describe("UserRepository", () => {
         email: email,
         password: "somethingVerySecret123",
         name: "name",
-        surname: "surname",
+        surname: "surname"
       });
       await expect(
         UserRepository.create({
           email: email,
           password: "somethingVerySecret123",
           name: "name",
-          surname: "surname",
+          surname: "surname"
         })
       ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
     });
@@ -97,7 +97,7 @@ describe("UserRepository", () => {
         password: "somethingVerySecret123",
         name: "Robert",
         dni,
-        surname: "Johnson",
+        surname: "Johnson"
       });
       await expect(
         UserRepository.create({
@@ -105,7 +105,7 @@ describe("UserRepository", () => {
           password: "somethingVerySecret123",
           name: "Eddie",
           dni,
-          surname: "Boyd",
+          surname: "Boyd"
         })
       ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
     });
@@ -116,7 +116,7 @@ describe("UserRepository", () => {
           email: "asd@qwe.com",
           password: "somethingWithoutDigits",
           name: "name",
-          surname: "surname",
+          surname: "surname"
         })
       ).rejects.toThrowErrorWithMessage(
         PasswordWithoutDigitsError,
@@ -131,14 +131,14 @@ describe("UserRepository", () => {
           dni: DniGenerator.generate(),
           password: "somethingVerySecret123",
           name: "name",
-          surname: "surname",
+          surname: "surname"
         };
         const user = await UserRepository.createFiubaUser(attributes);
         expect(user).toEqual(
           expect.objectContaining({
             uuid: expect.stringMatching(UUID_REGEX),
             ...attributes,
-            password: null,
+            password: null
           })
         );
       });
@@ -153,7 +153,7 @@ describe("UserRepository", () => {
             dni,
             password: "somethingVerySecret123",
             name: "name",
-            surname: "surname",
+            surname: "surname"
           })
         ).rejects.toThrowErrorWithMessage(
           FiubaUserNotFoundError,
@@ -168,7 +168,7 @@ describe("UserRepository", () => {
             email: "email@gmail.com",
             password: "somethingVerySecret123",
             name: "name",
-            surname: "surname",
+            surname: "surname"
           })
         ).rejects.toThrowErrorWithMessage(
           InvalidEmptyUsernameError,
@@ -184,7 +184,7 @@ describe("UserRepository", () => {
         email: "bbb@bbb.com",
         password: "AValidPassword456",
         name: "Sebastian",
-        surname: "blanco",
+        surname: "blanco"
       });
 
       const emailToFind = "aaa@aaa.com";
@@ -192,7 +192,7 @@ describe("UserRepository", () => {
         email: emailToFind,
         password: "AValidPassword123",
         name: "Manuel",
-        surname: "Llauro",
+        surname: "Llauro"
       });
       const foundUser = await UserRepository.findByEmail(emailToFind);
 
@@ -205,13 +205,13 @@ describe("UserRepository", () => {
         email: "qqq@qqq.com",
         password: "AValidPassword789",
         name: "Sebastian",
-        surname: "Blanco",
+        surname: "Blanco"
       });
       await UserRepository.create({
         email: "www@www.com",
         password: "AValidPassword012",
         name: "Dylan",
-        surname: "Alvarez",
+        surname: "Alvarez"
       });
       await expect(UserRepository.findByEmail("yyy@yyy.com")).rejects.toThrow(UserNotFoundError);
     });

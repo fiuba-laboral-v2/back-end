@@ -10,7 +10,7 @@ describe("Offer", () => {
     description: "description",
     hoursPerDay: 8,
     minimumSalary: 52500,
-    maximumSalary: 70000,
+    maximumSalary: 70000
   };
 
   const offerWithoutProperty = async (property: string) => {
@@ -85,7 +85,7 @@ describe("Offer", () => {
     const offer = new Offer({
       ...offerAttributes,
       minimumSalary: 100,
-      maximumSalary: 50,
+      maximumSalary: 50
     });
     await expect(offer.validate()).rejects.toThrow(SalaryRangeError.buildMessage());
   });
@@ -93,7 +93,7 @@ describe("Offer", () => {
   it("throws an error if graduadosApprovalStatus isn't a ApprovalStatus enum value", async () => {
     const offer = new Offer({
       ...offerAttributes,
-      graduadosApprovalStatus: "pepito",
+      graduadosApprovalStatus: "pepito"
     });
     await expect(offer.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,

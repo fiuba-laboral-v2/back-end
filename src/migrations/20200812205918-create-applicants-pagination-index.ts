@@ -9,8 +9,8 @@ export = {
       name: indexName,
       fields: [
         { name: "uuid", order: "DESC" },
-        { name: "updatedAt", order: "DESC" },
-      ],
+        { name: "updatedAt", order: "DESC" }
+      ]
     }),
-  down: (queryInterface: QueryInterface) => queryInterface.removeIndex(tableName, indexName),
+  down: (queryInterface: QueryInterface) => queryInterface.removeIndex(tableName, indexName)
 };

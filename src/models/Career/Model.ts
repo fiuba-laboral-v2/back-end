@@ -8,20 +8,20 @@ export class Career extends Model<Career> {
   @Column({
     allowNull: false,
     primaryKey: true,
-    type: STRING,
+    type: STRING
   })
   public code: string;
 
   @Column({
     allowNull: false,
-    type: STRING,
+    type: STRING
   })
   public description: string;
 
   @Is("credits", validateIntegerInRange({ min: { value: 0, include: false } }))
   @Column({
     allowNull: false,
-    type: INTEGER,
+    type: INTEGER
   })
   public credits: number;
 

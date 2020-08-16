@@ -13,12 +13,12 @@ export const AdminTaskRepository = {
     if (filter.adminTaskTypes.length === 0 || filter.statuses.length === 0) {
       return {
         shouldFetchMore: false,
-        results: [],
+        results: []
       };
     }
     const limit = PaginationConfig.itemsPerPage() + 1;
     const rows = await Database.query(findAdminTasksQuery({ ...filter, limit: limit }), {
-      type: "SELECT",
+      type: "SELECT"
     });
     return {
       shouldFetchMore: rows.length === limit,
@@ -27,7 +27,7 @@ export const AdminTaskRepository = {
         const modelClass = getModelByTableName(tableName);
         if (!modelClass) throw new Error(`Invalid table name: ${tableName}`);
         return new modelClass(row);
-      }),
+      })
     };
-  },
+  }
 };

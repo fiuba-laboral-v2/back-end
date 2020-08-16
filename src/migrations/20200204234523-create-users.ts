@@ -7,50 +7,50 @@ export = {
         uuid: {
           allowNull: false,
           primaryKey: true,
-          type: UUID,
+          type: UUID
         },
         email: {
           allowNull: false,
-          type: STRING,
+          type: STRING
         },
         dni: {
           allowNull: true,
-          type: STRING,
+          type: STRING
         },
         password: {
           allowNull: true,
-          type: STRING,
+          type: STRING
         },
         name: {
           allowNull: false,
-          type: TEXT,
+          type: TEXT
         },
         surname: {
           allowNull: false,
-          type: TEXT,
+          type: TEXT
         },
         createdAt: {
           allowNull: false,
-          type: DATE,
+          type: DATE
         },
         updatedAt: {
           allowNull: false,
-          type: DATE,
-        },
+          type: DATE
+        }
       });
       await queryInterface.addConstraint("Users", ["email"], {
         type: "unique",
         name: "Users_email_key",
-        transaction,
+        transaction
       });
       await queryInterface.addConstraint("Users", ["dni"], {
         type: "unique",
         name: "Users_dni_key",
-        transaction,
+        transaction
       });
     });
   },
   down: (queryInterface: QueryInterface) => {
     return queryInterface.dropTable("Users");
-  },
+  }
 };

@@ -6,7 +6,7 @@ export const GraphQLAdmin = new GraphQLObjectType<Admin>({
   name: "Admin",
   fields: () => ({
     userUuid: {
-      type: nonNull(ID),
-    },
-  }),
+      type: nonNull(ID)
+    }
+  })
 });

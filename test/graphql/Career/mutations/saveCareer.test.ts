@@ -28,7 +28,7 @@ describe("saveCareer", () => {
     const params = CareerGenerator.data();
     const { data, errors } = await apolloClient.mutate({
       mutation: SAVE_CAREER,
-      variables: params,
+      variables: params
     });
 
     expect(errors).toBeUndefined();
@@ -36,7 +36,7 @@ describe("saveCareer", () => {
     expect(data!.saveCareer).toMatchObject({
       code: params.code,
       credits: params.credits,
-      description: params.description,
+      description: params.description
     });
   });
 
@@ -45,7 +45,7 @@ describe("saveCareer", () => {
       const { apolloClient } = await TestClientGenerator.admin();
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_CAREER,
-        variables: { code: "3", credits: 250 },
+        variables: { code: "3", credits: 250 }
       });
       expect(errors![0].constructor.name).toEqual(ApolloError.name);
     });
@@ -56,10 +56,10 @@ describe("saveCareer", () => {
       await apolloClient.mutate({ mutation: SAVE_CAREER, variables: params });
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_CAREER,
-        variables: params,
+        variables: params
       });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: "CareerAlreadyExistsError",
+        errorType: "CareerAlreadyExistsError"
       });
     });
 
@@ -68,10 +68,10 @@ describe("saveCareer", () => {
       const params = CareerGenerator.data();
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_CAREER,
-        variables: params,
+        variables: params
       });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
 
@@ -80,10 +80,10 @@ describe("saveCareer", () => {
       const params = CareerGenerator.data();
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_CAREER,
-        variables: params,
+        variables: params
       });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
   });

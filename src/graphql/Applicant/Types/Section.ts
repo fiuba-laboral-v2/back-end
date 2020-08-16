@@ -5,36 +5,36 @@ const GraphQLSectionInput = new GraphQLInputObjectType({
   name: "SectionInput",
   fields: () => ({
     uuid: {
-      type: ID,
+      type: ID
     },
     title: {
-      type: nonNull(String),
+      type: nonNull(String)
     },
     text: {
-      type: nonNull(String),
+      type: nonNull(String)
     },
     displayOrder: {
-      type: Int,
-    },
-  }),
+      type: Int
+    }
+  })
 });
 
 const GraphQLSection = new GraphQLObjectType({
   name: "Section",
   fields: () => ({
     uuid: {
-      type: nonNull(ID),
+      type: nonNull(ID)
     },
     title: {
-      type: nonNull(String),
+      type: nonNull(String)
     },
     text: {
-      type: nonNull(String),
+      type: nonNull(String)
     },
     displayOrder: {
-      type: nonNull(Int),
-    },
-  }),
+      type: nonNull(Int)
+    }
+  })
 });
 
 export { GraphQLSectionInput, GraphQLSection };

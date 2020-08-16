@@ -8,14 +8,14 @@ export class Capability extends Model<Capability> {
     allowNull: false,
     primaryKey: true,
     type: UUID,
-    defaultValue: UUIDV4,
+    defaultValue: UUIDV4
   })
   public uuid: string;
 
   @Column({
     allowNull: false,
     unique: true,
-    type: CITEXT,
+    type: CITEXT
   })
   public description: string;
 

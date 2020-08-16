@@ -17,7 +17,7 @@ export const mercadoLibre = {
     website: "www.mercadolibre.com",
     email: "info@mercadolibre.com",
     createdAt: new Date(),
-    updatedAt: new Date(),
+    updatedAt: new Date()
   },
   photos: [
     {
@@ -27,7 +27,7 @@ export const mercadoLibre = {
         "https://s3.amazonaws.com/arc-wordpress-client-uploads/infobae-wp/wp-content/uploads/2019/06/11164003/Edificio-Mercado-Libre-y-retratos-a-las-arquitectas-8.jpg",
       companyUuid: uuids.companies.mercadoLibre,
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     },
     {
       uuid: "db9a1d3c-d911-49da-8eb3-de8780cb1eef",
@@ -36,7 +36,7 @@ export const mercadoLibre = {
         "https://s3.amazonaws.com/mercado-ideas/wp-content/uploads/sites/2/2018/12/11133752/Webp.net-resizeimage-131-640x427.jpg",
       companyUuid: uuids.companies.mercadoLibre,
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     },
     {
       uuid: "2b4293a7-cc85-4a31-aeb3-471c17039fa9",
@@ -45,28 +45,28 @@ export const mercadoLibre = {
         "https://s3.amazonaws.com/arc-wordpress-client-uploads/infobae-wp/wp-content/uploads/2019/06/11164027/Edificio-Mercado-Libre-y-retratos-a-las-arquitectas-11.jpg",
       companyUuid: uuids.companies.mercadoLibre,
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     },
     {
       uuid: "83baffe6-1d83-475e-82ee-f4da63f7afc6",
       photo: "https://www.arquimaster.com.ar/diseno/Images/contract_mercadolibre1b.jpg",
       companyUuid: uuids.companies.mercadoLibre,
       createdAt: new Date(),
-      updatedAt: new Date(),
-    },
+      updatedAt: new Date()
+    }
   ],
   phoneNumbers: [
     {
       phoneNumber: "4640-8000",
       companyUuid: uuids.companies.mercadoLibre,
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     },
     {
       phoneNumber: "+54 9 11 2722-7255",
       companyUuid: uuids.companies.mercadoLibre,
       createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ],
+      updatedAt: new Date()
+    }
+  ]
 };

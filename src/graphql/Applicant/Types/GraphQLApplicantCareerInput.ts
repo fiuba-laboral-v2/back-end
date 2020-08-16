@@ -5,16 +5,16 @@ export const GraphQLApplicantCareerInput = new GraphQLInputObjectType({
   name: "ApplicantCareerInput",
   fields: () => ({
     careerCode: {
-      type: nonNull(String),
+      type: nonNull(String)
     },
     approvedSubjectCount: {
-      type: Int,
+      type: Int
     },
     currentCareerYear: {
-      type: Int,
+      type: Int
     },
     isGraduate: {
-      type: nonNull(Boolean),
-    },
-  }),
+      type: nonNull(Boolean)
+    }
+  })
 });

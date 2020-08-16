@@ -5,7 +5,7 @@ import { AdminRepository, Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import {
   ApplicantApprovalEventRepository,
-  ICreateApplicantApprovalEvent,
+  ICreateApplicantApprovalEvent
 } from "$models/Applicant/ApplicantApprovalEvent";
 
 import { AdminGenerator } from "$generators/Admin";
@@ -23,7 +23,7 @@ describe("ApplicantApprovalEventRepository", () => {
     const applicantApprovalEventAttributes: ICreateApplicantApprovalEvent = {
       adminUserUuid: admin.userUuid,
       applicantUuid: applicant.uuid,
-      status,
+      status
     };
     const applicantApprovalEvent = await ApplicantApprovalEventRepository.create(
       applicantApprovalEventAttributes
@@ -33,7 +33,7 @@ describe("ApplicantApprovalEventRepository", () => {
         uuid: expect.stringMatching(UUID_REGEX),
         createdAt: expect.any(Date),
         updatedAt: expect.any(Date),
-        ...applicantApprovalEventAttributes,
+        ...applicantApprovalEventAttributes
       })
     );
   };
@@ -56,7 +56,7 @@ describe("ApplicantApprovalEventRepository", () => {
     const applicantApprovalEvent = await ApplicantApprovalEventRepository.create({
       adminUserUuid: admin.userUuid,
       applicantUuid: applicant.uuid,
-      status: ApprovalStatus.approved,
+      status: ApprovalStatus.approved
     });
     expect((await applicantApprovalEvent.getApplicant()).toJSON()).toEqual(applicant.toJSON());
   });
@@ -67,7 +67,7 @@ describe("ApplicantApprovalEventRepository", () => {
     const applicantApprovalEvent = await ApplicantApprovalEventRepository.create({
       adminUserUuid: admin.userUuid,
       applicantUuid: applicant.uuid,
-      status: ApprovalStatus.approved,
+      status: ApprovalStatus.approved
     });
     expect((await applicantApprovalEvent.getAdmin()).toJSON()).toEqual(admin.toJSON());
   });
@@ -79,7 +79,7 @@ describe("ApplicantApprovalEventRepository", () => {
       ApplicantApprovalEventRepository.create({
         adminUserUuid: randomUuid,
         applicantUuid: applicant.uuid,
-        status: ApprovalStatus.approved,
+        status: ApprovalStatus.approved
       })
     ).rejects.toThrowErrorWithMessage(
       ForeignKeyConstraintError,
@@ -95,7 +95,7 @@ describe("ApplicantApprovalEventRepository", () => {
       ApplicantApprovalEventRepository.create({
         adminUserUuid: admin.userUuid,
         applicantUuid: randomUuid,
-        status: ApprovalStatus.approved,
+        status: ApprovalStatus.approved
       })
     ).rejects.toThrowErrorWithMessage(
       ForeignKeyConstraintError,
@@ -110,7 +110,7 @@ describe("ApplicantApprovalEventRepository", () => {
       return ApplicantApprovalEventRepository.create({
         adminUserUuid: admin.userUuid,
         applicantUuid: applicant.uuid,
-        status: ApprovalStatus.approved,
+        status: ApprovalStatus.approved
       });
     };
 

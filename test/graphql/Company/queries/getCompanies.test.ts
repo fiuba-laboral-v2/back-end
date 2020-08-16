@@ -29,8 +29,8 @@ describe("getCompanies", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.approved,
-        admin: await AdminGenerator.instance(Secretary.extension),
-      },
+        admin: await AdminGenerator.instance(Secretary.extension)
+      }
     });
     const response = await apolloClient.query({ query: GET_COMPANIES });
 
@@ -39,8 +39,8 @@ describe("getCompanies", () => {
     expect(response.data!.getCompanies).toEqual([
       {
         cuit: company.cuit,
-        companyName: company.companyName,
-      },
+        companyName: company.companyName
+      }
     ]);
   });
 
@@ -50,7 +50,7 @@ describe("getCompanies", () => {
 
       const { errors } = await apolloClient.query({ query: GET_COMPANIES });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: AuthenticationError.name,
+        errorType: AuthenticationError.name
       });
     });
 
@@ -58,7 +58,7 @@ describe("getCompanies", () => {
       const { apolloClient } = await TestClientGenerator.company();
       const { errors } = await apolloClient.query({ query: GET_COMPANIES });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
 
@@ -66,7 +66,7 @@ describe("getCompanies", () => {
       const { apolloClient } = await TestClientGenerator.admin();
       const { errors } = await apolloClient.query({ query: GET_COMPANIES });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
 
@@ -74,7 +74,7 @@ describe("getCompanies", () => {
       const { apolloClient } = await TestClientGenerator.applicant();
       const { errors } = await apolloClient.query({ query: GET_COMPANIES });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
 
@@ -82,12 +82,12 @@ describe("getCompanies", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.rejected,
-          admin: await AdminGenerator.instance(Secretary.extension),
-        },
+          admin: await AdminGenerator.instance(Secretary.extension)
+        }
       });
       const { errors } = await apolloClient.query({ query: GET_COMPANIES });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
   });

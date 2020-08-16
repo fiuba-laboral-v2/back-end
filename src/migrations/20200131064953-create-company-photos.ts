@@ -6,27 +6,27 @@ export = {
       uuid: {
         allowNull: false,
         primaryKey: true,
-        type: UUID,
+        type: UUID
       },
       photo: {
-        type: TEXT,
+        type: TEXT
       },
       companyUuid: {
         type: UUID,
         references: { model: "Companies", key: "uuid" },
-        onDelete: "CASCADE",
+        onDelete: "CASCADE"
       },
       createdAt: {
         allowNull: false,
-        type: DATE,
+        type: DATE
       },
       updatedAt: {
         allowNull: false,
-        type: DATE,
-      },
+        type: DATE
+      }
     });
   },
   down: (queryInterface: QueryInterface) => {
     return queryInterface.dropTable("CompanyPhotos");
-  },
+  }
 };

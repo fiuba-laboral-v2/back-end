@@ -13,5 +13,5 @@ export const RequestBodyBuilder = {
         </SOAP-ENV:Body>
       </SOAP-ENV:Envelope>
     `;
-  },
+  }
 };

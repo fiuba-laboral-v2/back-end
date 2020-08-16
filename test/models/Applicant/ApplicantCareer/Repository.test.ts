@@ -4,7 +4,7 @@ import { UserRepository } from "$models/User";
 import { CareerRepository } from "$models/Career";
 import {
   ApplicantCareerNotFound,
-  ForbiddenCurrentCareerYearError,
+  ForbiddenCurrentCareerYearError
 } from "$models/Applicant/ApplicantCareer/Errors";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { CareerGenerator } from "$generators/Career";
@@ -22,9 +22,9 @@ describe("ApplicantCareersRepository", () => {
         careers: [
           {
             careerCode,
-            isGraduate: true,
-          },
-        ],
+            isGraduate: true
+          }
+        ]
       });
       const applicantCareer = await ApplicantCareersRepository.findByApplicantAndCareer(
         applicantUuid,
@@ -37,7 +37,7 @@ describe("ApplicantCareersRepository", () => {
           currentCareerYear: null,
           approvedSubjectCount: null,
           createdAt: expect.any(Date),
-          updatedAt: expect.any(Date),
+          updatedAt: expect.any(Date)
         })
       );
     });
@@ -61,13 +61,13 @@ describe("ApplicantCareersRepository", () => {
       const applicant = await ApplicantGenerator.instance.withMinimumData();
       const applicantCareersData1 = {
         careerCode: career1.code,
-        isGraduate: true,
+        isGraduate: true
       };
       const applicantCareersData2 = {
         careerCode: career2.code,
         isGraduate: false,
         approvedSubjectCount: 20,
-        currentCareerYear: 3,
+        currentCareerYear: 3
       };
       const applicantCareers = await ApplicantCareersRepository.bulkCreate(
         [applicantCareersData1, applicantCareersData2],
@@ -75,7 +75,7 @@ describe("ApplicantCareersRepository", () => {
       );
       expect(applicantCareers).toEqual([
         expect.objectContaining(applicantCareersData1),
-        expect.objectContaining(applicantCareersData2),
+        expect.objectContaining(applicantCareersData2)
       ]);
     });
 
@@ -93,15 +93,15 @@ describe("ApplicantCareersRepository", () => {
       const applicant = await ApplicantGenerator.instance.withMinimumData();
       const applicantCareersData = [
         { careerCode, isGraduate: true },
-        { careerCode, isGraduate: null as any },
+        { careerCode, isGraduate: null as any }
       ];
       await expect(
         ApplicantCareersRepository.bulkCreate(applicantCareersData, applicant)
       ).rejects.toThrowBulkRecordErrorIncluding([
         {
           errorClass: ValidationError,
-          message: "notNull Violation: ApplicantCareer.isGraduate cannot be null",
-        },
+          message: "notNull Violation: ApplicantCareer.isGraduate cannot be null"
+        }
       ]);
     });
 
@@ -114,8 +114,8 @@ describe("ApplicantCareersRepository", () => {
       ).rejects.toThrowBulkRecordErrorIncluding([
         {
           errorClass: ValidationError,
-          message: ForbiddenCurrentCareerYearError.buildMessage(),
-        },
+          message: ForbiddenCurrentCareerYearError.buildMessage()
+        }
       ]);
     });
 
@@ -124,19 +124,19 @@ describe("ApplicantCareersRepository", () => {
       const applicant = await ApplicantGenerator.instance.withMinimumData();
       const applicantCareersData = [
         { careerCode, isGraduate: true, currentCareerYear: 2 },
-        { careerCode, isGraduate: null as any },
+        { careerCode, isGraduate: null as any }
       ];
       await expect(
         ApplicantCareersRepository.bulkCreate(applicantCareersData, applicant)
       ).rejects.toThrowBulkRecordErrorIncluding([
         {
           errorClass: ValidationError,
-          message: ForbiddenCurrentCareerYearError.buildMessage(),
+          message: ForbiddenCurrentCareerYearError.buildMessage()
         },
         {
           errorClass: ValidationError,
-          message: "notNull Violation: ApplicantCareer.isGraduate cannot be null",
-        },
+          message: "notNull Violation: ApplicantCareer.isGraduate cannot be null"
+        }
       ]);
     });
   });

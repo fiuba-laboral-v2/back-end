@@ -4,7 +4,7 @@ import {
   GraphQLNonNull as nonNull,
   GraphQLString as String,
   GraphQLList as List,
-  GraphQLBoolean as Boolean,
+  GraphQLBoolean as Boolean
 } from "graphql";
 
 export { ID, Int, String, nonNull, List, Boolean };

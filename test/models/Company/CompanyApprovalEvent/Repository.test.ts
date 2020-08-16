@@ -22,7 +22,7 @@ describe("CompanyApprovalEventRepository", () => {
       const event = await CompanyApprovalEventRepository.create({
         adminUserUuid,
         company,
-        status,
+        status
       });
       expect(event.userUuid).toEqual(admin.userUuid);
       expect(event.companyUuid).toEqual(company.uuid);
@@ -45,14 +45,14 @@ describe("CompanyApprovalEventRepository", () => {
       const company = await CompanyGenerator.instance.withCompleteData();
       const [userCompany] = await company.getUsers();
       const { userUuid: adminUserUuid } = new Admin({
-        userUuid: userCompany.uuid,
+        userUuid: userCompany.uuid
       });
       const status = ApprovalStatus.approved;
       await expect(
         CompanyApprovalEventRepository.create({
           adminUserUuid,
           company,
-          status,
+          status
         })
       ).rejects.toThrowErrorWithMessage(
         ForeignKeyConstraintError,
@@ -69,7 +69,7 @@ describe("CompanyApprovalEventRepository", () => {
       const event = await CompanyApprovalEventRepository.create({
         adminUserUuid,
         company,
-        status,
+        status
       });
       expect((await event.getCompany()).toJSON()).toEqual(company.toJSON());
       expect((await event.getAdmin()).toJSON()).toEqual(admin.toJSON());
@@ -84,7 +84,7 @@ describe("CompanyApprovalEventRepository", () => {
       return CompanyApprovalEventRepository.create({
         adminUserUuid,
         company,
-        status,
+        status
       });
     };
 

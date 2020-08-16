@@ -10,7 +10,7 @@ export const sebastian = {
     name: "Sebastián",
     surname: "Blanco",
     createdAt: new Date(),
-    updatedAt: new Date(),
+    updatedAt: new Date()
   },
   applicant: {
     uuid: uuids.sebastian.applicant,
@@ -23,7 +23,7 @@ export const sebastian = {
       "también formar parte de la gestión de proyectos, ya " +
       "que me interesa el balance de esos aspectos.",
     createdAt: new Date(),
-    updatedAt: new Date(),
+    updatedAt: new Date()
   },
   sections: [
     {
@@ -39,16 +39,16 @@ export const sebastian = {
         "con PostgreSQL y Cassandra indexada con Elasticsearch.",
       displayOrder: 1,
       createdAt: new Date(),
-      updatedAt: new Date(),
-    },
+      updatedAt: new Date()
+    }
   ],
   capabilities: [
     {
       capabilityUuid: uuids.capabilities.java,
       applicantUuid: uuids.sebastian.applicant,
       createdAt: new Date(),
-      updatedAt: new Date(),
-    },
+      updatedAt: new Date()
+    }
   ],
   careers: [
     {
@@ -58,7 +58,7 @@ export const sebastian = {
       approvedSubjectCount: 44,
       isGraduate: false,
       createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ],
+      updatedAt: new Date()
+    }
+  ]
 };

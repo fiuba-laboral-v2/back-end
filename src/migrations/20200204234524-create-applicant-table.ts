@@ -6,33 +6,33 @@ export = {
       uuid: {
         allowNull: false,
         primaryKey: true,
-        type: UUID,
+        type: UUID
       },
       userUuid: {
         allowNull: false,
         references: { model: "Users", key: "uuid" },
         onDelete: "CASCADE",
-        type: UUID,
+        type: UUID
       },
       padron: {
         allowNull: false,
-        type: INTEGER,
+        type: INTEGER
       },
       description: {
         allowNull: true,
-        type: TEXT,
+        type: TEXT
       },
       createdAt: {
         allowNull: false,
-        type: DATE,
+        type: DATE
       },
       updatedAt: {
         allowNull: false,
-        type: DATE,
-      },
+        type: DATE
+      }
     });
   },
   down: (queryInterface: QueryInterface) => {
     return queryInterface.dropTable("Applicants");
-  },
+  }
 };

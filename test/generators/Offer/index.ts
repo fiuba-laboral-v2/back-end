@@ -46,13 +46,13 @@ export const OfferGenerator = {
           return OfferRepository.updateStatus({
             uuid: offer.uuid,
             status,
-            secretary,
+            secretary
           });
         }
       );
       await generator.next();
       return generator;
-    },
+    }
   },
   data: {
     withObligatoryData: (): TOfferDataGenerator => {
@@ -61,6 +61,6 @@ export const OfferGenerator = {
       );
       generator.next();
       return generator;
-    },
-  },
+    }
+  }
 };

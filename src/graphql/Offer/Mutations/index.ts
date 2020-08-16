@@ -3,7 +3,7 @@ import { editOffer } from "./editOffer";
 
 const offerMutations = {
   createOffer,
-  editOffer,
+  editOffer
 };
 
 export { offerMutations };

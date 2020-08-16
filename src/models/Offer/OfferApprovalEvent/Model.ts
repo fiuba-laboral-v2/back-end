@@ -10,7 +10,7 @@ export class OfferApprovalEvent extends Model<OfferApprovalEvent> {
     allowNull: false,
     primaryKey: true,
     type: UUID,
-    defaultValue: UUIDV4,
+    defaultValue: UUIDV4
   })
   public uuid: string;
 
@@ -18,7 +18,7 @@ export class OfferApprovalEvent extends Model<OfferApprovalEvent> {
   @Column({
     allowNull: false,
     references: { model: "Admins", key: "uuid" },
-    type: UUID,
+    type: UUID
   })
   public adminUserUuid: string;
 
@@ -26,28 +26,28 @@ export class OfferApprovalEvent extends Model<OfferApprovalEvent> {
   @Column({
     allowNull: false,
     references: { model: "Offers", key: "uuid" },
-    type: UUID,
+    type: UUID
   })
   public offerUuid: string;
 
   @Column({
     allowNull: false,
     type: ENUM<string>({ values: approvalStatuses }),
-    ...isApprovalStatus,
+    ...isApprovalStatus
   })
   public status: ApprovalStatus;
 
   @Column({
     allowNull: false,
     type: DATE,
-    defaultValue: new Date(),
+    defaultValue: new Date()
   })
   public createdAt: Date;
 
   @Column({
     allowNull: false,
     type: DATE,
-    defaultValue: new Date(),
+    defaultValue: new Date()
   })
   public updatedAt: Date;
 

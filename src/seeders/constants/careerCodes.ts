@@ -11,5 +11,5 @@ export const careerCodes = {
   IngenieriaInformatica: "10",
   IngenieriaAlimentos: "11",
   IngenieriaAgrimensura: "12",
-  IngenieriaEnPetroleo: "13",
+  IngenieriaEnPetroleo: "13"
 };

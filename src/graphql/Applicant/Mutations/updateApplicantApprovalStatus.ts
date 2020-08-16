@@ -9,17 +9,17 @@ export const updateApplicantApprovalStatus = {
   type: GraphQLApplicant,
   args: {
     uuid: {
-      type: nonNull(ID),
+      type: nonNull(ID)
     },
     approvalStatus: {
-      type: nonNull(GraphQLApprovalStatus),
-    },
+      type: nonNull(GraphQLApprovalStatus)
+    }
   },
   resolve: async (
     _: undefined,
     { uuid, approvalStatus }: IUpdateApplicantApprovalStatusArguments,
     { currentUser }: { currentUser: IAdminUser }
-  ) => ApplicantRepository.updateApprovalStatus(currentUser.admin.userUuid, uuid, approvalStatus),
+  ) => ApplicantRepository.updateApprovalStatus(currentUser.admin.userUuid, uuid, approvalStatus)
 };
 
 interface IUpdateApplicantApprovalStatusArguments {

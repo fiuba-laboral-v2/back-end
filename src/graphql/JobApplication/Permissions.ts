@@ -3,9 +3,9 @@ import { isApprovedApplicant } from "$graphql/Rules/isApprovedApplicant";
 
 export const jobApplicationPermissions = {
   Mutation: {
-    saveJobApplication: isApprovedApplicant,
+    saveJobApplication: isApprovedApplicant
   },
   Query: {
-    getMyLatestJobApplications: isFromApprovedCompany,
-  },
+    getMyLatestJobApplications: isFromApprovedCompany
+  }
 };

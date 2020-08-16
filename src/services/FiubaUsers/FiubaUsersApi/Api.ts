@@ -4,7 +4,7 @@ import { RequestBodyBuilder } from "./RequestBodyBuilder";
 import {
   AuthenticateFaultError,
   AuthenticateUnknownError,
-  FiubaUsersServiceFetchError,
+  FiubaUsersServiceFetchError
 } from "../Errors";
 import { parse } from "fast-xml-parser";
 import "isomorphic-fetch";
@@ -13,14 +13,14 @@ import { FetchError } from "node-fetch";
 export const FiubaUsersApi = {
   headers: () => ({
     "Content-Type": "text/xml,",
-    charset: "UTF-8",
+    charset: "UTF-8"
   }),
   authenticate: async ({ dni, password }: ICredentials) => {
     try {
       const httpResponse = await fetch(FiubaUsersServiceConfig.url, {
         method: "POST",
         headers: FiubaUsersApi.headers(),
-        body: RequestBodyBuilder.buildAuthenticate({ dni, password }),
+        body: RequestBodyBuilder.buildAuthenticate({ dni, password })
       });
       if (httpResponse.status === 200) {
         const response: IFiubaUsersApiSuccessResponse = parse(await httpResponse.text());
@@ -33,5 +33,5 @@ export const FiubaUsersApi = {
       if (error instanceof FetchError) throw new FiubaUsersServiceFetchError();
       throw error;
     }
-  },
+  }
 };

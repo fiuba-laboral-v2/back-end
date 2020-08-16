@@ -17,7 +17,7 @@ describe("ApplicantLinkRepository", () => {
   it("creates a valid link with a name and a url", async () => {
     const params = {
       name: "Google",
-      url: "https://www.google.com/",
+      url: "https://www.google.com/"
     };
     await ApplicantLinkRepository.update([params], applicant);
 
@@ -27,21 +27,21 @@ describe("ApplicantLinkRepository", () => {
     expect(link).toMatchObject({
       applicantUuid: applicant.uuid,
       name: params.name,
-      url: params.url,
+      url: params.url
     });
   });
 
   it("should update a valid link", async () => {
     const params = {
       name: "Google",
-      url: "www.google.com",
+      url: "www.google.com"
     };
 
     await ApplicantLinkRepository.update([params], applicant);
 
     const newParams = {
       name: "LinkedIn",
-      url: "www.linkedin.com",
+      url: "www.linkedin.com"
     };
 
     await ApplicantLinkRepository.update([newParams], applicant);
@@ -55,7 +55,7 @@ describe("ApplicantLinkRepository", () => {
     const secondApplicant = await ApplicantGenerator.instance.withMinimumData();
     const params = {
       name: "Google",
-      url: "www.google.com",
+      url: "www.google.com"
     };
 
     await ApplicantLinkRepository.update([params], applicant);
@@ -66,7 +66,7 @@ describe("ApplicantLinkRepository", () => {
 
     expect({ name: link.name, url: link.url }).toMatchObject({
       name: secondlink.name,
-      url: secondlink.url,
+      url: secondlink.url
     });
   });
 
@@ -77,7 +77,7 @@ describe("ApplicantLinkRepository", () => {
       ApplicantLinkRepository.update(
         [
           { name: oneName, url: "some.url" },
-          { name: oneName, url: "other.url" },
+          { name: oneName, url: "other.url" }
         ],
         applicant
       )
@@ -94,7 +94,7 @@ describe("ApplicantLinkRepository", () => {
       ApplicantLinkRepository.update(
         [
           { name: "name", url },
-          { name: "other", url },
+          { name: "other", url }
         ],
         applicant
       )
@@ -107,8 +107,8 @@ describe("ApplicantLinkRepository", () => {
     ).rejects.toThrowBulkRecordErrorIncluding([
       {
         errorClass: ValidationError,
-        message: "Validation error: La URL es inválida",
-      },
+        message: "Validation error: La URL es inválida"
+      }
     ]);
   });
 });

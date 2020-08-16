@@ -5,8 +5,8 @@ export = {
     queryInterface.addColumn("Applicants", "approvalStatus", {
       allowNull: false,
       type: "approval_status",
-      defaultValue: "pending",
+      defaultValue: "pending"
     }),
   down: (queryInterface: QueryInterface) =>
-    queryInterface.removeColumn("Applicants", "approvalStatus"),
+    queryInterface.removeColumn("Applicants", "approvalStatus")
 };

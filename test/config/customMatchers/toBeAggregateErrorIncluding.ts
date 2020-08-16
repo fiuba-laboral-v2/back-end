@@ -24,7 +24,7 @@ const buildResponse = ({ aggregateError, expected, pass }: IBuildMessageParamete
       } else {
         return `Expected ${aggregateError} to include ${JSON.stringify(expected)}`;
       }
-    },
+    }
   };
 };
 
@@ -39,14 +39,14 @@ export const toBeAggregateErrorIncluding = (received, expected: IExpected[]) => 
   let aggregateErrorIncludes = buildResponse({
     aggregateError,
     expected,
-    pass: false,
+    pass: false
   });
   if (aggregateError.length !== expected.length) return aggregateErrorIncludes;
 
   aggregateErrorIncludes = buildResponse({
     aggregateError,
     expected,
-    pass: true,
+    pass: true
   });
   const errors = aggregateError.map((bulkError: BulkRecordError) => bulkError.errors);
   errors.forEach(error => {
@@ -58,7 +58,7 @@ export const toBeAggregateErrorIncluding = (received, expected: IExpected[]) => 
     aggregateErrorIncludes = buildResponse({
       aggregateError,
       expected,
-      pass: false,
+      pass: false
     });
   });
   return aggregateErrorIncludes;

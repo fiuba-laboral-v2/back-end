@@ -10,40 +10,40 @@ export = {
             allowNull: false,
             references: { model: "Applicants", key: "uuid" },
             onDelete: "CASCADE",
-            type: UUID,
+            type: UUID
           },
           name: {
             allowNull: false,
-            type: STRING,
+            type: STRING
           },
           url: {
             allowNull: false,
-            type: STRING,
+            type: STRING
           },
           createdAt: {
             allowNull: false,
-            type: DATE,
+            type: DATE
           },
           updatedAt: {
             allowNull: false,
-            type: DATE,
-          },
+            type: DATE
+          }
         },
         { transaction }
       );
       await queryInterface.addConstraint("ApplicantsLinks", ["applicantUuid", "name"], {
         type: "primary key",
         name: "ApplicantsLinks_applicantUuid_name_key",
-        transaction,
+        transaction
       });
       await queryInterface.addConstraint("ApplicantsLinks", ["applicantUuid", "url"], {
         type: "unique",
         name: "ApplicantsLinks_applicantUuid_url_key",
-        transaction,
+        transaction
       });
     });
   },
   down: (queryInterface: QueryInterface) => {
     return queryInterface.dropTable("ApplicantsLinks");
-  },
+  }
 };

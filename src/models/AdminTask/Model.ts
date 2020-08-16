@@ -7,7 +7,7 @@ export type AdminTask = Applicant | Company | Offer;
 export enum AdminTaskType {
   Applicant = "Applicant",
   Company = "Company",
-  Offer = "Offer",
+  Offer = "Offer"
 }
 export const SharedApprovalAdminTaskTypes = [AdminTaskType.Company, AdminTaskType.Applicant];
 export const SeparateApprovalAdminTaskTypes = [AdminTaskType.Offer];

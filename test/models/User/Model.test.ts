@@ -6,7 +6,7 @@ import { UUID_REGEX } from "../index";
 import {
   InvalidEmailError,
   NameWithDigitsError,
-  PasswordWithoutDigitsError,
+  PasswordWithoutDigitsError
 } from "validations-fiuba-laboral-v2";
 import { DniGenerator } from "$generators/DNI";
 
@@ -17,7 +17,7 @@ describe("User", () => {
       dni: DniGenerator.generate(),
       password: "somethingVerySecret123",
       name: "name",
-      surname: "surname",
+      surname: "surname"
     });
     await expect(user.validate()).resolves.not.toThrow();
   });
@@ -27,7 +27,7 @@ describe("User", () => {
       email: "asd@qwe.com",
       password: "somethingVerySecret123",
       name: "name",
-      surname: "surname",
+      surname: "surname"
     });
     await expect(user.validate()).resolves.not.toThrow();
     expect(user.dni).toBeUndefined();
@@ -38,7 +38,7 @@ describe("User", () => {
       email: "asd@qwe.com",
       dni: DniGenerator.generate(),
       name: "name",
-      surname: "surname",
+      surname: "surname"
     });
     expect(user.isFiubaUser()).toBe(true);
     expect(() => user.validateUser()).not.toThrow();
@@ -49,7 +49,7 @@ describe("User", () => {
       email: "asd@qwe.com",
       dni: DniGenerator.generate(),
       name: "name",
-      surname: "surname",
+      surname: "surname"
     });
     await expect(user.validate()).resolves.not.toThrow();
     expect(user.password).toBeUndefined();
@@ -60,14 +60,14 @@ describe("User", () => {
       email: "asd@qwe.com",
       password: "somethingVerySecret123",
       name: "A Very Very Very Very Very Very Very Very Very Very Very Long Name",
-      surname: "surname",
+      surname: "surname"
     };
     const user = new User(params);
     await expect(user.validate()).resolves.not.toThrow();
     expect(user).toEqual(
       expect.objectContaining({
         uuid: expect.stringMatching(UUID_REGEX),
-        ...params,
+        ...params
       })
     );
   });
@@ -80,7 +80,7 @@ describe("User", () => {
         email: "asd@qwe.com",
         password: "somethingVerySecret123",
         name: "name",
-        surname: "surname",
+        surname: "surname"
       };
       fields.map(field => delete attributes[field]);
       const user = new User(attributes);
@@ -93,7 +93,7 @@ describe("User", () => {
         email: "asd@qwe.com",
         password: "somethingVerySecret123",
         name: 1,
-        surname: "surname",
+        surname: "surname"
       });
       await expect(user.validate()).rejects.toThrow(NameWithDigitsError.buildMessage());
     });
@@ -104,7 +104,7 @@ describe("User", () => {
         email: "asd@qwe.com",
         password: "somethingVerySecret123",
         name: "name",
-        surname: 22,
+        surname: 22
       });
       await expect(user.validate()).rejects.toThrowErrorWithMessage(
         ValidationError,
@@ -132,7 +132,7 @@ describe("User", () => {
         email: email,
         password: "somethingVerySecret123",
         name: "name",
-        surname: "surname",
+        surname: "surname"
       });
 
       await expect(user.validate()).rejects.toThrowErrorWithMessage(
@@ -152,7 +152,7 @@ describe("User", () => {
         email: "asd@qwe.com",
         password: "somethingWithoutDigits",
         name: "name",
-        surname: "surname",
+        surname: "surname"
       });
       expect(() => User.beforeCreateHook(user)).toThrow(PasswordWithoutDigitsError);
     });
@@ -163,7 +163,7 @@ describe("User", () => {
         email: "asd@qwe.com",
         password: unhashedPassword,
         name: "name",
-        surname: "surname",
+        surname: "surname"
       });
       User.beforeCreateHook(user);
       expect(user.password).not.toEqual(unhashedPassword);
@@ -178,7 +178,7 @@ describe("User", () => {
         email: "asd@qwe.com",
         password: unhashedPassword,
         name: "name",
-        surname: "surname",
+        surname: "surname"
       });
       User.beforeCreateHook(user);
 
@@ -191,7 +191,7 @@ describe("User", () => {
       email: "asd@qwe.com",
       password: "somethingWithDigits99",
       name: "name",
-      surname: "surname",
+      surname: "surname"
     });
 
     expect(await user.passwordMatches("somethingElse")).toBe(false);

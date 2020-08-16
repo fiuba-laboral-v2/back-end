@@ -15,12 +15,12 @@ const constraintTranslator = {
   ApplicantsCapabilities_applicantUuid_fkey: "ApplicantDoesNotExistError",
   ApplicantCareers_applicantUuid_fkey: "ApplicantDoesNotExistError",
   ApplicantCareers_careerCode_fkey: "CareerDoesNotExistError",
-  ApplicantsCapabilities_capabilityUuid_fkey: "CapabilitiesDoesNotExistError",
+  ApplicantsCapabilities_capabilityUuid_fkey: "CapabilitiesDoesNotExistError"
 };
 
 export const foreignKeyConstraintErrorMapper: IMapItem = {
   message: "ForeignKeyConstraintError",
   data: (error: ForeignKeyConstraintError) => ({
-    errorType: constraintTranslator[error.index],
-  }),
+    errorType: constraintTranslator[error.index]
+  })
 };

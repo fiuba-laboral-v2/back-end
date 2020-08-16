@@ -34,7 +34,7 @@ describe("updateCompanyApprovalStatus", () => {
   const performMutation = (apolloClient: TestClient, dataToUpdate: object) =>
     apolloClient.mutate({
       mutation: UPDATE_COMPANY_APPROVAL_STATUS,
-      variables: dataToUpdate,
+      variables: dataToUpdate
     });
 
   const expectToUpdateStatusAndLogEvent = async (newStatus: ApprovalStatus) => {
@@ -44,15 +44,15 @@ describe("updateCompanyApprovalStatus", () => {
     expect(errors).toBeUndefined();
     expect(data!.updateCompanyApprovalStatus).toEqual({
       uuid: company.uuid,
-      approvalStatus: newStatus,
+      approvalStatus: newStatus
     });
     expect(await CompanyApprovalEventRepository.findAll()).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           userUuid: admin.userUuid,
           companyUuid: company.uuid,
-          status: newStatus,
-        }),
+          status: newStatus
+        })
       ])
     );
   };
@@ -69,11 +69,11 @@ describe("updateCompanyApprovalStatus", () => {
     const apolloClient = client.loggedOut();
     const dataToUpdate = {
       uuid: company.uuid,
-      approvalStatus: ApprovalStatus.approved,
+      approvalStatus: ApprovalStatus.approved
     };
     const { errors } = await performMutation(apolloClient, dataToUpdate);
     expect(errors![0].extensions!.data).toEqual({
-      errorType: AuthenticationError.name,
+      errorType: AuthenticationError.name
     });
   });
 
@@ -81,11 +81,11 @@ describe("updateCompanyApprovalStatus", () => {
     const { apolloClient } = await TestClientGenerator.applicant();
     const dataToUpdate = {
       uuid: company.uuid,
-      approvalStatus: ApprovalStatus.approved,
+      approvalStatus: ApprovalStatus.approved
     };
     const { errors } = await performMutation(apolloClient, dataToUpdate);
     expect(errors![0].extensions!.data).toEqual({
-      errorType: UnauthorizedError.name,
+      errorType: UnauthorizedError.name
     });
   });
 
@@ -93,11 +93,11 @@ describe("updateCompanyApprovalStatus", () => {
     const { apolloClient } = await TestClientGenerator.company();
     const dataToUpdate = {
       uuid: company.uuid,
-      approvalStatus: ApprovalStatus.approved,
+      approvalStatus: ApprovalStatus.approved
     };
     const { errors } = await performMutation(apolloClient, dataToUpdate);
     expect(errors![0].extensions!.data).toEqual({
-      errorType: UnauthorizedError.name,
+      errorType: UnauthorizedError.name
     });
   });
 
@@ -106,11 +106,11 @@ describe("updateCompanyApprovalStatus", () => {
     const { apolloClient } = await TestClientGenerator.admin();
     const dataToUpdate = {
       uuid: nonExistentCompanyUuid,
-      approvalStatus: ApprovalStatus.approved,
+      approvalStatus: ApprovalStatus.approved
     };
     const { errors } = await performMutation(apolloClient, dataToUpdate);
     expect(errors![0].extensions!.data).toEqual({
-      errorType: CompanyNotUpdatedError.name,
+      errorType: CompanyNotUpdatedError.name
     });
   });
 
@@ -118,7 +118,7 @@ describe("updateCompanyApprovalStatus", () => {
     const { apolloClient } = await TestClientGenerator.admin();
     const dataToUpdate = {
       uuid: company.uuid,
-      approvalStatus: "invalidApprovalStatus",
+      approvalStatus: "invalidApprovalStatus"
     };
     const { errors } = await performMutation(apolloClient, dataToUpdate);
     expect(errors).not.toBeUndefined();

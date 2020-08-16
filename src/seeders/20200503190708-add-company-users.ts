@@ -7,5 +7,5 @@ export = {
   },
   down: (queryInterface: QueryInterface) => {
     return queryInterface.bulkDelete("CompanyUsers", {});
-  },
+  }
 };

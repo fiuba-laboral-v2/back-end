@@ -25,7 +25,7 @@ describe("JobApplicationRepository", () => {
       const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
       expect(jobApplication).toMatchObject({
         offerUuid: offer.uuid,
-        applicantUuid: applicant.uuid,
+        applicantUuid: applicant.uuid
       });
     });
 
@@ -41,7 +41,7 @@ describe("JobApplicationRepository", () => {
           JobApplicationRepository.apply(applicant1.uuid, offer),
           JobApplicationRepository.apply(applicant2.uuid, offer),
           JobApplicationRepository.apply(applicant3.uuid, offer),
-          JobApplicationRepository.apply(applicant4.uuid, offer),
+          JobApplicationRepository.apply(applicant4.uuid, offer)
         ])
       ).resolves.not.toThrow();
     });
@@ -63,7 +63,7 @@ describe("JobApplicationRepository", () => {
       const { uuid: applicantUuid } = await ApplicantGenerator.instance.withMinimumData();
       const jobApplication = new JobApplication({
         offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
-        applicantUuid,
+        applicantUuid
       });
       await expect(jobApplication.save()).rejects.toThrowErrorWithMessage(
         ForeignKeyConstraintError,
@@ -133,8 +133,8 @@ describe("JobApplicationRepository", () => {
       expect(jobApplications).toMatchObject([
         {
           offerUuid: offer.uuid,
-          applicantUuid: applicant.uuid,
-        },
+          applicantUuid: applicant.uuid
+        }
       ]);
     });
 
@@ -162,12 +162,12 @@ describe("JobApplicationRepository", () => {
       expect(jobApplications).toMatchObject([
         {
           offerUuid: myOffer2.uuid,
-          applicantUuid: applicant.uuid,
+          applicantUuid: applicant.uuid
         },
         {
           offerUuid: myOffer1.uuid,
-          applicantUuid: applicant.uuid,
-        },
+          applicantUuid: applicant.uuid
+        }
       ]);
     });
   });

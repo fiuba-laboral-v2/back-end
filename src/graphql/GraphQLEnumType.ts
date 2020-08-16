@@ -7,7 +7,7 @@ export const GraphQLEnumType = ({ possibleValues, name }: IGraphQLEnumTypeConfig
       const values = {};
       possibleValues.forEach(status => (values[status] = { value: status }));
       return values;
-    })(),
+    })()
   });
 
 interface IGraphQLEnumTypeConfig {

@@ -12,12 +12,12 @@ const constraintTranslator = {
   JobApplications_applicantUuid_offerUuid_key: "JobApplicationAlreadyExistsError",
   Careers_code_key: "CareerAlreadyExistsError",
   ApplicantCareers_careerCode_applicantUuid_key: "CareerAlreadyExistsError",
-  ApplicantsLinks_applicantUuid_url_key: "LinkAlreadyExistsError",
+  ApplicantsLinks_applicantUuid_url_key: "LinkAlreadyExistsError"
 };
 
 export const uniqueConstraintErrorMapper: IMapItem = {
   message: "UniqueConstraintError",
   data: (error: UniqueConstraintError) => ({
-    errorType: constraintTranslator[error.original.constraint],
-  }),
+    errorType: constraintTranslator[error.original.constraint]
+  })
 };

@@ -71,20 +71,20 @@ describe("getAdminTasks", () => {
     const applicantsGenerator = ApplicantGenerator.instance.updatedWithStatus;
     rejectedCompany = await companiesGenerator({
       status: ApprovalStatus.rejected,
-      admin,
+      admin
     });
     approvedCompany = await companiesGenerator({
       status: ApprovalStatus.approved,
-      admin,
+      admin
     });
     pendingCompany = await companiesGenerator();
     rejectedApplicant = await applicantsGenerator({
       status: ApprovalStatus.rejected,
-      admin,
+      admin
     });
     approvedApplicant = await applicantsGenerator({
       status: ApprovalStatus.approved,
-      admin,
+      admin
     });
     pendingApplicant = await applicantsGenerator();
     const offers = await OfferGenerator.instance.updatedWithStatus();
@@ -92,17 +92,17 @@ describe("getAdminTasks", () => {
     rejectedOffer = await offers.next({
       companyUuid: approvedCompany.uuid,
       secretary,
-      status: ApprovalStatus.rejected,
+      status: ApprovalStatus.rejected
     }).value;
     approvedOffer = await offers.next({
       companyUuid: approvedCompany.uuid,
       secretary,
-      status: ApprovalStatus.approved,
+      status: ApprovalStatus.approved
     }).value;
     pendingOffer = await offers.next({
       companyUuid: approvedCompany.uuid,
       secretary,
-      status: ApprovalStatus.pending,
+      status: ApprovalStatus.pending
     }).value;
 
     allTasksByDescUpdatedAt = [
@@ -114,14 +114,14 @@ describe("getAdminTasks", () => {
       pendingApplicant,
       rejectedOffer,
       approvedOffer,
-      pendingOffer,
+      pendingOffer
     ].sort(task => -task.updatedAt);
   });
 
   const getAdminTasks = async (filter: IAdminTasksFilter) => {
     const { errors, data } = await apolloClient.query({
       query: GET_ADMIN_TASKS,
-      variables: filter,
+      variables: filter
     });
     expect(errors).toBeUndefined();
     return data!.getAdminTasks;
@@ -135,13 +135,13 @@ describe("getAdminTasks", () => {
     const result = await getAdminTasks({
       adminTaskTypes: adminTasks.map(adminTask => adminTask.constructor.name) as any,
       statuses,
-      secretary,
+      secretary
     });
     expect(result.results).toEqual(
       expect.arrayContaining(
         adminTasks.map(adminTask =>
           expect.objectContaining({
-            uuid: adminTask.uuid,
+            uuid: adminTask.uuid
           })
         )
       )
@@ -153,7 +153,7 @@ describe("getAdminTasks", () => {
     const result = await getAdminTasks({
       adminTaskTypes: [],
       statuses: [ApprovalStatus.pending],
-      secretary: admin.secretary,
+      secretary: admin.secretary
     });
     expect(result).toEqual({ results: [], shouldFetchMore: false });
   });
@@ -242,7 +242,7 @@ describe("getAdminTasks", () => {
     const result = await getAdminTasks({
       adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company, AdminTaskType.Offer],
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
-      secretary: admin.secretary,
+      secretary: admin.secretary
     });
     expect(result.results.map(adminTask => adminTask.uuid)).toEqual([
       pendingOffer.uuid,
@@ -253,7 +253,7 @@ describe("getAdminTasks", () => {
       rejectedApplicant.uuid,
       pendingCompany.uuid,
       approvedCompany.uuid,
-      rejectedCompany.uuid,
+      rejectedCompany.uuid
     ]);
     expect(result.results).toBeSortedBy({ key: "updatedAt", order: "desc" });
     expect(result.shouldFetchMore).toEqual(false);
@@ -269,9 +269,9 @@ describe("getAdminTasks", () => {
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
       updatedBeforeThan: {
         dateTime: lastTask.updatedAt.toISOString(),
-        uuid: lastTask.uuid,
+        uuid: lastTask.uuid
       },
-      secretary: admin.secretary,
+      secretary: admin.secretary
     });
     expect(result.shouldFetchMore).toEqual(false);
     expect(result.results.map(task => task.uuid)).toEqual(
@@ -285,7 +285,7 @@ describe("getAdminTasks", () => {
     it("returns an error if no filter is provided", async () => {
       const { errors } = await apolloClient.query({
         query: GET_ADMIN_TASKS,
-        variables: {},
+        variables: {}
       });
       expect(errors).not.toBeUndefined();
     });
@@ -293,7 +293,7 @@ describe("getAdminTasks", () => {
 
   describe("only admins can execute this query", () => {
     const testForbiddenAccess = async ({
-      apolloClient: client,
+      apolloClient: client
     }: {
       apolloClient: ApolloServerTestClient;
     }) => {
@@ -301,11 +301,11 @@ describe("getAdminTasks", () => {
         query: GET_ADMIN_TASKS,
         variables: {
           adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company, AdminTaskType.Offer],
-          statuses: [ApprovalStatus.pending],
-        },
+          statuses: [ApprovalStatus.pending]
+        }
       });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     };
 

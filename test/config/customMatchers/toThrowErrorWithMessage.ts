@@ -5,7 +5,7 @@ const failMessage = (received, type: Constructable, message: string | string[]) 
   message: () =>
     `Expected ${received} to be instanceof ${type.name}` +
     "\n" +
-    `Expected message: ${received.message} to include ${message}`,
+    `Expected message: ${received.message} to include ${message}`
 });
 
 const passMessage = (received, type: Constructable, message: string | string[]) => ({
@@ -13,7 +13,7 @@ const passMessage = (received, type: Constructable, message: string | string[]) 
   message: () =>
     `Expected ${received} not to be instanceof ${type.name}` +
     "\n" +
-    `Expected message: ${received.message} not to include ${message}`,
+    `Expected message: ${received.message} not to include ${message}`
 });
 
 const includesMessage = (receivedMessage: string, expectedMessage: string | string[]) => {

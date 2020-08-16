@@ -9,7 +9,7 @@ export const completeData = ({ index, photos, user }: IWithCompleteData) => ({
   website: "https://jobs.mercadolibre.com/",
   email: "jobs@mercadolibre.com",
   phoneNumbers: ["1143076222", "1159821999", "1143336666", "1143337777"],
-  photos: photos || [],
+  photos: photos || []
 });
 
 interface IWithCompleteData extends ICompanyGeneratorAttributes {

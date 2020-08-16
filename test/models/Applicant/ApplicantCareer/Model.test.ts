@@ -5,7 +5,7 @@ import {
   ForbiddenApprovedSubjectCountError,
   ForbiddenCurrentCareerYearError,
   MissingApprovedSubjectCountError,
-  MissingCurrentCareerYearError,
+  MissingCurrentCareerYearError
 } from "$models/Applicant/ApplicantCareer/Errors";
 
 describe("ApplicantCareer", () => {
@@ -13,7 +13,7 @@ describe("ApplicantCareer", () => {
     const applicantCareer = new ApplicantCareer({
       careerCode: "10",
       applicantUuid: "invalidUuidFormat",
-      isGraduate: false,
+      isGraduate: false
     });
     await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -26,7 +26,7 @@ describe("ApplicantCareer", () => {
       careerCode: "10",
       applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
       currentCareerYear: 5,
-      approvedSubjectCount: 20,
+      approvedSubjectCount: 20
     });
     await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -39,7 +39,7 @@ describe("ApplicantCareer", () => {
       const attributes = {
         careerCode: "10",
         applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
-        isGraduate: true,
+        isGraduate: true
       };
       const applicantCareer = new ApplicantCareer(attributes);
       await expect(applicantCareer.validate()).resolves.not.toThrow();
@@ -47,7 +47,7 @@ describe("ApplicantCareer", () => {
         expect.objectContaining({
           ...attributes,
           createdAt: expect.any(Date),
-          updatedAt: expect.any(Date),
+          updatedAt: expect.any(Date)
         })
       );
     });
@@ -57,7 +57,7 @@ describe("ApplicantCareer", () => {
         careerCode: "10",
         applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
         approvedSubjectCount: 20,
-        isGraduate: true,
+        isGraduate: true
       });
       await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
         ValidationError,
@@ -70,7 +70,7 @@ describe("ApplicantCareer", () => {
         careerCode: "10",
         applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
         currentCareerYear: 5,
-        isGraduate: true,
+        isGraduate: true
       });
       await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
         ValidationError,
@@ -86,7 +86,7 @@ describe("ApplicantCareer", () => {
         applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
         currentCareerYear: 3,
         approvedSubjectCount: 20,
-        isGraduate: false,
+        isGraduate: false
       };
       const applicantCareer = new ApplicantCareer(attributes);
       await expect(applicantCareer.validate()).resolves.not.toThrow();
@@ -94,7 +94,7 @@ describe("ApplicantCareer", () => {
         expect.objectContaining({
           ...attributes,
           createdAt: expect.any(Date),
-          updatedAt: expect.any(Date),
+          updatedAt: expect.any(Date)
         })
       );
     });
@@ -105,7 +105,7 @@ describe("ApplicantCareer", () => {
         applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
         currentCareerYear: -12,
         approvedSubjectCount: 20,
-        isGraduate: false,
+        isGraduate: false
       });
       await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
         ValidationError,
@@ -119,7 +119,7 @@ describe("ApplicantCareer", () => {
         applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
         currentCareerYear: 0,
         approvedSubjectCount: 20,
-        isGraduate: false,
+        isGraduate: false
       });
       await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
         ValidationError,
@@ -133,7 +133,7 @@ describe("ApplicantCareer", () => {
         applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
         currentCareerYear: 12,
         approvedSubjectCount: -20,
-        isGraduate: false,
+        isGraduate: false
       });
       await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
         ValidationError,
@@ -146,7 +146,7 @@ describe("ApplicantCareer", () => {
         careerCode: "10",
         applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
         currentCareerYear: 12,
-        isGraduate: false,
+        isGraduate: false
       });
       await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
         ValidationError,
@@ -159,7 +159,7 @@ describe("ApplicantCareer", () => {
         careerCode: "10",
         applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
         approvedSubjectCount: 20,
-        isGraduate: false,
+        isGraduate: false
       });
       await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
         ValidationError,

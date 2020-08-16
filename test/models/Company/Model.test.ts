@@ -8,7 +8,7 @@ import {
   InvalidEmailError,
   InvalidURLError,
   NameWithDigitsError,
-  WrongLengthCuitError,
+  WrongLengthCuitError
 } from "validations-fiuba-laboral-v2";
 
 describe("Company", () => {
@@ -21,14 +21,14 @@ describe("Company", () => {
       logo: "https://logo.png",
       website: "https://website.com/",
       email: "email@email.com",
-      approvalStatus: ApprovalStatus.pending,
+      approvalStatus: ApprovalStatus.pending
     };
     const company = new Company(companyData);
     await expect(company.validate()).resolves.not.toThrow();
     expect(company).toEqual(
       expect.objectContaining({
         uuid: expect.stringMatching(UUID_REGEX),
-        ...companyData,
+        ...companyData
       })
     );
   });
@@ -44,7 +44,7 @@ describe("Company", () => {
   it("throws an error if companyName is null", async () => {
     const company: Company = new Company({
       cuit: "30711819017",
-      companyName: null,
+      companyName: null
     });
     await expect(company.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -64,7 +64,7 @@ describe("Company", () => {
   it("throws an error if cuit has invalid format", async () => {
     const company = new Company({
       cuit: "30711819018",
-      companyName: "devartis",
+      companyName: "devartis"
     });
     await expect(company.validate()).rejects.toThrow(InvalidCuitError.buildMessage());
   });
@@ -77,7 +77,7 @@ describe("Company", () => {
   it("throws an error if cuit has more than eleven digits", async () => {
     const company = new Company({
       cuit: "3057341761199",
-      companyName: "devartis",
+      companyName: "devartis"
     });
     await expect(company.validate()).rejects.toThrow(WrongLengthCuitError.buildMessage());
   });
@@ -90,7 +90,7 @@ describe("Company", () => {
   it("should throw an error if name has digits", async () => {
     const company = new Company({
       cuit: "30711819017",
-      companyName: "Google34",
+      companyName: "Google34"
     });
     await expect(company.validate()).rejects.toThrow(NameWithDigitsError.buildMessage());
   });
@@ -98,11 +98,11 @@ describe("Company", () => {
   it("throws an error if name has digits and cuit has more than eleven digits", async () => {
     const company = new Company({
       cuit: "3057341761199",
-      companyName: "Google34",
+      companyName: "Google34"
     });
     await expect(company.validate()).rejects.toThrowErrorWithMessage(ValidationError, [
       NameWithDigitsError.buildMessage(),
-      WrongLengthCuitError.buildMessage(),
+      WrongLengthCuitError.buildMessage()
     ]);
   });
 
@@ -110,7 +110,7 @@ describe("Company", () => {
     const company = new Company({
       cuit: "30711819017",
       companyName: "Google34",
-      website: "badURL",
+      website: "badURL"
     });
     await expect(company.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -123,7 +123,7 @@ describe("Company", () => {
     const company = new Company({
       cuit: "30711819017",
       companyName: "Google34",
-      email: badEmail,
+      email: badEmail
     });
     await expect(company.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,

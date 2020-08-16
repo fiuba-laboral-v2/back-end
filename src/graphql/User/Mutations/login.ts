@@ -8,11 +8,11 @@ export const login = {
   type: Boolean,
   args: {
     email: {
-      type: nonNull(String),
+      type: nonNull(String)
     },
     password: {
-      type: nonNull(String),
-    },
+      type: nonNull(String)
+    }
   },
   resolve: async (_: undefined, { email, password }: ILogin, { res: expressResponse }: Context) => {
     const user = await UserRepository.findByEmail(email);
@@ -20,7 +20,7 @@ export const login = {
 
     const token = await JWT.createToken(user);
     expressResponse.cookie(AuthConfig.cookieName, token, AuthConfig.cookieOptions);
-  },
+  }
 };
 
 interface ILogin {

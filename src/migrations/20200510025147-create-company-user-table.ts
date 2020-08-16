@@ -10,30 +10,30 @@ export = {
             allowNull: false,
             references: { model: "Companies", key: "uuid" },
             onDelete: "CASCADE",
-            type: UUID,
+            type: UUID
           },
           userUuid: {
             allowNull: false,
             references: { model: "Users", key: "uuid" },
             onDelete: "CASCADE",
-            type: UUID,
+            type: UUID
           },
           createdAt: {
             allowNull: false,
-            type: DATE,
+            type: DATE
           },
           updatedAt: {
             allowNull: false,
-            type: DATE,
-          },
+            type: DATE
+          }
         },
         { transaction }
       );
       await queryInterface.addConstraint("CompanyUsers", ["companyUuid", "userUuid"], {
         type: "primary key",
         name: "CompanyUsers_companyUuid_userUuid_key",
-        transaction,
+        transaction
       });
     }),
-  down: (queryInterface: QueryInterface) => queryInterface.dropTable("CompanyUsers"),
+  down: (queryInterface: QueryInterface) => queryInterface.dropTable("CompanyUsers")
 };

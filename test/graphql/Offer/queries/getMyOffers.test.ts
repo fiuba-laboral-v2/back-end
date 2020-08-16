@@ -47,15 +47,15 @@ describe("getMyOffers", () => {
       const career2 = await CareerGenerator.instance();
       offer1 = await offers.next({
         companyUuid,
-        careers: [{ careerCode: career1.code }],
+        careers: [{ careerCode: career1.code }]
       }).value;
       offer2 = await offers.next({
         companyUuid,
-        careers: [{ careerCode: career2.code }],
+        careers: [{ careerCode: career2.code }]
       }).value;
       await offers.next({
         companyUuid: uuid,
-        careers: [{ careerCode: career1.code }],
+        careers: [{ careerCode: career1.code }]
       }).value;
     };
 
@@ -63,12 +63,12 @@ describe("getMyOffers", () => {
       const { apolloClient, company } = await TestClientGenerator.company({
         status: {
           admin,
-          approvalStatus: ApprovalStatus.approved,
-        },
+          approvalStatus: ApprovalStatus.approved
+        }
       });
       await createOffers(company.uuid);
       const { data, errors } = await apolloClient.query({
-        query: GET_MY_OFFERS,
+        query: GET_MY_OFFERS
       });
       expect(errors).toBeUndefined();
       expect(data!.getMyOffers).toHaveLength(2);
@@ -82,11 +82,11 @@ describe("getMyOffers", () => {
       const { apolloClient } = await TestClientGenerator.company({
         status: {
           admin,
-          approvalStatus: ApprovalStatus.approved,
-        },
+          approvalStatus: ApprovalStatus.approved
+        }
       });
       const { data, errors } = await apolloClient.query({
-        query: GET_MY_OFFERS,
+        query: GET_MY_OFFERS
       });
 
       expect(errors).toBeUndefined();
@@ -98,11 +98,11 @@ describe("getMyOffers", () => {
     it("returns an error if there is no current user", async () => {
       const apolloClient = client.loggedOut();
       const { errors } = await apolloClient.query({
-        query: GET_MY_OFFERS,
+        query: GET_MY_OFFERS
       });
 
       expect(errors![0].extensions!.data).toEqual({
-        errorType: AuthenticationError.name,
+        errorType: AuthenticationError.name
       });
     });
 
@@ -111,7 +111,7 @@ describe("getMyOffers", () => {
       const { errors } = await apolloClient.query({ query: GET_MY_OFFERS });
 
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
 
@@ -119,12 +119,12 @@ describe("getMyOffers", () => {
       const { apolloClient } = await TestClientGenerator.company({
         status: {
           admin,
-          approvalStatus: ApprovalStatus.pending,
-        },
+          approvalStatus: ApprovalStatus.pending
+        }
       });
       const { errors } = await apolloClient.query({ query: GET_MY_OFFERS });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
 
@@ -132,12 +132,12 @@ describe("getMyOffers", () => {
       const { apolloClient } = await TestClientGenerator.company({
         status: {
           admin,
-          approvalStatus: ApprovalStatus.rejected,
-        },
+          approvalStatus: ApprovalStatus.rejected
+        }
       });
       const { errors } = await apolloClient.query({ query: GET_MY_OFFERS });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
   });

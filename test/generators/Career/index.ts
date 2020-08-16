@@ -8,5 +8,5 @@ export const CareerGenerator = {
     return CareerGenerator.index;
   },
   instance: () => CareerRepository.create(CareerGenerator.data()),
-  data: () => careerData(CareerGenerator.getIndex()),
+  data: () => careerData(CareerGenerator.getIndex())
 };

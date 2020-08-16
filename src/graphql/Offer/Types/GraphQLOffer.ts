@@ -14,46 +14,46 @@ const GraphQLOffer = new GraphQLObjectType<Offer, IApolloServerContext>({
   name: "Offer",
   fields: () => ({
     uuid: {
-      type: nonNull(ID),
+      type: nonNull(ID)
     },
     title: {
-      type: nonNull(String),
+      type: nonNull(String)
     },
     description: {
-      type: nonNull(String),
+      type: nonNull(String)
     },
     hoursPerDay: {
-      type: nonNull(Int),
+      type: nonNull(Int)
     },
     minimumSalary: {
-      type: nonNull(Int),
+      type: nonNull(Int)
     },
     maximumSalary: {
-      type: nonNull(Int),
+      type: nonNull(Int)
     },
     extensionApprovalStatus: {
-      type: nonNull(GraphQLApprovalStatus),
+      type: nonNull(GraphQLApprovalStatus)
     },
     graduadosApprovalStatus: {
-      type: nonNull(GraphQLApprovalStatus),
+      type: nonNull(GraphQLApprovalStatus)
     },
     createdAt: {
-      type: nonNull(GraphQLDateTime),
+      type: nonNull(GraphQLDateTime)
     },
     updatedAt: {
-      type: nonNull(GraphQLDateTime),
+      type: nonNull(GraphQLDateTime)
     },
     sections: {
       type: List(GraphQLOfferSection),
-      resolve: offer => offer.getSections(),
+      resolve: offer => offer.getSections()
     },
     careers: {
       type: List(GraphQLCareer),
-      resolve: offer => offer.getCareers(),
+      resolve: offer => offer.getCareers()
     },
     company: {
       type: GraphQLCompany,
-      resolve: offer => offer.getCompany(),
+      resolve: offer => offer.getCompany()
     },
     hasApplied: {
       type: nonNull(Boolean),
@@ -62,9 +62,9 @@ const GraphQLOffer = new GraphQLObjectType<Offer, IApolloServerContext>({
         const applicant = await user.getApplicant();
 
         return JobApplicationRepository.hasApplied(applicant, offer);
-      },
-    },
-  }),
+      }
+    }
+  })
 });
 
 export { GraphQLOffer };

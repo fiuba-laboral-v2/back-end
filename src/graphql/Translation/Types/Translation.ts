@@ -5,12 +5,12 @@ const GraphQLTranslation = new GraphQLObjectType({
   name: "Translation",
   fields: () => ({
     key: {
-      type: nonNull(String),
+      type: nonNull(String)
     },
     value: {
-      type: nonNull(String),
-    },
-  }),
+      type: nonNull(String)
+    }
+  })
 });
 
 export { GraphQLTranslation };

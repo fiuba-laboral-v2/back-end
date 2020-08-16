@@ -6,33 +6,33 @@ export = {
       uuid: {
         allowNull: false,
         primaryKey: true,
-        type: UUID,
+        type: UUID
       },
       adminUserUuid: {
         allowNull: false,
         references: { model: "Admins", key: "userUuid" },
         onDelete: "CASCADE",
-        type: UUID,
+        type: UUID
       },
       applicantUuid: {
         allowNull: false,
         references: { model: "Applicants", key: "uuid" },
         onDelete: "CASCADE",
-        type: UUID,
+        type: UUID
       },
       status: {
         allowNull: false,
         type: "approval_status",
-        defaultValue: "pending",
+        defaultValue: "pending"
       },
       createdAt: {
         allowNull: false,
-        type: DATE,
+        type: DATE
       },
       updatedAt: {
         allowNull: false,
-        type: DATE,
-      },
+        type: DATE
+      }
     }),
-  down: (queryInterface: QueryInterface) => queryInterface.dropTable("ApplicantApprovalEvents"),
+  down: (queryInterface: QueryInterface) => queryInterface.dropTable("ApplicantApprovalEvents")
 };

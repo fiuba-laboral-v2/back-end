@@ -28,5 +28,5 @@ export const RequestBodyMock = {
         </SOAP-ENV:Fault>
       </SOAP-ENV:Body>
     </SOAP-ENV:Envelope>
-  `,
+  `
 };

@@ -8,7 +8,7 @@ export class OfferCareer extends Model<OfferCareer> {
   @Column({
     allowNull: false,
     primaryKey: true,
-    type: INTEGER,
+    type: INTEGER
   })
   public careerCode: string;
 
@@ -19,7 +19,7 @@ export class OfferCareer extends Model<OfferCareer> {
   @Column({
     allowNull: false,
     primaryKey: true,
-    type: UUID,
+    type: UUID
   })
   public offerUuid: string;
 

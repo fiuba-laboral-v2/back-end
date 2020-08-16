@@ -3,7 +3,7 @@ import {
   AuthenticateFaultError,
   AuthenticateUnknownError,
   FiubaUsersApi,
-  FiubaUsersServiceFetchError,
+  FiubaUsersServiceFetchError
 } from "$services/FiubaUsers";
 import { FiubaUsersServiceConfig } from "$config/services";
 import { RequestBodyMock } from "./RequestBodyMock";
@@ -13,12 +13,12 @@ import { FetchError } from "node-fetch";
 
 const invalidCredentials = {
   dni: DniGenerator.generate(),
-  password: "badPassword",
+  password: "badPassword"
 };
 
 const validCredentials = {
   dni: DniGenerator.generate(),
-  password: "goodPassword",
+  password: "goodPassword"
 };
 
 const stubRequest = (mockResponse: MockResponseObject) =>
@@ -26,7 +26,7 @@ const stubRequest = (mockResponse: MockResponseObject) =>
     {
       url: FiubaUsersServiceConfig.url,
       method: "POST",
-      headers: FiubaUsersApi.headers(),
+      headers: FiubaUsersApi.headers()
     },
     mockResponse
   );
@@ -39,7 +39,7 @@ describe("FiubaUsersApi", () => {
     const isValid = false;
     stubRequest({
       status: 200,
-      body: authenticateSuccessResponse({ isValid }),
+      body: authenticateSuccessResponse({ isValid })
     });
     expect(await FiubaUsersApi.authenticate(invalidCredentials)).toBe(isValid);
   });
@@ -49,7 +49,7 @@ describe("FiubaUsersApi", () => {
     const isValid = true;
     stubRequest({
       status: 200,
-      body: authenticateSuccessResponse({ isValid }),
+      body: authenticateSuccessResponse({ isValid })
     });
     expect(await FiubaUsersApi.authenticate(validCredentials)).toBe(isValid);
   });
@@ -58,7 +58,7 @@ describe("FiubaUsersApi", () => {
     const errorMessage = "error in msg parsing: XML error parsing SOAP payload on line 1: required";
     stubRequest({
       status: 500,
-      body: RequestBodyMock.authenticateErrorResponse(errorMessage),
+      body: RequestBodyMock.authenticateErrorResponse(errorMessage)
     });
     await expect(FiubaUsersApi.authenticate(validCredentials)).rejects.toThrowErrorWithMessage(
       Error,
@@ -72,7 +72,7 @@ describe("FiubaUsersApi", () => {
     );
     stubRequest({
       status: 500,
-      body: responseError,
+      body: responseError
     });
     await expect(FiubaUsersApi.authenticate(validCredentials)).rejects.toThrowErrorWithMessage(
       AuthenticateFaultError,
@@ -83,7 +83,7 @@ describe("FiubaUsersApi", () => {
   it("throws error when the service is unavailable", async () => {
     stubRequest({
       status: 500,
-      body: "unavailable",
+      body: "unavailable"
     });
     await expect(FiubaUsersApi.authenticate(validCredentials)).rejects.toThrowErrorWithMessage(
       AuthenticateFaultError,

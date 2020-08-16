@@ -10,10 +10,10 @@ export = {
       sebastian.user,
       manuel.user,
       aldana.user,
-      mariano.user,
+      mariano.user
     ]);
   },
   down: (queryInterface: QueryInterface) => {
     return queryInterface.bulkDelete("Users", {});
-  },
+  }
 };

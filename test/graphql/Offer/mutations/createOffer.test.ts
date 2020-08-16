@@ -108,15 +108,15 @@ describe("createOffer", () => {
       const { apolloClient, company } = await TestClientGenerator.company({
         status: {
           admin,
-          approvalStatus: ApprovalStatus.approved,
-        },
+          approvalStatus: ApprovalStatus.approved
+        }
       });
       const { companyUuid, ...createOfferAttributes } = offers.next({
-        companyUuid: company.uuid,
+        companyUuid: company.uuid
       }).value;
       const { data, errors } = await apolloClient.mutate({
         mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
-        variables: createOfferAttributes,
+        variables: createOfferAttributes
       });
 
       expect(errors).toBeUndefined();
@@ -126,7 +126,7 @@ describe("createOffer", () => {
         description: createOfferAttributes.description,
         hoursPerDay: createOfferAttributes.hoursPerDay,
         minimumSalary: createOfferAttributes.minimumSalary,
-        maximumSalary: createOfferAttributes.maximumSalary,
+        maximumSalary: createOfferAttributes.maximumSalary
       });
     });
 
@@ -134,13 +134,13 @@ describe("createOffer", () => {
       const { apolloClient, company } = await TestClientGenerator.company({
         status: {
           admin,
-          approvalStatus: ApprovalStatus.approved,
-        },
+          approvalStatus: ApprovalStatus.approved
+        }
       });
       const { code } = await CareerGenerator.instance();
 
       const { companyUuid, ...createOfferAttributes } = offers.next({
-        companyUuid: company.uuid,
+        companyUuid: company.uuid
       }).value;
       const { data, errors } = await apolloClient.mutate({
         mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
@@ -151,10 +151,10 @@ describe("createOffer", () => {
             {
               title: "title",
               text: "text",
-              displayOrder: 1,
-            },
-          ],
-        },
+              displayOrder: 1
+            }
+          ]
+        }
       });
 
       expect(errors).toBeUndefined();
@@ -168,15 +168,15 @@ describe("createOffer", () => {
       const { apolloClient, company } = await TestClientGenerator.company({
         status: {
           admin,
-          approvalStatus: ApprovalStatus.approved,
-        },
+          approvalStatus: ApprovalStatus.approved
+        }
       });
       const { companyUuid, title, ...createOfferAttributesWithNoTitle } = offers.next({
-        companyUuid: company.uuid,
+        companyUuid: company.uuid
       }).value;
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
-        variables: createOfferAttributesWithNoTitle,
+        variables: createOfferAttributesWithNoTitle
       });
       expect(errors).not.toBeUndefined();
     });
@@ -185,19 +185,19 @@ describe("createOffer", () => {
       const { company } = await TestClientGenerator.company({
         status: {
           admin,
-          approvalStatus: ApprovalStatus.approved,
-        },
+          approvalStatus: ApprovalStatus.approved
+        }
       });
       const apolloClient = client.loggedOut();
       const { companyUuid, ...createOfferAttributes } = offers.next({
-        companyUuid: company.uuid,
+        companyUuid: company.uuid
       }).value;
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
-        variables: createOfferAttributes,
+        variables: createOfferAttributes
       });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: AuthenticationError.name,
+        errorType: AuthenticationError.name
       });
     });
 
@@ -205,14 +205,14 @@ describe("createOffer", () => {
       const { company } = await TestClientGenerator.company();
       const { apolloClient } = await TestClientGenerator.applicant();
       const { companyUuid, ...createOfferAttributes } = offers.next({
-        companyUuid: company.uuid,
+        companyUuid: company.uuid
       }).value;
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
-        variables: createOfferAttributes,
+        variables: createOfferAttributes
       });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
 
@@ -220,18 +220,18 @@ describe("createOffer", () => {
       const { apolloClient, company } = await TestClientGenerator.company({
         status: {
           admin,
-          approvalStatus: ApprovalStatus.pending,
-        },
+          approvalStatus: ApprovalStatus.pending
+        }
       });
       const { companyUuid, ...createOfferAttributes } = offers.next({
-        companyUuid: company.uuid,
+        companyUuid: company.uuid
       }).value;
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
-        variables: createOfferAttributes,
+        variables: createOfferAttributes
       });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
 
@@ -239,18 +239,18 @@ describe("createOffer", () => {
       const { apolloClient, company } = await TestClientGenerator.company({
         status: {
           admin,
-          approvalStatus: ApprovalStatus.rejected,
-        },
+          approvalStatus: ApprovalStatus.rejected
+        }
       });
       const { companyUuid, ...createOfferAttributes } = offers.next({
-        companyUuid: company.uuid,
+        companyUuid: company.uuid
       }).value;
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
-        variables: createOfferAttributes,
+        variables: createOfferAttributes
       });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
   });

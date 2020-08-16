@@ -39,20 +39,20 @@ describe("saveJobApplication", () => {
       const { applicant, apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await AdminGenerator.instance(Secretary.extension),
-        },
+          admin: await AdminGenerator.instance(Secretary.extension)
+        }
       });
       const offer = await offers.next({ companyUuid: company.uuid }).value;
 
       const { data, errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
-        variables: { offerUuid: offer.uuid },
+        variables: { offerUuid: offer.uuid }
       });
 
       expect(errors).toBeUndefined();
       expect(data!.saveJobApplication).toMatchObject({
         offerUuid: offer.uuid,
-        applicantUuid: applicant.uuid,
+        applicantUuid: applicant.uuid
       });
     });
   });
@@ -61,7 +61,7 @@ describe("saveJobApplication", () => {
     it("returns an error if no offerUuid is provided", async () => {
       const { apolloClient } = await TestClientGenerator.user();
       const { errors } = await apolloClient.mutate({
-        mutation: SAVE_JOB_APPLICATION,
+        mutation: SAVE_JOB_APPLICATION
       });
       expect(errors![0].constructor.name).toEqual(ApolloError.name);
     });
@@ -71,11 +71,11 @@ describe("saveJobApplication", () => {
       const offer = await offers.next({ companyUuid: company.uuid }).value;
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
-        variables: { offerUuid: offer.uuid },
+        variables: { offerUuid: offer.uuid }
       });
 
       expect(errors![0].extensions!.data).toEqual({
-        errorType: AuthenticationError.name,
+        errorType: AuthenticationError.name
       });
     });
 
@@ -83,10 +83,10 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.user();
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
-        variables: { offerUuid: generateUuid() },
+        variables: { offerUuid: generateUuid() }
       });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
 
@@ -94,10 +94,10 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.company();
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
-        variables: { offerUuid: generateUuid() },
+        variables: { offerUuid: generateUuid() }
       });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
 
@@ -105,10 +105,10 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.admin();
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
-        variables: { offerUuid: generateUuid() },
+        variables: { offerUuid: generateUuid() }
       });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
 
@@ -116,10 +116,10 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.applicant();
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
-        variables: { offerUuid: generateUuid() },
+        variables: { offerUuid: generateUuid() }
       });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
 
@@ -127,15 +127,15 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.rejected,
-          admin: await AdminGenerator.instance(Secretary.extension),
-        },
+          admin: await AdminGenerator.instance(Secretary.extension)
+        }
       });
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
-        variables: { offerUuid: generateUuid() },
+        variables: { offerUuid: generateUuid() }
       });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
 
@@ -143,21 +143,21 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await AdminGenerator.instance(Secretary.extension),
-        },
+          admin: await AdminGenerator.instance(Secretary.extension)
+        }
       });
       const offer = await offers.next({ companyUuid: company.uuid }).value;
       await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
-        variables: { offerUuid: offer.uuid },
+        variables: { offerUuid: offer.uuid }
       });
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
-        variables: { offerUuid: offer.uuid },
+        variables: { offerUuid: offer.uuid }
       });
 
       expect(errors![0].extensions!.data).toMatchObject({
-        errorType: "JobApplicationAlreadyExistsError",
+        errorType: "JobApplicationAlreadyExistsError"
       });
     });
 
@@ -165,16 +165,16 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await AdminGenerator.instance(Secretary.extension),
-        },
+          admin: await AdminGenerator.instance(Secretary.extension)
+        }
       });
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
-        variables: { offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da" },
+        variables: { offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da" }
       });
 
       expect(errors![0].extensions!.data).toMatchObject({
-        errorType: "OfferNotFound",
+        errorType: "OfferNotFound"
       });
     });
   });

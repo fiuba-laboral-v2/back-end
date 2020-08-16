@@ -4,7 +4,7 @@ import {
   MissingApprovedSubjectCountError,
   MissingCurrentCareerYearError,
   ForbiddenApprovedSubjectCountError,
-  ForbiddenCurrentCareerYearError,
+  ForbiddenCurrentCareerYearError
 } from "./Errors";
 import { HasOneGetAssociationMixin, INTEGER, BOOLEAN, DATE, UUID, STRING } from "sequelize";
 import { isUuid, optional } from "$models/SequelizeModelValidators";
@@ -15,8 +15,8 @@ import { validateIntegerInRange } from "validations-fiuba-laboral-v2";
   validate: {
     validateApplicantCareer(this: ApplicantCareer) {
       this.validateApplicantCareer();
-    },
-  },
+    }
+  }
 })
 export class ApplicantCareer extends Model<ApplicantCareer> {
   @ForeignKey(() => Career)
@@ -25,7 +25,7 @@ export class ApplicantCareer extends Model<ApplicantCareer> {
     allowNull: false,
     type: STRING,
     references: { model: Career.tableName, key: "code" },
-    onDelete: "CASCADE",
+    onDelete: "CASCADE"
   })
   public careerCode: string;
 
@@ -36,41 +36,41 @@ export class ApplicantCareer extends Model<ApplicantCareer> {
     type: UUID,
     references: { model: Applicant.tableName, key: "uuid" },
     onDelete: "CASCADE",
-    ...isUuid,
+    ...isUuid
   })
   public applicantUuid: string;
 
   @Column({
     allowNull: true,
     type: INTEGER,
-    ...optional(validateIntegerInRange({ min: { value: 0, include: false } })),
+    ...optional(validateIntegerInRange({ min: { value: 0, include: false } }))
   })
   public currentCareerYear: number;
 
   @Column({
     allowNull: true,
     type: INTEGER,
-    ...optional(validateIntegerInRange({ min: { value: 0, include: true } })),
+    ...optional(validateIntegerInRange({ min: { value: 0, include: true } }))
   })
   public approvedSubjectCount: number;
 
   @Column({
     allowNull: false,
-    type: BOOLEAN,
+    type: BOOLEAN
   })
   public isGraduate: boolean;
 
   @Column({
     allowNull: false,
     type: DATE,
-    defaultValue: new Date(),
+    defaultValue: new Date()
   })
   public createdAt: Date;
 
   @Column({
     allowNull: false,
     type: DATE,
-    defaultValue: new Date(),
+    defaultValue: new Date()
   })
   public updatedAt: Date;
 

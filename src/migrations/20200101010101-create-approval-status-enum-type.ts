@@ -6,5 +6,5 @@ export = {
       "CREATE TYPE approval_status AS ENUM ('pending', 'approved', 'rejected');"
     ),
   down: (queryInterface: QueryInterface) =>
-    queryInterface.sequelize.query("DROP TYPE approval_status;"),
+    queryInterface.sequelize.query("DROP TYPE approval_status;")
 };

@@ -32,14 +32,14 @@ describe("login", () => {
     expressContext: { res: { cookie: jest.Mock } }
   ) => {
     expect(expressContext.res.cookie.mock.calls).toEqual([
-      [AuthConfig.cookieName, expect.any(String), AuthConfig.cookieOptions],
+      [AuthConfig.cookieName, expect.any(String), AuthConfig.cookieOptions]
     ]);
   };
 
   const testToken = async ({
     user,
     password,
-    result,
+    result
   }: {
     user: User;
     password: string;
@@ -51,8 +51,8 @@ describe("login", () => {
       mutation: LOGIN,
       variables: {
         email: user.email,
-        password,
-      },
+        password
+      }
     });
     expect(errors).toBeUndefined();
     await expectCookieToBeSet(user, expressContext);
@@ -68,15 +68,15 @@ describe("login", () => {
       password,
       result: {
         uuid: user.uuid,
-        email: user.email,
-      },
+        email: user.email
+      }
     });
   });
 
   it("sets the cookie for an applicant user", async () => {
     const password = "AValidPassword1";
     const applicant = await ApplicantGenerator.instance.withMinimumData({
-      password,
+      password
     });
     const user = await applicant.getUser();
     await testToken({
@@ -86,16 +86,16 @@ describe("login", () => {
         uuid: user.uuid,
         email: user.email,
         applicant: {
-          uuid: applicant.uuid,
-        },
-      },
+          uuid: applicant.uuid
+        }
+      }
     });
   });
 
   it("returns a token for a company user", async () => {
     const password = "AValidPassword2";
     const company = await CompanyGenerator.instance.withMinimumData({
-      user: { password },
+      user: { password }
     });
     const [user] = await company.getUsers();
     await testToken({
@@ -105,16 +105,16 @@ describe("login", () => {
         uuid: user.uuid,
         email: user.email,
         company: {
-          uuid: company.uuid,
-        },
-      },
+          uuid: company.uuid
+        }
+      }
     });
   });
 
   it("returns a token for an admin", async () => {
     const password = "AValidPassword3";
     const admin = await AdminGenerator.instance(Secretary.extension, {
-      password,
+      password
     });
     const user = await admin.getUser();
     await testToken({
@@ -124,19 +124,19 @@ describe("login", () => {
         uuid: user.uuid,
         email: user.email,
         admin: {
-          userUuid: admin.userUuid,
-        },
-      },
+          userUuid: admin.userUuid
+        }
+      }
     });
   });
 
   it("returns error if user is not registered", async () => {
     const { errors } = await executeMutation(LOGIN, {
       email: "asd@asd.com",
-      password: "AValidPassword000",
+      password: "AValidPassword000"
     });
     expect(errors![0].extensions!.data).toEqual({
-      errorType: UserNotFoundError.name,
+      errorType: UserNotFoundError.name
     });
   });
 
@@ -146,14 +146,14 @@ describe("login", () => {
       email: email,
       password: "AValidPassword11",
       name: "name",
-      surname: "surname",
+      surname: "surname"
     });
     const { errors } = await executeMutation(LOGIN, {
       email: email,
-      password: "AValidPassword22",
+      password: "AValidPassword22"
     });
     expect(errors![0].extensions!.data).toEqual({
-      errorType: BadCredentialsError.name,
+      errorType: BadCredentialsError.name
     });
   });
 });

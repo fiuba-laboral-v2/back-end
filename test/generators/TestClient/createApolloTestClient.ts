@@ -11,7 +11,7 @@ export const createApolloTestClient = (
     currentUser: {
       uuid: user.uuid,
       email: user.email,
-      ...entityContext,
+      ...entityContext
     },
-    expressContext,
+    expressContext
   });

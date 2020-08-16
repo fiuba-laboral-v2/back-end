@@ -2,35 +2,35 @@ export const defaultTranslations = {
   userFields: [
     { key: "email", value: "Email" },
     { key: "name", value: "Nombre" },
-    { key: "surname", value: "Apellido" },
+    { key: "surname", value: "Apellido" }
   ],
   userEditFields: [
     { key: "name", value: "Nombre" },
-    { key: "surname", value: "Apellido" },
+    { key: "surname", value: "Apellido" }
   ],
   register: [
     { key: "registerAsCompany", value: "Registrarme como empresa" },
-    { key: "registerAsApplicant", value: "Registrarme como alumno" },
+    { key: "registerAsApplicant", value: "Registrarme como alumno" }
   ],
   applicantList: [{ key: "title", value: "Postulantes" }],
   applicantProfileDetail: [
     { key: "edit", value: "Editar" },
     { key: "padron", value: "Padron" },
-    { key: "capabilities", value: "Aptitudes" },
+    { key: "capabilities", value: "Aptitudes" }
   ],
   applicantProfileTitle: [
     { key: "title", value: "Mi Perfil" },
-    { key: "subtitle", value: "Así se va a mostrar un postulante una empresa" },
+    { key: "subtitle", value: "Así se va a mostrar un postulante una empresa" }
   ],
   applicantSignUp: [
     { key: "title", value: "Crear tu cuenta" },
     { key: "padron", value: "Padron" },
     { key: "careersTitle", value: "Elegí tu carrera" },
-    { key: "submit", value: "Guardar" },
+    { key: "submit", value: "Guardar" }
   ],
   applicantCredentialsFields: [
     { key: "dni", value: "DNI" },
-    { key: "password", value: "Contraseña" },
+    { key: "password", value: "Contraseña" }
   ],
   careersDetail: [{ key: "careersTitle", value: "Carreras" }],
   careerSelector: [
@@ -38,9 +38,9 @@ export const defaultTranslations = {
     { key: "isGraduate", value: "Graduado?" },
     {
       key: "approvedSubjectCount",
-      value: "Cuántas materias aprobaste? (sin CBC)",
+      value: "Cuántas materias aprobaste? (sin CBC)"
     },
-    { key: "currentCareerYear", value: "Qué año estás cursando? (sin CBC)" },
+    { key: "currentCareerYear", value: "Qué año estás cursando? (sin CBC)" }
   ],
   editOffer: [
     { key: "create", value: "Publicar oferta" },
@@ -50,7 +50,7 @@ export const defaultTranslations = {
     { key: "hoursPerDay", value: "Horas por día" },
     { key: "minimumSalary", value: "Salario mínimo" },
     { key: "maximumSalary", value: "Salario máximo" },
-    { key: "submit", value: "Publicar" },
+    { key: "submit", value: "Publicar" }
   ],
   CompanyLogoInput: [{ key: "uploadLogo", value: "Subir logo" }],
   companyFields: [
@@ -59,25 +59,25 @@ export const defaultTranslations = {
     { key: "companyName", value: "Nombre de la empresa" },
     { key: "slogan", value: "Slogan" },
     { key: "description", value: "Descripción" },
-    { key: "website", value: "Sitio" },
+    { key: "website", value: "Sitio" }
   ],
   editableCompanyProfile: [{ key: "edit", value: "Editar" }],
   editMyCompanyProfile: [
     { key: "title", value: "Editar el perfil de tu empresa" },
-    { key: "submit", value: "Guardar" },
+    { key: "submit", value: "Guardar" }
   ],
   companySignUp: [
     { key: "title", value: "Crear tu cuenta" },
-    { key: "submit", value: "Guardar" },
+    { key: "submit", value: "Guardar" }
   ],
   companyCredentialsFields: [
     { key: "password", value: "Contraseña" },
-    { key: "passwordConfirm", value: "Confirmar contraseña" },
+    { key: "passwordConfirm", value: "Confirmar contraseña" }
   ],
   companiesList: [{ key: "title", value: "Empresas" }],
   companyProfileTitle: [
     { key: "title", value: "Perfil de mi empresa" },
-    { key: "subtitle", value: "Así se va a mostrar a los postulantes" },
+    { key: "subtitle", value: "Así se va a mostrar a los postulantes" }
   ],
   editableDetail: [
     { key: "title", value: "Editar tu perfil" },
@@ -91,7 +91,7 @@ export const defaultTranslations = {
     { key: "sections", value: "Secciones" },
     { key: "sectionTitle", value: "Título" },
     { key: "sectionContent", value: "Contenido" },
-    { key: "submit", value: "Guardar" },
+    { key: "submit", value: "Guardar" }
   ],
   login: [
     { key: "title", value: "Ingresar" },
@@ -100,7 +100,7 @@ export const defaultTranslations = {
     { key: "logIn", value: "Iniciar sesión" },
     { key: "dontHaveAnAccount", value: "No tenés cuenta?" },
     { key: "register", value: "Registrate" },
-    { key: "badCredentialsMessage", value: "Email o contraseña inválidos" },
+    { key: "badCredentialsMessage", value: "Email o contraseña inválidos" }
   ],
   navBar: [
     { key: "applicants", value: "Postulantes" },
@@ -115,35 +115,35 @@ export const defaultTranslations = {
     { key: "myCompanyProfile", value: "Mi empresa" },
     { key: "myOffers", value: "Mis Ofertas" },
     { key: "pendingProfile", value: "Su perfil esta pendiente de aprobación" },
-    { key: "rejectedProfile", value: "Su perfil ha sido rechazado" },
+    { key: "rejectedProfile", value: "Su perfil ha sido rechazado" }
   ],
   offerCareer: [{ key: "careersTitle", value: "Carreras" }],
   offerDetail: [
     { key: "edit", value: "Editar" },
     { key: "apply", value: "Postularme" },
     { key: "applySuccess", value: "Postulación exitosa!" },
-    { key: "alreadyApplied", value: "Ya te postulaste" },
+    { key: "alreadyApplied", value: "Ya te postulaste" }
   ],
   MyOffers: [{ key: "title", value: "Mis Ofertas" }],
   offerSalary: [
     { key: "salaryFrom", value: "Desde" },
     { key: "salaryTo", value: "Hasta" },
-    { key: "salaryTitle", value: "Salario Neto" },
+    { key: "salaryTitle", value: "Salario Neto" }
   ],
   offerWorkload: [
     { key: "title", value: "Carga horaria" },
-    { key: "hoursPerDay", value: "Horas por dia" },
+    { key: "hoursPerDay", value: "Horas por dia" }
   ],
   typeFilterMenu: [
     { key: "title", value: "Tipo" },
     { key: "companyIconTitle", value: "Empresa" },
-    { key: "applicantIconTitle", value: "Postulante" },
+    { key: "applicantIconTitle", value: "Postulante" }
   ],
   statusFilterMenu: [
     { key: "title", value: "Estado" },
     { key: "pending", value: "Pendiente" },
     { key: "approved", value: "Aprobado" },
-    { key: "rejected", value: "Rechazado" },
+    { key: "rejected", value: "Rechazado" }
   ],
   adminTaskList: [
     { key: "none", value: "Tareas" },
@@ -153,13 +153,13 @@ export const defaultTranslations = {
     { key: "pending_or_rejected", value: "Tareas pendientes o rechazadas" },
     { key: "approved_or_pending", value: "Tareas aprobadas o pendientes" },
     { key: "approved_or_rejected", value: "Tareas aprobadas o rechazadas" },
-    { key: "approved_or_pending_or_rejected", value: "Tareas" },
+    { key: "approved_or_pending_or_rejected", value: "Tareas" }
   ],
   adminEmptyDetail: [{ key: "selectToStart", value: "Seleccioná para comenzar" }],
   approvalActions: [
     { key: "approved", value: "Aprobado" },
     { key: "rejected", value: "Rechazado" },
-    { key: "pending", value: "Pendiente" },
+    { key: "pending", value: "Pendiente" }
   ],
   adminCompanyMainTitle: [{ key: "title", value: "Registro de Empresa" }],
   adminApplicantMainTitle: [{ key: "title", value: "Registro de Postulante" }],
@@ -168,11 +168,11 @@ export const defaultTranslations = {
   adminActions: [
     { key: "approve", value: "Aprobar" },
     { key: "reject", value: "Rechazar" },
-    { key: "pending", value: "A Pendiente" },
+    { key: "pending", value: "A Pendiente" }
   ],
   approvedLabel: [{ key: "text", value: "Aprobado" }],
   rejectedLabel: [{ key: "text", value: "Rechazado" }],
   pendingLabel: [{ key: "text", value: "Pendiente de Aprobación" }],
   createdSince: [{ key: "create", value: "Creado" }],
-  updatedSince: [{ key: "update", value: "Actualizado" }],
+  updatedSince: [{ key: "update", value: "Actualizado" }]
 };

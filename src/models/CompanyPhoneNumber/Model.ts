@@ -9,7 +9,7 @@ export class CompanyPhoneNumber extends Model<CompanyPhoneNumber> {
   @Column({
     primaryKey: true,
     allowNull: false,
-    type: STRING,
+    type: STRING
   })
   public phoneNumber: number;
 
@@ -17,7 +17,7 @@ export class CompanyPhoneNumber extends Model<CompanyPhoneNumber> {
   @Column({
     primaryKey: true,
     allowNull: false,
-    type: UUID,
+    type: UUID
   })
   public companyUuid: string;
 

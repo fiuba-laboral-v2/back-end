@@ -19,7 +19,7 @@ export const OfferRepository = {
   update: async (offer: IOffer & { uuid: string }) => {
     const [, [updatedOffer]] = await Offer.update(offer, {
       where: { uuid: offer.uuid },
-      returning: true,
+      returning: true
     });
     if (!updatedOffer) throw new OfferNotFound(offer.uuid);
     return updatedOffer;
@@ -27,7 +27,7 @@ export const OfferRepository = {
   updateStatus: async ({
     uuid,
     secretary,
-    status,
+    status
   }: {
     uuid: string;
     secretary: Secretary;
@@ -35,16 +35,16 @@ export const OfferRepository = {
   }) => {
     const offerAttributes = {
       ...(secretary === Secretary.graduados && {
-        graduadosApprovalStatus: status,
+        graduadosApprovalStatus: status
       }),
       ...(secretary === Secretary.extension && {
-        extensionApprovalStatus: status,
-      }),
+        extensionApprovalStatus: status
+      })
     };
 
     const [, [updatedOffer]] = await Offer.update(offerAttributes, {
       where: { uuid },
-      returning: true,
+      returning: true
     });
     if (!updatedOffer) throw new OfferNotFound(uuid);
     return updatedOffer;
@@ -78,29 +78,29 @@ export const OfferRepository = {
           [Op.or]: [
             {
               updatedAt: {
-                [Op.lt]: updatedBeforeThan.dateTime.toISOString(),
-              },
+                [Op.lt]: updatedBeforeThan.dateTime.toISOString()
+              }
             },
             {
               updatedAt: updatedBeforeThan.dateTime.toISOString(),
               uuid: {
-                [Op.lt]: updatedBeforeThan.uuid,
-              },
-            },
-          ],
-        },
+                [Op.lt]: updatedBeforeThan.uuid
+              }
+            }
+          ]
+        }
       }),
       order: [
         ["updatedAt", "DESC"],
-        ["uuid", "DESC"],
+        ["uuid", "DESC"]
       ],
-      limit,
+      limit
     });
     return {
       shouldFetchMore: result.length === limit,
-      results: result.slice(0, limit - 1),
+      results: result.slice(0, limit - 1)
     };
   },
   findByCompanyUuid: (companyUuid: string) => Offer.findAll({ where: { companyUuid } }),
-  truncate: () => Offer.truncate({ cascade: true }),
+  truncate: () => Offer.truncate({ cascade: true })
 };

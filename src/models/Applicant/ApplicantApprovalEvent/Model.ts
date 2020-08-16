@@ -11,7 +11,7 @@ export class ApplicantApprovalEvent extends Model<ApplicantApprovalEvent> {
     primaryKey: true,
     type: UUID,
     defaultValue: UUIDV4,
-    ...isUuid,
+    ...isUuid
   })
   public uuid: string;
 
@@ -20,7 +20,7 @@ export class ApplicantApprovalEvent extends Model<ApplicantApprovalEvent> {
     allowNull: false,
     references: { model: "Admins", key: "uuid" },
     type: UUID,
-    ...isUuid,
+    ...isUuid
   })
   public adminUserUuid: string;
 
@@ -29,28 +29,28 @@ export class ApplicantApprovalEvent extends Model<ApplicantApprovalEvent> {
     allowNull: false,
     references: { model: "Applicants", key: "uuid" },
     type: UUID,
-    ...isUuid,
+    ...isUuid
   })
   public applicantUuid: string;
 
   @Column({
     allowNull: false,
     type: ENUM<string>({ values: approvalStatuses }),
-    ...isApprovalStatus,
+    ...isApprovalStatus
   })
   public status: ApprovalStatus;
 
   @Column({
     allowNull: false,
     type: DATE,
-    defaultValue: new Date(),
+    defaultValue: new Date()
   })
   public createdAt: Date;
 
   @Column({
     allowNull: false,
     type: DATE,
-    defaultValue: new Date(),
+    defaultValue: new Date()
   })
   public updatedAt: Date;
 

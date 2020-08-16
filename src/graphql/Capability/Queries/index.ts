@@ -1,7 +1,7 @@
 import { getCapabilities } from "./getCapabilities";
 
 const capabilityQueries = {
-  getCapabilities,
+  getCapabilities
 };
 
 export { capabilityQueries };

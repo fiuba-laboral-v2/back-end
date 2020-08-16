@@ -34,7 +34,7 @@ describe("getCapabilities", () => {
       expect.arrayContaining([
         { description: "java", uuid: java.uuid },
         { description: "python", uuid: python.uuid },
-        { description: "ruby", uuid: ruby.uuid },
+        { description: "ruby", uuid: ruby.uuid }
       ])
     );
   });
@@ -45,7 +45,7 @@ describe("getCapabilities", () => {
 
       const { errors } = await apolloClient.query({ query: GET_CAPABILITIES });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: AuthenticationError.name,
+        errorType: AuthenticationError.name
       });
     });
   });

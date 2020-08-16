@@ -8,5 +8,5 @@ export const DniGenerator = {
     const randomDni = 11111111 + DniGenerator.getIndex();
     return `${randomDni}`.split("").map(digit => parseInt(digit, 10));
   },
-  generate: () => `11111111${DniGenerator.getIndex()}`,
+  generate: () => `11111111${DniGenerator.getIndex()}`
 };

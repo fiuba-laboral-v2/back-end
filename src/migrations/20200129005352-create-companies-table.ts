@@ -9,50 +9,50 @@ export = {
           uuid: {
             allowNull: false,
             primaryKey: true,
-            type: UUID,
+            type: UUID
           },
           cuit: {
             allowNull: false,
-            type: STRING,
+            type: STRING
           },
           companyName: {
             allowNull: false,
-            type: STRING,
+            type: STRING
           },
           slogan: {
-            type: STRING,
+            type: STRING
           },
           description: {
-            type: TEXT,
+            type: TEXT
           },
           logo: {
-            type: TEXT,
+            type: TEXT
           },
           website: {
-            type: STRING,
+            type: STRING
           },
           email: {
-            type: STRING,
+            type: STRING
           },
           createdAt: {
             allowNull: false,
-            type: DATE,
+            type: DATE
           },
           updatedAt: {
             allowNull: false,
-            type: DATE,
-          },
+            type: DATE
+          }
         },
         { transaction }
       );
       await queryInterface.addConstraint("Companies", ["cuit"], {
         type: "unique",
         name: "Companies_cuit_key",
-        transaction,
+        transaction
       });
     });
   },
   down: (queryInterface: QueryInterface) => {
     return queryInterface.dropTable("Companies");
-  },
+  }
 };

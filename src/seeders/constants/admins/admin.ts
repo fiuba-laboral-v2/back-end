@@ -9,12 +9,12 @@ export const admin = {
     name: "admin",
     surname: "admin",
     createdAt: new Date(),
-    updatedAt: new Date(),
+    updatedAt: new Date()
   },
   admin: {
     userUuid: uuids.admin.user,
     secretary: "extension",
     createdAt: new Date(),
-    updatedAt: new Date(),
-  },
+    updatedAt: new Date()
+  }
 };

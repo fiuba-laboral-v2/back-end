@@ -16,7 +16,7 @@ export const ApplicantRepository = {
     description,
     careers: applicantCareers = [],
     capabilities = [],
-    user,
+    user
   }: ISaveApplicant) =>
     Database.transaction(async transaction => {
       const { uuid: userUuid } = await UserRepository.createFiubaUser(user, transaction);
@@ -48,7 +48,7 @@ export const ApplicantRepository = {
     sections = [],
     links = [],
     capabilities: newCapabilities = [],
-    careers = [],
+    careers = []
   }: IApplicantEditable) =>
     Database.transaction(async transaction => {
       const applicant = await ApplicantRepository.findByUuid(uuid);
@@ -73,9 +73,9 @@ export const ApplicantRepository = {
         adminUserUuid,
         applicantUuid,
         status,
-        transaction,
+        transaction
       });
       return updatedApplicant;
     }),
-  truncate: () => Applicant.truncate({ cascade: true }),
+  truncate: () => Applicant.truncate({ cascade: true })
 };

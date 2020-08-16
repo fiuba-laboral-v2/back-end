@@ -2,7 +2,7 @@ import {
   DatabaseError,
   ForeignKeyConstraintError,
   UniqueConstraintError,
-  ValidationError,
+  ValidationError
 } from "sequelize";
 import { InvalidCuitError, PhoneNumberWithLettersError } from "validations-fiuba-laboral-v2";
 import { CompanyRepository } from "$models/Company";
@@ -32,7 +32,7 @@ describe("CompanyRepository", () => {
         description: companyCompleteData.description,
         logo: companyCompleteData.logo,
         website: companyCompleteData.website,
-        email: companyCompleteData.email,
+        email: companyCompleteData.email
       })
     );
     expect(await company.getPhoneNumbers()).toHaveLength(companyCompleteData.phoneNumbers!.length);
@@ -49,7 +49,7 @@ describe("CompanyRepository", () => {
     const companyCompleteData = CompanyGenerator.data.completeData();
     const company = await CompanyRepository.create({
       ...companyCompleteData,
-      logo: `data:image/jpeg;base64,/9j/${"4AAQSkZBAAD/4gKgUNDX1BS".repeat(200)}AgICAgIA==`,
+      logo: `data:image/jpeg;base64,/9j/${"4AAQSkZBAAD/4gKgUNDX1BS".repeat(200)}AgICAgIA==`
     });
     expect(company.logo.length).toEqual(4637);
   });
@@ -59,7 +59,7 @@ describe("CompanyRepository", () => {
     await expect(
       CompanyRepository.create({
         ...companyCompleteData,
-        description: "word".repeat(300),
+        description: "word".repeat(300)
       })
     ).resolves.not.toThrow();
   });
@@ -72,7 +72,7 @@ describe("CompanyRepository", () => {
       CompanyRepository.create({
         cuit: cuit,
         companyName: "Devartis Clone SA",
-        user: { ...UserMocks.userAttributes, email: "qwe@qwe.qwe" },
+        user: { ...UserMocks.userAttributes, email: "qwe@qwe.qwe" }
       })
     ).rejects.toThrow(UniqueConstraintError);
   });
@@ -82,7 +82,7 @@ describe("CompanyRepository", () => {
       CompanyRepository.create({
         cuit: null as any,
         companyName: "devartis",
-        user: UserMocks.userAttributes,
+        user: UserMocks.userAttributes
       })
     ).rejects.toThrow(ValidationError);
   });
@@ -92,7 +92,7 @@ describe("CompanyRepository", () => {
       CompanyRepository.create({
         cuit: "30711819017",
         companyName: null as any,
-        user: UserMocks.userAttributes,
+        user: UserMocks.userAttributes
       })
     ).rejects.toThrow(ValidationError);
   });
@@ -128,17 +128,17 @@ describe("CompanyRepository", () => {
     await expect(
       CompanyRepository.create({
         ...companyCompleteData,
-        phoneNumbers: ["InvalidPhoneNumber1", "InvalidPhoneNumber2"],
+        phoneNumbers: ["InvalidPhoneNumber1", "InvalidPhoneNumber2"]
       })
     ).rejects.toThrowBulkRecordErrorIncluding([
       {
         errorClass: ValidationError,
-        message: PhoneNumberWithLettersError.buildMessage(),
+        message: PhoneNumberWithLettersError.buildMessage()
       },
       {
         errorClass: ValidationError,
-        message: PhoneNumberWithLettersError.buildMessage(),
-      },
+        message: PhoneNumberWithLettersError.buildMessage()
+      }
     ]);
   });
 
@@ -147,7 +147,7 @@ describe("CompanyRepository", () => {
     await expect(
       CompanyRepository.create({
         ...companyCompleteData,
-        phoneNumbers: ["1159821066", "1159821066"],
+        phoneNumbers: ["1159821066", "1159821066"]
       })
     ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
   });
@@ -171,7 +171,7 @@ describe("CompanyRepository", () => {
         description: "new description",
         logo: "",
         website: "http://www.new-site.com",
-        email: "old@devartis.com",
+        email: "old@devartis.com"
       };
       const company = await CompanyRepository.update({ uuid, ...dataToUpdate });
       expect(company).toMatchObject(dataToUpdate);
@@ -206,8 +206,8 @@ describe("CompanyRepository", () => {
         expect.objectContaining({
           userUuid: admin.userUuid,
           companyUuid: company.uuid,
-          status: ApprovalStatus.approved,
-        }),
+          status: ApprovalStatus.approved
+        })
       ]);
     });
 
@@ -224,8 +224,8 @@ describe("CompanyRepository", () => {
         expect.objectContaining({
           userUuid: admin.userUuid,
           companyUuid: company.uuid,
-          status: ApprovalStatus.rejected,
-        }),
+          status: ApprovalStatus.rejected
+        })
       ]);
     });
 

@@ -46,7 +46,7 @@ describe("getCompanyByUuid", () => {
     const { apolloClient } = await TestClientGenerator.admin();
     const response = await apolloClient.query({
       query: query,
-      variables: { uuid: company.uuid },
+      variables: { uuid: company.uuid }
     });
     const phoneNumbers = await company.getPhoneNumbers();
     expect(response.errors).toBeUndefined();
@@ -69,10 +69,10 @@ describe("getCompanyByUuid", () => {
             uuid,
             email,
             name,
-            surname,
+            surname
           }))
-        ),
-      },
+        )
+      }
     });
   });
 
@@ -80,27 +80,27 @@ describe("getCompanyByUuid", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.approved,
-        admin: await AdminGenerator.instance(Secretary.extension),
-      },
+        admin: await AdminGenerator.instance(Secretary.extension)
+      }
     });
     const notExistentUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
     const { errors } = await apolloClient.query({
       query: query,
-      variables: { uuid: notExistentUuid },
+      variables: { uuid: notExistentUuid }
     });
     expect(errors![0].extensions!.data).toEqual({
-      errorType: "CompanyNotFoundError",
+      errorType: "CompanyNotFoundError"
     });
   });
 
   it("find a company with photos with an empty array", async () => {
     const company = await CompanyGenerator.instance.withCompleteData({
-      photos: [],
+      photos: []
     });
     const { apolloClient } = await TestClientGenerator.admin();
     const { data, errors } = await apolloClient.query({
       query: query,
-      variables: { uuid: company.uuid },
+      variables: { uuid: company.uuid }
     });
     expect(errors).toBeUndefined();
     expect(data!.getCompanyByUuid.photos).toHaveLength(0);
@@ -109,10 +109,10 @@ describe("getCompanyByUuid", () => {
   it("returns an error if no user is loggedin", async () => {
     const { errors } = await client.loggedOut().query({
       query: query,
-      variables: { uuid: generateUuid() },
+      variables: { uuid: generateUuid() }
     });
     expect(errors![0].extensions!.data).toEqual({
-      errorType: AuthenticationError.name,
+      errorType: AuthenticationError.name
     });
   });
 
@@ -120,10 +120,10 @@ describe("getCompanyByUuid", () => {
     const { apolloClient } = await TestClientGenerator.company();
     const { errors } = await apolloClient.query({
       query: query,
-      variables: { uuid: generateUuid() },
+      variables: { uuid: generateUuid() }
     });
     expect(errors![0].extensions!.data).toEqual({
-      errorType: UnauthorizedError.name,
+      errorType: UnauthorizedError.name
     });
   });
 
@@ -131,10 +131,10 @@ describe("getCompanyByUuid", () => {
     const { apolloClient } = await TestClientGenerator.applicant();
     const { errors } = await apolloClient.query({
       query: query,
-      variables: { uuid: generateUuid() },
+      variables: { uuid: generateUuid() }
     });
     expect(errors![0].extensions!.data).toEqual({
-      errorType: UnauthorizedError.name,
+      errorType: UnauthorizedError.name
     });
   });
 
@@ -142,15 +142,15 @@ describe("getCompanyByUuid", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.rejected,
-        admin: await AdminGenerator.instance(Secretary.extension),
-      },
+        admin: await AdminGenerator.instance(Secretary.extension)
+      }
     });
     const { errors } = await apolloClient.query({
       query: query,
-      variables: { uuid: generateUuid() },
+      variables: { uuid: generateUuid() }
     });
     expect(errors![0].extensions!.data).toEqual({
-      errorType: UnauthorizedError.name,
+      errorType: UnauthorizedError.name
     });
   });
 });

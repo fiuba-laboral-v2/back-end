@@ -67,7 +67,7 @@ describe("getApplicants", () => {
     it("fetches an empty array of applicants", async () => {
       const { apolloClient } = await TestClientGenerator.admin();
       const { data, errors } = await apolloClient.query({
-        query: GET_APPLICANTS,
+        query: GET_APPLICANTS
       });
       expect(errors).toBeUndefined();
       expect(data!.getApplicants).toEqual([]);
@@ -80,11 +80,11 @@ describe("getApplicants", () => {
       const applicantCareer = { careerCode: newCareer.code, isGraduate: true };
       const { user, applicant, apolloClient } = await TestClientGenerator.applicant({
         careers: [applicantCareer],
-        status: { approvalStatus: ApprovalStatus.approved, admin },
+        status: { approvalStatus: ApprovalStatus.approved, admin }
       });
 
       const { data, errors } = await apolloClient.query({
-        query: GET_APPLICANTS,
+        query: GET_APPLICANTS
       });
 
       expect(errors).toBeUndefined();
@@ -97,29 +97,29 @@ describe("getApplicants", () => {
             user: {
               email: user.email,
               name: user.name,
-              surname: user.surname,
+              surname: user.surname
             },
             padron: applicant.padron,
             description: applicant.description,
             capabilities: capabilities.map(({ uuid, description }) => ({
               uuid,
-              description,
+              description
             })),
             careers: [
               {
                 career: {
                   code: career.code,
                   description: career.description,
-                  credits: career.credits,
+                  credits: career.credits
                 },
                 ...applicantCareer,
                 approvedSubjectCount: null,
-                currentCareerYear: null,
-              },
+                currentCareerYear: null
+              }
             ],
             sections: [],
-            links: [],
-          },
+            links: []
+          }
         ])
       );
     });
@@ -130,21 +130,21 @@ describe("getApplicants", () => {
         careerCode: newCareer.code,
         approvedSubjectCount: 20,
         currentCareerYear: 3,
-        isGraduate: false,
+        isGraduate: false
       };
       const { applicant: firstApplicant, apolloClient } = await TestClientGenerator.applicant({
         careers: [applicantCareerData],
         capabilities: ["Go"],
-        status: { approvalStatus: ApprovalStatus.approved, admin },
+        status: { approvalStatus: ApprovalStatus.approved, admin }
       });
       const secondApplicant = await ApplicantGenerator.instance.withMinimumData({
         careers: [applicantCareerData],
-        capabilities: ["Go"],
+        capabilities: ["Go"]
       });
       const applicants = [firstApplicant, secondApplicant];
 
       const { data, errors } = await apolloClient.query({
-        query: GET_APPLICANTS,
+        query: GET_APPLICANTS
       });
       expect(errors).toBeUndefined();
 
@@ -157,7 +157,7 @@ describe("getApplicants", () => {
             user: {
               email: user.email,
               name: user.name,
-              surname: user.surname,
+              surname: user.surname
             },
             padron: applicant.padron,
             description: applicant.description,
@@ -166,17 +166,17 @@ describe("getApplicants", () => {
                 career: {
                   code: newCareer.code,
                   description: newCareer.description,
-                  credits: newCareer.credits,
+                  credits: newCareer.credits
                 },
-                ...applicantCareerData,
-              },
+                ...applicantCareerData
+              }
             ],
             capabilities: capabilities.map(({ uuid, description }) => ({
               uuid,
-              description,
+              description
             })),
             links: [],
-            sections: [],
+            sections: []
           };
         })
       );
@@ -190,7 +190,7 @@ describe("getApplicants", () => {
 
       const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: AuthenticationError.name,
+        errorType: AuthenticationError.name
       });
     });
 
@@ -198,17 +198,17 @@ describe("getApplicants", () => {
       const { apolloClient } = await TestClientGenerator.applicant();
       const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
 
     it("returns an error if current user is rejected applicant", async () => {
       const { apolloClient } = await TestClientGenerator.applicant({
-        status: { approvalStatus: ApprovalStatus.rejected, admin },
+        status: { approvalStatus: ApprovalStatus.rejected, admin }
       });
       const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
 
@@ -216,7 +216,7 @@ describe("getApplicants", () => {
       const { apolloClient } = await TestClientGenerator.company();
       const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name,
+        errorType: UnauthorizedError.name
       });
     });
   });

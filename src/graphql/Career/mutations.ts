@@ -7,20 +7,20 @@ const careerMutations = {
     type: GraphQLCareer,
     args: {
       code: {
-        type: nonNull(ID),
+        type: nonNull(ID)
       },
       description: {
-        type: nonNull(String),
+        type: nonNull(String)
       },
       credits: {
-        type: nonNull(Int),
-      },
+        type: nonNull(Int)
+      }
     },
     resolve: async (_: undefined, props: ICareer) => {
       const newCareer = await CareerRepository.create(props);
       return CareerSerializer.serialize(newCareer);
-    },
-  },
+    }
+  }
 };
 
 export default careerMutations;

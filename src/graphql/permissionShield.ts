@@ -23,5 +23,5 @@ const permissions = merge(
 );
 
 export const permissionShield = shield(permissions, {
-  debug: Environment.NODE_ENV !== "production",
+  debug: Environment.NODE_ENV !== "production"
 });

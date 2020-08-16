@@ -19,7 +19,7 @@ export const CompanyRepository = {
     Database.transaction(async transaction => {
       const user = await UserRepository.create(userAttributes, transaction);
       const company = await Company.create(companyAttributes, {
-        transaction: transaction,
+        transaction: transaction
       });
       await CompanyUserRepository.create(company, user, transaction);
       await CompanyPhotoRepository.bulkCreate(photos, company, transaction);
@@ -29,7 +29,7 @@ export const CompanyRepository = {
   update: async ({ uuid, phoneNumbers, photos, ...companyAttributes }: IUpdateCompany) => {
     const [, [updatedCompany]] = await Company.update(companyAttributes, {
       where: { uuid },
-      returning: true,
+      returning: true
     });
     if (!updatedCompany) throw new CompanyNotFoundError(uuid);
 
@@ -47,7 +47,7 @@ export const CompanyRepository = {
         adminUserUuid,
         company: updatedCompany,
         status: status,
-        transaction,
+        transaction
       });
       return updatedCompany;
     }),
@@ -60,5 +60,5 @@ export const CompanyRepository = {
   findAll: async () => {
     return Company.findAll();
   },
-  truncate: () => Company.truncate({ cascade: true }),
+  truncate: () => Company.truncate({ cascade: true })
 };

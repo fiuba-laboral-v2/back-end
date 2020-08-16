@@ -9,22 +9,22 @@ const saveApplicant = {
   type: GraphQLApplicant,
   args: {
     padron: {
-      type: nonNull(Int),
+      type: nonNull(Int)
     },
     description: {
-      type: String,
+      type: String
     },
     careers: {
-      type: nonNull(List(GraphQLApplicantCareerInput)),
+      type: nonNull(List(GraphQLApplicantCareerInput))
     },
     capabilities: {
-      type: List(String),
+      type: List(String)
     },
     user: {
-      type: nonNull(GraphQLUserCreateInput),
-    },
+      type: nonNull(GraphQLUserCreateInput)
+    }
   },
-  resolve: (_: undefined, props: ISaveApplicant) => ApplicantRepository.create(props),
+  resolve: (_: undefined, props: ISaveApplicant) => ApplicantRepository.create(props)
 };
 
 export { saveApplicant };

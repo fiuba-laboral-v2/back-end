@@ -6,7 +6,7 @@ import { Applicant, ApplicantCareer } from "$models";
 export const ApplicantCareersRepository = {
   findByApplicantAndCareer: async (applicantUuid: string, careerCode: string) => {
     const applicantCareer = await ApplicantCareer.findOne({
-      where: { applicantUuid, careerCode },
+      where: { applicantUuid, careerCode }
     });
     if (!applicantCareer) throw new ApplicantCareerNotFound(applicantUuid, careerCode);
 
@@ -20,7 +20,7 @@ export const ApplicantCareersRepository = {
     ApplicantCareer.bulkCreate(
       applicantCareers.map(applicantCareer => ({
         ...applicantCareer,
-        applicantUuid,
+        applicantUuid
       })),
       { transaction, validate: true }
     ),
@@ -33,11 +33,11 @@ export const ApplicantCareersRepository = {
     return ApplicantCareer.bulkCreate(
       applicantCareers.map(applicantCareer => ({
         ...applicantCareer,
-        applicantUuid,
+        applicantUuid
       })),
       { transaction, validate: true }
     );
   },
   findAll: () => ApplicantCareer.findAll(),
-  truncate: async () => ApplicantCareer.truncate({ cascade: true }),
+  truncate: async () => ApplicantCareer.truncate({ cascade: true })
 };

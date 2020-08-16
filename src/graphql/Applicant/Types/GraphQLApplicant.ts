@@ -13,42 +13,42 @@ export const GraphQLApplicant = new GraphQLObjectType<Applicant>({
   name: "Applicant",
   fields: () => ({
     uuid: {
-      type: nonNull(ID),
+      type: nonNull(ID)
     },
     user: {
       type: nonNull(GraphQLUser),
-      resolve: applicant => applicant.getUser(),
+      resolve: applicant => applicant.getUser()
     },
     padron: {
-      type: nonNull(Int),
+      type: nonNull(Int)
     },
     description: {
-      type: String,
+      type: String
     },
     createdAt: {
-      type: nonNull(GraphQLDateTime),
+      type: nonNull(GraphQLDateTime)
     },
     updatedAt: {
-      type: nonNull(GraphQLDateTime),
+      type: nonNull(GraphQLDateTime)
     },
     approvalStatus: {
-      type: nonNull(GraphQLApprovalStatus),
+      type: nonNull(GraphQLApprovalStatus)
     },
     careers: {
       type: nonNull(List(GraphQLApplicantCareer)),
-      resolve: applicant => applicant.getApplicantCareers(),
+      resolve: applicant => applicant.getApplicantCareers()
     },
     capabilities: {
       type: nonNull(List(GraphQLCapability)),
-      resolve: applicant => applicant.getCapabilities(),
+      resolve: applicant => applicant.getCapabilities()
     },
     sections: {
       type: nonNull(List(GraphQLSection)),
-      resolve: applicant => applicant.getSections(),
+      resolve: applicant => applicant.getSections()
     },
     links: {
       type: nonNull(List(GraphQLLink)),
-      resolve: applicant => applicant.getLinks(),
-    },
-  }),
+      resolve: applicant => applicant.getLinks()
+    }
+  })
 });

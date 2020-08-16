@@ -9,7 +9,7 @@ export const CapabilityRepository = {
   findAll: () => Capability.findAll(),
   findOrCreate: async (description: string) => {
     const [capability] = await Capability.findOrCreate({
-      where: { description },
+      where: { description }
     });
     return capability;
   },
@@ -20,5 +20,5 @@ export const CapabilityRepository = {
     }
     return capabilities;
   },
-  truncate: () => Capability.truncate({ cascade: true }),
+  truncate: () => Capability.truncate({ cascade: true })
 };

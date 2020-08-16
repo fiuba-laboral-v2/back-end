@@ -5,19 +5,19 @@ export const GraphQLUserCreateInput = new GraphQLInputObjectType({
   name: "UserInput",
   fields: () => ({
     email: {
-      type: nonNull(String),
+      type: nonNull(String)
     },
     dni: {
-      type: String,
+      type: String
     },
     password: {
-      type: nonNull(String),
+      type: nonNull(String)
     },
     name: {
-      type: nonNull(String),
+      type: nonNull(String)
     },
     surname: {
-      type: nonNull(String),
-    },
-  }),
+      type: nonNull(String)
+    }
+  })
 });

@@ -3,5 +3,5 @@ import { approvalStatuses } from "$models/ApprovalStatus";
 
 export const GraphQLApprovalStatus = GraphQLEnumType({
   name: "ApprovalStatus",
-  possibleValues: approvalStatuses,
+  possibleValues: approvalStatuses
 });

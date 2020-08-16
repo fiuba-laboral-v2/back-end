@@ -8,7 +8,7 @@ export const withOneSection = (variables: IVariables): IOfferAttributes => ({
     {
       title: "title",
       text: "text",
-      displayOrder: 1,
-    },
-  ],
+      displayOrder: 1
+    }
+  ]
 });

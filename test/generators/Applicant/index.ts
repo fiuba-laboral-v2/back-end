@@ -19,7 +19,7 @@ export const ApplicantGenerator = {
       ApplicantRepository.create(
         withMinimumData({
           index: ApplicantGenerator.getIndex(),
-          ...variables,
+          ...variables
         })
       ),
     updatedWithStatus: async (variables?: IUpdatedWithStatus) => {
@@ -29,9 +29,9 @@ export const ApplicantGenerator = {
       if (!variables) return applicant;
       const { admin, status } = variables;
       return ApplicantRepository.updateApprovalStatus(admin.userUuid, applicant.uuid, status);
-    },
+    }
   },
   data: {
-    minimum: () => withMinimumData({ index: ApplicantGenerator.getIndex() }),
-  },
+    minimum: () => withMinimumData({ index: ApplicantGenerator.getIndex() })
+  }
 };

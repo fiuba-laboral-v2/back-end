@@ -8,7 +8,7 @@ export = {
       await queryInterface.bulkInsert("Offers", [javaSemiSenior.offer, javaSenior.offer]);
       await queryInterface.bulkInsert("OffersSections", [
         ...javaSemiSenior.offerSections,
-        ...javaSenior.offerSections,
+        ...javaSenior.offerSections
       ]);
     });
   },
@@ -17,5 +17,5 @@ export = {
       await queryInterface.bulkDelete("Offers", {}, { transaction });
       await queryInterface.bulkDelete("OffersSections", {}, { transaction });
     });
-  },
+  }
 };

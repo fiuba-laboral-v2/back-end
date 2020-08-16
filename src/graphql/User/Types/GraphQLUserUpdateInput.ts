@@ -5,10 +5,10 @@ export const GraphQLUserUpdateInput = new GraphQLInputObjectType({
   name: "UserUpdateInput",
   fields: () => ({
     name: {
-      type: nonNull(String),
+      type: nonNull(String)
     },
     surname: {
-      type: nonNull(String),
-    },
-  }),
+      type: nonNull(String)
+    }
+  })
 });

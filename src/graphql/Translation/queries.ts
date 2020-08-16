@@ -7,13 +7,13 @@ const translationQueries = {
     type: nonNull(List(nonNull(GraphQLTranslation))),
     args: {
       translationGroup: {
-        type: nonNull(String),
-      },
+        type: nonNull(String)
+      }
     },
     resolve: (_: undefined, { translationGroup }: { translationGroup: string }) => {
       return TranslationRepository.translate(translationGroup);
-    },
-  },
+    }
+  }
 };
 
 export default translationQueries;

@@ -3,18 +3,18 @@ import { GraphQLPaginatedResults } from "$graphql/Pagination/Types/GraphQLPagina
 import { GraphQLOffer } from "$graphql/Offer/Types/GraphQLOffer";
 import {
   GraphQLPaginatedInput,
-  IPaginatedInput,
+  IPaginatedInput
 } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 
 const getOffers = {
   type: GraphQLPaginatedResults(GraphQLOffer),
   args: {
     updatedBeforeThan: {
-      type: GraphQLPaginatedInput,
-    },
+      type: GraphQLPaginatedInput
+    }
   },
   resolve: (_: undefined, { updatedBeforeThan }: { updatedBeforeThan?: IPaginatedInput }) =>
-    OfferRepository.findAll({ updatedBeforeThan }),
+    OfferRepository.findAll({ updatedBeforeThan })
 };
 
 export { getOffers };

@@ -4,5 +4,5 @@ import { CompanyRepository } from "$models/Company";
 
 export const getCompanies = {
   type: List(GraphQLCompany),
-  resolve: () => CompanyRepository.findAll(),
+  resolve: () => CompanyRepository.findAll()
 };

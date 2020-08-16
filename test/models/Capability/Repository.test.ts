@@ -6,7 +6,7 @@ describe("CapabilityRepository", () => {
 
   it("should create a valid capability", async () => {
     const capability = await CapabilityRepository.create({
-      description: "Python",
+      description: "Python"
     });
     expect(capability).toMatchObject({ description: "Python" });
   });

@@ -6,22 +6,22 @@ export const SectionRepository = {
   update: async (sections: TSection[], applicant: Applicant, transaction?: Transaction) => {
     await Section.destroy({
       where: {
-        applicantUuid: applicant.uuid,
+        applicantUuid: applicant.uuid
       },
-      transaction,
+      transaction
     });
 
     return Section.bulkCreate(
       sections.map(section => ({
         ...section,
-        applicantUuid: applicant.uuid,
+        applicantUuid: applicant.uuid
       })),
       {
         transaction,
         returning: true,
         validate: true,
-        updateOnDuplicate: ["title", "text", "displayOrder"],
+        updateOnDuplicate: ["title", "text", "displayOrder"]
       }
     );
-  },
+  }
 };

@@ -21,7 +21,7 @@ const types = [
   ...jobApplicationTypes,
   ...translationTypes,
   ...approvalStatusTypes,
-  ...adminTaskTypes,
+  ...adminTaskTypes
 ];
 
 export default types;

@@ -6,5 +6,5 @@ import { ICompanyUser } from "$graphql/Context";
 export const getMyLatestJobApplications = {
   type: List(GraphQLJobApplication),
   resolve: async (_: undefined, __: undefined, { currentUser }: { currentUser: ICompanyUser }) =>
-    JobApplicationRepository.findLatestByCompanyUuid(currentUser.company.uuid),
+    JobApplicationRepository.findLatestByCompanyUuid(currentUser.company.uuid)
 };

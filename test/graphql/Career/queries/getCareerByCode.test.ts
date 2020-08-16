@@ -31,14 +31,14 @@ describe("getCareerByCode", () => {
 
     const { data, errors } = await apolloClient.query({
       query: GET_CAREER_BY_CODE,
-      variables: { code: career.code },
+      variables: { code: career.code }
     });
     expect(errors).toBeUndefined();
     expect(data).not.toBeUndefined();
     expect(data!.getCareerByCode).toMatchObject({
       code: career.code,
       credits: career.credits,
-      description: career.description,
+      description: career.description
     });
   });
 
@@ -47,10 +47,10 @@ describe("getCareerByCode", () => {
       const { apolloClient } = await TestClientGenerator.user();
       const { errors } = await apolloClient.query({
         query: GET_CAREER_BY_CODE,
-        variables: { code: "3" },
+        variables: { code: "3" }
       });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: CareersNotFound.name,
+        errorType: CareersNotFound.name
       });
     });
 
@@ -59,10 +59,10 @@ describe("getCareerByCode", () => {
 
       const { errors } = await apolloClient.query({
         query: GET_CAREER_BY_CODE,
-        variables: { code: "3" },
+        variables: { code: "3" }
       });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: AuthenticationError.name,
+        errorType: AuthenticationError.name
       });
     });
   });

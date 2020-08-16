@@ -6,7 +6,7 @@ const buildResponseMessage = (pass: boolean) => {
   const negation = pass ? "not" : "";
   return {
     pass,
-    message: () => `Expected ${negation} to have the exact same characters`,
+    message: () => `Expected ${negation} to have the exact same characters`
   };
 };
 

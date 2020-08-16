@@ -7,10 +7,10 @@ export const ApplicantApprovalEventRepository = {
       {
         adminUserUuid,
         applicantUuid,
-        status,
+        status
       },
       { transaction }
     ),
   findAll: () => ApplicantApprovalEvent.findAll(),
-  truncate: () => ApplicantApprovalEvent.truncate({ cascade: true }),
+  truncate: () => ApplicantApprovalEvent.truncate({ cascade: true })
 };

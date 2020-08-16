@@ -18,7 +18,7 @@ describe("groupTableNamesByColumn", () => {
       slogan: expect.arrayContaining([COMPANIES_TABLE_NAME]),
       logo: expect.arrayContaining([COMPANIES_TABLE_NAME]),
       website: expect.arrayContaining([COMPANIES_TABLE_NAME]),
-      email: expect.arrayContaining([COMPANIES_TABLE_NAME]),
+      email: expect.arrayContaining([COMPANIES_TABLE_NAME])
     });
   });
 
@@ -30,7 +30,7 @@ describe("groupTableNamesByColumn", () => {
       padron: expect.arrayContaining([APPLICANTS_TABLE_NAME]),
       description: expect.arrayContaining([APPLICANTS_TABLE_NAME]),
       userUuid: expect.arrayContaining([APPLICANTS_TABLE_NAME]),
-      approvalStatus: expect.arrayContaining([APPLICANTS_TABLE_NAME]),
+      approvalStatus: expect.arrayContaining([APPLICANTS_TABLE_NAME])
     });
   });
 
@@ -46,7 +46,7 @@ describe("groupTableNamesByColumn", () => {
       slogan: expect.arrayContaining([COMPANIES_TABLE_NAME]),
       logo: expect.arrayContaining([COMPANIES_TABLE_NAME]),
       website: expect.arrayContaining([COMPANIES_TABLE_NAME]),
-      email: expect.arrayContaining([COMPANIES_TABLE_NAME]),
+      email: expect.arrayContaining([COMPANIES_TABLE_NAME])
     });
   });
 
@@ -62,7 +62,7 @@ describe("groupTableNamesByColumn", () => {
       minimumSalary: expect.arrayContaining([OFFER_TABLE_NAME]),
       maximumSalary: expect.arrayContaining([OFFER_TABLE_NAME]),
       graduadosApprovalStatus: expect.arrayContaining([OFFER_TABLE_NAME]),
-      extensionApprovalStatus: expect.arrayContaining([OFFER_TABLE_NAME]),
+      extensionApprovalStatus: expect.arrayContaining([OFFER_TABLE_NAME])
     });
   });
 });

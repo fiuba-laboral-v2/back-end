@@ -8,35 +8,35 @@ export = {
         {
           code: {
             allowNull: false,
-            type: STRING,
+            type: STRING
           },
           description: {
             allowNull: false,
-            type: TEXT,
+            type: TEXT
           },
           credits: {
             allowNull: false,
-            type: INTEGER,
+            type: INTEGER
           },
           createdAt: {
             allowNull: false,
-            type: DATE,
+            type: DATE
           },
           updatedAt: {
             allowNull: false,
-            type: DATE,
-          },
+            type: DATE
+          }
         },
         { transaction }
       );
       await queryInterface.addConstraint("Careers", ["code"], {
         type: "primary key",
         name: "Careers_code_key",
-        transaction,
+        transaction
       });
     });
   },
   down: (queryInterface: QueryInterface) => {
     return queryInterface.dropTable("Careers");
-  },
+  }
 };

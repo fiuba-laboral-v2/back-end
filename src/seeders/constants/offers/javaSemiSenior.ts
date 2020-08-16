@@ -19,7 +19,7 @@ export const javaSemiSenior = {
     minimumSalary: 52500,
     maximumSalary: 70000,
     createdAt: new Date(),
-    updatedAt: new Date(),
+    updatedAt: new Date()
   },
   offerSections: [
     {
@@ -33,7 +33,7 @@ export const javaSemiSenior = {
         "• Contar con experiencia en NodeJS, Express, React, Sass, WPO y SEO.",
       displayOrder: 1,
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     },
     {
       uuid: "0456a3b4-7514-4559-a69c-4f077942be58",
@@ -49,7 +49,7 @@ export const javaSemiSenior = {
         "una gran experiencia.",
       displayOrder: 2,
       createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ],
+      updatedAt: new Date()
+    }
+  ]
 };

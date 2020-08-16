@@ -10,29 +10,29 @@ export const editOffer = {
   type: GraphQLOffer,
   args: {
     uuid: {
-      type: nonNull(ID),
+      type: nonNull(ID)
     },
     title: {
-      type: nonNull(String),
+      type: nonNull(String)
     },
     description: {
-      type: nonNull(String),
+      type: nonNull(String)
     },
     hoursPerDay: {
-      type: nonNull(Int),
+      type: nonNull(Int)
     },
     minimumSalary: {
-      type: nonNull(Int),
+      type: nonNull(Int)
     },
     maximumSalary: {
-      type: nonNull(Int),
+      type: nonNull(Int)
     },
     sections: {
-      type: List(GraphQLOfferSectionInput),
+      type: List(GraphQLOfferSectionInput)
     },
     careers: {
-      type: List(GraphQLOfferCareerInput),
-    },
+      type: List(GraphQLOfferCareerInput)
+    }
   },
   resolve: async (
     _: undefined,
@@ -41,6 +41,6 @@ export const editOffer = {
   ) =>
     OfferRepository.update({
       companyUuid: currentUser.company.uuid,
-      ...attributes,
-    }),
+      ...attributes
+    })
 };

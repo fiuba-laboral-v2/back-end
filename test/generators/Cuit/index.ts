@@ -14,5 +14,5 @@ export const CuitGenerator = {
     if (last === 10) last = 9;
     const cuit = [...numbers, last];
     return cuit.join("");
-  },
+  }
 };

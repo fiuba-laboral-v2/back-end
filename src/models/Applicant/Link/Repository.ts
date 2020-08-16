@@ -14,11 +14,11 @@ export const ApplicantLinkRepository = {
         applicantUuid: applicant.uuid,
         ...(!isEmpty(linkNames) && {
           [Op.not]: {
-            name: linkNames,
-          },
-        }),
+            name: linkNames
+          }
+        })
       },
-      transaction,
+      transaction
     });
   },
   bulkUpsert: (links: TLink[], applicant: Applicant, transaction?: Transaction) => {
@@ -28,8 +28,8 @@ export const ApplicantLinkRepository = {
         transaction,
         validate: true,
         returning: true,
-        updateOnDuplicate: ["url"],
+        updateOnDuplicate: ["url"]
       }
     );
-  },
+  }
 };

@@ -6,7 +6,7 @@ import {
   HasMany,
   Is,
   Model,
-  Table,
+  Table
 } from "sequelize-typescript";
 import {
   ENUM,
@@ -16,7 +16,7 @@ import {
   INTEGER,
   TEXT,
   UUID,
-  UUIDV4,
+  UUIDV4
 } from "sequelize";
 import { validateIntegerInRange } from "validations-fiuba-laboral-v2";
 import {
@@ -28,7 +28,7 @@ import {
   Career,
   JobApplication,
   Section,
-  User,
+  User
 } from "$models";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
 import { isApprovalStatus } from "$models/SequelizeModelValidators";
@@ -39,27 +39,27 @@ export class Applicant extends Model<Applicant> {
     allowNull: false,
     primaryKey: true,
     type: UUID,
-    defaultValue: UUIDV4,
+    defaultValue: UUIDV4
   })
   public uuid: string;
 
   @Is("padron", validateIntegerInRange({ min: { value: 0, include: false } }))
   @Column({
     allowNull: false,
-    type: INTEGER,
+    type: INTEGER
   })
   public padron: number;
 
   @Column({
     allowNull: true,
-    type: TEXT,
+    type: TEXT
   })
   public description: string;
 
   @ForeignKey(() => User)
   @Column({
     allowNull: false,
-    type: UUID,
+    type: UUID
   })
   public userUuid: string;
 
@@ -67,7 +67,7 @@ export class Applicant extends Model<Applicant> {
     allowNull: false,
     type: ENUM<string>({ values: approvalStatuses }),
     defaultValue: ApprovalStatus.pending,
-    ...isApprovalStatus,
+    ...isApprovalStatus
   })
   public approvalStatus: ApprovalStatus;
 

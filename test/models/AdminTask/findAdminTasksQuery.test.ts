@@ -31,7 +31,7 @@ describe("findAdminTasksQuery", () => {
       statuses,
       limit,
       secretary,
-      ...(updatedBeforeThan && { updatedBeforeThan }),
+      ...(updatedBeforeThan && { updatedBeforeThan })
     });
 
     const commonStatus = statuses.map(
@@ -96,7 +96,7 @@ describe("findAdminTasksQuery", () => {
       adminTaskTypes: [AdminTaskType.Company],
       statuses: [status],
       limit,
-      secretary,
+      secretary
     });
     const expectedQuery = `
       WITH "AdminTask" AS
@@ -131,7 +131,7 @@ describe("findAdminTasksQuery", () => {
       adminTaskTypes: [AdminTaskType.Applicant],
       statuses: [status],
       limit,
-      secretary,
+      secretary
     });
     const expectedQuery = `
       WITH "AdminTask" AS
@@ -164,7 +164,7 @@ describe("findAdminTasksQuery", () => {
       adminTaskTypes: [AdminTaskType.Offer],
       statuses: [status],
       limit,
-      secretary,
+      secretary
     });
     const expectedQuery = `
       WITH "AdminTask" AS (
@@ -198,7 +198,7 @@ describe("findAdminTasksQuery", () => {
         adminTaskTypes: [],
         statuses: [ApprovalStatus.pending],
         limit: 100,
-        secretary: Secretary.graduados,
+        secretary: Secretary.graduados
       })
     ).toThrowErrorWithMessage(
       AdminTaskTypesIsEmptyError,
@@ -212,7 +212,7 @@ describe("findAdminTasksQuery", () => {
         adminTaskTypes: [AdminTaskType.Applicant],
         statuses: [],
         limit: 150,
-        secretary: Secretary.graduados,
+        secretary: Secretary.graduados
       })
     ).toThrowErrorWithMessage(StatusesIsEmptyError, StatusesIsEmptyError.buildMessage());
   });
@@ -306,7 +306,7 @@ describe("findAdminTasksQuery", () => {
 
     expectToReturnSQLQueryOfAllAdminTasksWithStatus(statuses, Secretary.extension, {
       dateTime: new Date("1995-12-17T03:24:00Z"),
-      uuid: "ec45bb65-6076-45ea-b5e2-844334c3238e",
+      uuid: "ec45bb65-6076-45ea-b5e2-844334c3238e"
     });
   });
 

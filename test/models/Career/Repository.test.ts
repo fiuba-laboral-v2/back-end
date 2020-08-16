@@ -50,7 +50,7 @@ describe("CareerRepository", () => {
 
     const expectedCareers = await CareerRepository.findByCodes([
       careerData.code,
-      secondaryCareer.code,
+      secondaryCareer.code
     ]);
     expect(expectedCareers.length).toEqual(2);
     expect(expectedCareers.map(({ code }) => code)).toEqual(

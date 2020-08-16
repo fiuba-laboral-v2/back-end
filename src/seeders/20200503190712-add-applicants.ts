@@ -5,10 +5,10 @@ export = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.sequelize.transaction(async transaction => {
       await queryInterface.bulkInsert("Applicants", [sebastian.applicant, aldana.applicant], {
-        transaction,
+        transaction
       });
       await queryInterface.bulkInsert("Sections", [...sebastian.sections, ...aldana.sections], {
-        transaction,
+        transaction
       });
       await queryInterface.bulkInsert(
         "ApplicantsCapabilities",
@@ -22,7 +22,7 @@ export = {
       );
 
       await queryInterface.bulkInsert("JobApplications", [...aldana.jobApplications], {
-        transaction,
+        transaction
       });
     });
   },
@@ -34,5 +34,5 @@ export = {
       await queryInterface.bulkDelete("JobApplications", {}, { transaction });
       await queryInterface.bulkDelete("Applicants", {}, { transaction });
     });
-  },
+  }
 };

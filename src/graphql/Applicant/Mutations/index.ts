@@ -5,7 +5,7 @@ import { updateApplicantApprovalStatus } from "./updateApplicantApprovalStatus";
 const applicantMutations = {
   saveApplicant,
   updateCurrentApplicant,
-  updateApplicantApprovalStatus,
+  updateApplicantApprovalStatus
 };
 
 export { applicantMutations };

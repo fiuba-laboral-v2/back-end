@@ -9,35 +9,35 @@ export = {
           uuid: {
             allowNull: false,
             primaryKey: true,
-            type: UUID,
+            type: UUID
           },
           applicantUuid: {
             allowNull: false,
             references: { model: "Applicants", key: "uuid" },
             onDelete: "CASCADE",
-            type: UUID,
+            type: UUID
           },
           title: {
             allowNull: false,
-            type: TEXT,
+            type: TEXT
           },
           text: {
             allowNull: false,
-            type: TEXT,
+            type: TEXT
           },
           displayOrder: {
             allowNull: false,
             autoIncrement: true,
-            type: INTEGER,
+            type: INTEGER
           },
           createdAt: {
             allowNull: false,
-            type: DATE,
+            type: DATE
           },
           updatedAt: {
             allowNull: false,
-            type: DATE,
-          },
+            type: DATE
+          }
         },
         { transaction }
       );
@@ -45,11 +45,11 @@ export = {
       await queryInterface.addConstraint("Sections", ["applicantUuid", "displayOrder"], {
         type: "unique",
         name: "Sections_applicantUuid_displayOrder_key",
-        transaction,
+        transaction
       });
     });
   },
   down: (queryInterface: QueryInterface) => {
     return queryInterface.dropTable("Sections");
-  },
+  }
 };

@@ -3,6 +3,6 @@ export const UserMocks = {
     email: "seblanco@fiuba.com.ar",
     password: "somethingVerySecret123",
     name: "Sebastián",
-    surname: "Blanco",
-  },
+    surname: "Blanco"
+  }
 };

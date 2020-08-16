@@ -38,7 +38,7 @@ describe("CompanyPhoneNumberRepository", () => {
     const company = await CompanyRepository.create(companyMocks.companyData());
     const phoneNumber = new CompanyPhoneNumber({
       companyUuid: company.uuid,
-      phoneNumber: "0".repeat(300),
+      phoneNumber: "0".repeat(300)
     });
     await expect(phoneNumber.save({ validate: false })).rejects.toThrowErrorWithMessage(
       DatabaseError,
@@ -48,7 +48,7 @@ describe("CompanyPhoneNumberRepository", () => {
 
   it("throws an error if company does not exist", async () => {
     const notSavedCompany = new Company({
-      uuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+      uuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
     });
     await expect(
       CompanyPhoneNumberRepository.create("1144444444", notSavedCompany)
@@ -62,17 +62,17 @@ describe("CompanyPhoneNumberRepository", () => {
   it("truncates phoneNumber by cascade when we remove its company", async () => {
     const company = await CompanyRepository.create({
       ...companyMocks.companyData(),
-      cuit: "30711819017",
+      cuit: "30711819017"
     });
     await CompanyRepository.create({
       ...companyMocks.companyData(),
       user: { ...UserMocks.userAttributes, email: "asd@asd.asd" },
-      cuit: "30701307115",
+      cuit: "30701307115"
     });
     await CompanyRepository.create({
       ...companyMocks.companyData(),
       user: { ...UserMocks.userAttributes, email: "qwe@qwe.qwe" },
-      cuit: "30703088534",
+      cuit: "30703088534"
     });
     await CompanyPhoneNumberRepository.create("1144444444", company);
     expect(await CompanyPhoneNumberRepository.findAll()).toHaveLength(1);
@@ -85,7 +85,7 @@ describe("CompanyPhoneNumberRepository", () => {
     const anotherCompany = await CompanyRepository.create({
       ...companyMocks.companyData(),
       user: { ...UserMocks.userAttributes, email: "qwe@qwe.qwe" },
-      cuit: "23390691939",
+      cuit: "23390691939"
     });
     await CompanyPhoneNumberRepository.create("(011) 44444444", company);
     expect(await CompanyPhoneNumberRepository.findAll()).toHaveLength(1);

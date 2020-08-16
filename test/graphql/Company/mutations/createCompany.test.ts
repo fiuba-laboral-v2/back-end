@@ -64,15 +64,15 @@ describe("createCompany", () => {
       const { user, ...companyData } = CompanyGenerator.data.completeData();
       const response = await client.loggedOut().mutate({
         mutation: SAVE_COMPANY_WITH_COMPLETE_DATA,
-        variables: { user, ...companyData },
+        variables: { user, ...companyData }
       });
       expect(response.errors).toBeUndefined();
       expect(response.data).toEqual({
         createCompany: {
           ...companyData,
           approvalStatus: ApprovalStatus.pending,
-          phoneNumbers: expect.arrayContaining(companyData.phoneNumbers!),
-        },
+          phoneNumbers: expect.arrayContaining(companyData.phoneNumbers!)
+        }
       });
     });
 
@@ -80,7 +80,7 @@ describe("createCompany", () => {
       const { user, cuit, companyName } = CompanyGenerator.data.completeData();
       const response = await client.loggedOut().mutate({
         mutation: SAVE_COMPANY_WITH_MINIMUM_DATA,
-        variables: { user, cuit, companyName },
+        variables: { user, cuit, companyName }
       });
       expect(response.errors).toBeUndefined();
       expect(response.data).not.toBeUndefined();
@@ -94,17 +94,17 @@ describe("createCompany", () => {
       const cuit = companyData.cuit;
       await client.loggedOut().mutate({
         mutation: SAVE_COMPANY_WITH_MINIMUM_DATA,
-        variables: companyData,
+        variables: companyData
       });
       const { errors } = await client.loggedOut().mutate({
         mutation: SAVE_COMPANY_WITH_MINIMUM_DATA,
         variables: {
           ...CompanyGenerator.data.completeData(),
-          cuit,
-        },
+          cuit
+        }
       });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: "CompanyCuitAlreadyExistsError",
+        errorType: "CompanyCuitAlreadyExistsError"
       });
     });
   });

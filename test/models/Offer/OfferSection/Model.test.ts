@@ -8,7 +8,7 @@ describe("OfferSection", () => {
         offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
         title: "title",
         text: "text",
-        displayOrder: 1,
+        displayOrder: 1
       };
       const section = new OfferSection(sectionAttributes);
       await expect(section.validate()).resolves.not.toThrow();
@@ -22,7 +22,7 @@ describe("OfferSection", () => {
       const section = new OfferSection({
         offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
         text: "text",
-        displayOrder: 1,
+        displayOrder: 1
       });
 
       await expect(section.validate()).rejects.toThrowErrorWithMessage(
@@ -35,7 +35,7 @@ describe("OfferSection", () => {
       const section = new OfferSection({
         offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
         title: "title",
-        displayOrder: 1,
+        displayOrder: 1
       });
 
       await expect(section.validate()).rejects.toThrowErrorWithMessage(
@@ -48,7 +48,7 @@ describe("OfferSection", () => {
       const section = new OfferSection({
         title: "title",
         text: "text",
-        displayOrder: 1,
+        displayOrder: 1
       });
 
       await expect(section.validate()).rejects.toThrowErrorWithMessage(

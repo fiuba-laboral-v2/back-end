@@ -34,7 +34,7 @@ describe("getCurrentUser", () => {
   it("returns current user if it's set in context", async () => {
     const { user, apolloClient } = await TestClientGenerator.user();
     const { data, errors } = await apolloClient.query({
-      query: GET_CURRENT_USER,
+      query: GET_CURRENT_USER
     });
     expect(errors).toBeUndefined();
     expect(data?.getCurrentUser).toEqual({
@@ -43,14 +43,14 @@ describe("getCurrentUser", () => {
       surname: user.surname,
       admin: null,
       applicant: null,
-      company: null,
+      company: null
     });
   });
 
   it("returns current admin user if it's set in context", async () => {
     const { admin, user, apolloClient } = await TestClientGenerator.admin();
     const { data, errors } = await apolloClient.query({
-      query: GET_CURRENT_USER,
+      query: GET_CURRENT_USER
     });
     expect(errors).toBeUndefined();
     expect(data?.getCurrentUser).toEqual({
@@ -58,17 +58,17 @@ describe("getCurrentUser", () => {
       name: user.name,
       surname: user.surname,
       admin: {
-        userUuid: admin.userUuid,
+        userUuid: admin.userUuid
       },
       applicant: null,
-      company: null,
+      company: null
     });
   });
 
   it("returns current user applicant if it's set", async () => {
     const { applicant, user, apolloClient } = await TestClientGenerator.applicant();
     const { data, errors } = await apolloClient.query({
-      query: GET_CURRENT_USER,
+      query: GET_CURRENT_USER
     });
     expect(errors).toBeUndefined();
     expect(data?.getCurrentUser).toEqual({
@@ -77,16 +77,16 @@ describe("getCurrentUser", () => {
       surname: user.surname,
       admin: null,
       applicant: {
-        padron: applicant.padron,
+        padron: applicant.padron
       },
-      company: null,
+      company: null
     });
   });
 
   it("returns current company user if it's set", async () => {
     const { company, user, apolloClient } = await TestClientGenerator.company();
     const { data, errors } = await apolloClient.query({
-      query: GET_CURRENT_USER,
+      query: GET_CURRENT_USER
     });
     expect(errors).toBeUndefined();
     expect(data?.getCurrentUser).toEqual({
@@ -98,8 +98,8 @@ describe("getCurrentUser", () => {
       company: {
         uuid: company.uuid,
         cuit: company.cuit,
-        companyName: company.companyName,
-      },
+        companyName: company.companyName
+      }
     });
   });
 

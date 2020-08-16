@@ -4,7 +4,7 @@ import {
   AdminTaskType,
   TABLE_NAME_COLUMN,
   SeparateApprovalAdminTaskTypes,
-  SharedApprovalAdminTaskTypes,
+  SharedApprovalAdminTaskTypes
 } from "./Model";
 import { IAdminTasksFilter, IApprovalStatusOptions } from "./Interfaces";
 import { AdminTaskTypesIsEmptyError, StatusesIsEmptyError } from "./Errors";
@@ -57,7 +57,7 @@ const getWhereClause = (
 ) =>
   [
     getStatusWhereClause(statuses, secretary, approvalStatusOptions),
-    getUpdatedAtWhereClause(updatedBeforeThan),
+    getUpdatedAtWhereClause(updatedBeforeThan)
   ]
     .filter(clause => clause)
     .map(clause => `(${clause})`)
@@ -100,7 +100,7 @@ const includeStatus = (adminTaskTypes: AdminTaskType[]) => {
     includesSharedApprovalModel:
       intersection(adminTaskTypes, SharedApprovalAdminTaskTypes).length >= 1,
     includesSeparateApprovalModel:
-      intersection(adminTaskTypes, SeparateApprovalAdminTaskTypes).length >= 1,
+      intersection(adminTaskTypes, SeparateApprovalAdminTaskTypes).length >= 1
   };
 };
 
@@ -117,7 +117,7 @@ export const findAdminTasksQuery = ({
   statuses,
   updatedBeforeThan,
   limit,
-  secretary,
+  secretary
 }: IAdminTasksFilter & { limit: number }) => {
   if (adminTaskTypes.length === 0) throw new AdminTaskTypesIsEmptyError();
   if (statuses.length === 0) throw new StatusesIsEmptyError();

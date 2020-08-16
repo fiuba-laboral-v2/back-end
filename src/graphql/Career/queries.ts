@@ -7,21 +7,21 @@ const careerQueries = {
     type: GraphQLCareer,
     args: {
       code: {
-        type: nonNull(ID),
-      },
+        type: nonNull(ID)
+      }
     },
     resolve: async (_: undefined, { code }) => {
       const career = await CareerRepository.findByCode(code);
       return CareerSerializer.serialize(career);
-    },
+    }
   },
   getCareers: {
     type: List(GraphQLCareer),
     resolve: async () => {
       const careers = await CareerRepository.findAll();
       return careers.map(career => CareerSerializer.serialize(career));
-    },
-  },
+    }
+  }
 };
 
 export default careerQueries;

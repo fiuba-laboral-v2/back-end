@@ -10,7 +10,7 @@ const buildResponse = ({ received, pass, key, order }: TBuildResponse) => {
   const negation = pass ? "not " : "";
   return {
     pass: pass,
-    message: () => `Expected ${received} to ${negation} be sorted by ${key} in ${order} order`,
+    message: () => `Expected ${received} to ${negation} be sorted by ${key} in ${order} order`
   };
 };
 
