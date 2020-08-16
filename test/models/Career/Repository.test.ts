@@ -43,16 +43,24 @@ describe("CareerRepository", () => {
     });
   });
 
-  it("retrieve all Careers", async () => {
-    await CareerRepository.truncate();
-    const career = await CareerRepository.create(CareerGenerator.data());
-    const expectedCareers = await CareerRepository.findAll();
-    expect(expectedCareers).toHaveLength(1);
-    expect(
-      expectedCareers.map(c => c.code)
-    ).toMatchObject(
-      [career.code]
-    );
+  describe("findAll", () => {
+    it("retrieve all Careers", async () => {
+      await CareerRepository.truncate();
+      const career = await CareerRepository.create(CareerGenerator.data());
+      const expectedCareers = await CareerRepository.findAll();
+      expect(expectedCareers).toHaveLength(1);
+      expect(
+        expectedCareers.map(c => c.code)
+      ).toMatchObject(
+        [career.code]
+      );
+    });
+
+    it("retrieve no Careers", async () => {
+      await CareerRepository.truncate();
+      const expectedCareers = await CareerRepository.findAll();
+      expect(expectedCareers).toEqual([]);
+    });
   });
 
   it("retrieve all careers by code", async () => {
