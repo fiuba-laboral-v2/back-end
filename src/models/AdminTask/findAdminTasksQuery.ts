@@ -92,9 +92,11 @@ const getAdminTaskModels = (adminTaskTypes: AdminTaskType[]) => {
 const includeStatus = (adminTaskTypes: AdminTaskType[]) => {
   return {
     includesSharedApprovalModel: intersection(
-      adminTaskTypes, SharedApprovalAdminTaskTypes).length >= 1,
+      adminTaskTypes, SharedApprovalAdminTaskTypes
+    ).length >= 1,
     includesSeparateApprovalModel: intersection(
-      adminTaskTypes, SeparateApprovalAdminTaskTypes).length >= 1
+      adminTaskTypes, SeparateApprovalAdminTaskTypes
+    ).length >= 1
   };
 };
 
