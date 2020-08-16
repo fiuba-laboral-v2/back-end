@@ -5,15 +5,16 @@ import { CompanyRepository } from "$models/Company";
 import { AdminTask, AdminTaskType, IAdminTasksFilter } from "$models/AdminTask";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { UserRepository } from "$models/User";
-import { Admin, Applicant, Company } from "$models";
+import { Admin, Applicant, Company, Offer } from "$models";
 import { UnauthorizedError } from "$graphql/Errors";
 
-import { AdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { TestClientGenerator } from "$generators/TestClient";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import { Secretary } from "$models/Admin";
+import { OfferGenerator } from "$test/generators/Offer";
+import { OfferRepository } from "$models/Offer";
 
 const GET_ADMIN_TASKS = gql`
   query GetAdminTasks(
@@ -43,19 +44,26 @@ const GET_ADMIN_TASKS = gql`
 
 describe("getAdminTasks", () => {
   let admin: Admin;
+  let apolloClient;
   let approvedCompany: Company;
   let rejectedCompany: Company;
   let pendingCompany: Company;
   let approvedApplicant: Applicant;
   let rejectedApplicant: Applicant;
   let pendingApplicant: Applicant;
+  let approvedOffer: Offer;
+  let rejectedOffer: Offer;
+  let pendingOffer: Offer;
   let allTasksByDescUpdatedAt: AdminTask[];
 
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
+    await OfferRepository.truncate();
+    const generator = await TestClientGenerator.admin();
+    admin = generator.admin;
+    apolloClient = generator.apolloClient;
     const companiesGenerator = CompanyGenerator.instance.updatedWithStatus;
-    admin = await AdminGenerator.instance(Secretary.extension);
     const applicantsGenerator = ApplicantGenerator.instance.updatedWithStatus;
     rejectedCompany = await companiesGenerator({ status: ApprovalStatus.rejected, admin });
     approvedCompany = await companiesGenerator({ status: ApprovalStatus.approved, admin });
@@ -63,6 +71,17 @@ describe("getAdminTasks", () => {
     rejectedApplicant = await applicantsGenerator({ status: ApprovalStatus.rejected, admin });
     approvedApplicant = await applicantsGenerator({ status: ApprovalStatus.approved, admin });
     pendingApplicant = await applicantsGenerator();
+    const offers = await OfferGenerator.instance.updatedWithStatus();
+    const secretary = admin.secretary;
+    rejectedOffer = await offers.next(
+      { companyUuid: approvedCompany.uuid, secretary, status: ApprovalStatus.rejected }
+    ).value;
+    approvedOffer = await offers.next(
+      { companyUuid: approvedCompany.uuid, secretary, status: ApprovalStatus.approved }
+    ).value;
+    pendingOffer = await offers.next(
+      { companyUuid: approvedCompany.uuid, secretary, status: ApprovalStatus.pending }
+    ).value;
 
     allTasksByDescUpdatedAt = [
       rejectedCompany,
@@ -70,12 +89,14 @@ describe("getAdminTasks", () => {
       pendingCompany,
       rejectedApplicant,
       approvedApplicant,
-      pendingApplicant
+      pendingApplicant,
+      rejectedOffer,
+      approvedOffer,
+      pendingOffer
     ].sort(task => -task.updatedAt);
   });
 
   const getAdminTasks = async (filter: IAdminTasksFilter) => {
-    const { apolloClient } = await TestClientGenerator.admin();
     const { errors, data } = await apolloClient.query({
       query: GET_ADMIN_TASKS,
       variables: filter
@@ -106,7 +127,7 @@ describe("getAdminTasks", () => {
     const result = await getAdminTasks({
       adminTaskTypes: [],
       statuses: [ApprovalStatus.pending],
-      secretary: Secretary.graduados
+      secretary: admin.secretary
     });
     expect(result).toEqual({ results: [], shouldFetchMore: false });
   });
@@ -115,7 +136,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [pendingCompany],
       [ApprovalStatus.pending],
-      Secretary.graduados
+      admin.secretary
     );
   });
 
@@ -123,7 +144,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [approvedCompany],
       [ApprovalStatus.approved],
-      Secretary.graduados
+      admin.secretary
     );
   });
 
@@ -131,7 +152,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [rejectedCompany],
       [ApprovalStatus.rejected],
-      Secretary.graduados
+      admin.secretary
     );
   });
 
@@ -139,7 +160,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [pendingApplicant],
       [ApprovalStatus.pending],
-      Secretary.graduados
+      admin.secretary
     );
   });
 
@@ -147,7 +168,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [approvedApplicant],
       [ApprovalStatus.approved],
-      Secretary.graduados
+      admin.secretary
     );
   });
 
@@ -155,7 +176,31 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [rejectedApplicant],
       [ApprovalStatus.rejected],
-      Secretary.graduados
+      admin.secretary
+    );
+  });
+
+  it("returns only pending offers", async () => {
+    await expectToFindAdminTaskWithStatuses(
+      [pendingOffer],
+      [ApprovalStatus.pending],
+      admin.secretary
+    );
+  });
+
+  it("returns only approved offers", async () => {
+    await expectToFindAdminTaskWithStatuses(
+      [approvedOffer],
+      [ApprovalStatus.approved],
+      admin.secretary
+    );
+  });
+
+  it("returns only rejected offers", async () => {
+    await expectToFindAdminTaskWithStatuses(
+      [rejectedOffer],
+      [ApprovalStatus.rejected],
+      admin.secretary
     );
   });
 
@@ -163,15 +208,15 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [pendingApplicant, pendingCompany],
       [ApprovalStatus.pending],
-      Secretary.graduados
+      admin.secretary
     );
   });
 
-  it("sorts all applicants and companies in any status by updated timestamp", async () => {
+  it("sorts all applicants, companies and offer in any status by updated timestamp", async () => {
     const result = await getAdminTasks({
-      adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
+      adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company, AdminTaskType.Offer],
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
-      secretary: Secretary.graduados
+      secretary: admin.secretary
     });
     expect(result.results.map(adminTask => adminTask.uuid)).toEqual([
       pendingApplicant.uuid,
@@ -191,13 +236,13 @@ describe("getAdminTasks", () => {
     const lastTaskIndex = 3;
     const lastTask = allTasksByDescUpdatedAt[lastTaskIndex];
     const result = await getAdminTasks({
-      adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
+      adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company, AdminTaskType.Offer],
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
       updatedBeforeThan: {
         dateTime: lastTask.updatedAt.toISOString(),
         uuid: lastTask.uuid
       },
-      secretary: Secretary.graduados
+      secretary: admin.secretary
     });
     expect(result.shouldFetchMore).toEqual(false);
     expect(
@@ -228,7 +273,7 @@ describe("getAdminTasks", () => {
       const { errors } = await apolloClient.query({
         query: GET_ADMIN_TASKS,
         variables: {
-          adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company],
+          adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company, AdminTaskType.Offer],
           statuses: [ApprovalStatus.pending]
         }
       });

@@ -27,6 +27,7 @@ export const getAdminTasks = {
     { currentUser }: { currentUser: IAdminUser }
   ) => {
     const admin = await AdminRepository.findByUserUuid(currentUser.admin.userUuid);
-    return AdminTaskRepository.find({ ...filter, secretary: admin.secretary });
+    const a = await AdminTaskRepository.find({ ...filter, secretary: admin.secretary });
+    return a;
   }
 };
