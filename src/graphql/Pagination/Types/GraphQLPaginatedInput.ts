@@ -6,12 +6,12 @@ export const GraphQLPaginatedInput = new GraphQLInputObjectType({
   name: "PaginatedInput",
   fields: () => ({
     dateTime: {
-      type: nonNull(GraphQLDateTime)
+      type: nonNull(GraphQLDateTime),
     },
     uuid: {
-      type: nonNull(ID)
-    }
-  })
+      type: nonNull(ID),
+    },
+  }),
 });
 
 export interface IPaginatedInput {

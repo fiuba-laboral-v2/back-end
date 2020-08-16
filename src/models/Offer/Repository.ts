@@ -12,52 +12,58 @@ import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export const OfferRepository = {
-  create: (
-    {
-      careers = [],
-      sections = [],
-      ...attributes
-    }: ICreateOffer) => {
+  create: ({ careers = [], sections = [], ...attributes }: ICreateOffer) => {
     const offer = new Offer(attributes);
     return OfferRepository.save(offer, sections, careers);
   },
   update: async (offer: IOffer & { uuid: string }) => {
     const [, [updatedOffer]] = await Offer.update(offer, {
       where: { uuid: offer.uuid },
-      returning: true
+      returning: true,
     });
     if (!updatedOffer) throw new OfferNotFound(offer.uuid);
     return updatedOffer;
   },
-  updateStatus: async (
-    { uuid, secretary, status }: { uuid: string, secretary: Secretary, status: ApprovalStatus }
-  ) => {
+  updateStatus: async ({
+    uuid,
+    secretary,
+    status,
+  }: {
+    uuid: string;
+    secretary: Secretary;
+    status: ApprovalStatus;
+  }) => {
     const offerAttributes = {
-      ...(secretary === Secretary.graduados && { graduadosApprovalStatus: status }),
-      ...(secretary === Secretary.extension && { extensionApprovalStatus: status })
+      ...(secretary === Secretary.graduados && {
+        graduadosApprovalStatus: status,
+      }),
+      ...(secretary === Secretary.extension && {
+        extensionApprovalStatus: status,
+      }),
     };
 
     const [, [updatedOffer]] = await Offer.update(offerAttributes, {
       where: { uuid },
-      returning: true
+      returning: true,
     });
     if (!updatedOffer) throw new OfferNotFound(uuid);
     return updatedOffer;
   },
-  save: async (
-    offer: Offer,
-    sections: IOfferSection[],
-    offersCareers: IOfferCareer[]
-  ) => Database.transaction(async transaction => {
-    await offer.save({ transaction });
-    await Promise.all(sections.map(section =>
-      OfferSection.create({ ...section, offerUuid: offer.uuid }, { transaction })
-    ));
-    await Promise.all(offersCareers.map(({ careerCode }) =>
-      OfferCareer.create({ careerCode, offerUuid: offer.uuid }, { transaction })
-    ));
-    return offer;
-  }),
+  save: async (offer: Offer, sections: IOfferSection[], offersCareers: IOfferCareer[]) =>
+    Database.transaction(async transaction => {
+      await offer.save({ transaction });
+      await Promise.all(
+        sections.map(section =>
+          OfferSection.create({ ...section, offerUuid: offer.uuid }, { transaction })
+        )
+      );
+      await Promise.all(
+        offersCareers.map(({ careerCode }) =>
+          OfferCareer.create({ careerCode, offerUuid: offer.uuid }, { transaction })
+        )
+      );
+      return offer;
+    }),
   findByUuid: async (uuid: string) => {
     const offer = await Offer.findByPk(uuid);
     if (!offer) throw new OfferNotFound(uuid);
@@ -72,27 +78,29 @@ export const OfferRepository = {
           [Op.or]: [
             {
               updatedAt: {
-                [Op.lt]: updatedBeforeThan.dateTime.toISOString()
-              }
+                [Op.lt]: updatedBeforeThan.dateTime.toISOString(),
+              },
             },
             {
               updatedAt: updatedBeforeThan.dateTime.toISOString(),
               uuid: {
-                [Op.lt]: updatedBeforeThan.uuid
-              }
-            }
-          ]
-        }
+                [Op.lt]: updatedBeforeThan.uuid,
+              },
+            },
+          ],
+        },
       }),
-      order: [["updatedAt", "DESC"], ["uuid", "DESC"]],
-      limit
+      order: [
+        ["updatedAt", "DESC"],
+        ["uuid", "DESC"],
+      ],
+      limit,
     });
     return {
       shouldFetchMore: result.length === limit,
-      results: result.slice(0, limit - 1)
+      results: result.slice(0, limit - 1),
     };
   },
-  findByCompanyUuid: (companyUuid: string) =>
-    Offer.findAll({ where: { companyUuid } }),
-  truncate: () => Offer.truncate({ cascade: true })
+  findByCompanyUuid: (companyUuid: string) => Offer.findAll({ where: { companyUuid } }),
+  truncate: () => Offer.truncate({ cascade: true }),
 };

@@ -5,24 +5,24 @@ const GraphQLLinkInput = new GraphQLInputObjectType({
   name: "LinkInput",
   fields: () => ({
     name: {
-      type: nonNull(String)
+      type: nonNull(String),
     },
     url: {
-      type: nonNull(String)
-    }
-  })
+      type: nonNull(String),
+    },
+  }),
 });
 
 const GraphQLLink = new GraphQLObjectType({
   name: "Link",
   fields: () => ({
     name: {
-      type: nonNull(String)
+      type: nonNull(String),
     },
     url: {
-      type: nonNull(String)
-    }
-  })
+      type: nonNull(String),
+    },
+  }),
 });
 
 export { GraphQLLinkInput, GraphQLLink };

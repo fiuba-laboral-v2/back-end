@@ -7,17 +7,16 @@ import {
   validateCuit,
   validateEmail,
   validateName,
-  validateURL
+  validateURL,
 } from "validations-fiuba-laboral-v2";
 
 @Table({ tableName: "Companies" })
 export class Company extends Model<Company> {
-
   @Column({
     allowNull: false,
     primaryKey: true,
     type: UUID,
-    defaultValue: UUIDV4
+    defaultValue: UUIDV4,
   })
   public uuid: string;
 
@@ -51,14 +50,14 @@ export class Company extends Model<Company> {
   @Column({
     allowNull: false,
     type: DATE,
-    defaultValue: new Date()
+    defaultValue: new Date(),
   })
   public createdAt: Date;
 
   @Column({
     allowNull: false,
     type: ENUM<string>({ values: approvalStatuses }),
-    defaultValue: ApprovalStatus.pending
+    defaultValue: ApprovalStatus.pending,
   })
   public approvalStatus: ApprovalStatus;
 

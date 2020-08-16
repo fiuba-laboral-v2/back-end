@@ -9,17 +9,17 @@ export const updateCompanyApprovalStatus = {
   type: GraphQLCompany,
   args: {
     uuid: {
-      type: nonNull(ID)
+      type: nonNull(ID),
     },
     approvalStatus: {
-      type: nonNull(GraphQLApprovalStatus)
-    }
+      type: nonNull(GraphQLApprovalStatus),
+    },
   },
   resolve: async (
     _: undefined,
     { uuid, approvalStatus }: IUpdateCompanyApprovalStatusArguments,
     { currentUser }: { currentUser: IAdminUser }
-  ) => CompanyRepository.updateApprovalStatus(currentUser.admin.userUuid, uuid, approvalStatus)
+  ) => CompanyRepository.updateApprovalStatus(currentUser.admin.userUuid, uuid, approvalStatus),
 };
 
 interface IUpdateCompanyApprovalStatusArguments {

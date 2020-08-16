@@ -7,35 +7,35 @@ export const createCompany = {
   type: GraphQLCompany,
   args: {
     cuit: {
-      type: nonNull(String)
+      type: nonNull(String),
     },
     companyName: {
-      type: nonNull(String)
+      type: nonNull(String),
     },
     slogan: {
-      type: String
+      type: String,
     },
     description: {
-      type: String
+      type: String,
     },
     logo: {
-      type: String
+      type: String,
     },
     website: {
-      type: String
+      type: String,
     },
     email: {
-      type: String
+      type: String,
     },
     phoneNumbers: {
-      type: List(String)
+      type: List(String),
     },
     photos: {
-      type: List(String)
+      type: List(String),
     },
     user: {
-      type: nonNull(GraphQLUserCreateInput)
-    }
+      type: nonNull(GraphQLUserCreateInput),
+    },
   },
-  resolve: (_: undefined, args: ICompany) => CompanyRepository.create(args)
+  resolve: (_: undefined, args: ICompany) => CompanyRepository.create(args),
 };

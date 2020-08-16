@@ -7,10 +7,10 @@ export const OfferApprovalEventRepository = {
       {
         adminUserUuid,
         offerUuid: offer.uuid,
-        status
+        status,
       },
       { transaction }
     ),
   findAll: () => OfferApprovalEvent.findAll(),
-  truncate: () => OfferApprovalEvent.truncate({ cascade: true })
+  truncate: () => OfferApprovalEvent.truncate({ cascade: true }),
 };

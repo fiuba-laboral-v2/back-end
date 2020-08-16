@@ -4,21 +4,22 @@ import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
 import { UUID_REGEX } from "../../index";
 
 describe("ApplicantApprovalEvent", () => {
-
   const expectToCreateAValidInstanceWithAStatus = async (status: ApprovalStatus) => {
     const applicantApprovalEventAttributes = {
       adminUserUuid: "cfe18465-9454-48b6-80bc-375411650d99",
       applicantUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
-      status
+      status,
     };
     const applicantApprovalEvent = new ApplicantApprovalEvent(applicantApprovalEventAttributes);
     await expect(applicantApprovalEvent.validate()).resolves.not.toThrow();
-    expect(applicantApprovalEvent).toEqual(expect.objectContaining({
-      uuid: expect.stringMatching(UUID_REGEX),
-      createdAt: expect.any(Date),
-      updatedAt: expect.any(Date),
-      ...applicantApprovalEventAttributes
-    }));
+    expect(applicantApprovalEvent).toEqual(
+      expect.objectContaining({
+        uuid: expect.stringMatching(UUID_REGEX),
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
+        ...applicantApprovalEventAttributes,
+      })
+    );
   };
 
   it("creates a valid pending ApplicantApprovalEvent", async () => {
@@ -37,7 +38,7 @@ describe("ApplicantApprovalEvent", () => {
     const applicantApprovalEvent = new ApplicantApprovalEvent({
       adminUserUuid: "cfe18465-9454-48b6-80bc-375411650d99",
       applicantUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
-      status: "notDefinedStatusInEnum"
+      status: "notDefinedStatusInEnum",
     });
     await expect(applicantApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -48,7 +49,7 @@ describe("ApplicantApprovalEvent", () => {
   it("throws an error if no adminUserUuid is provided", async () => {
     const applicantApprovalEvent = new ApplicantApprovalEvent({
       applicantUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
-      status: ApprovalStatus.approved
+      status: ApprovalStatus.approved,
     });
     await expect(applicantApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -59,7 +60,7 @@ describe("ApplicantApprovalEvent", () => {
   it("throws an error if no applicantUuid is provided", async () => {
     const applicantApprovalEvent = new ApplicantApprovalEvent({
       adminUserUuid: "cfe18465-9454-48b6-80bc-375411650d99",
-      status: ApprovalStatus.approved
+      status: ApprovalStatus.approved,
     });
     await expect(applicantApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -70,7 +71,7 @@ describe("ApplicantApprovalEvent", () => {
   it("throws an error if no status is provided", async () => {
     const applicantApprovalEvent = new ApplicantApprovalEvent({
       adminUserUuid: "cfe18465-9454-48b6-80bc-375411650d99",
-      applicantUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27"
+      applicantUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
     });
     await expect(applicantApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -81,7 +82,7 @@ describe("ApplicantApprovalEvent", () => {
   it("throws an error if no status is provided", async () => {
     const applicantApprovalEvent = new ApplicantApprovalEvent({
       adminUserUuid: "cfe18465-9454-48b6-80bc-375411650d99",
-      applicantUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27"
+      applicantUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
     });
     await expect(applicantApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -94,7 +95,7 @@ describe("ApplicantApprovalEvent", () => {
       uuid: "invalidFormat",
       adminUserUuid: "cfe18465-9454-48b6-80bc-375411650d99",
       applicantUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
-      status: ApprovalStatus.approved
+      status: ApprovalStatus.approved,
     });
     await expect(applicantApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -106,7 +107,7 @@ describe("ApplicantApprovalEvent", () => {
     const applicantApprovalEvent = new ApplicantApprovalEvent({
       adminUserUuid: "invalidFormat",
       applicantUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
-      status: ApprovalStatus.approved
+      status: ApprovalStatus.approved,
     });
     await expect(applicantApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -118,7 +119,7 @@ describe("ApplicantApprovalEvent", () => {
     const applicantApprovalEvent = new ApplicantApprovalEvent({
       adminUserUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
       applicantUuid: "invalidFormat",
-      status: ApprovalStatus.approved
+      status: ApprovalStatus.approved,
     });
     await expect(applicantApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,

@@ -7,13 +7,13 @@ import { CareerGenerator } from "$generators/Career";
 import { TestClientGenerator } from "$generators/TestClient";
 
 const GET_CAREERS = gql`
-    query getCareers {
-        getCareers {
-            code
-            description
-            credits
-        }
+  query getCareers {
+    getCareers {
+      code
+      description
+      credits
     }
+  }
 `;
 
 describe("getCareers", () => {
@@ -28,15 +28,13 @@ describe("getCareers", () => {
 
     const { data, errors } = await apolloClient.query({ query: GET_CAREERS });
     expect(errors).toBeUndefined();
-    expect(data!.getCareers).toMatchObject(
-      [
-        {
-          code: career.code,
-          credits: career.credits,
-          description: career.description
-        }
-      ]
-    );
+    expect(data!.getCareers).toMatchObject([
+      {
+        code: career.code,
+        credits: career.credits,
+        description: career.description,
+      },
+    ]);
   });
 
   it("works if there is no current user", async () => {

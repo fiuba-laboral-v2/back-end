@@ -12,12 +12,12 @@ describe("ApplicantLink", () => {
       email: "sblanco@yahoo.com",
       password: "fdmgkfHGH4353",
       name: "Bruno",
-      surname: "Diaz"
+      surname: "Diaz",
     });
     applicant = await Applicant.create({
       padron: 1,
       description: "Batman",
-      userUuid: userUuid
+      userUuid: userUuid,
     });
   });
 
@@ -25,23 +25,21 @@ describe("ApplicantLink", () => {
     const params = {
       applicantUuid: applicant.uuid,
       name: "Google",
-      url: "www.google.com"
+      url: "www.google.com",
     };
     const applicantLink = await ApplicantLink.create(params);
 
     expect(applicantLink).toMatchObject({
       name: params.name,
-      url: params.url
+      url: params.url,
     });
   });
 
   it("should throw an error if no name is provided", async () => {
-    const applicantLink = new ApplicantLink(
-      {
-        applicantUuid: applicant.uuid,
-        url: "www.google.com"
-      }
-    );
+    const applicantLink = new ApplicantLink({
+      applicantUuid: applicant.uuid,
+      url: "www.google.com",
+    });
     await expect(applicantLink.validate()).rejects.toThrow(ValidationError);
   });
 
@@ -49,18 +47,24 @@ describe("ApplicantLink", () => {
     const applicantLink = new ApplicantLink({
       applicantUuid: applicant.uuid,
       name: "Google",
-      url: "http://google"
+      url: "http://google",
     });
     await expect(applicantLink.validate()).rejects.toThrow("La URL es inválida");
   });
 
   it("should throw an error if no url is provided", async () => {
-    const applicantLink = new ApplicantLink({ applicantUuid: applicant.uuid, name: "Google" });
+    const applicantLink = new ApplicantLink({
+      applicantUuid: applicant.uuid,
+      name: "Google",
+    });
     await expect(applicantLink.validate()).rejects.toThrow();
   });
 
   it("should throw an error if no applicantUuid is provided", async () => {
-    const applicantLink = new ApplicantLink({ name: "Google", url: "www.google.com" });
+    const applicantLink = new ApplicantLink({
+      name: "Google",
+      url: "www.google.com",
+    });
     await expect(applicantLink.validate()).rejects.toThrow();
   });
 });

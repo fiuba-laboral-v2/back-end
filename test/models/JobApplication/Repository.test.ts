@@ -23,12 +23,10 @@ describe("JobApplicationRepository", () => {
       const company = await CompanyGenerator.instance.withMinimumData();
       const offer = await offers.next({ companyUuid: company.uuid }).value;
       const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
-      expect(jobApplication).toMatchObject(
-        {
-          offerUuid: offer.uuid,
-          applicantUuid: applicant.uuid
-        }
-      );
+      expect(jobApplication).toMatchObject({
+        offerUuid: offer.uuid,
+        applicantUuid: applicant.uuid,
+      });
     });
 
     it("should create four valid jobApplications for for the same offer", async () => {
@@ -43,7 +41,7 @@ describe("JobApplicationRepository", () => {
           JobApplicationRepository.apply(applicant1.uuid, offer),
           JobApplicationRepository.apply(applicant2.uuid, offer),
           JobApplicationRepository.apply(applicant3.uuid, offer),
-          JobApplicationRepository.apply(applicant4.uuid, offer)
+          JobApplicationRepository.apply(applicant4.uuid, offer),
         ])
       ).resolves.not.toThrow();
     });
@@ -56,8 +54,8 @@ describe("JobApplicationRepository", () => {
         JobApplicationRepository.apply(notExistingApplicantUuid, offer)
       ).rejects.toThrowErrorWithMessage(
         ForeignKeyConstraintError,
-        "insert or update on table \"JobApplications\" violates foreign key " +
-        "constraint \"JobApplications_applicantUuid_fkey\""
+        'insert or update on table "JobApplications" violates foreign key ' +
+          'constraint "JobApplications_applicantUuid_fkey"'
       );
     });
 
@@ -65,14 +63,12 @@ describe("JobApplicationRepository", () => {
       const { uuid: applicantUuid } = await ApplicantGenerator.instance.withMinimumData();
       const jobApplication = new JobApplication({
         offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
-        applicantUuid
+        applicantUuid,
       });
-      await expect(
-        jobApplication.save()
-      ).rejects.toThrowErrorWithMessage(
+      await expect(jobApplication.save()).rejects.toThrowErrorWithMessage(
         ForeignKeyConstraintError,
-        "insert or update on table \"JobApplications\" violates foreign key " +
-        "constraint \"JobApplications_offerUuid_fkey\""
+        'insert or update on table "JobApplications" violates foreign key ' +
+          'constraint "JobApplications_offerUuid_fkey"'
       );
     });
 
@@ -127,32 +123,28 @@ describe("JobApplicationRepository", () => {
   });
 
   describe("findLatestByCompanyUuid", () => {
-    it ("returns the only application for my company", async () => {
+    it("returns the only application for my company", async () => {
       const applicant = await ApplicantGenerator.instance.withMinimumData();
       const company = await CompanyGenerator.instance.withMinimumData();
       const offer = await offers.next({ companyUuid: company.uuid }).value;
       await JobApplicationRepository.apply(applicant.uuid, offer);
-      const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid(
-        company.uuid
-      );
+      const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid(company.uuid);
       expect(jobApplications.length).toEqual(1);
       expect(jobApplications).toMatchObject([
         {
           offerUuid: offer.uuid,
-          applicantUuid: applicant.uuid
-        }
+          applicantUuid: applicant.uuid,
+        },
       ]);
     });
 
-    it ("returns no job applications if my company has any", async () => {
+    it("returns no job applications if my company has any", async () => {
       const company = await CompanyGenerator.instance.withMinimumData();
-      const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid(
-        company.uuid
-      );
+      const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid(company.uuid);
       expect(jobApplications.length).toEqual(0);
     });
 
-    it ("returns the latest job applications first for my company", async () => {
+    it("returns the latest job applications first for my company", async () => {
       const applicant = await ApplicantGenerator.instance.withMinimumData();
       const myCompany = await CompanyGenerator.instance.withMinimumData();
       const anotherCompany = await CompanyGenerator.instance.withMinimumData();
@@ -170,12 +162,12 @@ describe("JobApplicationRepository", () => {
       expect(jobApplications).toMatchObject([
         {
           offerUuid: myOffer2.uuid,
-          applicantUuid: applicant.uuid
+          applicantUuid: applicant.uuid,
         },
         {
           offerUuid: myOffer1.uuid,
-          applicantUuid: applicant.uuid
-        }
+          applicantUuid: applicant.uuid,
+        },
       ]);
     });
   });

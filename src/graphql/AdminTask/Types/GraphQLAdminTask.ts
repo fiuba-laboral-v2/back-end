@@ -12,5 +12,5 @@ export const GraphQLAdminTask = new GraphQLUnionType({
     if (value instanceof Applicant) return GraphQLApplicant;
     if (value instanceof Offer) return GraphQLOffer;
     throw new Error("Value is not of AdminTask type");
-  }
+  },
 });

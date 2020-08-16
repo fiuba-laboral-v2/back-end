@@ -8,26 +8,26 @@ export = {
         primaryKey: true,
         type: UUID,
         references: { model: "Applicants", key: "uuid" },
-        onDelete: "CASCADE"
+        onDelete: "CASCADE",
       },
       capabilityUuid: {
         allowNull: false,
         primaryKey: true,
         type: UUID,
         references: { model: "Capabilities", key: "uuid" },
-        onDelete: "CASCADE"
+        onDelete: "CASCADE",
       },
       createdAt: {
         allowNull: false,
-        type: DATE
+        type: DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: DATE
-      }
+        type: DATE,
+      },
     });
   },
   down: (queryInterface: QueryInterface) => {
     return queryInterface.dropTable("ApplicantsCapabilities");
-  }
+  },
 };

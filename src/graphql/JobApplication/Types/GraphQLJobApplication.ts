@@ -9,21 +9,21 @@ export const GraphQLJobApplication = new GraphQLObjectType<JobApplication>({
   name: "JobApplication",
   fields: () => ({
     applicantUuid: {
-      type: nonNull(String)
+      type: nonNull(String),
     },
     offerUuid: {
-      type: nonNull(String)
+      type: nonNull(String),
     },
     applicant: {
       type: nonNull(GraphQLApplicant),
-      resolve: jobApplication => jobApplication.getApplicant()
+      resolve: jobApplication => jobApplication.getApplicant(),
     },
     offer: {
       type: nonNull(GraphQLOffer),
-      resolve: jobApplication => jobApplication.getOffer()
+      resolve: jobApplication => jobApplication.getOffer(),
     },
     createdAt: {
-      type: nonNull(GraphQLDateTime)
-    }
-  })
+      type: nonNull(GraphQLDateTime),
+    },
+  }),
 });

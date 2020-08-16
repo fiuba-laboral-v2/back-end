@@ -10,49 +10,45 @@ export = {
             allowNull: false,
             type: STRING,
             references: { model: "Careers", key: "code" },
-            onDelete: "CASCADE"
+            onDelete: "CASCADE",
           },
           applicantUuid: {
             allowNull: false,
             type: UUID,
             references: { model: "Applicants", key: "uuid" },
-            onDelete: "CASCADE"
+            onDelete: "CASCADE",
           },
           currentCareerYear: {
             allowNull: true,
-            type: INTEGER
+            type: INTEGER,
           },
           approvedSubjectCount: {
             allowNull: true,
-            type: INTEGER
+            type: INTEGER,
           },
           isGraduate: {
             allowNull: false,
-            type: BOOLEAN
+            type: BOOLEAN,
           },
           createdAt: {
             allowNull: false,
-            type: DATE
+            type: DATE,
           },
           updatedAt: {
             allowNull: false,
-            type: DATE
-          }
+            type: DATE,
+          },
         },
         { transaction }
-        );
-      await queryInterface.addConstraint(
-        "ApplicantCareers",
-        ["careerCode", "applicantUuid"],
-        {
-          type: "primary key",
-          name: "ApplicantCareers_careerCode_applicantUuid_key",
-          transaction
-        }
       );
+      await queryInterface.addConstraint("ApplicantCareers", ["careerCode", "applicantUuid"], {
+        type: "primary key",
+        name: "ApplicantCareers_careerCode_applicantUuid_key",
+        transaction,
+      });
     });
   },
   down: (queryInterface: QueryInterface) => {
     return queryInterface.dropTable("ApplicantCareers");
-  }
+  },
 };

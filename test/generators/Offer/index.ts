@@ -26,17 +26,15 @@ interface IUpdatedWithStatus {
 export const OfferGenerator = {
   instance: {
     withObligatoryData: async (): Promise<TOfferGenerator> => {
-      const generator = GenericGenerator<Promise<Offer>, IOfferInput>(
-        (index, variables) =>
-          OfferRepository.create(withObligatoryData({ index, ...variables }))
+      const generator = GenericGenerator<Promise<Offer>, IOfferInput>((index, variables) =>
+        OfferRepository.create(withObligatoryData({ index, ...variables }))
       );
       await generator.next();
       return generator;
     },
     withOneSection: async (): Promise<TOfferGenerator> => {
-      const generator = GenericGenerator<Promise<Offer>, IOfferInput>(
-        (index, variables) =>
-          OfferRepository.create(withOneSection({ index, ...variables }))
+      const generator = GenericGenerator<Promise<Offer>, IOfferInput>((index, variables) =>
+        OfferRepository.create(withOneSection({ index, ...variables }))
       );
       await generator.next();
       return generator;
@@ -45,21 +43,24 @@ export const OfferGenerator = {
       const generator = GenericGenerator<Promise<Offer>, IOfferInput & IUpdatedWithStatus>(
         async (index, { status, secretary, ...variables }) => {
           const offer = await OfferRepository.create(withOneSection({ index, ...variables }));
-          return OfferRepository.updateStatus({ uuid: offer.uuid, status, secretary });
+          return OfferRepository.updateStatus({
+            uuid: offer.uuid,
+            status,
+            secretary,
+          });
         }
       );
       await generator.next();
       return generator;
-    }
+    },
   },
   data: {
     withObligatoryData: (): TOfferDataGenerator => {
-      const generator = GenericGenerator<IOfferAttributes, IOfferInput>(
-        (index, variables) =>
-          withObligatoryData({ index, ...variables })
+      const generator = GenericGenerator<IOfferAttributes, IOfferInput>((index, variables) =>
+        withObligatoryData({ index, ...variables })
       );
       generator.next();
       return generator;
-    }
-  }
+    },
+  },
 };

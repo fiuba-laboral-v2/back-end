@@ -4,17 +4,13 @@ import { companyTestClient } from "./Company";
 import { adminTestClient } from "./Admin";
 import {
   IApplicantTestClientAttributes,
-  ICompanyTestClientAttributes
+  ICompanyTestClientAttributes,
 } from "$generators/interfaces";
 import { IUserTestClientAttributes } from "../interfaces";
 
 export const TestClientGenerator = {
-  user: (attributes: IUserTestClientAttributes = {}) =>
-    userTestClient(attributes),
-  admin: (attributes: IUserTestClientAttributes = {}) =>
-    adminTestClient(attributes),
-  applicant: (attributes: IApplicantTestClientAttributes = {}) =>
-    applicantTestClient(attributes),
-  company: (attributes: ICompanyTestClientAttributes = {}) =>
-    companyTestClient(attributes)
+  user: (attributes: IUserTestClientAttributes = {}) => userTestClient(attributes),
+  admin: (attributes: IUserTestClientAttributes = {}) => adminTestClient(attributes),
+  applicant: (attributes: IApplicantTestClientAttributes = {}) => applicantTestClient(attributes),
+  company: (attributes: ICompanyTestClientAttributes = {}) => companyTestClient(attributes),
 };

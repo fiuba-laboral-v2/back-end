@@ -9,7 +9,7 @@ export interface ICompanyGeneratorAttributes {
 }
 
 export interface IApplicantGeneratorAttributes {
-  careers?: IApplicantCareer [];
+  careers?: IApplicantCareer[];
   capabilities?: string[];
   password?: string | null;
 }
@@ -32,13 +32,15 @@ interface ITestClientApprovalStatus {
 }
 
 export interface IUserTestClientAttributes
-  extends ITestClientAttributes, IUserGeneratorAttributes {
-}
+  extends ITestClientAttributes,
+    IUserGeneratorAttributes {}
 
 export interface ICompanyTestClientAttributes
-  extends ITestClientAttributes, ICompanyGeneratorAttributes, ITestClientApprovalStatus {
-}
+  extends ITestClientAttributes,
+    ICompanyGeneratorAttributes,
+    ITestClientApprovalStatus {}
 
 export interface IApplicantTestClientAttributes
-  extends ITestClientAttributes, IApplicantGeneratorAttributes, ITestClientApprovalStatus {
-}
+  extends ITestClientAttributes,
+    IApplicantGeneratorAttributes,
+    ITestClientApprovalStatus {}

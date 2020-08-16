@@ -12,28 +12,28 @@ export class Admin extends Model<Admin> {
     allowNull: false,
     references: { model: "Users", key: "uuid" },
     onDelete: "CASCADE",
-    type: UUID
+    type: UUID,
   })
   public userUuid: string;
 
   @Column({
     allowNull: false,
     type: ENUM<string>({ values: SecretaryEnumValues }),
-    ...isSecretary
+    ...isSecretary,
   })
   public secretary: Secretary;
 
   @Column({
     allowNull: false,
     type: DATE,
-    defaultValue: new Date()
+    defaultValue: new Date(),
   })
   public createdAt: Date;
 
   @Column({
     allowNull: false,
     type: DATE,
-    defaultValue: new Date()
+    defaultValue: new Date(),
   })
   public updatedAt: Date;
 

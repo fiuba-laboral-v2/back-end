@@ -1,13 +1,12 @@
 import { isEqual } from "lodash";
 
-const formatString = (word: string) =>
-  word.replace(/\s/g, "").toLowerCase().split("").sort();
+const formatString = (word: string) => word.replace(/\s/g, "").toLowerCase().split("").sort();
 
 const buildResponseMessage = (pass: boolean) => {
   const negation = pass ? "not" : "";
   return {
     pass,
-    message: () => `Expected ${negation} to have the exact same characters`
+    message: () => `Expected ${negation} to have the exact same characters`,
   };
 };
 

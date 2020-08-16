@@ -8,33 +8,33 @@ export const updateCurrentCompany = {
   type: GraphQLCompany,
   args: {
     companyName: {
-      type: String
+      type: String,
     },
     slogan: {
-      type: String
+      type: String,
     },
     description: {
-      type: String
+      type: String,
     },
     logo: {
-      type: String
+      type: String,
     },
     website: {
-      type: String
+      type: String,
     },
     email: {
-      type: String
+      type: String,
     },
     phoneNumbers: {
-      type: List(String)
+      type: List(String),
     },
     photos: {
-      type: List(String)
-    }
+      type: List(String),
+    },
   },
   resolve: (
     _: undefined,
     attributes: ICreateCompany,
     { currentUser }: { currentUser: ICompanyUser }
-  ) => CompanyRepository.update({ uuid: currentUser.company.uuid, ...attributes })
+  ) => CompanyRepository.update({ uuid: currentUser.company.uuid, ...attributes }),
 };

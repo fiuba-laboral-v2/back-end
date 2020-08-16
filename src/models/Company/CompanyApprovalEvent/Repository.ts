@@ -7,10 +7,10 @@ export const CompanyApprovalEventRepository = {
       {
         userUuid: adminUserUuid,
         companyUuid: company.uuid,
-        status: status
+        status: status,
       },
       { transaction }
     ),
   findAll: () => CompanyApprovalEvent.findAll(),
-  truncate: () => CompanyApprovalEvent.truncate({ cascade: true })
+  truncate: () => CompanyApprovalEvent.truncate({ cascade: true }),
 };

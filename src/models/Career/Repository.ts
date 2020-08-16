@@ -14,9 +14,16 @@ export const CareerRepository = {
     return career.save();
   },
   findByCodes: async (codes: string[]) => {
-    const careers = await Career.findAll({ where: { code: { [Op.or]: codes } } });
+    const careers = await Career.findAll({
+      where: { code: { [Op.or]: codes } },
+    });
     if (careers.length < codes.length) {
-      throw new CareersNotFound(difference(codes, map(careers, ({ code }) => code)));
+      throw new CareersNotFound(
+        difference(
+          codes,
+          map(careers, ({ code }) => code)
+        )
+      );
     }
     return careers;
   },
@@ -24,14 +31,14 @@ export const CareerRepository = {
     const [career] = await CareerRepository.findByCodes([codes]);
     return career;
   },
-  findAll: async () =>
-    Career.findAll(),
-  deleteByCode: (
-    code: string
-  ) => Database.transaction(async transaction => {
-    await ApplicantCareer.destroy({ where: { careerCode: code }, transaction });
-    return Career.destroy({ where: { code }, transaction });
-  }),
-  truncate: async () =>
-    Career.truncate({ cascade: true })
+  findAll: async () => Career.findAll(),
+  deleteByCode: (code: string) =>
+    Database.transaction(async transaction => {
+      await ApplicantCareer.destroy({
+        where: { careerCode: code },
+        transaction,
+      });
+      return Career.destroy({ where: { code }, transaction });
+    }),
+  truncate: async () => Career.truncate({ cascade: true }),
 };

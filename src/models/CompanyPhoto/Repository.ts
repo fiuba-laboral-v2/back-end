@@ -7,11 +7,11 @@ export const CompanyPhotoRepository = {
       photos.map(photo => ({ photo, companyUuid: company.uuid })),
       {
         transaction,
-        validate: true
+        validate: true,
       }
     );
   },
   truncate: async () => {
     return CompanyPhoto.destroy({ truncate: true });
-  }
+  },
 };

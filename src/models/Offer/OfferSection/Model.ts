@@ -8,14 +8,14 @@ export class OfferSection extends Model<OfferSection> {
     allowNull: false,
     primaryKey: true,
     type: UUID,
-    defaultValue: UUIDV4
+    defaultValue: UUIDV4,
   })
   public uuid: string;
 
   @ForeignKey(() => Offer)
   @Column({
     allowNull: false,
-    type: UUID
+    type: UUID,
   })
   public offerUuid: string;
 
@@ -24,20 +24,20 @@ export class OfferSection extends Model<OfferSection> {
 
   @Column({
     allowNull: false,
-    type: TEXT
+    type: TEXT,
   })
   public title: string;
 
   @Column({
     allowNull: false,
-    type: TEXT
+    type: TEXT,
   })
   public text: string;
 
   @Column({
     allowNull: false,
     autoIncrement: true,
-    type: INTEGER
+    type: INTEGER,
   })
   public displayOrder: number;
 }

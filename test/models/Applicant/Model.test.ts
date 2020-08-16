@@ -10,7 +10,7 @@ describe("Applicant", () => {
     const applicant = new Applicant({
       userUuid: generateUuid(),
       padron: 1,
-      description: "Batman"
+      description: "Batman",
     });
     await expect(applicant.validate()).resolves.not.toThrow();
   });
@@ -20,15 +20,17 @@ describe("Applicant", () => {
     const applicant = new Applicant({
       userUuid,
       padron: 1,
-      description: "Batman"
-    });
-    expect(applicant).toEqual(expect.objectContaining({
-      uuid: expect.stringMatching(UUID_REGEX),
-      userUuid,
-      padron: 1,
       description: "Batman",
-      approvalStatus: ApprovalStatus.pending
-    }));
+    });
+    expect(applicant).toEqual(
+      expect.objectContaining({
+        uuid: expect.stringMatching(UUID_REGEX),
+        userUuid,
+        padron: 1,
+        description: "Batman",
+        approvalStatus: ApprovalStatus.pending,
+      })
+    );
   });
 
   it("throws an error if approval status is not part of the enum values", async () => {
@@ -36,7 +38,7 @@ describe("Applicant", () => {
       userUuid: generateUuid(),
       padron: 98539,
       description: "Batman",
-      approvalStatus: "undefinedApprovalStatus"
+      approvalStatus: "undefinedApprovalStatus",
     });
     await expect(applicant.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -47,7 +49,7 @@ describe("Applicant", () => {
   it("throws an error if no userUuid is provided", async () => {
     const applicant = new Applicant({
       padron: 98539,
-      description: "Batman"
+      description: "Batman",
     });
     await expect(applicant.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -59,7 +61,7 @@ describe("Applicant", () => {
     const applicant = new Applicant({
       userUuid: generateUuid(),
       padron: 0,
-      description: "Batman"
+      description: "Batman",
     });
     await expect(applicant.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -71,7 +73,7 @@ describe("Applicant", () => {
     const applicant = new Applicant({
       userUuid: generateUuid(),
       padron: -243,
-      description: "Batman"
+      description: "Batman",
     });
     await expect(applicant.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -82,7 +84,7 @@ describe("Applicant", () => {
   it("throws an error if no padron is provided", async () => {
     const applicant = new Applicant({
       userUuid: generateUuid(),
-      description: "Batman"
+      description: "Batman",
     });
 
     await expect(applicant.validate()).rejects.toThrowErrorWithMessage(
@@ -95,7 +97,7 @@ describe("Applicant", () => {
     const applicant = new Applicant({
       userUuid: generateUuid(),
       padron: null,
-      description: "Batman"
+      description: "Batman",
     });
     await expect(applicant.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,

@@ -9,31 +9,31 @@ export const GraphQLUser = new GraphQLObjectType<User>({
   name: "User",
   fields: () => ({
     uuid: {
-      type: nonNull(ID)
+      type: nonNull(ID),
     },
     email: {
-      type: nonNull(String)
+      type: nonNull(String),
     },
     dni: {
-      type: String
+      type: String,
     },
     name: {
-      type: nonNull(String)
+      type: nonNull(String),
     },
     surname: {
-      type: nonNull(String)
+      type: nonNull(String),
     },
     admin: {
       type: GraphQLAdmin,
-      resolve: user => user.getAdmin()
+      resolve: user => user.getAdmin(),
     },
     applicant: {
       type: GraphQLApplicant,
-      resolve: user => user.getApplicant()
+      resolve: user => user.getApplicant(),
     },
     company: {
       type: GraphQLCompany,
-      resolve: user => user.getCompany()
-    }
-  })
+      resolve: user => user.getCompany(),
+    },
+  }),
 });

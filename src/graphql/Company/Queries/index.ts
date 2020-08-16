@@ -3,5 +3,5 @@ import { getCompanyByUuid } from "./getCompanyByUuid";
 
 export const companyQueries = {
   getCompanies,
-  getCompanyByUuid
+  getCompanyByUuid,
 };

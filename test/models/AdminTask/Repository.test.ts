@@ -35,23 +35,41 @@ describe("AdminTaskRepository", () => {
     admin = await AdminGenerator.instance(Secretary.extension);
     const applicantsGenerator = ApplicantGenerator.instance.updatedWithStatus;
 
-    rejectedCompany = await companiesGenerator({ status: ApprovalStatus.rejected, admin });
-    approvedCompany = await companiesGenerator({ status: ApprovalStatus.approved, admin });
+    rejectedCompany = await companiesGenerator({
+      status: ApprovalStatus.rejected,
+      admin,
+    });
+    approvedCompany = await companiesGenerator({
+      status: ApprovalStatus.approved,
+      admin,
+    });
     pendingCompany = await companiesGenerator();
-    rejectedApplicant = await applicantsGenerator({ status: ApprovalStatus.rejected, admin });
-    approvedApplicant = await applicantsGenerator({ status: ApprovalStatus.approved, admin });
+    rejectedApplicant = await applicantsGenerator({
+      status: ApprovalStatus.rejected,
+      admin,
+    });
+    approvedApplicant = await applicantsGenerator({
+      status: ApprovalStatus.approved,
+      admin,
+    });
     pendingApplicant = await applicantsGenerator();
     const offers = await OfferGenerator.instance.updatedWithStatus();
     const secretary = admin.secretary;
-    rejectedOffer = await offers.next(
-      { companyUuid: approvedCompany.uuid, secretary, status: ApprovalStatus.rejected }
-    ).value;
-    approvedOffer = await offers.next(
-      { companyUuid: approvedCompany.uuid, secretary, status: ApprovalStatus.approved }
-    ).value;
-    pendingOffer = await offers.next(
-      { companyUuid: approvedCompany.uuid, secretary, status: ApprovalStatus.pending }
-    ).value;
+    rejectedOffer = await offers.next({
+      companyUuid: approvedCompany.uuid,
+      secretary,
+      status: ApprovalStatus.rejected,
+    }).value;
+    approvedOffer = await offers.next({
+      companyUuid: approvedCompany.uuid,
+      secretary,
+      status: ApprovalStatus.approved,
+    }).value;
+    pendingOffer = await offers.next({
+      companyUuid: approvedCompany.uuid,
+      secretary,
+      status: ApprovalStatus.pending,
+    }).value;
 
     allTasksByDescUpdatedAt = [
       rejectedCompany,
@@ -62,7 +80,7 @@ describe("AdminTaskRepository", () => {
       pendingApplicant,
       rejectedOffer,
       approvedOffer,
-      pendingOffer
+      pendingOffer,
     ].sort(task => -task.updatedAt);
   });
 
@@ -74,11 +92,13 @@ describe("AdminTaskRepository", () => {
     const result = await AdminTaskRepository.find({
       adminTaskTypes: adminTasks.map(adminTask => adminTask.constructor.name) as any,
       statuses,
-      secretary
+      secretary,
     });
-    expect(result.results).toEqual(expect.arrayContaining(
-      adminTasks.map(adminTask => expect.objectContaining(adminTask.toJSON()))
-    ));
+    expect(result.results).toEqual(
+      expect.arrayContaining(
+        adminTasks.map(adminTask => expect.objectContaining(adminTask.toJSON()))
+      )
+    );
     expect(result.shouldFetchMore).toEqual(false);
   };
 
@@ -86,7 +106,7 @@ describe("AdminTaskRepository", () => {
     const result = await AdminTaskRepository.find({
       adminTaskTypes: [AdminTaskType.Applicant],
       statuses: [],
-      secretary: admin.secretary
+      secretary: admin.secretary,
     });
     expect(result).toEqual({ results: [], shouldFetchMore: false });
   });
@@ -95,7 +115,7 @@ describe("AdminTaskRepository", () => {
     const result = await AdminTaskRepository.find({
       adminTaskTypes: [],
       statuses: [ApprovalStatus.pending],
-      secretary: admin.secretary
+      secretary: admin.secretary,
     });
     expect(result).toEqual({ results: [], shouldFetchMore: false });
   });
@@ -104,7 +124,7 @@ describe("AdminTaskRepository", () => {
     const result = await AdminTaskRepository.find({
       adminTaskTypes: [],
       statuses: [],
-      secretary: admin.secretary
+      secretary: admin.secretary,
     });
     expect(result).toEqual({ results: [], shouldFetchMore: false });
   });
@@ -197,7 +217,7 @@ describe("AdminTaskRepository", () => {
         approvedApplicant,
         rejectedApplicant,
         approvedOffer,
-        rejectedOffer
+        rejectedOffer,
       ],
       [ApprovalStatus.approved, ApprovalStatus.rejected],
       admin.secretary
@@ -208,7 +228,7 @@ describe("AdminTaskRepository", () => {
     const result = await AdminTaskRepository.find({
       adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company, AdminTaskType.Offer],
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
-      secretary: admin.secretary
+      secretary: admin.secretary,
     });
     expect(result.results.map(adminTask => adminTask.uuid)).toEqual([
       pendingOffer.uuid,
@@ -219,7 +239,7 @@ describe("AdminTaskRepository", () => {
       rejectedApplicant.uuid,
       pendingCompany.uuid,
       approvedCompany.uuid,
-      rejectedCompany.uuid
+      rejectedCompany.uuid,
     ]);
     expect(result.results).toBeSortedBy({ key: "updatedAt", order: "desc" });
     expect(result.shouldFetchMore).toEqual(false);
@@ -235,15 +255,12 @@ describe("AdminTaskRepository", () => {
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
       updatedBeforeThan: {
         dateTime: lastTask.updatedAt,
-        uuid: lastTask.uuid
+        uuid: lastTask.uuid,
       },
-      secretary: admin.secretary
+      secretary: admin.secretary,
     });
     expect(result.shouldFetchMore).toEqual(true);
-    expect(
-      result.results
-        .map(task => task.uuid)
-    ).toEqual(
+    expect(result.results.map(task => task.uuid)).toEqual(
       allTasksByDescUpdatedAt
         .map(task => task.uuid)
         .slice(lastTaskIndex + 1, lastTaskIndex + 1 + itemsPerPage)
@@ -269,15 +286,16 @@ describe("AdminTaskRepository", () => {
         statuses: [ApprovalStatus.pending],
         updatedBeforeThan: {
           dateTime: firstTask.updatedAt,
-          uuid: firstTask.uuid
+          uuid: firstTask.uuid,
         },
-        secretary: admin.secretary
+        secretary: admin.secretary,
       });
       expect(result.shouldFetchMore).toEqual(false);
-      expect(
-        result.results.map(task => task.uuid)
-      ).toEqual(
-        companies.map(company => company.uuid).sort().reverse()
+      expect(result.results.map(task => task.uuid)).toEqual(
+        companies
+          .map(company => company.uuid)
+          .sort()
+          .reverse()
       );
     });
   });

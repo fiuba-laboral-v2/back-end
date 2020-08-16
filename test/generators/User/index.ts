@@ -13,7 +13,7 @@ export const UserGenerator = {
       email: `userTestClient${index}@mail.com`,
       password: password || "ASDqfdsfsdfwe234",
       name: "userName",
-      surname: "userSurname"
+      surname: "userSurname",
     });
-  }
+  },
 };

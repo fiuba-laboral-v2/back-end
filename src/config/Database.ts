@@ -22,7 +22,7 @@ import {
   OfferSection,
   OfferApprovalEvent,
   Section,
-  User
+  User,
 } from "$models";
 
 const models = [
@@ -45,7 +45,7 @@ const models = [
   OfferSection,
   OfferCareer,
   OfferApprovalEvent,
-  User
+  User,
 ];
 
 export class Database {

@@ -6,10 +6,10 @@ const getApplicant = {
   type: GraphQLApplicant,
   args: {
     uuid: {
-      type: nonNull(ID)
-    }
+      type: nonNull(ID),
+    },
   },
-  resolve: (_: undefined, { uuid }) => ApplicantRepository.findByUuid(uuid)
+  resolve: (_: undefined, { uuid }) => ApplicantRepository.findByUuid(uuid),
 };
 
 export { getApplicant };

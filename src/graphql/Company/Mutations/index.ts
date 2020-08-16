@@ -5,5 +5,5 @@ import { updateCompanyApprovalStatus } from "./updateCompanyApprovalStatus";
 export const companyMutations = {
   createCompany,
   updateCurrentCompany,
-  updateCompanyApprovalStatus
+  updateCompanyApprovalStatus,
 };

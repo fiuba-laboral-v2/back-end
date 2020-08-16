@@ -11,18 +11,18 @@ import { UUID_REGEX } from "$test/models";
 
 const SAVE_APPLICANT_WITH_COMPLETE_DATA = gql`
   mutation SaveApplicant(
-      $user: UserInput!,
-      $padron: Int!,
-      $careers: [ApplicantCareerInput]!,
-      $description: String,
-      $capabilities: [String]
-    ) {
+    $user: UserInput!
+    $padron: Int!
+    $careers: [ApplicantCareerInput]!
+    $description: String
+    $capabilities: [String]
+  ) {
     saveApplicant(
-        user: $user,
-        padron: $padron,
-        description: $description,
-        careers: $careers,
-        capabilities: $capabilities
+      user: $user
+      padron: $padron
+      description: $description
+      careers: $careers
+      capabilities: $capabilities
     ) {
       uuid
       user {
@@ -54,8 +54,8 @@ const SAVE_APPLICANT_WITH_COMPLETE_DATA = gql`
 `;
 
 const SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA = gql`
-  mutation SaveApplicant ($user: UserInput!,$padron: Int!,$careers: [ApplicantCareerInput]!) {
-    saveApplicant(user: $user,padron: $padron,careers: $careers) {
+  mutation SaveApplicant($user: UserInput!, $padron: Int!, $careers: [ApplicantCareerInput]!) {
+    saveApplicant(user: $user, padron: $padron, careers: $careers) {
       uuid
       user {
         email
@@ -84,14 +84,14 @@ describe("saveApplicant", () => {
         careerCode: career.code,
         approvedSubjectCount: 20,
         currentCareerYear: 3,
-        isGraduate: false
+        isGraduate: false,
       };
       const { data, errors } = await client.loggedOut().mutate({
         mutation: SAVE_APPLICANT_WITH_COMPLETE_DATA,
         variables: {
           ...applicantData,
-          careers: [applicantCareerData]
-        }
+          careers: [applicantCareerData],
+        },
       });
       expect(errors).toBeUndefined();
       expect(data!.saveApplicant).toEqual({
@@ -101,19 +101,21 @@ describe("saveApplicant", () => {
           dni: applicantData.user.dni,
           email: applicantData.user.email,
           name: applicantData.user.name,
-          surname: applicantData.user.surname
+          surname: applicantData.user.surname,
         },
         description: applicantData.description,
         padron: applicantData.padron,
         capabilities: [],
-        careers: [{
-          career: {
-            code: career.code,
-            description: career.description,
-            credits: career.credits
+        careers: [
+          {
+            career: {
+              code: career.code,
+              description: career.description,
+              credits: career.credits,
+            },
+            ...applicantCareerData,
           },
-          ...applicantCareerData
-        }]
+        ],
       });
     });
 
@@ -121,21 +123,19 @@ describe("saveApplicant", () => {
       const applicantData = ApplicantGenerator.data.minimum();
       const applicantCareerData = {
         careerCode: career.code,
-        isGraduate: true
+        isGraduate: true,
       };
       const { data, errors } = await client.loggedOut().mutate({
         mutation: SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA,
-        variables: { ...applicantData, careers: [applicantCareerData] }
+        variables: { ...applicantData, careers: [applicantCareerData] },
       });
       expect(errors).toBeUndefined();
-      expect(data!.saveApplicant).toEqual(
-        {
-          uuid: expect.stringMatching(UUID_REGEX),
-          user: { email: applicantData.user.email },
-          padron: applicantData.padron,
-          careers: [{ careerCode: applicantCareerData.careerCode }]
-        }
-      );
+      expect(data!.saveApplicant).toEqual({
+        uuid: expect.stringMatching(UUID_REGEX),
+        user: { email: applicantData.user.email },
+        padron: applicantData.padron,
+        careers: [{ careerCode: applicantCareerData.careerCode }],
+      });
     });
   });
 
@@ -146,8 +146,8 @@ describe("saveApplicant", () => {
       mutation: SAVE_APPLICANT_WITH_COMPLETE_DATA,
       variables: {
         ...applicantData,
-        careers: [{ careerCode: career.code }]
-      }
+        careers: [{ careerCode: career.code }],
+      },
     });
     expect(errors).not.toBeUndefined();
   });
@@ -157,12 +157,10 @@ describe("saveApplicant", () => {
     await UserRepository.create(applicantData.user);
     const { errors } = await client.loggedOut().mutate({
       mutation: SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA,
-      variables: applicantData
+      variables: applicantData,
     });
-    expect(
-      errors![0].extensions!.data
-    ).toEqual(
-      { errorType: "UserEmailAlreadyExistsError" }
-    );
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: "UserEmailAlreadyExistsError",
+    });
   });
 });

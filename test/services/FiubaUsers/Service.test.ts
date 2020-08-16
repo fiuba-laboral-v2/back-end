@@ -1,7 +1,7 @@
 import {
   FiubaUsersService,
   InvalidEmptyPasswordError,
-  InvalidEmptyUsernameError
+  InvalidEmptyUsernameError,
 } from "$services/FiubaUsers";
 import { Environment } from "$config/Environment";
 import { DniGenerator } from "$generators/DNI";
@@ -10,17 +10,20 @@ describe("FiubaUsersService", () => {
   const expectToReturnTrueForEnvironment = async (environment: string) => {
     Environment.NODE_ENV = environment;
     expect(
-      await FiubaUsersService.authenticate({ dni: DniGenerator.generate(), password: "password" })
+      await FiubaUsersService.authenticate({
+        dni: DniGenerator.generate(),
+        password: "password",
+      })
     ).toBe(true);
   };
 
-  afterEach(() => Environment.NODE_ENV = Environment.TEST);
+  afterEach(() => (Environment.NODE_ENV = Environment.TEST));
 
   it("throws an error if the username is empty", async () => {
     await expect(
       FiubaUsersService.authenticate({
         dni: "",
-        password: "password"
+        password: "password",
       })
     ).rejects.toThrowErrorWithMessage(
       InvalidEmptyUsernameError,
@@ -32,7 +35,7 @@ describe("FiubaUsersService", () => {
     await expect(
       FiubaUsersService.authenticate({
         dni: DniGenerator.generate(),
-        password: ""
+        password: "",
       })
     ).rejects.toThrowErrorWithMessage(
       InvalidEmptyPasswordError,

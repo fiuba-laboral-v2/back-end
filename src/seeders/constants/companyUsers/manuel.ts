@@ -9,12 +9,12 @@ export const manuel = {
     name: "Manuel",
     surname: "Llauró",
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   },
   companyUser: {
     companyUuid: uuids.companies.devartis,
     userUuid: uuids.manuel.user,
     createdAt: new Date(),
-    updatedAt: new Date()
-  }
+    updatedAt: new Date(),
+  },
 };

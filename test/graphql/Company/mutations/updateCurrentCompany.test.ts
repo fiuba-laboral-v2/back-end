@@ -9,32 +9,34 @@ import { client } from "../../ApolloTestClient";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 const UPDATE_CURRENT_COMPANY = gql`
-    mutation (
-        $companyName: String,
-        $slogan: String,
-        $description: String,
-        $logo: String,
-        $website: String,
-        $email: String,
-        $phoneNumbers: [String],
-        $photos: [String]) {
-        updateCurrentCompany(
-            companyName: $companyName,
-            slogan: $slogan, description: $description,
-            logo: $logo,
-            website: $website,
-            email: $email,
-            phoneNumbers: $phoneNumbers,
-            photos: $photos
-        ) {
-            companyName
-            slogan
-            description
-            logo
-            website
-            email
-        }
+  mutation(
+    $companyName: String
+    $slogan: String
+    $description: String
+    $logo: String
+    $website: String
+    $email: String
+    $phoneNumbers: [String]
+    $photos: [String]
+  ) {
+    updateCurrentCompany(
+      companyName: $companyName
+      slogan: $slogan
+      description: $description
+      logo: $logo
+      website: $website
+      email: $email
+      phoneNumbers: $phoneNumbers
+      photos: $photos
+    ) {
+      companyName
+      slogan
+      description
+      logo
+      website
+      email
     }
+  }
 `;
 
 describe("updateCurrentCompany", () => {
@@ -52,11 +54,11 @@ describe("updateCurrentCompany", () => {
         description: "new description",
         logo: "",
         website: "http://www.new-site.com",
-        email: "old@devartis.com"
+        email: "old@devartis.com",
       };
       const { data, errors } = await apolloClient.mutate({
         mutation: UPDATE_CURRENT_COMPANY,
-        variables: dataToUpdate
+        variables: dataToUpdate,
       });
       expect(errors).toBeUndefined();
       expect(data!.updateCurrentCompany).toEqual(dataToUpdate);
@@ -69,10 +71,12 @@ describe("updateCurrentCompany", () => {
       const dataToUpdate = { companyName: "new company name" };
       const { errors } = await apolloClient.mutate({
         mutation: UPDATE_CURRENT_COMPANY,
-        variables: dataToUpdate
+        variables: dataToUpdate,
       });
 
-      expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: AuthenticationError.name,
+      });
     });
 
     it("throws an error if current user is not a company user", async () => {
@@ -80,10 +84,12 @@ describe("updateCurrentCompany", () => {
       const dataToUpdate = { companyName: "new company name" };
       const { errors } = await apolloClient.mutate({
         mutation: UPDATE_CURRENT_COMPANY,
-        variables: dataToUpdate
+        variables: dataToUpdate,
       });
 
-      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: UnauthorizedError.name,
+      });
     });
   });
 });

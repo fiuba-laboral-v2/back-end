@@ -18,4 +18,4 @@ const groupByColumns = (adminTaskModelsTypes: AdminTaskModelsType[]) =>
 export const groupTableNamesByColumn = (adminTaskModelsTypes: AdminTaskModelsType[]) =>
   mapValues(groupByColumns(adminTaskModelsTypes), columnTableObjects =>
     columnTableObjects.map(columnTableObject => columnTableObject.tableName)
-);
+  );

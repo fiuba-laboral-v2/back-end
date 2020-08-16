@@ -10,33 +10,28 @@ export = {
             allowNull: false,
             references: { model: "Users", key: "uuid" },
             onDelete: "CASCADE",
-            type: UUID
+            type: UUID,
           },
           secretary: {
             allowNull: false,
-            type: "secretary"
+            type: "secretary",
           },
           createdAt: {
             allowNull: false,
-            type: DATE
+            type: DATE,
           },
           updatedAt: {
             allowNull: false,
-            type: DATE
-          }
+            type: DATE,
+          },
         },
         { transaction }
       );
-      await queryInterface.addConstraint(
-        "Admins",
-        ["userUuid"],
-        {
-          type: "primary key",
-          name: "Admins_userUuid_key",
-          transaction
-        }
-      );
+      await queryInterface.addConstraint("Admins", ["userUuid"], {
+        type: "primary key",
+        name: "Admins_userUuid_key",
+        transaction,
+      });
     }),
-  down: (queryInterface: QueryInterface) =>
-    queryInterface.dropTable("Admins")
+  down: (queryInterface: QueryInterface) => queryInterface.dropTable("Admins"),
 };

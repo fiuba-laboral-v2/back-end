@@ -11,32 +11,32 @@ const updateCurrentApplicant = {
   type: GraphQLApplicant,
   args: {
     user: {
-      type: GraphQLUserUpdateInput
+      type: GraphQLUserUpdateInput,
     },
     padron: {
-      type: Int
+      type: Int,
     },
     description: {
-      type: String
+      type: String,
     },
     careers: {
-      type: List(GraphQLApplicantCareerInput)
+      type: List(GraphQLApplicantCareerInput),
     },
     capabilities: {
-      type: List(String)
+      type: List(String),
     },
     sections: {
-      type: List(GraphQLSectionInput)
+      type: List(GraphQLSectionInput),
     },
     links: {
-      type: List(GraphQLLinkInput)
-    }
+      type: List(GraphQLLinkInput),
+    },
   },
   resolve: async (
     _: undefined,
     props: IApplicantEditable,
     { currentUser }: { currentUser: IApplicantUser }
-  ) => ApplicantRepository.update({ ...props, uuid: currentUser.applicant.uuid })
+  ) => ApplicantRepository.update({ ...props, uuid: currentUser.applicant.uuid }),
 };
 
 export { updateCurrentApplicant };

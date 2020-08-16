@@ -14,10 +14,10 @@ export const companyMocks = {
       "día a día? ¡Súmate!",
     logo: "https://assets.entrepreneur.com/images/misc/1584487204_LOGOCODOS_fondoblanco-01.png",
     website: "https://jobs.mercadolibre.com/",
-    email: "jobs@mercadolibre.com"
+    email: "jobs@mercadolibre.com",
   }),
   companyData: (): ICompany => ({
     ...companyMocks.companyDataWithoutUser(),
-    user: UserMocks.userAttributes
-  })
+    user: UserMocks.userAttributes,
+  }),
 };

@@ -9,51 +9,47 @@ export = {
           uuid: {
             allowNull: false,
             primaryKey: true,
-            type: UUID
+            type: UUID,
           },
           offerUuid: {
             allowNull: false,
             references: { model: "Offers", key: "uuid" },
             onDelete: "CASCADE",
-            type: UUID
+            type: UUID,
           },
           title: {
             allowNull: false,
-            type: TEXT
+            type: TEXT,
           },
           text: {
             allowNull: false,
-            type: TEXT
+            type: TEXT,
           },
           displayOrder: {
             allowNull: false,
             autoIncrement: true,
-            type: INTEGER
+            type: INTEGER,
           },
           createdAt: {
             allowNull: false,
-            type: DATE
+            type: DATE,
           },
           updatedAt: {
             allowNull: false,
-            type: DATE
-          }
+            type: DATE,
+          },
         },
         { transaction }
       );
 
-      await queryInterface.addConstraint(
-        "OffersSections",
-        ["offerUuid", "displayOrder"],
-        {
-          type: "unique",
-          name: "OffersSections_offerUuid_displayOrder_key",
-          transaction
-        }
-      );
+      await queryInterface.addConstraint("OffersSections", ["offerUuid", "displayOrder"], {
+        type: "unique",
+        name: "OffersSections_offerUuid_displayOrder_key",
+        transaction,
+      });
     });
   },
   down: (queryInterface: QueryInterface) => {
     return queryInterface.dropTable("OffersSections");
-  }
+  },
 };

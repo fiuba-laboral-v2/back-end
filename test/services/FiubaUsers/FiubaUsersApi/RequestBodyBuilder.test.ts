@@ -6,7 +6,7 @@ describe("RequestBodyBuilder", () => {
   it("returns a valid request body for the api", async () => {
     const requestBody = RequestBodyBuilder.buildAuthenticate({
       dni: DniGenerator.generate(),
-      password: "password"
+      password: "password",
     });
     expect(validate(requestBody)).toBe(true);
   });

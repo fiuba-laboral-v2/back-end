@@ -10,37 +10,33 @@ export = {
             allowNull: false,
             references: { model: "Careers", key: "code" },
             onDelete: "CASCADE",
-            type: STRING
+            type: STRING,
           },
           offerUuid: {
             allowNull: false,
             references: { model: "Offers", key: "uuid" },
             onDelete: "CASCADE",
-            type: UUID
+            type: UUID,
           },
           createdAt: {
             allowNull: false,
-            type: DATE
+            type: DATE,
           },
           updatedAt: {
             allowNull: false,
-            type: DATE
-          }
+            type: DATE,
+          },
         },
         { transaction }
       );
-      await queryInterface.addConstraint(
-        "OffersCareers",
-        ["careerCode", "offerUuid"],
-        {
-          type: "primary key",
-          name: "OffersSections_careerCode_offerUuid_key",
-          transaction
-        }
-      );
+      await queryInterface.addConstraint("OffersCareers", ["careerCode", "offerUuid"], {
+        type: "primary key",
+        name: "OffersSections_careerCode_offerUuid_key",
+        transaction,
+      });
     });
   },
   down: (queryInterface: QueryInterface) => {
     return queryInterface.dropTable("OffersCareers");
-  }
+  },
 };

@@ -9,16 +9,17 @@ import { userQueries } from "./User";
 import { capabilityQueries } from "./Capability";
 import { adminTaskQueries } from "./AdminTask/Queries";
 
-const queries = () => merge(
-  translationQueries,
-  companyQueries,
-  offerQueries,
-  jobApplicationQueries,
-  applicantQueries,
-  careerQueries,
-  userQueries,
-  capabilityQueries,
-  adminTaskQueries
-);
+const queries = () =>
+  merge(
+    translationQueries,
+    companyQueries,
+    offerQueries,
+    jobApplicationQueries,
+    applicantQueries,
+    careerQueries,
+    userQueries,
+    capabilityQueries,
+    adminTaskQueries
+  );
 
 export default queries;

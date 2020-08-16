@@ -9,7 +9,7 @@ export const aldana = {
     name: "Aldana",
     surname: "Rastrelli",
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   },
   applicant: {
     uuid: uuids.aldana.applicant,
@@ -17,7 +17,7 @@ export const aldana = {
     padron: 98408,
     description: "Dev",
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   },
   sections: [
     {
@@ -27,7 +27,7 @@ export const aldana = {
       text: "Contenido 1",
       displayOrder: 1,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     },
     {
       uuid: "cf6f22c2-b1c9-4bf9-8717-7705e4c651e6",
@@ -36,7 +36,7 @@ export const aldana = {
       text: "Contenido 2",
       displayOrder: 2,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     },
     {
       uuid: "50eeb4ff-6428-43c4-aa55-714f5f290f74",
@@ -45,28 +45,28 @@ export const aldana = {
       text: "Contenido 3",
       displayOrder: 3,
       createdAt: new Date(),
-      updatedAt: new Date()
-    }
+      updatedAt: new Date(),
+    },
   ],
   capabilities: [
     {
       capabilityUuid: uuids.capabilities.python,
       applicantUuid: uuids.aldana.applicant,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     },
     {
       capabilityUuid: uuids.capabilities.sql,
       applicantUuid: uuids.aldana.applicant,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     },
     {
       capabilityUuid: uuids.capabilities.c,
       applicantUuid: uuids.aldana.applicant,
       createdAt: new Date(),
-      updatedAt: new Date()
-    }
+      updatedAt: new Date(),
+    },
   ],
   careers: [
     {
@@ -74,15 +74,15 @@ export const aldana = {
       applicantUuid: uuids.aldana.applicant,
       isGraduate: true,
       createdAt: new Date(),
-      updatedAt: new Date()
-    }
+      updatedAt: new Date(),
+    },
   ],
   jobApplications: [
     {
       offerUuid: uuids.offers.java_semi_senior,
       applicantUuid: uuids.aldana.applicant,
       createdAt: new Date(),
-      updatedAt: new Date()
-    }
-  ]
+      updatedAt: new Date(),
+    },
+  ],
 };

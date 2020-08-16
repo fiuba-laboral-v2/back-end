@@ -4,7 +4,7 @@ import {
   AdminTaskType,
   TABLE_NAME_COLUMN,
   SeparateApprovalAdminTaskTypes,
-  SharedApprovalAdminTaskTypes
+  SharedApprovalAdminTaskTypes,
 } from "./Model";
 import { IAdminTasksFilter, IApprovalStatusOptions } from "./Interfaces";
 import { AdminTaskTypesIsEmptyError, StatusesIsEmptyError } from "./Errors";
@@ -57,16 +57,22 @@ const getWhereClause = (
 ) =>
   [
     getStatusWhereClause(statuses, secretary, approvalStatusOptions),
-    getUpdatedAtWhereClause(updatedBeforeThan)
-  ].filter(clause => clause).map(clause => `(${clause})`).join(" AND ");
+    getUpdatedAtWhereClause(updatedBeforeThan),
+  ]
+    .filter(clause => clause)
+    .map(clause => `(${clause})`)
+    .join(" AND ");
 
 const getRowsToSelect = (adminTaskModelsTypes: AdminTaskModelsType[]) => {
   const tablesByColumn: object = groupTableNamesByColumn(adminTaskModelsTypes);
-  return Object.entries(tablesByColumn).map(([columnName, tableNames]) =>
-    `COALESCE (
+  return Object.entries(tablesByColumn)
+    .map(
+      ([columnName, tableNames]) =>
+        `COALESCE (
       ${tableNames.map(tableName => `${tableName}."${columnName}"`).join(",")}
     ) AS "${columnName}"`
-  ).join(",");
+    )
+    .join(",");
 };
 
 const getFullOuterJoin = (adminTaskModelsTypes: AdminTaskModelsType[]) => {
@@ -91,12 +97,10 @@ const getAdminTaskModels = (adminTaskTypes: AdminTaskType[]) => {
 
 const includeStatus = (adminTaskTypes: AdminTaskType[]) => {
   return {
-    includesSharedApprovalModel: intersection(
-      adminTaskTypes, SharedApprovalAdminTaskTypes
-    ).length >= 1,
-    includesSeparateApprovalModel: intersection(
-      adminTaskTypes, SeparateApprovalAdminTaskTypes
-    ).length >= 1
+    includesSharedApprovalModel:
+      intersection(adminTaskTypes, SharedApprovalAdminTaskTypes).length >= 1,
+    includesSeparateApprovalModel:
+      intersection(adminTaskTypes, SeparateApprovalAdminTaskTypes).length >= 1,
   };
 };
 
@@ -108,15 +112,13 @@ const findAdminTasksByTypeQuery = (adminTaskTypes: AdminTaskType[]) => {
   `;
 };
 
-export const findAdminTasksQuery = (
-  {
-    adminTaskTypes,
-    statuses,
-    updatedBeforeThan,
-    limit,
-    secretary
-  }: IAdminTasksFilter & { limit: number }
-) => {
+export const findAdminTasksQuery = ({
+  adminTaskTypes,
+  statuses,
+  updatedBeforeThan,
+  limit,
+  secretary,
+}: IAdminTasksFilter & { limit: number }) => {
   if (adminTaskTypes.length === 0) throw new AdminTaskTypesIsEmptyError();
   if (statuses.length === 0) throw new StatusesIsEmptyError();
   const approvalStatusOptions = includeStatus(adminTaskTypes);

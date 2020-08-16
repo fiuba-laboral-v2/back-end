@@ -8,7 +8,7 @@ export class JobApplication extends Model<JobApplication> {
   @Column({
     allowNull: false,
     primaryKey: true,
-    type: UUID
+    type: UUID,
   })
   public offerUuid: string;
 
@@ -19,7 +19,7 @@ export class JobApplication extends Model<JobApplication> {
   @Column({
     allowNull: false,
     primaryKey: true,
-    type: UUID
+    type: UUID,
   })
   public applicantUuid: string;
 

@@ -5,7 +5,7 @@ export type TSetCookie = (name: string, val: string, options: CookieOptions) => 
 
 export interface IExpressContext {
   res: {
-    cookie: TSetCookie
+    cookie: TSetCookie;
   };
   req?: Response;
   connection?: ExecutionParams;
@@ -13,6 +13,6 @@ export interface IExpressContext {
 
 export const expressContextMock = (): IExpressContext => ({
   res: {
-    cookie: () => null
-  }
+    cookie: () => null,
+  },
 });

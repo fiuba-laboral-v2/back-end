@@ -1,14 +1,12 @@
 import { IVariables } from "./interfaces";
 import { IOfferAttributes } from "$models/Offer/Interface";
 
-export const withObligatoryData = (
-  {
-    index,
-    companyUuid,
-    careers,
-    sections
-  }: IVariables
-): IOfferAttributes => {
+export const withObligatoryData = ({
+  index,
+  companyUuid,
+  careers,
+  sections,
+}: IVariables): IOfferAttributes => {
   const data = {
     companyUuid,
     title: `title${index}`,
@@ -17,7 +15,7 @@ export const withObligatoryData = (
     minimumSalary: index + 1,
     maximumSalary: 2 * index + 1,
     careers,
-    sections
+    sections,
   };
   if (!careers) delete data.careers;
   if (!sections) delete data.sections;

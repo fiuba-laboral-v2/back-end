@@ -6,7 +6,7 @@ import {
   HasMany,
   Is,
   Model,
-  Table
+  Table,
 } from "sequelize-typescript";
 import {
   HasManyGetAssociationsMixin,
@@ -15,7 +15,7 @@ import {
   TEXT,
   UUID,
   UUIDV4,
-  ENUM
+  ENUM,
 } from "sequelize";
 import { Career, Company, OfferCareer, OfferSection, OfferApprovalEvent } from "..";
 import { validateIntegerInRange, validateSalaryRange } from "validations-fiuba-laboral-v2";
@@ -27,22 +27,22 @@ import { isApprovalStatus } from "$models/SequelizeModelValidators";
   validate: {
     validateSalaryRange(this: Offer) {
       validateSalaryRange(this.minimumSalary, this.maximumSalary);
-    }
-  }
+    },
+  },
 })
 export class Offer extends Model<Offer> {
   @Column({
     allowNull: false,
     primaryKey: true,
     type: UUID,
-    defaultValue: UUIDV4
+    defaultValue: UUIDV4,
   })
   public uuid: string;
 
   @ForeignKey(() => Company)
   @Column({
     allowNull: false,
-    type: UUID
+    type: UUID,
   })
   public companyUuid: string;
 
@@ -51,13 +51,13 @@ export class Offer extends Model<Offer> {
 
   @Column({
     allowNull: false,
-    type: TEXT
+    type: TEXT,
   })
   public title: string;
 
   @Column({
     allowNull: false,
-    type: TEXT
+    type: TEXT,
   })
   public description: string;
 
@@ -65,7 +65,7 @@ export class Offer extends Model<Offer> {
     allowNull: false,
     type: ENUM<string>({ values: approvalStatuses }),
     defaultValue: ApprovalStatus.pending,
-    ...isApprovalStatus
+    ...isApprovalStatus,
   })
   public extensionApprovalStatus: ApprovalStatus;
 
@@ -73,28 +73,28 @@ export class Offer extends Model<Offer> {
     allowNull: false,
     type: ENUM<string>({ values: approvalStatuses }),
     defaultValue: ApprovalStatus.pending,
-    ...isApprovalStatus
+    ...isApprovalStatus,
   })
   public graduadosApprovalStatus: ApprovalStatus;
 
   @Is("hoursPerDay", validateIntegerInRange({ min: { value: 0, include: false } }))
   @Column({
     allowNull: false,
-    type: INTEGER
+    type: INTEGER,
   })
   public hoursPerDay: number;
 
   @Is("minimumSalary", validateIntegerInRange({ min: { value: 0, include: false } }))
   @Column({
     allowNull: false,
-    type: INTEGER
+    type: INTEGER,
   })
   public minimumSalary: number;
 
   @Is("maximumSalary", validateIntegerInRange({ min: { value: 0, include: false } }))
   @Column({
     allowNull: false,
-    type: INTEGER
+    type: INTEGER,
   })
   public maximumSalary: number;
 

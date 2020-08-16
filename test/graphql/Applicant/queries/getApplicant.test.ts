@@ -57,15 +57,13 @@ describe("getApplicant", () => {
     it("fetches the applicant", async () => {
       const career = await CareerGenerator.instance();
       const applicantCareerData = { careerCode: career.code, isGraduate: true };
-      const {
-        user,
-        applicant,
-        apolloClient
-      } = await TestClientGenerator.applicant({ careers: [applicantCareerData] });
+      const { user, applicant, apolloClient } = await TestClientGenerator.applicant({
+        careers: [applicantCareerData],
+      });
 
       const { data, errors } = await apolloClient.query({
         query: GET_APPLICANT,
-        variables: { uuid: applicant.uuid }
+        variables: { uuid: applicant.uuid },
       });
 
       expect(errors).toBeUndefined();
@@ -73,22 +71,24 @@ describe("getApplicant", () => {
         user: {
           email: user.email,
           name: user.name,
-          surname: user.surname
+          surname: user.surname,
         },
         description: applicant.description,
         padron: applicant.padron,
         createdAt: applicant.createdAt.toISOString(),
-        updatedAt: applicant.updatedAt.toISOString()
+        updatedAt: applicant.updatedAt.toISOString(),
       });
       expect(data!.getApplicant.capabilities).toHaveLength(0);
-      expect(data!.getApplicant.careers).toEqual([expect.objectContaining({
-        career: {
-          code: career.code,
-          description: career.description,
-          credits: career.credits
-        },
-        ...applicantCareerData
-      })]);
+      expect(data!.getApplicant.careers).toEqual([
+        expect.objectContaining({
+          career: {
+            code: career.code,
+            description: career.description,
+            credits: career.credits,
+          },
+          ...applicantCareerData,
+        }),
+      ]);
     });
 
     it("returns the applicant's default approvalStatus", async () => {
@@ -96,7 +96,7 @@ describe("getApplicant", () => {
       const applicant = await ApplicantGenerator.instance.withMinimumData();
       const { data } = await apolloClient.query({
         query: GET_APPLICANT,
-        variables: { uuid: applicant.uuid }
+        variables: { uuid: applicant.uuid },
       });
       expect(data!.getApplicant.approvalStatus).toEqual(ApprovalStatus.pending);
     });
@@ -112,7 +112,7 @@ describe("getApplicant", () => {
       );
       const { data } = await apolloClient.query({
         query: GET_APPLICANT,
-        variables: { uuid: applicant.uuid }
+        variables: { uuid: applicant.uuid },
       });
       expect(data!.getApplicant.approvalStatus).toEqual(ApprovalStatus.rejected);
     });
@@ -125,10 +125,12 @@ describe("getApplicant", () => {
       const uuid = generateUuid();
       const { errors } = await apolloClient.query({
         query: GET_APPLICANT,
-        variables: { uuid }
+        variables: { uuid },
       });
 
-      expect(errors![0].extensions!.data).toEqual({ errorType: ApplicantNotFound.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: ApplicantNotFound.name,
+      });
     });
   });
 
@@ -138,9 +140,11 @@ describe("getApplicant", () => {
       const uuid = generateUuid();
       const { errors } = await apolloClient.query({
         query: GET_APPLICANT,
-        variables: { uuid: uuid }
+        variables: { uuid: uuid },
       });
-      expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: AuthenticationError.name,
+      });
     });
   });
 });

@@ -4,7 +4,7 @@ import { CapabilityRepository } from "$models/Capability";
 
 const getCapabilities = {
   type: List(GraphQLCapability),
-  resolve: async () => CapabilityRepository.findAll()
+  resolve: async () => CapabilityRepository.findAll(),
 };
 
 export { getCapabilities };

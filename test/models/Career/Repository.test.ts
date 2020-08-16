@@ -48,9 +48,10 @@ describe("CareerRepository", () => {
     const secondaryCareer = await CareerRepository.create(secondCareerData);
     await CareerRepository.create(thirdCareerData);
 
-    const expectedCareers = await CareerRepository.findByCodes(
-      [careerData.code, secondaryCareer.code]
-    );
+    const expectedCareers = await CareerRepository.findByCodes([
+      careerData.code,
+      secondaryCareer.code,
+    ]);
     expect(expectedCareers.length).toEqual(2);
     expect(expectedCareers.map(({ code }) => code)).toEqual(
       expect.arrayContaining([career.code, secondaryCareer.code])
@@ -59,8 +60,8 @@ describe("CareerRepository", () => {
 
   it("throws CareersNotFound if the career doesn't exists", async () => {
     const careerData = CareerGenerator.data();
-    await expect(
-      CareerRepository.findByCode(careerData.code)
-    ).rejects.toThrow(Errors.CareersNotFound);
+    await expect(CareerRepository.findByCode(careerData.code)).rejects.toThrow(
+      Errors.CareersNotFound
+    );
   });
 });

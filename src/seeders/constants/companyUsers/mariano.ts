@@ -9,12 +9,12 @@ export const mariano = {
     name: "Mariano",
     surname: "Beiró",
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   },
   companyUser: {
     companyUuid: uuids.companies.mercadoLibre,
     userUuid: uuids.mariano.user,
     createdAt: new Date(),
-    updatedAt: new Date()
-  }
+    updatedAt: new Date(),
+  },
 };

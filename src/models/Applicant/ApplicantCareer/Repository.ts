@@ -6,7 +6,7 @@ import { Applicant, ApplicantCareer } from "$models";
 export const ApplicantCareersRepository = {
   findByApplicantAndCareer: async (applicantUuid: string, careerCode: string) => {
     const applicantCareer = await ApplicantCareer.findOne({
-      where: { applicantUuid, careerCode }
+      where: { applicantUuid, careerCode },
     });
     if (!applicantCareer) throw new ApplicantCareerNotFound(applicantUuid, careerCode);
 
@@ -16,10 +16,14 @@ export const ApplicantCareersRepository = {
     applicantCareers: IApplicantCareer[],
     { uuid: applicantUuid }: Applicant,
     transaction?: Transaction
-  ) => ApplicantCareer.bulkCreate(
-    applicantCareers.map(applicantCareer => ({ ...applicantCareer, applicantUuid })),
-    { transaction, validate: true }
-  ),
+  ) =>
+    ApplicantCareer.bulkCreate(
+      applicantCareers.map(applicantCareer => ({
+        ...applicantCareer,
+        applicantUuid,
+      })),
+      { transaction, validate: true }
+    ),
   update: async (
     applicantCareers: IApplicantCareer[],
     { uuid: applicantUuid }: Applicant,
@@ -27,10 +31,13 @@ export const ApplicantCareersRepository = {
   ) => {
     await ApplicantCareer.destroy({ where: { applicantUuid }, transaction });
     return ApplicantCareer.bulkCreate(
-      applicantCareers.map(applicantCareer => ({ ...applicantCareer, applicantUuid })),
+      applicantCareers.map(applicantCareer => ({
+        ...applicantCareer,
+        applicantUuid,
+      })),
       { transaction, validate: true }
     );
   },
   findAll: () => ApplicantCareer.findAll(),
-  truncate: async () => ApplicantCareer.truncate({ cascade: true })
+  truncate: async () => ApplicantCareer.truncate({ cascade: true }),
 };

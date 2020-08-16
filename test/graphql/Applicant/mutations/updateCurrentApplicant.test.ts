@@ -11,21 +11,21 @@ import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 const UPDATE_CURRENT_APPLICANT = gql`
   mutation updateCurrentApplicant(
-    $padron: Int,
-    $user: UserUpdateInput,
-    $description: String,
-    $careers: [ApplicantCareerInput],
-    $capabilities: [String],
-    $sections: [SectionInput],
+    $padron: Int
+    $user: UserUpdateInput
+    $description: String
+    $careers: [ApplicantCareerInput]
+    $capabilities: [String]
+    $sections: [SectionInput]
     $links: [LinkInput]
   ) {
     updateCurrentApplicant(
-      padron: $padron,
-      user: $user,
-      description: $description,
-      careers: $careers,
-      capabilities: $capabilities,
-      sections: $sections,
+      padron: $padron
+      user: $user
+      description: $description
+      careers: $careers
+      capabilities: $capabilities
+      sections: $sections
       links: $links
     ) {
       user {
@@ -76,7 +76,7 @@ describe("updateCurrentApplicant", () => {
     const dataToUpdate = {
       user: {
         name: "newName",
-        surname: "newSurname"
+        surname: "newSurname",
       },
       padron: applicant.padron,
       description: "newDescription",
@@ -86,56 +86,58 @@ describe("updateCurrentApplicant", () => {
           careerCode: newCareer.code,
           approvedSubjectCount: 20,
           currentCareerYear: 3,
-          isGraduate: false
-        }
+          isGraduate: false,
+        },
       ],
       sections: [
         {
           title: "title",
           text: "description",
-          displayOrder: 1
-        }
+          displayOrder: 1,
+        },
       ],
       links: [
         {
           name: "my link",
-          url: "https://some.url"
-        }
-      ]
+          url: "https://some.url",
+        },
+      ],
     };
 
     const { data, errors } = await apolloClient.mutate({
       mutation: UPDATE_CURRENT_APPLICANT,
-      variables: dataToUpdate
+      variables: dataToUpdate,
     });
 
     expect(errors).toBeUndefined();
     const updatedApplicantData = data!.updateCurrentApplicant;
-    expect(updatedApplicantData).toEqual(expect.objectContaining({
-      padron: dataToUpdate.padron,
-      user: {
-        uuid: user.uuid,
-        email: user.email,
-        name: dataToUpdate.user.name,
-        surname: dataToUpdate.user.surname
-      },
-      description: dataToUpdate.description,
-      careers: [{
-        career: {
-          code: newCareer.code,
-          description: newCareer.description,
-          credits: newCareer.credits
+    expect(updatedApplicantData).toEqual(
+      expect.objectContaining({
+        padron: dataToUpdate.padron,
+        user: {
+          uuid: user.uuid,
+          email: user.email,
+          name: dataToUpdate.user.name,
+          surname: dataToUpdate.user.surname,
         },
-        ...dataToUpdate.careers[0]
-      }],
-      sections: dataToUpdate.sections,
-      links: dataToUpdate.links
-    }));
-    expect(
-      updatedApplicantData.capabilities.map(c => c.description)
-    ).toEqual(expect.arrayContaining(
-      dataToUpdate.capabilities
-    ));
+        description: dataToUpdate.description,
+        careers: [
+          {
+            career: {
+              code: newCareer.code,
+              description: newCareer.description,
+              credits: newCareer.credits,
+            },
+            ...dataToUpdate.careers[0],
+          },
+        ],
+        sections: dataToUpdate.sections,
+        links: dataToUpdate.links,
+      })
+    );
+    expect(updatedApplicantData.capabilities.map(c => c.description)).toEqual(
+      expect.arrayContaining(dataToUpdate.capabilities)
+    );
   });
 
   describe("Errors", () => {
@@ -145,12 +147,14 @@ describe("updateCurrentApplicant", () => {
       const { errors } = await apolloClient.mutate({
         mutation: UPDATE_CURRENT_APPLICANT,
         variables: {
-          careers: [{
-            careerCode,
-            currentCareerYear: 3,
-            isGraduate: true
-          }]
-        }
+          careers: [
+            {
+              careerCode,
+              currentCareerYear: 3,
+              isGraduate: true,
+            },
+          ],
+        },
       });
 
       expect(errors).not.toBeUndefined();
@@ -161,19 +165,21 @@ describe("updateCurrentApplicant", () => {
       const dataToUpdate = {
         user: {
           name: "newName",
-          surname: "newSurname"
+          surname: "newSurname",
         },
         padron: 1500,
         description: "newDescription",
-        capabilities: ["CSS", "clojure"]
+        capabilities: ["CSS", "clojure"],
       };
 
       const { errors } = await apolloClient.mutate({
         mutation: UPDATE_CURRENT_APPLICANT,
-        variables: dataToUpdate
+        variables: dataToUpdate,
       });
 
-      expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: AuthenticationError.name,
+      });
     });
 
     it("returns an error if current user is not an applicant", async () => {
@@ -182,29 +188,33 @@ describe("updateCurrentApplicant", () => {
       const dataToUpdate = {
         user: {
           name: "newName",
-          surname: "newSurname"
+          surname: "newSurname",
         },
         padron: 1500,
         description: "newDescription",
-        capabilities: ["CSS", "clojure"]
+        capabilities: ["CSS", "clojure"],
       };
 
       const { errors } = await apolloClient.mutate({
         mutation: UPDATE_CURRENT_APPLICANT,
-        variables: dataToUpdate
+        variables: dataToUpdate,
       });
 
-      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: UnauthorizedError.name,
+      });
     });
 
     it("returns an error if current user is from a company", async () => {
       const { apolloClient } = await TestClientGenerator.company();
       const { errors } = await apolloClient.mutate({
         mutation: UPDATE_CURRENT_APPLICANT,
-        variables: { padron: 1500 }
+        variables: { padron: 1500 },
       });
 
-      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: UnauthorizedError.name,
+      });
     });
   });
 });

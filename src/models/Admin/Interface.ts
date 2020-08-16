@@ -2,7 +2,7 @@ import { IUser } from "../User";
 
 export enum Secretary {
   extension = "extension",
-  graduados = "graduados"
+  graduados = "graduados",
 }
 
 export interface ISaveAdmin {

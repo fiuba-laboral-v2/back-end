@@ -6,10 +6,10 @@ export const GraphQLPaginatedResults = (resultType: GraphQLObjectType | GraphQLU
     name: `Paginated${resultType.name}`,
     fields: () => ({
       shouldFetchMore: {
-        type: nonNull(Boolean)
+        type: nonNull(Boolean),
       },
       results: {
-        type: nonNull(List(nonNull(resultType)))
-      }
-    })
+        type: nonNull(List(nonNull(resultType))),
+      },
+    }),
   });

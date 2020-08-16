@@ -11,5 +11,5 @@ export const TranslationRepository = {
     const translation = get(defaultTranslations, translationGroup);
     if (translation === undefined) throw new MissingTranslationError(translationGroup);
     return translation;
-  }
+  },
 };

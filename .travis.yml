@@ -23,16 +23,14 @@ script:
 after_success: yarn coverage
 deploy:
   - provider: script
-    script:
-      git clone https://github.com/fiuba-laboral-v2/deploy.git &&
+    script: git clone https://github.com/fiuba-laboral-v2/deploy.git &&
       cd deploy &&
       yarn install &&
       NODE_ENV=production yarn deploy:backend
     on:
       branch: production
   - provider: script
-    script:
-      git clone https://github.com/fiuba-laboral-v2/deploy.git &&
+    script: git clone https://github.com/fiuba-laboral-v2/deploy.git &&
       cd deploy &&
       yarn install &&
       NODE_ENV=staging yarn deploy:backend

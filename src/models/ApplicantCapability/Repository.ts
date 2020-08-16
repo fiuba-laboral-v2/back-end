@@ -3,25 +3,23 @@ import { CapabilityRepository } from "$models/Capability";
 import { Applicant, ApplicantCapability } from "$models";
 
 export const ApplicantCapabilityRepository = {
-  update: async (
-    newCapabilities: string[],
-    applicant: Applicant,
-    transaction?: Transaction
-  ) => {
+  update: async (newCapabilities: string[], applicant: Applicant, transaction?: Transaction) => {
     await ApplicantCapability.destroy({
       where: {
-        applicantUuid: applicant.uuid
+        applicantUuid: applicant.uuid,
       },
-      transaction
+      transaction,
     });
 
     const capabilities = await CapabilityRepository.findOrCreateByDescriptions(newCapabilities);
 
     return ApplicantCapability.bulkCreate(
-      capabilities.map(({ uuid }) => ({ applicantUuid: applicant.uuid, capabilityUuid: uuid })),
+      capabilities.map(({ uuid }) => ({
+        applicantUuid: applicant.uuid,
+        capabilityUuid: uuid,
+      })),
       { transaction }
     );
   },
-  truncate: async () =>
-    ApplicantCapability.truncate({ cascade: true })
+  truncate: async () => ApplicantCapability.truncate({ cascade: true }),
 };

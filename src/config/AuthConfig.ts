@@ -14,65 +14,65 @@ const PRODUCTION_FRONT_END_DOMAIN = "http://laboral.fi.uba.ar";
 const corsOptions = (origin: string): CorsOptions => ({
   origin: origin,
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
 });
 
 const localAuthConfig: IEnvironment = {
   cors: {
     options: corsOptions(LOCAL_FRONT_END_DOMAIN),
-    accessControlAllowOrigin: LOCAL_FRONT_END_DOMAIN
+    accessControlAllowOrigin: LOCAL_FRONT_END_DOMAIN,
   },
   JWT: {
     expiresIn: TOKEN_EXPIRATION_DAYS_AS_STRING,
-    algorithms: ["RS256"]
+    algorithms: ["RS256"],
   },
   cookieName: "fiuba_laboral_v2_access_token",
   cookieOptions: {
     secure: false,
     httpOnly: true,
     maxAge: TOKEN_EXPIRATION_MILLISECONDS,
-    sameSite: "strict"
-  }
+    sameSite: "strict",
+  },
 };
 
 const AuthConfigForAllEnvironments: IAuthenticationVariables = {
   production: {
     cors: {
       options: corsOptions(PRODUCTION_FRONT_END_DOMAIN),
-      accessControlAllowOrigin: PRODUCTION_FRONT_END_DOMAIN
+      accessControlAllowOrigin: PRODUCTION_FRONT_END_DOMAIN,
     },
     JWT: {
       expiresIn: TOKEN_EXPIRATION_DAYS_AS_STRING,
-      algorithms: ["RS256"]
+      algorithms: ["RS256"],
     },
     cookieName: "fiuba_laboral_v2_access_token",
     cookieOptions: {
       secure: true,
       httpOnly: true,
       maxAge: TOKEN_EXPIRATION_MILLISECONDS,
-      sameSite: "strict"
-    }
+      sameSite: "strict",
+    },
   },
   staging: {
     cors: {
       options: corsOptions(STAGING_FRONT_END_DOMAIN),
-      accessControlAllowOrigin: STAGING_FRONT_END_DOMAIN
+      accessControlAllowOrigin: STAGING_FRONT_END_DOMAIN,
     },
     JWT: {
       expiresIn: TOKEN_EXPIRATION_DAYS_AS_STRING,
-      algorithms: ["RS256"]
+      algorithms: ["RS256"],
     },
     cookieName: "fiuba_laboral_v2_access_token",
     cookieOptions: {
       secure: false,
       httpOnly: true,
       maxAge: TOKEN_EXPIRATION_MILLISECONDS,
-      sameSite: "strict"
-    }
+      sameSite: "strict",
+    },
   },
   development: localAuthConfig,
   test: localAuthConfig,
-  test_travis: localAuthConfig
+  test_travis: localAuthConfig,
 };
 
 export const AuthConfig: IEnvironment = AuthConfigForAllEnvironments[Environment.NODE_ENV];

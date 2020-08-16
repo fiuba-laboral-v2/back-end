@@ -5,7 +5,7 @@ import { getMyOffers } from "./getMyOffers";
 const offerQueries = {
   getOfferByUuid,
   getOffers,
-  getMyOffers
+  getMyOffers,
 };
 
 export { offerQueries };

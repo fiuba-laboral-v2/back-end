@@ -16,10 +16,12 @@ export const ApplicantGenerator = {
   },
   instance: {
     withMinimumData: (variables?: IApplicantInputData) =>
-      ApplicantRepository.create(withMinimumData({
-        index: ApplicantGenerator.getIndex(),
-        ...variables
-      })),
+      ApplicantRepository.create(
+        withMinimumData({
+          index: ApplicantGenerator.getIndex(),
+          ...variables,
+        })
+      ),
     updatedWithStatus: async (variables?: IUpdatedWithStatus) => {
       const applicant = await ApplicantRepository.create(
         withMinimumData({ index: ApplicantGenerator.getIndex() })
@@ -27,9 +29,9 @@ export const ApplicantGenerator = {
       if (!variables) return applicant;
       const { admin, status } = variables;
       return ApplicantRepository.updateApprovalStatus(admin.userUuid, applicant.uuid, status);
-    }
+    },
   },
   data: {
-    minimum: () => withMinimumData({ index: ApplicantGenerator.getIndex() })
-  }
+    minimum: () => withMinimumData({ index: ApplicantGenerator.getIndex() }),
+  },
 };

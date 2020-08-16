@@ -8,13 +8,13 @@ import { permissionShield } from "./permissionShield";
 const Schema: GraphQLSchema = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: "Query",
-    fields: queries
+    fields: queries,
   }),
   mutation: new GraphQLObjectType({
     name: "Mutation",
-    fields: mutations
+    fields: mutations,
   }),
-  types: types
+  types: types,
 });
 
 export const { schema } = applyMiddleware(Schema, permissionShield);

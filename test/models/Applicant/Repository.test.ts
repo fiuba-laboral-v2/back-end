@@ -16,7 +16,7 @@ import { Secretary } from "$models/Admin";
 import { UUID_REGEX } from "$test/models";
 import {
   ForbiddenCurrentCareerYearError,
-  MissingApprovedSubjectCountError
+  MissingApprovedSubjectCountError,
 } from "$models/Applicant/ApplicantCareer/Errors";
 
 describe("ApplicantRepository", () => {
@@ -34,15 +34,17 @@ describe("ApplicantRepository", () => {
       const applicant = await ApplicantRepository.create({
         ...applicantData,
         careers: [applicantCareerData],
-        capabilities: ["Python"]
+        capabilities: ["Python"],
       });
       const [applicantCareer] = await applicant.getApplicantCareers();
 
-      expect(applicant).toEqual(expect.objectContaining({
-        uuid: expect.stringMatching(UUID_REGEX),
-        padron: applicantData.padron,
-        description: applicantData.description
-      }));
+      expect(applicant).toEqual(
+        expect.objectContaining({
+          uuid: expect.stringMatching(UUID_REGEX),
+          padron: applicantData.padron,
+          description: applicantData.description,
+        })
+      );
       expect(applicantCareer).toEqual(expect.objectContaining(applicantCareerData));
       const capabilities = await applicant.getCapabilities();
       const capabilityDescriptions = capabilities.map(c => c.description.toLowerCase());
@@ -53,16 +55,16 @@ describe("ApplicantRepository", () => {
       const career = await CareerGenerator.instance();
       const applicantCareer = {
         careerCode: career.code,
-        isGraduate: true
+        isGraduate: true,
       };
       await ApplicantRepository.create({
         ...ApplicantGenerator.data.minimum(),
-        careers: [applicantCareer]
+        careers: [applicantCareer],
       });
       await expect(
         ApplicantRepository.create({
           ...ApplicantGenerator.data.minimum(),
-          careers: [applicantCareer]
+          careers: [applicantCareer],
         })
       ).resolves.not.toThrow(ApplicantNotFound);
     });
@@ -71,15 +73,15 @@ describe("ApplicantRepository", () => {
       const applicantData = ApplicantGenerator.data.minimum();
       const savedApplicant = await ApplicantRepository.create(applicantData);
       const applicant = await ApplicantRepository.findByUuid(savedApplicant.uuid);
-      expect((await applicant.getCareers())).toHaveLength(0);
-      expect((await applicant.getCapabilities())).toHaveLength(0);
+      expect(await applicant.getCareers()).toHaveLength(0);
+      expect(await applicant.getCapabilities()).toHaveLength(0);
     });
 
     it("creates an applicant with capabilities", async () => {
       const applicantData = ApplicantGenerator.data.minimum();
       const applicant = await ApplicantRepository.create({
         ...applicantData,
-        capabilities: ["Python"]
+        capabilities: ["Python"],
       });
       const [capability] = await applicant.getCapabilities();
       expect(capability.description).toEqual("Python");
@@ -95,9 +97,7 @@ describe("ApplicantRepository", () => {
     it("throws an error if no padron is given", async () => {
       const applicantData = ApplicantGenerator.data.minimum();
       delete applicantData.padron;
-      await expect(
-        ApplicantRepository.create(applicantData)
-      ).rejects.toThrowErrorWithMessage(
+      await expect(ApplicantRepository.create(applicantData)).rejects.toThrowErrorWithMessage(
         ValidationError,
         "notNull Violation: Applicant.padron cannot be null"
       );
@@ -107,10 +107,12 @@ describe("ApplicantRepository", () => {
       const career = await CareerGenerator.instance();
       const applicantData = {
         ...ApplicantGenerator.data.minimum(),
-        careers: [{
-          careerCode: career.code,
-          isGraduate: true
-        }]
+        careers: [
+          {
+            careerCode: career.code,
+            isGraduate: true,
+          },
+        ],
       };
       delete applicantData.careers[0].isGraduate;
       await expect(
@@ -118,8 +120,8 @@ describe("ApplicantRepository", () => {
       ).rejects.toThrowBulkRecordErrorIncluding([
         {
           errorClass: ValidationError,
-          message: "notNull Violation: ApplicantCareer.isGraduate cannot be null"
-        }
+          message: "notNull Violation: ApplicantCareer.isGraduate cannot be null",
+        },
       ]);
     });
 
@@ -128,9 +130,7 @@ describe("ApplicantRepository", () => {
       fiubaUsersServiceMock.mockResolvedValueOnce(Promise.resolve(false));
 
       const applicantData = ApplicantGenerator.data.minimum();
-      await expect(
-        ApplicantRepository.create(applicantData)
-      ).rejects.toThrowErrorWithMessage(
+      await expect(ApplicantRepository.create(applicantData)).rejects.toThrowErrorWithMessage(
         FiubaUserNotFoundError,
         FiubaUserNotFoundError.buildMessage(applicantData.user.dni)
       );
@@ -145,16 +145,18 @@ describe("ApplicantRepository", () => {
       await ApplicantRepository.create({
         ...applicantData,
         careers: [applicantCareerData],
-        capabilities: ["Node"]
+        capabilities: ["Node"],
       });
 
       const applicant = await ApplicantRepository.findByPadron(applicantData.padron);
 
-      expect(applicant).toEqual(expect.objectContaining({
-        uuid: expect.stringMatching(UUID_REGEX),
-        padron: applicantData.padron,
-        description: applicantData.description
-      }));
+      expect(applicant).toEqual(
+        expect.objectContaining({
+          uuid: expect.stringMatching(UUID_REGEX),
+          padron: applicantData.padron,
+          description: applicantData.description,
+        })
+      );
 
       const [applicantCareer] = await applicant.getApplicantCareers();
       expect(applicantCareer).toEqual(expect.objectContaining(applicantCareerData));
@@ -171,15 +173,17 @@ describe("ApplicantRepository", () => {
       const { uuid } = await ApplicantRepository.create({
         ...applicantData,
         careers: [applicantCareerData],
-        capabilities: ["GO"]
+        capabilities: ["GO"],
       });
       const applicant = await ApplicantRepository.findByUuid(uuid);
 
-      expect(applicant).toEqual(expect.objectContaining({
-        uuid: expect.stringMatching(UUID_REGEX),
-        padron: applicantData.padron,
-        description: applicantData.description
-      }));
+      expect(applicant).toEqual(
+        expect.objectContaining({
+          uuid: expect.stringMatching(UUID_REGEX),
+          padron: applicantData.padron,
+          description: applicantData.description,
+        })
+      );
 
       const [applicantCareer] = await applicant.getApplicantCareers();
       expect(applicantCareer).toEqual(expect.objectContaining(applicantCareerData));
@@ -199,14 +203,14 @@ describe("ApplicantRepository", () => {
       const { code: careerCode } = await CareerGenerator.instance();
       const { uuid } = await ApplicantRepository.create({
         ...ApplicantGenerator.data.minimum(),
-        careers: [{ careerCode, isGraduate: true }]
+        careers: [{ careerCode, isGraduate: true }],
       });
       const newCareer = await CareerGenerator.instance();
       const newProps: IApplicantEditable = {
         uuid,
         user: {
           name: "newName",
-          surname: "newSurname"
+          surname: "newSurname",
         },
         description: "newDescription",
         capabilities: ["CSS", "clojure"],
@@ -215,38 +219,36 @@ describe("ApplicantRepository", () => {
             careerCode: newCareer.code,
             approvedSubjectCount: 20,
             currentCareerYear: 3,
-            isGraduate: false
-          }
+            isGraduate: false,
+          },
         ],
         sections: [
           {
             title: "title",
             text: "some description",
-            displayOrder: 1
-          }
+            displayOrder: 1,
+          },
         ],
         links: [
           {
             name: "someName",
-            url: "https://some.url"
-          }
-        ]
+            url: "https://some.url",
+          },
+        ],
       };
       const applicant = await ApplicantRepository.update(newProps);
       const applicantCareers = await applicant.getApplicantCareers();
       const capabilities = await applicant.getCapabilities();
       const user = await applicant.getUser();
       expect(applicant).toMatchObject({
-        description: newProps.description
+        description: newProps.description,
       });
 
       expect(user).toMatchObject(newProps.user!);
 
-      expect(
-        capabilities.map(c => c.description)
-      ).toEqual(expect.arrayContaining(
-        newProps.capabilities!
-      ));
+      expect(capabilities.map(c => c.description)).toEqual(
+        expect.arrayContaining(newProps.capabilities!)
+      );
       expect(applicantCareers).toEqual([expect.objectContaining(newProps.careers![0])]);
     });
 
@@ -255,8 +257,8 @@ describe("ApplicantRepository", () => {
       const newProps: IApplicantEditable = {
         uuid,
         user: {
-          name: "newName"
-        }
+          name: "newName",
+        },
       };
       const applicant = await ApplicantRepository.update(newProps);
       const user = await applicant.getUser();
@@ -269,8 +271,8 @@ describe("ApplicantRepository", () => {
       const newProps: IApplicantEditable = {
         uuid,
         user: {
-          surname: "newSurname"
-        }
+          surname: "newSurname",
+        },
       };
       const applicant = await ApplicantRepository.update(newProps);
       const user = await applicant.getUser();
@@ -281,7 +283,7 @@ describe("ApplicantRepository", () => {
       const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       const newProps: IApplicantEditable = {
         uuid,
-        description: "newDescription"
+        description: "newDescription",
       };
       const applicant = await ApplicantRepository.update(newProps);
       expect(applicant.description).toEqual(newProps.description);
@@ -290,42 +292,35 @@ describe("ApplicantRepository", () => {
     it("updates by adding new capabilities", async () => {
       const applicant = await ApplicantRepository.create({
         ...ApplicantGenerator.data.minimum(),
-        capabilities: ["CSS", "clojure"]
+        capabilities: ["CSS", "clojure"],
       });
-      expect(
-        (await applicant.getCapabilities()).map(c => c.description)
-      ).toEqual(expect.arrayContaining(
-        ["CSS", "clojure"]
-      ));
+      expect((await applicant.getCapabilities()).map(c => c.description)).toEqual(
+        expect.arrayContaining(["CSS", "clojure"])
+      );
 
       const changeOneProps: IApplicantEditable = {
         uuid: applicant.uuid,
-        capabilities: ["Python", "clojure"]
+        capabilities: ["Python", "clojure"],
       };
 
       await ApplicantRepository.update(changeOneProps);
-      expect(
-        (await applicant.getCapabilities()).map(c => c.description)
-      ).toEqual(expect.arrayContaining(
-        ["Python", "clojure"]
-      ));
-
+      expect((await applicant.getCapabilities()).map(c => c.description)).toEqual(
+        expect.arrayContaining(["Python", "clojure"])
+      );
     });
 
     it("updates by deleting all capabilities if none is provided", async () => {
       const applicant = await ApplicantRepository.create({
         ...ApplicantGenerator.data.minimum(),
-        capabilities: ["CSS", "clojure"]
+        capabilities: ["CSS", "clojure"],
       });
 
-      expect(
-        (await applicant.getCapabilities()).map(capability => capability.description)
-      ).toEqual(expect.arrayContaining(
-        ["CSS", "clojure"]
-      ));
+      expect((await applicant.getCapabilities()).map(capability => capability.description)).toEqual(
+        expect.arrayContaining(["CSS", "clojure"])
+      );
 
       await ApplicantRepository.update({ uuid: applicant.uuid });
-      expect((await applicant.getCapabilities())).toHaveLength(0);
+      expect(await applicant.getCapabilities()).toHaveLength(0);
     });
 
     it("updates by keeping only the new careers", async () => {
@@ -339,24 +334,21 @@ describe("ApplicantRepository", () => {
             careerCode: firstCareer.code,
             approvedSubjectCount: 20,
             currentCareerYear: 3,
-            isGraduate: false
+            isGraduate: false,
           },
           {
             careerCode: secondCareer.code,
             approvedSubjectCount: 20,
             currentCareerYear: 3,
-            isGraduate: false
-          }
-        ]
+            isGraduate: false,
+          },
+        ],
       };
 
       const updatedApplicant = await ApplicantRepository.update(newProps);
-      expect(
-        (await updatedApplicant.getCareers()).map(career => career.code)
-      ).toEqual(expect.arrayContaining([
-        firstCareer.code,
-        secondCareer.code
-      ]));
+      expect((await updatedApplicant.getCareers()).map(career => career.code)).toEqual(
+        expect.arrayContaining([firstCareer.code, secondCareer.code])
+      );
 
       const thirdCareer = await CareerGenerator.instance();
       const updatedProps: IApplicantEditable = {
@@ -364,22 +356,19 @@ describe("ApplicantRepository", () => {
         careers: [
           {
             careerCode: thirdCareer.code,
-            isGraduate: true
+            isGraduate: true,
           },
           {
             careerCode: secondCareer.code,
-            isGraduate: true
-          }
-        ]
+            isGraduate: true,
+          },
+        ],
       };
 
       await ApplicantRepository.update(updatedProps);
-      expect(
-        (await updatedApplicant.getCareers()).map(career => career.code)
-      ).toEqual(expect.arrayContaining([
-        thirdCareer.code,
-        secondCareer.code
-      ]));
+      expect((await updatedApplicant.getCareers()).map(career => career.code)).toEqual(
+        expect.arrayContaining([thirdCareer.code, secondCareer.code])
+      );
     });
 
     it("updates by keeping only the new sections", async () => {
@@ -388,22 +377,27 @@ describe("ApplicantRepository", () => {
         {
           title: "myTitle",
           text: "some description",
-          displayOrder: 1
+          displayOrder: 1,
         },
         {
           title: "second section",
           text: "other description",
-          displayOrder: 2
-        }
+          displayOrder: 2,
+        },
       ];
-      const applicant = await ApplicantRepository.update({ uuid, sections: sectionsData });
+      const applicant = await ApplicantRepository.update({
+        uuid,
+        sections: sectionsData,
+      });
 
       const initialSections = await applicant.getSections();
 
       expect(
-        initialSections.map(
-          ({ title, text, displayOrder }) => ({ title, text, displayOrder })
-        )
+        initialSections.map(({ title, text, displayOrder }) => ({
+          title,
+          text,
+          displayOrder,
+        }))
       ).toEqual(expect.arrayContaining(sectionsData));
 
       const updatedSectionsData = [
@@ -411,29 +405,35 @@ describe("ApplicantRepository", () => {
           uuid: initialSections.find(({ title }) => title === "second section")!.uuid,
           title: "second section",
           text: "new some description",
-          displayOrder: 2
+          displayOrder: 2,
         },
         {
           title: "Third section",
           text: "some other description",
-          displayOrder: 3
-        }
+          displayOrder: 3,
+        },
       ];
 
       const updatedApplicant = await ApplicantRepository.update({
         uuid: applicant.uuid,
-        sections: updatedSectionsData
+        sections: updatedSectionsData,
       });
       const updatedSections = await updatedApplicant.getSections();
       expect(
-        updatedSections.map(
-          ({ title, text, displayOrder }) => ({ title, text, displayOrder })
+        updatedSections.map(({ title, text, displayOrder }) => ({
+          title,
+          text,
+          displayOrder,
+        }))
+      ).toEqual(
+        expect.arrayContaining(
+          updatedSectionsData.map(({ title, text, displayOrder }) => ({
+            title,
+            text,
+            displayOrder,
+          }))
         )
-      ).toEqual(expect.arrayContaining(
-        updatedSectionsData.map(
-          ({ title, text, displayOrder }) => ({ title, text, displayOrder })
-        )
-      ));
+      );
     });
 
     it("updates deleting all sections if none is provided", async () => {
@@ -442,16 +442,19 @@ describe("ApplicantRepository", () => {
         {
           title: "myTitle",
           text: "some description",
-          displayOrder: 1
+          displayOrder: 1,
         },
         {
           title: "new myTitle",
           text: "new some description",
-          displayOrder: 2
-        }
+          displayOrder: 2,
+        },
       ];
       await ApplicantRepository.update({ uuid, sections: sectionsData });
-      const updatedApplicant = await ApplicantRepository.update({ uuid, sections: [] });
+      const updatedApplicant = await ApplicantRepository.update({
+        uuid,
+        sections: [],
+      });
       expect((await updatedApplicant.getSections()).length).toEqual(0);
     });
 
@@ -460,30 +463,39 @@ describe("ApplicantRepository", () => {
       const linksData = [
         {
           name: "LinkedIn",
-          url: "https://www.linkedin.com/in/dylan-alvarez-89430b88/"
+          url: "https://www.linkedin.com/in/dylan-alvarez-89430b88/",
         },
         {
           name: "GitHub",
-          url: "https://github.com"
-        }
+          url: "https://github.com",
+        },
       ];
-      const applicant = await ApplicantRepository.update({ uuid, links: linksData });
-      expect(
-        (await applicant.getLinks()).map(({ url, name }) => ({ url, name }))
-      ).toEqual(expect.arrayContaining(linksData));
+      const applicant = await ApplicantRepository.update({
+        uuid,
+        links: linksData,
+      });
+      expect((await applicant.getLinks()).map(({ url, name }) => ({ url, name }))).toEqual(
+        expect.arrayContaining(linksData)
+      );
       const newLinksData = [
         {
           name: "GitHub",
-          url: "https://github.com"
+          url: "https://github.com",
         },
         {
           name: "Google",
-          url: "http://www.google.com"
-        }
+          url: "http://www.google.com",
+        },
       ];
-      const updatedApplicant = await ApplicantRepository.update({ uuid, links: newLinksData });
+      const updatedApplicant = await ApplicantRepository.update({
+        uuid,
+        links: newLinksData,
+      });
       expect(
-        (await updatedApplicant.getLinks()).map(({ url, name }) => ({ url, name }))
+        (await updatedApplicant.getLinks()).map(({ url, name }) => ({
+          url,
+          name,
+        }))
       ).toEqual(expect.arrayContaining(newLinksData));
     });
 
@@ -494,13 +506,13 @@ describe("ApplicantRepository", () => {
         links: [
           {
             name: "GitHub",
-            url: "https://github.com"
+            url: "https://github.com",
           },
           {
             name: "Google",
-            url: "http://www.google.com"
-          }
-        ]
+            url: "http://www.google.com",
+          },
+        ],
       });
       await ApplicantRepository.update({ uuid });
       expect((await applicant.getLinks()).length).toEqual(0);
@@ -509,7 +521,7 @@ describe("ApplicantRepository", () => {
     it("does not throw an error when adding an existing capability", async () => {
       const { uuid } = await ApplicantRepository.create({
         ...ApplicantGenerator.data.minimum(),
-        capabilities: ["GO"]
+        capabilities: ["GO"],
       });
       await expect(
         ApplicantRepository.update({ uuid, capabilities: ["GO"] })
@@ -520,20 +532,25 @@ describe("ApplicantRepository", () => {
       const career = await CareerGenerator.instance();
       const { uuid } = await ApplicantRepository.create({
         ...ApplicantGenerator.data.minimum(),
-        careers: [{
-          careerCode: career.code,
-          isGraduate: false,
-          currentCareerYear: 2,
-          approvedSubjectCount: 10
-        }]
+        careers: [
+          {
+            careerCode: career.code,
+            isGraduate: false,
+            currentCareerYear: 2,
+            approvedSubjectCount: 10,
+          },
+        ],
       });
       const newApplicantCareerData = {
         careerCode: career.code,
         currentCareerYear: 3,
         approvedSubjectCount: 17,
-        isGraduate: false
+        isGraduate: false,
       };
-      await ApplicantRepository.update({ uuid, careers: [newApplicantCareerData] });
+      await ApplicantRepository.update({
+        uuid,
+        careers: [newApplicantCareerData],
+      });
 
       const updatedApplicantCareer = await ApplicantCareersRepository.findByApplicantAndCareer(
         uuid,
@@ -546,10 +563,13 @@ describe("ApplicantRepository", () => {
       const career = await CareerGenerator.instance();
       const applicant = await ApplicantRepository.create({
         ...ApplicantGenerator.data.minimum(),
-        careers: [{ careerCode: career.code, isGraduate: true }]
+        careers: [{ careerCode: career.code, isGraduate: true }],
       });
       const newApplicantCareerData = [{ careerCode: career.code, isGraduate: true }];
-      await ApplicantRepository.update({ uuid: applicant.uuid, careers: newApplicantCareerData });
+      await ApplicantRepository.update({
+        uuid: applicant.uuid,
+        careers: newApplicantCareerData,
+      });
       expect((await applicant.getCareers()).length).toEqual(1);
       await ApplicantRepository.update({ uuid: applicant.uuid });
       expect((await applicant.getCareers()).length).toEqual(0);
@@ -561,18 +581,22 @@ describe("ApplicantRepository", () => {
         const { code: careerCode } = await CareerGenerator.instance();
         const dataToUpdate = {
           uuid,
-          careers: [{
-            careerCode,
-            currentCareerYear: 3,
-            isGraduate: true
-          }]
+          careers: [
+            {
+              careerCode,
+              currentCareerYear: 3,
+              isGraduate: true,
+            },
+          ],
         };
         await expect(
           ApplicantRepository.update(dataToUpdate)
-        ).rejects.toThrowBulkRecordErrorIncluding([{
-          errorClass: ValidationError,
-          message: ForbiddenCurrentCareerYearError.buildMessage()
-        }]);
+        ).rejects.toThrowBulkRecordErrorIncluding([
+          {
+            errorClass: ValidationError,
+            message: ForbiddenCurrentCareerYearError.buildMessage(),
+          },
+        ]);
       });
 
       it("throws an error if approvedSubjectCount is missing for a non graduate", async () => {
@@ -580,18 +604,22 @@ describe("ApplicantRepository", () => {
         const { code: careerCode } = await CareerGenerator.instance();
         const dataToUpdate = {
           uuid,
-          careers: [{
-            careerCode,
-            currentCareerYear: 3,
-            isGraduate: false
-          }]
+          careers: [
+            {
+              careerCode,
+              currentCareerYear: 3,
+              isGraduate: false,
+            },
+          ],
         };
         await expect(
           ApplicantRepository.update(dataToUpdate)
-        ).rejects.toThrowBulkRecordErrorIncluding([{
-          errorClass: ValidationError,
-          message: MissingApprovedSubjectCountError.buildMessage()
-        }]);
+        ).rejects.toThrowBulkRecordErrorIncluding([
+          {
+            errorClass: ValidationError,
+            message: MissingApprovedSubjectCountError.buildMessage(),
+          },
+        ]);
       });
 
       it("does not update if two sections have the same displayOrder", async () => {
@@ -600,37 +628,45 @@ describe("ApplicantRepository", () => {
           {
             title: "myTitle",
             text: "some description",
-            displayOrder: 1
+            displayOrder: 1,
           },
           {
             title: "new myTitle",
             text: "new some description",
-            displayOrder: 2
-          }
+            displayOrder: 2,
+          },
         ];
-        const applicant = await ApplicantRepository.update({ uuid, sections: sectionsData });
+        const applicant = await ApplicantRepository.update({
+          uuid,
+          sections: sectionsData,
+        });
 
         const newSectionsData = [
           {
             title: "myTitle",
             text: "some description",
-            displayOrder: 2
+            displayOrder: 2,
           },
           {
             title: "new myTitle",
             text: "new some description",
-            displayOrder: 2
-          }
+            displayOrder: 2,
+          },
         ];
         await expect(
-          ApplicantRepository.update({ uuid: applicant.uuid, sections: newSectionsData })
+          ApplicantRepository.update({
+            uuid: applicant.uuid,
+            sections: newSectionsData,
+          })
         ).rejects.toThrow();
 
         const sections = await applicant.getSections();
         expect(
-          sections.map(
-            ({ title, text, displayOrder }) => ({ title, text, displayOrder })
-          )
+          sections.map(({ title, text, displayOrder }) => ({
+            title,
+            text,
+            displayOrder,
+          }))
         ).toEqual(expect.arrayContaining(sectionsData));
       });
     });
@@ -646,11 +682,7 @@ describe("ApplicantRepository", () => {
       applicant: Applicant,
       status: ApprovalStatus
     ) => {
-      return ApplicantRepository.updateApprovalStatus(
-        admin.userUuid,
-        applicant.uuid,
-        status
-      );
+      return ApplicantRepository.updateApprovalStatus(admin.userUuid, applicant.uuid, status);
     };
 
     const expectApplicantWithApprovalStatus = async (approvalStatus: ApprovalStatus) => {
@@ -672,8 +704,8 @@ describe("ApplicantRepository", () => {
         expect.objectContaining({
           adminUserUuid: admin.userUuid,
           applicantUuid: approvedApplicant.uuid,
-          status: approvalStatus
-        })
+          status: approvalStatus,
+        }),
       ]);
     };
 
@@ -709,28 +741,30 @@ describe("ApplicantRepository", () => {
       await expectSuccessfulApplicantStatusUpdate(applicant, ApprovalStatus.rejected);
       await expectSuccessfulApplicantStatusUpdate(applicant, ApprovalStatus.pending);
       const events = await applicant.getApprovalEvents();
-      expect(events).toEqual(expect.arrayContaining([
-        expect.objectContaining({
-          adminUserUuid: admin.userUuid,
-          applicantUuid: applicant.uuid,
-          status: ApprovalStatus.pending
-        }),
-        expect.objectContaining({
-          adminUserUuid: admin.userUuid,
-          applicantUuid: applicant.uuid,
-          status: ApprovalStatus.approved
-        }),
-        expect.objectContaining({
-          adminUserUuid: admin.userUuid,
-          applicantUuid: applicant.uuid,
-          status: ApprovalStatus.rejected
-        }),
-        expect.objectContaining({
-          adminUserUuid: admin.userUuid,
-          applicantUuid: applicant.uuid,
-          status: ApprovalStatus.pending
-        })
-      ]));
+      expect(events).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            adminUserUuid: admin.userUuid,
+            applicantUuid: applicant.uuid,
+            status: ApprovalStatus.pending,
+          }),
+          expect.objectContaining({
+            adminUserUuid: admin.userUuid,
+            applicantUuid: applicant.uuid,
+            status: ApprovalStatus.approved,
+          }),
+          expect.objectContaining({
+            adminUserUuid: admin.userUuid,
+            applicantUuid: applicant.uuid,
+            status: ApprovalStatus.rejected,
+          }),
+          expect.objectContaining({
+            adminUserUuid: admin.userUuid,
+            applicantUuid: applicant.uuid,
+            status: ApprovalStatus.pending,
+          }),
+        ])
+      );
     });
 
     it("throws an error if admin does not exist", async () => {
@@ -744,8 +778,8 @@ describe("ApplicantRepository", () => {
         )
       ).rejects.toThrowErrorWithMessage(
         ForeignKeyConstraintError,
-        "insert or update on table \"ApplicantApprovalEvents\" violates " +
-        "foreign key constraint \"ApplicantApprovalEvents_adminUserUuid_fkey\""
+        'insert or update on table "ApplicantApprovalEvents" violates ' +
+          'foreign key constraint "ApplicantApprovalEvents_adminUserUuid_fkey"'
       );
     });
 
@@ -772,7 +806,7 @@ describe("ApplicantRepository", () => {
         )
       ).rejects.toThrowErrorWithMessage(
         DatabaseError,
-        "invalid input syntax for type uuid: \"InvalidFormat\""
+        'invalid input syntax for type uuid: "InvalidFormat"'
       );
     });
 
@@ -813,9 +847,9 @@ describe("ApplicantRepository", () => {
           "unknownStatus" as ApprovalStatus
         )
       ).rejects.toThrow();
-      expect(
-        (await ApplicantRepository.findByUuid(applicant.uuid)).approvalStatus
-      ).toEqual(ApprovalStatus.pending);
+      expect((await ApplicantRepository.findByUuid(applicant.uuid)).approvalStatus).toEqual(
+        ApprovalStatus.pending
+      );
     });
 
     it("does not create an event for the applicant if it throws an error", async () => {

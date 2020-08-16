@@ -6,7 +6,7 @@ const offerTypes = [
   GraphQLOffer,
   GraphQLOfferSectionInput,
   GraphQLOfferSection,
-  GraphQLOfferCareerInput
+  GraphQLOfferCareerInput,
 ];
 
 export { offerTypes };

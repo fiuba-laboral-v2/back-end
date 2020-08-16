@@ -8,37 +8,33 @@ export = {
         {
           phoneNumber: {
             allowNull: false,
-            type: STRING
+            type: STRING,
           },
           companyUuid: {
             allowNull: false,
             type: UUID,
             references: { model: "Companies", key: "uuid" },
-            onDelete: "CASCADE"
+            onDelete: "CASCADE",
           },
           createdAt: {
             allowNull: false,
-            type: DATE
+            type: DATE,
           },
           updatedAt: {
             allowNull: false,
-            type: DATE
-          }
+            type: DATE,
+          },
         },
         { transaction }
       );
-      await queryInterface.addConstraint(
-        "CompanyPhoneNumbers",
-        ["phoneNumber", "companyUuid"],
-        {
-          type: "primary key",
-          name: "companyUuid_phoneNumber_companyUuid_key",
-          transaction
-        }
-      );
+      await queryInterface.addConstraint("CompanyPhoneNumbers", ["phoneNumber", "companyUuid"], {
+        type: "primary key",
+        name: "companyUuid_phoneNumber_companyUuid_key",
+        transaction,
+      });
     });
   },
   down: (queryInterface: QueryInterface) => {
     return queryInterface.dropTable("CompanyPhoneNumbers");
-  }
+  },
 };

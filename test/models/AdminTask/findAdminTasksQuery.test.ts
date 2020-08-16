@@ -1,9 +1,6 @@
 import { findAdminTasksQuery } from "$models/AdminTask/findAdminTasksQuery";
 import { AdminTaskType } from "$models/AdminTask";
-import {
-  AdminTaskTypesIsEmptyError,
-  StatusesIsEmptyError
-} from "$models/AdminTask/Errors";
+import { AdminTaskTypesIsEmptyError, StatusesIsEmptyError } from "$models/AdminTask/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
@@ -34,17 +31,20 @@ describe("findAdminTasksQuery", () => {
       statuses,
       limit,
       secretary,
-      ...(updatedBeforeThan && { updatedBeforeThan })
+      ...(updatedBeforeThan && { updatedBeforeThan }),
     });
 
-    const commonStatus = statuses
-      .map(selectedStatus => `"AdminTask"."approvalStatus" = '${selectedStatus}'`);
-    const offerStatus = statuses
-      .map(selectedStatus => `"AdminTask"."${secretaryColumn(secretary)}" = '${selectedStatus}'`);
+    const commonStatus = statuses.map(
+      selectedStatus => `"AdminTask"."approvalStatus" = '${selectedStatus}'`
+    );
+    const offerStatus = statuses.map(
+      selectedStatus => `"AdminTask"."${secretaryColumn(secretary)}" = '${selectedStatus}'`
+    );
     const adminTaskWhereStatus = commonStatus.concat(offerStatus).join(" OR ");
 
-    const whereUpdatedBeforeThan = updatedBeforeThan ?
-      ` AND (${setUpdatedBeforeThan(updatedBeforeThan)})` : "";
+    const whereUpdatedBeforeThan = updatedBeforeThan
+      ? ` AND (${setUpdatedBeforeThan(updatedBeforeThan)})`
+      : "";
 
     const expectedQuery = `
     WITH "AdminTask" AS (
@@ -96,7 +96,7 @@ describe("findAdminTasksQuery", () => {
       adminTaskTypes: [AdminTaskType.Company],
       statuses: [status],
       limit,
-      secretary
+      secretary,
     });
     const expectedQuery = `
       WITH "AdminTask" AS
@@ -131,7 +131,7 @@ describe("findAdminTasksQuery", () => {
       adminTaskTypes: [AdminTaskType.Applicant],
       statuses: [status],
       limit,
-      secretary
+      secretary,
     });
     const expectedQuery = `
       WITH "AdminTask" AS
@@ -164,7 +164,7 @@ describe("findAdminTasksQuery", () => {
       adminTaskTypes: [AdminTaskType.Offer],
       statuses: [status],
       limit,
-      secretary
+      secretary,
     });
     const expectedQuery = `
       WITH "AdminTask" AS (
@@ -193,12 +193,12 @@ describe("findAdminTasksQuery", () => {
   };
 
   it("throws an error if no adminTaskTypes are provided", async () => {
-    expect(
-      () => findAdminTasksQuery({
+    expect(() =>
+      findAdminTasksQuery({
         adminTaskTypes: [],
         statuses: [ApprovalStatus.pending],
         limit: 100,
-        secretary: Secretary.graduados
+        secretary: Secretary.graduados,
       })
     ).toThrowErrorWithMessage(
       AdminTaskTypesIsEmptyError,
@@ -207,17 +207,14 @@ describe("findAdminTasksQuery", () => {
   });
 
   it("throws an error if no statuses are provided", async () => {
-    expect(
-      () => findAdminTasksQuery({
+    expect(() =>
+      findAdminTasksQuery({
         adminTaskTypes: [AdminTaskType.Applicant],
         statuses: [],
         limit: 150,
-        secretary: Secretary.graduados
+        secretary: Secretary.graduados,
       })
-    ).toThrowErrorWithMessage(
-      StatusesIsEmptyError,
-      StatusesIsEmptyError.buildMessage()
-    );
+    ).toThrowErrorWithMessage(StatusesIsEmptyError, StatusesIsEmptyError.buildMessage());
   });
 
   it("returns an sql query of adminTasks in pending status for extension secretary", async () => {
@@ -307,25 +304,21 @@ describe("findAdminTasksQuery", () => {
   it("optionally filters by maximum updatedAt (not inclusive)", async () => {
     const statuses = [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected];
 
-    expectToReturnSQLQueryOfAllAdminTasksWithStatus(
-      statuses, Secretary.extension,
-      { dateTime: new Date("1995-12-17T03:24:00Z"), uuid: "ec45bb65-6076-45ea-b5e2-844334c3238e" }
-    );
+    expectToReturnSQLQueryOfAllAdminTasksWithStatus(statuses, Secretary.extension, {
+      dateTime: new Date("1995-12-17T03:24:00Z"),
+      uuid: "ec45bb65-6076-45ea-b5e2-844334c3238e",
+    });
   });
 
-  it(
-    "returns an sql query of adminTasks in approved and rejected statuses for extension secretary",
-    async () => {
-      const statuses = [ApprovalStatus.approved, ApprovalStatus.rejected];
+  it("returns an sql query of adminTasks in approved and rejected statuses for extension secretary", async () => {
+    const statuses = [ApprovalStatus.approved, ApprovalStatus.rejected];
 
-      expectToReturnSQLQueryOfAllAdminTasksWithStatus(statuses, Secretary.extension);
-    });
+    expectToReturnSQLQueryOfAllAdminTasksWithStatus(statuses, Secretary.extension);
+  });
 
-  it(
-    "returns an sql query of adminTasks in approved and rejected statuses for graduados secretary",
-    async () => {
-      const statuses = [ApprovalStatus.approved, ApprovalStatus.rejected];
+  it("returns an sql query of adminTasks in approved and rejected statuses for graduados secretary", async () => {
+    const statuses = [ApprovalStatus.approved, ApprovalStatus.rejected];
 
-      expectToReturnSQLQueryOfAllAdminTasksWithStatus(statuses, Secretary.graduados);
-    });
+    expectToReturnSQLQueryOfAllAdminTasksWithStatus(statuses, Secretary.graduados);
+  });
 });

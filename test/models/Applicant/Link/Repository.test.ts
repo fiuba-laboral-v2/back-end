@@ -17,7 +17,7 @@ describe("ApplicantLinkRepository", () => {
   it("creates a valid link with a name and a url", async () => {
     const params = {
       name: "Google",
-      url: "https://www.google.com/"
+      url: "https://www.google.com/",
     };
     await ApplicantLinkRepository.update([params], applicant);
 
@@ -27,21 +27,21 @@ describe("ApplicantLinkRepository", () => {
     expect(link).toMatchObject({
       applicantUuid: applicant.uuid,
       name: params.name,
-      url: params.url
+      url: params.url,
     });
   });
 
   it("should update a valid link", async () => {
     const params = {
       name: "Google",
-      url: "www.google.com"
+      url: "www.google.com",
     };
 
     await ApplicantLinkRepository.update([params], applicant);
 
     const newParams = {
       name: "LinkedIn",
-      url: "www.linkedin.com"
+      url: "www.linkedin.com",
     };
 
     await ApplicantLinkRepository.update([newParams], applicant);
@@ -55,7 +55,7 @@ describe("ApplicantLinkRepository", () => {
     const secondApplicant = await ApplicantGenerator.instance.withMinimumData();
     const params = {
       name: "Google",
-      url: "www.google.com"
+      url: "www.google.com",
     };
 
     await ApplicantLinkRepository.update([params], applicant);
@@ -64,8 +64,10 @@ describe("ApplicantLinkRepository", () => {
     const [link] = await applicant.getLinks();
     const [secondlink] = await secondApplicant.getLinks();
 
-    expect({ name: link.name, url: link.url })
-      .toMatchObject({ name: secondlink.name, url: secondlink.url });
+    expect({ name: link.name, url: link.url }).toMatchObject({
+      name: secondlink.name,
+      url: secondlink.url,
+    });
   });
 
   it("thows an error if an applicantUuid has duplicated links name", async () => {
@@ -73,7 +75,10 @@ describe("ApplicantLinkRepository", () => {
 
     await expect(
       ApplicantLinkRepository.update(
-        [{ name: oneName, url: "some.url" }, { name: oneName, url: "other.url" }],
+        [
+          { name: oneName, url: "some.url" },
+          { name: oneName, url: "other.url" },
+        ],
         applicant
       )
     ).rejects.toThrowErrorWithMessage(
@@ -87,23 +92,23 @@ describe("ApplicantLinkRepository", () => {
 
     await expect(
       ApplicantLinkRepository.update(
-        [{ name: "name", url }, { name: "other", url }],
+        [
+          { name: "name", url },
+          { name: "other", url },
+        ],
         applicant
       )
-    ).rejects.toThrowErrorWithMessage(
-      UniqueConstraintError,
-      "Validation error"
-    );
+    ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
   });
 
   it("throws an error if the url is longer than 256 characters", async () => {
     await expect(
-      ApplicantLinkRepository.update(
-        [{ name: "name", url: "a".repeat(300) }],
-        applicant
-      )
-    ).rejects.toThrowBulkRecordErrorIncluding(
-      [{ errorClass: ValidationError, message: "Validation error: La URL es inválida" }]
-    );
+      ApplicantLinkRepository.update([{ name: "name", url: "a".repeat(300) }], applicant)
+    ).rejects.toThrowBulkRecordErrorIncluding([
+      {
+        errorClass: ValidationError,
+        message: "Validation error: La URL es inválida",
+      },
+    ]);
   });
 });

@@ -2,7 +2,7 @@ import {
   Category,
   CategoryConfiguration,
   CategoryServiceFactory,
-  LogLevel
+  LogLevel,
 } from "typescript-logging";
 
 CategoryServiceFactory.setDefaultConfiguration(new CategoryConfiguration(LogLevel.Info));

@@ -5,20 +5,20 @@ import { isEmpty } from "lodash";
 
 export const ApplicantLinkRepository = {
   update: async (links: TLink[], applicant: Applicant, transaction?: Transaction) => {
-    const linkNames: string[] =
-      (await ApplicantLinkRepository.bulkUpsert(links, applicant, transaction))
-        .map(({ name }) => (name));
+    const linkNames: string[] = (
+      await ApplicantLinkRepository.bulkUpsert(links, applicant, transaction)
+    ).map(({ name }) => name);
 
     return ApplicantLink.destroy({
       where: {
         applicantUuid: applicant.uuid,
         ...(!isEmpty(linkNames) && {
           [Op.not]: {
-            name: linkNames
-          }
-        })
+            name: linkNames,
+          },
+        }),
       },
-      transaction
+      transaction,
     });
   },
   bulkUpsert: (links: TLink[], applicant: Applicant, transaction?: Transaction) => {
@@ -28,8 +28,8 @@ export const ApplicantLinkRepository = {
         transaction,
         validate: true,
         returning: true,
-        updateOnDuplicate: ["url"]
+        updateOnDuplicate: ["url"],
       }
     );
-  }
+  },
 };
