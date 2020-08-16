@@ -30,15 +30,19 @@ describe("CareerRepository", () => {
       await CareerRepository.truncate();
       const firstCareer = await CareerRepository.create(CareerGenerator.data());
       const secondCareer = await CareerRepository.create(CareerGenerator.data());
-
       await CareerRepository.deleteByCode(secondCareer.code);
       const expectedCareers = await CareerRepository.findAll();
+      expect(expectedCareers.map(c => c.code)).toEqual([firstCareer.code]);
+    });
 
-      expect(expectedCareers).toHaveLength(1);
-      expect(
-        expectedCareers.map(c => c.code)
-      ).toEqual(
-        [firstCareer.code]
+    it("throws an error if the career does not exists", async () => {
+      await CareerRepository.create(CareerGenerator.data());
+      await CareerRepository.create(CareerGenerator.data());
+      await expect(
+        CareerRepository.deleteByCode("undefinedCareerCode")
+      ).rejects.toThrowErrorWithMessage(
+        CareersNotFoundError,
+        CareersNotFoundError.buildMessage(["undefinedCareerCode"])
       );
     });
   });
