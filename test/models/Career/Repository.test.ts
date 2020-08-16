@@ -63,31 +63,64 @@ describe("CareerRepository", () => {
     });
   });
 
-  it("retrieve all careers by code", async () => {
-    const firstCareer = await CareerRepository.create(CareerGenerator.data());
-    const secondCareer = await CareerRepository.create(CareerGenerator.data());
-    await CareerRepository.create(CareerGenerator.data());
+  describe("findByCodes", () => {
+    it("throws an error if one of the careers does not exists", async () => {
+      const firstCareer = await CareerRepository.create(CareerGenerator.data());
+      const secondCareer = await CareerRepository.create(CareerGenerator.data());
+      await CareerRepository.create(CareerGenerator.data());
+      const undefinedCareerCode = "undefinedCareerCode";
 
-    const expectedCareers = await CareerRepository.findByCodes([
-      firstCareer.code,
-      secondCareer.code
-    ]);
+      await expect(
+        CareerRepository.findByCodes([firstCareer.code, secondCareer.code, undefinedCareerCode])
+      ).rejects.toThrowErrorWithMessage(
+        CareersNotFoundError,
+        CareersNotFoundError.buildMessage([undefinedCareerCode])
+      );
+    });
 
-    expect(expectedCareers).toHaveLength(2);
-    expect(
-      expectedCareers.map(c => c.code)
-    ).toEqual(expect.arrayContaining([
-      firstCareer.code,
-      secondCareer.code
-    ]));
+    it("throws an error if all of the careers does not exists", async () => {
+      await CareerRepository.create(CareerGenerator.data());
+      await CareerRepository.create(CareerGenerator.data());
+      await CareerRepository.create(CareerGenerator.data());
+      const firstUndefinedCareerCode = "firstUndefinedCareerCode";
+      const secondUndefinedCareerCode = "secondUndefinedCareerCode";
+
+      const codes = [firstUndefinedCareerCode, secondUndefinedCareerCode];
+      await expect(
+        CareerRepository.findByCodes(codes)
+      ).rejects.toThrowErrorWithMessage(
+        CareersNotFoundError,
+        CareersNotFoundError.buildMessage(codes)
+      );
+    });
+
+    it("retrieve all careers by code", async () => {
+      const firstCareer = await CareerRepository.create(CareerGenerator.data());
+      const secondCareer = await CareerRepository.create(CareerGenerator.data());
+      await CareerRepository.create(CareerGenerator.data());
+
+      const codes = [firstCareer.code, secondCareer.code];
+      const expectedCareers = await CareerRepository.findByCodes(codes);
+
+      expect(expectedCareers).toHaveLength(2);
+      expect(expectedCareers.map(c => c.code)).toEqual(expect.arrayContaining(codes));
+    });
   });
 
-  it("throws CareersNotFoundError if the career doesn't exists", async () => {
-    await expect(
-      CareerRepository.findByCode("undefinedCareerCode")
-    ).rejects.toThrowErrorWithMessage(
-      CareersNotFoundError,
-      CareersNotFoundError.buildMessage(["undefinedCareerCode"])
-    );
+  describe("findByCode", () => {
+    it("return a career by code", async () => {
+      const { code } = await CareerRepository.create(CareerGenerator.data());
+      const career = await CareerRepository.findByCode(code);
+      expect(career.code).toEqual(code);
+    });
+
+    it("throws CareersNotFoundError if the career doesn't exists", async () => {
+      await expect(
+        CareerRepository.findByCode("undefinedCareerCode")
+      ).rejects.toThrowErrorWithMessage(
+        CareersNotFoundError,
+        CareersNotFoundError.buildMessage(["undefinedCareerCode"])
+      );
+    });
   });
 });
