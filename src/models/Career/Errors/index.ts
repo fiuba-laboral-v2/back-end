@@ -1,3 +1,1 @@
-import { CareersNotFound } from "./CareersNotFound";
-
-export default { CareersNotFound };
+export { CareersNotFound } from "./CareersNotFound";

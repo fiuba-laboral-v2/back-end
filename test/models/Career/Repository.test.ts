@@ -1,4 +1,4 @@
-import { CareerRepository, Errors } from "$models/Career";
+import { CareerRepository, CareersNotFound } from "$models/Career";
 import { CareerGenerator } from "$generators/Career";
 import { UniqueConstraintError } from "sequelize";
 
@@ -78,8 +78,8 @@ describe("CareerRepository", () => {
     await expect(
       CareerRepository.findByCode("undefinedCareerCode")
     ).rejects.toThrowErrorWithMessage(
-      Errors.CareersNotFound,
-      Errors.CareersNotFound.buildMessage(["undefinedCareerCode"])
+      CareersNotFound,
+      CareersNotFound.buildMessage(["undefinedCareerCode"])
     );
   });
 });
