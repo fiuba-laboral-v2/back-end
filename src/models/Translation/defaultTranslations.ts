@@ -37,7 +37,7 @@ export const defaultTranslations = {
   careersDetail: [
     { key: "careersTitle", value: "Carreras" },
     { key: "approvedSubjectCount", value: "materias aprobadas" },
-    { key: "currentCareerYear", value: "año de" },
+    { key: "currentCareerYear", value: "año" },
     { key: "isGraduate", value: "Graduado/a" },
     { key: "connector", value: "de" }
   ],
