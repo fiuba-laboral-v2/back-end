@@ -88,8 +88,6 @@ export const defaultTranslations = {
   ],
   editableDetail: [
     { key: "title", value: "Editar tu perfil" },
-    { key: "name", value: "Nombre" },
-    { key: "surname", value: "Apellido" },
     { key: "description", value: "Descripción" },
     { key: "links", value: "Links" },
     { key: "link", value: "Link" },
