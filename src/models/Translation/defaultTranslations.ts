@@ -157,10 +157,14 @@ export const defaultTranslations = {
     { key: "rejected", value: "Rechazado" }
   ],
   adminTaskList: [
-    { key: "tasks", value: "Tareas" },
-    { key: "pending", value: "pendientes" },
-    { key: "rejected", value: "rechazadas" },
-    { key: "approved", value: "aprobadas" }
+    { key: "none", value: "Tareas" },
+    { key: "approved", value: "Tareas aprobadas" },
+    { key: "pending", value: "Tareas pendientes" },
+    { key: "rejected", value: "Tareas rechazadas" },
+    { key: "pending_or_rejected", value: "Tareas pendientes o rechazadas" },
+    { key: "approved_or_pending", value: "Tareas aprobadas o pendientes" },
+    { key: "approved_or_rejected", value: "Tareas aprobadas o rechazadas" },
+    { key: "approved_or_pending_or_rejected", value: "Tareas" }
   ],
   adminEmptyDetail: [
     { key: "selectToStart", value: "Seleccioná para comenzar" }
@@ -201,8 +205,5 @@ export const defaultTranslations = {
   ],
   updatedSince: [
     { key: "update", value: "Actualizado" }
-  ],
-  list: [
-    { key: "fetchMore", value: "Ver más" }
   ]
 };
