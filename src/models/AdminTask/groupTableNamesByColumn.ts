@@ -1,9 +1,12 @@
 import { AdminTaskModelsType, TABLE_NAME_COLUMN } from "./Model";
 import { groupBy, mapValues } from "lodash";
 
-const getColumns = model => [TABLE_NAME_COLUMN].concat(Object.keys(model.rawAttributes));
+const getColumns = (model: AdminTaskModelsType) => {
+  const columns = Object.keys(model.rawAttributes);
+  return [TABLE_NAME_COLUMN].concat(columns);
+};
 
-const mapModelToTableNameColumnTuple = model =>
+const mapModelToTableNameColumnTuple = (model: AdminTaskModelsType) =>
   getColumns(model).map(column => ({ tableName: model.tableName, column }));
 
 const mapAllModelsToTableNameColumnTuple = (adminTaskModelsTypes: AdminTaskModelsType[]) =>

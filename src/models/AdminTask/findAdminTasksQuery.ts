@@ -1,12 +1,40 @@
-import { ADMIN_TASK_MODELS, AdminTaskModelsType, AdminTaskType, TABLE_NAME_COLUMN } from "./Model";
-import { IAdminTasksFilter } from "./Interfaces";
+import {
+  ADMIN_TASK_MODELS,
+  AdminTaskModelsType,
+  AdminTaskType,
+  TABLE_NAME_COLUMN,
+  SeparateApprovalAdminTaskTypes,
+  SharedApprovalAdminTaskTypes
+} from "./Model";
+import { IAdminTasksFilter, IApprovalStatusOptions } from "./Interfaces";
 import { AdminTaskTypesIsEmptyError, StatusesIsEmptyError } from "./Errors";
 import { groupTableNamesByColumn } from "./groupTableNamesByColumn";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { Secretary } from "$models/Admin/Interface";
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
+import intersection from "lodash/intersection";
 
-const getStatusWhereClause = (statuses: ApprovalStatus[]) =>
-  statuses.map(status => `"AdminTask"."approvalStatus" = '${status}'`).join(" OR ");
+const getStatusWhereClause = (
+  statuses: ApprovalStatus[],
+  secretary: Secretary,
+  { includesSharedApprovalModel, includesSeparateApprovalModel }: IApprovalStatusOptions
+) => {
+  const conditions: string[] = [];
+  const columns: string[] = [];
+  if (includesSharedApprovalModel) columns.push("approvalStatus");
+  if (includesSeparateApprovalModel) {
+    columns.push(
+      secretary === Secretary.graduados ? "graduadosApprovalStatus" : "extensionApprovalStatus"
+    );
+  }
+
+  for (const column of columns) {
+    for (const status of statuses) {
+      conditions.push(`"AdminTask"."${column}" = '${status}'`);
+    }
+  }
+  return conditions.join(" OR ");
+};
 
 const getUpdatedAtWhereClause = (updatedBeforeThan?: IPaginatedInput) => {
   if (!updatedBeforeThan) return;
@@ -21,9 +49,14 @@ const getUpdatedAtWhereClause = (updatedBeforeThan?: IPaginatedInput) => {
   `;
 };
 
-const getWhereClause = (statuses: ApprovalStatus[], updatedBeforeThan?: IPaginatedInput) =>
+const getWhereClause = (
+  statuses: ApprovalStatus[],
+  secretary: Secretary,
+  approvalStatusOptions: IApprovalStatusOptions,
+  updatedBeforeThan?: IPaginatedInput
+) =>
   [
-    getStatusWhereClause(statuses),
+    getStatusWhereClause(statuses, secretary, approvalStatusOptions),
     getUpdatedAtWhereClause(updatedBeforeThan)
   ].filter(clause => clause).map(clause => `(${clause})`).join(" AND ");
 
@@ -56,6 +89,17 @@ const getAdminTaskModels = (adminTaskTypes: AdminTaskType[]) => {
   return ADMIN_TASK_MODELS.filter(model => modelNames.includes(model.name));
 };
 
+const includeStatus = (adminTaskTypes: AdminTaskType[]) => {
+  return {
+    includesSharedApprovalModel: intersection(
+      adminTaskTypes, SharedApprovalAdminTaskTypes
+    ).length >= 1,
+    includesSeparateApprovalModel: intersection(
+      adminTaskTypes, SeparateApprovalAdminTaskTypes
+    ).length >= 1
+  };
+};
+
 const findAdminTasksByTypeQuery = (adminTaskTypes: AdminTaskType[]) => {
   const adminTaskModelsTypes = getAdminTaskModels(adminTaskTypes);
   return `
@@ -69,15 +113,17 @@ export const findAdminTasksQuery = (
     adminTaskTypes,
     statuses,
     updatedBeforeThan,
-    limit
+    limit,
+    secretary
   }: IAdminTasksFilter & { limit: number }
 ) => {
   if (adminTaskTypes.length === 0) throw new AdminTaskTypesIsEmptyError();
   if (statuses.length === 0) throw new StatusesIsEmptyError();
+  const approvalStatusOptions = includeStatus(adminTaskTypes);
   return `
     WITH "AdminTask" AS (${findAdminTasksByTypeQuery(adminTaskTypes)})
     SELECT * FROM "AdminTask"
-    WHERE ${getWhereClause(statuses, updatedBeforeThan)}
+    WHERE ${getWhereClause(statuses, secretary, approvalStatusOptions, updatedBeforeThan)}
     ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
     LIMIT ${limit}
   `;

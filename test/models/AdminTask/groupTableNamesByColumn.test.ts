@@ -1,6 +1,6 @@
 import { groupTableNamesByColumn } from "$models/AdminTask/groupTableNamesByColumn";
 import { ADMIN_TASK_MODELS } from "$models/AdminTask";
-import { Applicant, Company } from "$models";
+import { Applicant, Company, Offer } from "$models";
 
 describe("groupTableNamesByColumn", () => {
 
@@ -53,6 +53,24 @@ describe("groupTableNamesByColumn", () => {
         logo: expect.arrayContaining([COMPANIES_TABLE_NAME]),
         website: expect.arrayContaining([COMPANIES_TABLE_NAME]),
         email: expect.arrayContaining([COMPANIES_TABLE_NAME])
+      }
+    );
+  });
+
+  it("groups each Offer column as a key", async () => {
+    const OFFER_TABLE_NAME = Offer.tableName;
+    const tableNamesByColumn = groupTableNamesByColumn([Offer]);
+    expect(tableNamesByColumn).toMatchObject(
+      {
+        uuid: expect.arrayContaining([OFFER_TABLE_NAME]),
+        description: expect.arrayContaining([OFFER_TABLE_NAME]),
+        companyUuid: expect.arrayContaining([OFFER_TABLE_NAME]),
+        title: expect.arrayContaining([OFFER_TABLE_NAME]),
+        hoursPerDay: expect.arrayContaining([OFFER_TABLE_NAME]),
+        minimumSalary: expect.arrayContaining([OFFER_TABLE_NAME]),
+        maximumSalary: expect.arrayContaining([OFFER_TABLE_NAME]),
+        graduadosApprovalStatus: expect.arrayContaining([OFFER_TABLE_NAME]),
+        extensionApprovalStatus: expect.arrayContaining([OFFER_TABLE_NAME])
       }
     );
   });

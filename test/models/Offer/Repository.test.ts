@@ -1,4 +1,4 @@
-import { UniqueConstraintError } from "sequelize";
+import { UniqueConstraintError, ValidationError } from "sequelize";
 import { CareerRepository } from "$models/Career";
 import { OfferRepository } from "$models/Offer";
 import { CompanyRepository } from "$models/Company";
@@ -11,6 +11,8 @@ import { omit, range } from "lodash";
 import { UserRepository } from "$models/User";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import MockDate from "mockdate";
+import { Secretary } from "$models/Admin";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
 describe("OfferRepository", () => {
   let offersData: TOfferDataGenerator;
@@ -19,6 +21,7 @@ describe("OfferRepository", () => {
     await CareerRepository.truncate();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
+    await OfferRepository.truncate();
     offersData = OfferGenerator.data.withObligatoryData();
   });
 
@@ -160,6 +163,53 @@ describe("OfferRepository", () => {
         ...offersData.next({ companyUuid }).value,
         uuid: unknownOfferUuid
       })).rejects.toThrow(OfferNotFound);
+    });
+  });
+
+  describe("UpdateStatus", () => {
+    it("updates the status for the secretary graduados successfully", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const attributes = offersData.next({ companyUuid }).value;
+      const { uuid } = await OfferRepository.create(attributes);
+      const newStatus = ApprovalStatus.approved;
+      const params = { uuid, secretary: Secretary.graduados, status: newStatus };
+      await OfferRepository.updateStatus(params);
+
+      expect((await OfferRepository.findByUuid(uuid)).graduadosApprovalStatus).toEqual(newStatus);
+    });
+
+    it("updates the status for the secretary extension successfully", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const attributes = offersData.next({ companyUuid }).value;
+      const { uuid } = await OfferRepository.create(attributes);
+      const newStatus = ApprovalStatus.approved;
+      const params = { uuid, secretary: Secretary.extension, status: newStatus };
+      await OfferRepository.updateStatus(params);
+
+      expect((await OfferRepository.findByUuid(uuid)).extensionApprovalStatus).toEqual(newStatus);
+    });
+
+    it("throws an error if the offer does not exist", async () => {
+      const unknownOfferUuid = "1dd69a27-0f6c-4859-be9e-4de5adf22826";
+      const newStatus = ApprovalStatus.approved;
+      const params = { uuid: unknownOfferUuid, secretary: Secretary.graduados, status: newStatus };
+
+      await expect(OfferRepository.updateStatus(params)).rejects.toThrow(OfferNotFound);
+    });
+
+    it("throws an error if the status is not a valid ApprovalStatus value", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const attributes = offersData.next({ companyUuid }).value;
+      const { uuid } = await OfferRepository.create(attributes);
+      const newStatus = "pepito" as ApprovalStatus;
+      const params = { uuid, secretary: Secretary.extension, status: newStatus };
+
+      await expect(
+        OfferRepository.updateStatus(params)
+      ).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        "Validation error: ApprovalStatus must be one of these values: pending,approved,rejected"
+      );
     });
   });
 
