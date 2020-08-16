@@ -4,6 +4,10 @@ export const defaultTranslations = {
     { key: "name", value: "Nombre" },
     { key: "surname", value: "Apellido" }
   ],
+  userEditFields: [
+    { key: "name", value: "Nombre" },
+    { key: "surname", value: "Apellido" }
+  ],
   register: [
     { key: "registerAsCompany", value: "Registrarme como empresa" },
     { key: "registerAsApplicant", value: "Registrarme como alumno" }
