@@ -4,6 +4,10 @@ export const defaultTranslations = {
     { key: "name", value: "Nombre" },
     { key: "surname", value: "Apellido" }
   ],
+  userEditFields: [
+    { key: "name", value: "Nombre" },
+    { key: "surname", value: "Apellido" }
+  ],
   register: [
     { key: "registerAsCompany", value: "Registrarme como empresa" },
     { key: "registerAsApplicant", value: "Registrarme como alumno" }
@@ -34,7 +38,10 @@ export const defaultTranslations = {
     { key: "careersTitle", value: "Carreras" }
   ],
   careerSelector: [
-    { key: "career", value: "Carrera" }
+    { key: "career", value: "Carrera" },
+    { key: "isGraduate", value: "Graduado?" },
+    { key: "approvedSubjectCount", value: "Cuántas materias aprobaste? (sin CBC)" },
+    { key: "currentCareerYear", value: "Qué año estás cursando? (sin CBC)" }
   ],
   editOffer: [
     { key: "create", value: "Publicar oferta" },
@@ -81,8 +88,6 @@ export const defaultTranslations = {
   ],
   editableDetail: [
     { key: "title", value: "Editar tu perfil" },
-    { key: "name", value: "Nombre" },
-    { key: "surname", value: "Apellido" },
     { key: "description", value: "Descripción" },
     { key: "links", value: "Links" },
     { key: "link", value: "Link" },
