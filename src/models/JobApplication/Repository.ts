@@ -19,14 +19,14 @@ export const JobApplicationRepository = {
     );
     return jobApplication != null;
   },
-  findLatestByCompanyUuid: async (companyUuid: string) => {
-    const offers = await Offer.findAll({ where: { companyUuid } });
-    return JobApplication.findAll({
-      where: {
-        offerUuid: offers.map(({ uuid }) => uuid)
-      },
-      order: [["createdAt", "DESC"]]
-    });
-  },
+  findLatestByCompanyUuid: async (companyUuid: string) =>
+    JobApplication.findAll({
+      include: [{
+        model: Offer,
+        where: { companyUuid },
+        attributes: []
+      }],
+      order: [["updatedAt", "DESC"], ["offerUuid", "DESC"], ["applicantUuid", "DESC"]]
+    }),
   truncate: () => JobApplication.truncate()
 };

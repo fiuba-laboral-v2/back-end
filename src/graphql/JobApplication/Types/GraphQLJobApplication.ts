@@ -22,7 +22,7 @@ export const GraphQLJobApplication = new GraphQLObjectType<JobApplication>({
       type: nonNull(GraphQLOffer),
       resolve: jobApplication => jobApplication.getOffer()
     },
-    createdAt: {
+    updatedAt: {
       type: nonNull(GraphQLDateTime)
     }
   })

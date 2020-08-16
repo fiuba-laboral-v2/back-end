@@ -18,7 +18,7 @@ import { Secretary } from "$models/Admin";
 const GET_MY_LATEST_JOB_APPLICATIONS = gql`
     query getMyLatestJobApplications {
         getMyLatestJobApplications {
-            createdAt
+            updatedAt
             offer {
                 uuid
                 title
@@ -67,7 +67,7 @@ describe("getMyLatestJobApplications", () => {
       expect(data!.getMyLatestJobApplications).toMatchObject(
         [
           {
-            createdAt: jobApplication.createdAt.toISOString(),
+            updatedAt: jobApplication.updatedAt.toISOString(),
             offer: {
               uuid: offer.uuid,
               title: offer.title
