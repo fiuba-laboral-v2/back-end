@@ -196,8 +196,5 @@ export const defaultTranslations = {
   ],
   updatedSince: [
     { key: "update", value: "Actualizado" }
-  ],
-  list: [
-    { key: "fetchMore", value: "Ver más" }
   ]
 };
