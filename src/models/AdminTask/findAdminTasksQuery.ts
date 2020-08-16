@@ -1,30 +1,39 @@
-import { ADMIN_TASK_MODELS, AdminTaskModelsType, AdminTaskType, TABLE_NAME_COLUMN } from "./Model";
-import { IAdminTasksFilter, IStatusType } from "./Interfaces";
+import {
+  ADMIN_TASK_MODELS,
+  AdminTaskModelsType,
+  AdminTaskType,
+  TABLE_NAME_COLUMN,
+  SeparateApprovalAdminTaskTypes,
+  SharedApprovalAdminTaskTypes
+} from "./Model";
+import { IAdminTasksFilter, IApprovalStatusOptions } from "./Interfaces";
 import { AdminTaskTypesIsEmptyError, StatusesIsEmptyError } from "./Errors";
 import { groupTableNamesByColumn } from "./groupTableNamesByColumn";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin/Interface";
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
+import intersection from "lodash/intersection";
 
 const getStatusWhereClause = (
   statuses: ApprovalStatus[],
   secretary: Secretary,
-  statusType: IStatusType
+  { includesSharedApprovalModel, includesSeparateApprovalModel }: IApprovalStatusOptions
 ) => {
-  const statusColumns: string[] = [];
-  if (statusType.includeCommon) {
-    statusColumns.push(...statuses.map(status => `"AdminTask"."approvalStatus" = '${status}'`));
+  const conditions: string[] = [];
+  const columns: string[] = [];
+  if (includesSharedApprovalModel) columns.push("approvalStatus");
+  if (includesSeparateApprovalModel) {
+    columns.push(
+      secretary === Secretary.graduados ? "graduadosApprovalStatus" : "extensionApprovalStatus"
+    );
   }
 
-  if (statusType.includeSecretary) {
-    const secretaryStatusName = secretary === Secretary.graduados ?
-      "graduadosApprovalStatus" : "extensionApprovalStatus";
-    statusColumns.push(...statuses.map(
-      status => `"AdminTask"."${secretaryStatusName}" = '${status}'`
-    ));
+  for (const column of columns) {
+    for (const status of statuses) {
+      conditions.push(`"AdminTask"."${column}" = '${status}'`);
+    }
   }
-
-  return statusColumns.join(" OR ");
+  return conditions.join(" OR ");
 };
 
 const getUpdatedAtWhereClause = (updatedBeforeThan?: IPaginatedInput) => {
@@ -43,11 +52,11 @@ const getUpdatedAtWhereClause = (updatedBeforeThan?: IPaginatedInput) => {
 const getWhereClause = (
   statuses: ApprovalStatus[],
   secretary: Secretary,
-  statusType: IStatusType,
+  approvalStatusOptions: IApprovalStatusOptions,
   updatedBeforeThan?: IPaginatedInput
 ) =>
   [
-    getStatusWhereClause(statuses, secretary, statusType),
+    getStatusWhereClause(statuses, secretary, approvalStatusOptions),
     getUpdatedAtWhereClause(updatedBeforeThan)
   ].filter(clause => clause).map(clause => `(${clause})`).join(" AND ");
 
@@ -80,11 +89,12 @@ const getAdminTaskModels = (adminTaskTypes: AdminTaskType[]) => {
   return ADMIN_TASK_MODELS.filter(model => modelNames.includes(model.name));
 };
 
-const incluedeStatus = (adminTaskTypes: AdminTaskType[]) => {
-  const commonStatus = adminTaskTypes.filter(type => type !== "Offer");
+const includeStatus = (adminTaskTypes: AdminTaskType[]) => {
   return {
-    includeCommon: commonStatus.length >= 1,
-    includeSecretary: adminTaskTypes.includes(AdminTaskType.Offer)
+    includesSharedApprovalModel: intersection(
+      adminTaskTypes, SharedApprovalAdminTaskTypes).length >= 1,
+    includesSeparateApprovalModel: intersection(
+      adminTaskTypes, SeparateApprovalAdminTaskTypes).length >= 1
   };
 };
 
@@ -107,11 +117,11 @@ export const findAdminTasksQuery = (
 ) => {
   if (adminTaskTypes.length === 0) throw new AdminTaskTypesIsEmptyError();
   if (statuses.length === 0) throw new StatusesIsEmptyError();
-  const statusTypes = incluedeStatus(adminTaskTypes);
+  const approvalStatusOptions = includeStatus(adminTaskTypes);
   return `
     WITH "AdminTask" AS (${findAdminTasksByTypeQuery(adminTaskTypes)})
     SELECT * FROM "AdminTask"
-    WHERE ${getWhereClause(statuses, secretary, statusTypes, updatedBeforeThan)}
+    WHERE ${getWhereClause(statuses, secretary, approvalStatusOptions, updatedBeforeThan)}
     ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
     LIMIT ${limit}
   `;

@@ -32,12 +32,12 @@ export const OfferRepository = {
   updateStatus: async (
     { uuid, secretary, status }: { uuid: string, secretary: Secretary, status: ApprovalStatus }
   ) => {
-    const offer = {
+    const offerAttributes = {
       ...(secretary === Secretary.graduados && { graduadosApprovalStatus: status }),
       ...(secretary === Secretary.extension && { extensionApprovalStatus: status })
     };
 
-    const [, [updatedOffer]] = await Offer.update(offer, {
+    const [, [updatedOffer]] = await Offer.update(offerAttributes, {
       where: { uuid },
       returning: true
     });

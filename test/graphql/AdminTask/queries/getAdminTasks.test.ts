@@ -216,7 +216,7 @@ describe("getAdminTasks", () => {
     );
   });
 
-  it("sorts all applicants, companies and offer in any status by updated timestamp", async () => {
+  it("sorts all applicants, companies and offers in any status by updated timestamp", async () => {
     const result = await getAdminTasks({
       adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company, AdminTaskType.Offer],
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],

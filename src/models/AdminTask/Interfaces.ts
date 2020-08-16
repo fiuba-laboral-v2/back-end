@@ -10,7 +10,7 @@ export interface IAdminTasksFilter {
   secretary: Secretary;
 }
 
-export interface IStatusType {
-  includeCommon: boolean;
-  includeSecretary: boolean;
+export interface IApprovalStatusOptions {
+  includesSharedApprovalModel: boolean;
+  includesSeparateApprovalModel: boolean;
 }
