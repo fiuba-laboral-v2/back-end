@@ -18,7 +18,7 @@ export const ApplicantCareersRepository = {
     transaction?: Transaction
   ) => ApplicantCareer.bulkCreate(
     applicantCareers.map(applicantCareer => ({ ...applicantCareer, applicantUuid })),
-    { transaction }
+    { transaction, validate: true }
   ),
   update: async (
     applicantCareers: IApplicantCareer[],

@@ -115,10 +115,12 @@ describe("ApplicantRepository", () => {
       delete applicantData.careers[0].isGraduate;
       await expect(
         ApplicantRepository.create(applicantData)
-      ).rejects.toThrowErrorWithMessage(
-        DatabaseError,
-        "null value in column \"isGraduate\" violates not-null constraint"
-      );
+      ).rejects.toThrowBulkRecordErrorIncluding([
+        {
+          errorClass: ValidationError,
+          message: "notNull Violation: ApplicantCareer.isGraduate cannot be null"
+        }
+      ]);
     });
 
     it("throws an error if the FiubaService authentication returns false", async () => {
