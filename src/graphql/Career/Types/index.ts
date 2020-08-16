@@ -1,3 +1,3 @@
 import { GraphQLCareer } from "./GraphQLCareer";
 
-export = [GraphQLCareer];
+export const careerTypes = [GraphQLCareer];

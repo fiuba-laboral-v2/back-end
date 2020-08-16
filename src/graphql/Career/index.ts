@@ -1,6 +1,4 @@
-import CareerTypes from "./Types";
-import { careerMutations } from "./Mutations";
-import { careerQueries } from "./queries";
+export { careerTypes } from "./Types";
+export { careerMutations } from "./Mutations";
+export { careerQueries } from "./Queries";
 export { careersPermissions } from "./Permissions";
-
-export { CareerTypes, careerMutations, careerQueries };
