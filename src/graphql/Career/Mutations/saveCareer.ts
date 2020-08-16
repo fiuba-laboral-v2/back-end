@@ -12,5 +12,5 @@ export const saveCareer = {
       type: nonNull(String)
     }
   },
-  resolve: async (_: undefined, props: ICareer) => CareerRepository.create(props)
+  resolve: (_: undefined, props: ICareer) => CareerRepository.create(props)
 };

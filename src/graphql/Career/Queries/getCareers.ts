@@ -4,5 +4,5 @@ import { CareerRepository } from "$models/Career";
 
 export const getCareers = {
   type: List(GraphQLCareer),
-  resolve: async () => await CareerRepository.findAll()
+  resolve: () => CareerRepository.findAll()
 };
