@@ -1,7 +1,7 @@
 import { GraphQLObjectType } from "graphql";
 import { Int, nonNull, ID, Boolean } from "$graphql/fieldTypes";
 import { ApplicantCareer } from "$models";
-import { GraphQLCareer } from "$graphql/Career/Types/Career";
+import { GraphQLCareer } from "$graphql/Career/Types/GraphQLCareer";
 
 export const GraphQLApplicantCareer = new GraphQLObjectType<ApplicantCareer>({
   name: "ApplicantCareer",

@@ -1,4 +1,4 @@
-import { GraphQLCareer } from "./Types/Career";
+import { GraphQLCareer } from "./Types/GraphQLCareer";
 import { ID, List, nonNull } from "$graphql/fieldTypes";
 import { CareerRepository } from "$models/Career";
 
