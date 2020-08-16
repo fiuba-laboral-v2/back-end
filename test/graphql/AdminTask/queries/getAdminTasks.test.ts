@@ -36,6 +36,10 @@ const GET_ADMIN_TASKS = gql`
           __typename
           uuid
         }
+        ... on Offer {
+          __typename
+          uuid
+        }
       }
       shouldFetchMore
     }
@@ -219,6 +223,9 @@ describe("getAdminTasks", () => {
       secretary: admin.secretary
     });
     expect(result.results.map(adminTask => adminTask.uuid)).toEqual([
+      pendingOffer.uuid,
+      approvedOffer.uuid,
+      rejectedOffer.uuid,
       pendingApplicant.uuid,
       approvedApplicant.uuid,
       rejectedApplicant.uuid,
@@ -257,7 +264,6 @@ describe("getAdminTasks", () => {
 
   describe("when the variables are incorrect", () => {
     it("returns an error if no filter is provided", async () => {
-      const { apolloClient } = await TestClientGenerator.admin();
       const { errors } = await apolloClient.query({
         query: GET_ADMIN_TASKS,
         variables: {}
@@ -268,9 +274,9 @@ describe("getAdminTasks", () => {
 
   describe("only admins can execute this query", () => {
     const testForbiddenAccess = async (
-      { apolloClient }: { apolloClient: ApolloServerTestClient }
+      { apolloClient: client }: { apolloClient: ApolloServerTestClient }
     ) => {
-      const { errors } = await apolloClient.query({
+      const { errors } = await client.query({
         query: GET_ADMIN_TASKS,
         variables: {
           adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company, AdminTaskType.Offer],

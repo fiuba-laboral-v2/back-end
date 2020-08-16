@@ -173,7 +173,7 @@ describe("OfferRepository", () => {
       const newStatus = ApprovalStatus.approved;
       const params = { uuid, secretary: Secretary.graduados, status: newStatus };
       await OfferRepository.updateStatus(params);
-      
+
       expect((await OfferRepository.findByUuid(uuid)).graduadosApprovalStatus).toEqual(newStatus);
     });
 

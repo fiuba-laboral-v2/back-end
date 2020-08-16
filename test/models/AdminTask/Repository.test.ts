@@ -191,7 +191,14 @@ describe("AdminTaskRepository", () => {
 
   it("returns only approved and rejected applicants, companies and Offers", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [approvedCompany, rejectedCompany, approvedApplicant, rejectedApplicant, approvedOffer, rejectedOffer],
+      [
+        approvedCompany,
+        rejectedCompany,
+        approvedApplicant,
+        rejectedApplicant,
+        approvedOffer,
+        rejectedOffer
+      ],
       [ApprovalStatus.approved, ApprovalStatus.rejected],
       admin.secretary
     );
@@ -212,7 +219,7 @@ describe("AdminTaskRepository", () => {
       rejectedApplicant.uuid,
       pendingCompany.uuid,
       approvedCompany.uuid,
-      rejectedCompany.uuid,
+      rejectedCompany.uuid
     ]);
     expect(result.results).toBeSortedBy({ key: "updatedAt", order: "desc" });
     expect(result.shouldFetchMore).toEqual(false);
