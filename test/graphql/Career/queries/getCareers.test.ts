@@ -11,7 +11,6 @@ const GET_CAREERS = gql`
         getCareers {
             code
             description
-            credits
         }
     }
 `;
@@ -32,7 +31,6 @@ describe("getCareers", () => {
       [
         {
           code: career.code,
-          credits: career.credits,
           description: career.description
         }
       ]

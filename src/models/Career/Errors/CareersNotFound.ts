@@ -1,5 +1,9 @@
 export class CareersNotFound extends Error {
+  public static buildMessage(codes: string[]) {
+    return `Careers with codes: [${codes}] does not exist`;
+  }
+
   constructor(codes: string[]) {
-    super(`Careers with codes: [${codes}] does not exist`);
+    super(CareersNotFound.buildMessage(codes));
   }
 }

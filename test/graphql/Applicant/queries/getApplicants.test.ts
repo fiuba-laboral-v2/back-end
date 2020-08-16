@@ -35,7 +35,6 @@ const GET_APPLICANTS = gql`
           career {
             code
             description
-            credits
           }
           approvedSubjectCount
           currentCareerYear
@@ -103,8 +102,7 @@ describe("getApplicants", () => {
         careers: [{
           career: {
             code: career.code,
-            description: career.description,
-            credits: career.credits
+            description: career.description
           },
           ...applicantCareer,
           approvedSubjectCount: null,
@@ -156,8 +154,7 @@ describe("getApplicants", () => {
             careers: [{
               career: {
                 code: newCareer.code,
-                description: newCareer.description,
-                credits: newCareer.credits
+                description: newCareer.description
               },
               ...applicantCareerData
             }],

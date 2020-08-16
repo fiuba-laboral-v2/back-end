@@ -9,10 +9,7 @@ import difference from "lodash/difference";
 import map from "lodash/map";
 
 export const CareerRepository = {
-  create: async ({ code, description, credits }: ICareer) => {
-    const career = new Career({ code, description, credits });
-    return career.save();
-  },
+  create: (attributes: ICareer) => Career.create(attributes),
   findByCodes: async (codes: string[]) => {
     const careers = await Career.findAll({ where: { code: { [Op.or]: codes } } });
     if (careers.length < codes.length) {
@@ -24,14 +21,10 @@ export const CareerRepository = {
     const [career] = await CareerRepository.findByCodes([codes]);
     return career;
   },
-  findAll: async () =>
-    Career.findAll(),
-  deleteByCode: (
-    code: string
-  ) => Database.transaction(async transaction => {
+  findAll: () => Career.findAll(),
+  deleteByCode: (code: string) => Database.transaction(async transaction => {
     await ApplicantCareer.destroy({ where: { careerCode: code }, transaction });
     return Career.destroy({ where: { code }, transaction });
   }),
-  truncate: async () =>
-    Career.truncate({ cascade: true })
+  truncate: () => Career.truncate({ cascade: true })
 };

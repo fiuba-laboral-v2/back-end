@@ -48,7 +48,6 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
             careers {
                 code
                 description
-                credits
             }
             company {
               uuid
