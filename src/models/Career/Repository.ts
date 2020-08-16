@@ -2,7 +2,7 @@ import { ICareer } from "./index";
 import { Op } from "sequelize";
 import { ApplicantCareer, Career } from "$models";
 import { Database } from "$config/Database";
-import { CareersNotFound } from "./Errors/CareersNotFound";
+import { CareersNotFoundError } from "./Errors/CareersNotFoundError";
 
 import difference from "lodash/difference";
 import map from "lodash/map";
@@ -12,7 +12,7 @@ export const CareerRepository = {
   findByCodes: async (codes: string[]) => {
     const careers = await Career.findAll({ where: { code: { [Op.or]: codes } } });
     if (careers.length < codes.length) {
-      throw new CareersNotFound(difference(codes, map(careers, ({ code }) => code)));
+      throw new CareersNotFoundError(difference(codes, map(careers, ({ code }) => code)));
     }
     return careers;
   },

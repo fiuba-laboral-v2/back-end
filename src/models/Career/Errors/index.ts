@@ -1,1 +1,1 @@
-export { CareersNotFound } from "./CareersNotFound";
+export { CareersNotFoundError } from "./CareersNotFoundError";

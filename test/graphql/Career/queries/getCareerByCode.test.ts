@@ -3,7 +3,7 @@ import { client } from "../../ApolloTestClient";
 
 import { CareerRepository } from "$models/Career";
 import { UserRepository } from "$models/User";
-import { CareersNotFound } from "$models/Career/Errors/CareersNotFound";
+import { CareersNotFoundError } from "$models/Career/Errors/CareersNotFoundError";
 import { CareerGenerator } from "$generators/Career";
 import { TestClientGenerator } from "$generators/TestClient";
 
@@ -49,7 +49,7 @@ describe("getCareerByCode", () => {
       });
       expect(errors![0].extensions!.data).toEqual(
         {
-          errorType: CareersNotFound.name
+          errorType: CareersNotFoundError.name
         }
       );
     });
