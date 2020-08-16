@@ -35,7 +35,11 @@ export const defaultTranslations = {
     { key: "password", value: "Contraseña" }
   ],
   careersDetail: [
-    { key: "careersTitle", value: "Carreras" }
+    { key: "careersTitle", value: "Carreras" },
+    { key: "approvedSubjectCount", value: "materias aprobadas" },
+    { key: "currentCareerYear", value: "año" },
+    { key: "isGraduate", value: "Graduado/a" },
+    { key: "connector", value: "de" }
   ],
   careerSelector: [
     { key: "career", value: "Carrera" },
