@@ -1,11 +1,8 @@
 import { withObligatoryData } from "./withObligatoryData";
 import { withOneSection } from "./withOneSection";
 import { OfferRepository } from "$models/Offer";
-import { Offer } from "$models";
 import { IOfferCareer } from "$models/Offer/OfferCareer";
 import { IOfferSection } from "$models/Offer/OfferSection";
-import { TGenericGenerator } from "../GenericGenerator";
-import { IOfferAttributes } from "$models/Offer/Interface";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
@@ -14,9 +11,6 @@ export interface IOfferInput {
   careers?: IOfferCareer[];
   sections?: IOfferSection[];
 }
-
-export type TOfferGenerator = TGenericGenerator<Promise<Offer>, IOfferInput>;
-export type TOfferDataGenerator = TGenericGenerator<IOfferAttributes, IOfferInput>;
 
 interface IUpdatedWithStatus {
   secretary: Secretary;
