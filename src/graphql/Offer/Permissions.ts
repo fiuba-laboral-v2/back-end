@@ -5,6 +5,7 @@ import { or } from "graphql-shield";
 export const offerPermissions = {
   Mutation: {
     createOffer: isFromApprovedCompany,
+    updateOfferApprovalStatus: isAdmin,
     editOffer: isFromApprovedCompany
   },
   Query: {

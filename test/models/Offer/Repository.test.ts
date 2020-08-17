@@ -15,6 +15,7 @@ import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AdminGenerator } from "$test/generators/Admin";
 import { adminTaskPermissions } from "$graphql/AdminTask";
+import { OfferApprovalEventRepository } from "$models/Offer/OfferApprovalEvent";
 
 describe("OfferRepository", () => {
   let offersData: TOfferDataGenerator;
@@ -217,6 +218,23 @@ describe("OfferRepository", () => {
       await OfferRepository.updateApprovalStatus(params);
 
       expect((await OfferRepository.findByUuid(uuid)).extensionApprovalStatus).toEqual(newStatus);
+    });
+
+    it("creates an entry on OfferApprovalEvents table", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const attributes = offersData.next({ companyUuid }).value;
+      const { uuid } = await OfferRepository.create(attributes);
+      const newStatus = ApprovalStatus.approved;
+      const params = {
+        uuid,
+        adminUserUuid: admin.userUuid,
+        secretary: Secretary.extension,
+        status: newStatus
+      };
+      await OfferRepository.updateApprovalStatus(params);
+      const offerApprovalEvents = await OfferApprovalEventRepository.findAll();
+
+      expect(offerApprovalEvents[offerApprovalEvents.length - 1].offerUuid).toEqual(uuid);
     });
 
     it("throws an error if the offer does not exist", async () => {

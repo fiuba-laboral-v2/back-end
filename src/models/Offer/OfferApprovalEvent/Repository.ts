@@ -2,7 +2,7 @@ import { ICreateOfferApprovalEvent } from "./Interface";
 import { OfferApprovalEvent } from "$models";
 
 export const OfferApprovalEventRepository = {
-  create: async ({ adminUserUuid, offer, status, transaction }: ICreateOfferApprovalEvent) =>
+  create: ({ adminUserUuid, offer, status, transaction }: ICreateOfferApprovalEvent) =>
     OfferApprovalEvent.create(
       {
         adminUserUuid,

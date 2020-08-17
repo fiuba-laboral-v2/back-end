@@ -55,7 +55,7 @@ export class OfferApprovalEvent extends Model<OfferApprovalEvent> {
   public admin: Admin;
 
   @BelongsTo(() => Offer, "offerUuid")
-  public company: Offer;
+  public offer: Offer;
 
   public getOffer: HasOneGetAssociationMixin<Offer>;
   public getAdmin: HasOneGetAssociationMixin<Admin>;
