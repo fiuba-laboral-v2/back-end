@@ -14,7 +14,28 @@ export const GraphQLPaginatedInput = new GraphQLInputObjectType({
   })
 });
 
+export const GraphQLPaginatedJobApplicationsInput = new GraphQLInputObjectType({
+  name: "PaginatedJobApplicationsInput",
+  fields: () => ({
+    dateTime: {
+      type: nonNull(GraphQLDateTime)
+    },
+    offerUuid: {
+      type: nonNull(ID)
+    },
+    applicantUuid: {
+      type: nonNull(ID)
+    }
+  })
+});
+
 export interface IPaginatedInput {
   dateTime: Date;
   uuid: string;
+}
+
+export interface IPaginatedJobApplicationsInput {
+  dateTime: Date;
+  offerUuid: string;
+  applicantUuid: string;
 }

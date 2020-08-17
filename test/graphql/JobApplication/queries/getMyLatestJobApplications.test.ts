@@ -16,22 +16,25 @@ import { TestClientGenerator } from "$generators/TestClient";
 import { Secretary } from "$models/Admin";
 
 const GET_MY_LATEST_JOB_APPLICATIONS = gql`
-    query getMyLatestJobApplications {
-        getMyLatestJobApplications {
-            updatedAt
-            offer {
-                uuid
-                title
-            }
-            applicant {
-                uuid
-                user {
-                    name
-                    surname
-                }
-            }
+  query getMyLatestJobApplications {
+    getMyLatestJobApplications {
+      shouldFetchMore
+      results {
+        updatedAt
+        offer {
+          uuid
+          title
         }
+        applicant {
+          uuid
+          user {
+            name
+            surname
+          }
+        }
+      }
     }
+  }
 `;
 
 describe("getMyLatestJobApplications", () => {
@@ -58,13 +61,13 @@ describe("getMyLatestJobApplications", () => {
       const offer = await offers.next({ companyUuid: company.uuid }).value;
       const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
 
-      const { data, errors } = await apolloClient.query({
+      const { data } = await apolloClient.query({
         query: GET_MY_LATEST_JOB_APPLICATIONS
       });
 
       const user = await applicant.getUser();
-      expect(errors).toBeUndefined();
-      expect(data!.getMyLatestJobApplications).toMatchObject(
+      expect(data!.getMyLatestJobApplications.shouldFetchMore).toEqual(false);
+      expect(data!.getMyLatestJobApplications.results).toMatchObject(
         [
           {
             updatedAt: jobApplication.updatedAt.toISOString(),
