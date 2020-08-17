@@ -24,7 +24,7 @@ export const CareerRepository = {
   deleteByCode: (code: string) => Database.transaction(async transaction => {
     await ApplicantCareer.destroy({ where: { careerCode: code }, transaction });
     const numberOfDeletedCareers = await Career.destroy({ where: { code }, transaction });
-    if (numberOfDeletedCareers < 1) throw new CareersNotFoundError([code]);
+    if (numberOfDeletedCareers !== 1) throw new CareersNotFoundError([code]);
     return numberOfDeletedCareers;
   }),
   truncate: () => Career.truncate({ cascade: true })
