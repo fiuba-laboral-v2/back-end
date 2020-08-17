@@ -6,7 +6,7 @@ import { CompanyRepository } from "$models/Company";
 
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
-import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
+import { OfferGenerator } from "$generators/Offer";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AdminGenerator } from "$generators/Admin";
 import { TestClientGenerator } from "$generators/TestClient";
@@ -25,13 +25,11 @@ const SAVE_JOB_APPLICATION = gql`
 
 describe("saveJobApplication", () => {
   let company;
-  let offers: TOfferGenerator;
 
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     company = await CompanyGenerator.instance.withCompleteData();
-    offers = await OfferGenerator.instance.withObligatoryData();
   });
 
   describe("when the input is valid", () => {
@@ -42,7 +40,7 @@ describe("saveJobApplication", () => {
           admin: await AdminGenerator.instance(Secretary.extension)
         }
       });
-      const offer = await offers.next({ companyUuid: company.uuid }).value;
+      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
 
       const { data, errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
@@ -68,7 +66,7 @@ describe("saveJobApplication", () => {
 
     it("returns an error if there is no current user", async () => {
       const apolloClient = client.loggedOut();
-      const offer = await offers.next({ companyUuid: company.uuid }).value;
+      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
         variables: { offerUuid: offer.uuid }
@@ -146,7 +144,7 @@ describe("saveJobApplication", () => {
           admin: await AdminGenerator.instance(Secretary.extension)
         }
       });
-      const offer = await offers.next({ companyUuid: company.uuid }).value;
+      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
       await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
         variables: { offerUuid: offer.uuid }
