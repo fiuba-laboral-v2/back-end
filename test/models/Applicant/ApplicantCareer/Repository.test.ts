@@ -1,8 +1,11 @@
-import { DatabaseError, UniqueConstraintError } from "sequelize";
+import { UniqueConstraintError, ValidationError } from "sequelize";
 import { ApplicantCareersRepository } from "$models/Applicant/ApplicantCareer";
 import { UserRepository } from "$models/User";
 import { CareerRepository } from "$models/Career";
-import { ApplicantCareerNotFound } from "$models/Applicant/ApplicantCareer/Errors";
+import {
+  ApplicantCareerNotFound,
+  ForbiddenCurrentCareerYearError
+} from "$models/Applicant/ApplicantCareer/Errors";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { CareerGenerator } from "$generators/Career";
 
@@ -16,23 +19,27 @@ describe("ApplicantCareersRepository", () => {
     it("returns an applicantCareer", async () => {
       const { code: careerCode } = await CareerGenerator.instance();
       const { uuid: applicantUuid } = await ApplicantGenerator.instance.withMinimumData({
-        careers: [{
-          careerCode,
-          isGraduate: true
-        }]
+        careers: [
+          {
+            careerCode,
+            isGraduate: true
+          }
+        ]
       });
       const applicantCareer = await ApplicantCareersRepository.findByApplicantAndCareer(
         applicantUuid,
         careerCode
       );
-      expect(applicantCareer).toEqual(expect.objectContaining({
-        careerCode,
-        isGraduate: true,
-        currentCareerYear: null,
-        approvedSubjectCount: null,
-        createdAt: expect.any(Date),
-        updatedAt: expect.any(Date)
-      }));
+      expect(applicantCareer).toEqual(
+        expect.objectContaining({
+          careerCode,
+          isGraduate: true,
+          currentCareerYear: null,
+          approvedSubjectCount: null,
+          createdAt: expect.any(Date),
+          updatedAt: expect.any(Date)
+        })
+      );
     });
 
     it("throws an error if the applicantCareer does not exists", async () => {
@@ -78,10 +85,7 @@ describe("ApplicantCareersRepository", () => {
       await ApplicantCareersRepository.bulkCreate([{ careerCode, isGraduate: true }], applicant);
       await expect(
         ApplicantCareersRepository.bulkCreate([{ careerCode, isGraduate: true }], applicant)
-      ).rejects.toThrowErrorWithMessage(
-        UniqueConstraintError,
-        "Validation error"
-      );
+      ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
     });
 
     it("throws an error if one of the applicantCareers data has no isGraduate", async () => {
@@ -93,10 +97,47 @@ describe("ApplicantCareersRepository", () => {
       ];
       await expect(
         ApplicantCareersRepository.bulkCreate(applicantCareersData, applicant)
-      ).rejects.toThrowErrorWithMessage(
-        DatabaseError,
-        "null value in column \"isGraduate\" violates not-null constraint"
-      );
+      ).rejects.toThrowBulkRecordErrorIncluding([
+        {
+          errorClass: ValidationError,
+          message: "notNull Violation: ApplicantCareer.isGraduate cannot be null"
+        }
+      ]);
+    });
+
+    it("throws an error if isGraduate is true and currentCareerYear is set", async () => {
+      const { code: careerCode } = await CareerGenerator.instance();
+      const applicant = await ApplicantGenerator.instance.withMinimumData();
+      const applicantCareersData = [{ careerCode, isGraduate: true, currentCareerYear: 2 }];
+      await expect(
+        ApplicantCareersRepository.bulkCreate(applicantCareersData, applicant)
+      ).rejects.toThrowBulkRecordErrorIncluding([
+        {
+          errorClass: ValidationError,
+          message: ForbiddenCurrentCareerYearError.buildMessage()
+        }
+      ]);
+    });
+
+    it("throws an error for not null and forbidden attribute errors", async () => {
+      const { code: careerCode } = await CareerGenerator.instance();
+      const applicant = await ApplicantGenerator.instance.withMinimumData();
+      const applicantCareersData = [
+        { careerCode, isGraduate: true, currentCareerYear: 2 },
+        { careerCode, isGraduate: null as any }
+      ];
+      await expect(
+        ApplicantCareersRepository.bulkCreate(applicantCareersData, applicant)
+      ).rejects.toThrowBulkRecordErrorIncluding([
+        {
+          errorClass: ValidationError,
+          message: ForbiddenCurrentCareerYearError.buildMessage()
+        },
+        {
+          errorClass: ValidationError,
+          message: "notNull Violation: ApplicantCareer.isGraduate cannot be null"
+        }
+      ]);
     });
   });
 

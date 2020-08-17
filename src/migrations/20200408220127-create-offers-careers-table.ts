@@ -29,15 +29,11 @@ export = {
         },
         { transaction }
       );
-      await queryInterface.addConstraint(
-        "OffersCareers",
-        ["careerCode", "offerUuid"],
-        {
-          type: "primary key",
-          name: "OffersSections_careerCode_offerUuid_key",
-          transaction
-        }
-      );
+      await queryInterface.addConstraint("OffersCareers", ["careerCode", "offerUuid"], {
+        type: "primary key",
+        name: "OffersSections_careerCode_offerUuid_key",
+        transaction
+      });
     });
   },
   down: (queryInterface: QueryInterface) => {

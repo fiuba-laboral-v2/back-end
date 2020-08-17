@@ -18,7 +18,7 @@ import { Secretary } from "$models/Admin";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 
 const GET_OFFERS = gql`
-  query ($updatedBeforeThan: PaginatedInput) {
+  query($updatedBeforeThan: PaginatedInput) {
     getOffers(updatedBeforeThan: $updatedBeforeThan) {
       results {
         uuid
@@ -77,12 +77,7 @@ describe("getOffers", () => {
     it("returns two offers sorted by updatedAt", async () => {
       const apolloClient = await approvedApplicantTestClient();
       const { data } = await apolloClient.query({ query: GET_OFFERS });
-      expect(data!.getOffers.results).toMatchObject(
-        [
-          { uuid: offer2.uuid },
-          { uuid: offer1.uuid }
-        ]
-      );
+      expect(data!.getOffers.results).toMatchObject([{ uuid: offer2.uuid }, { uuid: offer1.uuid }]);
       expect(data!.getOffers.shouldFetchMore).toEqual(false);
     });
 
@@ -97,11 +92,7 @@ describe("getOffers", () => {
           }
         }
       });
-      expect(data!.getOffers.results).toMatchObject(
-        [
-          { uuid: offer1.uuid }
-        ]
-      );
+      expect(data!.getOffers.results).toMatchObject([{ uuid: offer1.uuid }]);
       expect(data!.getOffers.shouldFetchMore).toEqual(false);
     });
 
@@ -118,11 +109,7 @@ describe("getOffers", () => {
           }
         }
       });
-      expect(data!.getOffers.results).toMatchObject(
-        [
-          { uuid: offer2.uuid }
-        ]
-      );
+      expect(data!.getOffers.results).toMatchObject([{ uuid: offer2.uuid }]);
       expect(data!.getOffers.shouldFetchMore).toEqual(false);
     });
 
@@ -132,9 +119,11 @@ describe("getOffers", () => {
       beforeAll(async () => {
         for (const _ of range(15)) {
           newOffersByDescUpdatedAt.push(
-            await OfferRepository.create(offersData.next({
-              companyUuid: offer1.companyUuid
-            }).value)
+            await OfferRepository.create(
+              offersData.next({
+                companyUuid: offer1.companyUuid
+              }).value
+            )
           );
         }
         newOffersByDescUpdatedAt = newOffersByDescUpdatedAt.sort(offer => -offer.updatedAt);
@@ -148,20 +137,17 @@ describe("getOffers", () => {
         const itemsPerPage = 10;
         mockItemsPerPage(itemsPerPage);
         const { data } = await apolloClient.query({ query: GET_OFFERS });
-        expect(data!.getOffers.results.map(offer => offer.uuid)).toEqual(
-          [
-            offer1.uuid,
-            ...newOffersByDescUpdatedAt.slice(0, itemsPerPage - 1).map(offer => offer.uuid)
-          ]
-        );
+        expect(data!.getOffers.results.map(offer => offer.uuid)).toEqual([
+          offer1.uuid,
+          ...newOffersByDescUpdatedAt.slice(0, itemsPerPage - 1).map(offer => offer.uuid)
+        ]);
         expect(data!.getOffers.shouldFetchMore).toEqual(true);
       });
 
       it("gets the next 3 offers", async () => {
-        const offersByDescUpdatedAt = [
-          offer1,
-          ...newOffersByDescUpdatedAt
-        ].sort(offer => offer.updatedAt);
+        const offersByDescUpdatedAt = [offer1, ...newOffersByDescUpdatedAt].sort(
+          offer => offer.updatedAt
+        );
         const apolloClient = await approvedApplicantTestClient();
 
         const itemsPerPage = 3;
@@ -188,11 +174,13 @@ describe("getOffers", () => {
   });
 
   describe("when no offers exists", () => {
-    beforeEach(() => Promise.all([
-      CompanyRepository.truncate(),
-      CareerRepository.truncate(),
-      UserRepository.truncate()
-    ]));
+    beforeEach(() =>
+      Promise.all([
+        CompanyRepository.truncate(),
+        CareerRepository.truncate(),
+        UserRepository.truncate()
+      ])
+    );
 
     it("returns no offers when no offers were created", async () => {
       const apolloClient = await approvedApplicantTestClient();
@@ -207,13 +195,17 @@ describe("getOffers", () => {
   it("returns an error when the user is from a company", async () => {
     const { apolloClient } = await TestClientGenerator.company();
     const { errors } = await apolloClient.query({ query: GET_OFFERS });
-    expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: UnauthorizedError.name
+    });
   });
 
   it("returns an error when the user is an admin", async () => {
     const { apolloClient } = await TestClientGenerator.admin();
     const { errors } = await apolloClient.query({ query: GET_OFFERS });
-    expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: UnauthorizedError.name
+    });
   });
 
   it("returns an error when the user is a rejected applicant", async () => {
@@ -224,12 +216,16 @@ describe("getOffers", () => {
       }
     });
     const { errors } = await apolloClient.query({ query: GET_OFFERS });
-    expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: UnauthorizedError.name
+    });
   });
 
   it("returns an error when the user is a pending applicant", async () => {
     const { apolloClient } = await TestClientGenerator.applicant();
     const { errors } = await apolloClient.query({ query: GET_OFFERS });
-    expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: UnauthorizedError.name
+    });
   });
 });

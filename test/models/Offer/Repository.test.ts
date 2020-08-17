@@ -1,4 +1,4 @@
-import { UniqueConstraintError } from "sequelize";
+import { UniqueConstraintError, ValidationError } from "sequelize";
 import { CareerRepository } from "$models/Career";
 import { OfferRepository } from "$models/Offer";
 import { CompanyRepository } from "$models/Company";
@@ -11,6 +11,8 @@ import { omit, range } from "lodash";
 import { UserRepository } from "$models/User";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import MockDate from "mockdate";
+import { Secretary } from "$models/Admin";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
 describe("OfferRepository", () => {
   let offersData: TOfferDataGenerator;
@@ -19,6 +21,7 @@ describe("OfferRepository", () => {
     await CareerRepository.truncate();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
+    await OfferRepository.truncate();
     offersData = OfferGenerator.data.withObligatoryData();
   });
 
@@ -39,7 +42,10 @@ describe("OfferRepository", () => {
     it("creates a new offer with one section", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const attributes = offersData.next({ companyUuid }).value;
-      const offer = await OfferRepository.create({ ...attributes, sections: [sectionData] });
+      const offer = await OfferRepository.create({
+        ...attributes,
+        sections: [sectionData]
+      });
       expect(offer).toEqual(expect.objectContaining(attributes));
       const sections = await offer.getSections();
       expect(sections).toEqual([expect.objectContaining(sectionData)]);
@@ -48,7 +54,10 @@ describe("OfferRepository", () => {
     it("creates a new offer with one career", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const { code: careerCode } = await CareerGenerator.instance();
-      const attributes = offersData.next({ companyUuid, careers: [{ careerCode }] }).value;
+      const attributes = offersData.next({
+        companyUuid,
+        careers: [{ careerCode }]
+      }).value;
       const offer = await OfferRepository.create(attributes);
       expect(offer).toEqual(expect.objectContaining(omit(attributes, ["careers"])));
       const careers = await offer.getCareers();
@@ -62,15 +71,14 @@ describe("OfferRepository", () => {
       const { code: careerCode } = await CareerGenerator.instance();
       const careerData = { careerCode };
       const attributes = offersData.next({ companyUuid, careers: [careerData] }).value;
-      const offer = await OfferRepository.create({ ...attributes, sections: [sectionData] });
-      expect(offer).toEqual(expect.objectContaining(
-        omit(attributes, ["sections", "careers"])
-      ));
+      const offer = await OfferRepository.create({
+        ...attributes,
+        sections: [sectionData]
+      });
+      expect(offer).toEqual(expect.objectContaining(omit(attributes, ["sections", "careers"])));
       const careers = await offer.getCareers();
       const sections = await offer.getSections();
-      expect(sections).toEqual([
-        expect.objectContaining(sectionData)
-      ]);
+      expect(sections).toEqual([expect.objectContaining(sectionData)]);
       expect(careers.map(c => c.code)).toEqual([careerData.careerCode]);
     });
 
@@ -80,9 +88,9 @@ describe("OfferRepository", () => {
           companyUuid: null as any,
           sections: [sectionData]
         }).value;
-        await expect(
-          OfferRepository.create(attributes)
-        ).rejects.toThrow("notNull Violation: Offer.companyUuid cannot be null");
+        await expect(OfferRepository.create(attributes)).rejects.toThrow(
+          "notNull Violation: Offer.companyUuid cannot be null"
+        );
       });
 
       it("throws error if section has no title and not create the offer", async () => {
@@ -90,10 +98,12 @@ describe("OfferRepository", () => {
         const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
         const attributes = offersData.next({
           companyUuid,
-          sections: [{
-            ...sectionData,
-            title: null as any
-          }]
+          sections: [
+            {
+              ...sectionData,
+              title: null as any
+            }
+          ]
         }).value;
         await expect(OfferRepository.create(attributes)).rejects.toThrow();
         expect(await OfferSection.findAll()).toHaveLength(0);
@@ -104,7 +114,10 @@ describe("OfferRepository", () => {
         await CompanyRepository.truncate();
         const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
         const careerCode = null as any;
-        const attributes = offersData.next({ companyUuid, careers: [{ careerCode }] }).value;
+        const attributes = offersData.next({
+          companyUuid,
+          careers: [{ careerCode }]
+        }).value;
         await expect(OfferRepository.create(attributes)).rejects.toThrow();
         expect(await OfferSection.findAll()).toHaveLength(0);
         expect(await OfferCareer.findAll()).toHaveLength(0);
@@ -115,10 +128,11 @@ describe("OfferRepository", () => {
         const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
         const { code } = await CareerGenerator.instance();
         const offerCareersData = [{ careerCode: code }, { careerCode: code }];
-        const attributes = offersData.next({ companyUuid, careers: offerCareersData }).value;
-        await expect(
-          OfferRepository.create(attributes)
-        ).rejects.toThrowErrorWithMessage(
+        const attributes = offersData.next({
+          companyUuid,
+          careers: offerCareersData
+        }).value;
+        await expect(OfferRepository.create(attributes)).rejects.toThrowErrorWithMessage(
           UniqueConstraintError,
           "Validation error"
         );
@@ -126,14 +140,14 @@ describe("OfferRepository", () => {
 
       it("throws an error if two sections have the same display order", async () => {
         const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-        const attributes = offersData.next({ companyUuid, sections: [sectionData] }).value;
+        const attributes = offersData.next({
+          companyUuid,
+          sections: [sectionData]
+        }).value;
         const { uuid: offerUuid } = await OfferRepository.create(attributes);
         await expect(
           OfferSection.create({ offerUuid, ...sectionData })
-        ).rejects.toThrowErrorWithMessage(
-          UniqueConstraintError,
-          "Validation error"
-        );
+        ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
       });
     });
   });
@@ -156,10 +170,73 @@ describe("OfferRepository", () => {
     it("throws an error if the offer does not exist", async () => {
       const companyUuid = "bda5f82a-d839-4af3-ae04-1b669d590a85";
       const unknownOfferUuid = "1dd69a27-0f6c-4859-be9e-4de5adf22826";
-      await expect(OfferRepository.update({
-        ...offersData.next({ companyUuid }).value,
-        uuid: unknownOfferUuid
-      })).rejects.toThrow(OfferNotFound);
+      await expect(
+        OfferRepository.update({
+          ...offersData.next({ companyUuid }).value,
+          uuid: unknownOfferUuid
+        })
+      ).rejects.toThrow(OfferNotFound);
+    });
+  });
+
+  describe("UpdateStatus", () => {
+    it("updates the status for the secretary graduados successfully", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const attributes = offersData.next({ companyUuid }).value;
+      const { uuid } = await OfferRepository.create(attributes);
+      const newStatus = ApprovalStatus.approved;
+      const params = {
+        uuid,
+        secretary: Secretary.graduados,
+        status: newStatus
+      };
+      await OfferRepository.updateStatus(params);
+
+      expect((await OfferRepository.findByUuid(uuid)).graduadosApprovalStatus).toEqual(newStatus);
+    });
+
+    it("updates the status for the secretary extension successfully", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const attributes = offersData.next({ companyUuid }).value;
+      const { uuid } = await OfferRepository.create(attributes);
+      const newStatus = ApprovalStatus.approved;
+      const params = {
+        uuid,
+        secretary: Secretary.extension,
+        status: newStatus
+      };
+      await OfferRepository.updateStatus(params);
+
+      expect((await OfferRepository.findByUuid(uuid)).extensionApprovalStatus).toEqual(newStatus);
+    });
+
+    it("throws an error if the offer does not exist", async () => {
+      const unknownOfferUuid = "1dd69a27-0f6c-4859-be9e-4de5adf22826";
+      const newStatus = ApprovalStatus.approved;
+      const params = {
+        uuid: unknownOfferUuid,
+        secretary: Secretary.graduados,
+        status: newStatus
+      };
+
+      await expect(OfferRepository.updateStatus(params)).rejects.toThrow(OfferNotFound);
+    });
+
+    it("throws an error if the status is not a valid ApprovalStatus value", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const attributes = offersData.next({ companyUuid }).value;
+      const { uuid } = await OfferRepository.create(attributes);
+      const newStatus = "pepito" as ApprovalStatus;
+      const params = {
+        uuid,
+        secretary: Secretary.extension,
+        status: newStatus
+      };
+
+      await expect(OfferRepository.updateStatus(params)).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        "Validation error: ApprovalStatus must be one of these values: pending,approved,rejected"
+      );
     });
   });
 
@@ -199,10 +276,12 @@ describe("OfferRepository", () => {
       await OfferRepository.truncate();
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const { code: careerCode } = await CareerGenerator.instance();
-      await OfferRepository.create(offersData.next({
-        companyUuid,
-        careers: [{ careerCode }]
-      }).value);
+      await OfferRepository.create(
+        offersData.next({
+          companyUuid,
+          careers: [{ careerCode }]
+        }).value
+      );
       expect(await OfferCareer.findAll()).toHaveLength(1);
       await OfferRepository.truncate();
       expect(await OfferCareer.findAll()).toHaveLength(0);
@@ -213,10 +292,12 @@ describe("OfferRepository", () => {
       await CompanyRepository.truncate();
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const { code: careerCode } = await CareerGenerator.instance();
-      await OfferRepository.create(offersData.next({
-        companyUuid,
-        careers: [{ careerCode }]
-      }).value);
+      await OfferRepository.create(
+        offersData.next({
+          companyUuid,
+          careers: [{ careerCode }]
+        }).value
+      );
 
       expect(await OfferCareer.findAll()).toHaveLength(1);
       await CompanyRepository.truncate();
@@ -227,10 +308,12 @@ describe("OfferRepository", () => {
       it("deletes all sections if all offers are deleted", async () => {
         await CompanyRepository.truncate();
         const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-        await OfferRepository.create(offersData.next({
-          companyUuid,
-          sections: [sectionData]
-        }).value);
+        await OfferRepository.create(
+          offersData.next({
+            companyUuid,
+            sections: [sectionData]
+          }).value
+        );
 
         expect(await OfferSection.findAll()).toHaveLength(1);
         await OfferRepository.truncate();
@@ -240,10 +323,12 @@ describe("OfferRepository", () => {
       it("deletes all sections and offer if all companies are deleted", async () => {
         await CompanyRepository.truncate();
         const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-        await OfferRepository.create(offersData.next({
-          companyUuid,
-          sections: [sectionData]
-        }).value);
+        await OfferRepository.create(
+          offersData.next({
+            companyUuid,
+            sections: [sectionData]
+          }).value
+        );
 
         expect(await OfferSection.findAll()).toHaveLength(1);
         await OfferRepository.truncate();
@@ -273,13 +358,8 @@ describe("OfferRepository", () => {
       mockItemsPerPage(itemsPerPage);
       const result = await OfferRepository.findAll({});
       expect(result.shouldFetchMore).toEqual(true);
-      expect(
-        result.results
-          .map(offer => offer.uuid)
-      ).toEqual(
-        allOffersByDescUpdatedAt
-          .map(offer => offer.uuid)
-          .slice(0, itemsPerPage)
+      expect(result.results.map(offer => offer.uuid)).toEqual(
+        allOffersByDescUpdatedAt.map(offer => offer.uuid).slice(0, itemsPerPage)
       );
     });
 
@@ -294,10 +374,7 @@ describe("OfferRepository", () => {
         }
       });
       expect(result.shouldFetchMore).toEqual(false);
-      expect(
-        result.results
-          .map(offer => offer.uuid)
-      ).toEqual(
+      expect(result.results.map(offer => offer.uuid)).toEqual(
         allOffersByDescUpdatedAt
           .map(offer => offer.uuid)
           .slice(lastOfferIndex + 1, allOffersByDescUpdatedAt.length)
@@ -321,10 +398,11 @@ describe("OfferRepository", () => {
     it("sorts by uuid", async () => {
       const result = await OfferRepository.findAll({});
       expect(result.shouldFetchMore).toEqual(false);
-      expect(
-        result.results.map(offer => offer.uuid)
-      ).toEqual(
-        offers.map(offer => offer.uuid).sort().reverse()
+      expect(result.results.map(offer => offer.uuid)).toEqual(
+        offers
+          .map(offer => offer.uuid)
+          .sort()
+          .reverse()
       );
     });
   });

@@ -37,7 +37,6 @@ const GET_APPLICANT = gql`
         career {
           code
           description
-          credits
         }
         approvedSubjectCount
         currentCareerYear
@@ -57,11 +56,9 @@ describe("getApplicant", () => {
     it("fetches the applicant", async () => {
       const career = await CareerGenerator.instance();
       const applicantCareerData = { careerCode: career.code, isGraduate: true };
-      const {
-        user,
-        applicant,
-        apolloClient
-      } = await TestClientGenerator.applicant({ careers: [applicantCareerData] });
+      const { user, applicant, apolloClient } = await TestClientGenerator.applicant({
+        careers: [applicantCareerData]
+      });
 
       const { data, errors } = await apolloClient.query({
         query: GET_APPLICANT,
@@ -81,14 +78,15 @@ describe("getApplicant", () => {
         updatedAt: applicant.updatedAt.toISOString()
       });
       expect(data!.getApplicant.capabilities).toHaveLength(0);
-      expect(data!.getApplicant.careers).toEqual([expect.objectContaining({
-        career: {
-          code: career.code,
-          description: career.description,
-          credits: career.credits
-        },
-        ...applicantCareerData
-      })]);
+      expect(data!.getApplicant.careers).toEqual([
+        expect.objectContaining({
+          career: {
+            code: career.code,
+            description: career.description
+          },
+          ...applicantCareerData
+        })
+      ]);
     });
 
     it("returns the applicant's default approvalStatus", async () => {
@@ -128,7 +126,9 @@ describe("getApplicant", () => {
         variables: { uuid }
       });
 
-      expect(errors![0].extensions!.data).toEqual({ errorType: ApplicantNotFound.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: ApplicantNotFound.name
+      });
     });
   });
 
@@ -140,7 +140,9 @@ describe("getApplicant", () => {
         query: GET_APPLICANT,
         variables: { uuid: uuid }
       });
-      expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: AuthenticationError.name
+      });
     });
   });
 });

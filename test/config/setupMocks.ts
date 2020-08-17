@@ -1,2 +1,1 @@
-export const setupMocks = () =>
-  beforeEach(() => jest.restoreAllMocks());
+export const setupMocks = () => beforeEach(() => jest.restoreAllMocks());

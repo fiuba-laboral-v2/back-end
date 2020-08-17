@@ -15,80 +15,79 @@ import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { Secretary } from "$models/Admin";
 
 const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
-    mutation createOffer(
-        $title: String!,
-        $description: String!,
-        $hoursPerDay: Int!,
-        $minimumSalary: Int!,
-        $maximumSalary: Int!,
-        $sections: [OfferSectionInput],
-        $careers: [OfferCareerInput]
+  mutation createOffer(
+    $title: String!
+    $description: String!
+    $hoursPerDay: Int!
+    $minimumSalary: Int!
+    $maximumSalary: Int!
+    $sections: [OfferSectionInput]
+    $careers: [OfferCareerInput]
+  ) {
+    createOffer(
+      title: $title
+      description: $description
+      hoursPerDay: $hoursPerDay
+      minimumSalary: $minimumSalary
+      maximumSalary: $maximumSalary
+      sections: $sections
+      careers: $careers
     ) {
-        createOffer(
-            title: $title,
-            description: $description,
-            hoursPerDay: $hoursPerDay,
-            minimumSalary: $minimumSalary,
-            maximumSalary: $maximumSalary,
-            sections: $sections,
-            careers: $careers
-        ) {
-            uuid
-            title
-            description
-            hoursPerDay
-            minimumSalary
-            maximumSalary
-            sections {
-              uuid
-              title
-              text
-              displayOrder
-            }
-            careers {
-                code
-                description
-                credits
-            }
-            company {
-              uuid
-              cuit
-              companyName
-              slogan
-              description
-              logo
-              website
-              email
-              phoneNumbers
-              photos
-            }
-        }
+      uuid
+      title
+      description
+      hoursPerDay
+      minimumSalary
+      maximumSalary
+      sections {
+        uuid
+        title
+        text
+        displayOrder
+      }
+      careers {
+        code
+        description
+      }
+      company {
+        uuid
+        cuit
+        companyName
+        slogan
+        description
+        logo
+        website
+        email
+        phoneNumbers
+        photos
+      }
     }
+  }
 `;
 
 const SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA = gql`
-    mutation createOffer(
-        $title: String!,
-        $description: String!,
-        $hoursPerDay: Int!,
-        $minimumSalary: Int!,
-        $maximumSalary: Int!
+  mutation createOffer(
+    $title: String!
+    $description: String!
+    $hoursPerDay: Int!
+    $minimumSalary: Int!
+    $maximumSalary: Int!
+  ) {
+    createOffer(
+      title: $title
+      description: $description
+      hoursPerDay: $hoursPerDay
+      minimumSalary: $minimumSalary
+      maximumSalary: $maximumSalary
     ) {
-        createOffer(
-            title: $title,
-            description: $description,
-            hoursPerDay: $hoursPerDay,
-            minimumSalary: $minimumSalary,
-            maximumSalary: $maximumSalary
-        ) {
-            uuid
-            title
-            description
-            hoursPerDay
-            minimumSalary
-            maximumSalary
-        }
+      uuid
+      title
+      description
+      hoursPerDay
+      minimumSalary
+      maximumSalary
     }
+  }
 `;
 
 describe("createOffer", () => {
@@ -121,15 +120,13 @@ describe("createOffer", () => {
 
       expect(errors).toBeUndefined();
       expect(data!.createOffer).toHaveProperty("uuid");
-      expect(data!.createOffer).toMatchObject(
-        {
-          title: createOfferAttributes.title,
-          description: createOfferAttributes.description,
-          hoursPerDay: createOfferAttributes.hoursPerDay,
-          minimumSalary: createOfferAttributes.minimumSalary,
-          maximumSalary: createOfferAttributes.maximumSalary
-        }
-      );
+      expect(data!.createOffer).toMatchObject({
+        title: createOfferAttributes.title,
+        description: createOfferAttributes.description,
+        hoursPerDay: createOfferAttributes.hoursPerDay,
+        minimumSalary: createOfferAttributes.minimumSalary,
+        maximumSalary: createOfferAttributes.maximumSalary
+      });
     });
 
     it("creates a new offer with one section and one career", async () => {
@@ -149,11 +146,13 @@ describe("createOffer", () => {
         variables: {
           ...createOfferAttributes,
           careers: [{ careerCode: code }],
-          sections: [{
-            title: "title",
-            text: "text",
-            displayOrder: 1
-          }]
+          sections: [
+            {
+              title: "title",
+              text: "text",
+              displayOrder: 1
+            }
+          ]
         }
       });
 
@@ -171,11 +170,9 @@ describe("createOffer", () => {
           approvalStatus: ApprovalStatus.approved
         }
       });
-      const {
-        companyUuid,
-        title,
-        ...createOfferAttributesWithNoTitle
-      } = offers.next({ companyUuid: company.uuid }).value;
+      const { companyUuid, title, ...createOfferAttributesWithNoTitle } = offers.next({
+        companyUuid: company.uuid
+      }).value;
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
         variables: createOfferAttributesWithNoTitle

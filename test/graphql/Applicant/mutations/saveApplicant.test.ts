@@ -11,18 +11,18 @@ import { UUID_REGEX } from "$test/models";
 
 const SAVE_APPLICANT_WITH_COMPLETE_DATA = gql`
   mutation SaveApplicant(
-      $user: UserInput!,
-      $padron: Int!,
-      $careers: [ApplicantCareerInput]!,
-      $description: String,
-      $capabilities: [String]
-    ) {
+    $user: UserInput!
+    $padron: Int!
+    $careers: [ApplicantCareerInput]!
+    $description: String
+    $capabilities: [String]
+  ) {
     saveApplicant(
-        user: $user,
-        padron: $padron,
-        description: $description,
-        careers: $careers,
-        capabilities: $capabilities
+      user: $user
+      padron: $padron
+      description: $description
+      careers: $careers
+      capabilities: $capabilities
     ) {
       uuid
       user {
@@ -43,7 +43,6 @@ const SAVE_APPLICANT_WITH_COMPLETE_DATA = gql`
         career {
           code
           description
-          credits
         }
         approvedSubjectCount
         currentCareerYear
@@ -54,8 +53,8 @@ const SAVE_APPLICANT_WITH_COMPLETE_DATA = gql`
 `;
 
 const SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA = gql`
-  mutation SaveApplicant ($user: UserInput!,$padron: Int!,$careers: [ApplicantCareerInput]!) {
-    saveApplicant(user: $user,padron: $padron,careers: $careers) {
+  mutation SaveApplicant($user: UserInput!, $padron: Int!, $careers: [ApplicantCareerInput]!) {
+    saveApplicant(user: $user, padron: $padron, careers: $careers) {
       uuid
       user {
         email
@@ -106,14 +105,15 @@ describe("saveApplicant", () => {
         description: applicantData.description,
         padron: applicantData.padron,
         capabilities: [],
-        careers: [{
-          career: {
-            code: career.code,
-            description: career.description,
-            credits: career.credits
-          },
-          ...applicantCareerData
-        }]
+        careers: [
+          {
+            career: {
+              code: career.code,
+              description: career.description
+            },
+            ...applicantCareerData
+          }
+        ]
       });
     });
 
@@ -128,14 +128,12 @@ describe("saveApplicant", () => {
         variables: { ...applicantData, careers: [applicantCareerData] }
       });
       expect(errors).toBeUndefined();
-      expect(data!.saveApplicant).toEqual(
-        {
-          uuid: expect.stringMatching(UUID_REGEX),
-          user: { email: applicantData.user.email },
-          padron: applicantData.padron,
-          careers: [{ careerCode: applicantCareerData.careerCode }]
-        }
-      );
+      expect(data!.saveApplicant).toEqual({
+        uuid: expect.stringMatching(UUID_REGEX),
+        user: { email: applicantData.user.email },
+        padron: applicantData.padron,
+        careers: [{ careerCode: applicantCareerData.careerCode }]
+      });
     });
   });
 
@@ -159,10 +157,8 @@ describe("saveApplicant", () => {
       mutation: SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA,
       variables: applicantData
     });
-    expect(
-      errors![0].extensions!.data
-    ).toEqual(
-      { errorType: "UserEmailAlreadyExistsError" }
-    );
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: "UserEmailAlreadyExistsError"
+    });
   });
 });

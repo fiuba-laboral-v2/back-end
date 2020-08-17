@@ -7,9 +7,9 @@ import { TestClientGenerator } from "$generators/TestClient";
 import { AuthConfig } from "$config/AuthConfig";
 
 const LOGOUT = gql`
-    mutation {
-        logout
-    }
+  mutation {
+    logout
+  }
 `;
 
 describe("logout", () => {
@@ -37,7 +37,9 @@ describe("logout", () => {
 
   it("logouts an applicant setting empty cookie", async () => {
     const expressContext = createExpressContext();
-    const { apolloClient } = await TestClientGenerator.applicant({ expressContext });
+    const { apolloClient } = await TestClientGenerator.applicant({
+      expressContext
+    });
     const { errors } = await apolloClient.mutate({ mutation: LOGOUT });
     expect(errors).toBeUndefined();
     expectCookieToBeRemoved(expressContext);
@@ -45,7 +47,9 @@ describe("logout", () => {
 
   it("logouts a company user setting empty cookie", async () => {
     const expressContext = createExpressContext();
-    const { apolloClient } = await TestClientGenerator.company({ expressContext });
+    const { apolloClient } = await TestClientGenerator.company({
+      expressContext
+    });
     const { errors } = await apolloClient.mutate({ mutation: LOGOUT });
     expect(errors).toBeUndefined();
     expectCookieToBeRemoved(expressContext);
@@ -53,6 +57,8 @@ describe("logout", () => {
 
   it("returns an error if no logged user tries to log out", async () => {
     const { errors } = await client.loggedOut().mutate({ mutation: LOGOUT });
-    expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: AuthenticationError.name
+    });
   });
 });

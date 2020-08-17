@@ -4,46 +4,26 @@ import { sebastian, aldana } from "./constants/applicants";
 export = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.sequelize.transaction(async transaction => {
-      await queryInterface.bulkInsert(
-        "Applicants",
-        [
-          sebastian.applicant,
-          aldana.applicant
-        ],
-        { transaction }
-      );
-      await queryInterface.bulkInsert(
-        "Sections",
-        [
-          ...sebastian.sections,
-          ...aldana.sections
-        ],
-        { transaction }
-      );
+      await queryInterface.bulkInsert("Applicants", [sebastian.applicant, aldana.applicant], {
+        transaction
+      });
+      await queryInterface.bulkInsert("Sections", [...sebastian.sections, ...aldana.sections], {
+        transaction
+      });
       await queryInterface.bulkInsert(
         "ApplicantsCapabilities",
-        [
-          ...sebastian.capabilities,
-          ...aldana.capabilities
-        ],
+        [...sebastian.capabilities, ...aldana.capabilities],
         { transaction }
       );
       await queryInterface.bulkInsert(
         "ApplicantCareers",
-        [
-          ...sebastian.careers,
-          ...aldana.careers
-        ],
+        [...sebastian.careers, ...aldana.careers],
         { transaction }
       );
 
-      await queryInterface.bulkInsert(
-        "JobApplications",
-        [
-          ...aldana.jobApplications
-        ],
-        { transaction }
-      );
+      await queryInterface.bulkInsert("JobApplications", [...aldana.jobApplications], {
+        transaction
+      });
     });
   },
   down: (queryInterface: QueryInterface) => {

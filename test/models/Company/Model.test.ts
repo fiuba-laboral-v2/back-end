@@ -25,43 +25,47 @@ describe("Company", () => {
     };
     const company = new Company(companyData);
     await expect(company.validate()).resolves.not.toThrow();
-    expect(company).toEqual(expect.objectContaining({
-      uuid: expect.stringMatching(UUID_REGEX),
-      ...companyData
-    }));
+    expect(company).toEqual(
+      expect.objectContaining({
+        uuid: expect.stringMatching(UUID_REGEX),
+        ...companyData
+      })
+    );
   });
 
   it("throws an error if cuit is null", async () => {
     const company = new Company({ cuit: null, companyName: "devartis" });
-    await expect(
-      company.validate()
-    ).rejects.toThrowErrorWithMessage(
-      ValidationError, "notNull Violation: Company.cuit cannot be null"
+    await expect(company.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      "notNull Violation: Company.cuit cannot be null"
     );
   });
 
   it("throws an error if companyName is null", async () => {
-    const company: Company = new Company({ cuit: "30711819017", companyName: null });
-    await expect(
-      company.validate()
-    ).rejects.toThrowErrorWithMessage(
-      ValidationError, "notNull Violation: Company.companyName cannot be null"
+    const company: Company = new Company({
+      cuit: "30711819017",
+      companyName: null
+    });
+    await expect(company.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      "notNull Violation: Company.companyName cannot be null"
     );
   });
 
   it("throws an error if companyName and cuit is null", async () => {
     const company: Company = new Company({ cuit: null, companyName: null });
-    await expect(
-      company.validate()
-    ).rejects.toThrowErrorWithMessage(
+    await expect(company.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       "notNull Violation: Company.cuit cannot be null,\n" +
-      "notNull Violation: Company.companyName cannot be null"
+        "notNull Violation: Company.companyName cannot be null"
     );
   });
 
   it("throws an error if cuit has invalid format", async () => {
-    const company = new Company({ cuit: "30711819018", companyName: "devartis" });
+    const company = new Company({
+      cuit: "30711819018",
+      companyName: "devartis"
+    });
     await expect(company.validate()).rejects.toThrow(InvalidCuitError.buildMessage());
   });
 
@@ -71,7 +75,10 @@ describe("Company", () => {
   });
 
   it("throws an error if cuit has more than eleven digits", async () => {
-    const company = new Company({ cuit: "3057341761199", companyName: "devartis" });
+    const company = new Company({
+      cuit: "3057341761199",
+      companyName: "devartis"
+    });
     await expect(company.validate()).rejects.toThrow(WrongLengthCuitError.buildMessage());
   });
 
@@ -81,18 +88,22 @@ describe("Company", () => {
   });
 
   it("should throw an error if name has digits", async () => {
-    const company = new Company({ cuit: "30711819017", companyName: "Google34" });
+    const company = new Company({
+      cuit: "30711819017",
+      companyName: "Google34"
+    });
     await expect(company.validate()).rejects.toThrow(NameWithDigitsError.buildMessage());
   });
 
   it("throws an error if name has digits and cuit has more than eleven digits", async () => {
-    const company = new Company({ cuit: "3057341761199", companyName: "Google34" });
-    await expect(
-      company.validate()
-    ).rejects.toThrowErrorWithMessage(
-      ValidationError,
-      [NameWithDigitsError.buildMessage(), WrongLengthCuitError.buildMessage()]
-    );
+    const company = new Company({
+      cuit: "3057341761199",
+      companyName: "Google34"
+    });
+    await expect(company.validate()).rejects.toThrowErrorWithMessage(ValidationError, [
+      NameWithDigitsError.buildMessage(),
+      WrongLengthCuitError.buildMessage()
+    ]);
   });
 
   it("throws an error if url has invalid format", async () => {
@@ -101,9 +112,7 @@ describe("Company", () => {
       companyName: "Google34",
       website: "badURL"
     });
-    await expect(
-      company.validate()
-    ).rejects.toThrowErrorWithMessage(
+    await expect(company.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       InvalidURLError.buildMessage()
     );
@@ -116,9 +125,7 @@ describe("Company", () => {
       companyName: "Google34",
       email: badEmail
     });
-    await expect(
-      company.validate()
-    ).rejects.toThrowErrorWithMessage(
+    await expect(company.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       InvalidEmailError.buildMessage(badEmail)
     );

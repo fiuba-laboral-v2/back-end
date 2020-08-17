@@ -1,7 +1,5 @@
 import { GraphQLCapability } from "./Capability";
 
-const capabilityTypes = [
-  GraphQLCapability
-];
+const capabilityTypes = [GraphQLCapability];
 
 export { capabilityTypes };

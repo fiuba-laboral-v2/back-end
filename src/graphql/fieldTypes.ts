@@ -7,11 +7,4 @@ import {
   GraphQLBoolean as Boolean
 } from "graphql";
 
-export {
-  ID,
-  Int,
-  String,
-  nonNull,
-  List,
-  Boolean
-};
+export { ID, Int, String, nonNull, List, Boolean };

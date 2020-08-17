@@ -12,7 +12,10 @@ export const SectionRepository = {
     });
 
     return Section.bulkCreate(
-      sections.map(section => ({ ...section, applicantUuid: applicant.uuid })),
+      sections.map(section => ({
+        ...section,
+        applicantUuid: applicant.uuid
+      })),
       {
         transaction,
         returning: true,

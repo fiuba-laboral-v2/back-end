@@ -40,16 +40,12 @@ export = {
           }
         },
         { transaction }
-        );
-      await queryInterface.addConstraint(
-        "ApplicantCareers",
-        ["careerCode", "applicantUuid"],
-        {
-          type: "primary key",
-          name: "ApplicantCareers_careerCode_applicantUuid_key",
-          transaction
-        }
       );
+      await queryInterface.addConstraint("ApplicantCareers", ["careerCode", "applicantUuid"], {
+        type: "primary key",
+        name: "ApplicantCareers_careerCode_applicantUuid_key",
+        transaction
+      });
     });
   },
   down: (queryInterface: QueryInterface) => {

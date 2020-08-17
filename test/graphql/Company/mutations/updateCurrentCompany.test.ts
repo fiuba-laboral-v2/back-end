@@ -9,32 +9,34 @@ import { client } from "../../ApolloTestClient";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 const UPDATE_CURRENT_COMPANY = gql`
-    mutation (
-        $companyName: String,
-        $slogan: String,
-        $description: String,
-        $logo: String,
-        $website: String,
-        $email: String,
-        $phoneNumbers: [String],
-        $photos: [String]) {
-        updateCurrentCompany(
-            companyName: $companyName,
-            slogan: $slogan, description: $description,
-            logo: $logo,
-            website: $website,
-            email: $email,
-            phoneNumbers: $phoneNumbers,
-            photos: $photos
-        ) {
-            companyName
-            slogan
-            description
-            logo
-            website
-            email
-        }
+  mutation(
+    $companyName: String
+    $slogan: String
+    $description: String
+    $logo: String
+    $website: String
+    $email: String
+    $phoneNumbers: [String]
+    $photos: [String]
+  ) {
+    updateCurrentCompany(
+      companyName: $companyName
+      slogan: $slogan
+      description: $description
+      logo: $logo
+      website: $website
+      email: $email
+      phoneNumbers: $phoneNumbers
+      photos: $photos
+    ) {
+      companyName
+      slogan
+      description
+      logo
+      website
+      email
     }
+  }
 `;
 
 describe("updateCurrentCompany", () => {
@@ -72,7 +74,9 @@ describe("updateCurrentCompany", () => {
         variables: dataToUpdate
       });
 
-      expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: AuthenticationError.name
+      });
     });
 
     it("throws an error if current user is not a company user", async () => {
@@ -83,7 +87,9 @@ describe("updateCurrentCompany", () => {
         variables: dataToUpdate
       });
 
-      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: UnauthorizedError.name
+      });
     });
   });
 });

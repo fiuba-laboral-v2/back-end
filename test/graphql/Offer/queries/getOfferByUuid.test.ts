@@ -18,7 +18,7 @@ import { AdminGenerator } from "$generators/Admin";
 import { Secretary } from "$models/Admin";
 
 const GET_OFFER_BY_UUID = gql`
-  query ($uuid: ID!) {
+  query($uuid: ID!) {
     getOfferByUuid(uuid: $uuid) {
       uuid
       title
@@ -28,15 +28,14 @@ const GET_OFFER_BY_UUID = gql`
       maximumSalary
       createdAt
       sections {
-          uuid
-          title
-          text
-          displayOrder
+        uuid
+        title
+        text
+        displayOrder
       }
       careers {
-          code
-          description
-          credits
+        code
+        description
       }
       company {
         cuit
@@ -54,12 +53,12 @@ const GET_OFFER_BY_UUID = gql`
 `;
 
 const GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION = gql`
-    query ($uuid: ID!) {
-        getOfferByUuid(uuid: $uuid) {
-            uuid
-            hasApplied
-        }
+  query($uuid: ID!) {
+    getOfferByUuid(uuid: $uuid) {
+      uuid
+      hasApplied
     }
+  }
 `;
 
 describe("getOfferByUuid", () => {
@@ -75,7 +74,10 @@ describe("getOfferByUuid", () => {
   const createOffer = async company => {
     const career = await CareerGenerator.instance();
     const careerCode = career.code;
-    const offer = await offers.next({ companyUuid: company.uuid, careers: [{ careerCode }] }).value;
+    const offer = await offers.next({
+      companyUuid: company.uuid,
+      careers: [{ careerCode }]
+    }).value;
     return { offer, career, company };
   };
 
@@ -94,43 +96,38 @@ describe("getOfferByUuid", () => {
       });
       expect(errors).toBeUndefined();
       const phoneNumbers = await company.getPhoneNumbers();
-      expect(data!.getOfferByUuid).toMatchObject(
-        {
-          uuid: offer.uuid,
-          title: offer.title,
-          description: offer.description,
-          hoursPerDay: offer.hoursPerDay,
-          minimumSalary: offer.minimumSalary,
-          maximumSalary: offer.maximumSalary,
-          createdAt: offer.createdAt.toISOString(),
-          careers: [
-            {
-              code: career.code,
-              description: career.description,
-              credits: career.credits
-            }
-          ],
-          sections: (await offer.getSections()).map(section => (
-            {
-              uuid: section.uuid,
-              title: section.title,
-              text: section.text,
-              displayOrder: section.displayOrder
-            }
-          )),
-          company: {
-            cuit: company.cuit,
-            companyName: company.companyName,
-            slogan: company.slogan,
-            description: company.description,
-            logo: company.logo,
-            website: company.website,
-            email: company.email,
-            phoneNumbers: phoneNumbers.map(phoneNumber => phoneNumber.phoneNumber),
-            photos: await company.getPhotos()
+      expect(data!.getOfferByUuid).toMatchObject({
+        uuid: offer.uuid,
+        title: offer.title,
+        description: offer.description,
+        hoursPerDay: offer.hoursPerDay,
+        minimumSalary: offer.minimumSalary,
+        maximumSalary: offer.maximumSalary,
+        createdAt: offer.createdAt.toISOString(),
+        careers: [
+          {
+            code: career.code,
+            description: career.description
           }
+        ],
+        sections: (await offer.getSections()).map(section => ({
+          uuid: section.uuid,
+          title: section.title,
+          text: section.text,
+          displayOrder: section.displayOrder
+        })),
+        company: {
+          cuit: company.cuit,
+          companyName: company.companyName,
+          slogan: company.slogan,
+          description: company.description,
+          logo: company.logo,
+          website: company.website,
+          email: company.email,
+          phoneNumbers: phoneNumbers.map(phoneNumber => phoneNumber.phoneNumber),
+          photos: await company.getPhotos()
         }
-      );
+      });
     });
 
     it("finds an offer with hasApplied in true", async () => {
@@ -150,12 +147,10 @@ describe("getOfferByUuid", () => {
       });
 
       expect(errors).toBeUndefined();
-      expect(data!.getOfferByUuid).toMatchObject(
-        {
-          uuid: offer.uuid,
-          hasApplied: true
-        }
-      );
+      expect(data!.getOfferByUuid).toMatchObject({
+        uuid: offer.uuid,
+        hasApplied: true
+      });
     });
 
     it("finds an offer with hasApplied in false", async () => {
@@ -166,18 +161,18 @@ describe("getOfferByUuid", () => {
         }
       });
       const company = await CompanyGenerator.instance.withCompleteData();
-      const { offer: { uuid } } = await createOffer(company);
+      const {
+        offer: { uuid }
+      } = await createOffer(company);
       const { data, errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
         variables: { uuid: uuid }
       });
       expect(errors).toBeUndefined();
-      expect(data!.getOfferByUuid).toMatchObject(
-        {
-          uuid: uuid,
-          hasApplied: false
-        }
-      );
+      expect(data!.getOfferByUuid).toMatchObject({
+        uuid: uuid,
+        hasApplied: false
+      });
     });
   });
 
@@ -189,7 +184,9 @@ describe("getOfferByUuid", () => {
         query: GET_OFFER_BY_UUID,
         variables: { uuid: randomUuid }
       });
-      expect(errors![0].extensions!.data).toEqual({ errorType: OfferNotFound.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: OfferNotFound.name
+      });
     });
 
     it("returns an error if the current user is not an applicant", async () => {
@@ -201,44 +198,53 @@ describe("getOfferByUuid", () => {
         }
       });
       const company = await CompanyGenerator.instance.withCompleteData();
-      const { offer: { uuid } } = await createOffer(company);
+      const {
+        offer: { uuid }
+      } = await createOffer(company);
 
       const { errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
         variables: { uuid: uuid }
       });
 
-      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: UnauthorizedError.name
+      });
     });
 
     it("returns an error if there is no current user", async () => {
       const apolloClient = client.loggedOut();
       const company = await CompanyGenerator.instance.withCompleteData();
 
-      const { offer: { uuid } } = await createOffer(company);
+      const {
+        offer: { uuid }
+      } = await createOffer(company);
       const { errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
         variables: { uuid: uuid }
       });
-      expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: AuthenticationError.name
+      });
     });
 
-    it(
-      "returns an error if the user is not admin, approved company or approved applicant",
-      async () => {
-        const expectUnauthorized = async (
-          { apolloClient }: { apolloClient: ApolloServerTestClient }
-        ) => {
-          const { errors } = await apolloClient.query({
-            query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
-            variables: { uuid: generateUuid() }
-          });
-          expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
-        };
-        await expectUnauthorized(await TestClientGenerator.company());
-        await expectUnauthorized(await TestClientGenerator.applicant());
-        await expectUnauthorized(await TestClientGenerator.user());
-      }
-    );
+    it("returns an error if the user is not admin, approved company or approved applicant", async () => {
+      const expectUnauthorized = async ({
+        apolloClient
+      }: {
+        apolloClient: ApolloServerTestClient;
+      }) => {
+        const { errors } = await apolloClient.query({
+          query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
+          variables: { uuid: generateUuid() }
+        });
+        expect(errors![0].extensions!.data).toEqual({
+          errorType: UnauthorizedError.name
+        });
+      };
+      await expectUnauthorized(await TestClientGenerator.company());
+      await expectUnauthorized(await TestClientGenerator.applicant());
+      await expectUnauthorized(await TestClientGenerator.user());
+    });
   });
 });

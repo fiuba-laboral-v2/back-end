@@ -24,14 +24,12 @@ export const JWT = {
       email: user.email,
       ...(admin?.userUuid && { admin: { userUuid: admin.userUuid } }),
       ...(applicant?.uuid && { applicant: { uuid: applicant.uuid } }),
-      ...(companyUser?.companyUuid && { company: { uuid: companyUser.companyUuid } })
+      ...(companyUser?.companyUuid && {
+        company: { uuid: companyUser.companyUuid }
+      })
     };
 
-    return sign(
-      payload,
-      JWT_SECRET,
-      { expiresIn: AuthConfig.JWT.expiresIn }
-    );
+    return sign(payload, JWT_SECRET, { expiresIn: AuthConfig.JWT.expiresIn });
   },
   decodeToken: (token: string): ICurrentUser | undefined => {
     try {

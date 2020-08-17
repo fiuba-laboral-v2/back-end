@@ -58,9 +58,7 @@ describe("Offer", () => {
 
   it("throws an error if offer has negative hoursPerDay", async () => {
     const offer = new Offer({ ...offerAttributes, hoursPerDay: -23 });
-    await expect(
-      offer.validate()
-    ).rejects.toThrow(NumberIsTooSmallError.buildMessage(0, false));
+    await expect(offer.validate()).rejects.toThrow(NumberIsTooSmallError.buildMessage(0, false));
   });
 
   it("throws an error if offer does not has a minimumSalary", async () => {
@@ -70,9 +68,7 @@ describe("Offer", () => {
 
   it("throws an error if offer has negative minimumSalary", async () => {
     const offer = new Offer({ ...offerAttributes, minimumSalary: -23 });
-    await expect(
-      offer.validate()
-    ).rejects.toThrow(NumberIsTooSmallError.buildMessage(0, false));
+    await expect(offer.validate()).rejects.toThrow(NumberIsTooSmallError.buildMessage(0, false));
   });
 
   it("throws an error if offer does not has a maximumSalary", async () => {
@@ -82,9 +78,7 @@ describe("Offer", () => {
 
   it("throws an error if offer has negative maximumSalary", async () => {
     const offer = new Offer({ ...offerAttributes, maximumSalary: -23 });
-    await expect(
-      offer.validate()
-    ).rejects.toThrow(NumberIsTooSmallError.buildMessage(0, false));
+    await expect(offer.validate()).rejects.toThrow(NumberIsTooSmallError.buildMessage(0, false));
   });
 
   it("throws an error if minimumSalary if bigger than maximumSalary", async () => {
@@ -96,19 +90,14 @@ describe("Offer", () => {
     await expect(offer.validate()).rejects.toThrow(SalaryRangeError.buildMessage());
   });
 
-  it(
-      "throws an error if graduadosApprovalStatus isn't a ApprovalStatus enum value",
-      async () => {
-        const offer = new Offer({
-          ...offerAttributes,
-          graduadosApprovalStatus: "pepito"
-        });
-        await expect(
-          offer.validate()
-        ).rejects.toThrowErrorWithMessage(
-          ValidationError,
-          "Validation error: ApprovalStatus must be one of these values: pending,approved,rejected"
-        );
-      }
+  it("throws an error if graduadosApprovalStatus isn't a ApprovalStatus enum value", async () => {
+    const offer = new Offer({
+      ...offerAttributes,
+      graduadosApprovalStatus: "pepito"
+    });
+    await expect(offer.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      "Validation error: ApprovalStatus must be one of these values: pending,approved,rejected"
     );
+  });
 });

@@ -7,18 +7,18 @@ import { CompanyRepository } from "$models/Company";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
-import { companyMocks } from "$test/models/Company/mocks";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AdminGenerator } from "$generators/Admin";
 import { TestClientGenerator } from "$generators/TestClient";
+import { CompanyGenerator } from "$generators/Company";
 import generateUuid from "uuid/v4";
 import { Secretary } from "$models/Admin";
 
 const SAVE_JOB_APPLICATION = gql`
   mutation saveJobApplication($offerUuid: String!) {
     saveJobApplication(offerUuid: $offerUuid) {
-        offerUuid
-        applicantUuid
+      offerUuid
+      applicantUuid
     }
   }
 `;
@@ -30,7 +30,7 @@ describe("saveJobApplication", () => {
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
-    company = await CompanyRepository.create(companyMocks.companyData());
+    company = await CompanyGenerator.instance.withCompleteData();
     offers = await OfferGenerator.instance.withObligatoryData();
   });
 
@@ -50,19 +50,19 @@ describe("saveJobApplication", () => {
       });
 
       expect(errors).toBeUndefined();
-      expect(data!.saveJobApplication).toMatchObject(
-        {
-          offerUuid: offer.uuid,
-          applicantUuid: applicant.uuid
-        }
-      );
+      expect(data!.saveJobApplication).toMatchObject({
+        offerUuid: offer.uuid,
+        applicantUuid: applicant.uuid
+      });
     });
   });
 
   describe("Errors", () => {
     it("returns an error if no offerUuid is provided", async () => {
       const { apolloClient } = await TestClientGenerator.user();
-      const { errors } = await apolloClient.mutate({ mutation: SAVE_JOB_APPLICATION });
+      const { errors } = await apolloClient.mutate({
+        mutation: SAVE_JOB_APPLICATION
+      });
       expect(errors![0].constructor.name).toEqual(ApolloError.name);
     });
 
@@ -74,7 +74,9 @@ describe("saveJobApplication", () => {
         variables: { offerUuid: offer.uuid }
       });
 
-      expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: AuthenticationError.name
+      });
     });
 
     it("returns an error if current user is not an applicant", async () => {
@@ -83,7 +85,9 @@ describe("saveJobApplication", () => {
         mutation: SAVE_JOB_APPLICATION,
         variables: { offerUuid: generateUuid() }
       });
-      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: UnauthorizedError.name
+      });
     });
 
     it("returns an error if current user is a company", async () => {
@@ -92,7 +96,9 @@ describe("saveJobApplication", () => {
         mutation: SAVE_JOB_APPLICATION,
         variables: { offerUuid: generateUuid() }
       });
-      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: UnauthorizedError.name
+      });
     });
 
     it("returns an error if current user is an admin", async () => {
@@ -101,7 +107,9 @@ describe("saveJobApplication", () => {
         mutation: SAVE_JOB_APPLICATION,
         variables: { offerUuid: generateUuid() }
       });
-      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: UnauthorizedError.name
+      });
     });
 
     it("returns an error if current user is a pending applicant", async () => {
@@ -110,7 +118,9 @@ describe("saveJobApplication", () => {
         mutation: SAVE_JOB_APPLICATION,
         variables: { offerUuid: generateUuid() }
       });
-      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: UnauthorizedError.name
+      });
     });
 
     it("returns an error if current user is a rejected applicant", async () => {
@@ -124,7 +134,9 @@ describe("saveJobApplication", () => {
         mutation: SAVE_JOB_APPLICATION,
         variables: { offerUuid: generateUuid() }
       });
-      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: UnauthorizedError.name
+      });
     });
 
     it("returns an error if the application already exist", async () => {
@@ -144,9 +156,9 @@ describe("saveJobApplication", () => {
         variables: { offerUuid: offer.uuid }
       });
 
-      expect(errors![0].extensions!.data).toMatchObject(
-        { errorType: "JobApplicationAlreadyExistsError" }
-      );
+      expect(errors![0].extensions!.data).toMatchObject({
+        errorType: "JobApplicationAlreadyExistsError"
+      });
     });
 
     it("returns an error if the offer does not exist", async () => {
@@ -161,7 +173,9 @@ describe("saveJobApplication", () => {
         variables: { offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da" }
       });
 
-      expect(errors![0].extensions!.data).toMatchObject({ errorType: "OfferNotFound" });
+      expect(errors![0].extensions!.data).toMatchObject({
+        errorType: "OfferNotFound"
+      });
     });
   });
 });

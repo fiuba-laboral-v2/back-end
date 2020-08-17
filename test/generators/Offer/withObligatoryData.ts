@@ -1,14 +1,12 @@
 import { IVariables } from "./interfaces";
 import { IOfferAttributes } from "$models/Offer/Interface";
 
-export const withObligatoryData = (
-  {
-    index,
-    companyUuid,
-    careers,
-    sections
-  }: IVariables
-): IOfferAttributes => {
+export const withObligatoryData = ({
+  index,
+  companyUuid,
+  careers,
+  sections
+}: IVariables): IOfferAttributes => {
   const data = {
     companyUuid,
     title: `title${index}`,

@@ -16,10 +16,14 @@ export const ApplicantCareersRepository = {
     applicantCareers: IApplicantCareer[],
     { uuid: applicantUuid }: Applicant,
     transaction?: Transaction
-  ) => ApplicantCareer.bulkCreate(
-    applicantCareers.map(applicantCareer => ({ ...applicantCareer, applicantUuid })),
-    { transaction }
-  ),
+  ) =>
+    ApplicantCareer.bulkCreate(
+      applicantCareers.map(applicantCareer => ({
+        ...applicantCareer,
+        applicantUuid
+      })),
+      { transaction, validate: true }
+    ),
   update: async (
     applicantCareers: IApplicantCareer[],
     { uuid: applicantUuid }: Applicant,
@@ -27,7 +31,10 @@ export const ApplicantCareersRepository = {
   ) => {
     await ApplicantCareer.destroy({ where: { applicantUuid }, transaction });
     return ApplicantCareer.bulkCreate(
-      applicantCareers.map(applicantCareer => ({ ...applicantCareer, applicantUuid })),
+      applicantCareers.map(applicantCareer => ({
+        ...applicantCareer,
+        applicantUuid
+      })),
       { transaction, validate: true }
     );
   },

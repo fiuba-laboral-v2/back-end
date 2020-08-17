@@ -12,7 +12,6 @@ import {
 
 @Table({ tableName: "Companies" })
 export class Company extends Model<Company> {
-
   @Column({
     allowNull: false,
     primaryKey: true,

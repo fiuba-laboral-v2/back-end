@@ -1,10 +1,12 @@
 # Back-end Bolsa de Trabajo de la FIUBA v2
+
 Trabajo Práctico Profesional, FIUBA, 2020
 
-**Staging:** 
-  * **Build:** [![Build Status](https://travis-ci.com/fiuba-laboral-v2/back-end.svg?branch=staging)](https://travis-ci.com/fiuba-laboral-v2/back-end)  
-  * **Coverage:** [![Coverage Status](https://coveralls.io/repos/github/fiuba-laboral-v2/back-end/badge.svg)](https://coveralls.io/github/fiuba-laboral-v2/back-end)
-  * **URL:** http://antiguos.fi.uba.ar/graphql/
+**Staging:**
+
+- **Build:** [![Build Status](https://travis-ci.com/fiuba-laboral-v2/back-end.svg?branch=staging)](https://travis-ci.com/fiuba-laboral-v2/back-end)
+- **Coverage:** [![Coverage Status](https://coveralls.io/repos/github/fiuba-laboral-v2/back-end/badge.svg)](https://coveralls.io/github/fiuba-laboral-v2/back-end)
+- **URL:** http://antiguos.fi.uba.ar/graphql/
 
 # Set up
 
@@ -20,17 +22,17 @@ Trabajo Práctico Profesional, FIUBA, 2020
 
 ### Development
 
- - `yarn db:migrate`: Runs the migrations
- - `yarn db:create`: Creates the database
- - `yarn db:drop`: Drops the database
+- `yarn db:migrate`: Runs the migrations
+- `yarn db:create`: Creates the database
+- `yarn db:drop`: Drops the database
 
 ### Test
 
 To run test db migrations, you can use the following commands:
- 
- - `yarn db:test:migrate`
- - `yarn db:test:create`
- - `yarn db:test:drop`
+
+- `yarn db:test:migrate`
+- `yarn db:test:create`
+- `yarn db:test:drop`
 
 In the project directory, you can run:
 
@@ -49,6 +51,7 @@ You will also see any lint errors in the console.
 ```
 
 ### Test
+
 ```
     yarn test
 ```

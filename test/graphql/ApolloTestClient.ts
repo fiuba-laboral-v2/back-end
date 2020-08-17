@@ -16,26 +16,29 @@ export const defaultCurrentUser = {
   applicant: { uuid: defaultApplicantUuid }
 };
 
-const LoggedInTestClient = (
-  {
-    currentUser = defaultCurrentUser,
-    expressContext = expressContextMock()
-  }: IClient) =>
-  createTestClient(new Server({
-    schema,
-    formatError: apolloErrorConverter({ logger: false }),
-    context: () => ({
-      ...expressContext,
-      currentUser
+const LoggedInTestClient = ({
+  currentUser = defaultCurrentUser,
+  expressContext = expressContextMock()
+}: IClient) =>
+  createTestClient(
+    new Server({
+      schema,
+      formatError: apolloErrorConverter({ logger: false }),
+      context: () => ({
+        ...expressContext,
+        currentUser
+      })
     })
-  }));
+  );
 
 const LoggedOutTestClient = ({ expressContext = expressContextMock() }: IClient) =>
-  createTestClient(new Server({
-    schema,
-    formatError: apolloErrorConverter({ logger: false }),
-    context: () => expressContext
-  }));
+  createTestClient(
+    new Server({
+      schema,
+      formatError: apolloErrorConverter({ logger: false }),
+      context: () => expressContext
+    })
+  );
 
 const defaultClient = (loggedIn: boolean) =>
   loggedIn ? LoggedInTestClient({ currentUser: defaultCurrentUser }) : LoggedOutTestClient({});
@@ -63,12 +66,10 @@ export const executeMutation = (
 };
 
 export const client = {
-  loggedIn: (
-    {
-      currentUser = defaultCurrentUser,
-      expressContext = expressContextMock()
-    }: IClient = {}
-  ) => LoggedInTestClient({ currentUser, expressContext }),
+  loggedIn: ({
+    currentUser = defaultCurrentUser,
+    expressContext = expressContextMock()
+  }: IClient = {}) => LoggedInTestClient({ currentUser, expressContext }),
   loggedOut: ({ expressContext = expressContextMock() }: IClient = {}) =>
     LoggedOutTestClient({ expressContext })
 };

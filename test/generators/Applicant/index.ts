@@ -16,10 +16,12 @@ export const ApplicantGenerator = {
   },
   instance: {
     withMinimumData: (variables?: IApplicantInputData) =>
-      ApplicantRepository.create(withMinimumData({
-        index: ApplicantGenerator.getIndex(),
-        ...variables
-      })),
+      ApplicantRepository.create(
+        withMinimumData({
+          index: ApplicantGenerator.getIndex(),
+          ...variables
+        })
+      ),
     updatedWithStatus: async (variables?: IUpdatedWithStatus) => {
       const applicant = await ApplicantRepository.create(
         withMinimumData({ index: ApplicantGenerator.getIndex() })

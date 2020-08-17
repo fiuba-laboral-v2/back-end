@@ -16,7 +16,8 @@ export const sebastian = {
     uuid: uuids.sebastian.applicant,
     userUuid: uuids.sebastian.user,
     padron: 98539,
-    description: "Me considero una persona a la que le gusta tomar " +
+    description:
+      "Me considero una persona a la que le gusta tomar " +
       "riesgos y también tener cierto control sobre la situación." +
       "Por eso tengo como objetivos ser un desarrollador de software y" +
       "también formar parte de la gestión de proyectos, ya " +
@@ -29,7 +30,8 @@ export const sebastian = {
       uuid: "ca2c5210-cb79-4026-9a26-1eb7a4159e71",
       applicantUuid: uuids.sebastian.applicant,
       title: "Experiencia Laboral",
-      text: "Trabajo junto al equipo de Keepcon como desarrollador full stack." +
+      text:
+        "Trabajo junto al equipo de Keepcon como desarrollador full stack." +
         "Por ejemplo, estoy trabajando en la integración de LinkedIn a" +
         " la herramienta.\nTrabajo en Rails con un frontend en Backbone.js," +
         "y en un motor de procesamiento de datos de redes sociales en" +

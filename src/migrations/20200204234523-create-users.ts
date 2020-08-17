@@ -38,24 +38,16 @@ export = {
           type: DATE
         }
       });
-      await queryInterface.addConstraint(
-        "Users",
-        ["email"],
-        {
-          type: "unique",
-          name: "Users_email_key",
-          transaction
-        }
-      );
-      await queryInterface.addConstraint(
-        "Users",
-        ["dni"],
-        {
-          type: "unique",
-          name: "Users_dni_key",
-          transaction
-        }
-      );
+      await queryInterface.addConstraint("Users", ["email"], {
+        type: "unique",
+        name: "Users_email_key",
+        transaction
+      });
+      await queryInterface.addConstraint("Users", ["dni"], {
+        type: "unique",
+        name: "Users_dni_key",
+        transaction
+      });
     });
   },
   down: (queryInterface: QueryInterface) => {

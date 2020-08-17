@@ -12,12 +12,14 @@ describe("CompanyApprovalEvent", () => {
     };
     const companyApprovalEvent = new CompanyApprovalEvent(companyApprovalEventAttributes);
     await expect(companyApprovalEvent.validate()).resolves.not.toThrow();
-    expect(companyApprovalEvent).toEqual(expect.objectContaining({
-      uuid: expect.stringMatching(UUID_REGEX),
-      createdAt: expect.any(Date),
-      updatedAt: expect.any(Date),
-      ...companyApprovalEventAttributes
-    }));
+    expect(companyApprovalEvent).toEqual(
+      expect.objectContaining({
+        uuid: expect.stringMatching(UUID_REGEX),
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
+        ...companyApprovalEventAttributes
+      })
+    );
   });
 
   it("creates a rejected CompanyApprovalEvent", async () => {

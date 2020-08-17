@@ -32,7 +32,12 @@ export const createOffer = {
     }
   },
   resolve: (
-    _: undefined, attributes: ICreateOffer, { currentUser }: { currentUser: ICompanyUser }
+    _: undefined,
+    attributes: ICreateOffer,
+    { currentUser }: { currentUser: ICompanyUser }
   ) =>
-    OfferRepository.create({ ...attributes, companyUuid: currentUser.company.uuid })
+    OfferRepository.create({
+      ...attributes,
+      companyUuid: currentUser.company.uuid
+    })
 };

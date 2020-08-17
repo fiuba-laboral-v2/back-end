@@ -16,8 +16,9 @@ export const AdminGenerator = {
         ...variables
       })
     ),
-  data: (secretary: Secretary) => withCompleteData({
-    index: AdminGenerator.getIndex(),
-    secretary
-  })
+  data: (secretary: Secretary) =>
+    withCompleteData({
+      index: AdminGenerator.getIndex(),
+      secretary
+    })
 };

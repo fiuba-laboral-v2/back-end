@@ -22,7 +22,6 @@ const permissions = merge(
   adminTaskPermissions
 );
 
-export const permissionShield = shield(
-  permissions,
-  { debug: Environment.NODE_ENV !== "production" }
-);
+export const permissionShield = shield(permissions, {
+  debug: Environment.NODE_ENV !== "production"
+});

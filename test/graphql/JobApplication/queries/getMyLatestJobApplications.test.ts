@@ -67,24 +67,22 @@ describe("getMyLatestJobApplications", () => {
 
       const user = await applicant.getUser();
       expect(data!.getMyLatestJobApplications.shouldFetchMore).toEqual(false);
-      expect(data!.getMyLatestJobApplications.results).toMatchObject(
-        [
-          {
-            updatedAt: jobApplication.updatedAt.toISOString(),
-            offer: {
-              uuid: offer.uuid,
-              title: offer.title
-            },
-            applicant: {
-              uuid: applicant.uuid,
-              user: {
-                name: user.name,
-                surname: user.surname
-              }
+      expect(data!.getMyLatestJobApplications.results).toMatchObject([
+        {
+          updatedAt: jobApplication.updatedAt.toISOString(),
+          offer: {
+            uuid: offer.uuid,
+            title: offer.title
+          },
+          applicant: {
+            uuid: applicant.uuid,
+            user: {
+              name: user.name,
+              surname: user.surname
             }
           }
-        ]
-      );
+        }
+      ]);
     });
   });
 
@@ -95,7 +93,9 @@ describe("getMyLatestJobApplications", () => {
         query: GET_MY_LATEST_JOB_APPLICATIONS
       });
 
-      expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: AuthenticationError.name
+      });
     });
 
     it("returns an error if current user is not a companyUser", async () => {
@@ -104,7 +104,9 @@ describe("getMyLatestJobApplications", () => {
         query: GET_MY_LATEST_JOB_APPLICATIONS
       });
 
-      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: UnauthorizedError.name
+      });
     });
 
     it("returns an error if the company has pending status", async () => {
@@ -118,7 +120,9 @@ describe("getMyLatestJobApplications", () => {
         query: GET_MY_LATEST_JOB_APPLICATIONS
       });
 
-      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: UnauthorizedError.name
+      });
     });
 
     it("returns an error if the company has rejected status", async () => {
@@ -132,7 +136,9 @@ describe("getMyLatestJobApplications", () => {
         query: GET_MY_LATEST_JOB_APPLICATIONS
       });
 
-      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: UnauthorizedError.name
+      });
     });
   });
 });

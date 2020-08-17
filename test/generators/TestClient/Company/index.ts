@@ -3,9 +3,12 @@ import { createApolloTestClient } from "../createApolloTestClient";
 import { CompanyRepository } from "$models/Company";
 import { CompanyGenerator } from "$generators/Company";
 
-export const companyTestClient = async (
-  { status, photos, expressContext, user: userAttributes }: ICompanyTestClientAttributes
-) => {
+export const companyTestClient = async ({
+  status,
+  photos,
+  expressContext,
+  user: userAttributes
+}: ICompanyTestClientAttributes) => {
   let company = await CompanyGenerator.instance.withMinimumData({
     photos,
     user: userAttributes

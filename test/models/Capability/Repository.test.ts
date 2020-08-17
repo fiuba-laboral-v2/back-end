@@ -5,7 +5,9 @@ describe("CapabilityRepository", () => {
   beforeEach(() => CapabilityRepository.truncate());
 
   it("should create a valid capability", async () => {
-    const capability = await CapabilityRepository.create({ description: "Python" });
+    const capability = await CapabilityRepository.create({
+      description: "Python"
+    });
     expect(capability).toMatchObject({ description: "Python" });
   });
 
@@ -18,8 +20,8 @@ describe("CapabilityRepository", () => {
 
   it("should throw an error if adding existing case-insensitive description", async () => {
     await CapabilityRepository.create({ description: "Python" });
-    await expect(
-      CapabilityRepository.create({ description: "PYTHON" })
-    ).rejects.toThrow(UniqueConstraintError);
+    await expect(CapabilityRepository.create({ description: "PYTHON" })).rejects.toThrow(
+      UniqueConstraintError
+    );
   });
 });

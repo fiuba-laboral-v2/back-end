@@ -1,4 +1,4 @@
-version: '3.4'
+version: "3.4"
 services:
   fiuba-laboral-v2-backend:
     build: .

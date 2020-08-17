@@ -5,39 +5,35 @@ import { PaginationConfig } from "$config/PaginationConfig";
 
 export const JobApplicationRepository = {
   apply: async (applicantUuid: string, offer: Offer) =>
-    JobApplication.create(
-      {
-        offerUuid: offer.uuid,
-        applicantUuid
-      }
-    ),
+    JobApplication.create({
+      offerUuid: offer.uuid,
+      applicantUuid
+    }),
   hasApplied: async (applicant: Applicant, offer: Offer) => {
-    const jobApplication = await JobApplication.findOne(
-      {
-        where: {
-          offerUuid: offer.uuid,
-          applicantUuid: applicant.uuid
-        }
+    const jobApplication = await JobApplication.findOne({
+      where: {
+        offerUuid: offer.uuid,
+        applicantUuid: applicant.uuid
       }
-    );
+    });
     return jobApplication != null;
   },
-  findLatestByCompanyUuid: async (
-    {
-      companyUuid,
-      updatedBeforeThan
-    }: {
-      companyUuid: string,
-      updatedBeforeThan?: IPaginatedJobApplicationsInput
-    }
-  ) => {
+  findLatestByCompanyUuid: async ({
+    companyUuid,
+    updatedBeforeThan
+  }: {
+    companyUuid: string;
+    updatedBeforeThan?: IPaginatedJobApplicationsInput;
+  }) => {
     const limit = PaginationConfig.itemsPerPage() + 1;
     const result = await JobApplication.findAll({
-      include: [{
-        model: Offer,
-        where: { companyUuid },
-        attributes: []
-      }],
+      include: [
+        {
+          model: Offer,
+          where: { companyUuid },
+          attributes: []
+        }
+      ],
       ...(updatedBeforeThan && {
         where: {
           [Op.or]: [
@@ -62,7 +58,11 @@ export const JobApplicationRepository = {
           ]
         }
       }),
-      order: [["updatedAt", "DESC"], ["offerUuid", "DESC"], ["applicantUuid", "DESC"]],
+      order: [
+        ["updatedAt", "DESC"],
+        ["offerUuid", "DESC"],
+        ["applicantUuid", "DESC"]
+      ],
       limit
     });
     return {

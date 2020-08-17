@@ -13,7 +13,7 @@ import { FetchError } from "node-fetch";
 export const FiubaUsersApi = {
   headers: () => ({
     "Content-Type": "text/xml,",
-    "charset": "UTF-8"
+    charset: "UTF-8"
   }),
   authenticate: async ({ dni, password }: ICredentials) => {
     try {

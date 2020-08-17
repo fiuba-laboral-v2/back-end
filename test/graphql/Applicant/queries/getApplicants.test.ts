@@ -18,37 +18,36 @@ import { Admin } from "$models";
 const GET_APPLICANTS = gql`
   query getApplicants {
     getApplicants {
+      uuid
+      user {
+        email
+        name
+        surname
+      }
+      padron
+      description
+      capabilities {
         uuid
-        user {
-          email
-          name
-          surname
-        }
-        padron
         description
-        capabilities {
-            uuid
-            description
+      }
+      careers {
+        careerCode
+        career {
+          code
+          description
         }
-        careers {
-          careerCode
-          career {
-            code
-            description
-            credits
-          }
-          approvedSubjectCount
-          currentCareerYear
-          isGraduate
-        }
-        sections {
-          title
-          text
-        }
-        links {
-          name
-          url
-        }
+        approvedSubjectCount
+        currentCareerYear
+        isGraduate
+      }
+      sections {
+        title
+        text
+      }
+      links {
+        name
+        url
+      }
     }
   }
 `;
@@ -76,11 +75,7 @@ describe("getApplicants", () => {
     it("fetches the existing applicant", async () => {
       const newCareer = await CareerGenerator.instance();
       const applicantCareer = { careerCode: newCareer.code, isGraduate: true };
-      const {
-        user,
-        applicant,
-        apolloClient
-      } = await TestClientGenerator.applicant({
+      const { user, applicant, apolloClient } = await TestClientGenerator.applicant({
         careers: [applicantCareer],
         status: { approvalStatus: ApprovalStatus.approved, admin }
       });
@@ -90,29 +85,34 @@ describe("getApplicants", () => {
       expect(errors).toBeUndefined();
       const [career] = await applicant.getCareers();
       const capabilities = await applicant.getCapabilities();
-      expect(data!.getApplicants).toEqual(expect.arrayContaining([{
-        uuid: applicant.uuid,
-        user: {
-          email: user.email,
-          name: user.name,
-          surname: user.surname
-        },
-        padron: applicant.padron,
-        description: applicant.description,
-        capabilities: capabilities.map(({ uuid, description }) => ({ uuid, description })),
-        careers: [{
-          career: {
-            code: career.code,
-            description: career.description,
-            credits: career.credits
-          },
-          ...applicantCareer,
-          approvedSubjectCount: null,
-          currentCareerYear: null
-        }],
-        sections: [],
-        links: []
-      }]));
+      expect(data!.getApplicants).toEqual(
+        expect.arrayContaining([
+          {
+            uuid: applicant.uuid,
+            user: {
+              email: user.email,
+              name: user.name,
+              surname: user.surname
+            },
+            padron: applicant.padron,
+            description: applicant.description,
+            capabilities: capabilities.map(({ uuid, description }) => ({ uuid, description })),
+            careers: [
+              {
+                career: {
+                  code: career.code,
+                  description: career.description
+                },
+                ...applicantCareer,
+                approvedSubjectCount: null,
+                currentCareerYear: null
+              }
+            ],
+            sections: [],
+            links: []
+          }
+        ])
+      );
     });
 
     it("allows an applicant user to fetch all applicants", async () => {
@@ -123,10 +123,7 @@ describe("getApplicants", () => {
         currentCareerYear: 3,
         isGraduate: false
       };
-      const {
-        applicant: firstApplicant,
-        apolloClient
-      } = await TestClientGenerator.applicant({
+      const { applicant: firstApplicant, apolloClient } = await TestClientGenerator.applicant({
         careers: [applicantCareerData],
         capabilities: ["Go"],
         status: { approvalStatus: ApprovalStatus.approved, admin }
@@ -153,14 +150,15 @@ describe("getApplicants", () => {
             },
             padron: applicant.padron,
             description: applicant.description,
-            careers: [{
-              career: {
-                code: newCareer.code,
-                description: newCareer.description,
-                credits: newCareer.credits
-              },
-              ...applicantCareerData
-            }],
+            careers: [
+              {
+                career: {
+                  code: newCareer.code,
+                  description: newCareer.description
+                },
+                ...applicantCareerData
+              }
+            ],
             capabilities: capabilities.map(({ uuid, description }) => ({ uuid, description })),
             links: [],
             sections: []

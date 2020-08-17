@@ -29,15 +29,11 @@ export = {
         },
         { transaction }
       );
-      await queryInterface.addConstraint(
-        "JobApplications",
-        ["applicantUuid", "offerUuid"],
-        {
-          type: "primary key",
-          name: "JobApplications_applicantUuid_offerUuid_key",
-          transaction
-        }
-      );
+      await queryInterface.addConstraint("JobApplications", ["applicantUuid", "offerUuid"], {
+        type: "primary key",
+        name: "JobApplications_applicantUuid_offerUuid_key",
+        transaction
+      });
     });
   },
   down: (queryInterface: QueryInterface) => {

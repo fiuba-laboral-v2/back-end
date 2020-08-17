@@ -4,7 +4,6 @@ import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
 import { UUID_REGEX } from "../../index";
 
 describe("ApplicantApprovalEvent", () => {
-
   const expectToCreateAValidInstanceWithAStatus = async (status: ApprovalStatus) => {
     const applicantApprovalEventAttributes = {
       adminUserUuid: "cfe18465-9454-48b6-80bc-375411650d99",
@@ -13,12 +12,14 @@ describe("ApplicantApprovalEvent", () => {
     };
     const applicantApprovalEvent = new ApplicantApprovalEvent(applicantApprovalEventAttributes);
     await expect(applicantApprovalEvent.validate()).resolves.not.toThrow();
-    expect(applicantApprovalEvent).toEqual(expect.objectContaining({
-      uuid: expect.stringMatching(UUID_REGEX),
-      createdAt: expect.any(Date),
-      updatedAt: expect.any(Date),
-      ...applicantApprovalEventAttributes
-    }));
+    expect(applicantApprovalEvent).toEqual(
+      expect.objectContaining({
+        uuid: expect.stringMatching(UUID_REGEX),
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
+        ...applicantApprovalEventAttributes
+      })
+    );
   };
 
   it("creates a valid pending ApplicantApprovalEvent", async () => {

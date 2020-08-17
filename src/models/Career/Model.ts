@@ -1,7 +1,6 @@
-import { BelongsToMany, Column, HasMany, Is, Model, Table } from "sequelize-typescript";
+import { BelongsToMany, Column, HasMany, Model, Table } from "sequelize-typescript";
 import { Applicant, ApplicantCareer } from "$models";
-import { validateIntegerInRange } from "validations-fiuba-laboral-v2";
-import { INTEGER, STRING } from "sequelize";
+import { DATE, STRING } from "sequelize";
 
 @Table({ tableName: "Careers" })
 export class Career extends Model<Career> {
@@ -18,12 +17,19 @@ export class Career extends Model<Career> {
   })
   public description: string;
 
-  @Is("credits", validateIntegerInRange({ min: { value: 0, include: false } }))
   @Column({
     allowNull: false,
-    type: INTEGER
+    type: DATE,
+    defaultValue: new Date()
   })
-  public credits: number;
+  public createdAt: Date;
+
+  @Column({
+    allowNull: false,
+    type: DATE,
+    defaultValue: new Date()
+  })
+  public updatedAt: Date;
 
   @BelongsToMany(() => Applicant, () => ApplicantCareer)
   public applicants: Applicant[];

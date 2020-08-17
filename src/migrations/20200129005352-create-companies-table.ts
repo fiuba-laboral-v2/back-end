@@ -45,15 +45,11 @@ export = {
         },
         { transaction }
       );
-      await queryInterface.addConstraint(
-        "Companies",
-        ["cuit"],
-        {
-          type: "unique",
-          name: "Companies_cuit_key",
-          transaction
-        }
-      );
+      await queryInterface.addConstraint("Companies", ["cuit"], {
+        type: "unique",
+        name: "Companies_cuit_key",
+        transaction
+      });
     });
   },
   down: (queryInterface: QueryInterface) => {

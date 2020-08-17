@@ -1,4 +1,4 @@
-import { DATE, INTEGER, QueryInterface, STRING, TEXT } from "sequelize";
+import { DATE, QueryInterface, STRING, TEXT } from "sequelize";
 
 export = {
   up: (queryInterface: QueryInterface) => {
@@ -14,10 +14,6 @@ export = {
             allowNull: false,
             type: TEXT
           },
-          credits: {
-            allowNull: false,
-            type: INTEGER
-          },
           createdAt: {
             allowNull: false,
             type: DATE
@@ -29,15 +25,11 @@ export = {
         },
         { transaction }
       );
-      await queryInterface.addConstraint(
-        "Careers",
-        ["code"],
-        {
-          type: "primary key",
-          name: "Careers_code_key",
-          transaction
-        }
-      );
+      await queryInterface.addConstraint("Careers", ["code"], {
+        type: "primary key",
+        name: "Careers_code_key",
+        transaction
+      });
     });
   },
   down: (queryInterface: QueryInterface) => {

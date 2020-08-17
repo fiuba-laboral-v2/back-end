@@ -1,13 +1,7 @@
 import { withMinimumData } from "./withMinimumData";
 import { ICompanyGeneratorAttributes } from "$generators/interfaces";
 
-export const completeData = (
-  {
-    index,
-    photos,
-    user
-  }: IWithCompleteData
-) => ({
+export const completeData = ({ index, photos, user }: IWithCompleteData) => ({
   ...withMinimumData({ index, user }),
   slogan: "Lo mejor está llegando",
   description: "description",

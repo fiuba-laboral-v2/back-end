@@ -14,11 +14,7 @@ export const login = {
       type: nonNull(String)
     }
   },
-  resolve: async (
-    _: undefined,
-    { email, password }: ILogin,
-    { res: expressResponse }: Context
-  ) => {
+  resolve: async (_: undefined, { email, password }: ILogin, { res: expressResponse }: Context) => {
     const user = await UserRepository.findByEmail(email);
     await UserRepository.validateCredentials(user, password);
 

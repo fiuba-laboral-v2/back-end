@@ -3,11 +3,12 @@ import { GraphQLDateTime } from "graphql-iso-date";
 import { IApolloServerContext } from "$graphql/Context";
 import { ID, Int, List, nonNull, String, Boolean } from "$graphql/fieldTypes";
 import { GraphQLOfferSection } from "./GraphQLOfferSection";
-import { GraphQLCareer } from "$graphql/Career/Types/Career";
+import { GraphQLCareer } from "$graphql/Career/Types/GraphQLCareer";
 import { GraphQLCompany } from "$graphql/Company/Types/GraphQLCompany";
 import { Offer } from "$models";
 import { UserRepository } from "$models/User";
 import { JobApplicationRepository } from "$models/JobApplication";
+import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
 
 const GraphQLOffer = new GraphQLObjectType<Offer, IApolloServerContext>({
   name: "Offer",
@@ -29,6 +30,12 @@ const GraphQLOffer = new GraphQLObjectType<Offer, IApolloServerContext>({
     },
     maximumSalary: {
       type: nonNull(Int)
+    },
+    extensionApprovalStatus: {
+      type: nonNull(GraphQLApprovalStatus)
+    },
+    graduadosApprovalStatus: {
+      type: nonNull(GraphQLApprovalStatus)
     },
     createdAt: {
       type: nonNull(GraphQLDateTime)
