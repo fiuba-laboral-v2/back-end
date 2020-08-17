@@ -2,7 +2,7 @@ import { Database } from "$config/Database";
 import { IOffer } from "./";
 import { IOfferSection } from "./OfferSection";
 import { IOfferCareer } from "./OfferCareer";
-import { OfferNotFound } from "./Errors";
+import { OfferNotFound, OfferNotUpdatedError } from "./Errors";
 import { Offer, OfferCareer, OfferSection } from "$models";
 import { Op } from "sequelize";
 import { PaginationConfig } from "$config/PaginationConfig";
@@ -22,7 +22,7 @@ export const OfferRepository = {
       where: { uuid: offer.uuid },
       returning: true
     });
-    if (!updatedOffer) throw new OfferNotFound(offer.uuid);
+    if (!updatedOffer) throw new OfferNotUpdatedError(offer.uuid);
     return updatedOffer;
   },
   updateApprovalStatus: async ({
@@ -51,7 +51,7 @@ export const OfferRepository = {
         returning: true,
         transaction
       });
-      if (!updatedOffer) throw new OfferNotFound(uuid);
+      if (!updatedOffer) throw new OfferNotUpdatedError(uuid);
 
       await OfferApprovalEventRepository.create({
         adminUserUuid,

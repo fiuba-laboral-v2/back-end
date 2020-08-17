@@ -675,7 +675,7 @@ describe("ApplicantRepository", () => {
   describe("updateApprovalStatus", () => {
     let admin: Admin;
     beforeAll(async () => {
-      admin = await AdminGenerator.instance(Secretary.extension);
+      admin = await AdminGenerator.instance({ secretary: Secretary.extension });
     });
 
     const expectSuccessfulApplicantStatusUpdate = async (

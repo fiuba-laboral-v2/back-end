@@ -17,7 +17,7 @@ describe("CompanyApprovalEventRepository", () => {
   describe("create", () => {
     const expectValidCreation = async (status: ApprovalStatus) => {
       const company = await CompanyGenerator.instance.withCompleteData();
-      const admin = await AdminGenerator.instance(Secretary.extension);
+      const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
       const adminUserUuid = admin.userUuid;
       const event = await CompanyApprovalEventRepository.create({
         adminUserUuid,
@@ -63,7 +63,7 @@ describe("CompanyApprovalEventRepository", () => {
 
     it("gets company and admin by association", async () => {
       const company = await CompanyGenerator.instance.withCompleteData();
-      const admin = await AdminGenerator.instance(Secretary.extension);
+      const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
       const status = ApprovalStatus.approved;
       const adminUserUuid = admin.userUuid;
       const event = await CompanyApprovalEventRepository.create({
@@ -79,7 +79,9 @@ describe("CompanyApprovalEventRepository", () => {
   describe("Delete cascade", () => {
     const createCompanyApprovalEvent = async () => {
       const company = await CompanyGenerator.instance.withCompleteData();
-      const { userUuid: adminUserUuid } = await AdminGenerator.instance(Secretary.extension);
+      const { userUuid: adminUserUuid } = await AdminGenerator.instance({
+        secretary: Secretary.extension
+      });
       const status = ApprovalStatus.approved;
       return CompanyApprovalEventRepository.create({
         adminUserUuid,

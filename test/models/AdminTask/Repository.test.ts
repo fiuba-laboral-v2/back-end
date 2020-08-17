@@ -32,7 +32,7 @@ describe("AdminTaskRepository", () => {
     await CompanyRepository.truncate();
     await OfferRepository.truncate();
     const companiesGenerator = CompanyGenerator.instance.updatedWithStatus;
-    admin = await AdminGenerator.instance(Secretary.extension);
+    admin = await AdminGenerator.instance({ secretary: Secretary.extension });
     const applicantsGenerator = ApplicantGenerator.instance.updatedWithStatus;
 
     rejectedCompany = await companiesGenerator({

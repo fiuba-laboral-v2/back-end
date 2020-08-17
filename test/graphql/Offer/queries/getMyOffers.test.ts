@@ -34,7 +34,7 @@ describe("getMyOffers", () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
     offers = await OfferGenerator.instance.withObligatoryData();
-    admin = await AdminGenerator.instance(Secretary.extension);
+    admin = await AdminGenerator.instance({ secretary: Secretary.extension });
   });
 
   describe("when offers exists", () => {

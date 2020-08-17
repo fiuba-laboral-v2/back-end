@@ -44,7 +44,7 @@ describe("getMyLatestJobApplications", () => {
     await CompanyRepository.truncate();
     applicant = await ApplicantGenerator.instance.withMinimumData();
     offers = await OfferGenerator.instance.withObligatoryData();
-    admin = await AdminGenerator.instance(Secretary.extension);
+    admin = await AdminGenerator.instance({ secretary: Secretary.extension });
   });
 
   describe("when the input is valid", () => {

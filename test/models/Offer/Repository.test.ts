@@ -2,7 +2,7 @@ import { UniqueConstraintError, ValidationError } from "sequelize";
 import { CareerRepository } from "$models/Career";
 import { OfferRepository } from "$models/Offer";
 import { CompanyRepository } from "$models/Company";
-import { OfferNotFound } from "$models/Offer/Errors";
+import { OfferNotFound, OfferNotUpdatedError } from "$models/Offer/Errors";
 import { Offer, OfferCareer, OfferSection, Admin } from "$models";
 import { CompanyGenerator } from "$generators/Company";
 import { OfferGenerator, TOfferDataGenerator } from "$generators/Offer";
@@ -14,7 +14,6 @@ import MockDate from "mockdate";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AdminGenerator } from "$test/generators/Admin";
-import { adminTaskPermissions } from "$graphql/AdminTask";
 import { OfferApprovalEventRepository } from "$models/Offer/OfferApprovalEvent";
 
 describe("OfferRepository", () => {
@@ -178,14 +177,14 @@ describe("OfferRepository", () => {
           ...offersData.next({ companyUuid }).value,
           uuid: unknownOfferUuid
         })
-      ).rejects.toThrow(OfferNotFound);
+      ).rejects.toThrow(OfferNotUpdatedError);
     });
   });
 
   describe("UpdateApprovalStatus", () => {
     let admin: Admin;
     beforeAll(async () => {
-      admin = await AdminGenerator.instance(Secretary.graduados);
+      admin = await AdminGenerator.instance({ secretary: Secretary.graduados });
     });
 
     it("updates the status for the secretary graduados successfully", async () => {
@@ -247,7 +246,9 @@ describe("OfferRepository", () => {
         status: newStatus
       };
 
-      await expect(OfferRepository.updateApprovalStatus(params)).rejects.toThrow(OfferNotFound);
+      await expect(OfferRepository.updateApprovalStatus(params)).rejects.toThrow(
+        OfferNotUpdatedError
+      );
     });
 
     it("throws an error if the status is not a valid ApprovalStatus value", async () => {

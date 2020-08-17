@@ -21,7 +21,7 @@ describe("OfferApprovalEventRepository", () => {
   describe("create", () => {
     const expectValidCreation = async (status: ApprovalStatus) => {
       const company = await CompanyGenerator.instance.withCompleteData();
-      const admin = await AdminGenerator.instance(Secretary.extension);
+      const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
       const offer = await (await offersGenerator).next({ companyUuid: company.uuid }).value;
       const adminUserUuid = admin.userUuid;
       const event = await OfferApprovalEventRepository.create({
@@ -69,7 +69,7 @@ describe("OfferApprovalEventRepository", () => {
 
     it("gets offer and admin by association", async () => {
       const company = await CompanyGenerator.instance.withCompleteData();
-      const admin = await AdminGenerator.instance(Secretary.extension);
+      const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
       const status = ApprovalStatus.approved;
       const adminUserUuid = admin.userUuid;
       const offer = await (await offersGenerator).next({ companyUuid: company.uuid }).value;
@@ -87,7 +87,9 @@ describe("OfferApprovalEventRepository", () => {
   describe("Delete cascade", () => {
     const createOfferApprovalEvent = async () => {
       const company = await CompanyGenerator.instance.withCompleteData();
-      const { userUuid: adminUserUuid } = await AdminGenerator.instance(Secretary.extension);
+      const { userUuid: adminUserUuid } = await AdminGenerator.instance({
+        secretary: Secretary.extension
+      });
       const status = ApprovalStatus.approved;
       const offer = await (await offersGenerator).next({ companyUuid: company.uuid }).value;
       return OfferApprovalEventRepository.create({

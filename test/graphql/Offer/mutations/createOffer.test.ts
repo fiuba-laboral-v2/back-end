@@ -99,7 +99,7 @@ describe("createOffer", () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
     offers = OfferGenerator.data.withObligatoryData();
-    admin = await AdminGenerator.instance(Secretary.extension);
+    admin = await AdminGenerator.instance({ secretary: Secretary.extension });
   });
 
   describe("when the input values are valid", () => {

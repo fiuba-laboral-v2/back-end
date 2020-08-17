@@ -59,7 +59,7 @@ describe("getApplicants", () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
     await CompanyRepository.truncate();
-    admin = await AdminGenerator.instance(Secretary.extension);
+    admin = await AdminGenerator.instance({ secretary: Secretary.extension });
   });
 
   describe("when no applicant exists", () => {
