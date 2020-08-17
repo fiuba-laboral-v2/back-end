@@ -380,30 +380,30 @@ describe("OfferRepository", () => {
           .slice(lastOfferIndex + 1, allOffersByDescUpdatedAt.length)
       );
     });
-  });
 
-  describe("when there are offers with equal updatedAt", () => {
-    const offers: Offer[] = [];
+    describe("when there are offers with equal updatedAt", () => {
+      const offers: Offer[] = [];
 
-    beforeAll(async () => {
-      MockDate.set(new Date());
-      OfferRepository.truncate();
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      for (const _ of range(10)) {
-        offers.push(await OfferRepository.create(offersData.next({ companyUuid }).value));
-      }
-      MockDate.reset();
-    });
+      beforeAll(async () => {
+        MockDate.set(new Date());
+        OfferRepository.truncate();
+        const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+        for (const _ of range(10)) {
+          offers.push(await OfferRepository.create(offersData.next({ companyUuid }).value));
+        }
+        MockDate.reset();
+      });
 
-    it("sorts by uuid", async () => {
-      const result = await OfferRepository.findAll({});
-      expect(result.shouldFetchMore).toEqual(false);
-      expect(result.results.map(offer => offer.uuid)).toEqual(
-        offers
-          .map(offer => offer.uuid)
-          .sort()
-          .reverse()
-      );
+      it("sorts by uuid", async () => {
+        const result = await OfferRepository.findAll({});
+        expect(result.shouldFetchMore).toEqual(false);
+        expect(result.results.map(offer => offer.uuid)).toEqual(
+          offers
+            .map(offer => offer.uuid)
+            .sort()
+            .reverse()
+        );
+      });
     });
   });
 });

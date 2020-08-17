@@ -1,12 +1,14 @@
 import { ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
 import { CompanyRepository } from "$models/Company";
-import { OfferRepository } from "$models/Offer";
+import { Offer, OfferRepository } from "$models/Offer";
 import { JobApplicationRepository } from "$models/JobApplication";
-import { JobApplication } from "$models";
+import { Applicant, Company, JobApplication } from "$models";
 import { UserRepository } from "$models/User";
 import { CompanyGenerator } from "$generators/Company";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
+import MockDate from "mockdate";
+import { range } from "lodash";
 
 describe("JobApplicationRepository", () => {
   let offers: TOfferGenerator;
@@ -174,6 +176,76 @@ describe("JobApplicationRepository", () => {
           applicantUuid: applicant.uuid
         }
       ]);
+    });
+
+    describe("when there are applications with equal updatedAt", () => {
+      const updatedAt = new Date();
+      let company: Company;
+      const newOffers: Offer[] = [];
+
+      beforeAll(async () => {
+        JobApplicationRepository.truncate();
+
+        MockDate.set(updatedAt);
+
+        company = await CompanyGenerator.instance.withMinimumData();
+        const applicant = await ApplicantGenerator.instance.withMinimumData();
+        for (const _ of range(10)) {
+          const offer = await offers.next({ companyUuid: company.uuid }).value;
+          await JobApplicationRepository.apply(applicant.uuid, offer);
+          newOffers.push(offer);
+        }
+
+        MockDate.reset();
+      });
+
+      it("sorts by offerUuid", async () => {
+        const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid({
+          companyUuid: company.uuid
+        });
+        expect(jobApplications.shouldFetchMore).toEqual(false);
+        expect(jobApplications.results.map(result => result.offerUuid)).toMatchObject(
+          newOffers
+            .map(offer => offer.uuid)
+            .sort()
+            .reverse()
+        );
+      });
+    });
+
+    describe("when there are applications with equal updatedAt and offerUuid", () => {
+      const updatedAt = new Date();
+      let company: Company;
+      const newApplicants: Applicant[] = [];
+
+      beforeAll(async () => {
+        JobApplicationRepository.truncate();
+
+        MockDate.set(updatedAt);
+
+        company = await CompanyGenerator.instance.withMinimumData();
+        const offer = await offers.next({ companyUuid: company.uuid }).value;
+        for (const _ of range(10)) {
+          const applicant = await ApplicantGenerator.instance.withMinimumData();
+          await JobApplicationRepository.apply(applicant.uuid, offer);
+          newApplicants.push(applicant);
+        }
+
+        MockDate.reset();
+      });
+
+      it("sorts by applicantUuid", async () => {
+        const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid({
+          companyUuid: company.uuid
+        });
+        expect(jobApplications.shouldFetchMore).toEqual(false);
+        expect(jobApplications.results.map(result => result.applicantUuid)).toMatchObject(
+          newApplicants
+            .map(applicant => applicant.uuid)
+            .sort()
+            .reverse()
+        );
+      });
     });
   });
 
