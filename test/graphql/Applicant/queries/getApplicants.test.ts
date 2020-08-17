@@ -35,7 +35,6 @@ const GET_APPLICANTS = gql`
         career {
           code
           description
-          credits
         }
         approvedSubjectCount
         currentCareerYear
@@ -66,9 +65,7 @@ describe("getApplicants", () => {
   describe("when no applicant exists", () => {
     it("fetches an empty array of applicants", async () => {
       const { apolloClient } = await TestClientGenerator.admin();
-      const { data, errors } = await apolloClient.query({
-        query: GET_APPLICANTS
-      });
+      const { data, errors } = await apolloClient.query({ query: GET_APPLICANTS });
       expect(errors).toBeUndefined();
       expect(data!.getApplicants).toEqual([]);
     });
@@ -83,9 +80,7 @@ describe("getApplicants", () => {
         status: { approvalStatus: ApprovalStatus.approved, admin }
       });
 
-      const { data, errors } = await apolloClient.query({
-        query: GET_APPLICANTS
-      });
+      const { data, errors } = await apolloClient.query({ query: GET_APPLICANTS });
 
       expect(errors).toBeUndefined();
       const [career] = await applicant.getCareers();
@@ -101,16 +96,12 @@ describe("getApplicants", () => {
             },
             padron: applicant.padron,
             description: applicant.description,
-            capabilities: capabilities.map(({ uuid, description }) => ({
-              uuid,
-              description
-            })),
+            capabilities: capabilities.map(({ uuid, description }) => ({ uuid, description })),
             careers: [
               {
                 career: {
                   code: career.code,
-                  description: career.description,
-                  credits: career.credits
+                  description: career.description
                 },
                 ...applicantCareer,
                 approvedSubjectCount: null,
@@ -143,9 +134,7 @@ describe("getApplicants", () => {
       });
       const applicants = [firstApplicant, secondApplicant];
 
-      const { data, errors } = await apolloClient.query({
-        query: GET_APPLICANTS
-      });
+      const { data, errors } = await apolloClient.query({ query: GET_APPLICANTS });
       expect(errors).toBeUndefined();
 
       const expectedApplicants = await Promise.all(
@@ -165,16 +154,12 @@ describe("getApplicants", () => {
               {
                 career: {
                   code: newCareer.code,
-                  description: newCareer.description,
-                  credits: newCareer.credits
+                  description: newCareer.description
                 },
                 ...applicantCareerData
               }
             ],
-            capabilities: capabilities.map(({ uuid, description }) => ({
-              uuid,
-              description
-            })),
+            capabilities: capabilities.map(({ uuid, description }) => ({ uuid, description })),
             links: [],
             sections: []
           };
@@ -189,17 +174,13 @@ describe("getApplicants", () => {
       const apolloClient = client.loggedOut();
 
       const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
-      expect(errors![0].extensions!.data).toEqual({
-        errorType: AuthenticationError.name
-      });
+      expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
     });
 
     it("returns an error if current user is pending applicant", async () => {
       const { apolloClient } = await TestClientGenerator.applicant();
       const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
-      expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name
-      });
+      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("returns an error if current user is rejected applicant", async () => {
@@ -207,17 +188,13 @@ describe("getApplicants", () => {
         status: { approvalStatus: ApprovalStatus.rejected, admin }
       });
       const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
-      expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name
-      });
+      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("returns an error if current user is from company", async () => {
       const { apolloClient } = await TestClientGenerator.company();
       const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
-      expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name
-      });
+      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
   });
 });

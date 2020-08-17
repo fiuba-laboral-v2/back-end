@@ -37,7 +37,6 @@ const GET_APPLICANT = gql`
         career {
           code
           description
-          credits
         }
         approvedSubjectCount
         currentCareerYear
@@ -83,8 +82,7 @@ describe("getApplicant", () => {
         expect.objectContaining({
           career: {
             code: career.code,
-            description: career.description,
-            credits: career.credits
+            description: career.description
           },
           ...applicantCareerData
         })

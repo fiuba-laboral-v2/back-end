@@ -3,15 +3,14 @@ import { Company, CompanyPhoneNumber } from "$models";
 import { CompanyRepository } from "$models/Company";
 import { CompanyPhoneNumberRepository } from "$models/CompanyPhoneNumber";
 import { UserRepository } from "$models/User";
-import { UserMocks } from "../User/mocks";
-import { companyMocks } from "../Company/mocks";
+import { CompanyGenerator } from "$generators/Company";
 
 describe("CompanyPhoneNumberRepository", () => {
   beforeEach(() => Promise.all([CompanyRepository.truncate(), UserRepository.truncate()]));
 
   it("creates several phoneNumbers for the same company", async () => {
     const phoneNumbers = ["1144444444", "1155555555", "1166666666"];
-    const company = await CompanyRepository.create(companyMocks.companyData());
+    const company = await CompanyGenerator.instance.withCompleteData();
     await expect(
       CompanyPhoneNumberRepository.bulkCreate(phoneNumbers, company)
     ).resolves.not.toThrow();
@@ -19,7 +18,7 @@ describe("CompanyPhoneNumberRepository", () => {
 
   it("throws an error if a phone number is repeated in a bulk create", async () => {
     const phoneNumbers = ["1144444444", "1144444444", "1166666666"];
-    const company = await CompanyRepository.create(companyMocks.companyData());
+    const company = await CompanyGenerator.instance.withCompleteData();
     await expect(CompanyPhoneNumberRepository.bulkCreate(phoneNumbers, company)).rejects.toThrow(
       UniqueConstraintError
     );
@@ -27,7 +26,7 @@ describe("CompanyPhoneNumberRepository", () => {
 
   it("throws an error if a company has already the same phoneNumber", async () => {
     const phoneNumber = "1144444444";
-    const company = await CompanyRepository.create(companyMocks.companyData());
+    const company = await CompanyGenerator.instance.withCompleteData();
     await CompanyPhoneNumberRepository.create(phoneNumber, company);
     await expect(
       CompanyPhoneNumberRepository.create(phoneNumber, company)
@@ -35,7 +34,7 @@ describe("CompanyPhoneNumberRepository", () => {
   });
 
   it("throws a database constraint error if phoneNumber is very large", async () => {
-    const company = await CompanyRepository.create(companyMocks.companyData());
+    const company = await CompanyGenerator.instance.withCompleteData();
     const phoneNumber = new CompanyPhoneNumber({
       companyUuid: company.uuid,
       phoneNumber: "0".repeat(300)
@@ -59,37 +58,29 @@ describe("CompanyPhoneNumberRepository", () => {
     );
   });
 
-  it("truncates phoneNumber by cascade when we remove its company", async () => {
-    const company = await CompanyRepository.create({
-      ...companyMocks.companyData(),
-      cuit: "30711819017"
+  describe("delete cascade", () => {
+    beforeEach(async () => {
+      await UserRepository.truncate();
+      await CompanyRepository.truncate();
     });
-    await CompanyRepository.create({
-      ...companyMocks.companyData(),
-      user: { ...UserMocks.userAttributes, email: "asd@asd.asd" },
-      cuit: "30701307115"
-    });
-    await CompanyRepository.create({
-      ...companyMocks.companyData(),
-      user: { ...UserMocks.userAttributes, email: "qwe@qwe.qwe" },
-      cuit: "30703088534"
-    });
-    await CompanyPhoneNumberRepository.create("1144444444", company);
-    expect(await CompanyPhoneNumberRepository.findAll()).toHaveLength(1);
-    await company.destroy();
-    expect(await CompanyPhoneNumberRepository.findAll()).toHaveLength(0);
-  });
 
-  it("does not truncate phoneNumber by cascade when we remove another company", async () => {
-    const company = await CompanyRepository.create(companyMocks.companyData());
-    const anotherCompany = await CompanyRepository.create({
-      ...companyMocks.companyData(),
-      user: { ...UserMocks.userAttributes, email: "qwe@qwe.qwe" },
-      cuit: "23390691939"
+    it("truncates phoneNumber by cascade when we remove its company", async () => {
+      const company = await CompanyGenerator.instance.withMinimumData();
+      await CompanyGenerator.instance.withMinimumData();
+      await CompanyGenerator.instance.withMinimumData();
+      await CompanyPhoneNumberRepository.create("1144444444", company);
+      expect(await CompanyPhoneNumberRepository.findAll()).toHaveLength(1);
+      await company.destroy();
+      expect(await CompanyPhoneNumberRepository.findAll()).toHaveLength(0);
     });
-    await CompanyPhoneNumberRepository.create("(011) 44444444", company);
-    expect(await CompanyPhoneNumberRepository.findAll()).toHaveLength(1);
-    await anotherCompany.destroy();
-    expect(await CompanyPhoneNumberRepository.findAll()).toHaveLength(1);
+
+    it("does not truncate phoneNumber by cascade when we remove another company", async () => {
+      const company = await CompanyGenerator.instance.withMinimumData();
+      const anotherCompany = await CompanyGenerator.instance.withMinimumData();
+      await CompanyPhoneNumberRepository.create("(011) 44444444", company);
+      expect(await CompanyPhoneNumberRepository.findAll()).toHaveLength(1);
+      await anotherCompany.destroy();
+      expect(await CompanyPhoneNumberRepository.findAll()).toHaveLength(1);
+    });
   });
 });

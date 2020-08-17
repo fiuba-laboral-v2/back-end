@@ -11,7 +11,6 @@ import { Admin } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { CompanyGenerator } from "$generators/Company";
 import { AdminGenerator } from "$generators/Admin";
-import { UserMocks } from "../User/mocks";
 import { CompanyNotUpdatedError } from "$models/Company/Errors";
 import { Secretary } from "$models/Admin";
 
@@ -72,7 +71,7 @@ describe("CompanyRepository", () => {
       CompanyRepository.create({
         cuit: cuit,
         companyName: "Devartis Clone SA",
-        user: { ...UserMocks.userAttributes, email: "qwe@qwe.qwe" }
+        user: CompanyGenerator.data.completeData().user
       })
     ).rejects.toThrow(UniqueConstraintError);
   });
@@ -80,9 +79,8 @@ describe("CompanyRepository", () => {
   it("should throw an error if cuit is null", async () => {
     await expect(
       CompanyRepository.create({
-        cuit: null as any,
-        companyName: "devartis",
-        user: UserMocks.userAttributes
+        ...CompanyGenerator.data.completeData(),
+        cuit: null as any
       })
     ).rejects.toThrow(ValidationError);
   });
@@ -90,9 +88,8 @@ describe("CompanyRepository", () => {
   it("should throw an error if companyName is null", async () => {
     await expect(
       CompanyRepository.create({
-        cuit: "30711819017",
-        companyName: null as any,
-        user: UserMocks.userAttributes
+        ...CompanyGenerator.data.completeData(),
+        companyName: null as any
       })
     ).rejects.toThrow(ValidationError);
   });

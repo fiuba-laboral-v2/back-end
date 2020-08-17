@@ -36,7 +36,6 @@ const GET_OFFER_BY_UUID = gql`
       careers {
         code
         description
-        credits
       }
       company {
         cuit
@@ -108,8 +107,7 @@ describe("getOfferByUuid", () => {
         careers: [
           {
             code: career.code,
-            description: career.description,
-            credits: career.credits
+            description: career.description
           }
         ],
         sections: (await offer.getSections()).map(section => ({

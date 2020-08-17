@@ -11,7 +11,6 @@ const GET_CAREERS = gql`
     getCareers {
       code
       description
-      credits
     }
   }
 `;
@@ -31,7 +30,6 @@ describe("getCareers", () => {
     expect(data!.getCareers).toMatchObject([
       {
         code: career.code,
-        credits: career.credits,
         description: career.description
       }
     ]);

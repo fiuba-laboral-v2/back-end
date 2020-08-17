@@ -3,7 +3,7 @@ import { client } from "../../ApolloTestClient";
 
 import { CareerRepository } from "$models/Career";
 import { UserRepository } from "$models/User";
-import { CareersNotFound } from "$models/Career/Errors/CareersNotFound";
+import { CareersNotFoundError } from "$models/Career/Errors/CareersNotFoundError";
 import { CareerGenerator } from "$generators/Career";
 import { TestClientGenerator } from "$generators/TestClient";
 
@@ -14,7 +14,6 @@ const GET_CAREER_BY_CODE = gql`
     getCareerByCode(code: $code) {
       code
       description
-      credits
     }
   }
 `;
@@ -37,20 +36,19 @@ describe("getCareerByCode", () => {
     expect(data).not.toBeUndefined();
     expect(data!.getCareerByCode).toMatchObject({
       code: career.code,
-      credits: career.credits,
       description: career.description
     });
   });
 
   describe("Errors", () => {
-    it("throws Career Not found if the code doesn't exists", async () => {
+    it("returns CareerNotFoundError if the code doesn't exists", async () => {
       const { apolloClient } = await TestClientGenerator.user();
       const { errors } = await apolloClient.query({
         query: GET_CAREER_BY_CODE,
         variables: { code: "3" }
       });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: CareersNotFound.name
+        errorType: CareersNotFoundError.name
       });
     });
 

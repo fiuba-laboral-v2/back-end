@@ -48,7 +48,6 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
       careers {
         code
         description
-        credits
       }
       company {
         uuid
@@ -196,9 +195,7 @@ describe("createOffer", () => {
         mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
         variables: createOfferAttributes
       });
-      expect(errors![0].extensions!.data).toEqual({
-        errorType: AuthenticationError.name
-      });
+      expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
     });
 
     it("throws an error if the current user is not a company", async () => {
@@ -211,9 +208,7 @@ describe("createOffer", () => {
         mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
         variables: createOfferAttributes
       });
-      expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name
-      });
+      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("returns an error if the company has pending approval status", async () => {
@@ -230,9 +225,7 @@ describe("createOffer", () => {
         mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
         variables: createOfferAttributes
       });
-      expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name
-      });
+      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("returns an error if the company has rejected approval status", async () => {
@@ -249,9 +242,7 @@ describe("createOffer", () => {
         mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
         variables: createOfferAttributes
       });
-      expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name
-      });
+      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
   });
 });

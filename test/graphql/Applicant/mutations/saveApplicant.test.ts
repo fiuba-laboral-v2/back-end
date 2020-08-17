@@ -43,7 +43,6 @@ const SAVE_APPLICANT_WITH_COMPLETE_DATA = gql`
         career {
           code
           description
-          credits
         }
         approvedSubjectCount
         currentCareerYear
@@ -110,8 +109,7 @@ describe("saveApplicant", () => {
           {
             career: {
               code: career.code,
-              description: career.description,
-              credits: career.credits
+              description: career.description
             },
             ...applicantCareerData
           }
