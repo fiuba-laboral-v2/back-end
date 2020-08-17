@@ -36,12 +36,10 @@ describe("ApplicantLink", () => {
   });
 
   it("should throw an error if no name is provided", async () => {
-    const applicantLink = new ApplicantLink(
-      {
-        applicantUuid: applicant.uuid,
-        url: "www.google.com"
-      }
-    );
+    const applicantLink = new ApplicantLink({
+      applicantUuid: applicant.uuid,
+      url: "www.google.com"
+    });
     await expect(applicantLink.validate()).rejects.toThrow(ValidationError);
   });
 
@@ -55,12 +53,18 @@ describe("ApplicantLink", () => {
   });
 
   it("should throw an error if no url is provided", async () => {
-    const applicantLink = new ApplicantLink({ applicantUuid: applicant.uuid, name: "Google" });
+    const applicantLink = new ApplicantLink({
+      applicantUuid: applicant.uuid,
+      name: "Google"
+    });
     await expect(applicantLink.validate()).rejects.toThrow();
   });
 
   it("should throw an error if no applicantUuid is provided", async () => {
-    const applicantLink = new ApplicantLink({ name: "Google", url: "www.google.com" });
+    const applicantLink = new ApplicantLink({
+      name: "Google",
+      url: "www.google.com"
+    });
     await expect(applicantLink.validate()).rejects.toThrow();
   });
 });

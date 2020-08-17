@@ -47,11 +47,9 @@ describe("getCareerByCode", () => {
         query: GET_CAREER_BY_CODE,
         variables: { code: "3" }
       });
-      expect(errors![0].extensions!.data).toEqual(
-        {
-          errorType: CareersNotFoundError.name
-        }
-      );
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: CareersNotFoundError.name
+      });
     });
 
     it("returns an error if there is no current user", async () => {
@@ -61,7 +59,9 @@ describe("getCareerByCode", () => {
         query: GET_CAREER_BY_CODE,
         variables: { code: "3" }
       });
-      expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: AuthenticationError.name
+      });
     });
   });
 });

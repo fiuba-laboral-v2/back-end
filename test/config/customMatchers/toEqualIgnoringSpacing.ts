@@ -1,7 +1,6 @@
 import { isEqual } from "lodash";
 
-const formatString = (word: string) =>
-  word.replace(/\s/g, "").toLowerCase().split("").sort();
+const formatString = (word: string) => word.replace(/\s/g, "").toLowerCase().split("").sort();
 
 const buildResponseMessage = (pass: boolean) => {
   const negation = pass ? "not" : "";

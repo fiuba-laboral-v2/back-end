@@ -44,24 +44,21 @@ describe("Section model", () => {
     });
   });
 
-  it(
-    "should throw an error if section has the same display order for the same applicant",
-    async () => {
-      await Section.create({
-        applicantUuid: applicant.uuid,
-        title: "title",
-        text: "text",
-        displayOrder: 1
-      });
-      const sectionWithSameDisplayOrder = new Section({
-        applicantUuid: applicant.uuid,
-        title: "another title",
-        text: "another text",
-        displayOrder: 1
-      });
-      await expect(sectionWithSameDisplayOrder.save()).rejects.toThrow();
-    }
-  );
+  it("should throw an error if section has the same display order for the same applicant", async () => {
+    await Section.create({
+      applicantUuid: applicant.uuid,
+      title: "title",
+      text: "text",
+      displayOrder: 1
+    });
+    const sectionWithSameDisplayOrder = new Section({
+      applicantUuid: applicant.uuid,
+      title: "another title",
+      text: "another text",
+      displayOrder: 1
+    });
+    await expect(sectionWithSameDisplayOrder.save()).rejects.toThrow();
+  });
 
   it("should update the sections if the display order is the same", async () => {
     const params = {
@@ -81,21 +78,26 @@ describe("Section model", () => {
   });
 
   it("should update a valid section", async () => {
-    const params = [{
-      title: "I got in one little fight and my mom got scared",
-      text: "She said 'You're movin' with your auntie and uncle in Bel Air'\nI begged and pleaded",
-      displayOrder: 1
-    }];
+    const params = [
+      {
+        title: "I got in one little fight and my mom got scared",
+        text:
+          "She said 'You're movin' with your auntie and uncle in Bel Air'\nI begged and pleaded",
+        displayOrder: 1
+      }
+    ];
 
     await SectionRepository.update(params, applicant);
     const [firstSection] = await applicant.getSections();
 
-    const newParams = [{
-      uuid: firstSection.uuid,
-      title: "New title",
-      text: "New Text",
-      displayOrder: 1
-    }];
+    const newParams = [
+      {
+        uuid: firstSection.uuid,
+        title: "New title",
+        text: "New Text",
+        displayOrder: 1
+      }
+    ];
 
     await SectionRepository.update(newParams, applicant);
     const [section] = await applicant.getSections();

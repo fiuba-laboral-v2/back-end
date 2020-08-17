@@ -12,12 +12,14 @@ describe("OfferApprovalEvent", () => {
     };
     const offerApprovalEvent = new OfferApprovalEvent(offerApprovalEventAttributes);
     await expect(offerApprovalEvent.validate()).resolves.not.toThrow();
-    expect(offerApprovalEvent).toEqual(expect.objectContaining({
-      uuid: expect.stringMatching(UUID_REGEX),
-      createdAt: expect.any(Date),
-      updatedAt: expect.any(Date),
-      ...offerApprovalEventAttributes
-    }));
+    expect(offerApprovalEvent).toEqual(
+      expect.objectContaining({
+        uuid: expect.stringMatching(UUID_REGEX),
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
+        ...offerApprovalEventAttributes
+      })
+    );
   });
 
   it("creates a rejected OfferApprovalEvent", async () => {

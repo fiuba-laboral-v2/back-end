@@ -16,9 +16,7 @@ describe("CareerRepository", () => {
     it("throws an error if the career with the same code already exists", async () => {
       const careerData = CareerGenerator.data();
       await CareerRepository.create(careerData);
-      await expect(
-        CareerRepository.create(careerData)
-      ).rejects.toThrowErrorWithMessage(
+      await expect(CareerRepository.create(careerData)).rejects.toThrowErrorWithMessage(
         UniqueConstraintError,
         "Validation error"
       );
@@ -53,11 +51,7 @@ describe("CareerRepository", () => {
       const career = await CareerRepository.create(CareerGenerator.data());
       const expectedCareers = await CareerRepository.findAll();
       expect(expectedCareers).toHaveLength(1);
-      expect(
-        expectedCareers.map(c => c.code)
-      ).toMatchObject(
-        [career.code]
-      );
+      expect(expectedCareers.map(c => c.code)).toMatchObject([career.code]);
     });
 
     it("retrieve no Careers", async () => {
@@ -88,11 +82,8 @@ describe("CareerRepository", () => {
       await CareerRepository.create(CareerGenerator.data());
       const firstUndefinedCareerCode = "firstUndefinedCareerCode";
       const secondUndefinedCareerCode = "secondUndefinedCareerCode";
-
       const codes = [firstUndefinedCareerCode, secondUndefinedCareerCode];
-      await expect(
-        CareerRepository.findByCodes(codes)
-      ).rejects.toThrowErrorWithMessage(
+      await expect(CareerRepository.findByCodes(codes)).rejects.toThrowErrorWithMessage(
         CareersNotFoundError,
         CareersNotFoundError.buildMessage(codes)
       );

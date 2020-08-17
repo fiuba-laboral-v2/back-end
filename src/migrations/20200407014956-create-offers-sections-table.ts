@@ -42,15 +42,11 @@ export = {
         { transaction }
       );
 
-      await queryInterface.addConstraint(
-        "OffersSections",
-        ["offerUuid", "displayOrder"],
-        {
-          type: "unique",
-          name: "OffersSections_offerUuid_displayOrder_key",
-          transaction
-        }
-      );
+      await queryInterface.addConstraint("OffersSections", ["offerUuid", "displayOrder"], {
+        type: "unique",
+        name: "OffersSections_offerUuid_displayOrder_key",
+        transaction
+      });
     });
   },
   down: (queryInterface: QueryInterface) => {

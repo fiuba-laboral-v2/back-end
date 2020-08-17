@@ -11,7 +11,7 @@ import generateUuid from "uuid/v4";
 import { Secretary } from "$models/Admin";
 
 const query = gql`
-  query ($uuid: ID!) {
+  query($uuid: ID!) {
     getCompanyByUuid(uuid: $uuid) {
       cuit
       companyName
@@ -63,10 +63,15 @@ describe("getCompanyByUuid", () => {
         updatedAt: company.updatedAt.toISOString(),
         approvalStatus: company.approvalStatus,
         phoneNumbers: expect.arrayContaining(phoneNumbers.map(({ phoneNumber }) => phoneNumber)),
-        photos: expect.arrayContaining((await company.getPhotos())),
-        users: expect.arrayContaining((await company.getUsers()).map(
-          ({ uuid, email, name, surname }) => ({ uuid, email, name, surname })
-        ))
+        photos: expect.arrayContaining(await company.getPhotos()),
+        users: expect.arrayContaining(
+          (await company.getUsers()).map(({ uuid, email, name, surname }) => ({
+            uuid,
+            email,
+            name,
+            surname
+          }))
+        )
       }
     });
   });
@@ -83,15 +88,15 @@ describe("getCompanyByUuid", () => {
       query: query,
       variables: { uuid: notExistentUuid }
     });
-    expect(
-      errors![0].extensions!.data
-    ).toEqual(
-      { errorType: "CompanyNotFoundError" }
-    );
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: "CompanyNotFoundError"
+    });
   });
 
   it("find a company with photos with an empty array", async () => {
-    const company = await CompanyGenerator.instance.withCompleteData({ photos: [] });
+    const company = await CompanyGenerator.instance.withCompleteData({
+      photos: []
+    });
     const { apolloClient } = await TestClientGenerator.admin();
     const { data, errors } = await apolloClient.query({
       query: query,
@@ -106,7 +111,9 @@ describe("getCompanyByUuid", () => {
       query: query,
       variables: { uuid: generateUuid() }
     });
-    expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: AuthenticationError.name
+    });
   });
 
   it("returns an error if user is from a company", async () => {
@@ -115,7 +122,9 @@ describe("getCompanyByUuid", () => {
       query: query,
       variables: { uuid: generateUuid() }
     });
-    expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: UnauthorizedError.name
+    });
   });
 
   it("returns an error if user is a pending applicant", async () => {
@@ -124,7 +133,9 @@ describe("getCompanyByUuid", () => {
       query: query,
       variables: { uuid: generateUuid() }
     });
-    expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: UnauthorizedError.name
+    });
   });
 
   it("returns an error if user is a rejected applicant", async () => {
@@ -138,6 +149,8 @@ describe("getCompanyByUuid", () => {
       query: query,
       variables: { uuid: generateUuid() }
     });
-    expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: UnauthorizedError.name
+    });
   });
 });

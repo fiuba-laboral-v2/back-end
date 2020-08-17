@@ -5,16 +5,13 @@ import { admin } from "./constants/admins";
 
 export = {
   up: (queryInterface: QueryInterface) => {
-    return queryInterface.bulkInsert(
-      "Users",
-      [
-        admin.user,
-        sebastian.user,
-        manuel.user,
-        aldana.user,
-        mariano.user
-      ]
-    );
+    return queryInterface.bulkInsert("Users", [
+      admin.user,
+      sebastian.user,
+      manuel.user,
+      aldana.user,
+      mariano.user
+    ]);
   },
   down: (queryInterface: QueryInterface) => {
     return queryInterface.bulkDelete("Users", {});

@@ -25,15 +25,11 @@ export = {
         },
         { transaction }
       );
-      await queryInterface.addConstraint(
-        "Careers",
-        ["code"],
-        {
-          type: "primary key",
-          name: "Careers_code_key",
-          transaction
-        }
-      );
+      await queryInterface.addConstraint("Careers", ["code"], {
+        type: "primary key",
+        name: "Careers_code_key",
+        transaction
+      });
     });
   },
   down: (queryInterface: QueryInterface) => {

@@ -6,11 +6,12 @@ export const createApolloTestClient = (
   user: User,
   expressContext?: IExpressContext,
   entityContext?: object
-) => client.loggedIn({
-  currentUser: {
-    uuid: user.uuid,
-    email: user.email,
-    ...entityContext
-  },
-  expressContext
-});
+) =>
+  client.loggedIn({
+    currentUser: {
+      uuid: user.uuid,
+      email: user.email,
+      ...entityContext
+    },
+    expressContext
+  });

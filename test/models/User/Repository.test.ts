@@ -24,12 +24,14 @@ describe("UserRepository", () => {
       };
       const user = await UserRepository.create(userAttributes);
 
-      expect(user).toEqual(expect.objectContaining({
-        uuid: expect.stringMatching(UUID_REGEX),
-        email: userAttributes.email,
-        name: userAttributes.name,
-        surname: userAttributes.surname
-      }));
+      expect(user).toEqual(
+        expect.objectContaining({
+          uuid: expect.stringMatching(UUID_REGEX),
+          email: userAttributes.email,
+          name: userAttributes.name,
+          surname: userAttributes.surname
+        })
+      );
     });
 
     it("creates a user with no password", async () => {
@@ -43,24 +45,28 @@ describe("UserRepository", () => {
     });
 
     it("throws an error if password is invalid", async () => {
-      await expect(UserRepository.create({
-        email: "asd@qwe.com",
-        password: "an invalid password",
-        name: "Sebastian",
-        surname: "blanco"
-      })).rejects.toThrowErrorWithMessage(
+      await expect(
+        UserRepository.create({
+          email: "asd@qwe.com",
+          password: "an invalid password",
+          name: "Sebastian",
+          surname: "blanco"
+        })
+      ).rejects.toThrowErrorWithMessage(
         PasswordWithoutUppercaseError,
         "La contraseña debe contener letras mayúsculas"
       );
     });
 
     it("throws error if email has invalid format", async () => {
-      await expect(UserRepository.create({
-        email: "asd@qwecom",
-        password: "AValidPassword123",
-        name: "Sebastian",
-        surname: "blanco"
-      })).rejects.toThrowErrorWithMessage(
+      await expect(
+        UserRepository.create({
+          email: "asd@qwecom",
+          password: "AValidPassword123",
+          name: "Sebastian",
+          surname: "blanco"
+        })
+      ).rejects.toThrowErrorWithMessage(
         ValidationError,
         InvalidEmailError.buildMessage("asd@qwecom")
       );
@@ -81,10 +87,7 @@ describe("UserRepository", () => {
           name: "name",
           surname: "surname"
         })
-      ).rejects.toThrowErrorWithMessage(
-        UniqueConstraintError,
-        "Validation error"
-      );
+      ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
     });
 
     it("throws an error when creating an user with an existing dni", async () => {
@@ -104,10 +107,7 @@ describe("UserRepository", () => {
           dni,
           surname: "Boyd"
         })
-      ).rejects.toThrowErrorWithMessage(
-        UniqueConstraintError,
-        "Validation error"
-      );
+      ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
     });
 
     it("throws an error if the password has no digits", async () => {
@@ -134,11 +134,13 @@ describe("UserRepository", () => {
           surname: "surname"
         };
         const user = await UserRepository.createFiubaUser(attributes);
-        expect(user).toEqual(expect.objectContaining({
-          uuid: expect.stringMatching(UUID_REGEX),
-          ...attributes,
-          password: null
-        }));
+        expect(user).toEqual(
+          expect.objectContaining({
+            uuid: expect.stringMatching(UUID_REGEX),
+            ...attributes,
+            password: null
+          })
+        );
       });
 
       it("throws an error if the FiubaService authentication returns false", async () => {
@@ -211,9 +213,7 @@ describe("UserRepository", () => {
         name: "Dylan",
         surname: "Alvarez"
       });
-      await expect(
-        UserRepository.findByEmail("yyy@yyy.com")
-      ).rejects.toThrow(UserNotFoundError);
+      await expect(UserRepository.findByEmail("yyy@yyy.com")).rejects.toThrow(UserNotFoundError);
     });
   });
 });

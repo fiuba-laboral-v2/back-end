@@ -30,25 +30,17 @@ export = {
           }
         },
         { transaction }
-        );
-      await queryInterface.addConstraint(
-        "ApplicantsLinks",
-        ["applicantUuid", "name"],
-        {
-          type: "primary key",
-          name: "ApplicantsLinks_applicantUuid_name_key",
-          transaction
-        }
       );
-      await queryInterface.addConstraint(
-        "ApplicantsLinks",
-        ["applicantUuid", "url"],
-        {
-          type: "unique",
-          name: "ApplicantsLinks_applicantUuid_url_key",
-          transaction
-        }
-      );
+      await queryInterface.addConstraint("ApplicantsLinks", ["applicantUuid", "name"], {
+        type: "primary key",
+        name: "ApplicantsLinks_applicantUuid_name_key",
+        transaction
+      });
+      await queryInterface.addConstraint("ApplicantsLinks", ["applicantUuid", "url"], {
+        type: "unique",
+        name: "ApplicantsLinks_applicantUuid_url_key",
+        transaction
+      });
     });
   },
   down: (queryInterface: QueryInterface) => {

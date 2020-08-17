@@ -13,30 +13,30 @@ import { OfferNotFound } from "$models/Offer/Errors";
 import { Secretary } from "$models/Admin";
 
 const EDIT_OFFER = gql`
-    mutation editOffer(
-        $uuid: ID!,
-        $title: String!,
-        $description: String!,
-        $hoursPerDay: Int!,
-        $minimumSalary: Int!,
-        $maximumSalary: Int!
+  mutation editOffer(
+    $uuid: ID!
+    $title: String!
+    $description: String!
+    $hoursPerDay: Int!
+    $minimumSalary: Int!
+    $maximumSalary: Int!
+  ) {
+    editOffer(
+      uuid: $uuid
+      title: $title
+      description: $description
+      hoursPerDay: $hoursPerDay
+      minimumSalary: $minimumSalary
+      maximumSalary: $maximumSalary
     ) {
-        editOffer(
-            uuid: $uuid,
-            title: $title,
-            description: $description,
-            hoursPerDay: $hoursPerDay,
-            minimumSalary: $minimumSalary,
-            maximumSalary: $maximumSalary
-        ) {
-            uuid
-            title
-            description
-            hoursPerDay
-            minimumSalary
-            maximumSalary
-        }
+      uuid
+      title
+      description
+      hoursPerDay
+      minimumSalary
+      maximumSalary
     }
+  }
 `;
 
 describe("editOffer", () => {
@@ -77,9 +77,14 @@ describe("editOffer", () => {
     const attributes = offersData.next({ companyUuid: company.uuid }).value;
     const { errors } = await apolloClient.mutate({
       mutation: EDIT_OFFER,
-      variables: { ...attributes, uuid: "ca2c5210-cb79-4026-9a26-1eb7a4159e71" }
+      variables: {
+        ...attributes,
+        uuid: "ca2c5210-cb79-4026-9a26-1eb7a4159e71"
+      }
     });
-    expect(errors![0].extensions!.data).toEqual({ errorType: OfferNotFound.name });
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: OfferNotFound.name
+    });
   });
 
   it("throws an error when the user does not belong to a company", async () => {
@@ -89,9 +94,14 @@ describe("editOffer", () => {
     }).value;
     const { errors } = await apolloClient.mutate({
       mutation: EDIT_OFFER,
-      variables: { ...attributes, uuid: "ca2c5210-cb79-4026-9a26-1eb7a4159e71" }
+      variables: {
+        ...attributes,
+        uuid: "ca2c5210-cb79-4026-9a26-1eb7a4159e71"
+      }
     });
-    expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: UnauthorizedError.name
+    });
   });
 
   it("throws an error when the user does not belong to an approved company", async () => {
@@ -100,7 +110,9 @@ describe("editOffer", () => {
       mutation: EDIT_OFFER,
       variables: { ...offersData.next().value, uuid: generateUuid() }
     });
-    expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: UnauthorizedError.name
+    });
   });
 
   it("throws an error when a user is not logged in", async () => {
@@ -109,6 +121,8 @@ describe("editOffer", () => {
       mutation: EDIT_OFFER,
       variables: { ...offersData.next().value, uuid: generateUuid() }
     });
-    expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: AuthenticationError.name
+    });
   });
 });

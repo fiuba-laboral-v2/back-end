@@ -9,12 +9,8 @@ import {
 import { IUserTestClientAttributes } from "../interfaces";
 
 export const TestClientGenerator = {
-  user: (attributes: IUserTestClientAttributes = {}) =>
-    userTestClient(attributes),
-  admin: (attributes: IUserTestClientAttributes = {}) =>
-    adminTestClient(attributes),
-  applicant: (attributes: IApplicantTestClientAttributes = {}) =>
-    applicantTestClient(attributes),
-  company: (attributes: ICompanyTestClientAttributes = {}) =>
-    companyTestClient(attributes)
+  user: (attributes: IUserTestClientAttributes = {}) => userTestClient(attributes),
+  admin: (attributes: IUserTestClientAttributes = {}) => adminTestClient(attributes),
+  applicant: (attributes: IApplicantTestClientAttributes = {}) => applicantTestClient(attributes),
+  company: (attributes: ICompanyTestClientAttributes = {}) => companyTestClient(attributes)
 };

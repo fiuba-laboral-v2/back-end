@@ -6,10 +6,7 @@ import { UserRepository } from "$models/User";
 import { CompanyGenerator } from "$generators/Company";
 
 describe("CompanyPhoneNumberRepository", () => {
-  beforeAll(() => Promise.all([
-    CompanyRepository.truncate(),
-    UserRepository.truncate()
-  ]));
+  beforeEach(() => Promise.all([CompanyRepository.truncate(), UserRepository.truncate()]));
 
   it("creates several phoneNumbers for the same company", async () => {
     const phoneNumbers = ["1144444444", "1155555555", "1166666666"];
@@ -22,17 +19,17 @@ describe("CompanyPhoneNumberRepository", () => {
   it("throws an error if a phone number is repeated in a bulk create", async () => {
     const phoneNumbers = ["1144444444", "1144444444", "1166666666"];
     const company = await CompanyGenerator.instance.withCompleteData();
-    await expect(
-      CompanyPhoneNumberRepository.bulkCreate(phoneNumbers, company)
-    ).rejects.toThrow(UniqueConstraintError);
+    await expect(CompanyPhoneNumberRepository.bulkCreate(phoneNumbers, company)).rejects.toThrow(
+      UniqueConstraintError
+    );
   });
 
   it("throws an error if a company has already the same phoneNumber", async () => {
     const phoneNumber = "1144444444";
     const company = await CompanyGenerator.instance.withCompleteData();
     await CompanyPhoneNumberRepository.create(phoneNumber, company);
-    await expect(CompanyPhoneNumberRepository.create(
-      phoneNumber, company)
+    await expect(
+      CompanyPhoneNumberRepository.create(phoneNumber, company)
     ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
   });
 
@@ -42,10 +39,9 @@ describe("CompanyPhoneNumberRepository", () => {
       companyUuid: company.uuid,
       phoneNumber: "0".repeat(300)
     });
-    await expect(
-      phoneNumber.save({ validate: false })
-    ).rejects.toThrowErrorWithMessage(
-      DatabaseError, "value too long for type character varying(255)"
+    await expect(phoneNumber.save({ validate: false })).rejects.toThrowErrorWithMessage(
+      DatabaseError,
+      "value too long for type character varying(255)"
     );
   });
 
@@ -57,8 +53,8 @@ describe("CompanyPhoneNumberRepository", () => {
       CompanyPhoneNumberRepository.create("1144444444", notSavedCompany)
     ).rejects.toThrowErrorWithMessage(
       ForeignKeyConstraintError,
-      "insert or update on table \"CompanyPhoneNumbers\" violates foreign " +
-      "key constraint \"CompanyPhoneNumbers_companyUuid_fkey\""
+      'insert or update on table "CompanyPhoneNumbers" violates foreign ' +
+        'key constraint "CompanyPhoneNumbers_companyUuid_fkey"'
     );
   });
 

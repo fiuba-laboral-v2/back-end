@@ -6,9 +6,7 @@ describe("Career", () => {
     const attributes = { code: "1", description: "descripton" };
     delete attributes[attribute];
     const career: Career = new Career(attributes);
-    await expect(
-      career.validate()
-    ).rejects.toThrowErrorWithMessage(
+    await expect(career.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       `notNull Violation: Career.${attribute} cannot be null`
     );

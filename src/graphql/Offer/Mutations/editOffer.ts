@@ -38,5 +38,9 @@ export const editOffer = {
     _: undefined,
     attributes: IUpdateOffer,
     { currentUser }: { currentUser: ICompanyUser }
-  ) => OfferRepository.update({ companyUuid: currentUser.company.uuid, ...attributes })
+  ) =>
+    OfferRepository.update({
+      companyUuid: currentUser.company.uuid,
+      ...attributes
+    })
 };

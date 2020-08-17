@@ -29,16 +29,11 @@ export = {
         },
         { transaction }
       );
-      await queryInterface.addConstraint(
-        "CompanyUsers",
-        ["companyUuid", "userUuid"],
-        {
-          type: "primary key",
-          name: "CompanyUsers_companyUuid_userUuid_key",
-          transaction
-        }
-      );
+      await queryInterface.addConstraint("CompanyUsers", ["companyUuid", "userUuid"], {
+        type: "primary key",
+        name: "CompanyUsers_companyUuid_userUuid_key",
+        transaction
+      });
     }),
-  down: (queryInterface: QueryInterface) =>
-    queryInterface.dropTable("CompanyUsers")
+  down: (queryInterface: QueryInterface) => queryInterface.dropTable("CompanyUsers")
 };

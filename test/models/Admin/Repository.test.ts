@@ -13,34 +13,40 @@ describe("AdminRepository", () => {
     it("creates a valid Admin of extension", async () => {
       const adminAttributes = AdminGenerator.data(Secretary.extension);
       const admin = await AdminRepository.create(adminAttributes);
-      expect(await admin.getUser()).toEqual(expect.objectContaining({
-        ...adminAttributes.user,
-        password: expect.any(String)
-      }));
-      expect(admin).toEqual(expect.objectContaining({
-        secretary: adminAttributes.secretary
-      }));
+      expect(await admin.getUser()).toEqual(
+        expect.objectContaining({
+          ...adminAttributes.user,
+          password: expect.any(String)
+        })
+      );
+      expect(admin).toEqual(
+        expect.objectContaining({
+          secretary: adminAttributes.secretary
+        })
+      );
     });
 
     it("creates a valid Admin of graduados", async () => {
       const adminAttributes = AdminGenerator.data(Secretary.graduados);
       const admin = await AdminRepository.create(adminAttributes);
-      expect(await admin.getUser()).toEqual(expect.objectContaining({
-        ...adminAttributes.user,
-        password: expect.any(String)
-      }));
-      expect(admin).toEqual(expect.objectContaining({
-        secretary: adminAttributes.secretary
-      }));
+      expect(await admin.getUser()).toEqual(
+        expect.objectContaining({
+          ...adminAttributes.user,
+          password: expect.any(String)
+        })
+      );
+      expect(admin).toEqual(
+        expect.objectContaining({
+          secretary: adminAttributes.secretary
+        })
+      );
     });
 
     it("throws error if admin already exists and rollback transaction", async () => {
       const adminAttributes = AdminGenerator.data(Secretary.extension);
       await AdminRepository.create(adminAttributes);
       const numberOfAdmins = await AdminRepository.findAll();
-      await expect(
-        AdminRepository.create(adminAttributes)
-      ).rejects.toThrowErrorWithMessage(
+      await expect(AdminRepository.create(adminAttributes)).rejects.toThrowErrorWithMessage(
         UniqueConstraintError,
         "Validation error"
       );

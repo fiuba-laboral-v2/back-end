@@ -28,12 +28,14 @@ describe("ApplicantApprovalEventRepository", () => {
     const applicantApprovalEvent = await ApplicantApprovalEventRepository.create(
       applicantApprovalEventAttributes
     );
-    expect(applicantApprovalEvent).toEqual(expect.objectContaining({
-      uuid: expect.stringMatching(UUID_REGEX),
-      createdAt: expect.any(Date),
-      updatedAt: expect.any(Date),
-      ...applicantApprovalEventAttributes
-    }));
+    expect(applicantApprovalEvent).toEqual(
+      expect.objectContaining({
+        uuid: expect.stringMatching(UUID_REGEX),
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
+        ...applicantApprovalEventAttributes
+      })
+    );
   };
 
   it("creates a valid pending ApplicantApprovalEvent", async () => {
@@ -81,8 +83,8 @@ describe("ApplicantApprovalEventRepository", () => {
       })
     ).rejects.toThrowErrorWithMessage(
       ForeignKeyConstraintError,
-      "insert or update on table \"ApplicantApprovalEvents\" violates foreign " +
-      "key constraint \"ApplicantApprovalEvents_adminUserUuid_fkey\""
+      'insert or update on table "ApplicantApprovalEvents" violates foreign ' +
+        'key constraint "ApplicantApprovalEvents_adminUserUuid_fkey"'
     );
   });
 
@@ -97,8 +99,8 @@ describe("ApplicantApprovalEventRepository", () => {
       })
     ).rejects.toThrowErrorWithMessage(
       ForeignKeyConstraintError,
-      "insert or update on table \"ApplicantApprovalEvents\" violates foreign" +
-      " key constraint \"ApplicantApprovalEvents_applicantUuid_fkey\""
+      'insert or update on table "ApplicantApprovalEvents" violates foreign' +
+        ' key constraint "ApplicantApprovalEvents_applicantUuid_fkey"'
     );
   });
   describe("Delete cascade", () => {

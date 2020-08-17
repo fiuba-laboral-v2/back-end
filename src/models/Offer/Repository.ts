@@ -12,12 +12,7 @@ import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export const OfferRepository = {
-  create: (
-    {
-      careers = [],
-      sections = [],
-      ...attributes
-    }: ICreateOffer) => {
+  create: ({ careers = [], sections = [], ...attributes }: ICreateOffer) => {
     const offer = new Offer(attributes);
     return OfferRepository.save(offer, sections, careers);
   },
@@ -29,12 +24,22 @@ export const OfferRepository = {
     if (!updatedOffer) throw new OfferNotFound(offer.uuid);
     return updatedOffer;
   },
-  updateStatus: async (
-    { uuid, secretary, status }: { uuid: string, secretary: Secretary, status: ApprovalStatus }
-  ) => {
+  updateStatus: async ({
+    uuid,
+    secretary,
+    status
+  }: {
+    uuid: string;
+    secretary: Secretary;
+    status: ApprovalStatus;
+  }) => {
     const offerAttributes = {
-      ...(secretary === Secretary.graduados && { graduadosApprovalStatus: status }),
-      ...(secretary === Secretary.extension && { extensionApprovalStatus: status })
+      ...(secretary === Secretary.graduados && {
+        graduadosApprovalStatus: status
+      }),
+      ...(secretary === Secretary.extension && {
+        extensionApprovalStatus: status
+      })
     };
 
     const [, [updatedOffer]] = await Offer.update(offerAttributes, {
@@ -44,20 +49,21 @@ export const OfferRepository = {
     if (!updatedOffer) throw new OfferNotFound(uuid);
     return updatedOffer;
   },
-  save: async (
-    offer: Offer,
-    sections: IOfferSection[],
-    offersCareers: IOfferCareer[]
-  ) => Database.transaction(async transaction => {
-    await offer.save({ transaction });
-    await Promise.all(sections.map(section =>
-      OfferSection.create({ ...section, offerUuid: offer.uuid }, { transaction })
-    ));
-    await Promise.all(offersCareers.map(({ careerCode }) =>
-      OfferCareer.create({ careerCode, offerUuid: offer.uuid }, { transaction })
-    ));
-    return offer;
-  }),
+  save: async (offer: Offer, sections: IOfferSection[], offersCareers: IOfferCareer[]) =>
+    Database.transaction(async transaction => {
+      await offer.save({ transaction });
+      await Promise.all(
+        sections.map(section =>
+          OfferSection.create({ ...section, offerUuid: offer.uuid }, { transaction })
+        )
+      );
+      await Promise.all(
+        offersCareers.map(({ careerCode }) =>
+          OfferCareer.create({ careerCode, offerUuid: offer.uuid }, { transaction })
+        )
+      );
+      return offer;
+    }),
   findByUuid: async (uuid: string) => {
     const offer = await Offer.findByPk(uuid);
     if (!offer) throw new OfferNotFound(uuid);
@@ -84,7 +90,10 @@ export const OfferRepository = {
           ]
         }
       }),
-      order: [["updatedAt", "DESC"], ["uuid", "DESC"]],
+      order: [
+        ["updatedAt", "DESC"],
+        ["uuid", "DESC"]
+      ],
       limit
     });
     return {
@@ -92,7 +101,6 @@ export const OfferRepository = {
       results: result.slice(0, limit - 1)
     };
   },
-  findByCompanyUuid: (companyUuid: string) =>
-    Offer.findAll({ where: { companyUuid } }),
+  findByCompanyUuid: (companyUuid: string) => Offer.findAll({ where: { companyUuid } }),
   truncate: () => Offer.truncate({ cascade: true })
 };

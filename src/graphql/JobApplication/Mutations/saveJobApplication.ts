@@ -13,7 +13,7 @@ export const saveJobApplication = {
   },
   resolve: async (
     _: undefined,
-    { offerUuid }: { offerUuid: string; },
+    { offerUuid }: { offerUuid: string },
     { currentUser }: { currentUser: IApplicantUser }
   ) => {
     const offer = await OfferRepository.findByUuid(offerUuid);

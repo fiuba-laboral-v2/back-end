@@ -6,30 +6,29 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { CompanyGenerator } from "$generators/Company";
 
 const SAVE_COMPANY_WITH_COMPLETE_DATA = gql`
-  mutation (
-      $user: UserInput!,
-      $cuit: String!,
-      $companyName: String!,
-      $slogan: String,
-      $description: String,
-      $logo: String,
-      $website: String,
-      $email: String,
-      $phoneNumbers: [String],
-      $photos: [String]
+  mutation(
+    $user: UserInput!
+    $cuit: String!
+    $companyName: String!
+    $slogan: String
+    $description: String
+    $logo: String
+    $website: String
+    $email: String
+    $phoneNumbers: [String]
+    $photos: [String]
   ) {
     createCompany(
-        user: $user,
-        cuit: $cuit,
-        companyName:
-        $companyName,
-        slogan: $slogan,
-        description: $description,
-        logo: $logo,
-        website: $website,
-        email: $email,
-        phoneNumbers: $phoneNumbers,
-        photos: $photos
+      user: $user
+      cuit: $cuit
+      companyName: $companyName
+      slogan: $slogan
+      description: $description
+      logo: $logo
+      website: $website
+      email: $email
+      phoneNumbers: $phoneNumbers
+      photos: $photos
     ) {
       cuit
       companyName
@@ -46,7 +45,7 @@ const SAVE_COMPANY_WITH_COMPLETE_DATA = gql`
 `;
 
 const SAVE_COMPANY_WITH_MINIMUM_DATA = gql`
-  mutation ($cuit: String!, $companyName: String!, $user: UserInput!) {
+  mutation($cuit: String!, $companyName: String!, $user: UserInput!) {
     createCompany(cuit: $cuit, companyName: $companyName, user: $user) {
       cuit
       companyName
@@ -55,7 +54,6 @@ const SAVE_COMPANY_WITH_MINIMUM_DATA = gql`
 `;
 
 describe("createCompany", () => {
-
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
@@ -69,15 +67,13 @@ describe("createCompany", () => {
         variables: { user, ...companyData }
       });
       expect(response.errors).toBeUndefined();
-      expect(response.data).toEqual(
-        {
-          createCompany: {
-            ...companyData,
-            approvalStatus: ApprovalStatus.pending,
-            phoneNumbers: expect.arrayContaining(companyData.phoneNumbers!)
-          }
+      expect(response.data).toEqual({
+        createCompany: {
+          ...companyData,
+          approvalStatus: ApprovalStatus.pending,
+          phoneNumbers: expect.arrayContaining(companyData.phoneNumbers!)
         }
-      );
+      });
     });
 
     it("creates company with only obligatory data", async () => {
@@ -107,11 +103,9 @@ describe("createCompany", () => {
           cuit
         }
       });
-      expect(
-        errors![0].extensions!.data
-      ).toEqual(
-        { errorType: "CompanyCuitAlreadyExistsError" }
-      );
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: "CompanyCuitAlreadyExistsError"
+      });
     });
   });
 });

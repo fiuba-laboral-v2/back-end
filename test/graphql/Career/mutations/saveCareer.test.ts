@@ -49,24 +49,37 @@ describe("saveCareer", () => {
       const { apolloClient } = await TestClientGenerator.admin();
       const params = CareerGenerator.data();
       await apolloClient.mutate({ mutation: SAVE_CAREER, variables: params });
-      const { errors } = await apolloClient.mutate({ mutation: SAVE_CAREER, variables: params });
-      expect(errors![0].extensions!.data).toEqual(
-        { errorType: "CareerAlreadyExistsError" }
-      );
+      const { errors } = await apolloClient.mutate({
+        mutation: SAVE_CAREER,
+        variables: params
+      });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: "CareerAlreadyExistsError"
+      });
     });
 
     it("returns an error if user is from a company", async () => {
       const { apolloClient } = await TestClientGenerator.company();
       const params = CareerGenerator.data();
-      const { errors } = await apolloClient.mutate({ mutation: SAVE_CAREER, variables: params });
-      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+      const { errors } = await apolloClient.mutate({
+        mutation: SAVE_CAREER,
+        variables: params
+      });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: UnauthorizedError.name
+      });
     });
 
     it("returns an error if user is an applicant", async () => {
       const { apolloClient } = await TestClientGenerator.applicant();
       const params = CareerGenerator.data();
-      const { errors } = await apolloClient.mutate({ mutation: SAVE_CAREER, variables: params });
-      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+      const { errors } = await apolloClient.mutate({
+        mutation: SAVE_CAREER,
+        variables: params
+      });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: UnauthorizedError.name
+      });
     });
   });
 });

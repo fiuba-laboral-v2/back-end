@@ -11,21 +11,21 @@ import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 const UPDATE_CURRENT_APPLICANT = gql`
   mutation updateCurrentApplicant(
-    $padron: Int,
-    $user: UserUpdateInput,
-    $description: String,
-    $careers: [ApplicantCareerInput],
-    $capabilities: [String],
-    $sections: [SectionInput],
+    $padron: Int
+    $user: UserUpdateInput
+    $description: String
+    $careers: [ApplicantCareerInput]
+    $capabilities: [String]
+    $sections: [SectionInput]
     $links: [LinkInput]
   ) {
     updateCurrentApplicant(
-      padron: $padron,
-      user: $user,
-      description: $description,
-      careers: $careers,
-      capabilities: $capabilities,
-      sections: $sections,
+      padron: $padron
+      user: $user
+      description: $description
+      careers: $careers
+      capabilities: $capabilities
+      sections: $sections
       links: $links
     ) {
       user {
@@ -110,30 +110,32 @@ describe("updateCurrentApplicant", () => {
 
     expect(errors).toBeUndefined();
     const updatedApplicantData = data!.updateCurrentApplicant;
-    expect(updatedApplicantData).toEqual(expect.objectContaining({
-      padron: dataToUpdate.padron,
-      user: {
-        uuid: user.uuid,
-        email: user.email,
-        name: dataToUpdate.user.name,
-        surname: dataToUpdate.user.surname
-      },
-      description: dataToUpdate.description,
-      careers: [{
-        career: {
-          code: newCareer.code,
-          description: newCareer.description
+    expect(updatedApplicantData).toEqual(
+      expect.objectContaining({
+        padron: dataToUpdate.padron,
+        user: {
+          uuid: user.uuid,
+          email: user.email,
+          name: dataToUpdate.user.name,
+          surname: dataToUpdate.user.surname
         },
-        ...dataToUpdate.careers[0]
-      }],
-      sections: dataToUpdate.sections,
-      links: dataToUpdate.links
-    }));
-    expect(
-      updatedApplicantData.capabilities.map(c => c.description)
-    ).toEqual(expect.arrayContaining(
-      dataToUpdate.capabilities
-    ));
+        description: dataToUpdate.description,
+        careers: [
+          {
+            career: {
+              code: newCareer.code,
+              description: newCareer.description
+            },
+            ...dataToUpdate.careers[0]
+          }
+        ],
+        sections: dataToUpdate.sections,
+        links: dataToUpdate.links
+      })
+    );
+    expect(updatedApplicantData.capabilities.map(c => c.description)).toEqual(
+      expect.arrayContaining(dataToUpdate.capabilities)
+    );
   });
 
   describe("Errors", () => {
@@ -143,11 +145,13 @@ describe("updateCurrentApplicant", () => {
       const { errors } = await apolloClient.mutate({
         mutation: UPDATE_CURRENT_APPLICANT,
         variables: {
-          careers: [{
-            careerCode,
-            currentCareerYear: 3,
-            isGraduate: true
-          }]
+          careers: [
+            {
+              careerCode,
+              currentCareerYear: 3,
+              isGraduate: true
+            }
+          ]
         }
       });
 

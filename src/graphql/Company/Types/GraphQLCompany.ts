@@ -48,8 +48,7 @@ export const GraphQLCompany = new GraphQLObjectType<Company>({
     },
     photos: {
       type: List(String),
-      resolve: async company =>
-        (await company.getPhotos()).map(({ photo }) => photo)
+      resolve: async company => (await company.getPhotos()).map(({ photo }) => photo)
     },
     users: {
       type: List(GraphQLUser),

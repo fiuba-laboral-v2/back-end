@@ -1,5 +1,3 @@
 import { GraphQLApprovalStatus } from "./GraphQLApprovalStatus";
 
-export const approvalStatusTypes = [
-  GraphQLApprovalStatus
-];
+export const approvalStatusTypes = [GraphQLApprovalStatus];

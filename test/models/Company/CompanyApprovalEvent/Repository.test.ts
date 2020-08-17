@@ -19,7 +19,11 @@ describe("CompanyApprovalEventRepository", () => {
       const company = await CompanyGenerator.instance.withCompleteData();
       const admin = await AdminGenerator.instance(Secretary.extension);
       const adminUserUuid = admin.userUuid;
-      const event = await CompanyApprovalEventRepository.create({ adminUserUuid, company, status });
+      const event = await CompanyApprovalEventRepository.create({
+        adminUserUuid,
+        company,
+        status
+      });
       expect(event.userUuid).toEqual(admin.userUuid);
       expect(event.companyUuid).toEqual(company.uuid);
       expect(event.status).toEqual(status);
@@ -40,14 +44,20 @@ describe("CompanyApprovalEventRepository", () => {
     it("throws an error if userUuid does not belong to an admin", async () => {
       const company = await CompanyGenerator.instance.withCompleteData();
       const [userCompany] = await company.getUsers();
-      const { userUuid: adminUserUuid } = new Admin({ userUuid: userCompany.uuid });
+      const { userUuid: adminUserUuid } = new Admin({
+        userUuid: userCompany.uuid
+      });
       const status = ApprovalStatus.approved;
       await expect(
-        CompanyApprovalEventRepository.create({ adminUserUuid, company, status })
+        CompanyApprovalEventRepository.create({
+          adminUserUuid,
+          company,
+          status
+        })
       ).rejects.toThrowErrorWithMessage(
         ForeignKeyConstraintError,
-        "insert or update on table \"CompanyApprovalEvents\" violates " +
-        "foreign key constraint \"CompanyApprovalEvents_userUuid_fkey\""
+        'insert or update on table "CompanyApprovalEvents" violates ' +
+          'foreign key constraint "CompanyApprovalEvents_userUuid_fkey"'
       );
     });
 
@@ -56,7 +66,11 @@ describe("CompanyApprovalEventRepository", () => {
       const admin = await AdminGenerator.instance(Secretary.extension);
       const status = ApprovalStatus.approved;
       const adminUserUuid = admin.userUuid;
-      const event = await CompanyApprovalEventRepository.create({ adminUserUuid, company, status });
+      const event = await CompanyApprovalEventRepository.create({
+        adminUserUuid,
+        company,
+        status
+      });
       expect((await event.getCompany()).toJSON()).toEqual(company.toJSON());
       expect((await event.getAdmin()).toJSON()).toEqual(admin.toJSON());
     });
@@ -67,7 +81,11 @@ describe("CompanyApprovalEventRepository", () => {
       const company = await CompanyGenerator.instance.withCompleteData();
       const { userUuid: adminUserUuid } = await AdminGenerator.instance(Secretary.extension);
       const status = ApprovalStatus.approved;
-      return CompanyApprovalEventRepository.create({ adminUserUuid, company, status });
+      return CompanyApprovalEventRepository.create({
+        adminUserUuid,
+        company,
+        status
+      });
     };
 
     it("deletes all events if companies tables is truncated", async () => {

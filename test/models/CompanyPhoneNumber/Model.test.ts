@@ -16,9 +16,7 @@ describe("companyPhoneNumber", () => {
       phoneNumber: null,
       companyUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
     });
-    await expect(
-      companyPhoneNumber.validate()
-    ).rejects.toThrowErrorWithMessage(
+    await expect(companyPhoneNumber.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       "notNull Violation: CompanyPhoneNumber.phoneNumber cannot be null"
     );
@@ -29,19 +27,17 @@ describe("companyPhoneNumber", () => {
       phoneNumber: "1143076555",
       companyUuid: null
     });
-    await expect(
-      companyPhoneNumber.validate()
-    ).rejects.toThrowErrorWithMessage(
+    await expect(companyPhoneNumber.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       "notNull Violation: CompanyPhoneNumber.companyUuid cannot be null"
     );
   });
 
   it("throws an error if no companyUuid is provided", async () => {
-    const companyPhoneNumber = new CompanyPhoneNumber({ phoneNumber: "43076555" });
-    await expect(
-      companyPhoneNumber.validate()
-    ).rejects.toThrowErrorWithMessage(
+    const companyPhoneNumber = new CompanyPhoneNumber({
+      phoneNumber: "43076555"
+    });
+    await expect(companyPhoneNumber.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       "notNull Violation: CompanyPhoneNumber.companyUuid cannot be null"
     );
@@ -51,9 +47,7 @@ describe("companyPhoneNumber", () => {
     const companyPhoneNumber = new CompanyPhoneNumber({
       companyUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
     });
-    await expect(
-      companyPhoneNumber.validate()
-    ).rejects.toThrowErrorWithMessage(
+    await expect(companyPhoneNumber.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       "notNull Violation: CompanyPhoneNumber.phoneNumber cannot be null"
     );
@@ -64,15 +58,10 @@ describe("companyPhoneNumber", () => {
       phoneNumber: null,
       companyUuid: null
     });
-    await expect(
-      companyPhoneNumber.validate()
-    ).rejects.toThrowErrorWithMessage(
-      ValidationError,
-      [
-        "notNull Violation: CompanyPhoneNumber.phoneNumber cannot be null",
-        "notNull Violation: CompanyPhoneNumber.companyUuid cannot be null"
-      ]
-    );
+    await expect(companyPhoneNumber.validate()).rejects.toThrowErrorWithMessage(ValidationError, [
+      "notNull Violation: CompanyPhoneNumber.phoneNumber cannot be null",
+      "notNull Violation: CompanyPhoneNumber.companyUuid cannot be null"
+    ]);
   });
 
   it("throws an error if phoneNumber has letters", async () => {
@@ -80,9 +69,7 @@ describe("companyPhoneNumber", () => {
       phoneNumber: "letters",
       companyUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
     });
-    await expect(
-      companyPhoneNumber.validate()
-    ).rejects.toThrowErrorWithMessage(
+    await expect(companyPhoneNumber.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       PhoneNumberWithLettersError.buildMessage()
     );
@@ -93,9 +80,7 @@ describe("companyPhoneNumber", () => {
       phoneNumber: "",
       companyUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da"
     });
-    await expect(
-      companyPhoneNumber.validate()
-    ).rejects.toThrowErrorWithMessage(
+    await expect(companyPhoneNumber.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       InvalidPhoneNumberError.buildMessage()
     );

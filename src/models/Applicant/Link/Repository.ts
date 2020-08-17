@@ -5,9 +5,9 @@ import { isEmpty } from "lodash";
 
 export const ApplicantLinkRepository = {
   update: async (links: TLink[], applicant: Applicant, transaction?: Transaction) => {
-    const linkNames: string[] =
-      (await ApplicantLinkRepository.bulkUpsert(links, applicant, transaction))
-        .map(({ name }) => (name));
+    const linkNames: string[] = (
+      await ApplicantLinkRepository.bulkUpsert(links, applicant, transaction)
+    ).map(({ name }) => name);
 
     return ApplicantLink.destroy({
       where: {

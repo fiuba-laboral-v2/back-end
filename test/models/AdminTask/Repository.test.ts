@@ -35,23 +35,41 @@ describe("AdminTaskRepository", () => {
     admin = await AdminGenerator.instance(Secretary.extension);
     const applicantsGenerator = ApplicantGenerator.instance.updatedWithStatus;
 
-    rejectedCompany = await companiesGenerator({ status: ApprovalStatus.rejected, admin });
-    approvedCompany = await companiesGenerator({ status: ApprovalStatus.approved, admin });
+    rejectedCompany = await companiesGenerator({
+      status: ApprovalStatus.rejected,
+      admin
+    });
+    approvedCompany = await companiesGenerator({
+      status: ApprovalStatus.approved,
+      admin
+    });
     pendingCompany = await companiesGenerator();
-    rejectedApplicant = await applicantsGenerator({ status: ApprovalStatus.rejected, admin });
-    approvedApplicant = await applicantsGenerator({ status: ApprovalStatus.approved, admin });
+    rejectedApplicant = await applicantsGenerator({
+      status: ApprovalStatus.rejected,
+      admin
+    });
+    approvedApplicant = await applicantsGenerator({
+      status: ApprovalStatus.approved,
+      admin
+    });
     pendingApplicant = await applicantsGenerator();
     const offers = await OfferGenerator.instance.updatedWithStatus();
     const secretary = admin.secretary;
-    rejectedOffer = await offers.next(
-      { companyUuid: approvedCompany.uuid, secretary, status: ApprovalStatus.rejected }
-    ).value;
-    approvedOffer = await offers.next(
-      { companyUuid: approvedCompany.uuid, secretary, status: ApprovalStatus.approved }
-    ).value;
-    pendingOffer = await offers.next(
-      { companyUuid: approvedCompany.uuid, secretary, status: ApprovalStatus.pending }
-    ).value;
+    rejectedOffer = await offers.next({
+      companyUuid: approvedCompany.uuid,
+      secretary,
+      status: ApprovalStatus.rejected
+    }).value;
+    approvedOffer = await offers.next({
+      companyUuid: approvedCompany.uuid,
+      secretary,
+      status: ApprovalStatus.approved
+    }).value;
+    pendingOffer = await offers.next({
+      companyUuid: approvedCompany.uuid,
+      secretary,
+      status: ApprovalStatus.pending
+    }).value;
 
     allTasksByDescUpdatedAt = [
       rejectedCompany,
@@ -76,9 +94,11 @@ describe("AdminTaskRepository", () => {
       statuses,
       secretary
     });
-    expect(result.results).toEqual(expect.arrayContaining(
-      adminTasks.map(adminTask => expect.objectContaining(adminTask.toJSON()))
-    ));
+    expect(result.results).toEqual(
+      expect.arrayContaining(
+        adminTasks.map(adminTask => expect.objectContaining(adminTask.toJSON()))
+      )
+    );
     expect(result.shouldFetchMore).toEqual(false);
   };
 
@@ -240,10 +260,7 @@ describe("AdminTaskRepository", () => {
       secretary: admin.secretary
     });
     expect(result.shouldFetchMore).toEqual(true);
-    expect(
-      result.results
-        .map(task => task.uuid)
-    ).toEqual(
+    expect(result.results.map(task => task.uuid)).toEqual(
       allTasksByDescUpdatedAt
         .map(task => task.uuid)
         .slice(lastTaskIndex + 1, lastTaskIndex + 1 + itemsPerPage)
@@ -274,10 +291,11 @@ describe("AdminTaskRepository", () => {
         secretary: admin.secretary
       });
       expect(result.shouldFetchMore).toEqual(false);
-      expect(
-        result.results.map(task => task.uuid)
-      ).toEqual(
-        companies.map(company => company.uuid).sort().reverse()
+      expect(result.results.map(task => task.uuid)).toEqual(
+        companies
+          .map(company => company.uuid)
+          .sort()
+          .reverse()
       );
     });
   });

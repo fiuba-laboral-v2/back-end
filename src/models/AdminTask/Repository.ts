@@ -17,10 +17,9 @@ export const AdminTaskRepository = {
       };
     }
     const limit = PaginationConfig.itemsPerPage() + 1;
-    const rows = await Database.query(
-      findAdminTasksQuery({ ...filter, limit: limit }),
-      { type: "SELECT" }
-    );
+    const rows = await Database.query(findAdminTasksQuery({ ...filter, limit: limit }), {
+      type: "SELECT"
+    });
     return {
       shouldFetchMore: rows.length === limit,
       results: rows.slice(0, limit - 1).map((row: object) => {

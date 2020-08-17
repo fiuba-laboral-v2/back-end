@@ -7,19 +7,14 @@ import { CompanyUserRepository } from "$models/CompanyUser/Repository";
 import { ForeignKeyConstraintError } from "sequelize";
 
 describe("CompanyRepository", () => {
-  beforeAll(() => Promise.all([
-    UserRepository.truncate(),
-    CompanyRepository.truncate()
-  ]));
+  beforeEach(() => Promise.all([CompanyRepository.truncate(), UserRepository.truncate()]));
 
   it("needs to reference a persisted company", async () => {
     const company = new Company({ cuit: "30711819017", companyName: "Mercado Libre" });
     const user = await UserGenerator.instance();
-    await expect(
-      CompanyUserRepository.create(company, user)
-    ).rejects.toThrowErrorWithMessage(
+    await expect(CompanyUserRepository.create(company, user)).rejects.toThrowErrorWithMessage(
       ForeignKeyConstraintError,
-      "violates foreign key constraint \"CompanyUsers_companyUuid_fkey\""
+      'violates foreign key constraint "CompanyUsers_companyUuid_fkey"'
     );
   });
 
@@ -29,7 +24,7 @@ describe("CompanyRepository", () => {
     const user = new User(userAttributes);
     await expect(CompanyUserRepository.create(company, user)).rejects.toThrowErrorWithMessage(
       ForeignKeyConstraintError,
-      "violates foreign key constraint \"CompanyUsers_userUuid_fkey\""
+      'violates foreign key constraint "CompanyUsers_userUuid_fkey"'
     );
   });
 

@@ -19,23 +19,27 @@ describe("ApplicantCareersRepository", () => {
     it("returns an applicantCareer", async () => {
       const { code: careerCode } = await CareerGenerator.instance();
       const { uuid: applicantUuid } = await ApplicantGenerator.instance.withMinimumData({
-        careers: [{
-          careerCode,
-          isGraduate: true
-        }]
+        careers: [
+          {
+            careerCode,
+            isGraduate: true
+          }
+        ]
       });
       const applicantCareer = await ApplicantCareersRepository.findByApplicantAndCareer(
         applicantUuid,
         careerCode
       );
-      expect(applicantCareer).toEqual(expect.objectContaining({
-        careerCode,
-        isGraduate: true,
-        currentCareerYear: null,
-        approvedSubjectCount: null,
-        createdAt: expect.any(Date),
-        updatedAt: expect.any(Date)
-      }));
+      expect(applicantCareer).toEqual(
+        expect.objectContaining({
+          careerCode,
+          isGraduate: true,
+          currentCareerYear: null,
+          approvedSubjectCount: null,
+          createdAt: expect.any(Date),
+          updatedAt: expect.any(Date)
+        })
+      );
     });
 
     it("throws an error if the applicantCareer does not exists", async () => {
@@ -81,10 +85,7 @@ describe("ApplicantCareersRepository", () => {
       await ApplicantCareersRepository.bulkCreate([{ careerCode, isGraduate: true }], applicant);
       await expect(
         ApplicantCareersRepository.bulkCreate([{ careerCode, isGraduate: true }], applicant)
-      ).rejects.toThrowErrorWithMessage(
-        UniqueConstraintError,
-        "Validation error"
-      );
+      ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
     });
 
     it("throws an error if one of the applicantCareers data has no isGraduate", async () => {
@@ -107,9 +108,7 @@ describe("ApplicantCareersRepository", () => {
     it("throws an error if isGraduate is true and currentCareerYear is set", async () => {
       const { code: careerCode } = await CareerGenerator.instance();
       const applicant = await ApplicantGenerator.instance.withMinimumData();
-      const applicantCareersData = [
-        { careerCode, isGraduate: true, currentCareerYear: 2 }
-      ];
+      const applicantCareersData = [{ careerCode, isGraduate: true, currentCareerYear: 2 }];
       await expect(
         ApplicantCareersRepository.bulkCreate(applicantCareersData, applicant)
       ).rejects.toThrowBulkRecordErrorIncluding([

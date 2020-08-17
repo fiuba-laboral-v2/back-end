@@ -3,10 +3,9 @@ import { CITEXT, DATE, QueryInterface, UUID } from "sequelize";
 export = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.sequelize.transaction(async transaction => {
-      await queryInterface.sequelize.query(
-        "CREATE EXTENSION citext",
-        { transaction }
-      );
+      await queryInterface.sequelize.query("CREATE EXTENSION citext", {
+        transaction
+      });
       await queryInterface.createTable(
         "Capabilities",
         {
@@ -30,22 +29,20 @@ export = {
         },
         { transaction }
       );
-      await queryInterface.addConstraint(
-        "Capabilities",
-        ["description"],
-        {
-          type: "unique",
-          name: "Capabilities_description_key",
-          transaction
-        }
-      );
+      await queryInterface.addConstraint("Capabilities", ["description"], {
+        type: "unique",
+        name: "Capabilities_description_key",
+        transaction
+      });
     });
   },
 
   down: (queryInterface: QueryInterface) => {
     return queryInterface.sequelize.transaction(async transaction => {
       await queryInterface.dropTable("Capabilities", { transaction });
-      await queryInterface.sequelize.query("DROP EXTENSION citext", { transaction });
+      await queryInterface.sequelize.query("DROP EXTENSION citext", {
+        transaction
+      });
     });
   }
 };

@@ -15,7 +15,6 @@ import { CompanyNotUpdatedError } from "$models/Company/Errors";
 import { Secretary } from "$models/Admin";
 
 describe("CompanyRepository", () => {
-
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
@@ -24,21 +23,19 @@ describe("CompanyRepository", () => {
   it("creates a new company", async () => {
     const companyCompleteData = CompanyGenerator.data.completeData();
     const company = await CompanyRepository.create(companyCompleteData);
-    expect(company).toEqual(expect.objectContaining({
-      cuit: companyCompleteData.cuit,
-      companyName: companyCompleteData.companyName,
-      slogan: companyCompleteData.slogan,
-      description: companyCompleteData.description,
-      logo: companyCompleteData.logo,
-      website: companyCompleteData.website,
-      email: companyCompleteData.email
-    }));
-    expect((await company.getPhoneNumbers())).toHaveLength(
-      companyCompleteData.phoneNumbers!.length
+    expect(company).toEqual(
+      expect.objectContaining({
+        cuit: companyCompleteData.cuit,
+        companyName: companyCompleteData.companyName,
+        slogan: companyCompleteData.slogan,
+        description: companyCompleteData.description,
+        logo: companyCompleteData.logo,
+        website: companyCompleteData.website,
+        email: companyCompleteData.email
+      })
     );
-    expect((await company.getPhotos())).toHaveLength(
-      companyCompleteData.photos!.length
-    );
+    expect(await company.getPhoneNumbers()).toHaveLength(companyCompleteData.phoneNumbers!.length);
+    expect(await company.getPhotos()).toHaveLength(companyCompleteData.photos!.length);
   });
 
   it("creates a company in a pending approval status as default", async () => {
@@ -59,7 +56,10 @@ describe("CompanyRepository", () => {
   it("should create a valid company with a large description", async () => {
     const companyCompleteData = CompanyGenerator.data.completeData();
     await expect(
-      CompanyRepository.create({ ...companyCompleteData, description: "word".repeat(300) })
+      CompanyRepository.create({
+        ...companyCompleteData,
+        description: "word".repeat(300)
+      })
     ).resolves.not.toThrow();
   });
 
@@ -101,14 +101,8 @@ describe("CompanyRepository", () => {
     expect(expectedCompany).not.toBeNull();
     expect(expectedCompany).not.toBeUndefined();
     expect(expectedCompany.uuid).toEqual(company.uuid);
-    expect(
-      (await expectedCompany.getPhotos())
-    ).toHaveLength(
-      (await company.getPhotos()).length
-    );
-    expect(
-      (await expectedCompany.getPhoneNumbers())
-    ).toHaveLength(
+    expect(await expectedCompany.getPhotos()).toHaveLength((await company.getPhotos()).length);
+    expect(await expectedCompany.getPhoneNumbers()).toHaveLength(
       (await company.getPhoneNumbers()).length
     );
   });
@@ -129,27 +123,29 @@ describe("CompanyRepository", () => {
   it("throws an error if phoneNumbers are invalid", async () => {
     const companyCompleteData = CompanyGenerator.data.completeData();
     await expect(
-      CompanyRepository.create(
-        {
-          ...companyCompleteData,
-          phoneNumbers: ["InvalidPhoneNumber1", "InvalidPhoneNumber2"]
-        }
-      )
+      CompanyRepository.create({
+        ...companyCompleteData,
+        phoneNumbers: ["InvalidPhoneNumber1", "InvalidPhoneNumber2"]
+      })
     ).rejects.toThrowBulkRecordErrorIncluding([
-      { errorClass: ValidationError, message: PhoneNumberWithLettersError.buildMessage() },
-      { errorClass: ValidationError, message: PhoneNumberWithLettersError.buildMessage() }
+      {
+        errorClass: ValidationError,
+        message: PhoneNumberWithLettersError.buildMessage()
+      },
+      {
+        errorClass: ValidationError,
+        message: PhoneNumberWithLettersError.buildMessage()
+      }
     ]);
   });
 
   it("throws an error if phoneNumbers are duplicated", async () => {
     const companyCompleteData = CompanyGenerator.data.completeData();
     await expect(
-      CompanyRepository.create(
-        {
-          ...companyCompleteData,
-          phoneNumbers: ["1159821066", "1159821066"]
-        }
-      )
+      CompanyRepository.create({
+        ...companyCompleteData,
+        phoneNumbers: ["1159821066", "1159821066"]
+      })
     ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
   });
 
@@ -241,11 +237,9 @@ describe("CompanyRepository", () => {
         )
       ).rejects.toThrowErrorWithMessage(
         DatabaseError,
-        "invalid input value for enum approval_status: \"notDefinedStatus\""
+        'invalid input value for enum approval_status: "notDefinedStatus"'
       );
-      expect(
-        (await CompanyRepository.findByUuid(company.uuid)).approvalStatus
-      ).toEqual(
+      expect((await CompanyRepository.findByUuid(company.uuid)).approvalStatus).toEqual(
         ApprovalStatus.pending
       );
     });
@@ -261,8 +255,8 @@ describe("CompanyRepository", () => {
         )
       ).rejects.toThrowErrorWithMessage(
         ForeignKeyConstraintError,
-        "insert or update on table \"CompanyApprovalEvents\" violates foreign " +
-        "key constraint \"CompanyApprovalEvents_userUuid_fkey\""
+        'insert or update on table "CompanyApprovalEvents" violates foreign ' +
+          'key constraint "CompanyApprovalEvents_userUuid_fkey"'
       );
     });
 
@@ -289,21 +283,17 @@ describe("CompanyRepository", () => {
         )
       ).rejects.toThrowErrorWithMessage(
         DatabaseError,
-        "invalid input syntax for type uuid: \"invalidUuid\""
+        'invalid input syntax for type uuid: "invalidUuid"'
       );
     });
 
     it("throws an error if admin userUuid has an invalid format", async () => {
       const company = await CompanyRepository.create(CompanyGenerator.data.completeData());
       await expect(
-        CompanyRepository.updateApprovalStatus(
-          "invalidUuid",
-          company.uuid,
-          ApprovalStatus.approved
-        )
+        CompanyRepository.updateApprovalStatus("invalidUuid", company.uuid, ApprovalStatus.approved)
       ).rejects.toThrowErrorWithMessage(
         DatabaseError,
-        "invalid input syntax for type uuid: \"invalidUuid\""
+        'invalid input syntax for type uuid: "invalidUuid"'
       );
     });
   });

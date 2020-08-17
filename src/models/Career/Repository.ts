@@ -10,9 +10,16 @@ import map from "lodash/map";
 export const CareerRepository = {
   create: (attributes: ICareer) => Career.create(attributes),
   findByCodes: async (codes: string[]) => {
-    const careers = await Career.findAll({ where: { code: { [Op.or]: codes } } });
+    const careers = await Career.findAll({
+      where: { code: { [Op.or]: codes } }
+    });
     if (careers.length < codes.length) {
-      throw new CareersNotFoundError(difference(codes, map(careers, ({ code }) => code)));
+      throw new CareersNotFoundError(
+        difference(
+          codes,
+          map(careers, ({ code }) => code)
+        )
+      );
     }
     return careers;
   },
@@ -21,11 +28,12 @@ export const CareerRepository = {
     return career;
   },
   findAll: () => Career.findAll(),
-  deleteByCode: (code: string) => Database.transaction(async transaction => {
-    await ApplicantCareer.destroy({ where: { careerCode: code }, transaction });
-    const numberOfDeletedCareers = await Career.destroy({ where: { code }, transaction });
-    if (numberOfDeletedCareers !== 1) throw new CareersNotFoundError([code]);
-    return numberOfDeletedCareers;
-  }),
+  deleteByCode: (code: string) =>
+    Database.transaction(async transaction => {
+      await ApplicantCareer.destroy({ where: { careerCode: code }, transaction });
+      const numberOfDeletedCareers = await Career.destroy({ where: { code }, transaction });
+      if (numberOfDeletedCareers !== 1) throw new CareersNotFoundError([code]);
+      return numberOfDeletedCareers;
+    }),
   truncate: () => Career.truncate({ cascade: true })
 };

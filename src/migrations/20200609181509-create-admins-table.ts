@@ -27,16 +27,11 @@ export = {
         },
         { transaction }
       );
-      await queryInterface.addConstraint(
-        "Admins",
-        ["userUuid"],
-        {
-          type: "primary key",
-          name: "Admins_userUuid_key",
-          transaction
-        }
-      );
+      await queryInterface.addConstraint("Admins", ["userUuid"], {
+        type: "primary key",
+        name: "Admins_userUuid_key",
+        transaction
+      });
     }),
-  down: (queryInterface: QueryInterface) =>
-    queryInterface.dropTable("Admins")
+  down: (queryInterface: QueryInterface) => queryInterface.dropTable("Admins")
 };

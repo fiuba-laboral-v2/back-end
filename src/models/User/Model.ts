@@ -14,7 +14,6 @@ import { validateEmail, validateName, validatePassword } from "validations-fiuba
   }
 })
 export class User extends Model<User> {
-
   @BeforeCreate
   public static beforeCreateHook(user: User): void {
     if (!user.password) return;

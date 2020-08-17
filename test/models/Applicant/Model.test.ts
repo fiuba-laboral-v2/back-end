@@ -22,13 +22,15 @@ describe("Applicant", () => {
       padron: 1,
       description: "Batman"
     });
-    expect(applicant).toEqual(expect.objectContaining({
-      uuid: expect.stringMatching(UUID_REGEX),
-      userUuid,
-      padron: 1,
-      description: "Batman",
-      approvalStatus: ApprovalStatus.pending
-    }));
+    expect(applicant).toEqual(
+      expect.objectContaining({
+        uuid: expect.stringMatching(UUID_REGEX),
+        userUuid,
+        padron: 1,
+        description: "Batman",
+        approvalStatus: ApprovalStatus.pending
+      })
+    );
   });
 
   it("throws an error if approval status is not part of the enum values", async () => {

@@ -6,14 +6,12 @@ import { isApplicant } from "./isApplicant";
 import { rule } from "./rule";
 import { ApplicantRepository } from "$models/Applicant";
 
-const applicantIsApproved = rule(async (
-  parent,
-  args,
-  { currentUser }: { currentUser: IApplicantUser }
-) => {
-  const applicant = await ApplicantRepository.findByUuid(currentUser.applicant.uuid);
-  if (applicant.approvalStatus !== ApprovalStatus.approved) return new UnauthorizedError();
-  return true;
-});
+const applicantIsApproved = rule(
+  async (parent, args, { currentUser }: { currentUser: IApplicantUser }) => {
+    const applicant = await ApplicantRepository.findByUuid(currentUser.applicant.uuid);
+    if (applicant.approvalStatus !== ApprovalStatus.approved) return new UnauthorizedError();
+    return true;
+  }
+);
 
 export const isApprovedApplicant = chain(isApplicant, applicantIsApproved);

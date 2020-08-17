@@ -18,19 +18,25 @@ export const CompanyGenerator = {
   },
   instance: {
     withMinimumData: (variables?: ICompanyGeneratorAttributes) =>
-      CompanyRepository.create(withMinimumData({
-        index: CompanyGenerator.getIndex(),
-        ...variables
-      })),
+      CompanyRepository.create(
+        withMinimumData({
+          index: CompanyGenerator.getIndex(),
+          ...variables
+        })
+      ),
     withCompleteData: (variables?: ICompanyGeneratorAttributes) =>
-      CompanyRepository.create(completeData({
-        index: CompanyGenerator.getIndex(),
-        ...variables
-      })),
+      CompanyRepository.create(
+        completeData({
+          index: CompanyGenerator.getIndex(),
+          ...variables
+        })
+      ),
     updatedWithStatus: async (variables?: IUpdatedWithStatus) => {
-      const company = await CompanyRepository.create(withMinimumData({
-        index: CompanyGenerator.getIndex()
-      }));
+      const company = await CompanyRepository.create(
+        withMinimumData({
+          index: CompanyGenerator.getIndex()
+        })
+      );
       if (!variables) return company;
       const { admin, status } = variables;
       return CompanyRepository.updateApprovalStatus(admin.userUuid, company.uuid, status);

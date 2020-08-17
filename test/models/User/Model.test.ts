@@ -64,10 +64,12 @@ describe("User", () => {
     };
     const user = new User(params);
     await expect(user.validate()).resolves.not.toThrow();
-    expect(user).toEqual(expect.objectContaining({
-      uuid: expect.stringMatching(UUID_REGEX),
-      ...params
-    }));
+    expect(user).toEqual(
+      expect.objectContaining({
+        uuid: expect.stringMatching(UUID_REGEX),
+        ...params
+      })
+    );
   });
 
   describe("Errors", () => {
@@ -82,12 +84,7 @@ describe("User", () => {
       };
       fields.map(field => delete attributes[field]);
       const user = new User(attributes);
-      await expect(
-        user.validate()
-      ).rejects.toThrowErrorWithMessage(
-        ValidationError,
-        message
-      );
+      await expect(user.validate()).rejects.toThrowErrorWithMessage(ValidationError, message);
     };
 
     it("throws an error if name has a digit", async () => {
@@ -111,8 +108,8 @@ describe("User", () => {
       });
       await expect(user.validate()).rejects.toThrowErrorWithMessage(
         ValidationError,
-        NameWithDigitsError.buildMessage())
-      ;
+        NameWithDigitsError.buildMessage()
+      );
     });
 
     it("throws an error if name is null", async () => {
@@ -157,20 +154,17 @@ describe("User", () => {
         name: "name",
         surname: "surname"
       });
-      expect(
-        () => User.beforeCreateHook(user)
-      ).toThrow(PasswordWithoutDigitsError);
+      expect(() => User.beforeCreateHook(user)).toThrow(PasswordWithoutDigitsError);
     });
 
     it("hashes password before creation", async () => {
       const unhashedPassword = "somethingWithDigits99";
-      const user = new User(
-        {
-          email: "asd@qwe.com",
-          password: unhashedPassword,
-          name: "name",
-          surname: "surname"
-        });
+      const user = new User({
+        email: "asd@qwe.com",
+        password: unhashedPassword,
+        name: "name",
+        surname: "surname"
+      });
       User.beforeCreateHook(user);
       expect(user.password).not.toEqual(unhashedPassword);
     });

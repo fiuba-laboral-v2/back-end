@@ -21,10 +21,7 @@ const GET_COMPANIES = gql`
 
 describe("getCompanies", () => {
   beforeAll(() => {
-    return Promise.all([
-      CompanyRepository.truncate(),
-      UserRepository.truncate()
-    ]);
+    return Promise.all([CompanyRepository.truncate(), UserRepository.truncate()]);
   });
 
   it("returns all companies", async () => {
@@ -39,10 +36,12 @@ describe("getCompanies", () => {
 
     expect(response.errors).toBeUndefined();
     expect(response.data).not.toBeUndefined();
-    expect(response.data!.getCompanies).toEqual([{
-      cuit: company.cuit,
-      companyName: company.companyName
-    }]);
+    expect(response.data!.getCompanies).toEqual([
+      {
+        cuit: company.cuit,
+        companyName: company.companyName
+      }
+    ]);
   });
 
   describe("Errors", () => {
@@ -50,25 +49,33 @@ describe("getCompanies", () => {
       const apolloClient = client.loggedOut();
 
       const { errors } = await apolloClient.query({ query: GET_COMPANIES });
-      expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: AuthenticationError.name
+      });
     });
 
     it("returns an error if the user is from a company", async () => {
       const { apolloClient } = await TestClientGenerator.company();
       const { errors } = await apolloClient.query({ query: GET_COMPANIES });
-      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: UnauthorizedError.name
+      });
     });
 
     it("returns an error if the user is an admin", async () => {
       const { apolloClient } = await TestClientGenerator.admin();
       const { errors } = await apolloClient.query({ query: GET_COMPANIES });
-      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: UnauthorizedError.name
+      });
     });
 
     it("returns an error if the user is a pending applicant", async () => {
       const { apolloClient } = await TestClientGenerator.applicant();
       const { errors } = await apolloClient.query({ query: GET_COMPANIES });
-      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: UnauthorizedError.name
+      });
     });
 
     it("returns an error if the user is a rejected applicant", async () => {
@@ -79,7 +86,9 @@ describe("getCompanies", () => {
         }
       });
       const { errors } = await apolloClient.query({ query: GET_COMPANIES });
-      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: UnauthorizedError.name
+      });
     });
   });
 });

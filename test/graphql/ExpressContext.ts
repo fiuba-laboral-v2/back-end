@@ -5,7 +5,7 @@ export type TSetCookie = (name: string, val: string, options: CookieOptions) => 
 
 export interface IExpressContext {
   res: {
-    cookie: TSetCookie
+    cookie: TSetCookie;
   };
   req?: Response;
   connection?: ExecutionParams;

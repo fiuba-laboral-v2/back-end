@@ -28,9 +28,13 @@ describe("getTranslations", () => {
   });
 
   it("should return an error if a translationGroup doesn't exist", async () => {
-    const { errors } = await executeQuery(query, { translationGroup: "falalala" });
+    const { errors } = await executeQuery(query, {
+      translationGroup: "falalala"
+    });
 
     expect(errors).toHaveLength(1);
-    expect(errors![0].extensions!.data).toEqual({ errorType: MissingTranslationError.name });
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: MissingTranslationError.name
+    });
   });
 });

@@ -1,12 +1,7 @@
 import { ICompanyGeneratorAttributes } from "$generators/interfaces";
 import { CuitGenerator } from "$generators/Cuit";
 
-export const withMinimumData = (
-  {
-    index,
-    user
-  }: IWithMinimumData
-) => ({
+export const withMinimumData = ({ index, user }: IWithMinimumData) => ({
   cuit: CuitGenerator.generate(),
   companyName: "companyName",
   user: {
