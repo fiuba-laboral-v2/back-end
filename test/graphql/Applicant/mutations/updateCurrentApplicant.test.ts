@@ -44,7 +44,6 @@ const UPDATE_CURRENT_APPLICANT = gql`
         career {
           code
           description
-          credits
         }
         approvedSubjectCount
         currentCareerYear
@@ -123,8 +122,7 @@ describe("updateCurrentApplicant", () => {
       careers: [{
         career: {
           code: newCareer.code,
-          description: newCareer.description,
-          credits: newCareer.credits
+          description: newCareer.description
         },
         ...dataToUpdate.careers[0]
       }],

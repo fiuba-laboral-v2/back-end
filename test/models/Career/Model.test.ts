@@ -1,88 +1,52 @@
 import { ValidationError } from "sequelize";
 import { Career } from "$models";
-import { NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
 
 describe("Career", () => {
-  it("creates a valid applicant", async () => {
+  const expectToThrowErrorOnMissingAttribute = async (attribute: string) => {
+    const attributes = { code: "1", description: "descripton" };
+    delete attributes[attribute];
+    const career: Career = new Career(attributes);
+    await expect(
+      career.validate()
+    ).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      `notNull Violation: Career.${attribute} cannot be null`
+    );
+  };
+
+  it("creates a valid career", async () => {
     const career = new Career({
       code: "10",
-      description: "Ingeniería Informática",
-      credits: 100
+      description: "Ingeniería Informática"
     });
 
     await expect(career.validate()).resolves.not.toThrow();
   });
 
-  it("throws an error if credits is 0", async () => {
-    const career: Career = new Career({
-      code: "1",
-      description: "Ingeniería Informática",
-      credits: 0
-    });
+  it("creates a career with the given attributes", async () => {
+    const attributes = {
+      code: "10",
+      description: "Ingeniería Informática"
+    };
+    const career = new Career(attributes);
 
-    await expect(
-      career.validate()
-    ).rejects.toThrowErrorWithMessage(
-      ValidationError,
-      NumberIsTooSmallError.buildMessage(0, false)
-    );
+    expect(career).toEqual(expect.objectContaining(attributes));
   });
 
-  it("throws an error if credits is negative", async () => {
-    const career: Career = new Career({
-      code: "1",
-      description: "Ingeniería Informática",
-      credits: -54
-    });
-
-    await expect(
-      career.validate()
-    ).rejects.toThrowErrorWithMessage(
-      ValidationError,
-      NumberIsTooSmallError.buildMessage(0, false)
-    );
-  });
-
-  it("throws an error if code is null", async () => {
-    const career: Career = new Career({
-      description: "Ingeniería Informática",
-      credits: 250
-    });
-
-    await expect(
-      career.validate()
-    ).rejects.toThrowErrorWithMessage(
-      ValidationError,
-      "notNull Violation: Career.code cannot be null"
-    );
-  });
-
-  it("throws an error if description is null", async () => {
-    const career: Career = new Career({
-      code: "1",
-      description: null,
-      credits: 250
-    });
-
-    await expect(
-      career.validate()
-    ).rejects.toThrowErrorWithMessage(
-      ValidationError,
-      "notNull Violation: Career.description cannot be null"
-    );
-  });
-
-  it("throws an error if credits is null", async () => {
-    const career: Career = new Career({
-      code: "1",
+  it("creates a career with timestamps", async () => {
+    const career = new Career({
+      code: "10",
       description: "Ingeniería Informática"
     });
+    expect(career.createdAt).toEqual(expect.any(Date));
+    expect(career.updatedAt).toEqual(expect.any(Date));
+  });
 
-    await expect(
-      career.validate()
-    ).rejects.toThrowErrorWithMessage(
-      ValidationError,
-      "notNull Violation: Career.credits cannot be null"
-    );
+  it("throws an error if no code is provided", async () => {
+    await expectToThrowErrorOnMissingAttribute("code");
+  });
+
+  it("throws an error if no description is provided", async () => {
+    await expectToThrowErrorOnMissingAttribute("description");
   });
 });
