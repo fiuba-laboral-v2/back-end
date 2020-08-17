@@ -7,10 +7,10 @@ import { CompanyRepository } from "$models/Company";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
-import { companyMocks } from "$test/models/Company/mocks";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AdminGenerator } from "$generators/Admin";
 import { TestClientGenerator } from "$generators/TestClient";
+import { CompanyGenerator } from "$generators/Company";
 import generateUuid from "uuid/v4";
 import { Secretary } from "$models/Admin";
 
@@ -30,7 +30,7 @@ describe("saveJobApplication", () => {
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
-    company = await CompanyRepository.create(companyMocks.companyData());
+    company = await CompanyGenerator.instance.withCompleteData();
     offers = await OfferGenerator.instance.withObligatoryData();
   });
 
