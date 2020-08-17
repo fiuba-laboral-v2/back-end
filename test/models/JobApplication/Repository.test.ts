@@ -7,6 +7,7 @@ import { UserRepository } from "$models/User";
 import { CompanyGenerator } from "$generators/Company";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
 describe("JobApplicationRepository", () => {
   let offers: TOfferGenerator;
@@ -18,7 +19,7 @@ describe("JobApplicationRepository", () => {
   });
 
   describe("Apply", () => {
-    it("should apply to a new jobApplication", async () => {
+    it("applies to a new jobApplication", async () => {
       const applicant = await ApplicantGenerator.instance.withMinimumData();
       const company = await CompanyGenerator.instance.withMinimumData();
       const offer = await offers.next({ companyUuid: company.uuid }).value;
@@ -29,7 +30,18 @@ describe("JobApplicationRepository", () => {
       });
     });
 
-    it("should create four valid jobApplications for for the same offer", async () => {
+    it("applies to a new jobApplication and both status are in pending", async () => {
+      const { uuid: applicantUuid } = await ApplicantGenerator.instance.withMinimumData();
+      const company = await CompanyGenerator.instance.withMinimumData();
+      const offer = await offers.next({ companyUuid: company.uuid }).value;
+      const jobApplication = await JobApplicationRepository.apply(applicantUuid, offer);
+      expect(jobApplication).toMatchObject({
+        extensionApprovalStatus: ApprovalStatus.pending,
+        graduadosApprovalStatus: ApprovalStatus.pending
+      });
+    });
+
+    it("creates four valid jobApplications for for the same offer", async () => {
       const applicant1 = await ApplicantGenerator.instance.withMinimumData();
       const applicant2 = await ApplicantGenerator.instance.withMinimumData();
       const applicant3 = await ApplicantGenerator.instance.withMinimumData();
@@ -46,7 +58,7 @@ describe("JobApplicationRepository", () => {
       ).resolves.not.toThrow();
     });
 
-    it("should throw an error if given applicantUuid that does not exist", async () => {
+    it("throws an error if given applicantUuid that does not exist", async () => {
       const company = await CompanyGenerator.instance.withMinimumData();
       const offer = await offers.next({ companyUuid: company.uuid }).value;
       const notExistingApplicantUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
@@ -59,7 +71,7 @@ describe("JobApplicationRepository", () => {
       );
     });
 
-    it("should throw an error if given offerUuid that does not exist", async () => {
+    it("throws an error if given offerUuid that does not exist", async () => {
       const { uuid: applicantUuid } = await ApplicantGenerator.instance.withMinimumData();
       const jobApplication = new JobApplication({
         offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
@@ -72,7 +84,7 @@ describe("JobApplicationRepository", () => {
       );
     });
 
-    it("should throw an error if jobApplication already exists", async () => {
+    it("throws an error if jobApplication already exists", async () => {
       const applicant = await ApplicantGenerator.instance.withMinimumData();
       const company = await CompanyGenerator.instance.withMinimumData();
       const offer = await offers.next({ companyUuid: company.uuid }).value;
@@ -84,7 +96,7 @@ describe("JobApplicationRepository", () => {
   });
 
   describe("Associations", () => {
-    it("should get Applicant and offer from a jobApplication", async () => {
+    it("gets Applicant and offer from a jobApplication", async () => {
       const applicant = await ApplicantGenerator.instance.withMinimumData();
       const company = await CompanyGenerator.instance.withMinimumData();
       const offer = await offers.next({ companyUuid: company.uuid }).value;
@@ -94,7 +106,7 @@ describe("JobApplicationRepository", () => {
       expect(offer1).toMatchObject(offer.toJSON());
     });
 
-    it("should get all applicant's jobApplications", async () => {
+    it("gets all applicant's jobApplications", async () => {
       const applicant = await ApplicantGenerator.instance.withMinimumData();
       const company = await CompanyGenerator.instance.withMinimumData();
       const offer = await offers.next({ companyUuid: company.uuid }).value;
@@ -106,7 +118,7 @@ describe("JobApplicationRepository", () => {
   });
 
   describe("hasApplied", () => {
-    it("should return true if applicant applied for offer", async () => {
+    it("returns true if applicant applied for offer", async () => {
       const applicant = await ApplicantGenerator.instance.withMinimumData();
       const company = await CompanyGenerator.instance.withMinimumData();
       const offer = await offers.next({ companyUuid: company.uuid }).value;
@@ -180,7 +192,7 @@ describe("JobApplicationRepository", () => {
       return JobApplicationRepository.apply(applicant.uuid, offer);
     };
 
-    it("should delete all jobApplication if all offers are deleted", async () => {
+    it("deletes all jobApplication if all offers are deleted", async () => {
       await JobApplication.truncate();
       await createJobApplication();
       expect(await JobApplication.findAll()).toHaveLength(1);
@@ -188,7 +200,7 @@ describe("JobApplicationRepository", () => {
       expect(await JobApplication.findAll()).toHaveLength(0);
     });
 
-    it("should delete all jobApplication if all applicants are deleted", async () => {
+    it("deletes all jobApplication if all applicants are deleted", async () => {
       await JobApplication.truncate();
       await createJobApplication();
       expect(await JobApplication.findAll()).toHaveLength(1);
@@ -196,7 +208,7 @@ describe("JobApplicationRepository", () => {
       expect(await JobApplication.findAll()).toHaveLength(0);
     });
 
-    it("should delete all jobApplication if all companies are deleted", async () => {
+    it("deletes all jobApplication if all companies are deleted", async () => {
       await JobApplication.truncate();
       await createJobApplication();
       expect(await JobApplication.findAll()).toHaveLength(1);
