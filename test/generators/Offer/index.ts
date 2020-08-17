@@ -1,7 +1,7 @@
 import { withObligatoryData } from "./withObligatoryData";
 import { withOneSection } from "./withOneSection";
 import { OfferRepository } from "$models/Offer";
-import { Offer } from "$models";
+import { Offer, Admin } from "$models";
 import { IOfferCareer } from "$models/Offer/OfferCareer";
 import { IOfferSection } from "$models/Offer/OfferSection";
 import { GenericGenerator, TGenericGenerator } from "../GenericGenerator";
@@ -18,9 +18,10 @@ export interface IOfferInput {
 export type TOfferGenerator = TGenericGenerator<Promise<Offer>, IOfferInput>;
 export type TOfferDataGenerator = TGenericGenerator<IOfferAttributes, IOfferInput>;
 
-interface IUpdatedWithStatus {
+interface IUpdatedWithStatus extends IOfferInput {
   secretary: Secretary;
   status: ApprovalStatus;
+  admin: Admin;
 }
 
 export const OfferGenerator = {
@@ -40,11 +41,12 @@ export const OfferGenerator = {
       return generator;
     },
     updatedWithStatus: async () => {
-      const generator = GenericGenerator<Promise<Offer>, IOfferInput & IUpdatedWithStatus>(
-        async (index, { status, secretary, ...variables }) => {
+      const generator = GenericGenerator<Promise<Offer>, IUpdatedWithStatus>(
+        async (index, { admin, status, secretary, ...variables }) => {
           const offer = await OfferRepository.create(withOneSection({ index, ...variables }));
-          return OfferRepository.updateStatus({
+          return OfferRepository.updateApprovalStatus({
             uuid: offer.uuid,
+            adminUserUuid: admin.userUuid,
             status,
             secretary
           });

@@ -10,6 +10,7 @@ import { ICreateOffer } from "$models/Offer/Interface";
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { OfferApprovalEventRepository } from "./OfferApprovalEvent/Repository";
 
 export const OfferRepository = {
   create: ({ careers = [], sections = [], ...attributes }: ICreateOffer) => {
@@ -24,31 +25,42 @@ export const OfferRepository = {
     if (!updatedOffer) throw new OfferNotFound(offer.uuid);
     return updatedOffer;
   },
-  updateStatus: async ({
+  updateApprovalStatus: async ({
     uuid,
+    adminUserUuid,
     secretary,
     status
   }: {
     uuid: string;
+    adminUserUuid: string;
     secretary: Secretary;
     status: ApprovalStatus;
-  }) => {
-    const offerAttributes = {
-      ...(secretary === Secretary.graduados && {
-        graduadosApprovalStatus: status
-      }),
-      ...(secretary === Secretary.extension && {
-        extensionApprovalStatus: status
-      })
-    };
+  }) =>
+    Database.transaction(async transaction => {
+      const offerAttributes = {
+        ...(secretary === Secretary.graduados && {
+          graduadosApprovalStatus: status
+        }),
+        ...(secretary === Secretary.extension && {
+          extensionApprovalStatus: status
+        })
+      };
 
-    const [, [updatedOffer]] = await Offer.update(offerAttributes, {
-      where: { uuid },
-      returning: true
-    });
-    if (!updatedOffer) throw new OfferNotFound(uuid);
-    return updatedOffer;
-  },
+      const [, [updatedOffer]] = await Offer.update(offerAttributes, {
+        where: { uuid },
+        returning: true,
+        transaction
+      });
+      if (!updatedOffer) throw new OfferNotFound(uuid);
+
+      await OfferApprovalEventRepository.create({
+        adminUserUuid,
+        offer: updatedOffer,
+        status: status,
+        transaction
+      });
+      return updatedOffer;
+    }),
   save: async (offer: Offer, sections: IOfferSection[], offersCareers: IOfferCareer[]) =>
     Database.transaction(async transaction => {
       await offer.save({ transaction });

@@ -56,16 +56,19 @@ describe("AdminTaskRepository", () => {
     const offers = await OfferGenerator.instance.updatedWithStatus();
     const secretary = admin.secretary;
     rejectedOffer = await offers.next({
+      admin,
       companyUuid: approvedCompany.uuid,
       secretary,
       status: ApprovalStatus.rejected
     }).value;
     approvedOffer = await offers.next({
+      admin,
       companyUuid: approvedCompany.uuid,
       secretary,
       status: ApprovalStatus.approved
     }).value;
     pendingOffer = await offers.next({
+      admin,
       companyUuid: approvedCompany.uuid,
       secretary,
       status: ApprovalStatus.pending
