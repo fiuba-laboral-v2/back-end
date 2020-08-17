@@ -136,17 +136,19 @@ describe("JobApplicationRepository", () => {
 
   describe("findLatestByCompanyUuid", () => {
     it("returns the only application for my company", async () => {
-      const applicant = await ApplicantGenerator.instance.withMinimumData();
+      const { uuid: applicantUuid } = await ApplicantGenerator.instance.withMinimumData();
       const company = await CompanyGenerator.instance.withMinimumData();
       const offer = await offers.next({ companyUuid: company.uuid }).value;
-      await JobApplicationRepository.apply(applicant.uuid, offer);
+      await JobApplicationRepository.apply(applicantUuid, offer);
       const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid(company.uuid);
-      expect(jobApplications.length).toEqual(1);
+      expect(jobApplications).toHaveLength(1);
       expect(jobApplications).toMatchObject([
-        {
+        expect.objectContaining({
           offerUuid: offer.uuid,
-          applicantUuid: applicant.uuid
-        }
+          applicantUuid,
+          extensionApprovalStatus: ApprovalStatus.pending,
+          graduadosApprovalStatus: ApprovalStatus.pending
+        })
       ]);
     });
 
@@ -157,28 +159,30 @@ describe("JobApplicationRepository", () => {
     });
 
     it("returns the latest job applications first for my company", async () => {
-      const applicant = await ApplicantGenerator.instance.withMinimumData();
-      const myCompany = await CompanyGenerator.instance.withMinimumData();
+      const { uuid: applicantUuid } = await ApplicantGenerator.instance.withMinimumData();
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const anotherCompany = await CompanyGenerator.instance.withMinimumData();
-      const myOffer1 = await offers.next({ companyUuid: myCompany.uuid }).value;
-      const myOffer2 = await offers.next({ companyUuid: myCompany.uuid }).value;
+      const myOffer1 = await offers.next({ companyUuid }).value;
+      const myOffer2 = await offers.next({ companyUuid }).value;
       const notMyOffer = await offers.next({ companyUuid: anotherCompany.uuid }).value;
 
-      await JobApplicationRepository.apply(applicant.uuid, myOffer1);
-      await JobApplicationRepository.apply(applicant.uuid, myOffer2);
-      await JobApplicationRepository.apply(applicant.uuid, notMyOffer);
-      const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid(
-        myCompany.uuid
-      );
+      await JobApplicationRepository.apply(applicantUuid, myOffer1);
+      await JobApplicationRepository.apply(applicantUuid, myOffer2);
+      await JobApplicationRepository.apply(applicantUuid, notMyOffer);
+      const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid(companyUuid);
       expect(jobApplications).toHaveLength(2);
       expect(jobApplications).toMatchObject([
         {
           offerUuid: myOffer2.uuid,
-          applicantUuid: applicant.uuid
+          applicantUuid,
+          extensionApprovalStatus: ApprovalStatus.pending,
+          graduadosApprovalStatus: ApprovalStatus.pending
         },
         {
           offerUuid: myOffer1.uuid,
-          applicantUuid: applicant.uuid
+          applicantUuid,
+          extensionApprovalStatus: ApprovalStatus.pending,
+          graduadosApprovalStatus: ApprovalStatus.pending
         }
       ]);
     });
