@@ -15,8 +15,6 @@ describe("OfferApprovalEvent", () => {
     expect(offerApprovalEvent).toEqual(
       expect.objectContaining({
         uuid: expect.stringMatching(UUID_REGEX),
-        createdAt: expect.any(Date),
-        updatedAt: expect.any(Date),
         ...offerApprovalEventAttributes
       })
     );

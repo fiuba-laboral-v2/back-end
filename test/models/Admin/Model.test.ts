@@ -11,9 +11,7 @@ describe("Admin", () => {
     expect(admin).toEqual(
       expect.objectContaining({
         userUuid,
-        secretary: Secretary.extension,
-        createdAt: expect.any(Date),
-        updatedAt: expect.any(Date)
+        secretary: Secretary.extension
       })
     );
   });

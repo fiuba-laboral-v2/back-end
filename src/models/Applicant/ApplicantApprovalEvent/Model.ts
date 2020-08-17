@@ -1,10 +1,18 @@
-import { BelongsTo, Column, ForeignKey, Model, Table } from "sequelize-typescript";
-import { DATE, ENUM, HasOneGetAssociationMixin, UUID, UUIDV4 } from "sequelize";
+import {
+  BelongsTo,
+  Column,
+  CreatedAt,
+  ForeignKey,
+  Model,
+  Table,
+  UpdatedAt
+} from "sequelize-typescript";
+import { ENUM, HasOneGetAssociationMixin, UUID, UUIDV4 } from "sequelize";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
 import { Admin, Applicant } from "$models";
 import { isApprovalStatus, isUuid } from "$models/SequelizeModelValidators";
 
-@Table({ tableName: "ApplicantApprovalEvents" })
+@Table({ tableName: "ApplicantApprovalEvents", timestamps: true })
 export class ApplicantApprovalEvent extends Model<ApplicantApprovalEvent> {
   @Column({
     allowNull: false,
@@ -40,18 +48,12 @@ export class ApplicantApprovalEvent extends Model<ApplicantApprovalEvent> {
   })
   public status: ApprovalStatus;
 
-  @Column({
-    allowNull: false,
-    type: DATE,
-    defaultValue: new Date()
-  })
+  @CreatedAt
+  @Column
   public createdAt: Date;
 
-  @Column({
-    allowNull: false,
-    type: DATE,
-    defaultValue: new Date()
-  })
+  @UpdatedAt
+  @Column
   public updatedAt: Date;
 
   @BelongsTo(() => Admin, "adminUserUuid")

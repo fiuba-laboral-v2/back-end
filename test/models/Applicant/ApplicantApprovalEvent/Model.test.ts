@@ -15,8 +15,6 @@ describe("ApplicantApprovalEvent", () => {
     expect(applicantApprovalEvent).toEqual(
       expect.objectContaining({
         uuid: expect.stringMatching(UUID_REGEX),
-        createdAt: expect.any(Date),
-        updatedAt: expect.any(Date),
         ...applicantApprovalEventAttributes
       })
     );
