@@ -158,7 +158,7 @@ describe("JobApplicationRepository", () => {
       const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid(
         myCompany.uuid
       );
-      expect(jobApplications.length).toEqual(2);
+      expect(jobApplications).toHaveLength(2);
       expect(jobApplications).toMatchObject([
         {
           offerUuid: myOffer2.uuid,
