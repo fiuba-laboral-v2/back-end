@@ -118,7 +118,7 @@ describe("CareerRepository", () => {
       expect(career.code).toEqual(code);
     });
 
-    it("throws CareersNotFoundError if the career doesn't exists", async () => {
+    it("throws CareersNotFoundError if the career doesn't exist", async () => {
       await expect(
         CareerRepository.findByCode("undefinedCareerCode")
       ).rejects.toThrowErrorWithMessage(
