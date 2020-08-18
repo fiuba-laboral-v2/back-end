@@ -80,7 +80,7 @@ describe("getCompanyByUuid", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.approved,
-        admin: await AdminGenerator.instance(Secretary.extension)
+        admin: await AdminGenerator.instance({ secretary: Secretary.extension })
       }
     });
     const notExistentUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
@@ -142,7 +142,7 @@ describe("getCompanyByUuid", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.rejected,
-        admin: await AdminGenerator.instance(Secretary.extension)
+        admin: await AdminGenerator.instance({ secretary: Secretary.extension })
       }
     });
     const { errors } = await apolloClient.query({

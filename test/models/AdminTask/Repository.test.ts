@@ -32,7 +32,7 @@ describe("AdminTaskRepository", () => {
     await CompanyRepository.truncate();
     await OfferRepository.truncate();
     const companiesGenerator = CompanyGenerator.instance.updatedWithStatus;
-    admin = await AdminGenerator.instance(Secretary.extension);
+    admin = await AdminGenerator.instance({ secretary: Secretary.extension });
     const applicantsGenerator = ApplicantGenerator.instance.updatedWithStatus;
 
     rejectedCompany = await companiesGenerator({
@@ -55,16 +55,19 @@ describe("AdminTaskRepository", () => {
     pendingApplicant = await applicantsGenerator();
     const secretary = admin.secretary;
     rejectedOffer = await OfferGenerator.instance.updatedWithStatus({
+      admin,
       companyUuid: approvedCompany.uuid,
       secretary,
       status: ApprovalStatus.rejected
     });
     approvedOffer = await OfferGenerator.instance.updatedWithStatus({
+      admin,
       companyUuid: approvedCompany.uuid,
       secretary,
       status: ApprovalStatus.approved
     });
     pendingOffer = await OfferGenerator.instance.updatedWithStatus({
+      admin,
       companyUuid: approvedCompany.uuid,
       secretary,
       status: ApprovalStatus.pending

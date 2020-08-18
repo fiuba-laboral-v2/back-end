@@ -2,7 +2,7 @@ import { Database } from "$config";
 import { IOffer } from "./";
 import { IOfferSection } from "./OfferSection";
 import { IOfferCareer } from "./OfferCareer";
-import { OfferNotFound } from "./Errors";
+import { OfferNotFound, OfferNotUpdatedError } from "./Errors";
 import { Offer, OfferCareer, OfferSection } from "$models";
 import { Op } from "sequelize";
 import { PaginationConfig } from "$config/PaginationConfig";
@@ -10,6 +10,7 @@ import { ICreateOffer } from "$models/Offer/Interface";
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { OfferApprovalEventRepository } from "./OfferApprovalEvent/Repository";
 
 export const OfferRepository = {
   create: ({ careers = [], sections = [], ...attributes }: ICreateOffer) => {
@@ -21,34 +22,41 @@ export const OfferRepository = {
       where: { uuid: offer.uuid },
       returning: true
     });
-    if (!updatedOffer) throw new OfferNotFound(offer.uuid);
+    if (!updatedOffer) throw new OfferNotUpdatedError(offer.uuid);
     return updatedOffer;
   },
-  updateStatus: async ({
+  updateApprovalStatus: async ({
     uuid,
+    adminUserUuid,
     secretary,
     status
   }: {
     uuid: string;
+    adminUserUuid: string;
     secretary: Secretary;
     status: ApprovalStatus;
-  }) => {
-    const offerAttributes = {
-      ...(secretary === Secretary.graduados && {
-        graduadosApprovalStatus: status
-      }),
-      ...(secretary === Secretary.extension && {
-        extensionApprovalStatus: status
-      })
-    };
+  }) =>
+    Database.transaction(async transaction => {
+      const offerAttributes = {
+        ...(secretary === Secretary.graduados && { graduadosApprovalStatus: status }),
+        ...(secretary === Secretary.extension && { extensionApprovalStatus: status })
+      };
 
-    const [, [updatedOffer]] = await Offer.update(offerAttributes, {
-      where: { uuid },
-      returning: true
-    });
-    if (!updatedOffer) throw new OfferNotFound(uuid);
-    return updatedOffer;
-  },
+      const [, [updatedOffer]] = await Offer.update(offerAttributes, {
+        where: { uuid },
+        returning: true,
+        transaction
+      });
+      if (!updatedOffer) throw new OfferNotUpdatedError(uuid);
+
+      await OfferApprovalEventRepository.create({
+        adminUserUuid,
+        offer: updatedOffer,
+        status: status,
+        transaction
+      });
+      return updatedOffer;
+    }),
   save: async (offer: Offer, sections: IOfferSection[], offersCareers: IOfferCareer[]) =>
     Database.transaction(async transaction => {
       await offer.save({ transaction });

@@ -2,8 +2,8 @@ import { UniqueConstraintError, ValidationError } from "sequelize";
 import { CareerRepository } from "$models/Career";
 import { OfferRepository } from "$models/Offer";
 import { CompanyRepository } from "$models/Company";
-import { OfferNotFound } from "$models/Offer/Errors";
-import { Offer, OfferCareer, OfferSection } from "$models";
+import { OfferNotFound, OfferNotUpdatedError } from "$models/Offer/Errors";
+import { Offer, OfferCareer, OfferSection, Admin } from "$models";
 import { CompanyGenerator } from "$generators/Company";
 import { OfferGenerator } from "$generators/Offer";
 import { CareerGenerator } from "$generators/Career";
@@ -13,6 +13,8 @@ import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import MockDate from "mockdate";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { AdminGenerator } from "$test/generators/Admin";
+import { OfferApprovalEventRepository } from "$models/Offer/OfferApprovalEvent";
 
 describe("OfferRepository", () => {
   beforeAll(async () => {
@@ -175,11 +177,16 @@ describe("OfferRepository", () => {
           ...OfferGenerator.data.withObligatoryData({ companyUuid }),
           uuid: unknownOfferUuid
         })
-      ).rejects.toThrow(OfferNotFound);
+      ).rejects.toThrow(OfferNotUpdatedError);
     });
   });
 
-  describe("UpdateStatus", () => {
+  describe("UpdateApprovalStatus", () => {
+    let admin: Admin;
+    beforeAll(async () => {
+      admin = await AdminGenerator.instance({ secretary: Secretary.graduados });
+    });
+
     it("updates the status for the secretary graduados successfully", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const attributes = OfferGenerator.data.withObligatoryData({ companyUuid });
@@ -187,10 +194,11 @@ describe("OfferRepository", () => {
       const newStatus = ApprovalStatus.approved;
       const params = {
         uuid,
+        adminUserUuid: admin.userUuid,
         secretary: Secretary.graduados,
         status: newStatus
       };
-      await OfferRepository.updateStatus(params);
+      await OfferRepository.updateApprovalStatus(params);
 
       expect((await OfferRepository.findByUuid(uuid)).graduadosApprovalStatus).toEqual(newStatus);
     });
@@ -202,12 +210,30 @@ describe("OfferRepository", () => {
       const newStatus = ApprovalStatus.approved;
       const params = {
         uuid,
+        adminUserUuid: admin.userUuid,
         secretary: Secretary.extension,
         status: newStatus
       };
-      await OfferRepository.updateStatus(params);
+      await OfferRepository.updateApprovalStatus(params);
 
       expect((await OfferRepository.findByUuid(uuid)).extensionApprovalStatus).toEqual(newStatus);
+    });
+
+    it("creates an entry on OfferApprovalEvents table", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const attributes = OfferGenerator.data.withObligatoryData({ companyUuid });
+      const { uuid } = await OfferRepository.create(attributes);
+      const newStatus = ApprovalStatus.approved;
+      const params = {
+        uuid,
+        adminUserUuid: admin.userUuid,
+        secretary: Secretary.extension,
+        status: newStatus
+      };
+      await OfferRepository.updateApprovalStatus(params);
+      const offerApprovalEvents = await OfferApprovalEventRepository.findAll();
+
+      expect(offerApprovalEvents[offerApprovalEvents.length - 1].offerUuid).toEqual(uuid);
     });
 
     it("throws an error if the offer does not exist", async () => {
@@ -215,11 +241,14 @@ describe("OfferRepository", () => {
       const newStatus = ApprovalStatus.approved;
       const params = {
         uuid: unknownOfferUuid,
+        adminUserUuid: admin.userUuid,
         secretary: Secretary.graduados,
         status: newStatus
       };
 
-      await expect(OfferRepository.updateStatus(params)).rejects.toThrow(OfferNotFound);
+      await expect(OfferRepository.updateApprovalStatus(params)).rejects.toThrow(
+        OfferNotUpdatedError
+      );
     });
 
     it("throws an error if the status is not a valid ApprovalStatus value", async () => {
@@ -229,11 +258,12 @@ describe("OfferRepository", () => {
       const newStatus = "pepito" as ApprovalStatus;
       const params = {
         uuid,
+        adminUserUuid: admin.userUuid,
         secretary: Secretary.extension,
         status: newStatus
       };
 
-      await expect(OfferRepository.updateStatus(params)).rejects.toThrowErrorWithMessage(
+      await expect(OfferRepository.updateApprovalStatus(params)).rejects.toThrowErrorWithMessage(
         ValidationError,
         "Validation error: ApprovalStatus must be one of these values: pending,approved,rejected"
       );

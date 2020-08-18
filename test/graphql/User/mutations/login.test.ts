@@ -113,9 +113,7 @@ describe("login", () => {
 
   it("returns a token for an admin", async () => {
     const password = "AValidPassword3";
-    const admin = await AdminGenerator.instance(Secretary.extension, {
-      password
-    });
+    const admin = await AdminGenerator.instance({ secretary: Secretary.extension, password });
     const user = await admin.getUser();
     await testToken({
       user,

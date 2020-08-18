@@ -2,6 +2,11 @@ import { IApplicantCareer } from "$models/Applicant/ApplicantCareer";
 import { Admin } from "$models";
 import { IExpressContext } from "../graphql/ExpressContext";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { Secretary } from "$models/Admin";
+
+export interface IAdminGeneratorAttributes extends IUserGeneratorAttributes {
+  secretary: Secretary;
+}
 
 export interface ICompanyGeneratorAttributes {
   user?: { password?: string };
@@ -34,6 +39,10 @@ interface ITestClientApprovalStatus {
 export interface IUserTestClientAttributes
   extends ITestClientAttributes,
     IUserGeneratorAttributes {}
+
+export interface IAdminTestClientAttributes
+  extends ITestClientAttributes,
+    IAdminGeneratorAttributes {}
 
 export interface ICompanyTestClientAttributes
   extends ITestClientAttributes,
