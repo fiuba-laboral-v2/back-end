@@ -1,6 +1,7 @@
 import { ValidationError } from "sequelize";
 import { JobApplicationApprovalEvent } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { UUID_REGEX } from "$test/models";
 
 describe("JobApplicationApprovalEvent", () => {
   const expectToCreateAValidEventWithStatus = async (status: ApprovalStatus) => {
@@ -85,6 +86,16 @@ describe("JobApplicationApprovalEvent", () => {
     });
     expect(jobApplicationApprovalEvent.createdAt).toBeUndefined();
     expect(jobApplicationApprovalEvent.updatedAt).toBeUndefined();
+  });
+
+  it("creates an event with a generated uuid", async () => {
+    const jobApplicationApprovalEvent = new JobApplicationApprovalEvent({
+      offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+      applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
+      adminUserUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
+      status: ApprovalStatus.pending
+    });
+    expect(jobApplicationApprovalEvent.uuid).toEqual(expect.stringMatching(UUID_REGEX));
   });
 
   it("throws an error if no offerUuid is provided", async () => {
