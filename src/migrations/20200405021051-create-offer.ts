@@ -44,7 +44,7 @@ export = {
         type: "approval_status",
         defaultValue: "pending"
       },
-      target: {
+      targetApplicantType: {
         allowNull: false,
         type: "target_applicant_type"
       },

@@ -6,7 +6,7 @@ export const javaSenior = {
     uuid: uuids.offers.java_senior,
     companyUuid: uuids.companies.mercadoLibre,
     title: "Desarrollador Java senior",
-    target: TargetApplicantType.graduate,
+    targetApplicantType: TargetApplicantType.graduate,
     description:
       "En Mercado Libre seguimos democratizando el comercio, el dinero " +
       "y los pagos en América Latina.\n\n" +

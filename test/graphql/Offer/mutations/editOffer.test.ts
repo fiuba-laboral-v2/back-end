@@ -32,7 +32,7 @@ const EDIT_OFFER = gql`
       uuid
       title
       description
-      target
+      targetApplicantType
       hoursPerDay
       minimumSalary
       maximumSalary

@@ -12,7 +12,7 @@ describe("Offer", () => {
     hoursPerDay: 8,
     minimumSalary: 52500,
     maximumSalary: 70000,
-    target: TargetApplicantType.both
+    targetApplicantType: TargetApplicantType.both
   };
 
   const offerWithoutProperty = async (property: string) => {
@@ -21,10 +21,10 @@ describe("Offer", () => {
     return offerAttributesWithoutProperty;
   };
 
-  const createsAValidOfferWithTarget = async (target: TargetApplicantType) => {
+  const createsAValidOfferWithTarget = async (targetApplicantType: TargetApplicantType) => {
     const offer = new Offer({
       ...offerAttributes,
-      target
+      targetApplicantType
     });
     await expect(offer.validate()).resolves.not.toThrow();
   };
@@ -40,15 +40,15 @@ describe("Offer", () => {
     expect(offer).toEqual(expect.objectContaining(offerAttributes));
   });
 
-  it("creates a valid offer with a target for graduate", async () => {
+  it("creates a valid offer with a targetApplicantType for graduate", async () => {
     await createsAValidOfferWithTarget(TargetApplicantType.graduate);
   });
 
-  it("creates a valid offer with a target for student", async () => {
+  it("creates a valid offer with a targetApplicantType for student", async () => {
     await createsAValidOfferWithTarget(TargetApplicantType.student);
   });
 
-  it("creates a valid offer with a target for both student and graduate", async () => {
+  it("creates a valid offer with a targetApplicantType for both student and graduate", async () => {
     await createsAValidOfferWithTarget(TargetApplicantType.both);
   });
 
@@ -129,10 +129,10 @@ describe("Offer", () => {
     );
   });
 
-  it("throws an error if target isn not a TargetApplicantType enum value", async () => {
+  it("throws an error if targetApplicantType isn not a TargetApplicantType enum value", async () => {
     const offer = new Offer({
       ...offerAttributes,
-      target: "undefinedTargetApplicantType"
+      targetApplicantType: "undefinedTargetApplicantType"
     });
     await expect(offer.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,

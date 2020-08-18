@@ -18,7 +18,7 @@ export interface ICreateOffer {
   sections?: IOfferSection[];
   careers?: IOfferCareer[];
   companyUuid: string;
-  target: TargetApplicantType;
+  targetApplicantType: TargetApplicantType;
 }
 
 export interface IUpdateOffer extends ICreateOffer {

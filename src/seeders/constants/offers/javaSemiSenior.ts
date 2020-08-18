@@ -6,7 +6,7 @@ export const javaSemiSenior = {
     uuid: uuids.offers.java_semi_senior,
     companyUuid: uuids.companies.devartis,
     title: "Desarrollador Java semi senior",
-    target: TargetApplicantType.both,
+    targetApplicantType: TargetApplicantType.both,
     description:
       "En Mercado Libre estamos democratizando el comercio, el dinero " +
       "y los pagos en América Latina.\n\n" +

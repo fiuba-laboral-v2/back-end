@@ -19,7 +19,7 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
   mutation createOffer(
     $title: String!
     $description: String!
-    $target: TargetApplicantType!
+    $targetApplicantType: TargetApplicantType!
     $hoursPerDay: Int!
     $minimumSalary: Int!
     $maximumSalary: Int!
@@ -29,7 +29,7 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
     createOffer(
       title: $title
       description: $description
-      target: $target
+      targetApplicantType: $targetApplicantType
       hoursPerDay: $hoursPerDay
       minimumSalary: $minimumSalary
       maximumSalary: $maximumSalary
@@ -39,7 +39,7 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
       uuid
       title
       description
-      target
+      targetApplicantType
       hoursPerDay
       minimumSalary
       maximumSalary
@@ -73,7 +73,7 @@ const SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA = gql`
   mutation createOffer(
     $title: String!
     $description: String!
-    $target: TargetApplicantType!
+    $targetApplicantType: TargetApplicantType!
     $hoursPerDay: Int!
     $minimumSalary: Int!
     $maximumSalary: Int!
@@ -81,7 +81,7 @@ const SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA = gql`
     createOffer(
       title: $title
       description: $description
-      target: $target
+      targetApplicantType: $targetApplicantType
       hoursPerDay: $hoursPerDay
       minimumSalary: $minimumSalary
       maximumSalary: $maximumSalary
@@ -92,7 +92,7 @@ const SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA = gql`
       hoursPerDay
       minimumSalary
       maximumSalary
-      target
+      targetApplicantType
     }
   }
 `;
@@ -131,7 +131,7 @@ describe("createOffer", () => {
         hoursPerDay: createOfferAttributes.hoursPerDay,
         minimumSalary: createOfferAttributes.minimumSalary,
         maximumSalary: createOfferAttributes.maximumSalary,
-        target: createOfferAttributes.target
+        targetApplicantType: createOfferAttributes.targetApplicantType
       });
     });
 
@@ -197,8 +197,8 @@ describe("createOffer", () => {
       await expectToThrowErrorOnMissingAttribute("description");
     });
 
-    it("throws an error if no target is provided", async () => {
-      await expectToThrowErrorOnMissingAttribute("target");
+    it("throws an error if no targetApplicantType is provided", async () => {
+      await expectToThrowErrorOnMissingAttribute("targetApplicantType");
     });
 
     it("throws an error if no hoursPerDay is provided", async () => {

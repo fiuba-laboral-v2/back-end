@@ -38,7 +38,7 @@ export const GraphQLOffer = new GraphQLObjectType<Offer, IApolloServerContext>({
     graduadosApprovalStatus: {
       type: nonNull(GraphQLApprovalStatus)
     },
-    target: {
+    targetApplicantType: {
       type: nonNull(GraphQLTargetApplicantType)
     },
     createdAt: {

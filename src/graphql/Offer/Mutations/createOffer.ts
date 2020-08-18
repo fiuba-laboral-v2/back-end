@@ -16,7 +16,7 @@ export const createOffer = {
     description: {
       type: nonNull(String)
     },
-    target: {
+    targetApplicantType: {
       type: nonNull(GraphQLTargetApplicantType)
     },
     hoursPerDay: {

@@ -30,9 +30,9 @@ describe("OfferRepository", () => {
     displayOrder: 1
   };
 
-  const expectToCreateAValidOfferWithTarget = async (target: TargetApplicantType) => {
+  const expectToCreateAValidOfferWithTarget = async (targetApplicantType: TargetApplicantType) => {
     const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-    const offerProps = OfferGenerator.data.withObligatoryData({ companyUuid, target });
+    const offerProps = OfferGenerator.data.withObligatoryData({ companyUuid, targetApplicantType });
     const offer = await OfferRepository.create(offerProps);
     expect(offer).toEqual(expect.objectContaining(offerProps));
   };
@@ -45,15 +45,15 @@ describe("OfferRepository", () => {
       expect(offer).toEqual(expect.objectContaining(offerProps));
     });
 
-    it("creates a new offer with a target for students", async () => {
+    it("creates a new offer with a targetApplicantType for students", async () => {
       await expectToCreateAValidOfferWithTarget(TargetApplicantType.student);
     });
 
-    it("creates a new offer with a target for graduates", async () => {
+    it("creates a new offer with a targetApplicantType for graduates", async () => {
       await expectToCreateAValidOfferWithTarget(TargetApplicantType.graduate);
     });
 
-    it("creates a new offer with a target for both graduates and students", async () => {
+    it("creates a new offer with a targetApplicantType for both graduates and students", async () => {
       await expectToCreateAValidOfferWithTarget(TargetApplicantType.both);
     });
 

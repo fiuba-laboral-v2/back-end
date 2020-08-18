@@ -12,7 +12,7 @@ export interface IOfferInput {
   companyUuid: string;
   careers?: IOfferCareer[];
   sections?: IOfferSection[];
-  target?: TargetApplicantType;
+  targetApplicantType?: TargetApplicantType;
 }
 
 interface IUpdatedWithStatus {

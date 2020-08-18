@@ -6,7 +6,7 @@ export const withObligatoryData = ({
   companyUuid,
   careers,
   sections,
-  target
+  targetApplicantType
 }: IVariables): IOfferAttributes => {
   const data = {
     companyUuid,
@@ -15,7 +15,7 @@ export const withObligatoryData = ({
     hoursPerDay: index + 1,
     minimumSalary: index + 1,
     maximumSalary: 2 * index + 1,
-    target: target || TargetApplicantType.both,
+    targetApplicantType: targetApplicantType || TargetApplicantType.both,
     careers,
     sections
   };

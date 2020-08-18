@@ -83,7 +83,7 @@ export class Offer extends Model<Offer> {
     type: ENUM<string>({ values: targetApplicantTypeEnumValues }),
     ...isTargetApplicantType
   })
-  public target: TargetApplicantType;
+  public targetApplicantType: TargetApplicantType;
 
   @Is("hoursPerDay", validateIntegerInRange({ min: { value: 0, include: false } }))
   @Column({
