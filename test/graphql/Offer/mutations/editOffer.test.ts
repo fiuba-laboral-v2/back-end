@@ -11,12 +11,14 @@ import generateUuid from "uuid/v4";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { OfferNotUpdatedError } from "$models/Offer/Errors";
 import { Secretary } from "$models/Admin";
+import { TargetApplicantType } from "$models/Offer";
 
 const EDIT_OFFER = gql`
   mutation editOffer(
     $uuid: ID!
     $title: String!
     $description: String!
+    $targetApplicantType: TargetApplicantType!
     $hoursPerDay: Int!
     $minimumSalary: Int!
     $maximumSalary: Int!
@@ -25,6 +27,7 @@ const EDIT_OFFER = gql`
       uuid: $uuid
       title: $title
       description: $description
+      targetApplicantType: $targetApplicantType
       hoursPerDay: $hoursPerDay
       minimumSalary: $minimumSalary
       maximumSalary: $maximumSalary
@@ -46,23 +49,59 @@ describe("editOffer", () => {
     await UserRepository.truncate();
   });
 
-  it("edits an offer successfully", async () => {
-    const { apolloClient, company } = await TestClientGenerator.company({
+  const expectToUpdateAttribute = async (attribute: string, newValue: any) => {
+    const {
+      apolloClient,
+      company: { uuid: companyUuid }
+    } = await TestClientGenerator.company({
       status: {
         admin: await AdminGenerator.instance({ secretary: Secretary.extension }),
         approvalStatus: ApprovalStatus.approved
       }
     });
-    const initialAttributes = OfferGenerator.data.withObligatoryData({ companyUuid: company.uuid });
+    const initialAttributes = OfferGenerator.data.withObligatoryData({ companyUuid });
     const { uuid } = await OfferRepository.create(initialAttributes);
-    const newTitle = "Amazing Offer";
     await apolloClient.mutate({
       mutation: EDIT_OFFER,
-      variables: { ...initialAttributes, uuid, title: newTitle }
+      variables: { ...initialAttributes, uuid, [attribute]: newValue }
     });
     const updatedOffer = await OfferRepository.findByUuid(uuid);
-    expect(updatedOffer.title).not.toEqual(initialAttributes.title);
-    expect(updatedOffer.title).toEqual(newTitle);
+    if (newValue !== initialAttributes[attribute]) {
+      expect(updatedOffer[attribute]).not.toEqual(initialAttributes[attribute]);
+    }
+    expect(updatedOffer[attribute]).toEqual(newValue);
+  };
+
+  it("edits an offer title", async () => {
+    await expectToUpdateAttribute("title", "Amazing Offer");
+  });
+
+  it("edits an offer description", async () => {
+    await expectToUpdateAttribute("description", "new description");
+  });
+
+  it("edits an offer targetApplicantType to both student and graduate", async () => {
+    await expectToUpdateAttribute("targetApplicantType", TargetApplicantType.both);
+  });
+
+  it("edits an offer targetApplicantType to student", async () => {
+    await expectToUpdateAttribute("targetApplicantType", TargetApplicantType.student);
+  });
+
+  it("edits an offer targetApplicantType to graduate", async () => {
+    await expectToUpdateAttribute("targetApplicantType", TargetApplicantType.graduate);
+  });
+
+  it("edits an offer hoursPerDay", async () => {
+    await expectToUpdateAttribute("hoursPerDay", 15);
+  });
+
+  it("edits an offer minimumSalary", async () => {
+    await expectToUpdateAttribute("minimumSalary", 1);
+  });
+
+  it("edits an offer maximumSalary", async () => {
+    await expectToUpdateAttribute("maximumSalary", 10000);
   });
 
   it("throws an error when the offer uuid is not found", async () => {
