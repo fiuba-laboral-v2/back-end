@@ -8,12 +8,20 @@ import { CompanyGenerator } from "$generators/Company";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { OfferGenerator } from "$generators/Offer";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { Secretary } from "$models/Admin";
 
 describe("JobApplicationRepository", () => {
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
   });
+
+  const createJobApplication = async () => {
+    const applicant = await ApplicantGenerator.instance.withMinimumData();
+    const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+    const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid });
+    return JobApplicationRepository.apply(applicant.uuid, offer);
+  };
 
   describe("Apply", () => {
     it("applies to a new jobApplication", async () => {
@@ -187,14 +195,72 @@ describe("JobApplicationRepository", () => {
     });
   });
 
-  describe("Delete cascade", () => {
-    const createJobApplication = async () => {
-      const applicant = await ApplicantGenerator.instance.withMinimumData();
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid });
-      return JobApplicationRepository.apply(applicant.uuid, offer);
+  describe("updateApprovalStatus", () => {
+    const expectGraduadosStatusToBe = async (
+      status: ApprovalStatus,
+      secretary: Secretary,
+      statusColumn: string
+    ) => {
+      const { offerUuid, applicantUuid } = await createJobApplication();
+      const jobApplication = await JobApplicationRepository.updateApprovalStatus({
+        offerUuid,
+        applicantUuid,
+        status,
+        secretary
+      });
+      expect(jobApplication[statusColumn]).toEqual(status);
     };
 
+    it("sets to pending the jobApplication by graduados secretary", async () => {
+      await expectGraduadosStatusToBe(
+        ApprovalStatus.pending,
+        Secretary.graduados,
+        "graduadosApprovalStatus"
+      );
+    });
+
+    it("approves the jobApplication by graduados secretary", async () => {
+      await expectGraduadosStatusToBe(
+        ApprovalStatus.approved,
+        Secretary.graduados,
+        "graduadosApprovalStatus"
+      );
+    });
+
+    it("rejects the jobApplication by graduados secretary", async () => {
+      await expectGraduadosStatusToBe(
+        ApprovalStatus.rejected,
+        Secretary.graduados,
+        "graduadosApprovalStatus"
+      );
+    });
+
+    it("sets to pending the jobApplication by extension secretary", async () => {
+      await expectGraduadosStatusToBe(
+        ApprovalStatus.pending,
+        Secretary.extension,
+        "extensionApprovalStatus"
+      );
+    });
+
+    it("approved the jobApplication by extension secretary", async () => {
+      await expectGraduadosStatusToBe(
+        ApprovalStatus.approved,
+        Secretary.extension,
+        "extensionApprovalStatus"
+      );
+    });
+
+    it("rejects the jobApplication by extension secretary", async () => {
+      await expectGraduadosStatusToBe(
+        ApprovalStatus.approved,
+        Secretary.extension,
+        "extensionApprovalStatus"
+      );
+    });
+  });
+
+  describe("Delete cascade", () => {
     it("deletes all jobApplication if all offers are deleted", async () => {
       await JobApplication.truncate();
       await createJobApplication();

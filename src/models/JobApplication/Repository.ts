@@ -1,4 +1,6 @@
 import { Applicant, JobApplication, Offer } from "$models";
+import { IUpdateApprovalStatus } from "./Interfaces";
+import { Secretary } from "$models/Admin";
 
 export const JobApplicationRepository = {
   apply: async (applicantUuid: string, offer: Offer) =>
@@ -23,6 +25,23 @@ export const JobApplicationRepository = {
       },
       order: [["createdAt", "DESC"]]
     });
+  },
+  updateApprovalStatus: async ({
+    offerUuid,
+    applicantUuid,
+    secretary,
+    status
+  }: IUpdateApprovalStatus) => {
+    const attributes = {
+      ...(secretary === Secretary.graduados && { graduadosApprovalStatus: status }),
+      ...(secretary === Secretary.extension && { extensionApprovalStatus: status })
+    };
+    const [, [updatedJobApplication]] = await JobApplication.update(attributes, {
+      where: { offerUuid, applicantUuid },
+      returning: true
+    });
+    if (!updatedJobApplication) throw new Error("JobApplicationNotFoundError");
+    return updatedJobApplication;
   },
   truncate: () => JobApplication.truncate()
 };
