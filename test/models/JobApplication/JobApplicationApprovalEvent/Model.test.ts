@@ -2,7 +2,7 @@ import { ValidationError } from "sequelize";
 import { JobApplicationApprovalEvent } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { UUID_REGEX } from "$test/models";
-import { isApprovalStatus } from "$models/SequelizeModelValidators";
+import { isApprovalStatus, isUuid } from "$models/SequelizeModelValidators";
 
 describe("JobApplicationApprovalEvent", () => {
   const expectToCreateAValidEventWithStatus = async (status: ApprovalStatus) => {
@@ -50,7 +50,7 @@ describe("JobApplicationApprovalEvent", () => {
     const jobApplicationApprovalEvent = new JobApplicationApprovalEvent(attributes);
     await expect(jobApplicationApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
-      "Validation error: uuid has invalid format"
+      isUuid.validate.isUUID.msg
     );
   };
 
