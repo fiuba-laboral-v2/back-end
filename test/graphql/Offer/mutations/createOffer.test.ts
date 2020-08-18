@@ -13,11 +13,13 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Admin } from "$models";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { Secretary } from "$models/Admin";
+import { UUID_REGEX } from "$test/models";
 
 const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
   mutation createOffer(
     $title: String!
     $description: String!
+    $targetApplicantType: TargetApplicantType!
     $hoursPerDay: Int!
     $minimumSalary: Int!
     $maximumSalary: Int!
@@ -27,6 +29,7 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
     createOffer(
       title: $title
       description: $description
+      targetApplicantType: $targetApplicantType
       hoursPerDay: $hoursPerDay
       minimumSalary: $minimumSalary
       maximumSalary: $maximumSalary
@@ -36,6 +39,7 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
       uuid
       title
       description
+      targetApplicantType
       hoursPerDay
       minimumSalary
       maximumSalary
@@ -69,6 +73,7 @@ const SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA = gql`
   mutation createOffer(
     $title: String!
     $description: String!
+    $targetApplicantType: TargetApplicantType!
     $hoursPerDay: Int!
     $minimumSalary: Int!
     $maximumSalary: Int!
@@ -76,6 +81,7 @@ const SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA = gql`
     createOffer(
       title: $title
       description: $description
+      targetApplicantType: $targetApplicantType
       hoursPerDay: $hoursPerDay
       minimumSalary: $minimumSalary
       maximumSalary: $maximumSalary
@@ -86,6 +92,7 @@ const SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA = gql`
       hoursPerDay
       minimumSalary
       maximumSalary
+      targetApplicantType
     }
   }
 `;
@@ -117,13 +124,14 @@ describe("createOffer", () => {
       });
 
       expect(errors).toBeUndefined();
-      expect(data!.createOffer).toHaveProperty("uuid");
       expect(data!.createOffer).toMatchObject({
+        uuid: expect.stringMatching(UUID_REGEX),
         title: createOfferAttributes.title,
         description: createOfferAttributes.description,
         hoursPerDay: createOfferAttributes.hoursPerDay,
         minimumSalary: createOfferAttributes.minimumSalary,
-        maximumSalary: createOfferAttributes.maximumSalary
+        maximumSalary: createOfferAttributes.maximumSalary,
+        targetApplicantType: createOfferAttributes.targetApplicantType
       });
     });
 
@@ -161,7 +169,7 @@ describe("createOffer", () => {
   });
 
   describe("when the input values are invalid", () => {
-    it("throws an error if no title is provided", async () => {
+    const expectToThrowErrorOnMissingAttribute = async (attribute: string) => {
       const { apolloClient, company } = await TestClientGenerator.company({
         status: {
           admin,
@@ -170,16 +178,39 @@ describe("createOffer", () => {
       });
       const {
         companyUuid,
-        title,
         ...createOfferAttributesWithNoTitle
-      } = OfferGenerator.data.withObligatoryData({
-        companyUuid: company.uuid
-      });
+      } = OfferGenerator.data.withObligatoryData({ companyUuid: company.uuid });
+      delete createOfferAttributesWithNoTitle[attribute];
+
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
         variables: createOfferAttributesWithNoTitle
       });
-      expect(errors).not.toBeUndefined();
+      expect(errors).toEqual([expect.objectContaining({ message: "Internal server error" })]);
+    };
+
+    it("throws an error if no title is provided", async () => {
+      await expectToThrowErrorOnMissingAttribute("title");
+    });
+
+    it("throws an error if no description is provided", async () => {
+      await expectToThrowErrorOnMissingAttribute("description");
+    });
+
+    it("throws an error if no targetApplicantType is provided", async () => {
+      await expectToThrowErrorOnMissingAttribute("targetApplicantType");
+    });
+
+    it("throws an error if no hoursPerDay is provided", async () => {
+      await expectToThrowErrorOnMissingAttribute("hoursPerDay");
+    });
+
+    it("throws an error if no minimumSalary is provided", async () => {
+      await expectToThrowErrorOnMissingAttribute("minimumSalary");
+    });
+
+    it("throws an error if no maximumSalary is provided", async () => {
+      await expectToThrowErrorOnMissingAttribute("maximumSalary");
     });
 
     it("throws an error if no user is logged in", async () => {

@@ -23,6 +23,7 @@ const GET_OFFER_BY_UUID = gql`
       uuid
       title
       description
+      targetApplicantType
       hoursPerDay
       minimumSalary
       maximumSalary
@@ -97,6 +98,7 @@ describe("getOfferByUuid", () => {
         uuid: offer.uuid,
         title: offer.title,
         description: offer.description,
+        targetApplicantType: offer.targetApplicantType,
         hoursPerDay: offer.hoursPerDay,
         minimumSalary: offer.minimumSalary,
         maximumSalary: offer.maximumSalary,

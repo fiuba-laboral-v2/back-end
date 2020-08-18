@@ -1,9 +1,9 @@
 import { UniqueConstraintError, ValidationError } from "sequelize";
 import { CareerRepository } from "$models/Career";
-import { OfferRepository } from "$models/Offer";
+import { OfferRepository, TargetApplicantType } from "$models/Offer";
 import { CompanyRepository } from "$models/Company";
 import { OfferNotFound, OfferNotUpdatedError } from "$models/Offer/Errors";
-import { Offer, OfferCareer, OfferSection, Admin } from "$models";
+import { Admin, Offer, OfferCareer, OfferSection } from "$models";
 import { CompanyGenerator } from "$generators/Company";
 import { OfferGenerator } from "$generators/Offer";
 import { CareerGenerator } from "$generators/Career";
@@ -31,12 +31,31 @@ describe("OfferRepository", () => {
     displayOrder: 1
   };
 
+  const expectToCreateAValidOfferWithTarget = async (targetApplicantType: TargetApplicantType) => {
+    const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+    const offerProps = OfferGenerator.data.withObligatoryData({ companyUuid, targetApplicantType });
+    const offer = await OfferRepository.create(offerProps);
+    expect(offer).toEqual(expect.objectContaining(offerProps));
+  };
+
   describe("Create", () => {
     it("creates a new offer", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const offerProps = OfferGenerator.data.withObligatoryData({ companyUuid });
       const offer = await OfferRepository.create(offerProps);
       expect(offer).toEqual(expect.objectContaining(offerProps));
+    });
+
+    it("creates a new offer with a targetApplicantType for students", async () => {
+      await expectToCreateAValidOfferWithTarget(TargetApplicantType.student);
+    });
+
+    it("creates a new offer with a targetApplicantType for graduates", async () => {
+      await expectToCreateAValidOfferWithTarget(TargetApplicantType.graduate);
+    });
+
+    it("creates a new offer with a targetApplicantType for both graduates and students", async () => {
+      await expectToCreateAValidOfferWithTarget(TargetApplicantType.both);
     });
 
     it("creates a new offer with one section", async () => {

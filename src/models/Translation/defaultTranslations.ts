@@ -48,6 +48,7 @@ export const defaultTranslations = {
     },
     { key: "currentCareerYear", value: "Qué año estás cursando? (sin CBC)" }
   ],
+  targetApplicantTypeSelector: [{ key: "title", value: "Tipo de postulante objetivo" }],
   editOffer: [
     { key: "create", value: "Publicar oferta" },
     { key: "edit", value: "Editar tu oferta" },

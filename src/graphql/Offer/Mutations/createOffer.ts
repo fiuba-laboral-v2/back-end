@@ -1,6 +1,7 @@
 import { GraphQLOffer } from "../Types/GraphQLOffer";
 import { GraphQLOfferCareerInput } from "../Types/GraphQLOfferCareer";
 import { GraphQLOfferSectionInput } from "../Types/GraphQLOfferSection";
+import { GraphQLTargetApplicantType } from "../Types/GraphQLTargetApplicantType";
 import { OfferRepository } from "$models/Offer";
 import { ICompanyUser } from "$graphql/Context";
 import { Int, List, nonNull, String } from "$graphql/fieldTypes";
@@ -14,6 +15,9 @@ export const createOffer = {
     },
     description: {
       type: nonNull(String)
+    },
+    targetApplicantType: {
+      type: nonNull(GraphQLTargetApplicantType)
     },
     hoursPerDay: {
       type: nonNull(Int)

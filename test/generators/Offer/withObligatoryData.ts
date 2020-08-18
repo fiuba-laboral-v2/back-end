@@ -1,11 +1,12 @@
 import { IVariables } from "./interfaces";
-import { IOfferAttributes } from "$models/Offer/Interface";
+import { IOfferAttributes, TargetApplicantType } from "$models/Offer/Interface";
 
 export const withObligatoryData = ({
   index,
   companyUuid,
   careers,
-  sections
+  sections,
+  targetApplicantType
 }: IVariables): IOfferAttributes => {
   const data = {
     companyUuid,
@@ -14,6 +15,7 @@ export const withObligatoryData = ({
     hoursPerDay: index + 1,
     minimumSalary: index + 1,
     maximumSalary: 2 * index + 1,
+    targetApplicantType: targetApplicantType || TargetApplicantType.both,
     careers,
     sections
   };

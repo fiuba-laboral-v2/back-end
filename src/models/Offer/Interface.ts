@@ -1,6 +1,14 @@
 import { IOfferSection } from "./OfferSection/Interface";
 import { IOfferCareer } from "./OfferCareer/Interface";
 
+export enum TargetApplicantType {
+  graduate = "graduate",
+  student = "student",
+  both = "both"
+}
+
+export const targetApplicantTypeEnumValues = Object.keys(TargetApplicantType);
+
 export interface ICreateOffer {
   title: string;
   description: string;
@@ -10,6 +18,7 @@ export interface ICreateOffer {
   sections?: IOfferSection[];
   careers?: IOfferCareer[];
   companyUuid: string;
+  targetApplicantType: TargetApplicantType;
 }
 
 export interface IUpdateOffer extends ICreateOffer {

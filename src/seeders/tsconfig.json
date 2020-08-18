@@ -4,5 +4,6 @@
     "outDir": "../../dist_seeders",
     "rootDir": "../../",
     "sourceMap": false
-  }
+  },
+  "include": ["../models/Offer/Interface", "../seeders"]
 }

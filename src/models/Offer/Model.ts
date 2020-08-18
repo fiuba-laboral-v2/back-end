@@ -17,10 +17,11 @@ import {
   UUIDV4,
   ENUM
 } from "sequelize";
-import { Career, Company, OfferCareer, OfferSection, OfferApprovalEvent } from "..";
+import { Career, Company, OfferCareer, OfferSection, OfferApprovalEvent } from "$models";
 import { validateIntegerInRange, validateSalaryRange } from "validations-fiuba-laboral-v2";
 import { approvalStatuses, ApprovalStatus } from "$models/ApprovalStatus";
-import { isApprovalStatus } from "$models/SequelizeModelValidators";
+import { isApprovalStatus, isTargetApplicantType } from "$models/SequelizeModelValidators";
+import { TargetApplicantType, targetApplicantTypeEnumValues } from "./Interface";
 
 @Table({
   tableName: "Offers",
@@ -76,6 +77,13 @@ export class Offer extends Model<Offer> {
     ...isApprovalStatus
   })
   public graduadosApprovalStatus: ApprovalStatus;
+
+  @Column({
+    allowNull: false,
+    type: ENUM<string>({ values: targetApplicantTypeEnumValues }),
+    ...isTargetApplicantType
+  })
+  public targetApplicantType: TargetApplicantType;
 
   @Is("hoursPerDay", validateIntegerInRange({ min: { value: 0, include: false } }))
   @Column({
