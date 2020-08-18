@@ -45,7 +45,8 @@ export class JobApplicationApprovalEvent extends Model<JobApplicationApprovalEve
   @Column({
     allowNull: false,
     references: { model: "Admins", key: "uuid" },
-    type: UUID
+    type: UUID,
+    ...isUuid
   })
   public adminUserUuid: string;
 

@@ -38,6 +38,20 @@ describe("JobApplicationApprovalEvent", () => {
     );
   };
 
+  const expectToThrowAnErrorOnInvalidUuid = async (attribute: string) => {
+    const attributes = {
+      applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
+      adminUserUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
+      status: ApprovalStatus.pending
+    };
+    attributes[attribute] = "invalidUuid";
+    const jobApplicationApprovalEvent = new JobApplicationApprovalEvent(attributes);
+    await expect(jobApplicationApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      "Validation error: uuid has invalid format"
+    );
+  };
+
   it("creates a valid JobApplicationApprovalEvent with pending status", async () => {
     await expectToCreateAValidEventWithStatus(ApprovalStatus.pending);
   });
@@ -87,5 +101,17 @@ describe("JobApplicationApprovalEvent", () => {
 
   it("throws an error if no status is provided", async () => {
     await expectToThrowErrorOnMissingAttribute("status");
+  });
+
+  it("throws an error if offerUuid has invalid format", async () => {
+    await expectToThrowAnErrorOnInvalidUuid("offerUuid");
+  });
+
+  it("throws an error if applicantUuid has invalid format", async () => {
+    await expectToThrowAnErrorOnInvalidUuid("applicantUuid");
+  });
+
+  it("throws an error if adminUserUuid has invalid format", async () => {
+    await expectToThrowAnErrorOnInvalidUuid("adminUserUuid");
   });
 });
