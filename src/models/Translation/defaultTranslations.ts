@@ -137,6 +137,12 @@ export const defaultTranslations = {
     { key: "salaryTo", value: "Hasta" },
     { key: "salaryTitle", value: "Salario Neto" }
   ],
+  offerTargetApplicantType: [
+    { key: "title", value: "Tipo de postulante objetivo" },
+    { key: "graduate", value: "Graduados" },
+    { key: "student", value: "Alumnos" },
+    { key: "both", value: "Alumnos y graduados" }
+  ],
   offerWorkload: [
     { key: "title", value: "Carga horaria" },
     { key: "hoursPerDay", value: "Horas por dia" }
