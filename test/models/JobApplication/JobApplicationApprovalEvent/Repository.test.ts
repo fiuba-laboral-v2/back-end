@@ -9,7 +9,8 @@ import { CompanyGenerator } from "$generators/Company";
 import { OfferGenerator } from "$generators/Offer";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { ValidationError } from "sequelize";
+import { ValidationError, ForeignKeyConstraintError } from "sequelize";
+import generateUuid from "uuid/v4";
 import { UUID_REGEX } from "$test/models";
 
 describe("JobApplicationApprovalEventRepository", () => {
@@ -47,6 +48,25 @@ describe("JobApplicationApprovalEventRepository", () => {
         createdAt: expect.any(Date),
         updatedAt: expect.any(Date)
       })
+    );
+  };
+
+  const expectToThrowErrorOnForeignKeyFor = async (attribute: string) => {
+    const { applicantUuid, offerUuid } = await createOfferAndApplicant();
+    const attributes = {
+      offerUuid,
+      applicantUuid,
+      adminUserUuid: admin.userUuid,
+      status: ApprovalStatus.pending
+    };
+    attributes[attribute] = generateUuid();
+    const constrain = `JobApplicationApprovalEvent_${attribute}_fkey`;
+    const model = "JobApplicationApprovalEvent";
+    await expect(
+      JobApplicationApprovalEventRepository.create(attributes)
+    ).rejects.toThrowErrorWithMessage(
+      ForeignKeyConstraintError,
+      `insert or update on table "${model}" violates foreign key constraint "${constrain}"`
     );
   };
 
@@ -119,6 +139,18 @@ describe("JobApplicationApprovalEventRepository", () => {
           status: "undefinedStatus" as ApprovalStatus
         })
       ).rejects.toThrowErrorWithMessage(ValidationError, isApprovalStatus.validate.isIn.msg);
+    });
+
+    it("throws an error if the adminUserUuid does not belong to an admin", async () => {
+      await expectToThrowErrorOnForeignKeyFor("adminUserUuid");
+    });
+
+    it("throws an error if the offerUuid does not belong to an offer", async () => {
+      await expectToThrowErrorOnForeignKeyFor("offerUuid");
+    });
+
+    it("throws an error if the applicantUuid does not belong to an applicant", async () => {
+      await expectToThrowErrorOnForeignKeyFor("applicantUuid");
     });
   });
 });
