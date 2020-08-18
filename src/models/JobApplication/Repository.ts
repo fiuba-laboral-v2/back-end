@@ -1,14 +1,14 @@
 import { Applicant, JobApplication, Offer } from "$models";
+import { IUpdateApprovalStatus } from "./Interfaces";
+import { JobApplicationNotFoundError } from "./Errors";
+import { Secretary } from "$models/Admin";
 import { IPaginatedJobApplicationsInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { Op } from "sequelize";
 import { PaginationConfig } from "$config/PaginationConfig";
 
 export const JobApplicationRepository = {
-  apply: async (applicantUuid: string, offer: Offer) =>
-    JobApplication.create({
-      offerUuid: offer.uuid,
-      applicantUuid
-    }),
+  apply: (applicantUuid: string, { uuid: offerUuid }: Offer) =>
+    JobApplication.create({ offerUuid, applicantUuid }),
   hasApplied: async (applicant: Applicant, offer: Offer) => {
     const jobApplication = await JobApplication.findOne({
       where: {
@@ -69,6 +69,23 @@ export const JobApplicationRepository = {
       shouldFetchMore: result.length === limit,
       results: result.slice(0, limit - 1)
     };
+  },
+  updateApprovalStatus: async ({
+    offerUuid,
+    applicantUuid,
+    secretary,
+    status
+  }: IUpdateApprovalStatus) => {
+    const attributes = {
+      ...(secretary === Secretary.graduados && { graduadosApprovalStatus: status }),
+      ...(secretary === Secretary.extension && { extensionApprovalStatus: status })
+    };
+    const [, [updatedJobApplication]] = await JobApplication.update(attributes, {
+      where: { offerUuid, applicantUuid },
+      returning: true
+    });
+    if (!updatedJobApplication) throw new JobApplicationNotFoundError(offerUuid, applicantUuid);
+    return updatedJobApplication;
   },
   truncate: () => JobApplication.truncate()
 };

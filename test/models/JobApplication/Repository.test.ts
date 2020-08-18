@@ -1,7 +1,7 @@
 import { ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
 import { CompanyRepository } from "$models/Company";
 import { Offer, OfferRepository } from "$models/Offer";
-import { JobApplicationRepository } from "$models/JobApplication";
+import { JobApplicationNotFoundError, JobApplicationRepository } from "$models/JobApplication";
 import { Applicant, Company, JobApplication } from "$models";
 import { UserRepository } from "$models/User";
 import { CompanyGenerator } from "$generators/Company";
@@ -10,12 +10,20 @@ import { OfferGenerator } from "$generators/Offer";
 import MockDate from "mockdate";
 import { range } from "lodash";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { Secretary } from "$models/Admin";
 
 describe("JobApplicationRepository", () => {
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
   });
+
+  const createJobApplication = async () => {
+    const applicant = await ApplicantGenerator.instance.withMinimumData();
+    const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+    const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid });
+    return JobApplicationRepository.apply(applicant.uuid, offer);
+  };
 
   describe("Apply", () => {
     it("applies to a new jobApplication", async () => {
@@ -268,16 +276,116 @@ describe("JobApplicationRepository", () => {
     });
   });
 
-  describe("Delete cascade", () => {
-    const createJobApplication = async () => {
-      const applicant = await ApplicantGenerator.instance.withMinimumData();
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid });
-      return JobApplicationRepository.apply(applicant.uuid, offer);
+  describe("updateApprovalStatus", () => {
+    const expectGraduadosStatusToBe = async (
+      status: ApprovalStatus,
+      secretary: Secretary,
+      statusColumn: string
+    ) => {
+      const { offerUuid, applicantUuid } = await createJobApplication();
+      const jobApplication = await JobApplicationRepository.updateApprovalStatus({
+        offerUuid,
+        applicantUuid,
+        status,
+        secretary
+      });
+      expect(jobApplication[statusColumn]).toEqual(status);
     };
 
+    it("sets to pending the jobApplication by graduados secretary", async () => {
+      await expectGraduadosStatusToBe(
+        ApprovalStatus.pending,
+        Secretary.graduados,
+        "graduadosApprovalStatus"
+      );
+    });
+
+    it("approves the jobApplication by graduados secretary", async () => {
+      await expectGraduadosStatusToBe(
+        ApprovalStatus.approved,
+        Secretary.graduados,
+        "graduadosApprovalStatus"
+      );
+    });
+
+    it("rejects the jobApplication by graduados secretary", async () => {
+      await expectGraduadosStatusToBe(
+        ApprovalStatus.rejected,
+        Secretary.graduados,
+        "graduadosApprovalStatus"
+      );
+    });
+
+    it("sets to pending the jobApplication by extension secretary", async () => {
+      await expectGraduadosStatusToBe(
+        ApprovalStatus.pending,
+        Secretary.extension,
+        "extensionApprovalStatus"
+      );
+    });
+
+    it("approved the jobApplication by extension secretary", async () => {
+      await expectGraduadosStatusToBe(
+        ApprovalStatus.approved,
+        Secretary.extension,
+        "extensionApprovalStatus"
+      );
+    });
+
+    it("rejects the jobApplication by extension secretary", async () => {
+      await expectGraduadosStatusToBe(
+        ApprovalStatus.approved,
+        Secretary.extension,
+        "extensionApprovalStatus"
+      );
+    });
+
+    it("throws an error if the offer does not exists", async () => {
+      const { uuid: applicantUuid } = await ApplicantGenerator.instance.withMinimumData();
+      const nonExistentOfferUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+      await expect(
+        JobApplicationRepository.updateApprovalStatus({
+          offerUuid: nonExistentOfferUuid,
+          applicantUuid,
+          status: ApprovalStatus.approved,
+          secretary: Secretary.extension
+        })
+      ).rejects.toThrowErrorWithMessage(
+        JobApplicationNotFoundError,
+        JobApplicationNotFoundError.buildMessage(nonExistentOfferUuid, applicantUuid)
+      );
+    });
+
+    it("throws an error if the applicant does not exists", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const { uuid: offerUuid } = await OfferGenerator.instance.withObligatoryData({ companyUuid });
+      const nonExistentApplicantUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+      await expect(
+        JobApplicationRepository.updateApprovalStatus({
+          offerUuid,
+          applicantUuid: nonExistentApplicantUuid,
+          status: ApprovalStatus.approved,
+          secretary: Secretary.extension
+        })
+      ).rejects.toThrowErrorWithMessage(
+        JobApplicationNotFoundError,
+        JobApplicationNotFoundError.buildMessage(offerUuid, nonExistentApplicantUuid)
+      );
+    });
+  });
+
+  describe("Delete", () => {
+    it("deletes all jobApplications", async () => {
+      await JobApplicationRepository.truncate();
+      await createJobApplication();
+      await createJobApplication();
+      expect(await JobApplication.findAll()).toHaveLength(2);
+      await JobApplicationRepository.truncate();
+      expect(await JobApplication.findAll()).toHaveLength(0);
+    });
+
     it("deletes all jobApplication if all offers are deleted", async () => {
-      await JobApplication.truncate();
+      await JobApplicationRepository.truncate();
       await createJobApplication();
       expect(await JobApplication.findAll()).toHaveLength(1);
       await OfferRepository.truncate();
@@ -285,7 +393,7 @@ describe("JobApplicationRepository", () => {
     });
 
     it("deletes all jobApplication if all applicants are deleted", async () => {
-      await JobApplication.truncate();
+      await JobApplicationRepository.truncate();
       await createJobApplication();
       expect(await JobApplication.findAll()).toHaveLength(1);
       await UserRepository.truncate();
@@ -293,7 +401,7 @@ describe("JobApplicationRepository", () => {
     });
 
     it("deletes all jobApplication if all companies are deleted", async () => {
-      await JobApplication.truncate();
+      await JobApplicationRepository.truncate();
       await createJobApplication();
       expect(await JobApplication.findAll()).toHaveLength(1);
       await CompanyRepository.truncate();
