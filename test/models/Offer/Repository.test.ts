@@ -175,6 +175,20 @@ describe("OfferRepository", () => {
   });
 
   describe("Update", () => {
+    const expectToUpdateTargetApplicantTypeTo = async (
+      targetApplicantType: TargetApplicantType
+    ) => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const attributes = OfferGenerator.data.withObligatoryData({ companyUuid });
+      const { uuid } = await OfferRepository.create(attributes);
+      const updatedOffer = await OfferRepository.update({
+        uuid,
+        ...attributes,
+        targetApplicantType
+      });
+      expect(updatedOffer.targetApplicantType).toEqual(targetApplicantType);
+    };
+
     it("updates successfully", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const attributes = OfferGenerator.data.withObligatoryData({ companyUuid });
@@ -187,6 +201,18 @@ describe("OfferRepository", () => {
       };
       await OfferRepository.update({ ...newAttributes, uuid });
       expect((await OfferRepository.findByUuid(uuid)).minimumSalary).toEqual(newSalary);
+    });
+
+    it("updates targetApplicantType to student", async () => {
+      await expectToUpdateTargetApplicantTypeTo(TargetApplicantType.student);
+    });
+
+    it("updates targetApplicantType to graduate", async () => {
+      await expectToUpdateTargetApplicantTypeTo(TargetApplicantType.graduate);
+    });
+
+    it("updates targetApplicantType to both graduate and student", async () => {
+      await expectToUpdateTargetApplicantTypeTo(TargetApplicantType.both);
     });
 
     it("throws an error if the offer does not exist", async () => {
