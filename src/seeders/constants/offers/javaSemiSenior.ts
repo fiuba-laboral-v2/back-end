@@ -1,10 +1,12 @@
 import { uuids } from "../uuids";
+import { TargetApplicantType } from "../../../models/Offer/Interface";
 
 export const javaSemiSenior = {
   offer: {
     uuid: uuids.offers.java_semi_senior,
     companyUuid: uuids.companies.devartis,
     title: "Desarrollador Java semi senior",
+    target: TargetApplicantType.both,
     description:
       "En Mercado Libre estamos democratizando el comercio, el dinero " +
       "y los pagos en América Latina.\n\n" +
