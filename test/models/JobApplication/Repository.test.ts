@@ -1,8 +1,8 @@
 import { ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
 import { CompanyRepository } from "$models/Company";
-import { Offer, OfferRepository } from "$models/Offer";
+import { OfferRepository } from "$models/Offer";
 import { JobApplicationNotFoundError, JobApplicationRepository } from "$models/JobApplication";
-import { Applicant, Company, JobApplication } from "$models";
+import { Applicant, Company, JobApplication, Offer } from "$models";
 import { UserRepository } from "$models/User";
 import { CompanyGenerator } from "$generators/Company";
 import { ApplicantGenerator } from "$generators/Applicant";

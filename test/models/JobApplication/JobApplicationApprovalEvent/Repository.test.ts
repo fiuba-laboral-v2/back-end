@@ -1,6 +1,9 @@
 import { JobApplicationApprovalEventRepository } from "$models/JobApplication/JobApplicationsApprovalEvent";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
+import { OfferRepository } from "$models/Offer";
+import { ApplicantRepository } from "$models/Applicant";
+import { AdminRepository } from "$models/Admin";
 import { Admin } from "$models";
 import { isApprovalStatus } from "$models/SequelizeModelValidators";
 import { Secretary } from "$models/Admin";
@@ -68,6 +71,16 @@ describe("JobApplicationApprovalEventRepository", () => {
       ForeignKeyConstraintError,
       `insert or update on table "${model}" violates foreign key constraint "${constrain}"`
     );
+  };
+
+  const createJobApplicationApprovalEvent = async () => {
+    const { applicantUuid, offerUuid } = await createOfferAndApplicant();
+    return JobApplicationApprovalEventRepository.create({
+      offerUuid,
+      applicantUuid,
+      adminUserUuid: admin.userUuid,
+      status: ApprovalStatus.pending
+    });
   };
 
   describe("create", () => {
@@ -155,16 +168,6 @@ describe("JobApplicationApprovalEventRepository", () => {
   });
 
   describe("findAll", () => {
-    const createJobApplicationApprovalEvent = async () => {
-      const { applicantUuid, offerUuid } = await createOfferAndApplicant();
-      return JobApplicationApprovalEventRepository.create({
-        offerUuid,
-        applicantUuid,
-        adminUserUuid: admin.userUuid,
-        status: ApprovalStatus.pending
-      });
-    };
-
     it("finds all events", async () => {
       await JobApplicationApprovalEventRepository.truncate();
       await createJobApplicationApprovalEvent();
@@ -172,6 +175,35 @@ describe("JobApplicationApprovalEventRepository", () => {
       await createJobApplicationApprovalEvent();
       await createJobApplicationApprovalEvent();
       expect(await JobApplicationApprovalEventRepository.findAll()).toHaveLength(4);
+    });
+  });
+
+  describe("delete by cascade", () => {
+    it("deletes all events by deleting offers table", async () => {
+      await JobApplicationApprovalEventRepository.truncate();
+      await createJobApplicationApprovalEvent();
+      await createJobApplicationApprovalEvent();
+      expect(await JobApplicationApprovalEventRepository.findAll()).toHaveLength(2);
+      await OfferRepository.truncate();
+      expect(await JobApplicationApprovalEventRepository.findAll()).toHaveLength(0);
+    });
+
+    it("deletes all events by deleting applicants table", async () => {
+      await JobApplicationApprovalEventRepository.truncate();
+      await createJobApplicationApprovalEvent();
+      await createJobApplicationApprovalEvent();
+      expect(await JobApplicationApprovalEventRepository.findAll()).toHaveLength(2);
+      await ApplicantRepository.truncate();
+      expect(await JobApplicationApprovalEventRepository.findAll()).toHaveLength(0);
+    });
+
+    it("deletes all events by deleting admins table", async () => {
+      await JobApplicationApprovalEventRepository.truncate();
+      await createJobApplicationApprovalEvent();
+      await createJobApplicationApprovalEvent();
+      expect(await JobApplicationApprovalEventRepository.findAll()).toHaveLength(2);
+      await AdminRepository.truncate();
+      expect(await JobApplicationApprovalEventRepository.findAll()).toHaveLength(0);
     });
   });
 });
