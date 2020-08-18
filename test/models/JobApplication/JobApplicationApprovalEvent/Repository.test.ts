@@ -10,6 +10,7 @@ import { OfferGenerator } from "$generators/Offer";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ValidationError } from "sequelize";
+import { UUID_REGEX } from "$test/models";
 
 describe("JobApplicationApprovalEventRepository", () => {
   let admin: Admin;
@@ -41,6 +42,7 @@ describe("JobApplicationApprovalEventRepository", () => {
     const event = await JobApplicationApprovalEventRepository.create(attributes);
     expect(event).toEqual(
       expect.objectContaining({
+        uuid: expect.stringMatching(UUID_REGEX),
         ...attributes,
         createdAt: expect.any(Date),
         updatedAt: expect.any(Date)
