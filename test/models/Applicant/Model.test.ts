@@ -1,9 +1,10 @@
 import { ValidationError } from "sequelize";
 import generateUuid from "uuid/v4";
 import { Applicant } from "$models";
-import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 import { NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
 import { UUID_REGEX } from "../index";
+import { isApprovalStatus } from "$models/SequelizeModelValidators";
 
 describe("Applicant", () => {
   it("creates a valid applicant", async () => {
@@ -42,7 +43,7 @@ describe("Applicant", () => {
     });
     await expect(applicant.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
-      `ApprovalStatus must be one of these values: ${approvalStatuses}`
+      isApprovalStatus.validate.isIn.msg
     );
   });
 

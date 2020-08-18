@@ -2,6 +2,7 @@ import { NumberIsTooSmallError, SalaryRangeError } from "validations-fiuba-labor
 import { ValidationError } from "sequelize";
 import { Offer } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { isApprovalStatus } from "$models/SequelizeModelValidators";
 
 describe("Offer", () => {
   const offerAttributes = {
@@ -97,7 +98,7 @@ describe("Offer", () => {
     });
     await expect(offer.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
-      "Validation error: ApprovalStatus must be one of these values: pending,approved,rejected"
+      isApprovalStatus.validate.isIn.msg
     );
   });
 });

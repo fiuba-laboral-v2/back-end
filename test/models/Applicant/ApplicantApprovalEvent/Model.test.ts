@@ -1,7 +1,8 @@
 import { ValidationError } from "sequelize";
 import { ApplicantApprovalEvent } from "$models";
-import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 import { UUID_REGEX } from "../../index";
+import { isApprovalStatus } from "$models/SequelizeModelValidators";
 
 describe("ApplicantApprovalEvent", () => {
   const expectToCreateAValidInstanceWithAStatus = async (status: ApprovalStatus) => {
@@ -40,7 +41,7 @@ describe("ApplicantApprovalEvent", () => {
     });
     await expect(applicantApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
-      `ApprovalStatus must be one of these values: ${approvalStatuses}`
+      isApprovalStatus.validate.isIn.msg
     );
   });
 
