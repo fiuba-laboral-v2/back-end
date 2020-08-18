@@ -87,26 +87,25 @@ describe("getAdminTasks", () => {
       admin
     });
     pendingApplicant = await applicantsGenerator();
-    const offers = await OfferGenerator.instance.updatedWithStatus();
     const secretary = admin.secretary;
-    rejectedOffer = await offers.next({
+    rejectedOffer = await OfferGenerator.instance.updatedWithStatus({
       admin,
       companyUuid: approvedCompany.uuid,
       secretary,
       status: ApprovalStatus.rejected
-    }).value;
-    approvedOffer = await offers.next({
+    });
+    approvedOffer = await OfferGenerator.instance.updatedWithStatus({
       admin,
       companyUuid: approvedCompany.uuid,
       secretary,
       status: ApprovalStatus.approved
-    }).value;
-    pendingOffer = await offers.next({
+    });
+    pendingOffer = await OfferGenerator.instance.updatedWithStatus({
       admin,
       companyUuid: approvedCompany.uuid,
       secretary,
       status: ApprovalStatus.pending
-    }).value;
+    });
 
     allTasksByDescUpdatedAt = [
       rejectedCompany,

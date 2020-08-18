@@ -16,13 +16,12 @@ describe("OfferApprovalEventRepository", () => {
     await CompanyRepository.truncate();
     await OfferRepository.truncate();
   });
-  const offersGenerator = OfferGenerator.instance.withObligatoryData();
 
   describe("create", () => {
     const expectValidCreation = async (status: ApprovalStatus) => {
       const company = await CompanyGenerator.instance.withCompleteData();
       const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
-      const offer = await (await offersGenerator).next({ companyUuid: company.uuid }).value;
+      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
       const adminUserUuid = admin.userUuid;
       const event = await OfferApprovalEventRepository.create({
         adminUserUuid,
@@ -52,7 +51,7 @@ describe("OfferApprovalEventRepository", () => {
       const { userUuid: adminUserUuid } = new Admin({
         userUuid: userCompany.uuid
       });
-      const offer = await (await offersGenerator).next({ companyUuid: company.uuid }).value;
+      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
       const status = ApprovalStatus.approved;
       await expect(
         OfferApprovalEventRepository.create({
@@ -72,7 +71,7 @@ describe("OfferApprovalEventRepository", () => {
       const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
       const status = ApprovalStatus.approved;
       const adminUserUuid = admin.userUuid;
-      const offer = await (await offersGenerator).next({ companyUuid: company.uuid }).value;
+      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
       const event = await OfferApprovalEventRepository.create({
         adminUserUuid,
         offer,
@@ -91,7 +90,7 @@ describe("OfferApprovalEventRepository", () => {
         secretary: Secretary.extension
       });
       const status = ApprovalStatus.approved;
-      const offer = await (await offersGenerator).next({ companyUuid: company.uuid }).value;
+      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
       return OfferApprovalEventRepository.create({
         adminUserUuid,
         offer,

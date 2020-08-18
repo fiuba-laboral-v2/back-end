@@ -32,8 +32,7 @@ describe("updateOfferApprovalStatus", () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     const company = await CompanyGenerator.instance.withMinimumData();
-    const offersGenerator = OfferGenerator.instance.withObligatoryData();
-    offer = await (await offersGenerator).next({ companyUuid: company.uuid }).value;
+    offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
   });
 
   beforeEach(() => OfferApprovalEventRepository.truncate());

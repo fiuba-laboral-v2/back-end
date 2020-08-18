@@ -3,7 +3,7 @@ import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
 import { TestClientGenerator } from "$generators/TestClient";
 import { OfferRepository } from "$models/Offer";
-import { OfferGenerator, TOfferDataGenerator } from "$generators/Offer";
+import { OfferGenerator } from "$generators/Offer";
 import { client } from "../../ApolloTestClient";
 import { AdminGenerator } from "$generators/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
@@ -40,12 +40,9 @@ const EDIT_OFFER = gql`
 `;
 
 describe("editOffer", () => {
-  let offersData: TOfferDataGenerator;
-
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
-    offersData = OfferGenerator.data.withObligatoryData();
   });
 
   it("edits an offer successfully", async () => {
@@ -55,7 +52,7 @@ describe("editOffer", () => {
         approvalStatus: ApprovalStatus.approved
       }
     });
-    const initialAttributes = offersData.next({ companyUuid: company.uuid }).value;
+    const initialAttributes = OfferGenerator.data.withObligatoryData({ companyUuid: company.uuid });
     const { uuid } = await OfferRepository.create(initialAttributes);
     const newTitle = "Amazing Offer";
     await apolloClient.mutate({
@@ -74,7 +71,7 @@ describe("editOffer", () => {
         approvalStatus: ApprovalStatus.approved
       }
     });
-    const attributes = offersData.next({ companyUuid: company.uuid }).value;
+    const attributes = OfferGenerator.data.withObligatoryData({ companyUuid: company.uuid });
     const { errors } = await apolloClient.mutate({
       mutation: EDIT_OFFER,
       variables: {
@@ -89,9 +86,9 @@ describe("editOffer", () => {
 
   it("throws an error when the user does not belong to a company", async () => {
     const { apolloClient } = await TestClientGenerator.applicant();
-    const attributes = offersData.next({
+    const attributes = OfferGenerator.data.withObligatoryData({
       companyUuid: "ca2c5210-cb79-4026-9a26-1eb7a4159e72"
-    }).value;
+    });
     const { errors } = await apolloClient.mutate({
       mutation: EDIT_OFFER,
       variables: {
@@ -105,10 +102,11 @@ describe("editOffer", () => {
   });
 
   it("throws an error when the user does not belong to an approved company", async () => {
-    const { apolloClient } = await TestClientGenerator.company();
+    const { apolloClient, company } = await TestClientGenerator.company();
+    const offerData = OfferGenerator.data.withObligatoryData({ companyUuid: company.uuid });
     const { errors } = await apolloClient.mutate({
       mutation: EDIT_OFFER,
-      variables: { ...offersData.next().value, uuid: generateUuid() }
+      variables: { ...offerData, uuid: generateUuid() }
     });
     expect(errors![0].extensions!.data).toEqual({
       errorType: UnauthorizedError.name
@@ -117,9 +115,10 @@ describe("editOffer", () => {
 
   it("throws an error when a user is not logged in", async () => {
     const apolloClient = client.loggedOut();
+    const offerData = OfferGenerator.data.withObligatoryData({ companyUuid: generateUuid() });
     const { errors } = await apolloClient.mutate({
       mutation: EDIT_OFFER,
-      variables: { ...offersData.next().value, uuid: generateUuid() }
+      variables: { ...offerData, uuid: generateUuid() }
     });
     expect(errors![0].extensions!.data).toEqual({
       errorType: AuthenticationError.name

@@ -4,8 +4,6 @@ import { OfferRepository } from "$models/Offer";
 import { Offer, Admin } from "$models";
 import { IOfferCareer } from "$models/Offer/OfferCareer";
 import { IOfferSection } from "$models/Offer/OfferSection";
-import { GenericGenerator, TGenericGenerator } from "../GenericGenerator";
-import { IOfferAttributes } from "$models/Offer/Interface";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
@@ -15,54 +13,42 @@ export interface IOfferInput {
   sections?: IOfferSection[];
 }
 
-export type TOfferGenerator = TGenericGenerator<Promise<Offer>, IOfferInput>;
-export type TOfferDataGenerator = TGenericGenerator<IOfferAttributes, IOfferInput>;
-
-interface IUpdatedWithStatus extends IOfferInput {
+interface IUpdatedWithStatus {
   secretary: Secretary;
   status: ApprovalStatus;
   admin: Admin;
 }
 
 export const OfferGenerator = {
+  index: 0,
+  getIndex: () => {
+    OfferGenerator.index += 1;
+    return OfferGenerator.index;
+  },
   instance: {
-    withObligatoryData: async (): Promise<TOfferGenerator> => {
-      const generator = GenericGenerator<Promise<Offer>, IOfferInput>((index, variables) =>
-        OfferRepository.create(withObligatoryData({ index, ...variables }))
+    withObligatoryData: (variables: IOfferInput) =>
+      OfferRepository.create(OfferGenerator.data.withObligatoryData(variables)),
+    withOneSection: (variables: IOfferInput) =>
+      OfferRepository.create(withOneSection({ index: OfferGenerator.getIndex(), ...variables })),
+    updatedWithStatus: async ({
+      admin,
+      status,
+      secretary,
+      ...variables
+    }: IOfferInput & IUpdatedWithStatus) => {
+      const { uuid } = await OfferRepository.create(
+        withOneSection({ index: OfferGenerator.getIndex(), ...variables })
       );
-      await generator.next();
-      return generator;
-    },
-    withOneSection: async (): Promise<TOfferGenerator> => {
-      const generator = GenericGenerator<Promise<Offer>, IOfferInput>((index, variables) =>
-        OfferRepository.create(withOneSection({ index, ...variables }))
-      );
-      await generator.next();
-      return generator;
-    },
-    updatedWithStatus: async () => {
-      const generator = GenericGenerator<Promise<Offer>, IUpdatedWithStatus>(
-        async (index, { admin, status, secretary, ...variables }) => {
-          const offer = await OfferRepository.create(withOneSection({ index, ...variables }));
-          return OfferRepository.updateApprovalStatus({
-            uuid: offer.uuid,
-            adminUserUuid: admin.userUuid,
-            status,
-            secretary
-          });
-        }
-      );
-      await generator.next();
-      return generator;
+      return OfferRepository.updateApprovalStatus({
+        uuid,
+        adminUserUuid: admin.userUuid,
+        status,
+        secretary
+      });
     }
   },
   data: {
-    withObligatoryData: (): TOfferDataGenerator => {
-      const generator = GenericGenerator<IOfferAttributes, IOfferInput>((index, variables) =>
-        withObligatoryData({ index, ...variables })
-      );
-      generator.next();
-      return generator;
-    }
+    withObligatoryData: (variables: IOfferInput) =>
+      withObligatoryData({ index: OfferGenerator.getIndex(), ...variables })
   }
 };

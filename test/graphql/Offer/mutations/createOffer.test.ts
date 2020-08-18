@@ -2,7 +2,7 @@ import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 
 import { CareerGenerator } from "$generators/Career";
-import { OfferGenerator, TOfferDataGenerator } from "$generators/Offer";
+import { OfferGenerator } from "$generators/Offer";
 import { AdminGenerator } from "$generators/Admin";
 import { TestClientGenerator } from "$generators/TestClient";
 
@@ -91,14 +91,12 @@ const SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA = gql`
 `;
 
 describe("createOffer", () => {
-  let offers: TOfferDataGenerator;
   let admin: Admin;
 
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await UserRepository.truncate();
-    offers = OfferGenerator.data.withObligatoryData();
     admin = await AdminGenerator.instance({ secretary: Secretary.extension });
   });
 
@@ -110,9 +108,9 @@ describe("createOffer", () => {
           approvalStatus: ApprovalStatus.approved
         }
       });
-      const { companyUuid, ...createOfferAttributes } = offers.next({
+      const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
         companyUuid: company.uuid
-      }).value;
+      });
       const { data, errors } = await apolloClient.mutate({
         mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
         variables: createOfferAttributes
@@ -138,9 +136,9 @@ describe("createOffer", () => {
       });
       const { code } = await CareerGenerator.instance();
 
-      const { companyUuid, ...createOfferAttributes } = offers.next({
+      const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
         companyUuid: company.uuid
-      }).value;
+      });
       const { data, errors } = await apolloClient.mutate({
         mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
         variables: {
@@ -170,9 +168,13 @@ describe("createOffer", () => {
           approvalStatus: ApprovalStatus.approved
         }
       });
-      const { companyUuid, title, ...createOfferAttributesWithNoTitle } = offers.next({
+      const {
+        companyUuid,
+        title,
+        ...createOfferAttributesWithNoTitle
+      } = OfferGenerator.data.withObligatoryData({
         companyUuid: company.uuid
-      }).value;
+      });
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
         variables: createOfferAttributesWithNoTitle
@@ -188,9 +190,9 @@ describe("createOffer", () => {
         }
       });
       const apolloClient = client.loggedOut();
-      const { companyUuid, ...createOfferAttributes } = offers.next({
+      const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
         companyUuid: company.uuid
-      }).value;
+      });
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
         variables: createOfferAttributes
@@ -201,9 +203,9 @@ describe("createOffer", () => {
     it("throws an error if the current user is not a company", async () => {
       const { company } = await TestClientGenerator.company();
       const { apolloClient } = await TestClientGenerator.applicant();
-      const { companyUuid, ...createOfferAttributes } = offers.next({
+      const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
         companyUuid: company.uuid
-      }).value;
+      });
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
         variables: createOfferAttributes
@@ -218,9 +220,9 @@ describe("createOffer", () => {
           approvalStatus: ApprovalStatus.pending
         }
       });
-      const { companyUuid, ...createOfferAttributes } = offers.next({
+      const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
         companyUuid: company.uuid
-      }).value;
+      });
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
         variables: createOfferAttributes
@@ -235,9 +237,9 @@ describe("createOffer", () => {
           approvalStatus: ApprovalStatus.rejected
         }
       });
-      const { companyUuid, ...createOfferAttributes } = offers.next({
+      const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
         companyUuid: company.uuid
-      }).value;
+      });
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
         variables: createOfferAttributes

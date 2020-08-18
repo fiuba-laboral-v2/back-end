@@ -7,7 +7,7 @@ import { UserRepository } from "$models/User";
 
 import { CareerGenerator } from "$generators/Career";
 import { CompanyGenerator } from "$generators/Company";
-import { OfferGenerator, TOfferDataGenerator } from "$generators/Offer";
+import { OfferGenerator } from "$generators/Offer";
 import { TestClientGenerator } from "$generators/TestClient";
 import { UnauthorizedError } from "$graphql/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
@@ -29,8 +29,6 @@ const GET_OFFERS = gql`
 `;
 
 describe("getOffers", () => {
-  let offersData: TOfferDataGenerator;
-
   const approvedApplicantTestClient = async () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
@@ -45,7 +43,6 @@ describe("getOffers", () => {
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await UserRepository.truncate();
-    offersData = OfferGenerator.data.withObligatoryData();
   });
 
   describe("when offers exists", () => {
@@ -56,11 +53,11 @@ describe("getOffers", () => {
       const career1 = await CareerGenerator.instance();
       const career2 = await CareerGenerator.instance();
       offer1 = await OfferRepository.create({
-        ...offersData.next({ companyUuid }).value,
+        ...OfferGenerator.data.withObligatoryData({ companyUuid }),
         careers: [{ careerCode: career1.code }]
       });
       offer2 = await OfferRepository.create({
-        ...offersData.next({ companyUuid }).value,
+        ...OfferGenerator.data.withObligatoryData({ companyUuid }),
         careers: [{ careerCode: career2.code }]
       });
     };
@@ -120,9 +117,9 @@ describe("getOffers", () => {
         for (const _ of range(15)) {
           newOffersByDescUpdatedAt.push(
             await OfferRepository.create(
-              offersData.next({
+              OfferGenerator.data.withObligatoryData({
                 companyUuid: offer1.companyUuid
-              }).value
+              })
             )
           );
         }
