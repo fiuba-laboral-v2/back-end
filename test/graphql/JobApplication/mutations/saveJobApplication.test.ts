@@ -37,7 +37,7 @@ describe("saveJobApplication", () => {
       const { applicant, apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await AdminGenerator.instance(Secretary.extension)
+          admin: await AdminGenerator.instance({ secretary: Secretary.extension })
         }
       });
       const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
@@ -125,7 +125,7 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.rejected,
-          admin: await AdminGenerator.instance(Secretary.extension)
+          admin: await AdminGenerator.instance({ secretary: Secretary.extension })
         }
       });
       const { errors } = await apolloClient.mutate({
@@ -141,7 +141,7 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await AdminGenerator.instance(Secretary.extension)
+          admin: await AdminGenerator.instance({ secretary: Secretary.extension })
         }
       });
       const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
@@ -163,7 +163,7 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await AdminGenerator.instance(Secretary.extension)
+          admin: await AdminGenerator.instance({ secretary: Secretary.extension })
         }
       });
       const { errors } = await apolloClient.mutate({

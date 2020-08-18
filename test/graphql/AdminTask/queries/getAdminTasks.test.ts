@@ -89,16 +89,19 @@ describe("getAdminTasks", () => {
     pendingApplicant = await applicantsGenerator();
     const secretary = admin.secretary;
     rejectedOffer = await OfferGenerator.instance.updatedWithStatus({
+      admin,
       companyUuid: approvedCompany.uuid,
       secretary,
       status: ApprovalStatus.rejected
     });
     approvedOffer = await OfferGenerator.instance.updatedWithStatus({
+      admin,
       companyUuid: approvedCompany.uuid,
       secretary,
       status: ApprovalStatus.approved
     });
     pendingOffer = await OfferGenerator.instance.updatedWithStatus({
+      admin,
       companyUuid: approvedCompany.uuid,
       secretary,
       status: ApprovalStatus.pending

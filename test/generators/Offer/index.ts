@@ -1,6 +1,7 @@
 import { withObligatoryData } from "./withObligatoryData";
 import { withOneSection } from "./withOneSection";
 import { OfferRepository } from "$models/Offer";
+import { Admin } from "$models";
 import { IOfferCareer } from "$models/Offer/OfferCareer";
 import { IOfferSection } from "$models/Offer/OfferSection";
 import { Secretary } from "$models/Admin";
@@ -15,6 +16,7 @@ export interface IOfferInput {
 interface IUpdatedWithStatus {
   secretary: Secretary;
   status: ApprovalStatus;
+  admin: Admin;
 }
 
 export const OfferGenerator = {
@@ -29,6 +31,7 @@ export const OfferGenerator = {
     withOneSection: (variables: IOfferInput) =>
       OfferRepository.create(withOneSection({ index: OfferGenerator.getIndex(), ...variables })),
     updatedWithStatus: async ({
+      admin,
       status,
       secretary,
       ...variables
@@ -36,7 +39,12 @@ export const OfferGenerator = {
       const { uuid } = await OfferRepository.create(
         withOneSection({ index: OfferGenerator.getIndex(), ...variables })
       );
-      return OfferRepository.updateStatus({ uuid, status, secretary });
+      return OfferRepository.updateApprovalStatus({
+        uuid,
+        adminUserUuid: admin.userUuid,
+        status,
+        secretary
+      });
     }
   },
   data: {

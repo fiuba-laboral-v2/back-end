@@ -102,7 +102,7 @@ describe("getApplicant", () => {
     it("returns the applicant's modified approvalStatus", async () => {
       const { apolloClient } = await TestClientGenerator.user();
       const applicant = await ApplicantGenerator.instance.withMinimumData();
-      const admin = await AdminGenerator.instance(Secretary.extension);
+      const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
       await ApplicantRepository.updateApprovalStatus(
         admin.userUuid,
         applicant.uuid,

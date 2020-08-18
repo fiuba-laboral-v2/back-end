@@ -83,7 +83,7 @@ describe("getOfferByUuid", () => {
       const { company, apolloClient } = await TestClientGenerator.company({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await AdminGenerator.instance(Secretary.extension)
+          admin: await AdminGenerator.instance({ secretary: Secretary.extension })
         }
       });
       const { offer, career } = await createOffer(company);
@@ -131,7 +131,7 @@ describe("getOfferByUuid", () => {
       const { applicant, apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await AdminGenerator.instance(Secretary.extension)
+          admin: await AdminGenerator.instance({ secretary: Secretary.extension })
         }
       });
       const company = await CompanyGenerator.instance.withCompleteData();
@@ -154,7 +154,7 @@ describe("getOfferByUuid", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await AdminGenerator.instance(Secretary.extension)
+          admin: await AdminGenerator.instance({ secretary: Secretary.extension })
         }
       });
       const company = await CompanyGenerator.instance.withCompleteData();
