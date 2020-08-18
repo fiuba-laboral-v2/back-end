@@ -1,4 +1,4 @@
-import { Database } from "$config/Database";
+import { Database } from "$config";
 import { ISaveAdmin } from "./Interface";
 import { UserRepository } from "$models/User";
 import { AdminNotFoundError } from "./Errors";

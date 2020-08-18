@@ -1,7 +1,7 @@
 import { ICareer } from "./index";
 import { Op } from "sequelize";
 import { ApplicantCareer, Career } from "$models";
-import { Database } from "$config/Database";
+import { Database } from "$config";
 import { CareersNotFoundError } from "./Errors/CareersNotFoundError";
 
 import difference from "lodash/difference";

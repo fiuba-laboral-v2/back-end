@@ -4,6 +4,7 @@ export { ApplicantApprovalEvent } from "./Applicant/ApplicantApprovalEvent/Model
 export { Section } from "./Applicant/Section/Model";
 export { ApplicantLink } from "./Applicant/Link/Model";
 export { JobApplication } from "./JobApplication/Model";
+export { JobApplicationApprovalEvent } from "./JobApplication/JobApplicationsApprovalEvent/Model";
 export { Career } from "./Career/Model";
 export { ApplicantCareer } from "./Applicant/ApplicantCareer/Model";
 export { Capability } from "./Capability/Model";
