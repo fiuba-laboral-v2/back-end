@@ -13,6 +13,13 @@ describe("CareerRepository", () => {
       expect(career.description).toEqual(careerData.description);
     });
 
+    it("creates a new career with timestamps", async () => {
+      const careerData = CareerGenerator.data();
+      const career = await CareerRepository.create(careerData);
+      expect(career.createdAt).toEqual(expect.any(Date));
+      expect(career.updatedAt).toEqual(expect.any(Date));
+    });
+
     it("throws an error if the career with the same code already exists", async () => {
       const careerData = CareerGenerator.data();
       await CareerRepository.create(careerData);
