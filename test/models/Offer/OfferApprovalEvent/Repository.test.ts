@@ -1,6 +1,5 @@
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
-import { Admin } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { OfferApprovalEventRepository } from "$models/Offer/OfferApprovalEvent";
 import { ForeignKeyConstraintError } from "sequelize";
@@ -96,7 +95,7 @@ describe("OfferApprovalEventRepository", () => {
       });
     };
 
-    it("deletes all events if offer table is truncated", async () => {
+    it("deletes all events if offers table is truncated", async () => {
       await createOfferApprovalEvent();
       await createOfferApprovalEvent();
       await createOfferApprovalEvent();
