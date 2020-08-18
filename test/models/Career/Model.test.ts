@@ -31,18 +31,6 @@ describe("Career", () => {
     expect(career).toEqual(expect.objectContaining(attributes));
   });
 
-  it("timestamps are null until saved", async () => {
-    const career = new Career({
-      code: "10",
-      description: "Ingeniería Informática"
-    });
-    expect(career.createdAt).toBeUndefined();
-    expect(career.updatedAt).toBeUndefined();
-    career.save();
-    expect(career.createdAt).toEqual(expect.any(Date));
-    expect(career.updatedAt).toEqual(expect.any(Date));
-  });
-
   it("throws an error if no code is provided", async () => {
     await expectToThrowErrorOnMissingAttribute("code");
   });

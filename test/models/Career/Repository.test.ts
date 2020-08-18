@@ -1,6 +1,7 @@
 import { CareerRepository, CareersNotFoundError } from "$models/Career";
 import { CareerGenerator } from "$generators/Career";
 import { UniqueConstraintError } from "sequelize";
+import { Career } from "$models";
 
 describe("CareerRepository", () => {
   beforeAll(() => CareerRepository.truncate());
@@ -16,6 +17,15 @@ describe("CareerRepository", () => {
     it("creates a new career with timestamps", async () => {
       const careerData = CareerGenerator.data();
       const career = await CareerRepository.create(careerData);
+      expect(career.createdAt).toEqual(expect.any(Date));
+      expect(career.updatedAt).toEqual(expect.any(Date));
+    });
+
+    it("timestamps are null until saved", async () => {
+      const career = new Career({ code: "10", description: "Ingeniería Informática" });
+      expect(career.createdAt).toBeUndefined();
+      expect(career.updatedAt).toBeUndefined();
+      career.save();
       expect(career.createdAt).toEqual(expect.any(Date));
       expect(career.updatedAt).toEqual(expect.any(Date));
     });
