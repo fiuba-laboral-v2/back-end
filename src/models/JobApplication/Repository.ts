@@ -1,5 +1,6 @@
 import { Applicant, JobApplication, Offer } from "$models";
 import { IUpdateApprovalStatus } from "./Interfaces";
+import { JobApplicationNotFoundError } from "./Errors";
 import { Secretary } from "$models/Admin";
 
 export const JobApplicationRepository = {
@@ -37,7 +38,7 @@ export const JobApplicationRepository = {
       where: { offerUuid, applicantUuid },
       returning: true
     });
-    if (!updatedJobApplication) throw new Error("JobApplicationNotFoundError");
+    if (!updatedJobApplication) throw new JobApplicationNotFoundError(offerUuid, applicantUuid);
     return updatedJobApplication;
   },
   truncate: () => JobApplication.truncate()

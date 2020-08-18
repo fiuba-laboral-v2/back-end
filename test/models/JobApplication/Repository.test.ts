@@ -1,7 +1,7 @@
 import { ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
 import { CompanyRepository } from "$models/Company";
 import { OfferRepository } from "$models/Offer";
-import { JobApplicationRepository } from "$models/JobApplication";
+import { JobApplicationNotFoundError, JobApplicationRepository } from "$models/JobApplication";
 import { JobApplication } from "$models";
 import { UserRepository } from "$models/User";
 import { CompanyGenerator } from "$generators/Company";
@@ -256,6 +256,39 @@ describe("JobApplicationRepository", () => {
         ApprovalStatus.approved,
         Secretary.extension,
         "extensionApprovalStatus"
+      );
+    });
+
+    it("throws an error if the offer does not exists", async () => {
+      const { uuid: applicantUuid } = await ApplicantGenerator.instance.withMinimumData();
+      const nonExistentOfferUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+      await expect(
+        JobApplicationRepository.updateApprovalStatus({
+          offerUuid: nonExistentOfferUuid,
+          applicantUuid,
+          status: ApprovalStatus.approved,
+          secretary: Secretary.extension
+        })
+      ).rejects.toThrowErrorWithMessage(
+        JobApplicationNotFoundError,
+        JobApplicationNotFoundError.buildMessage(nonExistentOfferUuid, applicantUuid)
+      );
+    });
+
+    it("throws an error if the applicant does not exists", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const { uuid: offerUuid } = await OfferGenerator.instance.withObligatoryData({ companyUuid });
+      const nonExistentApplicantUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+      await expect(
+        JobApplicationRepository.updateApprovalStatus({
+          offerUuid,
+          applicantUuid: nonExistentApplicantUuid,
+          status: ApprovalStatus.approved,
+          secretary: Secretary.extension
+        })
+      ).rejects.toThrowErrorWithMessage(
+        JobApplicationNotFoundError,
+        JobApplicationNotFoundError.buildMessage(offerUuid, nonExistentApplicantUuid)
       );
     });
   });
