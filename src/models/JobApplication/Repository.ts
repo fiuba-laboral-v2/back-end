@@ -3,11 +3,8 @@ import { IUpdateApprovalStatus } from "./Interfaces";
 import { Secretary } from "$models/Admin";
 
 export const JobApplicationRepository = {
-  apply: async (applicantUuid: string, offer: Offer) =>
-    JobApplication.create({
-      offerUuid: offer.uuid,
-      applicantUuid
-    }),
+  apply: (applicantUuid: string, { uuid: offerUuid }: Offer) =>
+    JobApplication.create({ offerUuid, applicantUuid }),
   hasApplied: async (applicant: Applicant, offer: Offer) => {
     const jobApplication = await JobApplication.findOne({
       where: {
