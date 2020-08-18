@@ -9,7 +9,7 @@ import { JobApplicationRepository } from "$models/JobApplication";
 
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
-import { OfferGenerator, TOfferGenerator } from "$generators/Offer";
+import { OfferGenerator } from "$generators/Offer";
 import { AdminGenerator } from "$generators/Admin";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { TestClientGenerator } from "$generators/TestClient";
@@ -42,14 +42,12 @@ const GET_MY_LATEST_JOB_APPLICATIONS = gql`
 
 describe("getMyLatestJobApplications", () => {
   let applicant: Applicant;
-  let offers: TOfferGenerator;
   let admin: Admin;
 
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     applicant = await ApplicantGenerator.instance.withMinimumData();
-    offers = await OfferGenerator.instance.withObligatoryData();
     admin = await AdminGenerator.instance(Secretary.extension);
   });
 
@@ -61,7 +59,7 @@ describe("getMyLatestJobApplications", () => {
           approvalStatus: ApprovalStatus.approved
         }
       });
-      const offer = await offers.next({ companyUuid: company.uuid }).value;
+      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
       const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
 
       const { data } = await apolloClient.query({
@@ -106,7 +104,7 @@ describe("getMyLatestJobApplications", () => {
       apolloClient = result.apolloClient;
       company = result.company;
 
-      const offer = await offers.next({ companyUuid: company.uuid }).value;
+      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
       for (const _ of range(15)) {
         applicationsByDescUpdatedAt.push(
           await JobApplicationRepository.apply(

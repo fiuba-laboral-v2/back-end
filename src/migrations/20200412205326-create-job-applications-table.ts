@@ -18,6 +18,16 @@ export = {
             onDelete: "CASCADE",
             type: UUID
           },
+          extensionApprovalStatus: {
+            allowNull: false,
+            type: "approval_status",
+            defaultValue: "pending"
+          },
+          graduadosApprovalStatus: {
+            allowNull: false,
+            type: "approval_status",
+            defaultValue: "pending"
+          },
           createdAt: {
             allowNull: false,
             type: DATE
@@ -36,7 +46,5 @@ export = {
       });
     });
   },
-  down: (queryInterface: QueryInterface) => {
-    return queryInterface.dropTable("JobApplications");
-  }
+  down: (queryInterface: QueryInterface) => queryInterface.dropTable("JobApplications")
 };
