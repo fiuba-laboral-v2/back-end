@@ -1,4 +1,4 @@
-import { Database } from "$config/Database";
+import { Database } from "$config";
 import { IOffer } from "./";
 import { IOfferSection } from "./OfferSection";
 import { IOfferCareer } from "./OfferCareer";

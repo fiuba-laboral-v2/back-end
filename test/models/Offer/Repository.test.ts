@@ -15,6 +15,7 @@ import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AdminGenerator } from "$test/generators/Admin";
 import { OfferApprovalEventRepository } from "$models/Offer/OfferApprovalEvent";
+import { isApprovalStatus } from "$models/SequelizeModelValidators";
 
 describe("OfferRepository", () => {
   beforeAll(async () => {
@@ -284,7 +285,7 @@ describe("OfferRepository", () => {
 
       await expect(OfferRepository.updateApprovalStatus(params)).rejects.toThrowErrorWithMessage(
         ValidationError,
-        "Validation error: ApprovalStatus must be one of these values: pending,approved,rejected"
+        isApprovalStatus.validate.isIn.msg
       );
     });
   });

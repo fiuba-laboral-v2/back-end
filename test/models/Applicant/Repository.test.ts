@@ -10,7 +10,7 @@ import { FiubaUserNotFoundError } from "$models/User/Errors";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { CareerGenerator } from "$generators/Career";
 import { AdminGenerator } from "$generators/Admin";
-import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 import { FiubaUsersService } from "$services/FiubaUsers";
 import { Secretary } from "$models/Admin";
 import { UUID_REGEX } from "$test/models";
@@ -18,6 +18,7 @@ import {
   ForbiddenCurrentCareerYearError,
   MissingApprovedSubjectCountError
 } from "$models/Applicant/ApplicantCareer/Errors";
+import { isApprovalStatus } from "$models/SequelizeModelValidators";
 
 describe("ApplicantRepository", () => {
   beforeAll(async () => {
@@ -832,10 +833,7 @@ describe("ApplicantRepository", () => {
           applicant.uuid,
           "notDefinedValue" as ApprovalStatus
         )
-      ).rejects.toThrowErrorWithMessage(
-        ValidationError,
-        `ApprovalStatus must be one of these values: ${approvalStatuses}`
-      );
+      ).rejects.toThrowErrorWithMessage(ValidationError, isApprovalStatus.validate.isIn.msg);
     });
 
     it("does not update applicant status if it throws an error", async () => {
