@@ -153,4 +153,25 @@ describe("JobApplicationApprovalEventRepository", () => {
       await expectToThrowErrorOnForeignKeyFor("applicantUuid");
     });
   });
+
+  describe("findAll", () => {
+    const createJobApplicationApprovalEvent = async () => {
+      const { applicantUuid, offerUuid } = await createOfferAndApplicant();
+      return JobApplicationApprovalEventRepository.create({
+        offerUuid,
+        applicantUuid,
+        adminUserUuid: admin.userUuid,
+        status: ApprovalStatus.pending
+      });
+    };
+
+    it("finds all events", async () => {
+      await JobApplicationApprovalEventRepository.truncate();
+      await createJobApplicationApprovalEvent();
+      await createJobApplicationApprovalEvent();
+      await createJobApplicationApprovalEvent();
+      await createJobApplicationApprovalEvent();
+      expect(await JobApplicationApprovalEventRepository.findAll()).toHaveLength(4);
+    });
+  });
 });
