@@ -1,7 +1,7 @@
 import { ValidationError } from "sequelize";
 import { JobApplication } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { isApprovalStatus } from "$models/SequelizeModelValidators";
+import { isApprovalStatus, isUuid } from "$models/SequelizeModelValidators";
 
 describe("JobApplication", () => {
   it("creates a valid jobApplication", async () => {
@@ -126,7 +126,7 @@ describe("JobApplication", () => {
     });
     await expect(jobApplication.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
-      "uuid has invalid format"
+      isUuid.validate.isUUID.msg
     );
   });
 
@@ -137,7 +137,7 @@ describe("JobApplication", () => {
     });
     await expect(jobApplication.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
-      "uuid has invalid format"
+      isUuid.validate.isUUID.msg
     );
   });
 

@@ -2,7 +2,7 @@ import { ValidationError } from "sequelize";
 import { ApplicantApprovalEvent } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { UUID_REGEX } from "../../index";
-import { isApprovalStatus } from "$models/SequelizeModelValidators";
+import { isApprovalStatus, isUuid } from "$models/SequelizeModelValidators";
 
 describe("ApplicantApprovalEvent", () => {
   const expectToCreateAValidInstanceWithAStatus = async (status: ApprovalStatus) => {
@@ -98,7 +98,7 @@ describe("ApplicantApprovalEvent", () => {
     });
     await expect(applicantApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
-      "uuid has invalid format"
+      isUuid.validate.isUUID.msg
     );
   });
 
@@ -110,7 +110,7 @@ describe("ApplicantApprovalEvent", () => {
     });
     await expect(applicantApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
-      "uuid has invalid format"
+      isUuid.validate.isUUID.msg
     );
   });
 
@@ -122,7 +122,7 @@ describe("ApplicantApprovalEvent", () => {
     });
     await expect(applicantApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
-      "uuid has invalid format"
+      isUuid.validate.isUUID.msg
     );
   });
 });
