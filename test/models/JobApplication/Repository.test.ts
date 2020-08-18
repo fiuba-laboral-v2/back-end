@@ -260,9 +260,18 @@ describe("JobApplicationRepository", () => {
     });
   });
 
-  describe("Delete cascade", () => {
+  describe("Delete", () => {
+    it("deletes all jobApplications", async () => {
+      await JobApplicationRepository.truncate();
+      await createJobApplication();
+      await createJobApplication();
+      expect(await JobApplication.findAll()).toHaveLength(2);
+      await JobApplicationRepository.truncate();
+      expect(await JobApplication.findAll()).toHaveLength(0);
+    });
+
     it("deletes all jobApplication if all offers are deleted", async () => {
-      await JobApplication.truncate();
+      await JobApplicationRepository.truncate();
       await createJobApplication();
       expect(await JobApplication.findAll()).toHaveLength(1);
       await OfferRepository.truncate();
@@ -270,7 +279,7 @@ describe("JobApplicationRepository", () => {
     });
 
     it("deletes all jobApplication if all applicants are deleted", async () => {
-      await JobApplication.truncate();
+      await JobApplicationRepository.truncate();
       await createJobApplication();
       expect(await JobApplication.findAll()).toHaveLength(1);
       await UserRepository.truncate();
@@ -278,7 +287,7 @@ describe("JobApplicationRepository", () => {
     });
 
     it("deletes all jobApplication if all companies are deleted", async () => {
-      await JobApplication.truncate();
+      await JobApplicationRepository.truncate();
       await createJobApplication();
       expect(await JobApplication.findAll()).toHaveLength(1);
       await CompanyRepository.truncate();
