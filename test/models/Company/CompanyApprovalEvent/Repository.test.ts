@@ -27,6 +27,8 @@ describe("CompanyApprovalEventRepository", () => {
       expect(event.userUuid).toEqual(admin.userUuid);
       expect(event.companyUuid).toEqual(company.uuid);
       expect(event.status).toEqual(status);
+      expect(event.createdAt).toEqual(expect.any(Date));
+      expect(event.updatedAt).toEqual(expect.any(Date));
     };
 
     it("creates a valid CompanyApprovalEvent with approved status", async () => {

@@ -1,9 +1,17 @@
-import { BelongsTo, Column, ForeignKey, Model, Table } from "sequelize-typescript";
-import { DATE, ENUM, HasOneGetAssociationMixin, UUID, UUIDV4 } from "sequelize";
+import {
+  BelongsTo,
+  Column,
+  CreatedAt,
+  ForeignKey,
+  Model,
+  Table,
+  UpdatedAt
+} from "sequelize-typescript";
+import { ENUM, HasOneGetAssociationMixin, UUID, UUIDV4 } from "sequelize";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
 import { Admin, Company } from "$models";
 
-@Table({ tableName: "CompanyApprovalEvents" })
+@Table({ tableName: "CompanyApprovalEvents", timestamps: true })
 export class CompanyApprovalEvent extends Model<CompanyApprovalEvent> {
   @Column({
     allowNull: false,
@@ -35,18 +43,12 @@ export class CompanyApprovalEvent extends Model<CompanyApprovalEvent> {
   })
   public status: ApprovalStatus;
 
-  @Column({
-    allowNull: false,
-    type: DATE,
-    defaultValue: new Date()
-  })
+  @CreatedAt
+  @Column
   public createdAt: Date;
 
-  @Column({
-    allowNull: false,
-    type: DATE,
-    defaultValue: new Date()
-  })
+  @UpdatedAt
+  @Column
   public updatedAt: Date;
 
   @BelongsTo(() => Admin, "userUuid")

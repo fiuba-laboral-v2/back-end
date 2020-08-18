@@ -42,6 +42,13 @@ describe("AdminRepository", () => {
       );
     });
 
+    it("creates a valid Admin with timestamps", async () => {
+      const adminAttributes = AdminGenerator.data(Secretary.graduados);
+      const admin = await AdminRepository.create(adminAttributes);
+      expect(admin.createdAt).toEqual(expect.any(Date));
+      expect(admin.updatedAt).toEqual(expect.any(Date));
+    });
+
     it("throws error if admin already exists and rollback transaction", async () => {
       const adminAttributes = AdminGenerator.data(Secretary.extension);
       await AdminRepository.create(adminAttributes);

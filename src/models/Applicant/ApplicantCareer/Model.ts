@@ -1,12 +1,21 @@
-import { BelongsTo, Column, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript";
+import {
+  BelongsTo,
+  Column,
+  CreatedAt,
+  ForeignKey,
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt
+} from "sequelize-typescript";
 import { Applicant, Career } from "$models";
 import {
-  MissingApprovedSubjectCountError,
-  MissingCurrentCareerYearError,
   ForbiddenApprovedSubjectCountError,
-  ForbiddenCurrentCareerYearError
+  ForbiddenCurrentCareerYearError,
+  MissingApprovedSubjectCountError,
+  MissingCurrentCareerYearError
 } from "./Errors";
-import { HasOneGetAssociationMixin, INTEGER, BOOLEAN, DATE, UUID, STRING } from "sequelize";
+import { BOOLEAN, HasOneGetAssociationMixin, INTEGER, STRING, UUID } from "sequelize";
 import { isUuid, optional } from "$models/SequelizeModelValidators";
 import { validateIntegerInRange } from "validations-fiuba-laboral-v2";
 
@@ -16,7 +25,8 @@ import { validateIntegerInRange } from "validations-fiuba-laboral-v2";
     validateApplicantCareer(this: ApplicantCareer) {
       this.validateApplicantCareer();
     }
-  }
+  },
+  timestamps: true
 })
 export class ApplicantCareer extends Model<ApplicantCareer> {
   @ForeignKey(() => Career)
@@ -60,18 +70,12 @@ export class ApplicantCareer extends Model<ApplicantCareer> {
   })
   public isGraduate: boolean;
 
-  @Column({
-    allowNull: false,
-    type: DATE,
-    defaultValue: new Date()
-  })
+  @CreatedAt
+  @Column
   public createdAt: Date;
 
-  @Column({
-    allowNull: false,
-    type: DATE,
-    defaultValue: new Date()
-  })
+  @UpdatedAt
+  @Column
   public updatedAt: Date;
 
   @BelongsTo(() => Career, "careerCode")

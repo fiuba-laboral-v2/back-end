@@ -1,8 +1,16 @@
-import { BelongsToMany, Column, HasMany, Model, Table } from "sequelize-typescript";
+import {
+  BelongsToMany,
+  Column,
+  CreatedAt,
+  HasMany,
+  Model,
+  Table,
+  UpdatedAt
+} from "sequelize-typescript";
 import { Applicant, ApplicantCareer } from "$models";
-import { DATE, STRING } from "sequelize";
+import { STRING } from "sequelize";
 
-@Table({ tableName: "Careers" })
+@Table({ tableName: "Careers", timestamps: true })
 export class Career extends Model<Career> {
   @Column({
     allowNull: false,
@@ -17,18 +25,12 @@ export class Career extends Model<Career> {
   })
   public description: string;
 
-  @Column({
-    allowNull: false,
-    type: DATE,
-    defaultValue: new Date()
-  })
+  @CreatedAt
+  @Column
   public createdAt: Date;
 
-  @Column({
-    allowNull: false,
-    type: DATE,
-    defaultValue: new Date()
-  })
+  @UpdatedAt
+  @Column
   public updatedAt: Date;
 
   @BelongsToMany(() => Applicant, () => ApplicantCareer)

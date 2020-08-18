@@ -1,10 +1,18 @@
-import { Model, Table, Column, BelongsTo, ForeignKey } from "sequelize-typescript";
-import { UUID, HasOneGetAssociationMixin, DATE, ENUM } from "sequelize";
+import {
+  BelongsTo,
+  Column,
+  CreatedAt,
+  ForeignKey,
+  Model,
+  Table,
+  UpdatedAt
+} from "sequelize-typescript";
+import { ENUM, HasOneGetAssociationMixin, UUID } from "sequelize";
 import { User } from "..";
-import { SecretaryEnumValues, Secretary } from "./Interface";
+import { Secretary, SecretaryEnumValues } from "./Interface";
 import { isSecretary } from "../SequelizeModelValidators";
 
-@Table({ tableName: "Admins" })
+@Table({ tableName: "Admins", timestamps: true })
 export class Admin extends Model<Admin> {
   @ForeignKey(() => User)
   @Column({
@@ -23,18 +31,12 @@ export class Admin extends Model<Admin> {
   })
   public secretary: Secretary;
 
-  @Column({
-    allowNull: false,
-    type: DATE,
-    defaultValue: new Date()
-  })
+  @CreatedAt
+  @Column
   public createdAt: Date;
 
-  @Column({
-    allowNull: false,
-    type: DATE,
-    defaultValue: new Date()
-  })
+  @UpdatedAt
+  @Column
   public updatedAt: Date;
 
   @BelongsTo(() => User, "userUuid")

@@ -31,15 +31,6 @@ describe("Career", () => {
     expect(career).toEqual(expect.objectContaining(attributes));
   });
 
-  it("creates a career with timestamps", async () => {
-    const career = new Career({
-      code: "10",
-      description: "Ingeniería Informática"
-    });
-    expect(career.createdAt).toEqual(expect.any(Date));
-    expect(career.updatedAt).toEqual(expect.any(Date));
-  });
-
   it("throws an error if no code is provided", async () => {
     await expectToThrowErrorOnMissingAttribute("code");
   });
