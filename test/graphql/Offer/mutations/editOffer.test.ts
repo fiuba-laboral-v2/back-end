@@ -66,7 +66,9 @@ describe("editOffer", () => {
       variables: { ...initialAttributes, uuid, [attribute]: newValue }
     });
     const updatedOffer = await OfferRepository.findByUuid(uuid);
-    expect(updatedOffer[attribute]).not.toEqual(initialAttributes[attribute]);
+    if (newValue !== initialAttributes[attribute]) {
+      expect(updatedOffer[attribute]).not.toEqual(initialAttributes[attribute]);
+    }
     expect(updatedOffer[attribute]).toEqual(newValue);
   };
 
@@ -76,6 +78,10 @@ describe("editOffer", () => {
 
   it("edits an offer description", async () => {
     await expectToUpdateAttribute("description", "new description");
+  });
+
+  it("edits an offer targetApplicantType to both student and graduate", async () => {
+    await expectToUpdateAttribute("targetApplicantType", TargetApplicantType.both);
   });
 
   it("edits an offer targetApplicantType to student", async () => {
