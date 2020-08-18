@@ -4,6 +4,7 @@ import { OfferRepository } from "$models/Offer";
 import { Admin } from "$models";
 import { IOfferCareer } from "$models/Offer/OfferCareer";
 import { IOfferSection } from "$models/Offer/OfferSection";
+import { TargetApplicantType } from "$models/Offer";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
@@ -11,6 +12,7 @@ export interface IOfferInput {
   companyUuid: string;
   careers?: IOfferCareer[];
   sections?: IOfferSection[];
+  target?: TargetApplicantType;
 }
 
 interface IUpdatedWithStatus {

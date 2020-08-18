@@ -1,7 +1,8 @@
 import { NumberIsTooSmallError, SalaryRangeError } from "validations-fiuba-laboral-v2";
 import { ValidationError } from "sequelize";
-import { Offer } from "$models/Offer";
+import { Offer, TargetApplicantType } from "$models/Offer";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { isTargetApplicantType } from "$models/SequelizeModelValidators";
 
 describe("Offer", () => {
   const offerAttributes = {
@@ -10,7 +11,8 @@ describe("Offer", () => {
     description: "description",
     hoursPerDay: 8,
     minimumSalary: 52500,
-    maximumSalary: 70000
+    maximumSalary: 70000,
+    target: TargetApplicantType.both
   };
 
   const offerWithoutProperty = async (property: string) => {
@@ -19,9 +21,35 @@ describe("Offer", () => {
     return offerAttributesWithoutProperty;
   };
 
+  const createsAValidOfferWithTarget = async (target: TargetApplicantType) => {
+    const offer = new Offer({
+      ...offerAttributes,
+      target
+    });
+    await expect(offer.validate()).resolves.not.toThrow();
+  };
+
   it("creates a valid offer", async () => {
     const offer = new Offer(offerAttributes);
     await expect(offer.validate()).resolves.not.toThrow();
+  });
+
+  it("creates a valid offer with its given attributes", async () => {
+    const offer = new Offer(offerAttributes);
+    await expect(offer.validate()).resolves.not.toThrow();
+    expect(offer).toEqual(expect.objectContaining(offerAttributes));
+  });
+
+  it("creates a valid offer with a target for graduate", async () => {
+    await createsAValidOfferWithTarget(TargetApplicantType.graduate);
+  });
+
+  it("creates a valid offer with a target for student", async () => {
+    await createsAValidOfferWithTarget(TargetApplicantType.student);
+  });
+
+  it("creates a valid offer with a target for both student and graduate", async () => {
+    await createsAValidOfferWithTarget(TargetApplicantType.both);
   });
 
   it("creates a valid offer with default extensionApprovalStatus", async () => {
@@ -98,6 +126,17 @@ describe("Offer", () => {
     await expect(offer.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       "Validation error: ApprovalStatus must be one of these values: pending,approved,rejected"
+    );
+  });
+
+  it("throws an error if target isn not a TargetApplicantType enum value", async () => {
+    const offer = new Offer({
+      ...offerAttributes,
+      target: "undefinedTargetApplicantType"
+    });
+    await expect(offer.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      isTargetApplicantType.validate.isIn.msg
     );
   });
 });

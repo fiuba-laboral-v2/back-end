@@ -44,6 +44,10 @@ export = {
         type: "approval_status",
         defaultValue: "pending"
       },
+      target: {
+        allowNull: false,
+        type: "target_applicant_type"
+      },
       createdAt: {
         allowNull: false,
         type: DATE

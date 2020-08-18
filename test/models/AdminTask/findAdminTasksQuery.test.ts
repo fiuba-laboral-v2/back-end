@@ -72,7 +72,8 @@ describe("findAdminTasksQuery", () => {
       COALESCE ( Offers."graduadosApprovalStatus" ) AS "graduadosApprovalStatus",
       COALESCE ( Offers."hoursPerDay" ) AS "hoursPerDay",
       COALESCE ( Offers."minimumSalary" ) AS "minimumSalary",
-      COALESCE ( Offers."maximumSalary" ) AS "maximumSalary"
+      COALESCE ( Offers."maximumSalary" ) AS "maximumSalary",
+      COALESCE ( Offers."target" ) AS "target"
       FROM ((
         SELECT *, 'Applicants' AS "tableNameColumn" FROM "Applicants"
       ) AS Applicants FULL OUTER JOIN (
@@ -178,6 +179,7 @@ describe("findAdminTasksQuery", () => {
           COALESCE ( Offers."hoursPerDay" ) AS "hoursPerDay",
           COALESCE ( Offers."minimumSalary" ) AS "minimumSalary",
           COALESCE ( Offers."maximumSalary" ) AS "maximumSalary",
+          COALESCE ( Offers."target" ) AS "target",
           COALESCE ( Offers."createdAt" ) AS "createdAt",
           COALESCE ( Offers."updatedAt" ) AS "updatedAt"
         FROM (SELECT *, 'Offers' AS "tableNameColumn" FROM "Offers" ) AS Offers
