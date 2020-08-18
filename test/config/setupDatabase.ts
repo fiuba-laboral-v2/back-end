@@ -1,4 +1,4 @@
-import { Database } from "$config/Database";
+import { Database } from "$config";
 
 export const setupDatabase = () => {
   beforeAll(() => Database.setConnection());
