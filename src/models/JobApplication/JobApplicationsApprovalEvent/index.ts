@@ -1,0 +1,1 @@
+export { JobApplicationApprovalEventRepository } from "./Repository";

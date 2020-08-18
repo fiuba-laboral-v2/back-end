@@ -2,6 +2,7 @@ import { ValidationError } from "sequelize";
 import { JobApplicationApprovalEvent } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { UUID_REGEX } from "$test/models";
+import { isApprovalStatus } from "$models/SequelizeModelValidators";
 
 describe("JobApplicationApprovalEvent", () => {
   const expectToCreateAValidEventWithStatus = async (status: ApprovalStatus) => {
@@ -124,5 +125,18 @@ describe("JobApplicationApprovalEvent", () => {
 
   it("throws an error if adminUserUuid has invalid format", async () => {
     await expectToThrowAnErrorOnInvalidUuid("adminUserUuid");
+  });
+
+  it("throws an error if status has invalid format", async () => {
+    const jobApplicationApprovalEvent = new JobApplicationApprovalEvent({
+      offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+      applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
+      adminUserUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
+      status: "undefinedStatus"
+    });
+    await expect(jobApplicationApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      isApprovalStatus.validate.isIn.msg
+    );
   });
 });

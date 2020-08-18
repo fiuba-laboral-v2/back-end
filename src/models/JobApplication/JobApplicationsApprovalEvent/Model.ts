@@ -32,7 +32,7 @@ export class JobApplicationApprovalEvent extends Model<JobApplicationApprovalEve
   })
   public offerUuid: string;
 
-  @ForeignKey(() => Offer)
+  @ForeignKey(() => Applicant)
   @Column({
     allowNull: false,
     references: { model: "Applicants", key: "uuid" },
@@ -69,7 +69,10 @@ export class JobApplicationApprovalEvent extends Model<JobApplicationApprovalEve
   public admin: Admin;
 
   @BelongsTo(() => Offer, "offerUuid")
-  public company: Offer;
+  public offer: Offer;
+
+  @BelongsTo(() => Applicant, "applicantUuid")
+  public applicant: Applicant;
 
   public getOffer: HasOneGetAssociationMixin<Offer>;
   public getApplicant: HasOneGetAssociationMixin<Applicant>;

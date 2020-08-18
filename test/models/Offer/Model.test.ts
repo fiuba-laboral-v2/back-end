@@ -1,6 +1,6 @@
 import { NumberIsTooSmallError, SalaryRangeError } from "validations-fiuba-laboral-v2";
 import { ValidationError } from "sequelize";
-import { Offer } from "$models/Offer";
+import { Offer } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
 describe("Offer", () => {
