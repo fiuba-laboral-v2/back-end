@@ -38,12 +38,8 @@ export const OfferRepository = {
   }) =>
     Database.transaction(async transaction => {
       const offerAttributes = {
-        ...(secretary === Secretary.graduados && {
-          graduadosApprovalStatus: status
-        }),
-        ...(secretary === Secretary.extension && {
-          extensionApprovalStatus: status
-        })
+        ...(secretary === Secretary.graduados && { graduadosApprovalStatus: status }),
+        ...(secretary === Secretary.extension && { extensionApprovalStatus: status })
       };
 
       const [, [updatedOffer]] = await Offer.update(offerAttributes, {

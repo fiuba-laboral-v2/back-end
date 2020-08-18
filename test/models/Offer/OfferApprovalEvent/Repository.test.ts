@@ -18,7 +18,7 @@ describe("OfferApprovalEventRepository", () => {
   });
 
   describe("create", () => {
-    const expectValidCreation = async (status: ApprovalStatus) => {
+    const expectValidCreationWithStatus = async (status: ApprovalStatus) => {
       const company = await CompanyGenerator.instance.withCompleteData();
       const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
       const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
@@ -34,28 +34,26 @@ describe("OfferApprovalEventRepository", () => {
     };
 
     it("creates a valid OfferApprovalEvent with approved status", async () => {
-      await expectValidCreation(ApprovalStatus.approved);
+      await expectValidCreationWithStatus(ApprovalStatus.approved);
     });
 
     it("creates a valid OfferApprovalEvent with rejected status", async () => {
-      await expectValidCreation(ApprovalStatus.rejected);
+      await expectValidCreationWithStatus(ApprovalStatus.rejected);
     });
 
     it("creates a valid OfferApprovalEvent with pending status", async () => {
-      await expectValidCreation(ApprovalStatus.pending);
+      await expectValidCreationWithStatus(ApprovalStatus.pending);
     });
 
-    it("throws an error if userUuid does not belong to an admin", async () => {
+    it("throws an error if adminUserUuid does not belong to an admin", async () => {
       const company = await CompanyGenerator.instance.withCompleteData();
-      const [userCompany] = await company.getUsers();
-      const { userUuid: adminUserUuid } = new Admin({
-        userUuid: userCompany.uuid
-      });
+      const notAnAdminUserUuid = "b11a1432-1a79-4bce-aa2b-9dd0cb6aa648";
+
       const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
       const status = ApprovalStatus.approved;
       await expect(
         OfferApprovalEventRepository.create({
-          adminUserUuid,
+          adminUserUuid: notAnAdminUserUuid,
           offer,
           status
         })
@@ -98,7 +96,7 @@ describe("OfferApprovalEventRepository", () => {
       });
     };
 
-    it("deletes all events if companies tables is truncated", async () => {
+    it("deletes all events if offer table is truncated", async () => {
       await createOfferApprovalEvent();
       await createOfferApprovalEvent();
       await createOfferApprovalEvent();
