@@ -142,7 +142,7 @@ describe("JobApplicationApprovalEventRepository", () => {
       expect(userUuid).toEqual(admin.userUuid);
     });
 
-    it("throws an error if the status has an undefined enum value", async () => {
+    it("throws an error if the status is not an ApprovalStatus enum value", async () => {
       const { applicantUuid, offerUuid } = await createOfferAndApplicant();
       await expect(
         JobApplicationApprovalEventRepository.create({
