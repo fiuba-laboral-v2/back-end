@@ -60,5 +60,31 @@ export const sebastian = {
       createdAt: new Date(),
       updatedAt: new Date()
     }
+  ],
+  jobApplications: [
+    {
+      offerUuid: uuids.offers.java_semi_senior,
+      applicantUuid: uuids.sebastian.applicant,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      offerUuid: uuids.offers.java_junior,
+      applicantUuid: uuids.sebastian.applicant,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      offerUuid: uuids.offers.java_senior,
+      applicantUuid: uuids.sebastian.applicant,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      offerUuid: uuids.offers.ruby_junior,
+      applicantUuid: uuids.sebastian.applicant,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
   ]
 };
