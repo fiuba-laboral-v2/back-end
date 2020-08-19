@@ -150,7 +150,8 @@ export const defaultTranslations = {
   typeFilterMenu: [
     { key: "title", value: "Tipo" },
     { key: "companyIconTitle", value: "Empresa" },
-    { key: "applicantIconTitle", value: "Postulante" }
+    { key: "applicantIconTitle", value: "Postulante" },
+    { key: "offerIconTitle", value: "Ofertas Laborales" }
   ],
   statusFilterMenu: [
     { key: "title", value: "Estado" },
