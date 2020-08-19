@@ -1,1 +1,2 @@
-export { javaSemiSenior } from "./javaSemiSenior";
+export { javaSenior } from "./javaSenior";
+export * from "./devartis";
