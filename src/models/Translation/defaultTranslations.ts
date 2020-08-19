@@ -48,7 +48,12 @@ export const defaultTranslations = {
     },
     { key: "currentCareerYear", value: "Qué año estás cursando? (sin CBC)" }
   ],
-  targetApplicantTypeSelector: [{ key: "title", value: "Tipo de postulante objetivo" }],
+  targetApplicantTypeSelector: [
+    { key: "title", value: "Destinatarios" },
+    { key: "graduate", value: "Graduados" },
+    { key: "student", value: "Alumnos" },
+    { key: "both", value: "Alumnos y graduados" }
+  ],
   editOffer: [
     { key: "create", value: "Publicar oferta" },
     { key: "edit", value: "Editar tu oferta" },
@@ -138,7 +143,7 @@ export const defaultTranslations = {
     { key: "salaryTitle", value: "Salario Neto" }
   ],
   offerTargetApplicantType: [
-    { key: "title", value: "Tipo de postulante objetivo" },
+    { key: "title", value: "Destinatarios" },
     { key: "graduate", value: "Graduados" },
     { key: "student", value: "Alumnos" },
     { key: "both", value: "Alumnos y graduados" }
