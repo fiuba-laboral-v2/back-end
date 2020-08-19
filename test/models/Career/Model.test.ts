@@ -28,7 +28,7 @@ describe("Career", () => {
     };
     const career = new Career(attributes);
 
-    expect(career).toEqual(expect.objectContaining(attributes));
+    expect(career).toEqualObjectContaining(attributes);
   });
 
   it("throws an error if no code is provided", async () => {

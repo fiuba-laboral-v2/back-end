@@ -5,6 +5,7 @@ import { toThrowBulkRecordErrorIncluding } from "./toThrowBulkRecordErrorIncludi
 import { toThrowErrorWithMessage } from "./toThrowErrorWithMessage";
 import { toBeSortedBy } from "./toBeSortedBy";
 import { toEqualIgnoringSpacing } from "./toEqualIgnoringSpacing";
+import { toEqualObjectContaining } from "./toEqualObjectContaining";
 
 export const setupCustomMatchers = () =>
   expect.extend({
@@ -14,5 +15,6 @@ export const setupCustomMatchers = () =>
     toThrowBulkRecordErrorIncluding,
     toThrowErrorWithMessage,
     toBeSortedBy,
-    toEqualIgnoringSpacing
+    toEqualIgnoringSpacing,
+    toEqualObjectContaining
   });

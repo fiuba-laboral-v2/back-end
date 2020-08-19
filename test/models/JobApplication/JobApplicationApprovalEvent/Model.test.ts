@@ -23,7 +23,7 @@ describe("JobApplicationApprovalEvent", () => {
       status
     };
     const jobApplicationApprovalEvent = new JobApplicationApprovalEvent(attributes);
-    expect(jobApplicationApprovalEvent).toEqual(expect.objectContaining(attributes));
+    expect(jobApplicationApprovalEvent).toEqualObjectContaining(attributes);
   };
 
   const expectToThrowErrorOnMissingAttribute = async (attribute: string) => {

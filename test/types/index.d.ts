@@ -14,6 +14,7 @@ declare global {
       toThrowErrorWithMessage(type: Constructable, message: string | string[]): R;
       toBeSortedBy(options: IOptions): R;
       toEqualIgnoringSpacing(expected: string): R;
+      toEqualObjectContaining(expected: object): R;
     }
   }
 }
