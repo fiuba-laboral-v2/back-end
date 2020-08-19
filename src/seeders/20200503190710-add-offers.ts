@@ -1,5 +1,5 @@
 import { QueryInterface } from "sequelize";
-import { devartisOffers, javaSenior } from "./constants/offers";
+import { devartisOffers, mercadoLibreOffers } from "./constants/offers";
 
 const getSections = (offersData: any) =>
   [].concat.apply(
@@ -12,12 +12,12 @@ export = {
     return queryInterface.sequelize.transaction(async transaction => {
       await queryInterface.bulkInsert(
         "Offers",
-        [...devartisOffers.map(o => o.offer), javaSenior.offer],
+        [...devartisOffers.map(o => o.offer), ...mercadoLibreOffers.map(o => o.offer)],
         { transaction }
       );
       await queryInterface.bulkInsert(
         "OffersSections",
-        [...getSections(devartisOffers), ...javaSenior.offerSections],
+        [...getSections(devartisOffers), ...getSections(mercadoLibreOffers)],
         { transaction }
       );
     });
