@@ -1,2 +1,4 @@
-export * from "./mercadoLibre";
-export * from "./devartis";
+import { mercadoLibreOffers } from "./mercadoLibre";
+import { devartisOffers } from "./devartis";
+
+export const offers = [...mercadoLibreOffers, ...devartisOffers];

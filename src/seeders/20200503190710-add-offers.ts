@@ -1,23 +1,16 @@
 import { QueryInterface } from "sequelize";
-import { devartisOffers, mercadoLibreOffers } from "./constants/offers";
-
-const getSections = (offersData: any) =>
-  [].concat.apply(
-    [],
-    offersData.map(o => o.offerSections)
-  );
+import { flatten } from "lodash";
+import { offers } from "./constants/offers";
 
 export = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.sequelize.transaction(async transaction => {
-      await queryInterface.bulkInsert(
-        "Offers",
-        [...devartisOffers.map(o => o.offer), ...mercadoLibreOffers.map(o => o.offer)],
-        { transaction }
-      );
+      await queryInterface.bulkInsert("Offers", [...offers.map(offerData => offerData.offer)], {
+        transaction
+      });
       await queryInterface.bulkInsert(
         "OffersSections",
-        [...getSections(devartisOffers), ...getSections(mercadoLibreOffers)],
+        [...flatten(offers.map(offerData => offerData.offerSections))],
         { transaction }
       );
     });
