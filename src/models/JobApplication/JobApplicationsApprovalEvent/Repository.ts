@@ -6,14 +6,18 @@ export const JobApplicationApprovalEventRepository = {
     adminUserUuid,
     offerUuid,
     applicantUuid,
-    status
+    status,
+    transaction
   }: ICreateJobApplicationApprovalEvent) =>
-    JobApplicationApprovalEvent.create({
-      offerUuid,
-      applicantUuid,
-      adminUserUuid,
-      status
-    }),
+    JobApplicationApprovalEvent.create(
+      {
+        offerUuid,
+        applicantUuid,
+        adminUserUuid,
+        status
+      },
+      { transaction }
+    ),
   findAll: () => JobApplicationApprovalEvent.findAll(),
   truncate: () => JobApplicationApprovalEvent.truncate({ cascade: true })
 };

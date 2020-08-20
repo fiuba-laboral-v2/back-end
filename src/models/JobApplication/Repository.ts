@@ -1,5 +1,6 @@
 import { Applicant, JobApplication, Offer } from "$models";
 import { IUpdateApprovalStatus } from "./Interfaces";
+import { JobApplicationApprovalEventRepository } from "./JobApplicationsApprovalEvent";
 import { JobApplicationNotFoundError } from "./Errors";
 import { Secretary } from "$models/Admin";
 import { IPaginatedJobApplicationsInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
@@ -71,6 +72,7 @@ export const JobApplicationRepository = {
     };
   },
   updateApprovalStatus: async ({
+    adminUserUuid,
     offerUuid,
     applicantUuid,
     secretary,
@@ -85,6 +87,13 @@ export const JobApplicationRepository = {
       returning: true
     });
     if (!updatedJobApplication) throw new JobApplicationNotFoundError(offerUuid, applicantUuid);
+
+    await JobApplicationApprovalEventRepository.create({
+      adminUserUuid,
+      offerUuid,
+      applicantUuid,
+      status
+    });
     return updatedJobApplication;
   },
   truncate: () => JobApplication.truncate()
