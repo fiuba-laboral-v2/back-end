@@ -43,7 +43,7 @@ describe("ApplicantCareer", () => {
       };
       const applicantCareer = new ApplicantCareer(attributes);
       await expect(applicantCareer.validate()).resolves.not.toThrow();
-      expect(applicantCareer).toEqual(expect.objectContaining(attributes));
+      expect(applicantCareer).toBeObjectContaining(attributes);
     });
 
     it("throws an error if approvedSubjectCount is provided", async () => {
@@ -84,7 +84,7 @@ describe("ApplicantCareer", () => {
       };
       const applicantCareer = new ApplicantCareer(attributes);
       await expect(applicantCareer.validate()).resolves.not.toThrow();
-      expect(applicantCareer).toEqual(expect.objectContaining(attributes));
+      expect(applicantCareer).toBeObjectContaining(attributes);
     });
 
     it("throws an error if currentCareerYear is negative", async () => {

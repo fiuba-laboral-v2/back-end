@@ -38,7 +38,7 @@ describe("Offer", () => {
   it("creates a valid offer with its given attributes", async () => {
     const offer = new Offer(offerAttributes);
     await expect(offer.validate()).resolves.not.toThrow();
-    expect(offer).toEqual(expect.objectContaining(offerAttributes));
+    expect(offer).toBeObjectContaining(offerAttributes);
   });
 
   it("creates a valid offer with a targetApplicantType for graduate", async () => {

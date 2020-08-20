@@ -57,7 +57,7 @@ describe("login", () => {
     expect(errors).toBeUndefined();
     await expectCookieToBeSet(user, expressContext);
     const token: string = expressContext.res.cookie.mock.calls[0][1];
-    expect(JWT.decodeToken(token)).toEqual(expect.objectContaining(result));
+    expect(JWT.decodeToken(token)).toBeObjectContaining(result);
   };
 
   it("sets the cookie for a user", async () => {
