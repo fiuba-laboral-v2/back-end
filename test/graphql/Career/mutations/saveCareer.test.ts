@@ -32,7 +32,7 @@ describe("saveCareer", () => {
 
     expect(errors).toBeUndefined();
     expect(data).not.toBeUndefined();
-    expect(data!.saveCareer).toEqualObjectContaining(params);
+    expect(data!.saveCareer).toBeObjectContaining(params);
   });
 
   describe("Errors", () => {

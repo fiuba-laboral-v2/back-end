@@ -46,7 +46,7 @@ describe("ApplicantRepository", () => {
           description: applicantData.description
         })
       );
-      expect(applicantCareer).toEqualObjectContaining(applicantCareerData);
+      expect(applicantCareer).toBeObjectContaining(applicantCareerData);
       const capabilities = await applicant.getCapabilities();
       const capabilityDescriptions = capabilities.map(c => c.description.toLowerCase());
       expect(capabilityDescriptions).toEqual(["Python".toLowerCase()]);
@@ -92,7 +92,7 @@ describe("ApplicantRepository", () => {
       const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       await applicant.createSection({ title: "title", text: "text" });
       const [section] = await applicant.getSections();
-      expect(section).toEqualObjectContaining({ title: "title", text: "text" });
+      expect(section).toBeObjectContaining({ title: "title", text: "text" });
     });
 
     it("throws an error if no padron is given", async () => {
@@ -160,7 +160,7 @@ describe("ApplicantRepository", () => {
       );
 
       const [applicantCareer] = await applicant.getApplicantCareers();
-      expect(applicantCareer).toEqualObjectContaining(applicantCareerData);
+      expect(applicantCareer).toBeObjectContaining(applicantCareerData);
 
       const capabilities = await applicant.getCapabilities();
       const capabilityDescriptions = capabilities.map(c => c.description.toLowerCase());
@@ -187,7 +187,7 @@ describe("ApplicantRepository", () => {
       );
 
       const [applicantCareer] = await applicant.getApplicantCareers();
-      expect(applicantCareer).toEqualObjectContaining(applicantCareerData);
+      expect(applicantCareer).toBeObjectContaining(applicantCareerData);
       const capabilities = await applicant.getCapabilities();
       const capabilityDescriptions = capabilities.map(c => c.description.toLowerCase());
       expect(capabilityDescriptions).toEqual(["GO".toLowerCase()]);
@@ -557,7 +557,7 @@ describe("ApplicantRepository", () => {
         uuid,
         career.code
       );
-      expect(updatedApplicantCareer).toEqualObjectContaining(newApplicantCareerData);
+      expect(updatedApplicantCareer).toBeObjectContaining(newApplicantCareerData);
     });
 
     it("updates by deleting all applicant careers if none is provided", async () => {
