@@ -78,24 +78,27 @@ export const OfferRepository = {
 
     return offer;
   },
-  findAll: async ({ updatedBeforeThan }: { updatedBeforeThan?: IPaginatedInput }) => {
+  findAll: async ({ updatedBeforeThan, companyUuid }: IFindAll) => {
     const limit = PaginationConfig.itemsPerPage() + 1;
     const result = await Offer.findAll({
-      ...(updatedBeforeThan && {
+      ...((updatedBeforeThan || companyUuid) && {
         where: {
-          [Op.or]: [
-            {
-              updatedAt: {
-                [Op.lt]: updatedBeforeThan.dateTime.toISOString()
+          ...(updatedBeforeThan && {
+            [Op.or]: [
+              {
+                updatedAt: {
+                  [Op.lt]: updatedBeforeThan.dateTime.toISOString()
+                }
+              },
+              {
+                updatedAt: updatedBeforeThan.dateTime.toISOString(),
+                uuid: {
+                  [Op.lt]: updatedBeforeThan.uuid
+                }
               }
-            },
-            {
-              updatedAt: updatedBeforeThan.dateTime.toISOString(),
-              uuid: {
-                [Op.lt]: updatedBeforeThan.uuid
-              }
-            }
-          ]
+            ]
+          }),
+          ...(companyUuid && { companyUuid })
         }
       }),
       order: [
@@ -109,6 +112,10 @@ export const OfferRepository = {
       results: result.slice(0, limit - 1)
     };
   },
-  findByCompanyUuid: (companyUuid: string) => Offer.findAll({ where: { companyUuid } }),
   truncate: () => Offer.truncate({ cascade: true })
 };
+
+interface IFindAll {
+  updatedBeforeThan?: IPaginatedInput;
+  companyUuid?: string;
+}

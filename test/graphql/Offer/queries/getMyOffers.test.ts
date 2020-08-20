@@ -18,9 +18,12 @@ import { TestClientGenerator } from "$generators/TestClient";
 import { Secretary } from "$models/Admin";
 
 const GET_MY_OFFERS = gql`
-  query {
-    getMyOffers {
-      uuid
+  query getMyOffers($updatedBeforeThan: PaginatedInput) {
+    getMyOffers(updatedBeforeThan: $updatedBeforeThan) {
+      shouldFetchMore
+      results {
+        uuid
+      }
     }
   }
 `;
@@ -57,7 +60,7 @@ describe("getMyOffers", () => {
       });
     };
 
-    it("returns only the offers that the company made", async () => {
+    it("returns only the offers that the company made, by updatedAt desc", async () => {
       const { apolloClient, company } = await TestClientGenerator.company({
         status: {
           admin,
@@ -69,8 +72,12 @@ describe("getMyOffers", () => {
         query: GET_MY_OFFERS
       });
       expect(errors).toBeUndefined();
-      expect(data!.getMyOffers).toHaveLength(2);
-      expect(data!.getMyOffers).toMatchObject([{ uuid: offer1.uuid }, { uuid: offer2.uuid }]);
+      expect(data!.getMyOffers.shouldFetchMore).toEqual(false);
+      expect(data!.getMyOffers.results).toHaveLength(2);
+      expect(data!.getMyOffers.results).toMatchObject([
+        { uuid: offer2.uuid },
+        { uuid: offer1.uuid }
+      ]);
     });
   });
 
@@ -88,7 +95,8 @@ describe("getMyOffers", () => {
       });
 
       expect(errors).toBeUndefined();
-      expect(data!.getMyOffers).toHaveLength(0);
+      expect(data!.getMyOffers.shouldFetchMore).toEqual(false);
+      expect(data!.getMyOffers.results).toHaveLength(0);
     });
   });
 
