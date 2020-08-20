@@ -4,8 +4,12 @@ export const uuids = {
     mercadoLibre: "70ec7184-bb98-4fd8-93fa-477df4abc060"
   },
   offers: {
-    java_semi_senior: "7f03fcfa-93a9-476b-881a-b81a7ea9dbd6",
-    java_senior: "7f03fcfb-93a9-476b-881a-b81a7ea9dbd6"
+    java_semi_senior: "005abeec-a28e-41ce-87c1-98bb4f0b16de",
+    java_senior: "7f03fcfb-93a9-476b-881a-b81a7ea9dbd6",
+    java_junior: "238a8b4b-430d-4a4d-b91e-a95a393d1279",
+    ruby_senior: "50af861f-63c5-4c7a-bca1-1e1c1eaacaf3",
+    ruby_junior: "d1c02db9-0926-4c27-a4b9-039c8396fb98",
+    ruby_semi_senior: "c2be9676-9a5b-445e-9999-07b4da818581"
   },
   admin: {
     user: "68755de1-9dcb-44f9-8e08-f8e6ec1f668a"

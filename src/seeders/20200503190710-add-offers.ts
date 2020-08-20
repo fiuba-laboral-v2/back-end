@@ -1,16 +1,16 @@
 import { QueryInterface } from "sequelize";
-import { javaSemiSenior } from "./constants/offers";
-import { javaSenior } from "./constants/offers/javaSenior";
+import { flatten } from "lodash";
+import { offers } from "./constants/offers";
 
 export = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.sequelize.transaction(async transaction => {
-      await queryInterface.bulkInsert("Offers", [javaSemiSenior.offer, javaSenior.offer], {
+      await queryInterface.bulkInsert("Offers", [...offers.map(offerData => offerData.offer)], {
         transaction
       });
       await queryInterface.bulkInsert(
         "OffersSections",
-        [...javaSemiSenior.offerSections, ...javaSenior.offerSections],
+        [...flatten(offers.map(offerData => offerData.offerSections))],
         { transaction }
       );
     });
