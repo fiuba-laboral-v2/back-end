@@ -1,5 +1,5 @@
 import { Database } from "$config";
-import { IOffer } from "./";
+import { IFindAll, IOffer } from "./";
 import { IOfferSection } from "./OfferSection";
 import { IOfferCareer } from "./OfferCareer";
 import { OfferNotFound, OfferNotUpdatedError } from "./Errors";
@@ -7,7 +7,6 @@ import { Offer, OfferCareer, OfferSection } from "$models";
 import { Op } from "sequelize";
 import { PaginationConfig } from "$config/PaginationConfig";
 import { ICreateOffer } from "$models/Offer/Interface";
-import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { OfferApprovalEventRepository } from "./OfferApprovalEvent/Repository";
@@ -114,8 +113,3 @@ export const OfferRepository = {
   },
   truncate: () => Offer.truncate({ cascade: true })
 };
-
-interface IFindAll {
-  updatedBeforeThan?: IPaginatedInput;
-  companyUuid?: string;
-}
