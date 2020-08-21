@@ -1,3 +1,4 @@
+import generateUuid from "uuid/v4";
 import { uuids } from "../uuids";
 import { careerCodes } from "../careerCodes";
 
@@ -79,6 +80,7 @@ export const aldana = {
   ],
   jobApplications: [
     {
+      uuid: generateUuid(),
       offerUuid: uuids.offers.java_semi_senior,
       applicantUuid: uuids.aldana.applicant,
       createdAt: new Date(),
