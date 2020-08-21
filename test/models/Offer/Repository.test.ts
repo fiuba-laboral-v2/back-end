@@ -329,7 +329,9 @@ describe("OfferRepository", () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const offerProps = OfferGenerator.data.withObligatoryData({ companyUuid });
       await OfferRepository.create(offerProps);
-      const [offer] = await OfferRepository.findByCompanyUuid(companyUuid);
+      const {
+        results: [offer]
+      } = await OfferRepository.findAll({ companyUuid });
       expect(offer).toBeObjectContaining(offerProps);
     });
 
