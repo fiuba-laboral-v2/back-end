@@ -90,11 +90,10 @@ export const JobApplicationRepository = {
 
     await JobApplicationApprovalEventRepository.create({
       adminUserUuid,
-      offerUuid,
-      applicantUuid,
+      jobApplicationUuid: updatedJobApplication.uuid,
       status
     });
     return updatedJobApplication;
   },
-  truncate: () => JobApplication.truncate()
+  truncate: () => JobApplication.truncate({ cascade: true })
 };

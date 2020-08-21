@@ -8,15 +8,9 @@ export = {
         primaryKey: true,
         type: UUID
       },
-      offerUuid: {
+      jobApplicationUuid: {
         allowNull: false,
-        references: { model: "Offers", key: "uuid" },
-        onDelete: "CASCADE",
-        type: UUID
-      },
-      applicantUuid: {
-        allowNull: false,
-        references: { model: "Applicants", key: "uuid" },
+        references: { model: "JobApplications", key: "uuid" },
         onDelete: "CASCADE",
         type: UUID
       },

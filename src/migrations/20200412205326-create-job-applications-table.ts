@@ -6,6 +6,11 @@ export = {
       await queryInterface.createTable(
         "JobApplications",
         {
+          uuid: {
+            allowNull: false,
+            primaryKey: true,
+            type: UUID
+          },
           offerUuid: {
             allowNull: false,
             references: { model: "Offers", key: "uuid" },
@@ -40,7 +45,7 @@ export = {
         { transaction }
       );
       await queryInterface.addConstraint("JobApplications", ["applicantUuid", "offerUuid"], {
-        type: "primary key",
+        type: "unique",
         name: "JobApplications_applicantUuid_offerUuid_key",
         transaction
       });

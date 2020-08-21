@@ -4,15 +4,13 @@ import { JobApplicationApprovalEvent } from "$models";
 export const JobApplicationApprovalEventRepository = {
   create: ({
     adminUserUuid,
-    offerUuid,
-    applicantUuid,
+    jobApplicationUuid,
     status,
     transaction
   }: ICreateJobApplicationApprovalEvent) =>
     JobApplicationApprovalEvent.create(
       {
-        offerUuid,
-        applicantUuid,
+        jobApplicationUuid,
         adminUserUuid,
         status
       },

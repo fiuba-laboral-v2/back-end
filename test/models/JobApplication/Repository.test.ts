@@ -295,6 +295,25 @@ describe("JobApplicationRepository", () => {
       expect(jobApplication[statusColumn]).toEqual(status);
     };
 
+    const expectToLogAnEventForStatus = async (secretary: Secretary, status: ApprovalStatus) => {
+      const { userUuid: adminUserUuid } = await AdminGenerator.instance({ secretary });
+      const { offerUuid, applicantUuid } = await createJobApplication();
+      const jobApplication = await JobApplicationRepository.updateApprovalStatus({
+        adminUserUuid,
+        offerUuid,
+        applicantUuid,
+        status,
+        secretary
+      });
+      expect(await jobApplication.getApprovalEvents()).toEqual([
+        expect.objectContaining({
+          adminUserUuid,
+          jobApplicationUuid: jobApplication.uuid,
+          status
+        })
+      ]);
+    };
+
     it("sets to pending the jobApplication by graduados secretary", async () => {
       await expectStatusToBe(
         ApprovalStatus.pending,
@@ -341,6 +360,10 @@ describe("JobApplicationRepository", () => {
         Secretary.extension,
         "extensionApprovalStatus"
       );
+    });
+
+    it("logs an event after setting to pending the extension secretary status", async () => {
+      await expectToLogAnEventForStatus(Secretary.extension, ApprovalStatus.pending);
     });
 
     it("throws an error if the offer does not exists", async () => {
