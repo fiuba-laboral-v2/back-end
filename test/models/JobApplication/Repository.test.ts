@@ -444,6 +444,38 @@ describe("JobApplicationRepository", () => {
           'foreign key constraint "JobApplicationApprovalEvent_adminUserUuid_fkey"'
       );
     });
+
+    it("throws an error if status is invalid and does not update the jobApplication", async () => {
+      const { offerUuid, applicantUuid, extensionApprovalStatus } = await createJobApplication();
+      const { userUuid: adminUserUuid, secretary } = await AdminGenerator.instance({
+        secretary: Secretary.extension
+      });
+      await expect(
+        JobApplicationRepository.updateApprovalStatus({
+          adminUserUuid,
+          offerUuid,
+          applicantUuid,
+          status: "invalidStatus" as ApprovalStatus,
+          secretary
+        })
+      ).rejects.toThrow();
+      expect(extensionApprovalStatus).toEqual(ApprovalStatus.pending);
+    });
+
+    it("throws an error if the admin does not exists and does not log the event", async () => {
+      const jobApplication = await createJobApplication();
+      const nonExistentAdminUserUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+      await expect(
+        JobApplicationRepository.updateApprovalStatus({
+          adminUserUuid: nonExistentAdminUserUuid,
+          offerUuid: jobApplication.offerUuid,
+          applicantUuid: jobApplication.applicantUuid,
+          status: ApprovalStatus.approved,
+          secretary: Secretary.extension
+        })
+      ).rejects.toThrow();
+      expect(await jobApplication.getApprovalEvents()).toHaveLength(0);
+    });
   });
 
   describe("Delete", () => {
