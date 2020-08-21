@@ -7,9 +7,8 @@ import { isApprovalStatus, isUuid } from "$models/SequelizeModelValidators";
 describe("JobApplicationApprovalEvent", () => {
   const expectToCreateAValidEventWithStatus = async (status: ApprovalStatus) => {
     const jobApplicationApprovalEvent = new JobApplicationApprovalEvent({
-      offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
-      applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
-      adminUserUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
+      jobApplicationUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+      adminUserUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
       status
     });
     await expect(jobApplicationApprovalEvent.validate()).resolves.not.toThrow();
@@ -17,9 +16,8 @@ describe("JobApplicationApprovalEvent", () => {
 
   const expectToCreateAnEventWithTheGivenAttributes = async (status: ApprovalStatus) => {
     const attributes = {
-      offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
-      applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
-      adminUserUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
+      jobApplicationUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+      adminUserUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
       status
     };
     const jobApplicationApprovalEvent = new JobApplicationApprovalEvent(attributes);
@@ -28,7 +26,7 @@ describe("JobApplicationApprovalEvent", () => {
 
   const expectToThrowErrorOnMissingAttribute = async (attribute: string) => {
     const attributes = {
-      applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
+      jobApplicationUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
       adminUserUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
       status: ApprovalStatus.pending
     };
@@ -42,7 +40,7 @@ describe("JobApplicationApprovalEvent", () => {
 
   const expectToThrowAnErrorOnInvalidUuid = async (attribute: string) => {
     const attributes = {
-      applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
+      jobApplicationUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
       adminUserUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
       status: ApprovalStatus.pending
     };
@@ -80,8 +78,7 @@ describe("JobApplicationApprovalEvent", () => {
 
   it("creates an event with undefined timestamps", async () => {
     const jobApplicationApprovalEvent = new JobApplicationApprovalEvent({
-      offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
-      applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
+      jobApplicationUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
       adminUserUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
       status: ApprovalStatus.pending
     });
@@ -91,20 +88,15 @@ describe("JobApplicationApprovalEvent", () => {
 
   it("creates an event with a generated uuid", async () => {
     const jobApplicationApprovalEvent = new JobApplicationApprovalEvent({
-      offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
-      applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
+      jobApplicationUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
       adminUserUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
       status: ApprovalStatus.pending
     });
     expect(jobApplicationApprovalEvent.uuid).toEqual(expect.stringMatching(UUID_REGEX));
   });
 
-  it("throws an error if no offerUuid is provided", async () => {
-    await expectToThrowErrorOnMissingAttribute("offerUuid");
-  });
-
-  it("throws an error if no applicantUuid is provided", async () => {
-    await expectToThrowErrorOnMissingAttribute("applicantUuid");
+  it("throws an error if no jobApplicationUuid is provided", async () => {
+    await expectToThrowErrorOnMissingAttribute("jobApplicationUuid");
   });
 
   it("throws an error if no adminUserUuid is provided", async () => {
@@ -115,12 +107,8 @@ describe("JobApplicationApprovalEvent", () => {
     await expectToThrowErrorOnMissingAttribute("status");
   });
 
-  it("throws an error if offerUuid has invalid format", async () => {
-    await expectToThrowAnErrorOnInvalidUuid("offerUuid");
-  });
-
-  it("throws an error if applicantUuid has invalid format", async () => {
-    await expectToThrowAnErrorOnInvalidUuid("applicantUuid");
+  it("throws an error if jobApplicationUuid has invalid format", async () => {
+    await expectToThrowAnErrorOnInvalidUuid("jobApplicationUuid");
   });
 
   it("throws an error if adminUserUuid has invalid format", async () => {
@@ -129,8 +117,7 @@ describe("JobApplicationApprovalEvent", () => {
 
   it("throws an error if status has invalid format", async () => {
     const jobApplicationApprovalEvent = new JobApplicationApprovalEvent({
-      offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
-      applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
+      jobApplicationUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
       adminUserUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
       status: "undefinedStatus"
     });

@@ -1,3 +1,4 @@
+import generateUuid from "uuid/v4";
 import { uuids } from "../uuids";
 import { hashSync } from "bcrypt";
 import { careerCodes } from "../careerCodes";
@@ -63,24 +64,28 @@ export const sebastian = {
   ],
   jobApplications: [
     {
+      uuid: generateUuid(),
       offerUuid: uuids.offers.java_semi_senior,
       applicantUuid: uuids.sebastian.applicant,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
+      uuid: generateUuid(),
       offerUuid: uuids.offers.java_junior,
       applicantUuid: uuids.sebastian.applicant,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
+      uuid: generateUuid(),
       offerUuid: uuids.offers.java_senior,
       applicantUuid: uuids.sebastian.applicant,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
+      uuid: generateUuid(),
       offerUuid: uuids.offers.ruby_junior,
       applicantUuid: uuids.sebastian.applicant,
       createdAt: new Date(),

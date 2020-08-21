@@ -2,6 +2,7 @@ import { ValidationError } from "sequelize";
 import { JobApplication } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { isApprovalStatus, isUuid } from "$models/SequelizeModelValidators";
+import { UUID_REGEX } from "$test/models";
 
 describe("JobApplication", () => {
   it("creates a valid jobApplication", async () => {
@@ -10,6 +11,14 @@ describe("JobApplication", () => {
       applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468"
     });
     await expect(jobApplication.validate()).resolves.not.toThrow();
+  });
+
+  it("generates a new uuid", async () => {
+    const jobApplication = new JobApplication({
+      offerUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
+      applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468"
+    });
+    expect(jobApplication.uuid).toEqual(expect.stringMatching(UUID_REGEX));
   });
 
   it("sets extensionApprovalStatus in pending by default", async () => {

@@ -4,16 +4,18 @@ import { JobApplicationApprovalEvent } from "$models";
 export const JobApplicationApprovalEventRepository = {
   create: ({
     adminUserUuid,
-    offerUuid,
-    applicantUuid,
-    status
+    jobApplicationUuid,
+    status,
+    transaction
   }: ICreateJobApplicationApprovalEvent) =>
-    JobApplicationApprovalEvent.create({
-      offerUuid,
-      applicantUuid,
-      adminUserUuid,
-      status
-    }),
+    JobApplicationApprovalEvent.create(
+      {
+        jobApplicationUuid,
+        adminUserUuid,
+        status
+      },
+      { transaction }
+    ),
   findAll: () => JobApplicationApprovalEvent.findAll(),
   truncate: () => JobApplicationApprovalEvent.truncate({ cascade: true })
 };

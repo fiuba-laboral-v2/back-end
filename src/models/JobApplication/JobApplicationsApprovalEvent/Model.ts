@@ -9,7 +9,7 @@ import {
 } from "sequelize-typescript";
 import { ENUM, HasOneGetAssociationMixin, UUID, UUIDV4 } from "sequelize";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
-import { Admin, Offer, Applicant } from "$models";
+import { Admin, JobApplication } from "$models";
 import { isApprovalStatus, isUuid } from "$models/SequelizeModelValidators";
 
 @Table({ tableName: "JobApplicationApprovalEvent", timestamps: true })
@@ -23,23 +23,14 @@ export class JobApplicationApprovalEvent extends Model<JobApplicationApprovalEve
   })
   public uuid: string;
 
-  @ForeignKey(() => Offer)
+  @ForeignKey(() => JobApplication)
   @Column({
     allowNull: false,
-    references: { model: "Offers", key: "uuid" },
+    references: { model: "JobApplications", key: "uuid" },
     type: UUID,
     ...isUuid
   })
-  public offerUuid: string;
-
-  @ForeignKey(() => Applicant)
-  @Column({
-    allowNull: false,
-    references: { model: "Applicants", key: "uuid" },
-    type: UUID,
-    ...isUuid
-  })
-  public applicantUuid: string;
+  public jobApplicationUuid: string;
 
   @ForeignKey(() => Admin)
   @Column({
@@ -68,13 +59,9 @@ export class JobApplicationApprovalEvent extends Model<JobApplicationApprovalEve
   @BelongsTo(() => Admin, "adminUserUuid")
   public admin: Admin;
 
-  @BelongsTo(() => Offer, "offerUuid")
-  public offer: Offer;
+  @BelongsTo(() => JobApplication, "jobApplicationUuid")
+  public jobApplication: JobApplication;
 
-  @BelongsTo(() => Applicant, "applicantUuid")
-  public applicant: Applicant;
-
-  public getOffer: HasOneGetAssociationMixin<Offer>;
-  public getApplicant: HasOneGetAssociationMixin<Applicant>;
+  public getJobApplication: HasOneGetAssociationMixin<JobApplication>;
   public getAdmin: HasOneGetAssociationMixin<Admin>;
 }

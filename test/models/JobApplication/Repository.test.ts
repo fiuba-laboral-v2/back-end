@@ -7,6 +7,7 @@ import { UserRepository } from "$models/User";
 import { CompanyGenerator } from "$generators/Company";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { OfferGenerator } from "$generators/Offer";
+import { AdminGenerator } from "$generators/Admin";
 import MockDate from "mockdate";
 import { range } from "lodash";
 import { ApprovalStatus } from "$models/ApprovalStatus";
@@ -276,24 +277,62 @@ describe("JobApplicationRepository", () => {
     });
   });
 
+  describe("findByUuid", () => {
+    it("return a jobApplication By Uuid", async () => {
+      const jobApplication = await createJobApplication();
+      expect((await JobApplicationRepository.findByUuid(jobApplication.uuid)).toJSON()).toEqual(
+        jobApplication.toJSON()
+      );
+    });
+
+    it("throws an error if jobApplication does not exist", async () => {
+      const nonExistentJobApplicationUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+      await expect(
+        JobApplicationRepository.findByUuid(nonExistentJobApplicationUuid)
+      ).rejects.toThrowErrorWithMessage(
+        JobApplicationNotFoundError,
+        JobApplicationNotFoundError.buildMessage(nonExistentJobApplicationUuid)
+      );
+    });
+  });
+
   describe("updateApprovalStatus", () => {
-    const expectGraduadosStatusToBe = async (
+    const expectStatusToBe = async (
       status: ApprovalStatus,
       secretary: Secretary,
       statusColumn: string
     ) => {
-      const { offerUuid, applicantUuid } = await createJobApplication();
+      const { userUuid: adminUserUuid } = await AdminGenerator.instance({ secretary });
+      const { uuid } = await createJobApplication();
       const jobApplication = await JobApplicationRepository.updateApprovalStatus({
-        offerUuid,
-        applicantUuid,
+        adminUserUuid,
+        uuid,
         status,
         secretary
       });
       expect(jobApplication[statusColumn]).toEqual(status);
     };
 
+    const expectToLogAnEventForStatus = async (secretary: Secretary, status: ApprovalStatus) => {
+      const { userUuid: adminUserUuid } = await AdminGenerator.instance({ secretary });
+      const { uuid } = await createJobApplication();
+      const jobApplication = await JobApplicationRepository.updateApprovalStatus({
+        adminUserUuid,
+        uuid,
+        status,
+        secretary
+      });
+      expect(await jobApplication.getApprovalEvents()).toEqual([
+        expect.objectContaining({
+          adminUserUuid,
+          jobApplicationUuid: jobApplication.uuid,
+          status
+        })
+      ]);
+    };
+
     it("sets to pending the jobApplication by graduados secretary", async () => {
-      await expectGraduadosStatusToBe(
+      await expectStatusToBe(
         ApprovalStatus.pending,
         Secretary.graduados,
         "graduadosApprovalStatus"
@@ -301,7 +340,7 @@ describe("JobApplicationRepository", () => {
     });
 
     it("approves the jobApplication by graduados secretary", async () => {
-      await expectGraduadosStatusToBe(
+      await expectStatusToBe(
         ApprovalStatus.approved,
         Secretary.graduados,
         "graduadosApprovalStatus"
@@ -309,7 +348,7 @@ describe("JobApplicationRepository", () => {
     });
 
     it("rejects the jobApplication by graduados secretary", async () => {
-      await expectGraduadosStatusToBe(
+      await expectStatusToBe(
         ApprovalStatus.rejected,
         Secretary.graduados,
         "graduadosApprovalStatus"
@@ -317,7 +356,7 @@ describe("JobApplicationRepository", () => {
     });
 
     it("sets to pending the jobApplication by extension secretary", async () => {
-      await expectGraduadosStatusToBe(
+      await expectStatusToBe(
         ApprovalStatus.pending,
         Secretary.extension,
         "extensionApprovalStatus"
@@ -325,7 +364,7 @@ describe("JobApplicationRepository", () => {
     });
 
     it("approved the jobApplication by extension secretary", async () => {
-      await expectGraduadosStatusToBe(
+      await expectStatusToBe(
         ApprovalStatus.approved,
         Secretary.extension,
         "extensionApprovalStatus"
@@ -333,44 +372,113 @@ describe("JobApplicationRepository", () => {
     });
 
     it("rejects the jobApplication by extension secretary", async () => {
-      await expectGraduadosStatusToBe(
+      await expectStatusToBe(
         ApprovalStatus.approved,
         Secretary.extension,
         "extensionApprovalStatus"
       );
     });
 
-    it("throws an error if the offer does not exists", async () => {
-      const { uuid: applicantUuid } = await ApplicantGenerator.instance.withMinimumData();
-      const nonExistentOfferUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+    it("logs an event after setting to pending the extension secretary status", async () => {
+      await expectToLogAnEventForStatus(Secretary.extension, ApprovalStatus.pending);
+    });
+
+    it("logs an event after setting to approved the extension secretary status", async () => {
+      await expectToLogAnEventForStatus(Secretary.extension, ApprovalStatus.approved);
+    });
+
+    it("logs an event after setting to rejected the extension secretary status", async () => {
+      await expectToLogAnEventForStatus(Secretary.extension, ApprovalStatus.rejected);
+    });
+
+    it("logs an event after setting to pending the graduados secretary status", async () => {
+      await expectToLogAnEventForStatus(Secretary.graduados, ApprovalStatus.pending);
+    });
+
+    it("logs an event after setting to approved the graduados secretary status", async () => {
+      await expectToLogAnEventForStatus(Secretary.graduados, ApprovalStatus.approved);
+    });
+
+    it("logs an event after setting to rejected the graduados secretary status", async () => {
+      await expectToLogAnEventForStatus(Secretary.graduados, ApprovalStatus.rejected);
+    });
+
+    it("throws an error if the jobApplication does not exists", async () => {
+      const secretary = Secretary.extension;
+      const { userUuid: adminUserUuid } = await AdminGenerator.instance({ secretary });
+      const nonExistentJobApplicationUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       await expect(
         JobApplicationRepository.updateApprovalStatus({
-          offerUuid: nonExistentOfferUuid,
-          applicantUuid,
+          adminUserUuid,
+          uuid: nonExistentJobApplicationUuid,
           status: ApprovalStatus.approved,
-          secretary: Secretary.extension
+          secretary
         })
       ).rejects.toThrowErrorWithMessage(
         JobApplicationNotFoundError,
-        JobApplicationNotFoundError.buildMessage(nonExistentOfferUuid, applicantUuid)
+        JobApplicationNotFoundError.buildMessage(nonExistentJobApplicationUuid)
       );
     });
 
-    it("throws an error if the applicant does not exists", async () => {
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { uuid: offerUuid } = await OfferGenerator.instance.withObligatoryData({ companyUuid });
-      const nonExistentApplicantUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+    it("throws an error if the admin does not exists", async () => {
+      const { uuid } = await createJobApplication();
+      const nonExistentAdminUserUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       await expect(
         JobApplicationRepository.updateApprovalStatus({
-          offerUuid,
-          applicantUuid: nonExistentApplicantUuid,
+          adminUserUuid: nonExistentAdminUserUuid,
+          uuid,
           status: ApprovalStatus.approved,
           secretary: Secretary.extension
         })
       ).rejects.toThrowErrorWithMessage(
-        JobApplicationNotFoundError,
-        JobApplicationNotFoundError.buildMessage(offerUuid, nonExistentApplicantUuid)
+        ForeignKeyConstraintError,
+        'insert or update on table "JobApplicationApprovalEvent" violates ' +
+          'foreign key constraint "JobApplicationApprovalEvent_adminUserUuid_fkey"'
       );
+    });
+
+    it("throws an error if status is invalid and does not update the jobApplication", async () => {
+      const { uuid } = await createJobApplication();
+      const { userUuid: adminUserUuid, secretary } = await AdminGenerator.instance({
+        secretary: Secretary.extension
+      });
+      await expect(
+        JobApplicationRepository.updateApprovalStatus({
+          adminUserUuid,
+          uuid,
+          status: "invalidStatus" as ApprovalStatus,
+          secretary
+        })
+      ).rejects.toThrow();
+      const { extensionApprovalStatus } = await JobApplicationRepository.findByUuid(uuid);
+      expect(extensionApprovalStatus).toEqual(ApprovalStatus.pending);
+    });
+
+    it("throws an error if the admin does not exists and does not log the event", async () => {
+      const jobApplication = await createJobApplication();
+      await expect(
+        JobApplicationRepository.updateApprovalStatus({
+          adminUserUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+          uuid: jobApplication.uuid,
+          status: ApprovalStatus.approved,
+          secretary: Secretary.extension
+        })
+      ).rejects.toThrow();
+      expect(await jobApplication.getApprovalEvents()).toHaveLength(0);
+    });
+
+    it("fails logging event and does not update jobApplication", async () => {
+      const { uuid } = await createJobApplication();
+      await expect(
+        JobApplicationRepository.updateApprovalStatus({
+          adminUserUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+          uuid,
+          status: ApprovalStatus.approved,
+          secretary: Secretary.extension
+        })
+      ).rejects.toThrow();
+      const { extensionApprovalStatus } = await JobApplicationRepository.findByUuid(uuid);
+      expect(extensionApprovalStatus).toEqual(ApprovalStatus.pending);
     });
   });
 
