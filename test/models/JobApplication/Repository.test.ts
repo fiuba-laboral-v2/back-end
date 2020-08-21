@@ -366,6 +366,26 @@ describe("JobApplicationRepository", () => {
       await expectToLogAnEventForStatus(Secretary.extension, ApprovalStatus.pending);
     });
 
+    it("logs an event after setting to approved the extension secretary status", async () => {
+      await expectToLogAnEventForStatus(Secretary.extension, ApprovalStatus.approved);
+    });
+
+    it("logs an event after setting to rejected the extension secretary status", async () => {
+      await expectToLogAnEventForStatus(Secretary.extension, ApprovalStatus.rejected);
+    });
+
+    it("logs an event after setting to pending the graduados secretary status", async () => {
+      await expectToLogAnEventForStatus(Secretary.graduados, ApprovalStatus.pending);
+    });
+
+    it("logs an event after setting to approved the graduados secretary status", async () => {
+      await expectToLogAnEventForStatus(Secretary.graduados, ApprovalStatus.approved);
+    });
+
+    it("logs an event after setting to rejected the graduados secretary status", async () => {
+      await expectToLogAnEventForStatus(Secretary.graduados, ApprovalStatus.rejected);
+    });
+
     it("throws an error if the offer does not exists", async () => {
       const { userUuid: adminUserUuid } = await AdminGenerator.instance({
         secretary: Secretary.extension
