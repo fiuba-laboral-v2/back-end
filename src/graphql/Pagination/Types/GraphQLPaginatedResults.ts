@@ -7,7 +7,7 @@ export const GraphQLPaginatedResults = (resultType: GraphQLObjectType | GraphQLU
   const resultTypeName = resultType.name;
   if (!types[resultTypeName]) {
     types[resultTypeName] = new GraphQLObjectType({
-      name: `Paginated${resultType.name}`,
+      name: `Paginated${resultTypeName}`,
       fields: () => ({
         shouldFetchMore: {
           type: nonNull(Boolean)
