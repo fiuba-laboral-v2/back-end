@@ -3,8 +3,7 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export interface IUpdateApprovalStatus {
   adminUserUuid: string;
-  offerUuid: string;
-  applicantUuid: string;
+  uuid: string;
   secretary: Secretary;
   status: ApprovalStatus;
 }

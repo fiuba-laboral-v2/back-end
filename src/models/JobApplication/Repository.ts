@@ -22,7 +22,7 @@ export const JobApplicationRepository = {
   },
   findByUuid: async (uuid: string) => {
     const jobApplication = await JobApplication.findByPk(uuid);
-    if (!jobApplication) throw new JobApplicationNotFoundError("", "");
+    if (!jobApplication) throw new JobApplicationNotFoundError(uuid);
     return jobApplication;
   },
   findLatestByCompanyUuid: async ({
@@ -77,28 +77,22 @@ export const JobApplicationRepository = {
       results: result.slice(0, limit - 1)
     };
   },
-  updateApprovalStatus: async ({
-    adminUserUuid,
-    offerUuid,
-    applicantUuid,
-    secretary,
-    status
-  }: IUpdateApprovalStatus) =>
+  updateApprovalStatus: async ({ adminUserUuid, uuid, secretary, status }: IUpdateApprovalStatus) =>
     Database.transaction(async transaction => {
       const attributes = {
         ...(secretary === Secretary.graduados && { graduadosApprovalStatus: status }),
         ...(secretary === Secretary.extension && { extensionApprovalStatus: status })
       };
       const [, [updatedJobApplication]] = await JobApplication.update(attributes, {
-        where: { offerUuid, applicantUuid },
+        where: { uuid },
         returning: true,
         transaction
       });
-      if (!updatedJobApplication) throw new JobApplicationNotFoundError(offerUuid, applicantUuid);
+      if (!updatedJobApplication) throw new JobApplicationNotFoundError(uuid);
 
       await JobApplicationApprovalEventRepository.create({
         adminUserUuid,
-        jobApplicationUuid: updatedJobApplication.uuid,
+        jobApplicationUuid: uuid,
         status,
         transaction
       });
