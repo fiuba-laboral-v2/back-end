@@ -95,11 +95,9 @@ describe("getMyOffers", () => {
       beforeAll(async () => {
         for (const _ of range(15)) {
           newOffersByDescUpdatedAt.push(
-            await OfferRepository.create(
-              OfferGenerator.data.withObligatoryData({
-                companyUuid: company.uuid
-              })
-            )
+            await OfferGenerator.instance.withObligatoryData({
+              companyUuid: company.uuid
+            })
           );
         }
         newOffersByDescUpdatedAt = newOffersByDescUpdatedAt.sort(offer => -offer.updatedAt);
