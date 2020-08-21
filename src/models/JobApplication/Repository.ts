@@ -1,3 +1,4 @@
+import { Database } from "$config";
 import { Applicant, JobApplication, Offer } from "$models";
 import { IUpdateApprovalStatus } from "./Interfaces";
 import { JobApplicationApprovalEventRepository } from "./JobApplicationsApprovalEvent";
@@ -18,6 +19,11 @@ export const JobApplicationRepository = {
       }
     });
     return jobApplication != null;
+  },
+  findByUuid: async (uuid: string) => {
+    const jobApplication = await JobApplication.findByPk(uuid);
+    if (!jobApplication) throw new JobApplicationNotFoundError("", "");
+    return jobApplication;
   },
   findLatestByCompanyUuid: async ({
     companyUuid,
@@ -77,23 +83,26 @@ export const JobApplicationRepository = {
     applicantUuid,
     secretary,
     status
-  }: IUpdateApprovalStatus) => {
-    const attributes = {
-      ...(secretary === Secretary.graduados && { graduadosApprovalStatus: status }),
-      ...(secretary === Secretary.extension && { extensionApprovalStatus: status })
-    };
-    const [, [updatedJobApplication]] = await JobApplication.update(attributes, {
-      where: { offerUuid, applicantUuid },
-      returning: true
-    });
-    if (!updatedJobApplication) throw new JobApplicationNotFoundError(offerUuid, applicantUuid);
+  }: IUpdateApprovalStatus) =>
+    Database.transaction(async transaction => {
+      const attributes = {
+        ...(secretary === Secretary.graduados && { graduadosApprovalStatus: status }),
+        ...(secretary === Secretary.extension && { extensionApprovalStatus: status })
+      };
+      const [, [updatedJobApplication]] = await JobApplication.update(attributes, {
+        where: { offerUuid, applicantUuid },
+        returning: true,
+        transaction
+      });
+      if (!updatedJobApplication) throw new JobApplicationNotFoundError(offerUuid, applicantUuid);
 
-    await JobApplicationApprovalEventRepository.create({
-      adminUserUuid,
-      jobApplicationUuid: updatedJobApplication.uuid,
-      status
-    });
-    return updatedJobApplication;
-  },
+      await JobApplicationApprovalEventRepository.create({
+        adminUserUuid,
+        jobApplicationUuid: updatedJobApplication.uuid,
+        status,
+        transaction
+      });
+      return updatedJobApplication;
+    }),
   truncate: () => JobApplication.truncate({ cascade: true })
 };

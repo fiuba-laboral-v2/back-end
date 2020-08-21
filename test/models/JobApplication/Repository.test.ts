@@ -476,6 +476,21 @@ describe("JobApplicationRepository", () => {
       ).rejects.toThrow();
       expect(await jobApplication.getApprovalEvents()).toHaveLength(0);
     });
+
+    it("fails logging event and does not update jobApplication", async () => {
+      const { uuid, offerUuid, applicantUuid } = await createJobApplication();
+      await expect(
+        JobApplicationRepository.updateApprovalStatus({
+          adminUserUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+          offerUuid,
+          applicantUuid,
+          status: ApprovalStatus.approved,
+          secretary: Secretary.extension
+        })
+      ).rejects.toThrow();
+      const { extensionApprovalStatus } = await JobApplicationRepository.findByUuid(uuid);
+      expect(extensionApprovalStatus).toEqual(ApprovalStatus.pending);
+    });
   });
 
   describe("Delete", () => {
