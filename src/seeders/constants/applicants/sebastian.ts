@@ -1,4 +1,5 @@
 import generateUuid from "uuid/v4";
+import { ApprovalStatus } from "../../../models/ApprovalStatus/index";
 import { uuids } from "../uuids";
 import { hashSync } from "bcrypt";
 import { careerCodes } from "../careerCodes";
@@ -17,6 +18,7 @@ export const sebastian = {
     uuid: uuids.sebastian.applicant,
     userUuid: uuids.sebastian.user,
     padron: 98539,
+    approvalStatus: ApprovalStatus.approved,
     description:
       "Me considero una persona a la que le gusta tomar " +
       "riesgos y también tener cierto control sobre la situación." +

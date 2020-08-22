@@ -5,5 +5,5 @@
     "rootDir": "../../",
     "sourceMap": false
   },
-  "include": ["../models/Offer/Interface", "../seeders"]
+  "include": ["../models/ApprovalStatus/index", "../models/Offer/Interface", "../seeders"]
 }

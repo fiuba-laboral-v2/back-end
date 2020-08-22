@@ -1,6 +1,7 @@
 import generateUuid from "uuid/v4";
 import { uuids } from "../uuids";
 import { careerCodes } from "../careerCodes";
+import { ApprovalStatus } from "../../../models/ApprovalStatus/index";
 
 export const aldana = {
   user: {
@@ -15,6 +16,7 @@ export const aldana = {
   applicant: {
     uuid: uuids.aldana.applicant,
     userUuid: uuids.aldana.user,
+    approvalStatus: ApprovalStatus.approved,
     padron: 98408,
     description: "Dev",
     createdAt: new Date(),
