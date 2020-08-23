@@ -9,7 +9,7 @@ import {
 import { IAdminTasksFilter } from "./Interfaces";
 import { AdminTaskTypesIsEmptyError, StatusesIsEmptyError } from "./Errors";
 import { groupTableNamesByColumn } from "./groupTableNamesByColumn";
-import { WhereClauseBuilder } from "./whereClauseBuilder";
+import { WhereClauseBuilder } from "./WhereClauseBuilder";
 import intersection from "lodash/intersection";
 
 const getRowsToSelect = (adminTaskModelsTypes: AdminTaskModelsType[]) => {

@@ -1,5 +1,5 @@
 import { findAdminTasksQuery } from "$models/AdminTask/findAdminTasksQuery";
-import { WhereClauseBuilder } from "$models/AdminTask/whereClauseBuilder";
+import { WhereClauseBuilder } from "$models/AdminTask/WhereClauseBuilder";
 import { AdminTaskType } from "$models/AdminTask";
 import { AdminTaskTypesIsEmptyError, StatusesIsEmptyError } from "$models/AdminTask/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
