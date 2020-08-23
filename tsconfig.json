@@ -14,6 +14,7 @@
       "$services": ["src/services"],
       "$test/*": ["test/*"],
       "$generators/*": ["test/generators/*"],
+      "$setup/*": ["test/setup/*"],
       "$mocks/*": ["test/mocks/*"]
     },
     "outDir": "./dist",
