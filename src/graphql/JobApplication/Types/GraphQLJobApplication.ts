@@ -4,6 +4,7 @@ import { nonNull, String } from "$graphql/fieldTypes";
 import { JobApplication } from "$models";
 import { GraphQLApplicant } from "$graphql/Applicant/Types/GraphQLApplicant";
 import { GraphQLOffer } from "$graphql/Offer/Types/GraphQLOffer";
+import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
 
 export const GraphQLJobApplication = new GraphQLObjectType<JobApplication>({
   name: "JobApplication",
@@ -13,6 +14,12 @@ export const GraphQLJobApplication = new GraphQLObjectType<JobApplication>({
     },
     offerUuid: {
       type: nonNull(String)
+    },
+    extensionApprovalStatus: {
+      type: nonNull(GraphQLApprovalStatus)
+    },
+    graduadosApprovalStatus: {
+      type: nonNull(GraphQLApprovalStatus)
     },
     applicant: {
       type: nonNull(GraphQLApplicant),

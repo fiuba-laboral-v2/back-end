@@ -1,9 +1,9 @@
-import { isFromApprovedCompany } from "$graphql/Rules";
-import { isApprovedApplicant } from "$graphql/Rules/isApprovedApplicant";
+import { isFromApprovedCompany, isApprovedApplicant, isAdmin } from "$graphql/Rules";
 
 export const jobApplicationPermissions = {
   Mutation: {
-    saveJobApplication: isApprovedApplicant
+    saveJobApplication: isApprovedApplicant,
+    updateJobApplicationApprovalStatus: isAdmin
   },
   Query: {
     getMyLatestJobApplications: isFromApprovedCompany

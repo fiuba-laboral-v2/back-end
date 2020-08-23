@@ -1,7 +1,7 @@
 import { saveJobApplication } from "./saveJobApplication";
+import { updateJobApplicationApprovalStatus } from "./updateJobApplicationApprovalStatus";
 
-const jobApplicationMutations = {
-  saveJobApplication
+export const jobApplicationMutations = {
+  saveJobApplication,
+  updateJobApplicationApprovalStatus
 };
-
-export { jobApplicationMutations };
