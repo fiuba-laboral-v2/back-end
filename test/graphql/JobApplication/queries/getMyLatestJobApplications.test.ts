@@ -69,7 +69,7 @@ describe("getMyLatestJobApplications", () => {
 
       const user = await applicant.getUser();
       expect(data!.getMyLatestJobApplications.shouldFetchMore).toEqual(false);
-      expect(data!.getMyLatestJobApplications.results).toBeObjectContaining([
+      expect(data!.getMyLatestJobApplications.results).toEqual([
         {
           uuid: jobApplication.uuid,
           updatedAt: jobApplication.updatedAt.toISOString(),
