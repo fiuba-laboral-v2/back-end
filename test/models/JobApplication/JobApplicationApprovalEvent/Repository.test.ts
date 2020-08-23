@@ -44,7 +44,7 @@ describe("JobApplicationApprovalEventRepository", () => {
   };
 
   const expectToThrowErrorOnForeignKeyFor = async (attribute: string) => {
-    const { uuid: jobApplicationUuid } = await JobApplicationGenerator.instance();
+    const { uuid: jobApplicationUuid } = await JobApplicationGenerator.instance.withMinimumData();
     const attributes = {
       jobApplicationUuid,
       adminUserUuid: admin.userUuid,
@@ -62,7 +62,7 @@ describe("JobApplicationApprovalEventRepository", () => {
   };
 
   const createJobApplicationApprovalEvent = async () => {
-    const { uuid: jobApplicationUuid } = await JobApplicationGenerator.instance();
+    const { uuid: jobApplicationUuid } = await JobApplicationGenerator.instance.withMinimumData();
     return JobApplicationApprovalEventRepository.create({
       jobApplicationUuid,
       adminUserUuid: admin.userUuid,
@@ -72,29 +72,29 @@ describe("JobApplicationApprovalEventRepository", () => {
 
   describe("create", () => {
     it("creates an event with a pending status", async () => {
-      const { uuid } = await JobApplicationGenerator.instance();
+      const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
       await expectToCreateEventWithStatus(ApprovalStatus.pending, uuid);
     });
 
     it("creates an event with an approved status", async () => {
-      const { uuid } = await JobApplicationGenerator.instance();
+      const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
       await expectToCreateEventWithStatus(ApprovalStatus.approved, uuid);
     });
 
     it("creates an event with a rejected status", async () => {
-      const { uuid } = await JobApplicationGenerator.instance();
+      const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
       await expectToCreateEventWithStatus(ApprovalStatus.rejected, uuid);
     });
 
     it("logs events for the same applicantUuid and offerUuid", async () => {
-      const { uuid } = await JobApplicationGenerator.instance();
+      const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
       await expectToCreateEventWithStatus(ApprovalStatus.pending, uuid);
       await expectToCreateEventWithStatus(ApprovalStatus.approved, uuid);
       await expectToCreateEventWithStatus(ApprovalStatus.rejected, uuid);
     });
 
     it("creates an event with a jobApplication association", async () => {
-      const { uuid: jobApplicationUuid } = await JobApplicationGenerator.instance();
+      const { uuid: jobApplicationUuid } = await JobApplicationGenerator.instance.withMinimumData();
       const jobApplicationApprovalEvent = await JobApplicationApprovalEventRepository.create({
         jobApplicationUuid,
         adminUserUuid: admin.userUuid,
@@ -105,7 +105,7 @@ describe("JobApplicationApprovalEventRepository", () => {
     });
 
     it("creates an event with an admin association", async () => {
-      const { uuid: jobApplicationUuid } = await JobApplicationGenerator.instance();
+      const { uuid: jobApplicationUuid } = await JobApplicationGenerator.instance.withMinimumData();
       const jobApplicationApprovalEvent = await JobApplicationApprovalEventRepository.create({
         jobApplicationUuid,
         adminUserUuid: admin.userUuid,
@@ -116,7 +116,7 @@ describe("JobApplicationApprovalEventRepository", () => {
     });
 
     it("throws an error if the status is not an ApprovalStatus enum value", async () => {
-      const { uuid: jobApplicationUuid } = await JobApplicationGenerator.instance();
+      const { uuid: jobApplicationUuid } = await JobApplicationGenerator.instance.withMinimumData();
       await expect(
         JobApplicationApprovalEventRepository.create({
           jobApplicationUuid,
