@@ -161,4 +161,34 @@ describe("WhereClauseBuilder", () => {
       )
     `);
   });
+
+  it("builds with updatedAt where clause", async () => {
+    const updatedAt = new Date();
+    const uuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+    const whereClause = WhereClauseBuilder.build(
+      [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
+      Secretary.extension,
+      { includesSeparateApprovalModel: true, includesSharedApprovalModel: true },
+      { uuid, dateTime: updatedAt }
+    );
+
+    expect(whereClause).toEqualIgnoringSpacing(`
+      (
+        "AdminTask"."approvalStatus" = '${ApprovalStatus.pending}'
+        OR "AdminTask"."approvalStatus" = '${ApprovalStatus.approved}'
+        OR "AdminTask"."approvalStatus" = '${ApprovalStatus.rejected}'
+        OR "AdminTask"."extensionApprovalStatus" = '${ApprovalStatus.pending}'
+        OR "AdminTask"."extensionApprovalStatus" = '${ApprovalStatus.approved}'
+        OR "AdminTask"."extensionApprovalStatus" = '${ApprovalStatus.rejected}'
+      )
+      AND (
+        (
+          "AdminTask"."updatedAt" < '${updatedAt.toISOString()}'
+        ) OR (
+          "AdminTask"."updatedAt" = '${updatedAt.toISOString()}'
+          AND "AdminTask"."uuid" < '${uuid}'
+        )
+      )
+    `);
+  });
 });
