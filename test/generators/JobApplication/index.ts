@@ -7,14 +7,14 @@ import { Admin } from "$models";
 
 export const JobApplicationGenerator = {
   instance: {
-    recentlyApplied: async () => {
+    withMinimumData: async () => {
       const { uuid: applicantUuid } = await ApplicantGenerator.instance.withMinimumData();
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid });
       return JobApplicationRepository.apply(applicantUuid, offer);
     },
     updatedWithStatus: async ({ admin, status }: IUpdatedWithStatus) => {
-      const { uuid } = await JobApplicationGenerator.instance.recentlyApplied();
+      const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
       return JobApplicationRepository.updateApprovalStatus({
         uuid,
         admin,
