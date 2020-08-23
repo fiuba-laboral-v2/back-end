@@ -31,41 +31,48 @@ describe("AdminTaskRepository", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await OfferRepository.truncate();
-    const companiesGenerator = CompanyGenerator.instance.updatedWithStatus;
     admin = await AdminGenerator.instance({ secretary: Secretary.extension });
-    const applicantsGenerator = ApplicantGenerator.instance.updatedWithStatus;
 
-    rejectedCompany = await companiesGenerator({
+    rejectedCompany = await CompanyGenerator.instance.updatedWithStatus({
       status: ApprovalStatus.rejected,
       admin
     });
-    approvedCompany = await companiesGenerator({
+
+    approvedCompany = await CompanyGenerator.instance.updatedWithStatus({
       status: ApprovalStatus.approved,
       admin
     });
-    pendingCompany = await companiesGenerator();
-    rejectedApplicant = await applicantsGenerator({
+
+    pendingCompany = await CompanyGenerator.instance.updatedWithStatus();
+
+    rejectedApplicant = await ApplicantGenerator.instance.updatedWithStatus({
       status: ApprovalStatus.rejected,
       admin
     });
-    approvedApplicant = await applicantsGenerator({
+
+    approvedApplicant = await ApplicantGenerator.instance.updatedWithStatus({
       status: ApprovalStatus.approved,
       admin
     });
-    pendingApplicant = await applicantsGenerator();
+
+    pendingApplicant = await ApplicantGenerator.instance.updatedWithStatus();
+
     const secretary = admin.secretary;
+
     rejectedOffer = await OfferGenerator.instance.updatedWithStatus({
       admin,
       companyUuid: approvedCompany.uuid,
       secretary,
       status: ApprovalStatus.rejected
     });
+
     approvedOffer = await OfferGenerator.instance.updatedWithStatus({
       admin,
       companyUuid: approvedCompany.uuid,
       secretary,
       status: ApprovalStatus.approved
     });
+
     pendingOffer = await OfferGenerator.instance.updatedWithStatus({
       admin,
       companyUuid: approvedCompany.uuid,
