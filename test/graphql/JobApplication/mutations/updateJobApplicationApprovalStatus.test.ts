@@ -32,7 +32,7 @@ describe("updateJobApplicationApprovalStatus", () => {
     statusColumn: string
   ) => {
     const { apolloClient } = await TestClientGenerator.admin({ secretary });
-    const { uuid } = await JobApplicationGenerator.instance();
+    const { uuid } = await JobApplicationGenerator.instance.recentlyApplied();
     const { errors, data } = await apolloClient.mutate({
       mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
       variables: { uuid, approvalStatus }
@@ -92,7 +92,7 @@ describe("updateJobApplicationApprovalStatus", () => {
 
   it("returns an error if no user is logged in", async () => {
     const apolloClient = await client.loggedOut();
-    const { uuid } = await JobApplicationGenerator.instance();
+    const { uuid } = await JobApplicationGenerator.instance.recentlyApplied();
     const { errors } = await apolloClient.mutate({
       mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
       variables: { uuid, approvalStatus: ApprovalStatus.approved }
@@ -114,7 +114,7 @@ describe("updateJobApplicationApprovalStatus", () => {
 
   it("return an error if no approvalStatus is provided", async () => {
     const { apolloClient } = await TestClientGenerator.admin();
-    const { uuid } = await JobApplicationGenerator.instance();
+    const { uuid } = await JobApplicationGenerator.instance.recentlyApplied();
     const { errors } = await apolloClient.mutate({
       mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
       variables: { uuid }
@@ -124,7 +124,7 @@ describe("updateJobApplicationApprovalStatus", () => {
 
   it("returns an error if the current user is an applicant", async () => {
     const { apolloClient } = await TestClientGenerator.applicant();
-    const { uuid } = await JobApplicationGenerator.instance();
+    const { uuid } = await JobApplicationGenerator.instance.recentlyApplied();
     const { errors } = await apolloClient.mutate({
       mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
       variables: { uuid, approvalStatus: ApprovalStatus.approved }
@@ -137,7 +137,7 @@ describe("updateJobApplicationApprovalStatus", () => {
 
   it("returns an error if the current user from a company", async () => {
     const { apolloClient } = await TestClientGenerator.company();
-    const { uuid } = await JobApplicationGenerator.instance();
+    const { uuid } = await JobApplicationGenerator.instance.recentlyApplied();
     const { errors } = await apolloClient.mutate({
       mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
       variables: { uuid, approvalStatus: ApprovalStatus.approved }
