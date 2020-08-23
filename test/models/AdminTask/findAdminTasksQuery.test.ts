@@ -359,4 +359,83 @@ describe("findAdminTasksQuery", () => {
       expectToReturnSQLQueryOfOfferWithStatus(ApprovalStatus.rejected, Secretary.graduados);
     });
   });
+
+  describe("query only for jobApplications", () => {
+    const expectToReturnSQLQueryOfJobApplicationsWithStatus = (
+      status: ApprovalStatus,
+      secretary: Secretary
+    ) => {
+      const limit = 75;
+      const query = findAdminTasksQuery({
+        adminTaskTypes: [AdminTaskType.JobApplication],
+        statuses: [status],
+        limit,
+        secretary
+      });
+      const expectedQuery = `
+      WITH "AdminTask" AS (
+        SELECT  COALESCE (JobApplications."tableNameColumn") AS "tableNameColumn",
+          COALESCE (JobApplications."uuid") AS "uuid",
+          COALESCE (JobApplications."applicantUuid") AS "applicantUuid",
+          COALESCE (JobApplications."offerUuid") AS "offerUuid",
+          COALESCE (JobApplications."extensionApprovalStatus") AS "extensionApprovalStatus",
+          COALESCE (JobApplications."graduadosApprovalStatus") AS "graduadosApprovalStatus",
+          COALESCE (JobApplications."createdAt") AS "createdAt",
+          COALESCE (JobApplications."updatedAt") AS "updatedAt"
+        FROM (
+            SELECT *, 'JobApplications' AS "tableNameColumn" FROM "JobApplications"
+        ) AS JobApplications
+      )
+      SELECT * FROM "AdminTask"
+      WHERE (
+        "AdminTask"."${secretaryColumn(secretary)}" = '${status}'
+      )
+      ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
+      LIMIT ${limit}
+    `;
+      expect(query).toEqualIgnoringSpacing(expectedQuery);
+    };
+
+    it("returns an sql query of JobApplication in pending status for extension secretary", async () => {
+      expectToReturnSQLQueryOfJobApplicationsWithStatus(
+        ApprovalStatus.pending,
+        Secretary.extension
+      );
+    });
+
+    it("returns an sql query of JobApplication in approved status for extension secretary", async () => {
+      expectToReturnSQLQueryOfJobApplicationsWithStatus(
+        ApprovalStatus.approved,
+        Secretary.extension
+      );
+    });
+
+    it("returns an sql query of JobApplication in rejected status for extension secretary", async () => {
+      expectToReturnSQLQueryOfJobApplicationsWithStatus(
+        ApprovalStatus.rejected,
+        Secretary.extension
+      );
+    });
+
+    it("returns an sql query of JobApplication in pending status for graduados secretary", async () => {
+      expectToReturnSQLQueryOfJobApplicationsWithStatus(
+        ApprovalStatus.pending,
+        Secretary.graduados
+      );
+    });
+
+    it("returns an sql query of JobApplication in approved status for graduados secretary", async () => {
+      expectToReturnSQLQueryOfJobApplicationsWithStatus(
+        ApprovalStatus.approved,
+        Secretary.graduados
+      );
+    });
+
+    it("returns an sql query of JobApplication in rejected status for graduados secretary", async () => {
+      expectToReturnSQLQueryOfJobApplicationsWithStatus(
+        ApprovalStatus.rejected,
+        Secretary.graduados
+      );
+    });
+  });
 });
