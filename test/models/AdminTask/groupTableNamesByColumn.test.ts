@@ -1,6 +1,6 @@
 import { groupTableNamesByColumn } from "$models/AdminTask/groupTableNamesByColumn";
 import { ADMIN_TASK_MODELS } from "$models/AdminTask";
-import { Applicant, Company, Offer } from "$models";
+import { Applicant, Company, Offer, JobApplication } from "$models";
 
 describe("groupTableNamesByColumn", () => {
   it("groups each column as a key and their related tableNames as values", async () => {
@@ -63,6 +63,18 @@ describe("groupTableNamesByColumn", () => {
       maximumSalary: expect.arrayContaining([OFFER_TABLE_NAME]),
       graduadosApprovalStatus: expect.arrayContaining([OFFER_TABLE_NAME]),
       extensionApprovalStatus: expect.arrayContaining([OFFER_TABLE_NAME])
+    });
+  });
+
+  it("groups each JobApplication column as a key", async () => {
+    const JOB_APPLICATION_TABLE_NAME = JobApplication.tableName;
+    const tableNamesByColumn = groupTableNamesByColumn([JobApplication]);
+    expect(tableNamesByColumn).toMatchObject({
+      uuid: expect.arrayContaining([JOB_APPLICATION_TABLE_NAME]),
+      offerUuid: expect.arrayContaining([JOB_APPLICATION_TABLE_NAME]),
+      applicantUuid: expect.arrayContaining([JOB_APPLICATION_TABLE_NAME]),
+      graduadosApprovalStatus: expect.arrayContaining([JOB_APPLICATION_TABLE_NAME]),
+      extensionApprovalStatus: expect.arrayContaining([JOB_APPLICATION_TABLE_NAME])
     });
   });
 });
