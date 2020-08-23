@@ -1,6 +1,6 @@
 import { GraphQLObjectType } from "graphql";
 import { GraphQLDateTime } from "graphql-iso-date";
-import { nonNull, String } from "$graphql/fieldTypes";
+import { nonNull, String, ID } from "$graphql/fieldTypes";
 import { JobApplication } from "$models";
 import { GraphQLApplicant } from "$graphql/Applicant/Types/GraphQLApplicant";
 import { GraphQLOffer } from "$graphql/Offer/Types/GraphQLOffer";
@@ -9,6 +9,9 @@ import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLAppr
 export const GraphQLJobApplication = new GraphQLObjectType<JobApplication>({
   name: "JobApplication",
   fields: () => ({
+    uuid: {
+      type: nonNull(ID)
+    },
     applicantUuid: {
       type: nonNull(String)
     },
