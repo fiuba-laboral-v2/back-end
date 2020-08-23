@@ -23,6 +23,7 @@ const GET_MY_LATEST_JOB_APPLICATIONS = gql`
     getMyLatestJobApplications(updatedBeforeThan: $updatedBeforeThan) {
       shouldFetchMore
       results {
+        uuid
         updatedAt
         offer {
           uuid
@@ -68,8 +69,9 @@ describe("getMyLatestJobApplications", () => {
 
       const user = await applicant.getUser();
       expect(data!.getMyLatestJobApplications.shouldFetchMore).toEqual(false);
-      expect(data!.getMyLatestJobApplications.results).toMatchObject([
+      expect(data!.getMyLatestJobApplications.results).toEqual([
         {
+          uuid: jobApplication.uuid,
           updatedAt: jobApplication.updatedAt.toISOString(),
           offer: {
             uuid: offer.uuid,

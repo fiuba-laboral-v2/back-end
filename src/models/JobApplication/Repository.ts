@@ -77,7 +77,11 @@ export const JobApplicationRepository = {
       results: result.slice(0, limit - 1)
     };
   },
-  updateApprovalStatus: async ({ adminUserUuid, uuid, secretary, status }: IUpdateApprovalStatus) =>
+  updateApprovalStatus: async ({
+    admin: { userUuid: adminUserUuid, secretary },
+    uuid,
+    status
+  }: IUpdateApprovalStatus) =>
     Database.transaction(async transaction => {
       const attributes = {
         ...(secretary === Secretary.graduados && { graduadosApprovalStatus: status }),

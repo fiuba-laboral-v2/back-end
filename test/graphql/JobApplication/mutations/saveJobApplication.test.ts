@@ -13,10 +13,12 @@ import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyGenerator } from "$generators/Company";
 import generateUuid from "uuid/v4";
 import { Secretary } from "$models/Admin";
+import { UUID_REGEX } from "$test/models";
 
 const SAVE_JOB_APPLICATION = gql`
   mutation saveJobApplication($offerUuid: String!) {
     saveJobApplication(offerUuid: $offerUuid) {
+      uuid
       offerUuid
       applicantUuid
     }
@@ -48,7 +50,8 @@ describe("saveJobApplication", () => {
       });
 
       expect(errors).toBeUndefined();
-      expect(data!.saveJobApplication).toMatchObject({
+      expect(data!.saveJobApplication).toEqual({
+        uuid: expect.stringMatching(UUID_REGEX),
         offerUuid: offer.uuid,
         applicantUuid: applicant.uuid
       });

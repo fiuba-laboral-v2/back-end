@@ -2,8 +2,9 @@ import { ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
 import { CompanyRepository } from "$models/Company";
 import { OfferRepository } from "$models/Offer";
 import { JobApplicationNotFoundError, JobApplicationRepository } from "$models/JobApplication";
-import { Applicant, Company, JobApplication, Offer } from "$models";
+import { Admin, Applicant, Company, JobApplication, Offer } from "$models";
 import { UserRepository } from "$models/User";
+import { JobApplicationGenerator } from "$generators/JobApplication";
 import { CompanyGenerator } from "$generators/Company";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { OfferGenerator } from "$generators/Offer";
@@ -18,13 +19,6 @@ describe("JobApplicationRepository", () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
   });
-
-  const createJobApplication = async () => {
-    const applicant = await ApplicantGenerator.instance.withMinimumData();
-    const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-    const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid });
-    return JobApplicationRepository.apply(applicant.uuid, offer);
-  };
 
   describe("Apply", () => {
     it("applies to a new jobApplication", async () => {
@@ -279,7 +273,7 @@ describe("JobApplicationRepository", () => {
 
   describe("findByUuid", () => {
     it("return a jobApplication By Uuid", async () => {
-      const jobApplication = await createJobApplication();
+      const jobApplication = await JobApplicationGenerator.instance();
       expect((await JobApplicationRepository.findByUuid(jobApplication.uuid)).toJSON()).toEqual(
         jobApplication.toJSON()
       );
@@ -302,29 +296,27 @@ describe("JobApplicationRepository", () => {
       secretary: Secretary,
       statusColumn: string
     ) => {
-      const { userUuid: adminUserUuid } = await AdminGenerator.instance({ secretary });
-      const { uuid } = await createJobApplication();
+      const admin = await AdminGenerator.instance({ secretary });
+      const { uuid } = await JobApplicationGenerator.instance();
       const jobApplication = await JobApplicationRepository.updateApprovalStatus({
-        adminUserUuid,
+        admin,
         uuid,
-        status,
-        secretary
+        status
       });
       expect(jobApplication[statusColumn]).toEqual(status);
     };
 
     const expectToLogAnEventForStatus = async (secretary: Secretary, status: ApprovalStatus) => {
-      const { userUuid: adminUserUuid } = await AdminGenerator.instance({ secretary });
-      const { uuid } = await createJobApplication();
+      const admin = await AdminGenerator.instance({ secretary });
+      const { uuid } = await JobApplicationGenerator.instance();
       const jobApplication = await JobApplicationRepository.updateApprovalStatus({
-        adminUserUuid,
+        admin,
         uuid,
-        status,
-        secretary
+        status
       });
       expect(await jobApplication.getApprovalEvents()).toEqual([
         expect.objectContaining({
-          adminUserUuid,
+          adminUserUuid: admin.userUuid,
           jobApplicationUuid: jobApplication.uuid,
           status
         })
@@ -405,14 +397,13 @@ describe("JobApplicationRepository", () => {
 
     it("throws an error if the jobApplication does not exists", async () => {
       const secretary = Secretary.extension;
-      const { userUuid: adminUserUuid } = await AdminGenerator.instance({ secretary });
+      const admin = await AdminGenerator.instance({ secretary });
       const nonExistentJobApplicationUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       await expect(
         JobApplicationRepository.updateApprovalStatus({
-          adminUserUuid,
+          admin,
           uuid: nonExistentJobApplicationUuid,
-          status: ApprovalStatus.approved,
-          secretary
+          status: ApprovalStatus.approved
         })
       ).rejects.toThrowErrorWithMessage(
         JobApplicationNotFoundError,
@@ -421,14 +412,16 @@ describe("JobApplicationRepository", () => {
     });
 
     it("throws an error if the admin does not exists", async () => {
-      const { uuid } = await createJobApplication();
-      const nonExistentAdminUserUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+      const { uuid } = await JobApplicationGenerator.instance();
+      const notPersistedAdmin = new Admin({
+        userUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+        secretary: Secretary.extension
+      });
       await expect(
         JobApplicationRepository.updateApprovalStatus({
-          adminUserUuid: nonExistentAdminUserUuid,
+          admin: notPersistedAdmin,
           uuid,
-          status: ApprovalStatus.approved,
-          secretary: Secretary.extension
+          status: ApprovalStatus.approved
         })
       ).rejects.toThrowErrorWithMessage(
         ForeignKeyConstraintError,
@@ -438,43 +431,30 @@ describe("JobApplicationRepository", () => {
     });
 
     it("throws an error if status is invalid and does not update the jobApplication", async () => {
-      const { uuid } = await createJobApplication();
-      const { userUuid: adminUserUuid, secretary } = await AdminGenerator.instance({
-        secretary: Secretary.extension
-      });
+      const { uuid } = await JobApplicationGenerator.instance();
+      const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
       await expect(
         JobApplicationRepository.updateApprovalStatus({
-          adminUserUuid,
+          admin,
           uuid,
-          status: "invalidStatus" as ApprovalStatus,
-          secretary
+          status: "invalidStatus" as ApprovalStatus
         })
       ).rejects.toThrow();
       const { extensionApprovalStatus } = await JobApplicationRepository.findByUuid(uuid);
       expect(extensionApprovalStatus).toEqual(ApprovalStatus.pending);
     });
 
-    it("throws an error if the admin does not exists and does not log the event", async () => {
-      const jobApplication = await createJobApplication();
-      await expect(
-        JobApplicationRepository.updateApprovalStatus({
-          adminUserUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
-          uuid: jobApplication.uuid,
-          status: ApprovalStatus.approved,
-          secretary: Secretary.extension
-        })
-      ).rejects.toThrow();
-      expect(await jobApplication.getApprovalEvents()).toHaveLength(0);
-    });
-
     it("fails logging event and does not update jobApplication", async () => {
-      const { uuid } = await createJobApplication();
+      const { uuid } = await JobApplicationGenerator.instance();
+      const notPersistedAdmin = new Admin({
+        userUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+        secretary: Secretary.extension
+      });
       await expect(
         JobApplicationRepository.updateApprovalStatus({
-          adminUserUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+          admin: notPersistedAdmin,
           uuid,
-          status: ApprovalStatus.approved,
-          secretary: Secretary.extension
+          status: ApprovalStatus.approved
         })
       ).rejects.toThrow();
       const { extensionApprovalStatus } = await JobApplicationRepository.findByUuid(uuid);
@@ -485,8 +465,8 @@ describe("JobApplicationRepository", () => {
   describe("Delete", () => {
     it("deletes all jobApplications", async () => {
       await JobApplicationRepository.truncate();
-      await createJobApplication();
-      await createJobApplication();
+      await JobApplicationGenerator.instance();
+      await JobApplicationGenerator.instance();
       expect(await JobApplication.findAll()).toHaveLength(2);
       await JobApplicationRepository.truncate();
       expect(await JobApplication.findAll()).toHaveLength(0);
@@ -494,7 +474,7 @@ describe("JobApplicationRepository", () => {
 
     it("deletes all jobApplication if all offers are deleted", async () => {
       await JobApplicationRepository.truncate();
-      await createJobApplication();
+      await JobApplicationGenerator.instance();
       expect(await JobApplication.findAll()).toHaveLength(1);
       await OfferRepository.truncate();
       expect(await JobApplication.findAll()).toHaveLength(0);
@@ -502,7 +482,7 @@ describe("JobApplicationRepository", () => {
 
     it("deletes all jobApplication if all applicants are deleted", async () => {
       await JobApplicationRepository.truncate();
-      await createJobApplication();
+      await JobApplicationGenerator.instance();
       expect(await JobApplication.findAll()).toHaveLength(1);
       await UserRepository.truncate();
       expect(await JobApplication.findAll()).toHaveLength(0);
@@ -510,7 +490,7 @@ describe("JobApplicationRepository", () => {
 
     it("deletes all jobApplication if all companies are deleted", async () => {
       await JobApplicationRepository.truncate();
-      await createJobApplication();
+      await JobApplicationGenerator.instance();
       expect(await JobApplication.findAll()).toHaveLength(1);
       await CompanyRepository.truncate();
       expect(await JobApplication.findAll()).toHaveLength(0);

@@ -1,9 +1,8 @@
-import { Secretary } from "$models/Admin";
+import { Admin } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export interface IUpdateApprovalStatus {
-  adminUserUuid: string;
+  admin: Admin;
   uuid: string;
-  secretary: Secretary;
   status: ApprovalStatus;
 }
