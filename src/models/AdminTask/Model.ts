@@ -7,7 +7,7 @@ export type AdminTaskModelsType =
   | typeof Offer
   | typeof JobApplication;
 export const ADMIN_TASK_MODELS = [Applicant, Company, Offer, JobApplication];
-export type AdminTask = Applicant | Company | Offer;
+export type AdminTask = Applicant | Company | Offer | JobApplication;
 export enum AdminTaskType {
   Applicant = "Applicant",
   Company = "Company",
