@@ -2,7 +2,7 @@ import { ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
 import { CompanyRepository } from "$models/Company";
 import { OfferRepository } from "$models/Offer";
 import { JobApplicationNotFoundError, JobApplicationRepository } from "$models/JobApplication";
-import { Applicant, Company, JobApplication, Offer } from "$models";
+import { Admin, Applicant, Company, JobApplication, Offer } from "$models";
 import { UserRepository } from "$models/User";
 import { JobApplicationGenerator } from "$generators/JobApplication";
 import { CompanyGenerator } from "$generators/Company";
@@ -296,29 +296,27 @@ describe("JobApplicationRepository", () => {
       secretary: Secretary,
       statusColumn: string
     ) => {
-      const { userUuid: adminUserUuid } = await AdminGenerator.instance({ secretary });
+      const admin = await AdminGenerator.instance({ secretary });
       const { uuid } = await JobApplicationGenerator.instance();
       const jobApplication = await JobApplicationRepository.updateApprovalStatus({
-        adminUserUuid,
+        admin,
         uuid,
-        status,
-        secretary
+        status
       });
       expect(jobApplication[statusColumn]).toEqual(status);
     };
 
     const expectToLogAnEventForStatus = async (secretary: Secretary, status: ApprovalStatus) => {
-      const { userUuid: adminUserUuid } = await AdminGenerator.instance({ secretary });
+      const admin = await AdminGenerator.instance({ secretary });
       const { uuid } = await JobApplicationGenerator.instance();
       const jobApplication = await JobApplicationRepository.updateApprovalStatus({
-        adminUserUuid,
+        admin,
         uuid,
-        status,
-        secretary
+        status
       });
       expect(await jobApplication.getApprovalEvents()).toEqual([
         expect.objectContaining({
-          adminUserUuid,
+          adminUserUuid: admin.userUuid,
           jobApplicationUuid: jobApplication.uuid,
           status
         })
@@ -399,14 +397,13 @@ describe("JobApplicationRepository", () => {
 
     it("throws an error if the jobApplication does not exists", async () => {
       const secretary = Secretary.extension;
-      const { userUuid: adminUserUuid } = await AdminGenerator.instance({ secretary });
+      const admin = await AdminGenerator.instance({ secretary });
       const nonExistentJobApplicationUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       await expect(
         JobApplicationRepository.updateApprovalStatus({
-          adminUserUuid,
+          admin,
           uuid: nonExistentJobApplicationUuid,
-          status: ApprovalStatus.approved,
-          secretary
+          status: ApprovalStatus.approved
         })
       ).rejects.toThrowErrorWithMessage(
         JobApplicationNotFoundError,
@@ -416,13 +413,15 @@ describe("JobApplicationRepository", () => {
 
     it("throws an error if the admin does not exists", async () => {
       const { uuid } = await JobApplicationGenerator.instance();
-      const nonExistentAdminUserUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+      const notPersistedAdmin = new Admin({
+        userUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+        secretary: Secretary.extension
+      });
       await expect(
         JobApplicationRepository.updateApprovalStatus({
-          adminUserUuid: nonExistentAdminUserUuid,
+          admin: notPersistedAdmin,
           uuid,
-          status: ApprovalStatus.approved,
-          secretary: Secretary.extension
+          status: ApprovalStatus.approved
         })
       ).rejects.toThrowErrorWithMessage(
         ForeignKeyConstraintError,
@@ -433,42 +432,29 @@ describe("JobApplicationRepository", () => {
 
     it("throws an error if status is invalid and does not update the jobApplication", async () => {
       const { uuid } = await JobApplicationGenerator.instance();
-      const { userUuid: adminUserUuid, secretary } = await AdminGenerator.instance({
-        secretary: Secretary.extension
-      });
+      const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
       await expect(
         JobApplicationRepository.updateApprovalStatus({
-          adminUserUuid,
+          admin,
           uuid,
-          status: "invalidStatus" as ApprovalStatus,
-          secretary
+          status: "invalidStatus" as ApprovalStatus
         })
       ).rejects.toThrow();
       const { extensionApprovalStatus } = await JobApplicationRepository.findByUuid(uuid);
       expect(extensionApprovalStatus).toEqual(ApprovalStatus.pending);
     });
 
-    it("throws an error if the admin does not exists and does not log the event", async () => {
-      const jobApplication = await JobApplicationGenerator.instance();
-      await expect(
-        JobApplicationRepository.updateApprovalStatus({
-          adminUserUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
-          uuid: jobApplication.uuid,
-          status: ApprovalStatus.approved,
-          secretary: Secretary.extension
-        })
-      ).rejects.toThrow();
-      expect(await jobApplication.getApprovalEvents()).toHaveLength(0);
-    });
-
     it("fails logging event and does not update jobApplication", async () => {
       const { uuid } = await JobApplicationGenerator.instance();
+      const notPersistedAdmin = new Admin({
+        userUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+        secretary: Secretary.extension
+      });
       await expect(
         JobApplicationRepository.updateApprovalStatus({
-          adminUserUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+          admin: notPersistedAdmin,
           uuid,
-          status: ApprovalStatus.approved,
-          secretary: Secretary.extension
+          status: ApprovalStatus.approved
         })
       ).rejects.toThrow();
       const { extensionApprovalStatus } = await JobApplicationRepository.findByUuid(uuid);

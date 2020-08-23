@@ -23,9 +23,8 @@ export const updateJobApplicationApprovalStatus = {
   ) => {
     const admin = await AdminRepository.findByUserUuid(currentUser.admin.userUuid);
     return JobApplicationRepository.updateApprovalStatus({
-      adminUserUuid: currentUser.admin.userUuid,
+      admin,
       uuid,
-      secretary: admin.secretary,
       status: approvalStatus
     });
   }

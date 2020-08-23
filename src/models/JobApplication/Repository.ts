@@ -77,11 +77,11 @@ export const JobApplicationRepository = {
       results: result.slice(0, limit - 1)
     };
   },
-  updateApprovalStatus: async ({ adminUserUuid, uuid, secretary, status }: IUpdateApprovalStatus) =>
+  updateApprovalStatus: async ({ admin, uuid, status }: IUpdateApprovalStatus) =>
     Database.transaction(async transaction => {
       const attributes = {
-        ...(secretary === Secretary.graduados && { graduadosApprovalStatus: status }),
-        ...(secretary === Secretary.extension && { extensionApprovalStatus: status })
+        ...(admin.secretary === Secretary.graduados && { graduadosApprovalStatus: status }),
+        ...(admin.secretary === Secretary.extension && { extensionApprovalStatus: status })
       };
       const [, [updatedJobApplication]] = await JobApplication.update(attributes, {
         where: { uuid },
@@ -91,7 +91,7 @@ export const JobApplicationRepository = {
       if (!updatedJobApplication) throw new JobApplicationNotFoundError(uuid);
 
       await JobApplicationApprovalEventRepository.create({
-        adminUserUuid,
+        adminUserUuid: admin.userUuid,
         jobApplicationUuid: uuid,
         status,
         transaction
