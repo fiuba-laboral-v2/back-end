@@ -31,10 +31,10 @@ export class AdminTaskTestSetup {
   public rejectedByGraduadosJobApplication: JobApplication;
   public pendingByGraduadosJobApplication: JobApplication;
   public allTasksByDescUpdatedAt: AdminTask[];
-  public graphql: boolean;
+  public graphqlSetup: boolean;
 
-  constructor(graphql: boolean) {
-    this.graphql = graphql;
+  constructor({ graphqlSetup }: { graphqlSetup: boolean }) {
+    this.graphqlSetup = graphqlSetup;
   }
 
   public async execute() {
@@ -136,7 +136,7 @@ export class AdminTaskTestSetup {
   }
 
   private async setAdmins() {
-    if (this.graphql) {
+    if (this.graphqlSetup) {
       const extension = await TestClientGenerator.admin({ secretary: Secretary.extension });
       const graduados = await TestClientGenerator.admin({ secretary: Secretary.graduados });
       this.extensionAdmin = extension.admin;

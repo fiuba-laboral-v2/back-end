@@ -54,7 +54,7 @@ describe("getAdminTasks", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await OfferRepository.truncate();
-    setup = new AdminTaskTestSetup(true);
+    setup = new AdminTaskTestSetup({ graphqlSetup: true });
     await setup.execute();
   });
 
