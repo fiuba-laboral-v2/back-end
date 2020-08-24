@@ -19,7 +19,7 @@ describe("AdminTaskRepository", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await OfferRepository.truncate();
-    setup = new AdminTaskTestSetup();
+    setup = new AdminTaskTestSetup(false);
     await setup.execute();
   });
 

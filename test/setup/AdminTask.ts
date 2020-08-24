@@ -1,5 +1,7 @@
+import { ApolloServerTestClient } from "apollo-server-testing";
 import { CompanyGenerator } from "$generators/Company";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { TestClientGenerator } from "$generators/TestClient";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { OfferGenerator } from "$generators/Offer";
 import { JobApplicationGenerator } from "$generators/JobApplication";
@@ -9,6 +11,8 @@ import { AdminGenerator } from "$generators/Admin";
 import { Secretary } from "$models/Admin";
 
 export class AdminTaskTestSetup {
+  public graduadosApolloClient: ApolloServerTestClient;
+  public extensionApolloClient: ApolloServerTestClient;
   public extensionAdmin: Admin;
   public graduadosAdmin: Admin;
   public approvedCompany: Company;
@@ -27,10 +31,14 @@ export class AdminTaskTestSetup {
   public rejectedByGraduadosJobApplication: JobApplication;
   public pendingByGraduadosJobApplication: JobApplication;
   public allTasksByDescUpdatedAt: AdminTask[];
+  public graphql: boolean;
+
+  constructor(graphql: boolean) {
+    this.graphql = graphql;
+  }
 
   public async execute() {
-    this.extensionAdmin = await AdminGenerator.instance({ secretary: Secretary.extension });
-    this.graduadosAdmin = await AdminGenerator.instance({ secretary: Secretary.graduados });
+    await this.setAdmins();
 
     this.rejectedCompany = await CompanyGenerator.instance.updatedWithStatus({
       status: ApprovalStatus.rejected,
@@ -120,6 +128,25 @@ export class AdminTaskTestSetup {
       ...(await this.getJobApplicationAssociations(this.approvedByGraduadosJobApplication)),
       ...(await this.getJobApplicationAssociations(this.rejectedByGraduadosJobApplication))
     ].sort(task => -task.updatedAt);
+  }
+
+  public getApolloClient(secretary: Secretary) {
+    if (secretary === Secretary.graduados) return this.graduadosApolloClient;
+    return this.extensionApolloClient;
+  }
+
+  private async setAdmins() {
+    if (this.graphql) {
+      const extension = await TestClientGenerator.admin({ secretary: Secretary.extension });
+      const graduados = await TestClientGenerator.admin({ secretary: Secretary.graduados });
+      this.extensionAdmin = extension.admin;
+      this.extensionApolloClient = extension.apolloClient;
+      this.graduadosAdmin = graduados.admin;
+      this.graduadosApolloClient = graduados.apolloClient;
+    } else {
+      this.extensionAdmin = await AdminGenerator.instance({ secretary: Secretary.extension });
+      this.graduadosAdmin = await AdminGenerator.instance({ secretary: Secretary.graduados });
+    }
   }
 
   private async getJobApplicationAssociations(jobApplication: JobApplication) {
