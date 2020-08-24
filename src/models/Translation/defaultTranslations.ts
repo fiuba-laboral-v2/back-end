@@ -156,7 +156,8 @@ export const defaultTranslations = {
     { key: "title", value: "Tipo" },
     { key: "companyIconTitle", value: "Empresa" },
     { key: "applicantIconTitle", value: "Postulante" },
-    { key: "offerIconTitle", value: "Ofertas Laborales" }
+    { key: "offerIconTitle", value: "Ofertas Laborales" },
+    { key: "jobApplicationIconTitle", value: "Postulaciones" }
   ],
   statusFilterMenu: [
     { key: "title", value: "Estado" },
