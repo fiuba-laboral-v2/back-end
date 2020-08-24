@@ -2,13 +2,10 @@ import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
 import { AdminTask, AdminTaskRepository, AdminTaskType } from "$models/AdminTask";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { Admin, Applicant, Company, JobApplication, Offer } from "$models";
+import { Company } from "$models";
 
-import { AdminGenerator } from "$generators/Admin";
-import { ApplicantGenerator } from "$generators/Applicant";
+import { AdminTaskTestSetup } from "$setup/AdminTask";
 import { CompanyGenerator } from "$generators/Company";
-import { OfferGenerator } from "$test/generators/Offer";
-import { JobApplicationGenerator } from "$test/generators/JobApplication";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import { Secretary } from "$models/Admin";
 import MockDate from "mockdate";
@@ -16,133 +13,14 @@ import { range } from "lodash";
 import { OfferRepository } from "$models/Offer";
 
 describe("AdminTaskRepository", () => {
-  let extensionAdmin: Admin;
-  let graduadosAdmin: Admin;
-  let approvedCompany: Company;
-  let rejectedCompany: Company;
-  let pendingCompany: Company;
-  let approvedApplicant: Applicant;
-  let rejectedApplicant: Applicant;
-  let pendingApplicant: Applicant;
-  let approvedOffer: Offer;
-  let rejectedOffer: Offer;
-  let pendingOffer: Offer;
-  let approvedByExtensionJobApplication: JobApplication;
-  let rejectedByExtensionJobApplication: JobApplication;
-  let pendingByExtensionJobApplication: JobApplication;
-  let approvedByGraduadosJobApplication: JobApplication;
-  let rejectedByGraduadosJobApplication: JobApplication;
-  let pendingByGraduadosJobApplication: JobApplication;
-  let allTasksByDescUpdatedAt: AdminTask[];
-
-  const getJobApplicationAssociations = async (jobApplication: JobApplication) => {
-    const applicant = await jobApplication.getApplicant();
-    const offer = await jobApplication.getOffer();
-    const company = await offer.getCompany();
-    return [applicant, company, offer, jobApplication];
-  };
+  let setup: AdminTaskTestSetup;
 
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await OfferRepository.truncate();
-    extensionAdmin = await AdminGenerator.instance({ secretary: Secretary.extension });
-    graduadosAdmin = await AdminGenerator.instance({ secretary: Secretary.graduados });
-
-    rejectedCompany = await CompanyGenerator.instance.updatedWithStatus({
-      status: ApprovalStatus.rejected,
-      admin: extensionAdmin
-    });
-
-    approvedCompany = await CompanyGenerator.instance.updatedWithStatus({
-      status: ApprovalStatus.approved,
-      admin: extensionAdmin
-    });
-
-    pendingCompany = await CompanyGenerator.instance.updatedWithStatus();
-
-    rejectedApplicant = await ApplicantGenerator.instance.updatedWithStatus({
-      status: ApprovalStatus.rejected,
-      admin: extensionAdmin
-    });
-
-    approvedApplicant = await ApplicantGenerator.instance.updatedWithStatus({
-      status: ApprovalStatus.approved,
-      admin: extensionAdmin
-    });
-
-    pendingApplicant = await ApplicantGenerator.instance.updatedWithStatus();
-
-    const secretary = extensionAdmin.secretary;
-
-    rejectedOffer = await OfferGenerator.instance.updatedWithStatus({
-      admin: extensionAdmin,
-      companyUuid: approvedCompany.uuid,
-      secretary,
-      status: ApprovalStatus.rejected
-    });
-
-    approvedOffer = await OfferGenerator.instance.updatedWithStatus({
-      admin: extensionAdmin,
-      companyUuid: approvedCompany.uuid,
-      secretary,
-      status: ApprovalStatus.approved
-    });
-
-    pendingOffer = await OfferGenerator.instance.updatedWithStatus({
-      admin: extensionAdmin,
-      companyUuid: approvedCompany.uuid,
-      secretary,
-      status: ApprovalStatus.pending
-    });
-
-    pendingByExtensionJobApplication = await JobApplicationGenerator.instance.updatedWithStatus({
-      admin: extensionAdmin,
-      status: ApprovalStatus.pending
-    });
-
-    approvedByExtensionJobApplication = await JobApplicationGenerator.instance.updatedWithStatus({
-      admin: extensionAdmin,
-      status: ApprovalStatus.approved
-    });
-
-    rejectedByExtensionJobApplication = await JobApplicationGenerator.instance.updatedWithStatus({
-      admin: extensionAdmin,
-      status: ApprovalStatus.rejected
-    });
-
-    pendingByGraduadosJobApplication = await JobApplicationGenerator.instance.updatedWithStatus({
-      admin: graduadosAdmin,
-      status: ApprovalStatus.pending
-    });
-
-    approvedByGraduadosJobApplication = await JobApplicationGenerator.instance.updatedWithStatus({
-      admin: graduadosAdmin,
-      status: ApprovalStatus.approved
-    });
-
-    rejectedByGraduadosJobApplication = await JobApplicationGenerator.instance.updatedWithStatus({
-      admin: graduadosAdmin,
-      status: ApprovalStatus.rejected
-    });
-
-    allTasksByDescUpdatedAt = [
-      rejectedCompany,
-      approvedCompany,
-      pendingCompany,
-      rejectedApplicant,
-      approvedApplicant,
-      pendingApplicant,
-      rejectedOffer,
-      approvedOffer,
-      pendingOffer,
-      ...(await getJobApplicationAssociations(pendingByExtensionJobApplication)),
-      ...(await getJobApplicationAssociations(approvedByExtensionJobApplication)),
-      ...(await getJobApplicationAssociations(rejectedByExtensionJobApplication)),
-      ...(await getJobApplicationAssociations(pendingByGraduadosJobApplication)),
-      ...(await getJobApplicationAssociations(approvedByGraduadosJobApplication)),
-      ...(await getJobApplicationAssociations(rejectedByGraduadosJobApplication))
-    ].sort(task => -task.updatedAt);
+    setup = new AdminTaskTestSetup({ graphqlSetup: false });
+    await setup.execute();
   });
 
   const expectToFindAdminTasksWithStatuses = async (
@@ -167,7 +45,7 @@ describe("AdminTaskRepository", () => {
     const result = await AdminTaskRepository.find({
       adminTaskTypes: [AdminTaskType.Applicant],
       statuses: [],
-      secretary: extensionAdmin.secretary
+      secretary: setup.extensionAdmin.secretary
     });
     expect(result).toEqual({ results: [], shouldFetchMore: false });
   });
@@ -176,7 +54,7 @@ describe("AdminTaskRepository", () => {
     const result = await AdminTaskRepository.find({
       adminTaskTypes: [],
       statuses: [ApprovalStatus.pending],
-      secretary: extensionAdmin.secretary
+      secretary: setup.extensionAdmin.secretary
     });
     expect(result).toEqual({ results: [], shouldFetchMore: false });
   });
@@ -185,151 +63,151 @@ describe("AdminTaskRepository", () => {
     const result = await AdminTaskRepository.find({
       adminTaskTypes: [],
       statuses: [],
-      secretary: extensionAdmin.secretary
+      secretary: setup.extensionAdmin.secretary
     });
     expect(result).toEqual({ results: [], shouldFetchMore: false });
   });
 
   it("returns only pending companies", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [pendingCompany],
+      [setup.pendingCompany],
       [ApprovalStatus.pending],
-      extensionAdmin.secretary
+      setup.extensionAdmin.secretary
     );
   });
 
   it("returns only approved companies", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [approvedCompany],
+      [setup.approvedCompany],
       [ApprovalStatus.approved],
-      extensionAdmin.secretary
+      setup.extensionAdmin.secretary
     );
   });
 
   it("returns only rejected companies", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [rejectedCompany],
+      [setup.rejectedCompany],
       [ApprovalStatus.rejected],
-      extensionAdmin.secretary
+      setup.extensionAdmin.secretary
     );
   });
 
   it("returns only pending applicants", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [pendingApplicant],
+      [setup.pendingApplicant],
       [ApprovalStatus.pending],
-      extensionAdmin.secretary
+      setup.extensionAdmin.secretary
     );
   });
 
   it("returns only approved applicants", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [approvedApplicant],
+      [setup.approvedApplicant],
       [ApprovalStatus.approved],
-      extensionAdmin.secretary
+      setup.extensionAdmin.secretary
     );
   });
 
   it("returns only rejected applicants", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [rejectedApplicant],
+      [setup.rejectedApplicant],
       [ApprovalStatus.rejected],
-      extensionAdmin.secretary
+      setup.extensionAdmin.secretary
     );
   });
 
   it("returns only pending offers", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [pendingOffer],
+      [setup.pendingOffer],
       [ApprovalStatus.pending],
-      extensionAdmin.secretary
+      setup.extensionAdmin.secretary
     );
   });
 
   it("returns only approved offers", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [approvedOffer],
+      [setup.approvedOffer],
       [ApprovalStatus.approved],
-      extensionAdmin.secretary
+      setup.extensionAdmin.secretary
     );
   });
 
   it("returns only rejected offers", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [rejectedOffer],
+      [setup.rejectedOffer],
       [ApprovalStatus.rejected],
-      extensionAdmin.secretary
+      setup.extensionAdmin.secretary
     );
   });
 
   it("returns only pending by extension secretary jobApplications", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [pendingByExtensionJobApplication],
+      [setup.pendingByExtensionJobApplication],
       [ApprovalStatus.pending],
-      extensionAdmin.secretary
+      setup.extensionAdmin.secretary
     );
   });
 
   it("returns only approved by extension secretary jobApplications", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [approvedByExtensionJobApplication],
+      [setup.approvedByExtensionJobApplication],
       [ApprovalStatus.approved],
-      extensionAdmin.secretary
+      setup.extensionAdmin.secretary
     );
   });
 
   it("returns only rejected by extension secretary jobApplications", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [rejectedByExtensionJobApplication],
+      [setup.rejectedByExtensionJobApplication],
       [ApprovalStatus.rejected],
-      extensionAdmin.secretary
+      setup.extensionAdmin.secretary
     );
   });
 
   it("returns only pending by graduados secretary jobApplications", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [pendingByGraduadosJobApplication],
+      [setup.pendingByGraduadosJobApplication],
       [ApprovalStatus.pending],
-      graduadosAdmin.secretary
+      setup.graduadosAdmin.secretary
     );
   });
 
   it("returns only approved by graduados secretary jobApplications", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [approvedByGraduadosJobApplication],
+      [setup.approvedByGraduadosJobApplication],
       [ApprovalStatus.approved],
-      graduadosAdmin.secretary
+      setup.graduadosAdmin.secretary
     );
   });
 
   it("returns only rejected by graduados secretary jobApplications", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [rejectedByGraduadosJobApplication],
+      [setup.rejectedByGraduadosJobApplication],
       [ApprovalStatus.rejected],
-      graduadosAdmin.secretary
+      setup.graduadosAdmin.secretary
     );
   });
 
   it("returns only pending applicants, companies and Offers", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [pendingCompany, pendingApplicant, pendingOffer],
+      [setup.pendingCompany, setup.pendingApplicant, setup.pendingOffer],
       [ApprovalStatus.pending],
-      extensionAdmin.secretary
+      setup.extensionAdmin.secretary
     );
   });
 
   it("returns only approved and rejected applicants, companies and Offers", async () => {
     await expectToFindAdminTasksWithStatuses(
       [
-        approvedCompany,
-        rejectedCompany,
-        approvedApplicant,
-        rejectedApplicant,
-        approvedOffer,
-        rejectedOffer
+        setup.approvedCompany,
+        setup.rejectedCompany,
+        setup.approvedApplicant,
+        setup.rejectedApplicant,
+        setup.approvedOffer,
+        setup.rejectedOffer
       ],
       [ApprovalStatus.approved, ApprovalStatus.rejected],
-      extensionAdmin.secretary
+      setup.extensionAdmin.secretary
     );
   });
 
@@ -342,10 +220,10 @@ describe("AdminTaskRepository", () => {
         AdminTaskType.JobApplication
       ],
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
-      secretary: extensionAdmin.secretary
+      secretary: setup.extensionAdmin.secretary
     });
     expect(result.results.map(adminTask => adminTask.uuid)).toEqual(
-      allTasksByDescUpdatedAt.map(task => task.uuid)
+      setup.allTasksByDescUpdatedAt.map(task => task.uuid)
     );
     expect(result.results).toBeSortedBy({ key: "updatedAt", order: "desc" });
     expect(result.shouldFetchMore).toEqual(false);
@@ -355,7 +233,7 @@ describe("AdminTaskRepository", () => {
     const itemsPerPage = 3;
     mockItemsPerPage(itemsPerPage);
     const lastTaskIndex = 1;
-    const lastTask = allTasksByDescUpdatedAt[lastTaskIndex];
+    const lastTask = setup.allTasksByDescUpdatedAt[lastTaskIndex];
     const result = await AdminTaskRepository.find({
       adminTaskTypes: [
         AdminTaskType.Applicant,
@@ -368,11 +246,11 @@ describe("AdminTaskRepository", () => {
         dateTime: lastTask.updatedAt,
         uuid: lastTask.uuid
       },
-      secretary: extensionAdmin.secretary
+      secretary: setup.extensionAdmin.secretary
     });
     expect(result.shouldFetchMore).toEqual(true);
     expect(result.results.map(task => task.uuid)).toEqual(
-      allTasksByDescUpdatedAt
+      setup.allTasksByDescUpdatedAt
         .map(task => task.uuid)
         .slice(lastTaskIndex + 1, lastTaskIndex + 1 + itemsPerPage)
     );
@@ -383,7 +261,7 @@ describe("AdminTaskRepository", () => {
     const companies: Company[] = [];
 
     beforeAll(async () => {
-      firstTask = allTasksByDescUpdatedAt[allTasksByDescUpdatedAt.length - 1];
+      firstTask = setup.allTasksByDescUpdatedAt[setup.allTasksByDescUpdatedAt.length - 1];
       MockDate.set(firstTask.updatedAt - 1);
       for (const _ of range(9)) {
         companies.push(await CompanyGenerator.instance.updatedWithStatus());
@@ -399,7 +277,7 @@ describe("AdminTaskRepository", () => {
           dateTime: firstTask.updatedAt,
           uuid: firstTask.uuid
         },
-        secretary: extensionAdmin.secretary
+        secretary: setup.extensionAdmin.secretary
       });
       expect(result.shouldFetchMore).toEqual(false);
       expect(result.results.map(task => task.uuid)).toEqual(
