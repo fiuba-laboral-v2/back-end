@@ -1,10 +1,9 @@
 import { withObligatoryData } from "./withObligatoryData";
 import { withOneSection } from "./withOneSection";
-import { OfferRepository } from "$models/Offer";
+import { OfferRepository, TargetApplicantType } from "$models/Offer";
 import { Admin } from "$models";
 import { IOfferCareer } from "$models/Offer/OfferCareer";
 import { IOfferSection } from "$models/Offer/OfferSection";
-import { TargetApplicantType } from "$models/Offer";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
@@ -35,18 +34,12 @@ export const OfferGenerator = {
     updatedWithStatus: async ({
       admin,
       status,
-      secretary,
       ...variables
     }: IOfferInput & IUpdatedWithStatus) => {
       const { uuid } = await OfferRepository.create(
         withOneSection({ index: OfferGenerator.getIndex(), ...variables })
       );
-      return OfferRepository.updateApprovalStatus({
-        uuid,
-        adminUserUuid: admin.userUuid,
-        status,
-        secretary
-      });
+      return OfferRepository.updateApprovalStatus({ uuid, admin, status });
     }
   },
   data: {
