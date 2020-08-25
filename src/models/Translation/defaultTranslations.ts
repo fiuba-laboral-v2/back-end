@@ -63,7 +63,7 @@ export const defaultTranslations = {
     { key: "minimumSalary", value: "Salario mínimo" },
     { key: "maximumSalary", value: "Salario máximo" },
     { key: "submit", value: "Publicar" },
-    { key: "confirmDialogTitle", value: "¿Editar oferta aprobada?" },
+    { key: "confirmDialogTitle", value: "¿Editar oferta?" },
     {
       key: "confirmDialogDescription",
       value: "La oferta tendrá que ser nuevamente aprobada para volver a ser visible"
