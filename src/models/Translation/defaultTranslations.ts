@@ -62,7 +62,14 @@ export const defaultTranslations = {
     { key: "hoursPerDay", value: "Horas por día" },
     { key: "minimumSalary", value: "Salario mínimo" },
     { key: "maximumSalary", value: "Salario máximo" },
-    { key: "submit", value: "Publicar" }
+    { key: "submit", value: "Publicar" },
+    { key: "confirmDialogTitle", value: "¿Editar oferta aprobada?" },
+    {
+      key: "confirmDialogDescription",
+      value: "La oferta tendrá que ser nuevamente aprobada para volver a ser visible"
+    },
+    { key: "confirmDialogCancel", value: "Cancelar" },
+    { key: "confirmDialogConfirm", value: "Confirmar" }
   ],
   CompanyLogoInput: [{ key: "uploadLogo", value: "Subir logo" }],
   companyFields: [
