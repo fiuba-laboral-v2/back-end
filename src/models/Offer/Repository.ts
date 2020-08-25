@@ -3,7 +3,7 @@ import { IFindAll, IOffer } from "./";
 import { IOfferSection } from "./OfferSection";
 import { IOfferCareer } from "./OfferCareer";
 import { OfferNotFound, OfferNotUpdatedError } from "./Errors";
-import { Admin, Offer, OfferCareer, OfferSection } from "$models";
+import { Offer, OfferCareer, OfferSection } from "$models";
 import { Op } from "sequelize";
 import { PaginationConfig } from "$config/PaginationConfig";
 import { ICreateOffer } from "$models/Offer/Interface";
@@ -37,7 +37,10 @@ export const OfferRepository = {
     status
   }: {
     uuid: string;
-    admin: Admin;
+    admin: {
+      secretary: Secretary;
+      userUuid: string;
+    };
     status: ApprovalStatus;
   }) =>
     Database.transaction(async transaction => {
