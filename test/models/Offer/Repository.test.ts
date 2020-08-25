@@ -18,11 +18,16 @@ import { OfferApprovalEventRepository } from "$models/Offer/OfferApprovalEvent";
 import { isApprovalStatus } from "$models/SequelizeModelValidators";
 
 describe("OfferRepository", () => {
+  let graduadosAdmin: Admin;
+  let extensionAdmin: Admin;
+
   beforeAll(async () => {
     await CareerRepository.truncate();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     await OfferRepository.truncate();
+    graduadosAdmin = await AdminGenerator.instance({ secretary: Secretary.graduados });
+    extensionAdmin = await AdminGenerator.instance({ secretary: Secretary.extension });
   });
 
   const sectionData = {
@@ -215,6 +220,29 @@ describe("OfferRepository", () => {
       await expectToUpdateTargetApplicantTypeTo(TargetApplicantType.both);
     });
 
+    it("moves both approval statuses back to pending", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const attributes = OfferGenerator.data.withObligatoryData({ companyUuid });
+      const { uuid } = await OfferRepository.create(attributes);
+      await OfferRepository.updateApprovalStatus({
+        uuid,
+        admin: extensionAdmin,
+        status: ApprovalStatus.approved
+      });
+      await OfferRepository.updateApprovalStatus({
+        uuid,
+        admin: graduadosAdmin,
+        status: ApprovalStatus.approved
+      });
+      await OfferRepository.update({ ...attributes, uuid });
+      expect((await OfferRepository.findByUuid(uuid)).extensionApprovalStatus).toEqual(
+        ApprovalStatus.pending
+      );
+      expect((await OfferRepository.findByUuid(uuid)).graduadosApprovalStatus).toEqual(
+        ApprovalStatus.pending
+      );
+    });
+
     it("throws an error if the offer does not exist", async () => {
       const companyUuid = "bda5f82a-d839-4af3-ae04-1b669d590a85";
       const unknownOfferUuid = "1dd69a27-0f6c-4859-be9e-4de5adf22826";
@@ -228,11 +256,6 @@ describe("OfferRepository", () => {
   });
 
   describe("UpdateApprovalStatus", () => {
-    let admin: Admin;
-    beforeAll(async () => {
-      admin = await AdminGenerator.instance({ secretary: Secretary.graduados });
-    });
-
     it("updates the status for the secretary graduados successfully", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const attributes = OfferGenerator.data.withObligatoryData({ companyUuid });
@@ -240,8 +263,7 @@ describe("OfferRepository", () => {
       const newStatus = ApprovalStatus.approved;
       const params = {
         uuid,
-        adminUserUuid: admin.userUuid,
-        secretary: Secretary.graduados,
+        admin: graduadosAdmin,
         status: newStatus
       };
       await OfferRepository.updateApprovalStatus(params);
@@ -256,8 +278,7 @@ describe("OfferRepository", () => {
       const newStatus = ApprovalStatus.approved;
       const params = {
         uuid,
-        adminUserUuid: admin.userUuid,
-        secretary: Secretary.extension,
+        admin: extensionAdmin,
         status: newStatus
       };
       await OfferRepository.updateApprovalStatus(params);
@@ -272,8 +293,7 @@ describe("OfferRepository", () => {
       const newStatus = ApprovalStatus.approved;
       const params = {
         uuid,
-        adminUserUuid: admin.userUuid,
-        secretary: Secretary.extension,
+        admin: extensionAdmin,
         status: newStatus
       };
       await OfferRepository.updateApprovalStatus(params);
@@ -287,8 +307,7 @@ describe("OfferRepository", () => {
       const newStatus = ApprovalStatus.approved;
       const params = {
         uuid: unknownOfferUuid,
-        adminUserUuid: admin.userUuid,
-        secretary: Secretary.graduados,
+        admin: graduadosAdmin,
         status: newStatus
       };
 
@@ -304,8 +323,7 @@ describe("OfferRepository", () => {
       const newStatus = "pepito" as ApprovalStatus;
       const params = {
         uuid,
-        adminUserUuid: admin.userUuid,
-        secretary: Secretary.extension,
+        admin: extensionAdmin,
         status: newStatus
       };
 

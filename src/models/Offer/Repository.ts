@@ -17,28 +17,36 @@ export const OfferRepository = {
     return OfferRepository.save(offer, sections, careers);
   },
   update: async (offer: IOffer & { uuid: string }) => {
-    const [, [updatedOffer]] = await Offer.update(offer, {
-      where: { uuid: offer.uuid },
-      returning: true
-    });
+    const [, [updatedOffer]] = await Offer.update(
+      {
+        extensionApprovalStatus: ApprovalStatus.pending,
+        graduadosApprovalStatus: ApprovalStatus.pending,
+        ...offer
+      },
+      {
+        where: { uuid: offer.uuid },
+        returning: true
+      }
+    );
     if (!updatedOffer) throw new OfferNotUpdatedError(offer.uuid);
     return updatedOffer;
   },
   updateApprovalStatus: async ({
     uuid,
-    adminUserUuid,
-    secretary,
+    admin,
     status
   }: {
     uuid: string;
-    adminUserUuid: string;
-    secretary: Secretary;
+    admin: {
+      secretary: Secretary;
+      userUuid: string;
+    };
     status: ApprovalStatus;
   }) =>
     Database.transaction(async transaction => {
       const offerAttributes = {
-        ...(secretary === Secretary.graduados && { graduadosApprovalStatus: status }),
-        ...(secretary === Secretary.extension && { extensionApprovalStatus: status })
+        ...(admin.secretary === Secretary.graduados && { graduadosApprovalStatus: status }),
+        ...(admin.secretary === Secretary.extension && { extensionApprovalStatus: status })
       };
 
       const [, [updatedOffer]] = await Offer.update(offerAttributes, {
@@ -49,7 +57,7 @@ export const OfferRepository = {
       if (!updatedOffer) throw new OfferNotUpdatedError(uuid);
 
       await OfferApprovalEventRepository.create({
-        adminUserUuid,
+        adminUserUuid: admin.userUuid,
         offer: updatedOffer,
         status: status,
         transaction

@@ -24,8 +24,7 @@ export const updateOfferApprovalStatus = {
     const admin = await AdminRepository.findByUserUuid(currentUser.admin.userUuid);
     return OfferRepository.updateApprovalStatus({
       uuid,
-      adminUserUuid: currentUser.admin.userUuid,
-      secretary: admin.secretary,
+      admin,
       status: approvalStatus
     });
   }

@@ -2,6 +2,7 @@
 build
 coverage
 dist/
+config/
 data
 dist_migrations
 dist_seeders
