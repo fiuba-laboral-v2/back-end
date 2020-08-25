@@ -12,6 +12,7 @@ const GET_CURRENT_USER = gql`
       surname
       admin {
         userUuid
+        secretary
       }
       applicant {
         padron
@@ -58,7 +59,8 @@ describe("getCurrentUser", () => {
       name: user.name,
       surname: user.surname,
       admin: {
-        userUuid: admin.userUuid
+        userUuid: admin.userUuid,
+        secretary: admin.secretary
       },
       applicant: null,
       company: null
