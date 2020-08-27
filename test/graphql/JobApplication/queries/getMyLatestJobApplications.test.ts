@@ -25,6 +25,7 @@ const GET_MY_LATEST_JOB_APPLICATIONS = gql`
       results {
         uuid
         updatedAt
+        createdAt
         offer {
           uuid
           title
@@ -73,6 +74,7 @@ describe("getMyLatestJobApplications", () => {
         {
           uuid: jobApplication.uuid,
           updatedAt: jobApplication.updatedAt.toISOString(),
+          createdAt: jobApplication.createdAt.toISOString(),
           offer: {
             uuid: offer.uuid,
             title: offer.title
