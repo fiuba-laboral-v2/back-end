@@ -6,6 +6,7 @@ export const jobApplicationPermissions = {
     updateJobApplicationApprovalStatus: isAdmin
   },
   Query: {
-    getMyLatestJobApplications: isFromApprovedCompany
+    getMyLatestJobApplications: isFromApprovedCompany,
+    getJobApplicationByUuid: isAdmin
   }
 };

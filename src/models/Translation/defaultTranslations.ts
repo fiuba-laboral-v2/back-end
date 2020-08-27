@@ -190,6 +190,7 @@ export const defaultTranslations = {
   ],
   adminCompanyMainTitle: [{ key: "title", value: "Registro de Empresa" }],
   adminApplicantMainTitle: [{ key: "title", value: "Registro de Postulante" }],
+  adminJobApplicationMainTitle: [{ key: "title", value: "Nueva postulación" }],
   adminOfferMainTitle: [{ key: "title", value: "Oferta Laboral" }],
   adminOfferDetails: [{ key: "cuit", value: "Cuit de la empresa:" }],
   adminCompanyDetails: [{ key: "cuit", value: "Cuit:" }],

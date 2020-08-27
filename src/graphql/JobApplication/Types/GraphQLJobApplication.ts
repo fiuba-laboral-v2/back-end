@@ -34,6 +34,9 @@ export const GraphQLJobApplication = new GraphQLObjectType<JobApplication>({
     },
     updatedAt: {
       type: nonNull(GraphQLDateTime)
+    },
+    createdAt: {
+      type: nonNull(GraphQLDateTime)
     }
   })
 });
