@@ -14,6 +14,8 @@ const GET_JOB_APPLICATION_BY_UUID = gql`
     getJobApplicationByUuid(uuid: $uuid) {
       uuid
       updatedAt
+      extensionApprovalStatus
+      graduadosApprovalStatus
       offer {
         uuid
         title
@@ -50,6 +52,8 @@ describe("getJobApplicationByUuid", () => {
       expect(data!.getJobApplicationByUuid).toEqual({
         uuid: jobApplication.uuid,
         updatedAt: jobApplication.updatedAt.toISOString(),
+        extensionApprovalStatus: jobApplication.extensionApprovalStatus,
+        graduadosApprovalStatus: jobApplication.graduadosApprovalStatus,
         offer: {
           uuid: offer.uuid,
           title: offer.title
