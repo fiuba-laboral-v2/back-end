@@ -161,16 +161,16 @@ export const defaultTranslations = {
   ],
   typeFilterMenu: [
     { key: "title", value: "Tipo" },
-    { key: "companyIconTitle", value: "Empresa" },
-    { key: "applicantIconTitle", value: "Postulante" },
-    { key: "offerIconTitle", value: "Oferta" },
-    { key: "jobApplicationIconTitle", value: "Postulación" }
+    { key: "companyIconTitle", value: "Empresas" },
+    { key: "applicantIconTitle", value: "Postulantes" },
+    { key: "offerIconTitle", value: "Ofertas" },
+    { key: "jobApplicationIconTitle", value: "Postulaciones" }
   ],
   statusFilterMenu: [
     { key: "title", value: "Estado" },
-    { key: "pending", value: "Pendiente" },
-    { key: "approved", value: "Aprobado" },
-    { key: "rejected", value: "Rechazado" }
+    { key: "pending", value: "Pendientes" },
+    { key: "approved", value: "Aprobados" },
+    { key: "rejected", value: "Rechazados" }
   ],
   adminTaskList: [
     { key: "none", value: "Tareas" },
