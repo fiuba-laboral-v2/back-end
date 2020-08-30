@@ -73,7 +73,7 @@ export const defaultTranslations = {
   ],
   CompanyLogoInput: [{ key: "uploadLogo", value: "Subir logo" }],
   companyFields: [
-    { key: "cuit", value: "Cuit" },
+    { key: "cuit", value: "CUIT" },
     { key: "email", value: "Email de la empresa" },
     { key: "companyName", value: "Nombre de la empresa" },
     { key: "slogan", value: "Slogan" },
@@ -161,16 +161,16 @@ export const defaultTranslations = {
   ],
   typeFilterMenu: [
     { key: "title", value: "Tipo" },
-    { key: "companyIconTitle", value: "Empresa" },
-    { key: "applicantIconTitle", value: "Postulante" },
-    { key: "offerIconTitle", value: "Ofertas Laborales" },
+    { key: "companyIconTitle", value: "Empresas" },
+    { key: "applicantIconTitle", value: "Postulantes" },
+    { key: "offerIconTitle", value: "Ofertas" },
     { key: "jobApplicationIconTitle", value: "Postulaciones" }
   ],
   statusFilterMenu: [
     { key: "title", value: "Estado" },
-    { key: "pending", value: "Pendiente" },
-    { key: "approved", value: "Aprobado" },
-    { key: "rejected", value: "Rechazado" }
+    { key: "pending", value: "Pendientes" },
+    { key: "approved", value: "Aprobados" },
+    { key: "rejected", value: "Rechazados" }
   ],
   adminTaskList: [
     { key: "none", value: "Tareas" },
@@ -190,10 +190,10 @@ export const defaultTranslations = {
   ],
   adminCompanyMainTitle: [{ key: "title", value: "Registro de Empresa" }],
   adminApplicantMainTitle: [{ key: "title", value: "Registro de Postulante" }],
-  adminJobApplicationMainTitle: [{ key: "title", value: "Nueva postulación" }],
-  adminOfferMainTitle: [{ key: "title", value: "Oferta Laboral" }],
-  adminOfferDetails: [{ key: "cuit", value: "Cuit de la empresa:" }],
-  adminCompanyDetails: [{ key: "cuit", value: "Cuit:" }],
+  adminJobApplicationMainTitle: [{ key: "title", value: "Postulación a Oferta Laboral" }],
+  adminOfferMainTitle: [{ key: "title", value: "Publicación de Oferta Laboral" }],
+  adminOfferDetails: [{ key: "cuit", value: "CUIT de la empresa:" }],
+  adminCompanyDetails: [{ key: "cuit", value: "CUIT:" }],
   adminApplicantDetails: [{ key: "padron", value: "Padrón:" }],
   adminActions: [
     { key: "approve", value: "Aprobar" },
