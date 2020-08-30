@@ -7,7 +7,7 @@ export const rubySenior = {
   offer: {
     uuid: uuids.offers.ruby_senior,
     companyUuid: uuids.companies.devartis,
-    title: "Desarrollador Java semi senior",
+    title: "Desarrollador Ruby senior",
     targetApplicantType: TargetApplicantType.both,
     description,
     hoursPerDay: 6,
