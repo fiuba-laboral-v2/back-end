@@ -10,6 +10,7 @@ import {
   PasswordWithoutUppercaseError
 } from "validations-fiuba-laboral-v2";
 import { DniGenerator } from "$generators/DNI";
+import { UserGenerator } from "$generators/User";
 
 describe("UserRepository", () => {
   beforeEach(() => UserRepository.truncate());
@@ -179,41 +180,44 @@ describe("UserRepository", () => {
   });
 
   describe("findByEmail", () => {
-    it("should find a user by email", async () => {
-      await UserRepository.create({
-        email: "bbb@bbb.com",
-        password: "AValidPassword456",
-        name: "Sebastian",
-        surname: "blanco"
-      });
+    it("finds a user by email", async () => {
+      await UserGenerator.instance();
+      const user = await UserGenerator.instance();
+      const foundUser = await UserRepository.findByEmail(user.email);
 
-      const emailToFind = "aaa@aaa.com";
-      const userToFind = await UserRepository.create({
-        email: emailToFind,
-        password: "AValidPassword123",
-        name: "Manuel",
-        surname: "Llauro"
-      });
-      const foundUser = await UserRepository.findByEmail(emailToFind);
-
-      expect(foundUser.email).toEqual(emailToFind);
-      expect(foundUser.password).toEqual(userToFind.password);
+      expect(foundUser.email).toEqual(user.email);
+      expect(foundUser.password).toEqual(user.password);
     });
 
     it("returns error when it does not find a user with the given email", async () => {
-      await UserRepository.create({
-        email: "qqq@qqq.com",
-        password: "AValidPassword789",
-        name: "Sebastian",
-        surname: "Blanco"
-      });
-      await UserRepository.create({
-        email: "www@www.com",
-        password: "AValidPassword012",
-        name: "Dylan",
-        surname: "Alvarez"
-      });
-      await expect(UserRepository.findByEmail("yyy@yyy.com")).rejects.toThrow(UserNotFoundError);
+      await UserGenerator.instance();
+      await UserGenerator.instance();
+      const nonExistentEmail = "yyy@yyy.com";
+      await expect(UserRepository.findByEmail(nonExistentEmail)).rejects.toThrowErrorWithMessage(
+        UserNotFoundError,
+        UserNotFoundError.buildMessage({ email: nonExistentEmail })
+      );
+    });
+  });
+
+  describe("findByUuid", () => {
+    it("returns user by uuid", async () => {
+      await UserGenerator.instance();
+      const secondUser = await UserGenerator.instance();
+      await UserGenerator.instance();
+      const user = await UserRepository.findByUuid(secondUser.uuid);
+      expect(user.toJSON()).toEqual(secondUser.toJSON());
+    });
+
+    it("throws an error if the user with the given uuid is not found", async () => {
+      await UserGenerator.instance();
+      await UserGenerator.instance();
+      await UserGenerator.instance();
+      const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+      await expect(UserRepository.findByUuid(randomUuid)).rejects.toThrowErrorWithMessage(
+        UserNotFoundError,
+        UserNotFoundError.buildMessage({ uuid: randomUuid })
+      );
     });
   });
 });

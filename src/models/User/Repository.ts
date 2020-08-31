@@ -29,7 +29,13 @@ export const UserRepository = {
   },
   findByEmail: async (email: string) => {
     const user = await User.findOne({ where: { email } });
-    if (!user) throw new UserNotFoundError(email);
+    if (!user) throw new UserNotFoundError({ email });
+
+    return user;
+  },
+  findByUuid: async (uuid: string) => {
+    const user = await User.findByPk(uuid);
+    if (!user) throw new UserNotFoundError({ uuid });
 
     return user;
   },
