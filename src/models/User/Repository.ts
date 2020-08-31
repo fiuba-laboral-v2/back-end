@@ -17,8 +17,6 @@ export const UserRepository = {
     return User.create({ dni, ...attributes }, { transaction });
   },
   validateCredentials: async (user: User, password: string) => {
-    // TODO: Esto es temporal. En el próximo pr la idea es loguear al usuario de
-    //  FIUBA con dni y mejorar el código y testearlo
     let valid;
     if (user.isFiubaUser()) {
       valid = await FiubaUsersService.authenticate({ dni: user.dni, password });
