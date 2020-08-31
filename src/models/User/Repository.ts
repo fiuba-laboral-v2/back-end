@@ -39,8 +39,7 @@ export const UserRepository = {
 
     return user;
   },
-  update: (user: User, newAttributes: IUserEditable, transaction?: Transaction) => {
-    return user.update(newAttributes, { transaction });
-  },
+  update: (user: User, newAttributes: IUserEditable, transaction?: Transaction) =>
+    user.update(newAttributes, { transaction }),
   truncate: () => User.truncate({ cascade: true })
 };
