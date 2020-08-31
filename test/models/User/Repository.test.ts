@@ -213,10 +213,10 @@ describe("UserRepository", () => {
       await UserGenerator.instance();
       await UserGenerator.instance();
       await UserGenerator.instance();
-      const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
-      await expect(UserRepository.findByUuid(randomUuid)).rejects.toThrowErrorWithMessage(
+      const nonExistentUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+      await expect(UserRepository.findByUuid(nonExistentUuid)).rejects.toThrowErrorWithMessage(
         UserNotFoundError,
-        UserNotFoundError.buildMessage({ uuid: randomUuid })
+        UserNotFoundError.buildMessage({ uuid: nonExistentUuid })
       );
     });
   });
