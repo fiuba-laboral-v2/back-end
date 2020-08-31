@@ -105,7 +105,7 @@ describe("getCurrentUser", () => {
     });
   });
 
-  it("returns an error it the user is deleted and the cookie is outdated", async () => {
+  it("returns an error if the user is deleted and the cookie is outdated", async () => {
     const { apolloClient } = await TestClientGenerator.company();
     await UserRepository.truncate();
     await CompanyRepository.truncate();
