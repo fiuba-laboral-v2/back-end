@@ -2,6 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "$src/*": ["src/*"],
       "$models/*": ["src/models/*"],
       "$models": ["src/models"],
       "$graphql/*": ["src/graphql/*"],

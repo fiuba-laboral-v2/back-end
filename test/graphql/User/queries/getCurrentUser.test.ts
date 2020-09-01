@@ -1,6 +1,6 @@
 import { gql } from "apollo-server";
-import { client } from "../../ApolloTestClient";
-import { UserRepository } from "$models/User";
+import { client } from "$test/graphql/ApolloTestClient";
+import { UserNotFoundError, UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { TestClientGenerator } from "$generators/TestClient";
 
@@ -103,6 +103,14 @@ describe("getCurrentUser", () => {
         companyName: company.companyName
       }
     });
+  });
+
+  it("returns an error if the user is deleted and the cookie is outdated", async () => {
+    const { apolloClient } = await TestClientGenerator.company();
+    await UserRepository.truncate();
+    await CompanyRepository.truncate();
+    const { errors } = await apolloClient.query({ query: GET_CURRENT_USER });
+    expect(errors![0].extensions!.data).toEqual({ errorType: UserNotFoundError.name });
   });
 
   it("returns null if the current user is not set in context", async () => {

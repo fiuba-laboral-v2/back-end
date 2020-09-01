@@ -1,6 +1,6 @@
 import { Boolean, nonNull, String } from "$graphql/fieldTypes";
 import { UserRepository } from "$models/User";
-import { JWT } from "../../../JWT";
+import { JWT } from "$src/JWT";
 import { Context } from "$graphql/Context/graphqlContext";
 import { AuthConfig } from "$config/AuthConfig";
 

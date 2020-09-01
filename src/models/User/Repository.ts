@@ -17,8 +17,6 @@ export const UserRepository = {
     return User.create({ dni, ...attributes }, { transaction });
   },
   validateCredentials: async (user: User, password: string) => {
-    // TODO: Esto es temporal. En el próximo pr la idea es loguear al usuario de
-    //  FIUBA con dni y mejorar el código y testearlo
     let valid;
     if (user.isFiubaUser()) {
       valid = await FiubaUsersService.authenticate({ dni: user.dni, password });
@@ -29,12 +27,17 @@ export const UserRepository = {
   },
   findByEmail: async (email: string) => {
     const user = await User.findOne({ where: { email } });
-    if (!user) throw new UserNotFoundError(email);
+    if (!user) throw new UserNotFoundError({ email });
 
     return user;
   },
-  update: (user: User, newAttributes: IUserEditable, transaction?: Transaction) => {
-    return user.update(newAttributes, { transaction });
+  findByUuid: async (uuid: string) => {
+    const user = await User.findByPk(uuid);
+    if (!user) throw new UserNotFoundError({ uuid });
+
+    return user;
   },
+  update: (user: User, newAttributes: IUserEditable, transaction?: Transaction) =>
+    user.update(newAttributes, { transaction }),
   truncate: () => User.truncate({ cascade: true })
 };
