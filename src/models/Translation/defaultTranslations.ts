@@ -204,5 +204,6 @@ export const defaultTranslations = {
   rejectedLabel: [{ key: "text", value: "Rechazado" }],
   pendingLabel: [{ key: "text", value: "Pendiente de Aprobación" }],
   createdSince: [{ key: "create", value: "Creado" }],
-  updatedSince: [{ key: "update", value: "Actualizado" }]
+  updatedSince: [{ key: "update", value: "Actualizado" }],
+  list: [{ key: "fetchMore", value: "Ver más" }]
 };
