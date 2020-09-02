@@ -200,9 +200,18 @@ export const defaultTranslations = {
     { key: "reject", value: "Rechazar" },
     { key: "pending", value: "A Pendiente" }
   ],
-  approvedLabel: [{ key: "text", value: "Aprobado" }],
-  rejectedLabel: [{ key: "text", value: "Rechazado" }],
-  pendingLabel: [{ key: "text", value: "Pendiente de Aprobación" }],
+  statusLabel: [
+    { key: "approved", value: "Aprobado" },
+    { key: "rejected", value: "Rechazado" },
+    { key: "pending", value: "Pendiente de Aprobación" }
+  ],
+  separatedStatusLabel: [
+    { key: "graduate", value: "Graduados" },
+    { key: "student", value: "Alumnos" },
+    { key: "approve", value: "Aprobado para" },
+    { key: "rejected", value: "Rechazado para" },
+    { key: "pending", value: "Pendiente de aprobación para" }
+  ],
   createdSince: [{ key: "create", value: "Creado" }],
   updatedSince: [{ key: "update", value: "Actualizado" }],
   list: [{ key: "fetchMore", value: "Ver más" }]
