@@ -203,7 +203,7 @@ export const defaultTranslations = {
   statusLabel: [
     { key: "approved", value: "Aprobado" },
     { key: "rejected", value: "Rechazado" },
-    { key: "pending", value: "Pendiente de Aprobación" }
+    { key: "pending", value: "Pendiente de aprobación" }
   ],
   separatedStatusLabel: [
     { key: "graduate", value: "Graduados" },
