@@ -206,11 +206,19 @@ export const defaultTranslations = {
     { key: "pending", value: "Pendiente de aprobación" }
   ],
   separatedStatusLabel: [
-    { key: "graduate", value: "Graduados" },
-    { key: "student", value: "Alumnos" },
-    { key: "approved", value: "Aprobado para" },
-    { key: "rejected", value: "Rechazado para" },
-    { key: "pending", value: "Pendiente de aprobación para" }
+    {
+      key: "extensionTooltip",
+      value: "Revisa la Secretaría de Extensión Universitaria y Bienestar Estudiantil"
+    },
+    {
+      key: "graduadosTooltip",
+      value: "Revisa la Subsecretaría de Relación con Graduados"
+    },
+    { key: "graduate", value: "graduados" },
+    { key: "student", value: "alumnos" },
+    { key: "approved", value: "Visible por" },
+    { key: "rejected", value: "No visible por" },
+    { key: "pending", value: "aprobación pendiente" }
   ],
   createdSince: [{ key: "create", value: "Creado" }],
   updatedSince: [{ key: "update", value: "Actualizado" }],
