@@ -200,9 +200,26 @@ export const defaultTranslations = {
     { key: "reject", value: "Rechazar" },
     { key: "pending", value: "A Pendiente" }
   ],
-  approvedLabel: [{ key: "text", value: "Aprobado" }],
-  rejectedLabel: [{ key: "text", value: "Rechazado" }],
-  pendingLabel: [{ key: "text", value: "Pendiente de Aprobación" }],
+  statusLabel: [
+    { key: "approved", value: "Aprobado" },
+    { key: "rejected", value: "Rechazado" },
+    { key: "pending", value: "Pendiente de aprobación" }
+  ],
+  separatedStatusLabel: [
+    {
+      key: "extensionTooltip",
+      value: "Revisa la Secretaría de Extensión Universitaria y Bienestar Estudiantil"
+    },
+    {
+      key: "graduadosTooltip",
+      value: "Revisa la Subsecretaría de Relación con Graduados"
+    },
+    { key: "graduate", value: "graduados" },
+    { key: "student", value: "alumnos" },
+    { key: "approved", value: "Visible por" },
+    { key: "rejected", value: "No visible por" },
+    { key: "pending", value: "aprobación pendiente" }
+  ],
   createdSince: [{ key: "create", value: "Creado" }],
   updatedSince: [{ key: "update", value: "Actualizado" }],
   list: [{ key: "fetchMore", value: "Ver más" }]
