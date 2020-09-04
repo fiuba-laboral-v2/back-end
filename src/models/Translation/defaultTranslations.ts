@@ -197,8 +197,7 @@ export const defaultTranslations = {
   adminApplicantDetails: [{ key: "padron", value: "Padrón:" }],
   adminActions: [
     { key: "approve", value: "Aprobar" },
-    { key: "reject", value: "Rechazar" },
-    { key: "pending", value: "A Pendiente" }
+    { key: "reject", value: "Rechazar" }
   ],
   statusLabel: [
     { key: "approved", value: "Aprobado" },
