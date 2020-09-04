@@ -188,10 +188,10 @@ export const defaultTranslations = {
     { key: "rejected", value: "Rechazado" },
     { key: "pending", value: "Pendiente" }
   ],
-  adminCompanyMainTitle: [{ key: "title", value: "Registro de Empresa" }],
-  adminApplicantMainTitle: [{ key: "title", value: "Registro de Postulante" }],
-  adminJobApplicationMainTitle: [{ key: "title", value: "Postulación a Oferta Laboral" }],
-  adminOfferMainTitle: [{ key: "title", value: "Publicación de Oferta Laboral" }],
+  adminCompanyMainTitle: [{ key: "title", value: "Empresa" }],
+  adminApplicantMainTitle: [{ key: "title", value: "Postulante" }],
+  adminJobApplicationMainTitle: [{ key: "title", value: "Postulación" }],
+  adminOfferMainTitle: [{ key: "title", value: "Oferta Laboral" }],
   adminOfferDetails: [{ key: "cuit", value: "CUIT de la empresa:" }],
   adminCompanyDetails: [{ key: "cuit", value: "CUIT:" }],
   adminApplicantDetails: [{ key: "padron", value: "Padrón:" }],
@@ -220,6 +220,7 @@ export const defaultTranslations = {
     { key: "pending", value: "aprobación pendiente" }
   ],
   createdSince: [{ key: "create", value: "Creado" }],
+  desktopOnlyOverlay: [{ key: "message", value: "Ampliar la pantalla del navegador" }],
   updatedSince: [{ key: "update", value: "Actualizado" }],
   list: [{ key: "fetchMore", value: "Ver más" }]
 };
