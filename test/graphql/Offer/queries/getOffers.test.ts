@@ -29,16 +29,6 @@ const GET_OFFERS = gql`
 `;
 
 describe("getOffers", () => {
-  const approvedApplicantTestClient = async () => {
-    const { apolloClient } = await TestClientGenerator.applicant({
-      status: {
-        approvalStatus: ApprovalStatus.approved,
-        admin: await AdminGenerator.instance({ secretary: Secretary.extension })
-      }
-    });
-    return apolloClient;
-  };
-
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
@@ -65,21 +55,21 @@ describe("getOffers", () => {
     beforeAll(() => createOffers());
 
     it("returns two offers if two offers were created", async () => {
-      const apolloClient = await approvedApplicantTestClient();
+      const { apolloClient } = await TestClientGenerator.admin();
       const { data } = await apolloClient.query({ query: GET_OFFERS });
       expect(data!.getOffers.results).toHaveLength(2);
       expect(data!.getOffers.shouldFetchMore).toEqual(false);
     });
 
     it("returns two offers sorted by updatedAt", async () => {
-      const apolloClient = await approvedApplicantTestClient();
+      const { apolloClient } = await TestClientGenerator.admin();
       const { data } = await apolloClient.query({ query: GET_OFFERS });
       expect(data!.getOffers.results).toMatchObject([{ uuid: offer2.uuid }, { uuid: offer1.uuid }]);
       expect(data!.getOffers.shouldFetchMore).toEqual(false);
     });
 
     it("filters by updatedAt", async () => {
-      const apolloClient = await approvedApplicantTestClient();
+      const { apolloClient } = await TestClientGenerator.admin();
       const { data } = await apolloClient.query({
         query: GET_OFFERS,
         variables: {
@@ -96,7 +86,7 @@ describe("getOffers", () => {
     it("filters by updatedAt even when it does not coincide with createdAt", async () => {
       offer1.title = "something";
       await offer1.save();
-      const apolloClient = await approvedApplicantTestClient();
+      const { apolloClient } = await TestClientGenerator.admin();
       const { data } = await apolloClient.query({
         query: GET_OFFERS,
         variables: {
@@ -129,7 +119,7 @@ describe("getOffers", () => {
       it("gets the latest 10 offers", async () => {
         offer1.title = "something different";
         await offer1.save();
-        const apolloClient = await approvedApplicantTestClient();
+        const { apolloClient } = await TestClientGenerator.admin();
 
         const itemsPerPage = 10;
         mockItemsPerPage(itemsPerPage);
@@ -145,7 +135,7 @@ describe("getOffers", () => {
         const offersByDescUpdatedAt = [offer1, ...newOffersByDescUpdatedAt].sort(
           offer => offer.updatedAt
         );
-        const apolloClient = await approvedApplicantTestClient();
+        const { apolloClient } = await TestClientGenerator.admin();
 
         const itemsPerPage = 3;
         const lastOfferIndex = 9;
@@ -180,7 +170,7 @@ describe("getOffers", () => {
     );
 
     it("returns no offers when no offers were created", async () => {
-      const apolloClient = await approvedApplicantTestClient();
+      const { apolloClient } = await TestClientGenerator.admin();
       const { data, errors } = await apolloClient.query({ query: GET_OFFERS });
 
       expect(errors).toBeUndefined();
@@ -197,8 +187,8 @@ describe("getOffers", () => {
     });
   });
 
-  it("returns an error when the user is an admin", async () => {
-    const { apolloClient } = await TestClientGenerator.admin();
+  it("returns an error when the user is an applicant", async () => {
+    const { apolloClient } = await TestClientGenerator.applicant();
     const { errors } = await apolloClient.query({ query: GET_OFFERS });
     expect(errors![0].extensions!.data).toEqual({
       errorType: UnauthorizedError.name

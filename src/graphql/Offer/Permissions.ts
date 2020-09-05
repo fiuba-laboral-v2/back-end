@@ -1,5 +1,4 @@
-import { isAdmin, isFromApprovedCompany } from "../Rules";
-import { isApprovedApplicant } from "$graphql/Rules/isApprovedApplicant";
+import { isAdmin, isFromApprovedCompany, isApprovedApplicant } from "$graphql/Rules";
 import { or } from "graphql-shield";
 
 export const offerPermissions = {
@@ -11,7 +10,7 @@ export const offerPermissions = {
   Query: {
     getMyOffers: isFromApprovedCompany,
     getOfferByUuid: or(isApprovedApplicant, isFromApprovedCompany, isAdmin),
-    getOffers: isApprovedApplicant
+    getOffers: isAdmin
   },
   Offer: {
     hasApplied: isApprovedApplicant
