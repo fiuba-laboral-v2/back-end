@@ -20,7 +20,7 @@ export const defaultTranslations = {
   ],
   applicantProfileTitle: [
     { key: "title", value: "Mi Perfil" },
-    { key: "subtitle", value: "Así se va a mostrar un postulante una empresa" }
+    { key: "subtitle", value: "Así lo va a ver una empresa" }
   ],
   applicantSignUp: [
     { key: "title", value: "Crear tu cuenta" },
@@ -96,7 +96,7 @@ export const defaultTranslations = {
   companiesList: [{ key: "title", value: "Empresas" }],
   companyProfileTitle: [
     { key: "title", value: "Perfil de mi empresa" },
-    { key: "subtitle", value: "Así se va a mostrar a los postulantes" }
+    { key: "subtitle", value: "Así lo van a ver los alumnos y graduados" }
   ],
   editableDetail: [
     { key: "title", value: "Editar tu perfil" },
