@@ -144,6 +144,7 @@ export const defaultTranslations = {
     { key: "alreadyApplied", value: "Ya te postulaste" }
   ],
   MyOffers: [{ key: "title", value: "Mis Ofertas" }],
+  jobSpecs: [{ key: "timeDescription", value: "horas por día" }],
   offerSalary: [
     { key: "salaryFrom", value: "Desde" },
     { key: "salaryTo", value: "Hasta" },
