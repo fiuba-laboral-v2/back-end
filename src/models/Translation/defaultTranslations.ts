@@ -220,6 +220,6 @@ export const defaultTranslations = {
     { key: "pending", value: "aprobación pendiente" }
   ],
   desktopOnlyOverlay: [{ key: "message", value: "Ampliar la pantalla del navegador" }],
-  updatedSince: [{ key: "update", value: "Última actualización:" }],
+  publishedSince: [{ key: "update", value: "Publicado" }],
   list: [{ key: "fetchMore", value: "Ver más" }]
 };
