@@ -56,7 +56,6 @@ describe("getApprovedOffers", () => {
           { careerCode: (await CareerGenerator.instance()).code }
         ],
         admin: await AdminGenerator.instance({ secretary }),
-        secretary,
         status
       });
     };
@@ -133,7 +132,6 @@ describe("getApprovedOffers", () => {
           await OfferGenerator.instance.updatedWithStatus({
             companyUuid,
             status: ApprovalStatus.approved,
-            secretary: Secretary.extension,
             admin: await AdminGenerator.instance({ secretary: Secretary.extension })
           })
         );

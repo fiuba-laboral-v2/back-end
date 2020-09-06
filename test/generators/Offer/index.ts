@@ -4,7 +4,6 @@ import { OfferRepository, TargetApplicantType } from "$models/Offer";
 import { Admin } from "$models";
 import { IOfferCareer } from "$models/Offer/OfferCareer";
 import { IOfferSection } from "$models/Offer/OfferSection";
-import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export interface IOfferInput {
@@ -15,7 +14,6 @@ export interface IOfferInput {
 }
 
 interface IUpdatedWithStatus {
-  secretary: Secretary;
   status: ApprovalStatus;
   admin: Admin;
 }

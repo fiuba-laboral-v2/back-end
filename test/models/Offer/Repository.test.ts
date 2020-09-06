@@ -357,19 +357,16 @@ describe("OfferRepository", () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       await OfferGenerator.instance.updatedWithStatus({
         companyUuid,
-        secretary: Secretary.graduados,
         status: ApprovalStatus.approved,
         admin: await AdminGenerator.instance({ secretary: Secretary.graduados })
       });
       await OfferGenerator.instance.updatedWithStatus({
         companyUuid,
-        secretary: Secretary.extension,
         status: ApprovalStatus.approved,
         admin: await AdminGenerator.instance({ secretary: Secretary.extension })
       });
       await OfferGenerator.instance.updatedWithStatus({
         companyUuid,
-        secretary: Secretary.extension,
         status: ApprovalStatus.rejected,
         admin: await AdminGenerator.instance({ secretary: Secretary.extension })
       });
