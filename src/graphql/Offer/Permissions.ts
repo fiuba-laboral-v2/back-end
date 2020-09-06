@@ -10,7 +10,8 @@ export const offerPermissions = {
   Query: {
     getMyOffers: isFromApprovedCompany,
     getOfferByUuid: or(isApprovedApplicant, isFromApprovedCompany, isAdmin),
-    getOffers: isAdmin
+    getOffers: isAdmin,
+    getApprovedOffers: isApprovedApplicant
   },
   Offer: {
     hasApplied: isApprovedApplicant

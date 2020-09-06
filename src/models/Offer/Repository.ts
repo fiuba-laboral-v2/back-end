@@ -1,5 +1,5 @@
 import { Database } from "$config";
-import { IFindAll, IOffer } from "./";
+import { IFindAll, IOffer } from "./Interface";
 import { IOfferSection } from "./OfferSection";
 import { IOfferCareer } from "./OfferCareer";
 import { OfferNotFound, OfferNotUpdatedError } from "./Errors";
@@ -85,12 +85,13 @@ export const OfferRepository = {
 
     return offer;
   },
-  findAll: async ({ updatedBeforeThan, companyUuid }: IFindAll) => {
+  findAll: async ({ updatedBeforeThan, companyUuid, approvalStatuses }: IFindAll) => {
     const limit = PaginationConfig.itemsPerPage() + 1;
-    const result = await Offer.findAll({
-      ...((updatedBeforeThan || companyUuid) && {
-        where: {
-          ...(updatedBeforeThan && {
+    const shouldHaveWhereClause = updatedBeforeThan || companyUuid || approvalStatuses;
+    const whereClause = {
+      where: {
+        [Op.and]: [
+          updatedBeforeThan && {
             [Op.or]: [
               {
                 updatedAt: {
@@ -104,10 +105,19 @@ export const OfferRepository = {
                 }
               }
             ]
-          }),
-          ...(companyUuid && { companyUuid })
-        }
-      }),
+          },
+          companyUuid && { companyUuid },
+          approvalStatuses && {
+            [Op.or]: [
+              { graduadosApprovalStatus: approvalStatuses.graduadosApprovalStatus },
+              { extensionApprovalStatus: approvalStatuses.extensionApprovalStatus }
+            ]
+          }
+        ]
+      }
+    };
+    const result = await Offer.findAll({
+      ...(shouldHaveWhereClause && whereClause),
       order: [
         ["updatedAt", "DESC"],
         ["uuid", "DESC"]

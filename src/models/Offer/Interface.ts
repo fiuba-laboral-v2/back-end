@@ -1,6 +1,7 @@
 import { IOfferSection } from "./OfferSection/Interface";
 import { IOfferCareer } from "./OfferCareer/Interface";
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export enum TargetApplicantType {
   graduate = "graduate",
@@ -37,4 +38,8 @@ export interface IOffer extends IUpdateOffer {
 export interface IFindAll {
   updatedBeforeThan?: IPaginatedInput;
   companyUuid?: string;
+  approvalStatuses?: {
+    extensionApprovalStatus: ApprovalStatus;
+    graduadosApprovalStatus: ApprovalStatus;
+  };
 }
