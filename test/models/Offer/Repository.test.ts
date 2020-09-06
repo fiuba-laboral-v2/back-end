@@ -335,7 +335,7 @@ describe("OfferRepository", () => {
   });
 
   describe("Get", () => {
-    it("should get the only offer by uuid", async () => {
+    it("finds the only offer by uuid", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const offerProps = OfferGenerator.data.withObligatoryData({ companyUuid });
       const { uuid: offerUuid } = await OfferRepository.create(offerProps);
@@ -343,7 +343,7 @@ describe("OfferRepository", () => {
       expect(offer).toBeObjectContaining(offerProps);
     });
 
-    it("should get the only offer by companyUuid", async () => {
+    it("finds the only offer by companyUuid", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const offerProps = OfferGenerator.data.withObligatoryData({ companyUuid });
       await OfferRepository.create(offerProps);
@@ -353,7 +353,7 @@ describe("OfferRepository", () => {
       expect(offer).toBeObjectContaining(offerProps);
     });
 
-    it("should throw an error if offer does not exists", async () => {
+    it("throws an error if offer does not exists", async () => {
       await expect(
         OfferRepository.findByUuid("4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da")
       ).rejects.toThrow(OfferNotFound);
