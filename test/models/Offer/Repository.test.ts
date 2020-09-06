@@ -353,6 +353,36 @@ describe("OfferRepository", () => {
       expect(offer).toBeObjectContaining(offerProps);
     });
 
+    it("finds only the approved offers by any of the secretaries", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      await OfferGenerator.instance.updatedWithStatus({
+        companyUuid,
+        secretary: Secretary.graduados,
+        status: ApprovalStatus.approved,
+        admin: await AdminGenerator.instance({ secretary: Secretary.graduados })
+      });
+      await OfferGenerator.instance.updatedWithStatus({
+        companyUuid,
+        secretary: Secretary.extension,
+        status: ApprovalStatus.approved,
+        admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+      });
+      await OfferGenerator.instance.updatedWithStatus({
+        companyUuid,
+        secretary: Secretary.extension,
+        status: ApprovalStatus.rejected,
+        admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+      });
+      const { results } = await OfferRepository.findAll({
+        companyUuid,
+        approvalStatuses: {
+          extensionApprovalStatus: ApprovalStatus.approved,
+          graduadosApprovalStatus: ApprovalStatus.approved
+        }
+      });
+      expect(results).toHaveLength(2);
+    });
+
     it("throws an error if offer does not exists", async () => {
       await expect(
         OfferRepository.findByUuid("4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da")
