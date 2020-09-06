@@ -64,7 +64,7 @@ describe("getOffers", () => {
     it("returns two offers sorted by updatedAt", async () => {
       const { apolloClient } = await TestClientGenerator.admin();
       const { data } = await apolloClient.query({ query: GET_OFFERS });
-      expect(data!.getOffers.results).toMatchObject([{ uuid: offer2.uuid }, { uuid: offer1.uuid }]);
+      expect(data!.getOffers.results).toEqual([{ uuid: offer2.uuid }, { uuid: offer1.uuid }]);
       expect(data!.getOffers.shouldFetchMore).toEqual(false);
     });
 
@@ -79,7 +79,7 @@ describe("getOffers", () => {
           }
         }
       });
-      expect(data!.getOffers.results).toMatchObject([{ uuid: offer1.uuid }]);
+      expect(data!.getOffers.results).toEqual([{ uuid: offer1.uuid }]);
       expect(data!.getOffers.shouldFetchMore).toEqual(false);
     });
 
@@ -96,7 +96,7 @@ describe("getOffers", () => {
           }
         }
       });
-      expect(data!.getOffers.results).toMatchObject([{ uuid: offer2.uuid }]);
+      expect(data!.getOffers.results).toEqual([{ uuid: offer2.uuid }]);
       expect(data!.getOffers.shouldFetchMore).toEqual(false);
     });
 
