@@ -7,7 +7,7 @@ describe("TranslationRepository", () => {
       { key: "title", value: "Mi Perfil" },
       {
         key: "subtitle",
-        value: "Así se va a mostrar un postulante una empresa"
+        value: "Así lo va a ver una empresa"
       }
     ]);
   });
