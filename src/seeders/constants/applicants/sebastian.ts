@@ -11,6 +11,7 @@ export const sebastian = {
     password: hashSync("SecurePassword1010", 10),
     name: "Sebastián",
     surname: "Blanco",
+    dni: "33333332",
     createdAt: new Date(),
     updatedAt: new Date()
   },
@@ -59,6 +60,15 @@ export const sebastian = {
       applicantUuid: uuids.sebastian.applicant,
       currentCareerYear: 5,
       approvedSubjectCount: 44,
+      isGraduate: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      careerCode: careerCodes.IngenieriaAlimentos,
+      applicantUuid: uuids.sebastian.applicant,
+      currentCareerYear: 1,
+      approvedSubjectCount: 4,
       isGraduate: false,
       createdAt: new Date(),
       updatedAt: new Date()
