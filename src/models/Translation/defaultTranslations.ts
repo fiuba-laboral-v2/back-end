@@ -42,11 +42,9 @@ export const defaultTranslations = {
   careerSelector: [
     { key: "career", value: "Carrera" },
     { key: "isGraduate", value: "Graduado?" },
-    {
-      key: "approvedSubjectCount",
-      value: "Cuántas materias aprobaste? (sin CBC)"
-    },
-    { key: "currentCareerYear", value: "Qué año estás cursando? (sin CBC)" }
+    { key: "approvedSubjectCount", value: "Materias aprobadas" },
+    { key: "currentCareerYear", value: "Año en curso" },
+    { key: "withoutCBC", value: "Sin incluir CBC" }
   ],
   targetApplicantTypeSelector: [
     { key: "title", value: "Destinatarios" },
@@ -144,6 +142,7 @@ export const defaultTranslations = {
     { key: "alreadyApplied", value: "Ya te postulaste" }
   ],
   MyOffers: [{ key: "title", value: "Mis Ofertas" }],
+  jobSpecs: [{ key: "timeDescription", value: "horas por día" }],
   offerSalary: [
     { key: "salaryFrom", value: "Desde" },
     { key: "salaryTo", value: "Hasta" },
@@ -220,6 +219,6 @@ export const defaultTranslations = {
     { key: "pending", value: "aprobación pendiente" }
   ],
   desktopOnlyOverlay: [{ key: "message", value: "Ampliar la pantalla del navegador" }],
-  publishedSince: [{ key: "update", value: "Publicado" }],
+  publishedSince: [{ key: "prefix", value: "Publicado" }],
   list: [{ key: "fetchMore", value: "Ver más" }]
 };
