@@ -32,8 +32,8 @@ export const defaultTranslations = {
     { key: "dni", value: "DNI" },
     { key: "password", value: "Contraseña" }
   ],
-  careersDetail: [{ key: "careersTitle", value: "Carreras" }],
-  careersDetailData: [
+  careersSection: [{ key: "careersTitle", value: "Carreras" }],
+  careersDetail: [
     { key: "approvedSubjectCount", value: "materias aprobadas" },
     { key: "currentCareerYear", value: "año" },
     { key: "isGraduate", value: "Graduado/a" },
