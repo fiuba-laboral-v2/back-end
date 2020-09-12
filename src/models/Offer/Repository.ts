@@ -106,7 +106,7 @@ export const OfferRepository = {
     const targetsStudents = targetsBoth || applicantType === ApplicantType.student;
     const targetsGraduates = targetsBoth || applicantType === ApplicantType.graduate;
 
-    const targetApplicantTypeWhereClause = applicantType && {
+    const approvalStatusWhereClause = applicantType && {
       [Op.or]: [
         targetsStudents && {
           [Op.and]: [
@@ -134,7 +134,7 @@ export const OfferRepository = {
       [Op.and]: [
         paginationWhereClause,
         companyUuid && { companyUuid },
-        targetApplicantTypeWhereClause
+        approvalStatusWhereClause
       ].filter(clause => !!clause)
     };
     const shouldHaveWhereClause = updatedBeforeThan || companyUuid || applicantType;
