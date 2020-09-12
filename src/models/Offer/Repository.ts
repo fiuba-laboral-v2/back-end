@@ -137,9 +137,9 @@ export const OfferRepository = {
         approvalStatusWhereClause
       ].filter(clause => !!clause)
     };
-    const shouldHaveWhereClause = updatedBeforeThan || companyUuid || applicantType;
+    const hasWhereClause = updatedBeforeThan || companyUuid || applicantType;
     const result = await Offer.findAll({
-      ...(shouldHaveWhereClause && { where: whereClause }),
+      ...(hasWhereClause && { where: whereClause }),
       order: [
         ["updatedAt", "DESC"],
         ["uuid", "DESC"]
