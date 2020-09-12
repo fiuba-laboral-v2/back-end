@@ -87,7 +87,7 @@ export const OfferRepository = {
   },
   findAll: async ({ updatedBeforeThan, companyUuid, applicantType }: IFindAll) => {
     const limit = PaginationConfig.itemsPerPage() + 1;
-    const updatedBeforeThanWhereClause: any = updatedBeforeThan && {
+    const paginationWhereClause: any = updatedBeforeThan && {
       [Op.or]: [
         {
           updatedAt: {
@@ -132,7 +132,7 @@ export const OfferRepository = {
     };
     const whereClause = {
       [Op.and]: [
-        updatedBeforeThanWhereClause,
+        paginationWhereClause,
         companyUuid && { companyUuid },
         targetApplicantTypeWhereClause
       ].filter(clause => !!clause)
