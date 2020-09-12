@@ -32,6 +32,11 @@ export const defaultTranslations = {
     { key: "dni", value: "DNI" },
     { key: "password", value: "Contraseña" }
   ],
+  applicantOfferList: [
+    { key: "title", value: "Ofertas de trabajo" },
+    { key: "addFilters", value: "Agregar filtros" },
+    { key: "careers", value: "Carreras" }
+  ],
   careersDetail: [
     { key: "careersTitle", value: "Carreras" },
     { key: "approvedSubjectCount", value: "materias aprobadas" },
