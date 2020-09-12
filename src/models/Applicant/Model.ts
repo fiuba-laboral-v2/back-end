@@ -117,8 +117,8 @@ export class Applicant extends Model<Applicant> {
     const isGraduate = applicantCareers.some(applicantCareer => applicantCareer.isGraduate);
     const isStudent = applicantCareers.some(applicantCareer => !applicantCareer.isGraduate);
     if (isGraduate && isStudent) return ApplicantType.both;
-    if (isGraduate && !isStudent) return ApplicantType.graduate;
-    if (!isGraduate && isStudent) return ApplicantType.student;
+    if (isGraduate) return ApplicantType.graduate;
+    if (isStudent) return ApplicantType.student;
     throw new ApplicantWithNoCareersError(this.uuid);
   }
 }
