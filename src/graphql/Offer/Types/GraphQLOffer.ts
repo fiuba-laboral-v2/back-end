@@ -9,7 +9,7 @@ import { Offer } from "$models";
 import { UserRepository } from "$models/User";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
-import { GraphQLTargetApplicantType } from "./GraphQLTargetApplicantType";
+import { GraphQLApplicantType } from "../../Applicant/Types/GraphQLApplicantType";
 
 export const GraphQLOffer = new GraphQLObjectType<Offer, IApolloServerContext>({
   name: "Offer",
@@ -39,7 +39,7 @@ export const GraphQLOffer = new GraphQLObjectType<Offer, IApolloServerContext>({
       type: nonNull(GraphQLApprovalStatus)
     },
     targetApplicantType: {
-      type: nonNull(GraphQLTargetApplicantType)
+      type: nonNull(GraphQLApplicantType)
     },
     createdAt: {
       type: nonNull(GraphQLDateTime)
