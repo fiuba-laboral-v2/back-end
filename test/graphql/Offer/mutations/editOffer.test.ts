@@ -11,14 +11,14 @@ import generateUuid from "uuid/v4";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { OfferNotUpdatedError } from "$models/Offer/Errors";
 import { Secretary } from "$models/Admin";
-import { TargetApplicantType } from "$models/Offer";
+import { ApplicantType } from "$models/Offer";
 
 const EDIT_OFFER = gql`
   mutation editOffer(
     $uuid: ID!
     $title: String!
     $description: String!
-    $targetApplicantType: TargetApplicantType!
+    $targetApplicantType: ApplicantType!
     $hoursPerDay: Int!
     $minimumSalary: Int!
     $maximumSalary: Int!
@@ -81,15 +81,15 @@ describe("editOffer", () => {
   });
 
   it("edits an offer targetApplicantType to both student and graduate", async () => {
-    await expectToUpdateAttribute("targetApplicantType", TargetApplicantType.both);
+    await expectToUpdateAttribute("targetApplicantType", ApplicantType.both);
   });
 
   it("edits an offer targetApplicantType to student", async () => {
-    await expectToUpdateAttribute("targetApplicantType", TargetApplicantType.student);
+    await expectToUpdateAttribute("targetApplicantType", ApplicantType.student);
   });
 
   it("edits an offer targetApplicantType to graduate", async () => {
-    await expectToUpdateAttribute("targetApplicantType", TargetApplicantType.graduate);
+    await expectToUpdateAttribute("targetApplicantType", ApplicantType.graduate);
   });
 
   it("edits an offer hoursPerDay", async () => {

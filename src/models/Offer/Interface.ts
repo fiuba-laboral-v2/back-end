@@ -2,13 +2,13 @@ import { IOfferSection } from "./OfferSection/Interface";
 import { IOfferCareer } from "./OfferCareer/Interface";
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 
-export enum TargetApplicantType {
+export enum ApplicantType {
   graduate = "graduate",
   student = "student",
   both = "both"
 }
 
-export const targetApplicantTypeEnumValues = Object.keys(TargetApplicantType);
+export const targetApplicantTypeEnumValues = Object.keys(ApplicantType);
 
 export interface ICreateOffer {
   title: string;
@@ -19,7 +19,7 @@ export interface ICreateOffer {
   sections?: IOfferSection[];
   careers?: IOfferCareer[];
   companyUuid: string;
-  targetApplicantType: TargetApplicantType;
+  targetApplicantType: ApplicantType;
 }
 
 export interface IUpdateOffer extends ICreateOffer {
@@ -37,4 +37,5 @@ export interface IOffer extends IUpdateOffer {
 export interface IFindAll {
   updatedBeforeThan?: IPaginatedInput;
   companyUuid?: string;
+  applicantType?: ApplicantType;
 }

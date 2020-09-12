@@ -21,7 +21,7 @@ import { Career, Company, OfferCareer, OfferSection, OfferApprovalEvent } from "
 import { validateIntegerInRange, validateSalaryRange } from "validations-fiuba-laboral-v2";
 import { approvalStatuses, ApprovalStatus } from "$models/ApprovalStatus";
 import { isApprovalStatus, isTargetApplicantType } from "$models/SequelizeModelValidators";
-import { TargetApplicantType, targetApplicantTypeEnumValues } from "./Interface";
+import { ApplicantType, targetApplicantTypeEnumValues } from "./Interface";
 
 @Table({
   tableName: "Offers",
@@ -83,7 +83,7 @@ export class Offer extends Model<Offer> {
     type: ENUM<string>({ values: targetApplicantTypeEnumValues }),
     ...isTargetApplicantType
   })
-  public targetApplicantType: TargetApplicantType;
+  public targetApplicantType: ApplicantType;
 
   @Is("hoursPerDay", validateIntegerInRange({ min: { value: 0, include: false } }))
   @Column({

@@ -1,12 +1,12 @@
 import { uuids } from "../../../uuids";
-import { TargetApplicantType } from "../../../../../models/Offer/Interface";
+import { ApplicantType } from "../../../../../models/Offer/Interface";
 
 export const javaSenior = {
   offer: {
     uuid: uuids.offers.java_senior,
     companyUuid: uuids.companies.mercadoLibre,
     title: "Desarrollador Java senior",
-    targetApplicantType: TargetApplicantType.graduate,
+    targetApplicantType: ApplicantType.graduate,
     description:
       "En Mercado Libre seguimos democratizando el comercio, el dinero " +
       "y los pagos en América Latina.\n\n" +
