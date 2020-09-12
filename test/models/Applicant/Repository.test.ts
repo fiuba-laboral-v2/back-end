@@ -15,7 +15,7 @@ import { ApplicantGenerator } from "$generators/Applicant";
 import { CareerGenerator } from "$generators/Career";
 import { AdminGenerator } from "$generators/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { TargetApplicantType } from "$models/Offer";
+import { ApplicantType } from "$models/Offer";
 import { FiubaUsersService } from "$services/FiubaUsers";
 import { Secretary } from "$models/Admin";
 import { UUID_REGEX } from "$test/models";
@@ -40,7 +40,7 @@ describe("ApplicantRepository", () => {
           ...ApplicantGenerator.data.minimum(),
           careers: [{ careerCode: firstCareer.code, isGraduate: true }]
         });
-        expect(await applicant.getType()).toEqual(TargetApplicantType.graduate);
+        expect(await applicant.getType()).toEqual(ApplicantType.graduate);
       });
 
       it("creates a student", async () => {
@@ -56,7 +56,7 @@ describe("ApplicantRepository", () => {
             }
           ]
         });
-        expect(await applicant.getType()).toEqual(TargetApplicantType.student);
+        expect(await applicant.getType()).toEqual(ApplicantType.student);
       });
 
       it("creates an applicant that is a student for one career and a graduate for another one", async () => {
@@ -77,7 +77,7 @@ describe("ApplicantRepository", () => {
             }
           ]
         });
-        expect(await applicant.getType()).toEqual(TargetApplicantType.both);
+        expect(await applicant.getType()).toEqual(ApplicantType.both);
       });
 
       it("throws an error if the applicant has no careers", async () => {

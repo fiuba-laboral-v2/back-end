@@ -31,7 +31,7 @@ import {
   User
 } from "$models";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
-import { TargetApplicantType } from "$models/Offer";
+import { ApplicantType } from "$models/Offer";
 import { isApprovalStatus } from "$models/SequelizeModelValidators";
 import { ApplicantWithNoCareersError } from "./Errors";
 
@@ -116,9 +116,9 @@ export class Applicant extends Model<Applicant> {
     const applicantCareers = await this.getApplicantCareers();
     const isGraduate = applicantCareers.some(applicantCareer => applicantCareer.isGraduate);
     const isStudent = applicantCareers.some(applicantCareer => !applicantCareer.isGraduate);
-    if (isGraduate && isStudent) return TargetApplicantType.both;
-    if (isGraduate && !isStudent) return TargetApplicantType.graduate;
-    if (!isGraduate && isStudent) return TargetApplicantType.student;
+    if (isGraduate && isStudent) return ApplicantType.both;
+    if (isGraduate && !isStudent) return ApplicantType.graduate;
+    if (!isGraduate && isStudent) return ApplicantType.student;
     throw new ApplicantWithNoCareersError(this.uuid);
   }
 }

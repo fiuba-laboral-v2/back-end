@@ -3,7 +3,7 @@ import { ApolloServerTestClient } from "apollo-server-testing";
 import { CareerRepository } from "$models/Career";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
-import { OfferRepository, TargetApplicantType } from "$models/Offer";
+import { OfferRepository, ApplicantType } from "$models/Offer";
 import { Secretary } from "$models/Admin";
 import { Career, Offer } from "$models";
 import { IApplicantCareer } from "$models/Applicant/ApplicantCareer";
@@ -52,7 +52,7 @@ describe("getApprovedOffers", () => {
   const createOfferWith = async (
     status: ApprovalStatus,
     secretary: Secretary,
-    targetApplicantType: TargetApplicantType
+    targetApplicantType: ApplicantType
   ) => {
     const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
     return OfferGenerator.instance.updatedWithStatus({
@@ -75,44 +75,36 @@ describe("getApprovedOffers", () => {
     approvedStudentsOffer = await createOfferWith(
       ApprovalStatus.approved,
       Secretary.extension,
-      TargetApplicantType.student
+      ApplicantType.student
     );
-    await createOfferWith(
-      ApprovalStatus.rejected,
-      Secretary.extension,
-      TargetApplicantType.student
-    );
+    await createOfferWith(ApprovalStatus.rejected, Secretary.extension, ApplicantType.student);
     approvedGraduadosOffer = await createOfferWith(
       ApprovalStatus.approved,
       Secretary.graduados,
-      TargetApplicantType.graduate
+      ApplicantType.graduate
     );
-    await createOfferWith(
-      ApprovalStatus.rejected,
-      Secretary.graduados,
-      TargetApplicantType.graduate
-    );
+    await createOfferWith(ApprovalStatus.rejected, Secretary.graduados, ApplicantType.graduate);
     approvedByExtensionBothOffer = await createOfferWith(
       ApprovalStatus.approved,
       Secretary.extension,
-      TargetApplicantType.both
+      ApplicantType.both
     );
     approvedByGraduadosBothOffer = await createOfferWith(
       ApprovalStatus.approved,
       Secretary.graduados,
-      TargetApplicantType.both
+      ApplicantType.both
     );
     approvedByGraduadosAndExtensionBothOffer = await createOfferWith(
       ApprovalStatus.approved,
       Secretary.graduados,
-      TargetApplicantType.both
+      ApplicantType.both
     );
     approvedByGraduadosAndExtensionBothOffer = await OfferRepository.updateApprovalStatus({
       uuid: approvedByGraduadosAndExtensionBothOffer.uuid,
       status: ApprovalStatus.approved,
       admin: await AdminGenerator.instance({ secretary: Secretary.extension })
     });
-    await createOfferWith(ApprovalStatus.rejected, Secretary.graduados, TargetApplicantType.both);
+    await createOfferWith(ApprovalStatus.rejected, Secretary.graduados, ApplicantType.both);
   });
 
   describe("when the applicant is only a student", () => {
@@ -244,7 +236,7 @@ describe("getApprovedOffers", () => {
             companyUuid,
             status: ApprovalStatus.approved,
             admin: await AdminGenerator.instance({ secretary: Secretary.extension }),
-            targetApplicantType: TargetApplicantType.both
+            targetApplicantType: ApplicantType.both
           })
         );
       }

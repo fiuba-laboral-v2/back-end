@@ -1,7 +1,7 @@
 import { Database } from "$config";
 import { PaginationConfig } from "$config/PaginationConfig";
 import { Op } from "sequelize";
-import { IFindAll, IOffer, TargetApplicantType } from "./Interface";
+import { IFindAll, IOffer, ApplicantType } from "./Interface";
 import { ICreateOffer } from "$models/Offer/Interface";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { IOfferSection } from "./OfferSection";
@@ -102,9 +102,9 @@ export const OfferRepository = {
         }
       ]
     };
-    const targetsBoth = applicantType === TargetApplicantType.both;
-    const targetsStudents = targetsBoth || applicantType === TargetApplicantType.student;
-    const targetsGraduates = targetsBoth || applicantType === TargetApplicantType.graduate;
+    const targetsBoth = applicantType === ApplicantType.both;
+    const targetsStudents = targetsBoth || applicantType === ApplicantType.student;
+    const targetsGraduates = targetsBoth || applicantType === ApplicantType.graduate;
 
     const targetApplicantTypeWhereClause = applicantType && {
       [Op.or]: [
@@ -113,7 +113,7 @@ export const OfferRepository = {
             { extensionApprovalStatus: ApprovalStatus.approved },
             {
               targetApplicantType: {
-                [Op.in]: [TargetApplicantType.both, TargetApplicantType.student]
+                [Op.in]: [ApplicantType.both, ApplicantType.student]
               }
             }
           ]
@@ -123,7 +123,7 @@ export const OfferRepository = {
             { graduadosApprovalStatus: ApprovalStatus.approved },
             {
               targetApplicantType: {
-                [Op.in]: [TargetApplicantType.both, TargetApplicantType.graduate]
+                [Op.in]: [ApplicantType.both, ApplicantType.graduate]
               }
             }
           ]

@@ -1,14 +1,14 @@
 import { uuids } from "../../../uuids";
 import { sections } from "../sections";
 import { description } from "../description";
-import { TargetApplicantType } from "../../../../../models/Offer/Interface";
+import { ApplicantType } from "../../../../../models/Offer/Interface";
 
 export const rubyJunior = {
   offer: {
     uuid: uuids.offers.ruby_junior,
     companyUuid: uuids.companies.devartis,
     title: "Desarrollador Ruby junior",
-    targetApplicantType: TargetApplicantType.student,
+    targetApplicantType: ApplicantType.student,
     description,
     hoursPerDay: 6,
     minimumSalary: 52500,
