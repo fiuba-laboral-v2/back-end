@@ -1,16 +1,21 @@
 import { DatabaseError, ForeignKeyConstraintError, ValidationError } from "sequelize";
+import {
+  ApplicantNotFound,
+  ApplicantNotUpdatedError,
+  ApplicantWithNoCareersError
+} from "$models/Applicant/Errors";
 import { CareerRepository } from "$models/Career";
 import { ApplicantRepository, IApplicantEditable } from "$models/Applicant";
 import { Admin, Applicant } from "$models";
 import { ApplicantCareersRepository } from "$models/Applicant/ApplicantCareer";
 import { UserRepository } from "$models/User";
 import { CapabilityRepository } from "$models/Capability";
-import { ApplicantNotFound, ApplicantNotUpdatedError } from "$models/Applicant/Errors";
 import { FiubaUserNotFoundError } from "$models/User/Errors";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { CareerGenerator } from "$generators/Career";
 import { AdminGenerator } from "$generators/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { TargetApplicantType } from "$models/Offer";
 import { FiubaUsersService } from "$services/FiubaUsers";
 import { Secretary } from "$models/Admin";
 import { UUID_REGEX } from "$test/models";
@@ -28,6 +33,62 @@ describe("ApplicantRepository", () => {
   });
 
   describe("Create", () => {
+    describe("getType", () => {
+      it("creates a graduate", async () => {
+        const firstCareer = await CareerGenerator.instance();
+        const applicant = await ApplicantRepository.create({
+          ...ApplicantGenerator.data.minimum(),
+          careers: [{ careerCode: firstCareer.code, isGraduate: true }]
+        });
+        expect(await applicant.getType()).toEqual(TargetApplicantType.graduate);
+      });
+
+      it("creates a student", async () => {
+        const firstCareer = await CareerGenerator.instance();
+        const applicant = await ApplicantRepository.create({
+          ...ApplicantGenerator.data.minimum(),
+          careers: [
+            {
+              careerCode: firstCareer.code,
+              isGraduate: false,
+              approvedSubjectCount: 40,
+              currentCareerYear: 5
+            }
+          ]
+        });
+        expect(await applicant.getType()).toEqual(TargetApplicantType.student);
+      });
+
+      it("creates an applicant that is a student for one career and a graduate for another one", async () => {
+        const firstCareer = await CareerGenerator.instance();
+        const secondCareer = await CareerGenerator.instance();
+        const applicant = await ApplicantRepository.create({
+          ...ApplicantGenerator.data.minimum(),
+          careers: [
+            {
+              careerCode: firstCareer.code,
+              isGraduate: false,
+              approvedSubjectCount: 40,
+              currentCareerYear: 5
+            },
+            {
+              careerCode: secondCareer.code,
+              isGraduate: true
+            }
+          ]
+        });
+        expect(await applicant.getType()).toEqual(TargetApplicantType.both);
+      });
+
+      it("throws an error if the applicant has no careers", async () => {
+        const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
+        await expect(applicant.getType()).rejects.toThrowErrorWithMessage(
+          ApplicantWithNoCareersError,
+          ApplicantWithNoCareersError.buildMessage(applicant.uuid)
+        );
+      });
+    });
+
     it("creates a new applicant", async () => {
       const career = await CareerGenerator.instance();
       const applicantData = ApplicantGenerator.data.minimum();
