@@ -19,7 +19,7 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
   mutation createOffer(
     $title: String!
     $description: String!
-    $targetApplicantType: TargetApplicantType!
+    $targetApplicantType: ApplicantType!
     $hoursPerDay: Int!
     $minimumSalary: Int!
     $maximumSalary: Int!
@@ -73,7 +73,7 @@ const SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA = gql`
   mutation createOffer(
     $title: String!
     $description: String!
-    $targetApplicantType: TargetApplicantType!
+    $targetApplicantType: ApplicantType!
     $hoursPerDay: Int!
     $minimumSalary: Int!
     $maximumSalary: Int!

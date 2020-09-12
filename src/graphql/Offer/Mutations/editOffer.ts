@@ -1,7 +1,7 @@
 import { GraphQLOffer } from "../Types/GraphQLOffer";
 import { GraphQLOfferCareerInput } from "../Types/GraphQLOfferCareer";
 import { GraphQLOfferSectionInput } from "../Types/GraphQLOfferSection";
-import { GraphQLTargetApplicantType } from "../Types/GraphQLTargetApplicantType";
+import { GraphQLApplicantType } from "../../Applicant/Types/GraphQLApplicantType";
 import { OfferRepository } from "$models/Offer";
 import { ICompanyUser } from "$graphql/Context";
 import { ID, Int, List, nonNull, String } from "$graphql/fieldTypes";
@@ -20,7 +20,7 @@ export const editOffer = {
       type: nonNull(String)
     },
     targetApplicantType: {
-      type: nonNull(GraphQLTargetApplicantType)
+      type: nonNull(GraphQLApplicantType)
     },
     hoursPerDay: {
       type: nonNull(Int)

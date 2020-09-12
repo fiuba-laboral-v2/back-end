@@ -1,21 +1,19 @@
 import { withObligatoryData } from "./withObligatoryData";
 import { withOneSection } from "./withOneSection";
-import { OfferRepository, TargetApplicantType } from "$models/Offer";
+import { OfferRepository, ApplicantType } from "$models/Offer";
 import { Admin } from "$models";
 import { IOfferCareer } from "$models/Offer/OfferCareer";
 import { IOfferSection } from "$models/Offer/OfferSection";
-import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export interface IOfferInput {
   companyUuid: string;
   careers?: IOfferCareer[];
   sections?: IOfferSection[];
-  targetApplicantType?: TargetApplicantType;
+  targetApplicantType?: ApplicantType;
 }
 
 interface IUpdatedWithStatus {
-  secretary: Secretary;
   status: ApprovalStatus;
   admin: Admin;
 }

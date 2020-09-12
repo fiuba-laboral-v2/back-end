@@ -46,7 +46,7 @@ export = {
       },
       targetApplicantType: {
         allowNull: false,
-        type: "target_applicant_type"
+        type: "applicant_type"
       },
       createdAt: {
         allowNull: false,

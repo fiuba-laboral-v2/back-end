@@ -1,11 +1,11 @@
 import { getOfferByUuid } from "./getOfferByUuid";
 import { getOffers } from "./getOffers";
 import { getMyOffers } from "./getMyOffers";
+import { getApprovedOffers } from "./getApprovedOffers";
 
-const offerQueries = {
+export const offerQueries = {
   getOfferByUuid,
   getOffers,
-  getMyOffers
+  getMyOffers,
+  getApprovedOffers
 };
-
-export { offerQueries };

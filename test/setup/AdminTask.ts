@@ -64,26 +64,21 @@ export class AdminTaskTestSetup {
 
     this.pendingApplicant = await ApplicantGenerator.instance.updatedWithStatus();
 
-    const secretary = this.extensionAdmin.secretary;
-
     this.rejectedOffer = await OfferGenerator.instance.updatedWithStatus({
       admin: this.extensionAdmin,
       companyUuid: this.approvedCompany.uuid,
-      secretary,
       status: ApprovalStatus.rejected
     });
 
     this.approvedOffer = await OfferGenerator.instance.updatedWithStatus({
       admin: this.extensionAdmin,
       companyUuid: this.approvedCompany.uuid,
-      secretary,
       status: ApprovalStatus.approved
     });
 
     this.pendingOffer = await OfferGenerator.instance.updatedWithStatus({
       admin: this.extensionAdmin,
       companyUuid: this.approvedCompany.uuid,
-      secretary,
       status: ApprovalStatus.pending
     });
 

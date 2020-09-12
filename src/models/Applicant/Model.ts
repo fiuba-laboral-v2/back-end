@@ -31,7 +31,9 @@ import {
   User
 } from "$models";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
+import { ApplicantType } from "$models/Offer";
 import { isApprovalStatus } from "$models/SequelizeModelValidators";
+import { ApplicantWithNoCareersError } from "./Errors";
 
 @Table({ tableName: "Applicants" })
 export class Applicant extends Model<Applicant> {
@@ -109,4 +111,14 @@ export class Applicant extends Model<Applicant> {
   public getJobApplications: HasManyGetAssociationsMixin<JobApplication>;
 
   public getApprovalEvents: HasManyGetAssociationsMixin<ApplicantApprovalEvent>;
+
+  public async getType() {
+    const applicantCareers = await this.getApplicantCareers();
+    const isGraduate = applicantCareers.some(applicantCareer => applicantCareer.isGraduate);
+    const isStudent = applicantCareers.some(applicantCareer => !applicantCareer.isGraduate);
+    if (isGraduate && isStudent) return ApplicantType.both;
+    if (isGraduate) return ApplicantType.graduate;
+    if (isStudent) return ApplicantType.student;
+    throw new ApplicantWithNoCareersError(this.uuid);
+  }
 }

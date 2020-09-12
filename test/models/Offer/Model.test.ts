@@ -1,7 +1,7 @@
 import { NumberIsTooSmallError, SalaryRangeError } from "validations-fiuba-laboral-v2";
 import { ValidationError } from "sequelize";
 import { Offer } from "$models";
-import { TargetApplicantType } from "$models/Offer";
+import { ApplicantType } from "$models/Offer";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { isApprovalStatus, isTargetApplicantType } from "$models/SequelizeModelValidators";
 
@@ -13,7 +13,7 @@ describe("Offer", () => {
     hoursPerDay: 8,
     minimumSalary: 52500,
     maximumSalary: 70000,
-    targetApplicantType: TargetApplicantType.both
+    targetApplicantType: ApplicantType.both
   };
 
   const offerWithoutProperty = async (property: string) => {
@@ -22,7 +22,7 @@ describe("Offer", () => {
     return offerAttributesWithoutProperty;
   };
 
-  const createsAValidOfferWithTarget = async (targetApplicantType: TargetApplicantType) => {
+  const createsAValidOfferWithTarget = async (targetApplicantType: ApplicantType) => {
     const offer = new Offer({
       ...offerAttributes,
       targetApplicantType
@@ -42,15 +42,15 @@ describe("Offer", () => {
   });
 
   it("creates a valid offer with a targetApplicantType for graduate", async () => {
-    await createsAValidOfferWithTarget(TargetApplicantType.graduate);
+    await createsAValidOfferWithTarget(ApplicantType.graduate);
   });
 
   it("creates a valid offer with a targetApplicantType for student", async () => {
-    await createsAValidOfferWithTarget(TargetApplicantType.student);
+    await createsAValidOfferWithTarget(ApplicantType.student);
   });
 
   it("creates a valid offer with a targetApplicantType for both student and graduate", async () => {
-    await createsAValidOfferWithTarget(TargetApplicantType.both);
+    await createsAValidOfferWithTarget(ApplicantType.both);
   });
 
   it("creates a valid offer with default extensionApprovalStatus", async () => {
@@ -130,7 +130,7 @@ describe("Offer", () => {
     );
   });
 
-  it("throws an error if targetApplicantType isn not a TargetApplicantType enum value", async () => {
+  it("throws an error if targetApplicantType isn not a ApplicantType enum value", async () => {
     const offer = new Offer({
       ...offerAttributes,
       targetApplicantType: "undefinedTargetApplicantType"

@@ -33,6 +33,11 @@ export const defaultTranslations = {
     { key: "password", value: "Contraseña" }
   ],
   careersSection: [{ key: "careersTitle", value: "Carreras" }],
+  applicantOfferList: [
+    { key: "title", value: "Ofertas de trabajo" },
+    { key: "addFilters", value: "Agregar filtros" },
+    { key: "careers", value: "Carreras" }
+  ],
   careersDetail: [
     { key: "approvedSubjectCount", value: "materias aprobadas" },
     { key: "currentCareerYear", value: "año" },
@@ -220,11 +225,11 @@ export const defaultTranslations = {
       key: "graduadosTooltip",
       value: "Revisa la Subsecretaría de Relación con Graduados"
     },
-    { key: "graduate", value: "graduados" },
-    { key: "student", value: "alumnos" },
-    { key: "approved", value: "Visible por" },
-    { key: "rejected", value: "No visible por" },
-    { key: "pending", value: "aprobación pendiente" }
+    { key: "graduate", value: "Graduados" },
+    { key: "student", value: "Alumnos" },
+    { key: "approved", value: "Visible" },
+    { key: "rejected", value: "No visible" },
+    { key: "pending", value: "Pendiente" }
   ],
   desktopOnlyOverlay: [{ key: "message", value: "Ampliar la pantalla del navegador" }],
   publishedSince: [{ key: "prefix", value: "Publicado" }],
