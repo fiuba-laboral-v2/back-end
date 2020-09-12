@@ -353,31 +353,31 @@ describe("OfferRepository", () => {
       expect(offer).toBeObjectContaining(offerProps);
     });
 
-    it("finds only the approved offers by any of the secretaries", async () => {
+    it("finds only the approved offers targeted for graduates", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       await OfferGenerator.instance.updatedWithStatus({
         companyUuid,
         status: ApprovalStatus.approved,
-        admin: await AdminGenerator.instance({ secretary: Secretary.graduados })
+        admin: await AdminGenerator.instance({ secretary: Secretary.graduados }),
+        targetApplicantType: TargetApplicantType.graduate
       });
       await OfferGenerator.instance.updatedWithStatus({
         companyUuid,
         status: ApprovalStatus.approved,
-        admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+        admin: await AdminGenerator.instance({ secretary: Secretary.extension }),
+        targetApplicantType: TargetApplicantType.student
       });
       await OfferGenerator.instance.updatedWithStatus({
         companyUuid,
         status: ApprovalStatus.rejected,
-        admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+        admin: await AdminGenerator.instance({ secretary: Secretary.extension }),
+        targetApplicantType: TargetApplicantType.student
       });
       const { results } = await OfferRepository.findAll({
         companyUuid,
-        approvalStatuses: {
-          extensionApprovalStatus: ApprovalStatus.approved,
-          graduadosApprovalStatus: ApprovalStatus.approved
-        }
+        applicantType: TargetApplicantType.graduate
       });
-      expect(results).toHaveLength(2);
+      expect(results).toHaveLength(1);
     });
 
     it("throws an error if offer does not exists", async () => {

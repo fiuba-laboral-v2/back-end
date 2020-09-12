@@ -1,7 +1,12 @@
 import { gql } from "apollo-server";
+import { ApolloServerTestClient } from "apollo-server-testing";
 import { CareerRepository } from "$models/Career";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
+import { OfferRepository, TargetApplicantType } from "$models/Offer";
+import { Secretary } from "$models/Admin";
+import { Career, Offer } from "$models";
+import { IApplicantCareer } from "$models/Applicant/ApplicantCareer";
 
 import { CareerGenerator } from "$generators/Career";
 import { CompanyGenerator } from "$generators/Company";
@@ -11,8 +16,6 @@ import { UnauthorizedError } from "$graphql/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AdminGenerator } from "$generators/Admin";
 import { range } from "lodash";
-import { Offer } from "$models";
-import { Secretary } from "$models/Admin";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 
 const GET_APPROVED_OFFERS = gql`
@@ -27,103 +30,211 @@ const GET_APPROVED_OFFERS = gql`
 `;
 
 describe("getApprovedOffers", () => {
-  const approvedApplicantTestClient = async (secretary: Secretary) => {
+  let firstCareer: Career;
+  let secondCareer: Career;
+  let approvedStudentsOffer: Offer;
+  let approvedGraduadosOffer: Offer;
+  let approvedByExtensionBothOffer: Offer;
+  let approvedByGraduadosBothOffer: Offer;
+  let approvedByGraduadosAndExtensionBothOffer: Offer;
+
+  const approvedApplicantTestClient = async (careers: IApplicantCareer[]) => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.approved,
-        admin: await AdminGenerator.instance({ secretary })
-      }
+        admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+      },
+      careers
     });
     return apolloClient;
+  };
+
+  const createOfferWith = async (
+    status: ApprovalStatus,
+    secretary: Secretary,
+    targetApplicantType: TargetApplicantType
+  ) => {
+    const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+    return OfferGenerator.instance.updatedWithStatus({
+      companyUuid,
+      careers: [{ careerCode: firstCareer.code }, { careerCode: secondCareer.code }],
+      admin: await AdminGenerator.instance({ secretary }),
+      status,
+      targetApplicantType
+    });
   };
 
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await UserRepository.truncate();
+
+    firstCareer = await CareerGenerator.instance();
+    secondCareer = await CareerGenerator.instance();
+
+    approvedStudentsOffer = await createOfferWith(
+      ApprovalStatus.approved,
+      Secretary.extension,
+      TargetApplicantType.student
+    );
+    await createOfferWith(
+      ApprovalStatus.rejected,
+      Secretary.extension,
+      TargetApplicantType.student
+    );
+    approvedGraduadosOffer = await createOfferWith(
+      ApprovalStatus.approved,
+      Secretary.graduados,
+      TargetApplicantType.graduate
+    );
+    await createOfferWith(
+      ApprovalStatus.rejected,
+      Secretary.graduados,
+      TargetApplicantType.graduate
+    );
+    approvedByExtensionBothOffer = await createOfferWith(
+      ApprovalStatus.approved,
+      Secretary.extension,
+      TargetApplicantType.both
+    );
+    approvedByGraduadosBothOffer = await createOfferWith(
+      ApprovalStatus.approved,
+      Secretary.graduados,
+      TargetApplicantType.both
+    );
+    approvedByGraduadosAndExtensionBothOffer = await createOfferWith(
+      ApprovalStatus.approved,
+      Secretary.graduados,
+      TargetApplicantType.both
+    );
+    approvedByGraduadosAndExtensionBothOffer = await OfferRepository.updateApprovalStatus({
+      uuid: approvedByGraduadosAndExtensionBothOffer.uuid,
+      status: ApprovalStatus.approved,
+      admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+    });
+    await createOfferWith(ApprovalStatus.rejected, Secretary.graduados, TargetApplicantType.both);
   });
 
-  describe("when offers exists", () => {
-    let approvedOffer1: Offer;
-    let approvedOffer2: Offer;
-
-    const createOfferWith = async (status: ApprovalStatus, secretary: Secretary) => {
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      return OfferGenerator.instance.updatedWithStatus({
-        companyUuid,
-        careers: [
-          { careerCode: (await CareerGenerator.instance()).code },
-          { careerCode: (await CareerGenerator.instance()).code }
-        ],
-        admin: await AdminGenerator.instance({ secretary }),
-        status
-      });
-    };
+  describe("when the applicant is only a student", () => {
+    let studentApolloClient: ApolloServerTestClient;
 
     beforeAll(async () => {
-      approvedOffer1 = await createOfferWith(ApprovalStatus.approved, Secretary.extension);
-      approvedOffer2 = await createOfferWith(ApprovalStatus.approved, Secretary.graduados);
-      await createOfferWith(ApprovalStatus.rejected, Secretary.extension);
-      await createOfferWith(ApprovalStatus.pending, Secretary.graduados);
+      studentApolloClient = await approvedApplicantTestClient([
+        {
+          careerCode: firstCareer.code,
+          currentCareerYear: 4,
+          approvedSubjectCount: 40,
+          isGraduate: false
+        },
+        {
+          careerCode: secondCareer.code,
+          currentCareerYear: 4,
+          approvedSubjectCount: 40,
+          isGraduate: false
+        }
+      ]);
     });
 
-    it("returns only the two approved offers", async () => {
-      const apolloClient = await approvedApplicantTestClient(Secretary.extension);
-      const { data } = await apolloClient.query({ query: GET_APPROVED_OFFERS });
-      expect(data!.getApprovedOffers.results).toHaveLength(2);
-      expect(data!.getApprovedOffers.shouldFetchMore).toEqual(false);
-    });
+    it("returns only the approved offers targeted for students", async () => {
+      mockItemsPerPage(10);
+      const { data, errors } = await studentApolloClient.query({ query: GET_APPROVED_OFFERS });
 
-    it("returns two approved offers sorted by updatedAt", async () => {
-      const apolloClient = await approvedApplicantTestClient(Secretary.graduados);
-      const { data } = await apolloClient.query({ query: GET_APPROVED_OFFERS });
+      expect(errors).toBeUndefined();
       expect(data!.getApprovedOffers.results).toEqual([
-        { uuid: approvedOffer2.uuid },
-        { uuid: approvedOffer1.uuid }
+        { uuid: approvedByGraduadosAndExtensionBothOffer.uuid },
+        { uuid: approvedByExtensionBothOffer.uuid },
+        { uuid: approvedStudentsOffer.uuid }
       ]);
       expect(data!.getApprovedOffers.shouldFetchMore).toEqual(false);
     });
+  });
 
-    it("filters by updatedAt", async () => {
-      const apolloClient = await approvedApplicantTestClient(Secretary.extension);
-      const { data } = await apolloClient.query({
-        query: GET_APPROVED_OFFERS,
-        variables: {
-          updatedBeforeThan: {
-            dateTime: approvedOffer2.updatedAt.toISOString(),
-            uuid: approvedOffer2.uuid
-          }
+  describe("when the applicant is only a graduate", () => {
+    let graduateApolloClient: ApolloServerTestClient;
+
+    beforeAll(async () => {
+      graduateApolloClient = await approvedApplicantTestClient([
+        {
+          careerCode: firstCareer.code,
+          isGraduate: true
+        },
+        {
+          careerCode: secondCareer.code,
+          isGraduate: true
         }
-      });
-      expect(data!.getApprovedOffers.results).toEqual([{ uuid: approvedOffer1.uuid }]);
-      expect(data!.getApprovedOffers.shouldFetchMore).toEqual(false);
+      ]);
     });
 
-    it("filters by updatedAt even when it does not coincide with createdAt", async () => {
-      approvedOffer1.title = "new title";
-      await approvedOffer1.save();
-      const apolloClient = await approvedApplicantTestClient(Secretary.extension);
-      const { data } = await apolloClient.query({
-        query: GET_APPROVED_OFFERS,
-        variables: {
-          updatedBeforeThan: {
-            dateTime: approvedOffer1.updatedAt.toISOString(),
-            uuid: approvedOffer1.uuid
-          }
+    it("returns only the approved offers targeted for graduates", async () => {
+      mockItemsPerPage(10);
+      const { data, errors } = await graduateApolloClient.query({ query: GET_APPROVED_OFFERS });
+
+      expect(errors).toBeUndefined();
+      expect(data!.getApprovedOffers.results).toEqual([
+        { uuid: approvedByGraduadosAndExtensionBothOffer.uuid },
+        { uuid: approvedByGraduadosBothOffer.uuid },
+        { uuid: approvedGraduadosOffer.uuid }
+      ]);
+      expect(data!.getApprovedOffers.shouldFetchMore).toEqual(false);
+    });
+  });
+
+  describe("when the applicant is a graduate for one career an a student in another one", () => {
+    let graduateAndStudentApolloClient: ApolloServerTestClient;
+
+    beforeAll(async () => {
+      graduateAndStudentApolloClient = await approvedApplicantTestClient([
+        {
+          careerCode: firstCareer.code,
+          isGraduate: true
+        },
+        {
+          careerCode: secondCareer.code,
+          currentCareerYear: 4,
+          approvedSubjectCount: 40,
+          isGraduate: false
         }
+      ]);
+    });
+
+    it("returns only the approved offers targeted for graduates and students", async () => {
+      mockItemsPerPage(10);
+      const { data, errors } = await graduateAndStudentApolloClient.query({
+        query: GET_APPROVED_OFFERS
       });
-      expect(data!.getApprovedOffers.results).toEqual([{ uuid: approvedOffer2.uuid }]);
+
+      expect(errors).toBeUndefined();
+      expect(data!.getApprovedOffers.results).toEqual([
+        { uuid: approvedByGraduadosAndExtensionBothOffer.uuid },
+        { uuid: approvedByGraduadosBothOffer.uuid },
+        { uuid: approvedByExtensionBothOffer.uuid },
+        { uuid: approvedGraduadosOffer.uuid },
+        { uuid: approvedStudentsOffer.uuid }
+      ]);
       expect(data!.getApprovedOffers.shouldFetchMore).toEqual(false);
     });
   });
 
   describe("pagination", () => {
     let newOffersByDescUpdatedAt: Offer[] = [];
+    let apolloClient: ApolloServerTestClient;
 
     beforeAll(async () => {
       await CompanyRepository.truncate();
-      await CareerRepository.truncate();
       await UserRepository.truncate();
+
+      apolloClient = await approvedApplicantTestClient([
+        {
+          careerCode: firstCareer.code,
+          isGraduate: true
+        },
+        {
+          careerCode: secondCareer.code,
+          currentCareerYear: 4,
+          approvedSubjectCount: 40,
+          isGraduate: false
+        }
+      ]);
 
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
 
@@ -132,7 +243,8 @@ describe("getApprovedOffers", () => {
           await OfferGenerator.instance.updatedWithStatus({
             companyUuid,
             status: ApprovalStatus.approved,
-            admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+            admin: await AdminGenerator.instance({ secretary: Secretary.extension }),
+            targetApplicantType: TargetApplicantType.both
           })
         );
       }
@@ -140,7 +252,6 @@ describe("getApprovedOffers", () => {
     });
 
     it("gets the latest 10 offers", async () => {
-      const apolloClient = await approvedApplicantTestClient(Secretary.graduados);
       const itemsPerPage = 10;
       mockItemsPerPage(itemsPerPage);
       const { data } = await apolloClient.query({ query: GET_APPROVED_OFFERS });
@@ -151,7 +262,6 @@ describe("getApprovedOffers", () => {
     });
 
     it("gets the next 3 offers", async () => {
-      const apolloClient = await approvedApplicantTestClient(Secretary.graduados);
       const itemsPerPage = 3;
       const lastOfferIndex = 9;
       mockItemsPerPage(itemsPerPage);
@@ -176,9 +286,10 @@ describe("getApprovedOffers", () => {
 
   it("returns no offers when no offers were created", async () => {
     await CompanyRepository.truncate();
-    await CareerRepository.truncate();
     await UserRepository.truncate();
-    const apolloClient = await approvedApplicantTestClient(Secretary.extension);
+    const apolloClient = await approvedApplicantTestClient([
+      { careerCode: firstCareer.code, isGraduate: true }
+    ]);
     const { data, errors } = await apolloClient.query({ query: GET_APPROVED_OFFERS });
 
     expect(errors).toBeUndefined();

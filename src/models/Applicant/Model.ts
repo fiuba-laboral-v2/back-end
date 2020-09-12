@@ -31,6 +31,7 @@ import {
   User
 } from "$models";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
+import { TargetApplicantType } from "$models/Offer";
 import { isApprovalStatus } from "$models/SequelizeModelValidators";
 
 @Table({ tableName: "Applicants" })
@@ -109,4 +110,14 @@ export class Applicant extends Model<Applicant> {
   public getJobApplications: HasManyGetAssociationsMixin<JobApplication>;
 
   public getApprovalEvents: HasManyGetAssociationsMixin<ApplicantApprovalEvent>;
+
+  public async getType() {
+    const applicantCareers = await this.getApplicantCareers();
+    const isGraduate = applicantCareers.some(applicantCareer => applicantCareer.isGraduate);
+    const isStudent = applicantCareers.some(applicantCareer => !applicantCareer.isGraduate);
+    if (isGraduate && isStudent) return TargetApplicantType.both;
+    if (isGraduate && !isStudent) return TargetApplicantType.graduate;
+    if (!isGraduate && isStudent) return TargetApplicantType.student;
+    throw new Error();
+  }
 }

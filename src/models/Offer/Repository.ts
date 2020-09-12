@@ -1,15 +1,16 @@
 import { Database } from "$config";
-import { IFindAll, IOffer } from "./Interface";
+import { PaginationConfig } from "$config/PaginationConfig";
+import { Op } from "sequelize";
+import { IFindAll, IOffer, TargetApplicantType } from "./Interface";
+import { ICreateOffer } from "$models/Offer/Interface";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 import { IOfferSection } from "./OfferSection";
 import { IOfferCareer } from "./OfferCareer";
+import { OfferApprovalEventRepository } from "./OfferApprovalEvent/Repository";
+import { Secretary } from "$models/Admin";
 import { OfferNotFound, OfferNotUpdatedError } from "./Errors";
 import { Offer, OfferCareer, OfferSection } from "$models";
-import { Op } from "sequelize";
-import { PaginationConfig } from "$config/PaginationConfig";
-import { ICreateOffer } from "$models/Offer/Interface";
-import { Secretary } from "$models/Admin";
-import { ApprovalStatus } from "$models/ApprovalStatus";
-import { OfferApprovalEventRepository } from "./OfferApprovalEvent/Repository";
+import { uniq } from "lodash";
 
 export const OfferRepository = {
   create: ({ careers = [], sections = [], ...attributes }: ICreateOffer) => {
@@ -85,39 +86,69 @@ export const OfferRepository = {
 
     return offer;
   },
-  findAll: async ({ updatedBeforeThan, companyUuid, approvalStatuses }: IFindAll) => {
+  findAll: async ({ updatedBeforeThan, companyUuid, applicantType }: IFindAll) => {
     const limit = PaginationConfig.itemsPerPage() + 1;
-    const shouldHaveWhereClause = updatedBeforeThan || companyUuid || approvalStatuses;
-    const whereClause = {
-      where: {
-        [Op.and]: [
-          updatedBeforeThan && {
-            [Op.or]: [
-              {
-                updatedAt: {
-                  [Op.lt]: updatedBeforeThan.dateTime.toISOString()
-                }
-              },
-              {
-                updatedAt: updatedBeforeThan.dateTime.toISOString(),
-                uuid: {
-                  [Op.lt]: updatedBeforeThan.uuid
-                }
-              }
-            ]
-          },
-          companyUuid && { companyUuid },
-          approvalStatuses && {
-            [Op.or]: [
-              { graduadosApprovalStatus: approvalStatuses.graduadosApprovalStatus },
-              { extensionApprovalStatus: approvalStatuses.extensionApprovalStatus }
-            ]
+    const updatedBeforeThanWhereClause: any = updatedBeforeThan && {
+      [Op.or]: [
+        {
+          updatedAt: {
+            [Op.lt]: updatedBeforeThan.dateTime.toISOString()
           }
-        ]
-      }
+        },
+        {
+          updatedAt: updatedBeforeThan.dateTime.toISOString(),
+          uuid: {
+            [Op.lt]: updatedBeforeThan.uuid
+          }
+        }
+      ]
     };
+    const targetsBoth = (type: TargetApplicantType) => type === TargetApplicantType.both;
+    const targetsStudents = (type: TargetApplicantType) =>
+      targetsBoth(type) || type === TargetApplicantType.student;
+    const targetsGraduates = (type: TargetApplicantType) =>
+      targetsBoth(type) || type === TargetApplicantType.graduate;
+
+    let targets = [TargetApplicantType.both, applicantType];
+    if (applicantType && targetsBoth(applicantType)) {
+      targets.push(TargetApplicantType.graduate, TargetApplicantType.student);
+      targets = uniq(targets);
+    }
+
+    const targetApplicantTypeWhereClause = applicantType && {
+      [Op.or]: [
+        targetsStudents(applicantType) && {
+          [Op.and]: [
+            { extensionApprovalStatus: ApprovalStatus.approved },
+            {
+              targetApplicantType: {
+                [Op.in]: [TargetApplicantType.both, TargetApplicantType.student]
+              }
+            }
+          ]
+        },
+        targetsGraduates(applicantType) && {
+          [Op.and]: [
+            { graduadosApprovalStatus: ApprovalStatus.approved },
+            {
+              targetApplicantType: {
+                [Op.in]: [TargetApplicantType.both, TargetApplicantType.graduate]
+              }
+            }
+          ]
+        }
+      ]
+    };
+    const whereClause = {
+      [Op.and]: [
+        updatedBeforeThanWhereClause,
+        companyUuid && { companyUuid },
+        targetApplicantTypeWhereClause
+      ].filter(clause => !!clause)
+    };
+    const shouldHaveWhereClause = updatedBeforeThan || companyUuid || applicantType;
     const result = await Offer.findAll({
-      ...(shouldHaveWhereClause && whereClause),
+      ...(shouldHaveWhereClause && { where: whereClause }),
       order: [
         ["updatedAt", "DESC"],
         ["uuid", "DESC"]
