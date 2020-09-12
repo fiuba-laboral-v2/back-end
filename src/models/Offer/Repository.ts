@@ -10,7 +10,6 @@ import { OfferApprovalEventRepository } from "./OfferApprovalEvent/Repository";
 import { Secretary } from "$models/Admin";
 import { OfferNotFound, OfferNotUpdatedError } from "./Errors";
 import { Offer, OfferCareer, OfferSection } from "$models";
-import { uniq } from "lodash";
 
 export const OfferRepository = {
   create: ({ careers = [], sections = [], ...attributes }: ICreateOffer) => {
@@ -103,21 +102,13 @@ export const OfferRepository = {
         }
       ]
     };
-    const targetsBoth = (type: TargetApplicantType) => type === TargetApplicantType.both;
-    const targetsStudents = (type: TargetApplicantType) =>
-      targetsBoth(type) || type === TargetApplicantType.student;
-    const targetsGraduates = (type: TargetApplicantType) =>
-      targetsBoth(type) || type === TargetApplicantType.graduate;
-
-    let targets = [TargetApplicantType.both, applicantType];
-    if (applicantType && targetsBoth(applicantType)) {
-      targets.push(TargetApplicantType.graduate, TargetApplicantType.student);
-      targets = uniq(targets);
-    }
+    const targetsBoth = applicantType === TargetApplicantType.both;
+    const targetsStudents = targetsBoth || applicantType === TargetApplicantType.student;
+    const targetsGraduates = targetsBoth || applicantType === TargetApplicantType.graduate;
 
     const targetApplicantTypeWhereClause = applicantType && {
       [Op.or]: [
-        targetsStudents(applicantType) && {
+        targetsStudents && {
           [Op.and]: [
             { extensionApprovalStatus: ApprovalStatus.approved },
             {
@@ -127,7 +118,7 @@ export const OfferRepository = {
             }
           ]
         },
-        targetsGraduates(applicantType) && {
+        targetsGraduates && {
           [Op.and]: [
             { graduadosApprovalStatus: ApprovalStatus.approved },
             {
