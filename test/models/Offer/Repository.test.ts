@@ -1,21 +1,24 @@
 import { UniqueConstraintError, ValidationError } from "sequelize";
 import { CareerRepository } from "$models/Career";
-import { OfferRepository, ApplicantType } from "$models/Offer";
+import { ApplicantType, OfferRepository } from "$models/Offer";
 import { CompanyRepository } from "$models/Company";
+import { UserRepository } from "$models/User";
+import { Secretary } from "$models/Admin";
+import { IApplicantCareer } from "$models/Applicant/ApplicantCareer";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { OfferApprovalEventRepository } from "$models/Offer/OfferApprovalEvent";
 import { OfferNotFound, OfferNotUpdatedError } from "$models/Offer/Errors";
-import { Admin, Offer, OfferCareer, OfferSection } from "$models";
+import { Admin, Career, Offer, OfferCareer, OfferSection } from "$models";
+import { isApprovalStatus } from "$models/SequelizeModelValidators";
+
 import { CompanyGenerator } from "$generators/Company";
 import { OfferGenerator } from "$generators/Offer";
 import { CareerGenerator } from "$generators/Career";
+import { ApplicantGenerator } from "$generators/Applicant";
+import { AdminGenerator } from "$generators/Admin";
 import { omit, range } from "lodash";
-import { UserRepository } from "$models/User";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import MockDate from "mockdate";
-import { Secretary } from "$models/Admin";
-import { ApprovalStatus } from "$models/ApprovalStatus";
-import { AdminGenerator } from "$test/generators/Admin";
-import { OfferApprovalEventRepository } from "$models/Offer/OfferApprovalEvent";
-import { isApprovalStatus } from "$models/SequelizeModelValidators";
 
 describe("OfferRepository", () => {
   let graduadosAdmin: Admin;
@@ -175,6 +178,125 @@ describe("OfferRepository", () => {
         await expect(
           OfferSection.create({ offerUuid, ...sectionData })
         ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
+      });
+    });
+
+    describe("applicantCanApply", () => {
+      let admin: Admin;
+      let firstCareer: Career;
+      let secondCareer: Career;
+
+      beforeAll(async () => {
+        firstCareer = await CareerGenerator.instance();
+        secondCareer = await CareerGenerator.instance();
+        admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+      });
+
+      const createOfferFor = async (targetApplicantType: ApplicantType, status: ApprovalStatus) => {
+        const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+        const { uuid } = await OfferRepository.create(
+          OfferGenerator.data.withObligatoryData({
+            companyUuid,
+            targetApplicantType
+          })
+        );
+        return await OfferRepository.updateApprovalStatus({ uuid, status, admin });
+      };
+
+      const createApplicantInTheCareers = async (careers: IApplicantCareer[]) =>
+        ApplicantGenerator.instance.updatedWithStatus({
+          status: ApprovalStatus.approved,
+          admin,
+          careers
+        });
+
+      it("returns true if the offer targets students and the applicant is a student", async () => {
+        const offer = await createOfferFor(ApplicantType.student, ApprovalStatus.approved);
+        const applicant = await createApplicantInTheCareers([
+          {
+            careerCode: firstCareer.code,
+            approvedSubjectCount: 40,
+            isGraduate: false,
+            currentCareerYear: 5
+          }
+        ]);
+        expect(await offer.applicantCanApply(applicant)).toBe(true);
+      });
+
+      it("returns true if the offer targets graduates and the applicant is a graduate", async () => {
+        const offer = await createOfferFor(ApplicantType.graduate, ApprovalStatus.approved);
+        const applicant = await createApplicantInTheCareers([
+          {
+            careerCode: firstCareer.code,
+            isGraduate: true
+          }
+        ]);
+        expect(await offer.applicantCanApply(applicant)).toBe(true);
+      });
+
+      it("returns true if the offer targets both graduates and students and the applicant is both", async () => {
+        const offer = await createOfferFor(ApplicantType.both, ApprovalStatus.approved);
+        const applicant = await createApplicantInTheCareers([
+          {
+            careerCode: firstCareer.code,
+            approvedSubjectCount: 40,
+            isGraduate: false,
+            currentCareerYear: 5
+          },
+          {
+            careerCode: secondCareer.code,
+            isGraduate: true
+          }
+        ]);
+        expect(await offer.applicantCanApply(applicant)).toBe(true);
+      });
+
+      it("returns false if the offer targets students and the applicant is a graduate", async () => {
+        const offer = await createOfferFor(ApplicantType.student, ApprovalStatus.approved);
+        const applicant = await createApplicantInTheCareers([
+          {
+            careerCode: secondCareer.code,
+            isGraduate: true
+          }
+        ]);
+        expect(await offer.applicantCanApply(applicant)).toBe(false);
+      });
+
+      it("returns false if the offer targets graduates and the applicant is a student", async () => {
+        const offer = await createOfferFor(ApplicantType.graduate, ApprovalStatus.approved);
+        const applicant = await createApplicantInTheCareers([
+          {
+            careerCode: firstCareer.code,
+            approvedSubjectCount: 40,
+            isGraduate: false,
+            currentCareerYear: 5
+          }
+        ]);
+        expect(await offer.applicantCanApply(applicant)).toBe(false);
+      });
+
+      it("returns true if the offer targets both graduates and students and the applicant is a student", async () => {
+        const offer = await createOfferFor(ApplicantType.both, ApprovalStatus.approved);
+        const applicant = await createApplicantInTheCareers([
+          {
+            careerCode: firstCareer.code,
+            approvedSubjectCount: 40,
+            isGraduate: false,
+            currentCareerYear: 5
+          }
+        ]);
+        expect(await offer.applicantCanApply(applicant)).toBe(true);
+      });
+
+      it("returns true if the offer targets both graduates and students and the applicant is a graduate", async () => {
+        const offer = await createOfferFor(ApplicantType.both, ApprovalStatus.approved);
+        const applicant = await createApplicantInTheCareers([
+          {
+            careerCode: firstCareer.code,
+            isGraduate: true
+          }
+        ]);
+        expect(await offer.applicantCanApply(applicant)).toBe(true);
       });
     });
   });

@@ -1,11 +1,13 @@
 import { IApplicantInputData, withMinimumData } from "./withMinimumData";
 import { ApplicantRepository } from "$models/Applicant";
+import { IApplicantCareer } from "$models/Applicant/ApplicantCareer";
 import { Admin } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
 interface IUpdatedWithStatus {
   admin: Admin;
   status: ApprovalStatus;
+  careers?: IApplicantCareer[];
 }
 
 export const ApplicantGenerator = {
@@ -24,7 +26,7 @@ export const ApplicantGenerator = {
       ),
     updatedWithStatus: async (variables?: IUpdatedWithStatus) => {
       const applicant = await ApplicantRepository.create(
-        withMinimumData({ index: ApplicantGenerator.getIndex() })
+        withMinimumData({ index: ApplicantGenerator.getIndex(), careers: variables?.careers })
       );
       if (!variables) return applicant;
       const { admin, status } = variables;
