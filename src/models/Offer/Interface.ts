@@ -38,4 +38,5 @@ export interface IFindAll {
   updatedBeforeThan?: IPaginatedInput;
   companyUuid?: string;
   applicantType?: ApplicantType;
+  careerCodes?: string[];
 }
