@@ -49,6 +49,30 @@ export const OfferGenerator = {
         targetApplicantType: ApplicantType.student,
         ...variables
       });
+    },
+    forGraduates: async (variables: IOfferInput) => {
+      const admin = await AdminGenerator.instance({ secretary: Secretary.graduados });
+      return OfferGenerator.instance.updatedWithStatus({
+        status: ApprovalStatus.approved,
+        admin,
+        targetApplicantType: ApplicantType.graduate,
+        ...variables
+      });
+    },
+    forStudentsAndGraduates: async (variables: IOfferInput) => {
+      const extensionAdmin = await AdminGenerator.instance({ secretary: Secretary.extension });
+      const graduadosAdmin = await AdminGenerator.instance({ secretary: Secretary.graduados });
+      const { uuid } = await OfferGenerator.instance.updatedWithStatus({
+        status: ApprovalStatus.approved,
+        admin: extensionAdmin,
+        targetApplicantType: ApplicantType.both,
+        ...variables
+      });
+      return OfferRepository.updateApprovalStatus({
+        uuid,
+        admin: graduadosAdmin,
+        status: ApprovalStatus.approved
+      });
     }
   },
   data: {

@@ -11,7 +11,10 @@ import { PaginationConfig } from "$config/PaginationConfig";
 export const JobApplicationRepository = {
   apply: async (applicant: Applicant, offer: Offer) => {
     if (!(await offer.applicantCanApply(applicant))) {
-      throw new OfferNotTargetedForApplicantError(applicant.uuid, offer.uuid);
+      throw new OfferNotTargetedForApplicantError(
+        await applicant.getType(),
+        offer.targetApplicantType
+      );
     }
 
     return JobApplication.create({
