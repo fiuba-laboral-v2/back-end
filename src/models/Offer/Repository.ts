@@ -85,7 +85,7 @@ export const OfferRepository = {
 
     return offer;
   },
-  findAll: async ({ updatedBeforeThan, companyUuid, applicantType }: IFindAll) => {
+  findAll: async ({ updatedBeforeThan, companyUuid, applicantType, careerCodes }: IFindAll) => {
     const limit = PaginationConfig.itemsPerPage() + 1;
     const paginationWhereClause: any = updatedBeforeThan && {
       [Op.or]: [
@@ -140,6 +140,15 @@ export const OfferRepository = {
     const hasWhereClause = updatedBeforeThan || companyUuid || applicantType;
     const result = await Offer.findAll({
       ...(hasWhereClause && { where: whereClause }),
+      ...(careerCodes && {
+        include: [
+          {
+            model: OfferCareer,
+            where: { careerCode: { [Op.in]: careerCodes } },
+            attributes: []
+          }
+        ]
+      }),
       order: [
         ["updatedAt", "DESC"],
         ["uuid", "DESC"]

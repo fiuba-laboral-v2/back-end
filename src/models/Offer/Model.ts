@@ -112,6 +112,9 @@ export class Offer extends Model<Offer> {
   @BelongsToMany(() => Career, () => OfferCareer)
   public careers: Career[];
 
+  @HasMany(() => OfferCareer)
+  public offerCareers: OfferCareer[];
+
   @HasMany(() => OfferApprovalEvent)
   public approvalEvents: OfferApprovalEvent;
 

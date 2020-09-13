@@ -3,11 +3,10 @@ import { ApolloServerTestClient } from "apollo-server-testing";
 import { CareerRepository } from "$models/Career";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
-import { OfferRepository, ApplicantType } from "$models/Offer";
+import { ApplicantType, OfferRepository } from "$models/Offer";
 import { Secretary } from "$models/Admin";
 import { Career, Offer } from "$models";
 import { IApplicantCareer } from "$models/Applicant/ApplicantCareer";
-
 import { CareerGenerator } from "$generators/Career";
 import { CompanyGenerator } from "$generators/Company";
 import { OfferGenerator } from "$generators/Offer";
@@ -17,10 +16,11 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AdminGenerator } from "$generators/Admin";
 import { range } from "lodash";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
+import { IOfferCareer } from "$models/Offer/OfferCareer";
 
 const GET_APPROVED_OFFERS = gql`
-  query($updatedBeforeThan: PaginatedInput) {
-    getApprovedOffers(updatedBeforeThan: $updatedBeforeThan) {
+  query($updatedBeforeThan: PaginatedInput, $careerCodes: [ID!]) {
+    getApprovedOffers(updatedBeforeThan: $updatedBeforeThan, careerCodes: $careerCodes) {
       results {
         uuid
       }
@@ -52,12 +52,13 @@ describe("getApprovedOffers", () => {
   const createOfferWith = async (
     status: ApprovalStatus,
     secretary: Secretary,
-    targetApplicantType: ApplicantType
+    targetApplicantType: ApplicantType,
+    careers?: IOfferCareer[]
   ) => {
     const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
     return OfferGenerator.instance.updatedWithStatus({
       companyUuid,
-      careers: [{ careerCode: firstCareer.code }, { careerCode: secondCareer.code }],
+      careers: careers || [{ careerCode: firstCareer.code }, { careerCode: secondCareer.code }],
       admin: await AdminGenerator.instance({ secretary }),
       status,
       targetApplicantType
@@ -274,6 +275,40 @@ describe("getApprovedOffers", () => {
       );
       expect(data!.getApprovedOffers.shouldFetchMore).toEqual(true);
     });
+  });
+
+  it("filters offers by career code", async () => {
+    const { code: careerCode1 } = await CareerGenerator.instance();
+    const { code: careerCode2 } = await CareerGenerator.instance();
+    const { uuid: offerUuid } = await createOfferWith(
+      ApprovalStatus.approved,
+      Secretary.graduados,
+      ApplicantType.both,
+      [{ careerCode: careerCode1 }]
+    );
+    await createOfferWith(ApprovalStatus.approved, Secretary.graduados, ApplicantType.both, [
+      { careerCode: careerCode2 }
+    ]);
+    const apolloClient = await approvedApplicantTestClient([
+      {
+        careerCode: firstCareer.code,
+        isGraduate: true
+      },
+      {
+        careerCode: secondCareer.code,
+        currentCareerYear: 4,
+        approvedSubjectCount: 40,
+        isGraduate: false
+      }
+    ]);
+    const { data } = await apolloClient.query({
+      query: GET_APPROVED_OFFERS,
+      variables: {
+        careerCodes: [careerCode1]
+      }
+    });
+    expect(data!.getApprovedOffers.results.map(result => result.uuid)).toEqual([offerUuid]);
+    expect(data!.getApprovedOffers.shouldFetchMore).toEqual(false);
   });
 
   it("returns no offers when no offers were created", async () => {
