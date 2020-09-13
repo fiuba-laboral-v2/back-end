@@ -2,6 +2,7 @@ import { gql } from "apollo-server";
 import { ApolloServerTestClient } from "apollo-server-testing";
 
 import { CompanyRepository } from "$models/Company";
+import { CareerRepository } from "$models/Career";
 import { AdminTask, AdminTaskType, IAdminTasksFilter } from "$models/AdminTask";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { UserRepository } from "$models/User";
@@ -54,6 +55,7 @@ describe("getAdminTasks", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await OfferRepository.truncate();
+    await CareerRepository.truncate();
     setup = new AdminTaskTestSetup({ graphqlSetup: true });
     await setup.execute();
   });

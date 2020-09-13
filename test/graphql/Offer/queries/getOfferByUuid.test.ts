@@ -6,15 +6,17 @@ import { JobApplicationRepository } from "$models/JobApplication";
 import { UserRepository } from "$models/User";
 import { OfferNotFound } from "$models/Offer/Errors";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
+
 import { CareerGenerator } from "$generators/Career";
 import { OfferGenerator } from "$generators/Offer";
 import { CompanyGenerator } from "$generators/Company";
 import { UserGenerator } from "$generators/User";
+import { AdminGenerator } from "$generators/Admin";
 import { TestClientGenerator } from "$generators/TestClient";
+
 import { ApolloServerTestClient } from "apollo-server-testing";
 import generateUuid from "uuid/v4";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { AdminGenerator } from "$generators/Admin";
 import { Secretary } from "$models/Admin";
 
 const GET_OFFER_BY_UUID = gql`
@@ -130,15 +132,18 @@ describe("getOfferByUuid", () => {
     });
 
     it("finds an offer with hasApplied in true", async () => {
+      const { code: careerCode } = await CareerGenerator.instance();
+
       const { applicant, apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
           admin: await AdminGenerator.instance({ secretary: Secretary.extension })
-        }
+        },
+        careers: [{ careerCode, isGraduate: false, approvedSubjectCount: 33, currentCareerYear: 4 }]
       });
-      const company = await CompanyGenerator.instance.withCompleteData();
-      const { offer } = await createOffer(company);
-      await JobApplicationRepository.apply(applicant.uuid, offer);
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withCompleteData();
+      const offer = await OfferGenerator.instance.forStudents({ companyUuid });
+      await JobApplicationRepository.apply(applicant, offer);
 
       const { data, errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,

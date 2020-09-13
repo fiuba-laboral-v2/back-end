@@ -3,16 +3,20 @@ import { client } from "../../ApolloTestClient";
 
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
+import { CareerRepository } from "$models/Career";
+import { Secretary } from "$models/Admin";
+import { Company, Career } from "$models";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
+import { OfferNotFound } from "$models/Offer/Errors";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 import { OfferGenerator } from "$generators/Offer";
-import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AdminGenerator } from "$generators/Admin";
 import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyGenerator } from "$generators/Company";
+import { CareerGenerator } from "$generators/Career";
 import generateUuid from "uuid/v4";
-import { Secretary } from "$models/Admin";
 import { UUID_REGEX } from "$test/models";
 
 const SAVE_JOB_APPLICATION = gql`
@@ -26,12 +30,17 @@ const SAVE_JOB_APPLICATION = gql`
 `;
 
 describe("saveJobApplication", () => {
-  let company;
+  let company: Company;
+  let firstCareer: Career;
+  let secondCareer: Career;
 
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
+    await CareerRepository.truncate();
     company = await CompanyGenerator.instance.withCompleteData();
+    firstCareer = await CareerGenerator.instance();
+    secondCareer = await CareerGenerator.instance();
   });
 
   describe("when the input is valid", () => {
@@ -40,9 +49,17 @@ describe("saveJobApplication", () => {
         status: {
           approvalStatus: ApprovalStatus.approved,
           admin: await AdminGenerator.instance({ secretary: Secretary.extension })
-        }
+        },
+        careers: [
+          {
+            careerCode: firstCareer.code,
+            isGraduate: false,
+            currentCareerYear: 4,
+            approvedSubjectCount: 33
+          }
+        ]
       });
-      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
+      const offer = await OfferGenerator.instance.forStudents({ companyUuid: company.uuid });
 
       const { data, errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
@@ -145,7 +162,15 @@ describe("saveJobApplication", () => {
         status: {
           approvalStatus: ApprovalStatus.approved,
           admin: await AdminGenerator.instance({ secretary: Secretary.extension })
-        }
+        },
+        careers: [
+          {
+            careerCode: secondCareer.code,
+            isGraduate: false,
+            currentCareerYear: 4,
+            approvedSubjectCount: 33
+          }
+        ]
       });
       const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
       await apolloClient.mutate({
@@ -175,7 +200,7 @@ describe("saveJobApplication", () => {
       });
 
       expect(errors![0].extensions!.data).toMatchObject({
-        errorType: "OfferNotFound"
+        errorType: OfferNotFound.name
       });
     });
   });

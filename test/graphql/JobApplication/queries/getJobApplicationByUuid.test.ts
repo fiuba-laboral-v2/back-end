@@ -4,6 +4,7 @@ import { client } from "../../ApolloTestClient";
 
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
+import { CareerRepository } from "$models/Career";
 import { JobApplicationNotFoundError } from "$models/JobApplication";
 
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
@@ -38,6 +39,7 @@ describe("getJobApplicationByUuid", () => {
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
+    await CareerRepository.truncate();
   });
 
   describe("when the input is valid", () => {

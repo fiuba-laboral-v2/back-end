@@ -1,10 +1,12 @@
 import { withObligatoryData } from "./withObligatoryData";
 import { withOneSection } from "./withOneSection";
-import { OfferRepository, ApplicantType } from "$models/Offer";
+import { AdminGenerator } from "$generators/Admin";
+import { ApplicantType, OfferRepository } from "$models/Offer";
 import { Admin } from "$models";
 import { IOfferCareer } from "$models/Offer/OfferCareer";
 import { IOfferSection } from "$models/Offer/OfferSection";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { Secretary } from "$models/Admin";
 
 export interface IOfferInput {
   companyUuid: string;
@@ -38,6 +40,39 @@ export const OfferGenerator = {
         withOneSection({ index: OfferGenerator.getIndex(), ...variables })
       );
       return OfferRepository.updateApprovalStatus({ uuid, admin, status });
+    },
+    forStudents: async (variables: IOfferInput) => {
+      const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+      return OfferGenerator.instance.updatedWithStatus({
+        status: ApprovalStatus.approved,
+        admin,
+        targetApplicantType: ApplicantType.student,
+        ...variables
+      });
+    },
+    forGraduates: async (variables: IOfferInput) => {
+      const admin = await AdminGenerator.instance({ secretary: Secretary.graduados });
+      return OfferGenerator.instance.updatedWithStatus({
+        status: ApprovalStatus.approved,
+        admin,
+        targetApplicantType: ApplicantType.graduate,
+        ...variables
+      });
+    },
+    forStudentsAndGraduates: async (variables: IOfferInput) => {
+      const extensionAdmin = await AdminGenerator.instance({ secretary: Secretary.extension });
+      const graduadosAdmin = await AdminGenerator.instance({ secretary: Secretary.graduados });
+      const { uuid } = await OfferGenerator.instance.updatedWithStatus({
+        status: ApprovalStatus.approved,
+        admin: extensionAdmin,
+        targetApplicantType: ApplicantType.both,
+        ...variables
+      });
+      return OfferRepository.updateApprovalStatus({
+        uuid,
+        admin: graduadosAdmin,
+        status: ApprovalStatus.approved
+      });
     }
   },
   data: {

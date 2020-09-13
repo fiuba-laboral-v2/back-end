@@ -1,5 +1,6 @@
 import { JobApplicationApprovalEventRepository } from "$models/JobApplication/JobApplicationsApprovalEvent";
 import { CompanyRepository } from "$models/Company";
+import { CareerRepository } from "$models/Career";
 import { UserRepository } from "$models/User";
 import { OfferRepository } from "$models/Offer";
 import { ApplicantRepository } from "$models/Applicant";
@@ -20,6 +21,7 @@ describe("JobApplicationApprovalEventRepository", () => {
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
+    await CareerRepository.truncate();
     admin = await AdminGenerator.instance({ secretary: Secretary.extension });
   });
 
