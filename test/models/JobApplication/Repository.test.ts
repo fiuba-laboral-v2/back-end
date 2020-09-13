@@ -1,73 +1,130 @@
 import { ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
-import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
-import { OfferRepository } from "$models/Offer";
+import { CompanyRepository } from "$models/Company";
+import { ApplicantType, OfferRepository } from "$models/Offer";
 import { JobApplicationNotFoundError, JobApplicationRepository } from "$models/JobApplication";
-import { Admin, Applicant, Company, JobApplication, Offer } from "$models";
+import { Admin, Applicant, Career, Company, JobApplication, Offer } from "$models";
 import { UserRepository } from "$models/User";
 import { JobApplicationGenerator } from "$generators/JobApplication";
 import { CompanyGenerator } from "$generators/Company";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { OfferGenerator } from "$generators/Offer";
 import { AdminGenerator } from "$generators/Admin";
+import { CareerGenerator } from "$generators/Career";
 import MockDate from "mockdate";
 import { range } from "lodash";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
+import { IApplicantCareer } from "$models/Applicant/ApplicantCareer";
 
 describe("JobApplicationRepository", () => {
+  let extensionAdmin: Admin;
+  let firstCareer: Career;
+  let secondCareer: Career;
+  let student: Applicant;
+  let graduate: Applicant;
+  let studentAndGraduate: Applicant;
+  let offerForStudents: Offer;
+  let offerForGraduates: Offer;
+  let offerForStudentsAndGraduates: Offer;
+
+  const createOfferFor = async (
+    targetApplicantType: ApplicantType,
+    status: ApprovalStatus,
+    companyUuid?: string
+  ) => {
+    const { uuid } = await OfferRepository.create(
+      OfferGenerator.data.withObligatoryData({
+        companyUuid: companyUuid
+          ? companyUuid
+          : (await CompanyGenerator.instance.withMinimumData()).uuid,
+        targetApplicantType
+      })
+    );
+    return await OfferRepository.updateApprovalStatus({ uuid, status, admin: extensionAdmin });
+  };
+
+  const createApplicantInTheCareers = async (careers: IApplicantCareer[]) =>
+    ApplicantGenerator.instance.updatedWithStatus({
+      status: ApprovalStatus.approved,
+      admin: extensionAdmin,
+      careers
+    });
+
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     await CareerRepository.truncate();
+    extensionAdmin = await AdminGenerator.instance({ secretary: Secretary.extension });
+    firstCareer = await CareerGenerator.instance();
+    secondCareer = await CareerGenerator.instance();
+    student = await createApplicantInTheCareers([
+      {
+        careerCode: firstCareer.code,
+        approvedSubjectCount: 40,
+        isGraduate: false,
+        currentCareerYear: 5
+      }
+    ]);
+    graduate = await createApplicantInTheCareers([
+      {
+        careerCode: firstCareer.code,
+        isGraduate: true
+      }
+    ]);
+    studentAndGraduate = await createApplicantInTheCareers([
+      {
+        careerCode: firstCareer.code,
+        approvedSubjectCount: 40,
+        isGraduate: false,
+        currentCareerYear: 5
+      },
+      {
+        careerCode: secondCareer.code,
+        isGraduate: true
+      }
+    ]);
+    offerForStudents = await createOfferFor(ApplicantType.student, ApprovalStatus.approved);
+    offerForGraduates = await createOfferFor(ApplicantType.graduate, ApprovalStatus.approved);
+    offerForStudentsAndGraduates = await createOfferFor(
+      ApplicantType.both,
+      ApprovalStatus.approved
+    );
   });
 
   describe("Apply", () => {
     it("applies to a new jobApplication", async () => {
-      const applicant = await ApplicantGenerator.instance.withMinimumData();
-      const company = await CompanyGenerator.instance.withMinimumData();
-      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
-      const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
+      const jobApplication = await JobApplicationRepository.apply(student, offerForStudents);
       expect(jobApplication).toMatchObject({
-        offerUuid: offer.uuid,
-        applicantUuid: applicant.uuid
+        offerUuid: offerForStudents.uuid,
+        applicantUuid: student.uuid
       });
     });
 
     it("applies to a new jobApplication and both status are in pending", async () => {
-      const { uuid: applicantUuid } = await ApplicantGenerator.instance.withMinimumData();
-      const company = await CompanyGenerator.instance.withMinimumData();
-      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
-      const jobApplication = await JobApplicationRepository.apply(applicantUuid, offer);
+      const jobApplication = await JobApplicationRepository.apply(graduate, offerForGraduates);
       expect(jobApplication).toMatchObject({
         extensionApprovalStatus: ApprovalStatus.pending,
         graduadosApprovalStatus: ApprovalStatus.pending
       });
     });
 
-    it("creates four valid jobApplications for for the same offer", async () => {
-      const applicant1 = await ApplicantGenerator.instance.withMinimumData();
-      const applicant2 = await ApplicantGenerator.instance.withMinimumData();
-      const applicant3 = await ApplicantGenerator.instance.withMinimumData();
-      const applicant4 = await ApplicantGenerator.instance.withMinimumData();
-      const company = await CompanyGenerator.instance.withMinimumData();
-      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
+    it("creates three valid jobApplications for for the same offer", async () => {
       await expect(
         Promise.all([
-          JobApplicationRepository.apply(applicant1.uuid, offer),
-          JobApplicationRepository.apply(applicant2.uuid, offer),
-          JobApplicationRepository.apply(applicant3.uuid, offer),
-          JobApplicationRepository.apply(applicant4.uuid, offer)
+          JobApplicationRepository.apply(student, offerForStudentsAndGraduates),
+          JobApplicationRepository.apply(graduate, offerForStudentsAndGraduates),
+          JobApplicationRepository.apply(studentAndGraduate, offerForStudentsAndGraduates)
         ])
       ).resolves.not.toThrow();
     });
 
     it("throws an error if given applicantUuid that does not exist", async () => {
-      const company = await CompanyGenerator.instance.withMinimumData();
-      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
-      const notExistingApplicantUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+      const applicant = new Applicant();
+      jest.spyOn(applicant, "getType").mockResolvedValueOnce(ApplicantType.student);
+      jest.spyOn(offerForStudents, "applicantCanApply").mockResolvedValueOnce(true);
       await expect(
-        JobApplicationRepository.apply(notExistingApplicantUuid, offer)
+        JobApplicationRepository.apply(applicant, offerForStudents)
       ).rejects.toThrowErrorWithMessage(
         ForeignKeyConstraintError,
         'insert or update on table "JobApplications" violates foreign key ' +
@@ -89,69 +146,65 @@ describe("JobApplicationRepository", () => {
     });
 
     it("throws an error if jobApplication already exists", async () => {
-      const applicant = await ApplicantGenerator.instance.withMinimumData();
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid });
-      await JobApplicationRepository.apply(applicant.uuid, offer);
+      await JobApplicationRepository.apply(studentAndGraduate, offerForGraduates);
       await expect(
-        JobApplicationRepository.apply(applicant.uuid, offer)
+        JobApplicationRepository.apply(studentAndGraduate, offerForGraduates)
       ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
     });
   });
 
   describe("Associations", () => {
     it("gets Applicant and offer from a jobApplication", async () => {
-      const applicant = await ApplicantGenerator.instance.withMinimumData();
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid });
-      const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
-      const offer1 = (await jobApplication.getOffer()).toJSON();
+      const applicant = await createApplicantInTheCareers([
+        { careerCode: firstCareer.code, isGraduate: true }
+      ]);
+      const jobApplication = await JobApplicationRepository.apply(applicant, offerForGraduates);
       expect((await jobApplication.getApplicant()).toJSON()).toMatchObject(applicant.toJSON());
-      expect(offer1).toMatchObject(offer.toJSON());
+      expect((await jobApplication.getOffer()).toJSON()).toMatchObject(offerForGraduates.toJSON());
     });
 
     it("gets all applicant's jobApplications", async () => {
-      const applicant = await ApplicantGenerator.instance.withMinimumData();
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid });
-      const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
-      expect(
-        (await applicant.getJobApplications()).map(aJobApplication => aJobApplication.toJSON())
-      ).toEqual([jobApplication.toJSON()]);
+      const graduateApplicant = await createApplicantInTheCareers([
+        { careerCode: firstCareer.code, isGraduate: true }
+      ]);
+      const jobApplication = await JobApplicationRepository.apply(
+        graduateApplicant,
+        offerForGraduates
+      );
+      const applicantsJobApplications = await graduateApplicant.getJobApplications();
+      expect(applicantsJobApplications.map(aJobApplication => aJobApplication.toJSON())).toEqual([
+        jobApplication.toJSON()
+      ]);
     });
   });
 
   describe("hasApplied", () => {
     it("returns true if applicant applied for offer", async () => {
-      const applicant = await ApplicantGenerator.instance.withMinimumData();
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid });
-      await JobApplicationRepository.apply(applicant.uuid, offer);
-      expect(await JobApplicationRepository.hasApplied(applicant, offer)).toBe(true);
+      const applicant = await ApplicantGenerator.instance.graduate();
+      await JobApplicationRepository.apply(applicant, offerForStudentsAndGraduates);
+      expect(
+        await JobApplicationRepository.hasApplied(applicant, offerForStudentsAndGraduates)
+      ).toBe(true);
     });
 
-    it("should return false if applicant has not applied to the offer", async () => {
-      const applicant = await ApplicantGenerator.instance.withMinimumData();
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid });
-      expect(await JobApplicationRepository.hasApplied(applicant, offer)).toBe(false);
+    it("returns false if applicant has not applied to the offer", async () => {
+      const applicant = await ApplicantGenerator.instance.graduate();
+      expect(await JobApplicationRepository.hasApplied(applicant, offerForGraduates)).toBe(false);
     });
   });
 
   describe("findLatestByCompanyUuid", () => {
     it("returns the only application for my company", async () => {
-      const { uuid: applicantUuid } = await ApplicantGenerator.instance.withMinimumData();
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid });
-      await JobApplicationRepository.apply(applicantUuid, offer);
+      const offer = await createOfferFor(ApplicantType.student, ApprovalStatus.approved);
+      await JobApplicationRepository.apply(studentAndGraduate, offer);
       const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid({
-        companyUuid: companyUuid
+        companyUuid: offer.companyUuid
       });
       expect(jobApplications.shouldFetchMore).toEqual(false);
       expect(jobApplications.results).toMatchObject([
         {
           offerUuid: offer.uuid,
-          applicantUuid: applicantUuid
+          applicantUuid: studentAndGraduate.uuid
         }
       ]);
     });
@@ -166,35 +219,44 @@ describe("JobApplicationRepository", () => {
     });
 
     it("returns the latest job applications first for my company", async () => {
-      const { uuid: applicantUuid } = await ApplicantGenerator.instance.withMinimumData();
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const anotherCompany = await CompanyGenerator.instance.withMinimumData();
-      const myOffer1 = await OfferGenerator.instance.withObligatoryData({ companyUuid });
-      const myOffer2 = await OfferGenerator.instance.withObligatoryData({ companyUuid });
-      const notMyOffer = await OfferGenerator.instance.withObligatoryData({
-        companyUuid: anotherCompany.uuid
-      });
+      const myOffer1 = await createOfferFor(
+        ApplicantType.student,
+        ApprovalStatus.approved,
+        companyUuid
+      );
+      const myOffer2 = await createOfferFor(
+        ApplicantType.graduate,
+        ApprovalStatus.approved,
+        companyUuid
+      );
+      const notMyOffer = await createOfferFor(
+        ApplicantType.both,
+        ApprovalStatus.approved,
+        anotherCompany.uuid
+      );
 
-      await JobApplicationRepository.apply(applicantUuid, myOffer1);
-      await JobApplicationRepository.apply(applicantUuid, myOffer2);
-      await JobApplicationRepository.apply(applicantUuid, notMyOffer);
+      await JobApplicationRepository.apply(studentAndGraduate, myOffer1);
+      await JobApplicationRepository.apply(studentAndGraduate, myOffer2);
+      await JobApplicationRepository.apply(studentAndGraduate, notMyOffer);
       const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid({
         companyUuid: companyUuid
       });
       expect(jobApplications.shouldFetchMore).toEqual(false);
-      expect(jobApplications.results).toMatchObject([
-        {
+      expect(jobApplications.results).toEqual([
+        expect.objectContaining({
           offerUuid: myOffer2.uuid,
-          applicantUuid,
+          applicantUuid: studentAndGraduate.uuid,
           extensionApprovalStatus: ApprovalStatus.pending,
           graduadosApprovalStatus: ApprovalStatus.pending
-        },
-        {
+        }),
+        expect.objectContaining({
           offerUuid: myOffer1.uuid,
-          applicantUuid,
+          applicantUuid: studentAndGraduate.uuid,
           extensionApprovalStatus: ApprovalStatus.pending,
           graduadosApprovalStatus: ApprovalStatus.pending
-        }
+        })
       ]);
     });
 
@@ -204,17 +266,17 @@ describe("JobApplicationRepository", () => {
       const newOffers: Offer[] = [];
 
       beforeAll(async () => {
-        JobApplicationRepository.truncate();
+        await JobApplicationRepository.truncate();
 
         MockDate.set(updatedAt);
 
         company = await CompanyGenerator.instance.withMinimumData();
-        const applicant = await ApplicantGenerator.instance.withMinimumData();
+        const applicant = await ApplicantGenerator.instance.graduate();
         for (const _ of range(10)) {
           const offer = await OfferGenerator.instance.withObligatoryData({
             companyUuid: company.uuid
           });
-          await JobApplicationRepository.apply(applicant.uuid, offer);
+          await JobApplicationRepository.apply(applicant, offer);
           newOffers.push(offer);
         }
 
@@ -246,12 +308,14 @@ describe("JobApplicationRepository", () => {
         MockDate.set(updatedAt);
 
         company = await CompanyGenerator.instance.withMinimumData();
-        const offer = await OfferGenerator.instance.withObligatoryData({
-          companyUuid: company.uuid
-        });
+        const offer = await createOfferFor(
+          ApplicantType.both,
+          ApprovalStatus.approved,
+          company.uuid
+        );
         for (const _ of range(10)) {
-          const applicant = await ApplicantGenerator.instance.withMinimumData();
-          await JobApplicationRepository.apply(applicant.uuid, offer);
+          const applicant = await ApplicantGenerator.instance.graduate();
+          await JobApplicationRepository.apply(applicant, offer);
           newApplicants.push(applicant);
         }
 

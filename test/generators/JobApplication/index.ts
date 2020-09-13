@@ -11,7 +11,7 @@ export const JobApplicationGenerator = {
       const applicant = await ApplicantGenerator.instance.studentAndGraduate();
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const offer = await OfferGenerator.instance.forStudents({ companyUuid });
-      return JobApplicationRepository.apply(applicant.uuid, offer);
+      return JobApplicationRepository.apply(applicant, offer);
     },
     updatedWithStatus: async ({ admin, status }: IUpdatedWithStatus) => {
       const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
