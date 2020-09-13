@@ -23,6 +23,6 @@ export class OfferCareer extends Model<OfferCareer> {
   })
   public offerUuid: string;
 
-  @BelongsTo(() => Offer)
+  @BelongsTo(() => Offer, "offerUuid")
   public offer: Offer;
 }
