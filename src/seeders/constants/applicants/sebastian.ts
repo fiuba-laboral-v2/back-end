@@ -9,8 +9,8 @@ export const sebastian = {
     uuid: uuids.sebastian.user,
     email: "seblanco@fi.uba.ar",
     password: hashSync("SecurePassword1010", 10),
-    name: "Sebastián Eugenio",
-    surname: "Blanco y Negro también",
+    name: "Sebastián",
+    surname: "Blanco",
     dni: "33333332",
     createdAt: new Date(),
     updatedAt: new Date()
