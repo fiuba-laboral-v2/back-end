@@ -8,6 +8,7 @@ import { Secretary } from "$models/Admin";
 import { Company, Career } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
+import { OfferNotFound } from "$models/Offer/Errors";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 import { OfferGenerator } from "$generators/Offer";
@@ -199,7 +200,7 @@ describe("saveJobApplication", () => {
       });
 
       expect(errors![0].extensions!.data).toMatchObject({
-        errorType: "OfferNotFound"
+        errorType: OfferNotFound.name
       });
     });
   });
