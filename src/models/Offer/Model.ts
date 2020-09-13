@@ -124,8 +124,9 @@ export class Offer extends Model<Offer> {
   public getApprovalEvents: HasManyGetAssociationsMixin<OfferApprovalEvent>;
 
   public async applicantCanApply(applicant: Applicant) {
-    const applicantType = await applicant.getType();
     if (this.targetApplicantType === ApplicantType.both) return true;
+
+    const applicantType = await applicant.getType();
     if (applicantType === ApplicantType.both) return true;
     return this.targetApplicantType === applicantType;
   }
