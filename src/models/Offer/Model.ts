@@ -123,6 +123,7 @@ export class Offer extends Model<Offer> {
   public async applicantCanApply(applicant: Applicant) {
     const applicantType = await applicant.getType();
     if (this.targetApplicantType === ApplicantType.both) return true;
+    if (applicantType === ApplicantType.both) return true;
     return this.targetApplicantType === applicantType;
   }
 }

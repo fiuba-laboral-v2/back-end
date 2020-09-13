@@ -298,6 +298,40 @@ describe("OfferRepository", () => {
         ]);
         expect(await offer.applicantCanApply(applicant)).toBe(true);
       });
+
+      it("returns true if the offer target students and the applicant is both", async () => {
+        const offer = await createOfferFor(ApplicantType.student, ApprovalStatus.approved);
+        const applicant = await createApplicantInTheCareers([
+          {
+            careerCode: firstCareer.code,
+            isGraduate: true
+          },
+          {
+            careerCode: secondCareer.code,
+            approvedSubjectCount: 40,
+            isGraduate: false,
+            currentCareerYear: 5
+          }
+        ]);
+        expect(await offer.applicantCanApply(applicant)).toBe(true);
+      });
+
+      it("returns true if the offer target graduates and the applicant is both", async () => {
+        const offer = await createOfferFor(ApplicantType.graduate, ApprovalStatus.approved);
+        const applicant = await createApplicantInTheCareers([
+          {
+            careerCode: firstCareer.code,
+            isGraduate: true
+          },
+          {
+            careerCode: secondCareer.code,
+            approvedSubjectCount: 40,
+            isGraduate: false,
+            currentCareerYear: 5
+          }
+        ]);
+        expect(await offer.applicantCanApply(applicant)).toBe(true);
+      });
     });
   });
 
