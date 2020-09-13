@@ -10,6 +10,7 @@ export const aldana = {
     password: "$2b$10$Mql5/mLtH.lJy0CxfjfozOuVWkztx4X3LAWh.WL5vXMv9pktoXDyW",
     name: "Aldana",
     surname: "Rastrelli",
+    dni: "33333331",
     createdAt: new Date(),
     updatedAt: new Date()
   },
