@@ -3,6 +3,9 @@ import { ApplicantRepository } from "$models/Applicant";
 import { IApplicantCareer } from "$models/Applicant/ApplicantCareer";
 import { Admin } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { AdminGenerator } from "$generators/Admin";
+import { CareerGenerator } from "$generators/Career";
+import { Secretary } from "$models/Admin";
 
 interface IUpdatedWithStatus {
   admin: Admin;
@@ -24,6 +27,42 @@ export const ApplicantGenerator = {
           ...variables
         })
       ),
+    student: async (status?: ApprovalStatus) => {
+      const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+      const { code: careerCode } = await CareerGenerator.instance();
+      return ApplicantGenerator.instance.updatedWithStatus({
+        status: status || ApprovalStatus.approved,
+        admin,
+        careers: [{ careerCode, isGraduate: false, approvedSubjectCount: 40, currentCareerYear: 5 }]
+      });
+    },
+    graduate: async (status?: ApprovalStatus) => {
+      const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+      const { code: careerCode } = await CareerGenerator.instance();
+      return ApplicantGenerator.instance.updatedWithStatus({
+        status: status || ApprovalStatus.approved,
+        admin,
+        careers: [{ careerCode, isGraduate: true }]
+      });
+    },
+    studentAndGraduate: async (status?: ApprovalStatus) => {
+      const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+      const firstCareer = await CareerGenerator.instance();
+      const secondCareer = await CareerGenerator.instance();
+      return ApplicantGenerator.instance.updatedWithStatus({
+        status: status || ApprovalStatus.approved,
+        admin,
+        careers: [
+          {
+            careerCode: firstCareer.code,
+            isGraduate: false,
+            approvedSubjectCount: 40,
+            currentCareerYear: 5
+          },
+          { careerCode: secondCareer.code, isGraduate: true }
+        ]
+      });
+    },
     updatedWithStatus: async (variables?: IUpdatedWithStatus) => {
       const applicant = await ApplicantRepository.create(
         withMinimumData({ index: ApplicantGenerator.getIndex(), careers: variables?.careers })

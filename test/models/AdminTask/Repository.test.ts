@@ -1,5 +1,6 @@
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
+import { CareerRepository } from "$models/Career";
 import { AdminTask, AdminTaskRepository, AdminTaskType } from "$models/AdminTask";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Company } from "$models";
@@ -19,6 +20,7 @@ describe("AdminTaskRepository", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await OfferRepository.truncate();
+    await CareerRepository.truncate();
     setup = new AdminTaskTestSetup({ graphqlSetup: false });
     await setup.execute();
   });

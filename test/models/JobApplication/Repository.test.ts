@@ -1,5 +1,6 @@
 import { ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
 import { CompanyRepository } from "$models/Company";
+import { CareerRepository } from "$models/Career";
 import { OfferRepository } from "$models/Offer";
 import { JobApplicationNotFoundError, JobApplicationRepository } from "$models/JobApplication";
 import { Admin, Applicant, Company, JobApplication, Offer } from "$models";
@@ -18,6 +19,7 @@ describe("JobApplicationRepository", () => {
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
+    await CareerRepository.truncate();
   });
 
   describe("Apply", () => {
