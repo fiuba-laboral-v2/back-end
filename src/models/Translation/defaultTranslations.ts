@@ -32,13 +32,13 @@ export const defaultTranslations = {
     { key: "dni", value: "DNI" },
     { key: "password", value: "Contraseña" }
   ],
+  careersSection: [{ key: "careersTitle", value: "Carreras" }],
   applicantOfferList: [
     { key: "title", value: "Ofertas de trabajo" },
     { key: "addFilters", value: "Agregar filtros" },
     { key: "careers", value: "Carreras" }
   ],
   careersDetail: [
-    { key: "careersTitle", value: "Carreras" },
     { key: "approvedSubjectCount", value: "materias aprobadas" },
     { key: "currentCareerYear", value: "año" },
     { key: "isGraduate", value: "Graduado/a" },
@@ -194,6 +194,7 @@ export const defaultTranslations = {
   ],
   adminCompanyMainTitle: [{ key: "title", value: "Empresa" }],
   adminApplicantMainTitle: [{ key: "title", value: "Postulante" }],
+  adminApplicantListMainTitle: [{ key: "title", value: "Postulantes" }],
   adminJobApplicationMainTitle: [{ key: "title", value: "Postulación" }],
   adminOfferMainTitle: [{ key: "title", value: "Oferta Laboral" }],
   adminOfferDetails: [{ key: "cuit", value: "CUIT de la empresa:" }],
@@ -202,6 +203,13 @@ export const defaultTranslations = {
   adminActions: [
     { key: "approve", value: "Aprobar" },
     { key: "reject", value: "Rechazar" }
+  ],
+  adminApplicantListHeader: [
+    { key: "names", value: "Nombre y Apellido" },
+    { key: "padron", value: "Padrón" },
+    { key: "dni", value: "DNI" },
+    { key: "studies", value: "Estudios" },
+    { key: "state", value: "Estado" }
   ],
   statusLabel: [
     { key: "approved", value: "Aprobado" },
