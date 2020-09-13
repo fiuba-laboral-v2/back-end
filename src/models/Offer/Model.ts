@@ -113,7 +113,7 @@ export class Offer extends Model<Offer> {
   public careers: Career[];
 
   @HasMany(() => OfferCareer)
-  public offerCareer: OfferCareer[];
+  public offerCareers: OfferCareer[];
 
   @HasMany(() => OfferApprovalEvent)
   public approvalEvents: OfferApprovalEvent;
