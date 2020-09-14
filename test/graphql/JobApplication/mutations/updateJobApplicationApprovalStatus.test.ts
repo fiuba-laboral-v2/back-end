@@ -2,6 +2,7 @@ import { gql } from "apollo-server";
 import { client } from "$test/graphql/ApolloTestClient";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
+import { CareerRepository } from "$models/Career";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
@@ -23,6 +24,7 @@ describe("updateJobApplicationApprovalStatus", () => {
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
+    await CareerRepository.truncate();
   });
 
   const expectToUpdateStatus = async (secretary: Secretary, approvalStatus: ApprovalStatus) => {

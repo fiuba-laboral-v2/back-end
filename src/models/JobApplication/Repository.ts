@@ -2,14 +2,25 @@ import { Database } from "$config";
 import { Applicant, JobApplication, Offer } from "$models";
 import { IUpdateApprovalStatus } from "./Interfaces";
 import { JobApplicationApprovalEventRepository } from "./JobApplicationsApprovalEvent";
-import { JobApplicationNotFoundError } from "./Errors";
+import { JobApplicationNotFoundError, OfferNotTargetedForApplicantError } from "./Errors";
 import { IPaginatedJobApplicationsInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { Op } from "sequelize";
 import { PaginationConfig } from "$config/PaginationConfig";
 
 export const JobApplicationRepository = {
-  apply: (applicantUuid: string, { uuid: offerUuid }: Offer) =>
-    JobApplication.create({ offerUuid, applicantUuid }),
+  apply: async (applicant: Applicant, offer: Offer) => {
+    if (!(await offer.applicantCanApply(applicant))) {
+      throw new OfferNotTargetedForApplicantError(
+        await applicant.getType(),
+        offer.targetApplicantType
+      );
+    }
+
+    return JobApplication.create({
+      offerUuid: offer.uuid,
+      applicantUuid: applicant.uuid
+    });
+  },
   hasApplied: async (applicant: Applicant, offer: Offer) => {
     const jobApplication = await JobApplication.findOne({
       where: {

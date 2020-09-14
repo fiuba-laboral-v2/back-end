@@ -2,6 +2,7 @@ import { nonNull, String } from "$graphql/fieldTypes";
 import { GraphQLJobApplication } from "../Types/GraphQLJobApplication";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { OfferRepository } from "$models/Offer";
+import { ApplicantRepository } from "$models/Applicant";
 import { IApplicantUser } from "$graphql/Context";
 
 export const saveJobApplication = {
@@ -17,6 +18,7 @@ export const saveJobApplication = {
     { currentUser }: { currentUser: IApplicantUser }
   ) => {
     const offer = await OfferRepository.findByUuid(offerUuid);
-    return JobApplicationRepository.apply(currentUser.applicant.uuid, offer);
+    const applicant = await ApplicantRepository.findByUuid(currentUser.applicant.uuid);
+    return JobApplicationRepository.apply(applicant, offer);
   }
 };

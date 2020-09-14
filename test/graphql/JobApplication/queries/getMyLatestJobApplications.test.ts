@@ -1,10 +1,11 @@
 import { gql } from "apollo-server";
-import { client } from "../../ApolloTestClient";
+import { client } from "$test/graphql/ApolloTestClient";
 
 import { UserRepository } from "$models/User";
-import { Admin, Applicant, Company, JobApplication } from "$models";
+import { Admin, Company, JobApplication } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { CompanyRepository } from "$models/Company";
+import { CareerRepository } from "$models/Career";
 import { JobApplicationRepository } from "$models/JobApplication";
 
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
@@ -43,13 +44,12 @@ const GET_MY_LATEST_JOB_APPLICATIONS = gql`
 `;
 
 describe("getMyLatestJobApplications", () => {
-  let applicant: Applicant;
   let admin: Admin;
 
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
-    applicant = await ApplicantGenerator.instance.withMinimumData();
+    await CareerRepository.truncate();
     admin = await AdminGenerator.instance({ secretary: Secretary.extension });
   });
 
@@ -61,8 +61,9 @@ describe("getMyLatestJobApplications", () => {
           approvalStatus: ApprovalStatus.approved
         }
       });
-      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
-      const jobApplication = await JobApplicationRepository.apply(applicant.uuid, offer);
+      const applicant = await ApplicantGenerator.instance.student();
+      const offer = await OfferGenerator.instance.forStudents({ companyUuid: company.uuid });
+      const jobApplication = await JobApplicationRepository.apply(applicant, offer);
 
       const { data } = await apolloClient.query({
         query: GET_MY_LATEST_JOB_APPLICATIONS
@@ -108,11 +109,11 @@ describe("getMyLatestJobApplications", () => {
       apolloClient = result.apolloClient;
       company = result.company;
 
-      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
+      const offer = await OfferGenerator.instance.forStudents({ companyUuid: company.uuid });
       for (const _ of range(15)) {
         applicationsByDescUpdatedAt.push(
           await JobApplicationRepository.apply(
-            (await ApplicantGenerator.instance.withMinimumData()).uuid,
+            await ApplicantGenerator.instance.studentAndGraduate(),
             offer
           )
         );

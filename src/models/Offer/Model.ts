@@ -17,7 +17,7 @@ import {
   UUIDV4,
   ENUM
 } from "sequelize";
-import { Career, Company, OfferCareer, OfferSection, OfferApprovalEvent } from "$models";
+import { Career, Company, OfferCareer, OfferSection, OfferApprovalEvent, Applicant } from "$models";
 import { validateIntegerInRange, validateSalaryRange } from "validations-fiuba-laboral-v2";
 import { approvalStatuses, ApprovalStatus } from "$models/ApprovalStatus";
 import { isApprovalStatus, isTargetApplicantType } from "$models/SequelizeModelValidators";
@@ -112,6 +112,9 @@ export class Offer extends Model<Offer> {
   @BelongsToMany(() => Career, () => OfferCareer)
   public careers: Career[];
 
+  @HasMany(() => OfferCareer)
+  public offerCareers: OfferCareer[];
+
   @HasMany(() => OfferApprovalEvent)
   public approvalEvents: OfferApprovalEvent;
 
@@ -119,4 +122,12 @@ export class Offer extends Model<Offer> {
   public getSections: HasManyGetAssociationsMixin<OfferSection>;
   public getCareers: HasManyGetAssociationsMixin<Career>;
   public getApprovalEvents: HasManyGetAssociationsMixin<OfferApprovalEvent>;
+
+  public async applicantCanApply(applicant: Applicant) {
+    if (this.targetApplicantType === ApplicantType.both) return true;
+
+    const applicantType = await applicant.getType();
+    if (applicantType === ApplicantType.both) return true;
+    return this.targetApplicantType === applicantType;
+  }
 }
