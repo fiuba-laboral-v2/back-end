@@ -36,7 +36,8 @@ export const defaultTranslations = {
   applicantOfferList: [
     { key: "title", value: "Ofertas de trabajo" },
     { key: "addFilters", value: "Agregar filtros" },
-    { key: "careers", value: "Carreras" }
+    { key: "careers", value: "Carreras" },
+    { key: "openFilters", value: "Filtrar" }
   ],
   careersDetail: [
     { key: "approvedSubjectCount", value: "materias aprobadas" },
