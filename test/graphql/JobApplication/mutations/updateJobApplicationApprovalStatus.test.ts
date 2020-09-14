@@ -14,8 +14,7 @@ const UPDATE_JOB_APPLICATION_APPROVAL_STATUS = gql`
     updateJobApplicationApprovalStatus(uuid: $uuid, approvalStatus: $approvalStatus) {
       offerUuid
       applicantUuid
-      extensionApprovalStatus
-      graduadosApprovalStatus
+      approvalStatus
     }
   }
 `;
@@ -26,11 +25,7 @@ describe("updateJobApplicationApprovalStatus", () => {
     await UserRepository.truncate();
   });
 
-  const expectToUpdateStatus = async (
-    secretary: Secretary,
-    approvalStatus: ApprovalStatus,
-    statusColumn: string
-  ) => {
+  const expectToUpdateStatus = async (secretary: Secretary, approvalStatus: ApprovalStatus) => {
     const { apolloClient } = await TestClientGenerator.admin({ secretary });
     const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
     const { errors, data } = await apolloClient.mutate({
@@ -39,55 +34,31 @@ describe("updateJobApplicationApprovalStatus", () => {
     });
 
     expect(errors).toBeUndefined();
-    expect(data!.updateJobApplicationApprovalStatus[statusColumn]).toEqual(approvalStatus);
+    expect(data!.updateJobApplicationApprovalStatus.approvalStatus).toEqual(approvalStatus);
   };
 
-  it("sets to pending a jobApplication by an admin from extension secretary", async () => {
-    await expectToUpdateStatus(
-      Secretary.extension,
-      ApprovalStatus.pending,
-      "extensionApprovalStatus"
-    );
+  it("allows extension admin to change status to pending", async () => {
+    await expectToUpdateStatus(Secretary.extension, ApprovalStatus.pending);
   });
 
-  it("approves a jobApplication by an admin from extension secretary", async () => {
-    await expectToUpdateStatus(
-      Secretary.extension,
-      ApprovalStatus.approved,
-      "extensionApprovalStatus"
-    );
+  it("allows extension admin to change status to approved", async () => {
+    await expectToUpdateStatus(Secretary.extension, ApprovalStatus.approved);
   });
 
-  it("rejects a jobApplication by an admin from extension secretary", async () => {
-    await expectToUpdateStatus(
-      Secretary.extension,
-      ApprovalStatus.rejected,
-      "extensionApprovalStatus"
-    );
+  it("allows extension admin to change status to rejected", async () => {
+    await expectToUpdateStatus(Secretary.extension, ApprovalStatus.rejected);
   });
 
-  it("sets to pending a jobApplication by an admin from a graduados secretary", async () => {
-    await expectToUpdateStatus(
-      Secretary.graduados,
-      ApprovalStatus.pending,
-      "graduadosApprovalStatus"
-    );
+  it("allows graduados admin to change status to pending", async () => {
+    await expectToUpdateStatus(Secretary.graduados, ApprovalStatus.pending);
   });
 
-  it("approves a jobApplication by an admin from a graduados secretary", async () => {
-    await expectToUpdateStatus(
-      Secretary.graduados,
-      ApprovalStatus.approved,
-      "graduadosApprovalStatus"
-    );
+  it("allows graduados admin to change status to approved", async () => {
+    await expectToUpdateStatus(Secretary.graduados, ApprovalStatus.approved);
   });
 
-  it("rejects a jobApplication by an admin from a graduados secretary", async () => {
-    await expectToUpdateStatus(
-      Secretary.graduados,
-      ApprovalStatus.rejected,
-      "graduadosApprovalStatus"
-    );
+  it("allows graduados admin to change status to rejected", async () => {
+    await expectToUpdateStatus(Secretary.graduados, ApprovalStatus.rejected);
   });
 
   it("returns an error if no user is logged in", async () => {

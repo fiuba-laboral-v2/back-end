@@ -3,7 +3,6 @@ import { Applicant, JobApplication, Offer } from "$models";
 import { IUpdateApprovalStatus } from "./Interfaces";
 import { JobApplicationApprovalEventRepository } from "./JobApplicationsApprovalEvent";
 import { JobApplicationNotFoundError } from "./Errors";
-import { Secretary } from "$models/Admin";
 import { IPaginatedJobApplicationsInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { Op } from "sequelize";
 import { PaginationConfig } from "$config/PaginationConfig";
@@ -78,20 +77,15 @@ export const JobApplicationRepository = {
     };
   },
   updateApprovalStatus: async ({
-    admin: { userUuid: adminUserUuid, secretary },
+    admin: { userUuid: adminUserUuid },
     uuid,
     status
   }: IUpdateApprovalStatus) =>
     Database.transaction(async transaction => {
-      const attributes = {
-        ...(secretary === Secretary.graduados && { graduadosApprovalStatus: status }),
-        ...(secretary === Secretary.extension && { extensionApprovalStatus: status })
-      };
-      const [, [updatedJobApplication]] = await JobApplication.update(attributes, {
-        where: { uuid },
-        returning: true,
-        transaction
-      });
+      const [, [updatedJobApplication]] = await JobApplication.update(
+        { approvalStatus: status },
+        { where: { uuid }, returning: true, transaction }
+      );
       if (!updatedJobApplication) throw new JobApplicationNotFoundError(uuid);
 
       await JobApplicationApprovalEventRepository.create({

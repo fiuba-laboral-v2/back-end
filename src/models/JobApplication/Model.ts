@@ -48,15 +48,7 @@ export class JobApplication extends Model<JobApplication> {
     defaultValue: ApprovalStatus.pending,
     ...isApprovalStatus
   })
-  public extensionApprovalStatus: ApprovalStatus;
-
-  @Column({
-    allowNull: false,
-    type: ENUM<string>({ values: approvalStatuses }),
-    defaultValue: ApprovalStatus.pending,
-    ...isApprovalStatus
-  })
-  public graduadosApprovalStatus: ApprovalStatus;
+  public approvalStatus: ApprovalStatus;
 
   @BelongsTo(() => Applicant, "applicantUuid")
   public applicant: Applicant;

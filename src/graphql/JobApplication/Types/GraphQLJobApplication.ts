@@ -18,10 +18,7 @@ export const GraphQLJobApplication = new GraphQLObjectType<JobApplication>({
     offerUuid: {
       type: nonNull(String)
     },
-    extensionApprovalStatus: {
-      type: nonNull(GraphQLApprovalStatus)
-    },
-    graduadosApprovalStatus: {
+    approvalStatus: {
       type: nonNull(GraphQLApprovalStatus)
     },
     applicant: {

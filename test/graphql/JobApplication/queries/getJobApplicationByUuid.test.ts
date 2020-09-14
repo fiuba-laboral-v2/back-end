@@ -17,8 +17,7 @@ const GET_JOB_APPLICATION_BY_UUID = gql`
       uuid
       updatedAt
       createdAt
-      extensionApprovalStatus
-      graduadosApprovalStatus
+      approvalStatus
       offer {
         uuid
         title
@@ -56,8 +55,7 @@ describe("getJobApplicationByUuid", () => {
         uuid: jobApplication.uuid,
         updatedAt: jobApplication.updatedAt.toISOString(),
         createdAt: jobApplication.createdAt.toISOString(),
-        extensionApprovalStatus: jobApplication.extensionApprovalStatus,
-        graduadosApprovalStatus: jobApplication.graduadosApprovalStatus,
+        approvalStatus: jobApplication.approvalStatus,
         offer: {
           uuid: offer.uuid,
           title: offer.title

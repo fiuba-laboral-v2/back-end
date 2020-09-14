@@ -32,15 +32,12 @@ describe("JobApplicationRepository", () => {
       });
     });
 
-    it("applies to a new jobApplication and both status are in pending", async () => {
+    it("applies to a new jobApplication and approval status is pending", async () => {
       const { uuid: applicantUuid } = await ApplicantGenerator.instance.withMinimumData();
       const company = await CompanyGenerator.instance.withMinimumData();
       const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
       const jobApplication = await JobApplicationRepository.apply(applicantUuid, offer);
-      expect(jobApplication).toMatchObject({
-        extensionApprovalStatus: ApprovalStatus.pending,
-        graduadosApprovalStatus: ApprovalStatus.pending
-      });
+      expect(jobApplication).toMatchObject({ approvalStatus: ApprovalStatus.pending });
     });
 
     it("creates four valid jobApplications for for the same offer", async () => {
@@ -184,14 +181,12 @@ describe("JobApplicationRepository", () => {
         {
           offerUuid: myOffer2.uuid,
           applicantUuid,
-          extensionApprovalStatus: ApprovalStatus.pending,
-          graduadosApprovalStatus: ApprovalStatus.pending
+          approvalStatus: ApprovalStatus.pending
         },
         {
           offerUuid: myOffer1.uuid,
           applicantUuid,
-          extensionApprovalStatus: ApprovalStatus.pending,
-          graduadosApprovalStatus: ApprovalStatus.pending
+          approvalStatus: ApprovalStatus.pending
         }
       ]);
     });
@@ -291,11 +286,7 @@ describe("JobApplicationRepository", () => {
   });
 
   describe("updateApprovalStatus", () => {
-    const expectStatusToBe = async (
-      status: ApprovalStatus,
-      secretary: Secretary,
-      statusColumn: string
-    ) => {
+    const expectStatusToBe = async (status: ApprovalStatus, secretary: Secretary) => {
       const admin = await AdminGenerator.instance({ secretary });
       const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
       const jobApplication = await JobApplicationRepository.updateApprovalStatus({
@@ -303,7 +294,7 @@ describe("JobApplicationRepository", () => {
         uuid,
         status
       });
-      expect(jobApplication[statusColumn]).toEqual(status);
+      expect(jobApplication.approvalStatus).toEqual(status);
     };
 
     const expectToLogAnEventForStatus = async (secretary: Secretary, status: ApprovalStatus) => {
@@ -323,79 +314,55 @@ describe("JobApplicationRepository", () => {
       ]);
     };
 
-    it("sets to pending the jobApplication by graduados secretary", async () => {
-      await expectStatusToBe(
-        ApprovalStatus.pending,
-        Secretary.graduados,
-        "graduadosApprovalStatus"
-      );
+    it("allows graduados admin to change status to pending", async () => {
+      await expectStatusToBe(ApprovalStatus.pending, Secretary.graduados);
     });
 
-    it("approves the jobApplication by graduados secretary", async () => {
-      await expectStatusToBe(
-        ApprovalStatus.approved,
-        Secretary.graduados,
-        "graduadosApprovalStatus"
-      );
+    it("allows graduados admin to change status to approved", async () => {
+      await expectStatusToBe(ApprovalStatus.approved, Secretary.graduados);
     });
 
-    it("rejects the jobApplication by graduados secretary", async () => {
-      await expectStatusToBe(
-        ApprovalStatus.rejected,
-        Secretary.graduados,
-        "graduadosApprovalStatus"
-      );
+    it("allows graduados admin to change status to rejected", async () => {
+      await expectStatusToBe(ApprovalStatus.rejected, Secretary.graduados);
     });
 
-    it("sets to pending the jobApplication by extension secretary", async () => {
-      await expectStatusToBe(
-        ApprovalStatus.pending,
-        Secretary.extension,
-        "extensionApprovalStatus"
-      );
+    it("allows extension admin to change status to pending", async () => {
+      await expectStatusToBe(ApprovalStatus.pending, Secretary.extension);
     });
 
-    it("approved the jobApplication by extension secretary", async () => {
-      await expectStatusToBe(
-        ApprovalStatus.approved,
-        Secretary.extension,
-        "extensionApprovalStatus"
-      );
+    it("allows extension admin to change status to approved", async () => {
+      await expectStatusToBe(ApprovalStatus.approved, Secretary.extension);
     });
 
-    it("rejects the jobApplication by extension secretary", async () => {
-      await expectStatusToBe(
-        ApprovalStatus.approved,
-        Secretary.extension,
-        "extensionApprovalStatus"
-      );
+    it("allows extension admin to change status to rejected", async () => {
+      await expectStatusToBe(ApprovalStatus.rejected, Secretary.extension);
     });
 
-    it("logs an event after setting to pending the extension secretary status", async () => {
+    it("logs an event after an extension admin sets status to pending", async () => {
       await expectToLogAnEventForStatus(Secretary.extension, ApprovalStatus.pending);
     });
 
-    it("logs an event after setting to approved the extension secretary status", async () => {
+    it("logs an event after an extension admin sets status to approved", async () => {
       await expectToLogAnEventForStatus(Secretary.extension, ApprovalStatus.approved);
     });
 
-    it("logs an event after setting to rejected the extension secretary status", async () => {
+    it("logs an event after an extension admin sets status to rejected", async () => {
       await expectToLogAnEventForStatus(Secretary.extension, ApprovalStatus.rejected);
     });
 
-    it("logs an event after setting to pending the graduados secretary status", async () => {
+    it("logs an event after an graduados admin sets status to pending", async () => {
       await expectToLogAnEventForStatus(Secretary.graduados, ApprovalStatus.pending);
     });
 
-    it("logs an event after setting to approved the graduados secretary status", async () => {
+    it("logs an event after an graduados admin sets status to approved", async () => {
       await expectToLogAnEventForStatus(Secretary.graduados, ApprovalStatus.approved);
     });
 
-    it("logs an event after setting to rejected the graduados secretary status", async () => {
+    it("logs an event after an graduados admin sets status to rejected", async () => {
       await expectToLogAnEventForStatus(Secretary.graduados, ApprovalStatus.rejected);
     });
 
-    it("throws an error if the jobApplication does not exists", async () => {
+    it("throws an error if the jobApplication does not exist", async () => {
       const secretary = Secretary.extension;
       const admin = await AdminGenerator.instance({ secretary });
       const nonExistentJobApplicationUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
@@ -411,7 +378,7 @@ describe("JobApplicationRepository", () => {
       );
     });
 
-    it("throws an error if the admin does not exists", async () => {
+    it("throws an error if the admin does not exist", async () => {
       const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
       const notPersistedAdmin = new Admin({
         userUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
@@ -440,8 +407,8 @@ describe("JobApplicationRepository", () => {
           status: "invalidStatus" as ApprovalStatus
         })
       ).rejects.toThrow();
-      const { extensionApprovalStatus } = await JobApplicationRepository.findByUuid(uuid);
-      expect(extensionApprovalStatus).toEqual(ApprovalStatus.pending);
+      const { approvalStatus } = await JobApplicationRepository.findByUuid(uuid);
+      expect(approvalStatus).toEqual(ApprovalStatus.pending);
     });
 
     it("fails logging event and does not update jobApplication", async () => {
@@ -457,8 +424,8 @@ describe("JobApplicationRepository", () => {
           status: ApprovalStatus.approved
         })
       ).rejects.toThrow();
-      const { extensionApprovalStatus } = await JobApplicationRepository.findByUuid(uuid);
-      expect(extensionApprovalStatus).toEqual(ApprovalStatus.pending);
+      const { approvalStatus } = await JobApplicationRepository.findByUuid(uuid);
+      expect(approvalStatus).toEqual(ApprovalStatus.pending);
     });
   });
 
