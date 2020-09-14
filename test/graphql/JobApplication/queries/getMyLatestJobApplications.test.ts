@@ -20,7 +20,7 @@ import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import { ApolloServerTestClient } from "apollo-server-testing";
 
 const GET_MY_LATEST_JOB_APPLICATIONS = gql`
-  query getMyLatestJobApplications($updatedBeforeThan: PaginatedJobApplicationsInput) {
+  query getMyLatestJobApplications($updatedBeforeThan: PaginatedInput) {
     getMyLatestJobApplications(updatedBeforeThan: $updatedBeforeThan) {
       shouldFetchMore
       results {
@@ -148,8 +148,7 @@ describe("getMyLatestJobApplications", () => {
         variables: {
           updatedBeforeThan: {
             dateTime: lastApplication.updatedAt.toISOString(),
-            applicantUuid: lastApplication.applicantUuid,
-            offerUuid: lastApplication.offerUuid
+            uuid: lastApplication.uuid
           }
         }
       });

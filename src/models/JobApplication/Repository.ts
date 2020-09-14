@@ -4,7 +4,7 @@ import { IUpdateApprovalStatus } from "./Interfaces";
 import { JobApplicationApprovalEventRepository } from "./JobApplicationsApprovalEvent";
 import { JobApplicationNotFoundError, OfferNotTargetedForApplicantError } from "./Errors";
 import { Secretary } from "$models/Admin";
-import { IPaginatedJobApplicationsInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
+import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { Op } from "sequelize";
 import { PaginationConfig } from "$config/PaginationConfig";
 
@@ -41,7 +41,7 @@ export const JobApplicationRepository = {
     updatedBeforeThan
   }: {
     companyUuid: string;
-    updatedBeforeThan?: IPaginatedJobApplicationsInput;
+    updatedBeforeThan?: IPaginatedInput;
   }) => {
     const limit = PaginationConfig.itemsPerPage() + 1;
     const result = await JobApplication.findAll({
@@ -62,15 +62,8 @@ export const JobApplicationRepository = {
             },
             {
               updatedAt: updatedBeforeThan.dateTime.toISOString(),
-              offerUuid: {
-                [Op.lt]: updatedBeforeThan.offerUuid
-              }
-            },
-            {
-              updatedAt: updatedBeforeThan.dateTime.toISOString(),
-              offerUuid: updatedBeforeThan.offerUuid,
-              applicantUuid: {
-                [Op.lt]: updatedBeforeThan.applicantUuid
+              uuid: {
+                [Op.lt]: updatedBeforeThan.uuid
               }
             }
           ]
