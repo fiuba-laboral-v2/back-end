@@ -14,10 +14,10 @@ import { CompanyGenerator } from "$generators/Company";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { OfferGenerator } from "$generators/Offer";
 import { AdminGenerator } from "$generators/Admin";
-import MockDate from "mockdate";
 import { range } from "lodash";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
+import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 
 describe("JobApplicationRepository", () => {
   let student: Applicant;
@@ -235,77 +235,44 @@ describe("JobApplicationRepository", () => {
       ]);
     });
 
-    describe("when there are applications with equal updatedAt", () => {
-      const updatedAt = new Date();
+    describe("fetchMore", () => {
+      let jobApplicationsByDescUpdatedAt: JobApplication[] = [];
       let company: Company;
-      const newOffers: Offer[] = [];
 
       beforeAll(async () => {
         await JobApplicationRepository.truncate();
 
-        MockDate.set(updatedAt);
-
-        company = await CompanyGenerator.instance.withMinimumData();
-        const applicant = await ApplicantGenerator.instance.graduate();
-        for (const _ of range(10)) {
-          const offer = await OfferGenerator.instance.withObligatoryData({
-            companyUuid: company.uuid
-          });
-          await JobApplicationRepository.apply(applicant, offer);
-          newOffers.push(offer);
+        company = await CompanyGenerator.instance.withCompleteData();
+        for (const _ of range(15)) {
+          jobApplicationsByDescUpdatedAt.push(
+            await JobApplicationGenerator.instance.forTheSameCompany(company.uuid)
+          );
         }
-
-        MockDate.reset();
+        jobApplicationsByDescUpdatedAt = jobApplicationsByDescUpdatedAt.sort(
+          jobApplication => -jobApplication.updatedAt
+        );
       });
 
-      it("sorts by offerUuid", async () => {
+      it("gets the next 3 jobApplications", async () => {
+        const itemsPerPage = 3;
+        const lastIndex = 9;
+        mockItemsPerPage(itemsPerPage);
+
+        const lastJobApplication = jobApplicationsByDescUpdatedAt[lastIndex];
         const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid({
-          companyUuid: company.uuid
+          companyUuid: company.uuid,
+          updatedBeforeThan: {
+            dateTime: lastJobApplication.updatedAt,
+            uuid: lastJobApplication.uuid
+          }
         });
-        expect(jobApplications.shouldFetchMore).toEqual(false);
-        expect(jobApplications.results.map(result => result.offerUuid)).toMatchObject(
-          newOffers
+        expect(jobApplications.results.map(j => j.uuid)).toEqual(
+          jobApplicationsByDescUpdatedAt
+            .slice(lastIndex + 1, lastIndex + 1 + itemsPerPage)
             .map(offer => offer.uuid)
-            .sort()
-            .reverse()
         );
-      });
-    });
 
-    describe("when there are applications with equal updatedAt and offerUuid", () => {
-      const updatedAt = new Date();
-      let company: Company;
-      const newApplicants: Applicant[] = [];
-
-      beforeAll(async () => {
-        JobApplicationRepository.truncate();
-
-        MockDate.set(updatedAt);
-
-        company = await CompanyGenerator.instance.withMinimumData();
-        const offer = await OfferGenerator.instance.forStudentsAndGraduates({
-          companyUuid: company.uuid
-        });
-        for (const _ of range(10)) {
-          const applicant = await ApplicantGenerator.instance.graduate();
-          await JobApplicationRepository.apply(applicant, offer);
-          newApplicants.push(applicant);
-        }
-
-        MockDate.reset();
-      });
-
-      it("sorts by applicantUuid", async () => {
-        const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid({
-          companyUuid: company.uuid
-        });
-        expect(jobApplications.shouldFetchMore).toEqual(false);
-        expect(jobApplications.results.map(result => result.applicantUuid)).toMatchObject(
-          newApplicants
-            .map(applicant => applicant.uuid)
-            .sort()
-            .reverse()
-        );
+        expect(jobApplications.shouldFetchMore).toBe(true);
       });
     });
   });
