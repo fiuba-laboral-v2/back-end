@@ -37,7 +37,7 @@ export const defaultTranslations = {
     { key: "title", value: "Ofertas de trabajo" },
     { key: "addFilters", value: "Agregar filtros" },
     { key: "careers", value: "Carreras" },
-    { key: "openFilters", value: "Filtrar" }
+    { key: "filter", value: "Filtrar" }
   ],
   careersDetail: [
     { key: "approvedSubjectCount", value: "materias aprobadas" },
