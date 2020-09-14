@@ -2,8 +2,8 @@ import { GraphQLJobApplication } from "../Types/GraphQLJobApplication";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { ICompanyUser } from "$graphql/Context";
 import {
-  GraphQLPaginatedJobApplicationsInput,
-  IPaginatedJobApplicationsInput
+  GraphQLPaginatedInput,
+  IPaginatedInput
 } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { GraphQLPaginatedResults } from "$graphql/Pagination/Types/GraphQLPaginatedResults";
 
@@ -11,12 +11,12 @@ export const getMyLatestJobApplications = {
   type: GraphQLPaginatedResults(GraphQLJobApplication),
   args: {
     updatedBeforeThan: {
-      type: GraphQLPaginatedJobApplicationsInput
+      type: GraphQLPaginatedInput
     }
   },
   resolve: async (
     _: undefined,
-    { updatedBeforeThan }: { updatedBeforeThan?: IPaginatedJobApplicationsInput },
+    { updatedBeforeThan }: { updatedBeforeThan?: IPaginatedInput },
     { currentUser }: { currentUser: ICompanyUser }
   ) =>
     JobApplicationRepository.findLatestByCompanyUuid({

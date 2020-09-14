@@ -20,6 +20,11 @@ export const JobApplicationGenerator = {
         admin,
         status
       });
+    },
+    toTheCompany: async (companyUuid: string) => {
+      const applicant = await ApplicantGenerator.instance.studentAndGraduate();
+      const offer = await OfferGenerator.instance.forStudents({ companyUuid });
+      return JobApplicationRepository.apply(applicant, offer);
     }
   }
 };
