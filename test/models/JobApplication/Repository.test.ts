@@ -245,7 +245,7 @@ describe("JobApplicationRepository", () => {
         company = await CompanyGenerator.instance.withCompleteData();
         for (const _ of range(15)) {
           jobApplicationsByDescUpdatedAt.push(
-            await JobApplicationGenerator.instance.forTheSameCompany(company.uuid)
+            await JobApplicationGenerator.instance.toTheCompany(company.uuid)
           );
         }
         jobApplicationsByDescUpdatedAt = jobApplicationsByDescUpdatedAt.sort(
