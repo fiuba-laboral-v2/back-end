@@ -21,84 +21,32 @@ describe("JobApplication", () => {
     expect(jobApplication.uuid).toEqual(expect.stringMatching(UUID_REGEX));
   });
 
-  it("sets extensionApprovalStatus in pending by default", async () => {
+  it("sets approvalStatus in pending by default", async () => {
     const jobApplication = new JobApplication({
       offerUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
       applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468"
     });
-    expect(jobApplication.extensionApprovalStatus).toEqual(ApprovalStatus.pending);
+    expect(jobApplication.approvalStatus).toEqual(ApprovalStatus.pending);
   });
 
-  it("sets graduadosApprovalStatus in pending by default", async () => {
-    const jobApplication = new JobApplication({
-      offerUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
-      applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468"
-    });
-    expect(jobApplication.graduadosApprovalStatus).toEqual(ApprovalStatus.pending);
-  });
-
-  it("creates a jobApplication with a rejected graduadosApprovalStatus", async () => {
+  it("creates a jobApplication with a rejected approvalStatus", async () => {
     const jobApplication = new JobApplication({
       offerUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
       applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
-      graduadosApprovalStatus: ApprovalStatus.rejected
+      approvalStatus: ApprovalStatus.rejected
     });
     await expect(jobApplication.validate()).resolves.not.toThrow();
-    expect(jobApplication.graduadosApprovalStatus).toEqual(ApprovalStatus.rejected);
+    expect(jobApplication.approvalStatus).toEqual(ApprovalStatus.rejected);
   });
 
-  it("creates a jobApplication with an approved graduadosApprovalStatus", async () => {
+  it("creates a jobApplication with an approved approvalStatus", async () => {
     const jobApplication = new JobApplication({
       offerUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
       applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
-      graduadosApprovalStatus: ApprovalStatus.approved
+      approvalStatus: ApprovalStatus.approved
     });
     await expect(jobApplication.validate()).resolves.not.toThrow();
-    expect(jobApplication.graduadosApprovalStatus).toEqual(ApprovalStatus.approved);
-  });
-
-  it("creates a jobApplication with an approved extensionApprovalStatus", async () => {
-    const jobApplication = new JobApplication({
-      offerUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
-      applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
-      extensionApprovalStatus: ApprovalStatus.approved
-    });
-    await expect(jobApplication.validate()).resolves.not.toThrow();
-    expect(jobApplication.extensionApprovalStatus).toEqual(ApprovalStatus.approved);
-  });
-
-  it("creates a jobApplication with a rejected extensionApprovalStatus", async () => {
-    const jobApplication = new JobApplication({
-      offerUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
-      applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
-      extensionApprovalStatus: ApprovalStatus.rejected
-    });
-    await expect(jobApplication.validate()).resolves.not.toThrow();
-    expect(jobApplication.extensionApprovalStatus).toEqual(ApprovalStatus.rejected);
-  });
-
-  it("creates a jobApplication with both status approved", async () => {
-    const jobApplication = new JobApplication({
-      offerUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
-      applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
-      extensionApprovalStatus: ApprovalStatus.approved,
-      graduadosApprovalStatus: ApprovalStatus.approved
-    });
-    await expect(jobApplication.validate()).resolves.not.toThrow();
-    expect(jobApplication.extensionApprovalStatus).toEqual(ApprovalStatus.approved);
-    expect(jobApplication.graduadosApprovalStatus).toEqual(ApprovalStatus.approved);
-  });
-
-  it("creates a jobApplication with both status rejected", async () => {
-    const jobApplication = new JobApplication({
-      offerUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
-      applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
-      extensionApprovalStatus: ApprovalStatus.rejected,
-      graduadosApprovalStatus: ApprovalStatus.rejected
-    });
-    await expect(jobApplication.validate()).resolves.not.toThrow();
-    expect(jobApplication.extensionApprovalStatus).toEqual(ApprovalStatus.rejected);
-    expect(jobApplication.graduadosApprovalStatus).toEqual(ApprovalStatus.rejected);
+    expect(jobApplication.approvalStatus).toEqual(ApprovalStatus.approved);
   });
 
   it("throws an error if no offerUuid is provided", async () => {
@@ -150,23 +98,11 @@ describe("JobApplication", () => {
     );
   });
 
-  it("throws an error if extensionApprovalStatus has valid that is not in the enum", async () => {
+  it("throws an error if approvalStatus has an invalid value", async () => {
     const jobApplication = new JobApplication({
       offerUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
       applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
-      extensionApprovalStatus: "undefinedApprovalStatus"
-    });
-    await expect(jobApplication.validate()).rejects.toThrowErrorWithMessage(
-      ValidationError,
-      isApprovalStatus.validate.isIn.msg
-    );
-  });
-
-  it("throws an error if graduadosApprovalStatus has valid that is not in the enum", async () => {
-    const jobApplication = new JobApplication({
-      offerUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
-      applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
-      graduadosApprovalStatus: "undefinedApprovalStatus"
+      approvalStatus: "undefinedApprovalStatus"
     });
     await expect(jobApplication.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,

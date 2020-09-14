@@ -77,7 +77,11 @@ describe("findAdminTasksQuery", () => {
           Offers."description"
         ) AS "description",
         COALESCE (Applicants."userUuid") AS "userUuid",
-        COALESCE (Applicants."approvalStatus",Companies."approvalStatus") AS "approvalStatus",
+        COALESCE (
+            Applicants."approvalStatus",
+            Companies."approvalStatus",
+            JobApplications."approvalStatus"
+        ) AS "approvalStatus",
         COALESCE (
             Applicants."createdAt",
             Companies."createdAt",
@@ -98,14 +102,8 @@ describe("findAdminTasksQuery", () => {
         COALESCE (Companies."email") AS "email",
         COALESCE (Offers."companyUuid") AS "companyUuid",
         COALESCE (Offers."title") AS "title",
-        COALESCE (
-            Offers."extensionApprovalStatus",
-            JobApplications."extensionApprovalStatus"
-        ) AS "extensionApprovalStatus",
-        COALESCE (
-            Offers."graduadosApprovalStatus",
-            JobApplications."graduadosApprovalStatus"
-        ) AS "graduadosApprovalStatus",
+        COALESCE (Offers."extensionApprovalStatus") AS "extensionApprovalStatus",
+        COALESCE (Offers."graduadosApprovalStatus") AS "graduadosApprovalStatus",
         COALESCE (Offers."hoursPerDay") AS "hoursPerDay",
         COALESCE (Offers."minimumSalary") AS "minimumSalary",
         COALESCE (Offers."maximumSalary") AS "maximumSalary",
@@ -378,8 +376,7 @@ describe("findAdminTasksQuery", () => {
           COALESCE (JobApplications."uuid") AS "uuid",
           COALESCE (JobApplications."applicantUuid") AS "applicantUuid",
           COALESCE (JobApplications."offerUuid") AS "offerUuid",
-          COALESCE (JobApplications."extensionApprovalStatus") AS "extensionApprovalStatus",
-          COALESCE (JobApplications."graduadosApprovalStatus") AS "graduadosApprovalStatus",
+          COALESCE (JobApplications."approvalStatus") AS "approvalStatus",
           COALESCE (JobApplications."createdAt") AS "createdAt",
           COALESCE (JobApplications."updatedAt") AS "updatedAt"
         FROM (
@@ -388,7 +385,7 @@ describe("findAdminTasksQuery", () => {
       )
       SELECT * FROM "AdminTask"
       WHERE (
-        "AdminTask"."${secretaryColumn(secretary)}" = '${status}'
+        "AdminTask"."approvalStatus" = '${status}'
       )
       ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
       LIMIT ${limit}

@@ -14,14 +14,17 @@ describe("groupTableNamesByColumn", () => {
       OFFER_TABLE_NAME,
       JOB_APPLICATION_TABLE_NAME
     ];
-    const SEPARATE_APPROVAL_MODELS_TABLES_NAMES = [OFFER_TABLE_NAME, JOB_APPLICATION_TABLE_NAME];
     const tableNamesByColumn = groupTableNamesByColumn(ADMIN_TASK_MODELS);
     expect(tableNamesByColumn).toEqual({
       uuid: expect.arrayContaining(ALL_TABLE_NAMES),
       padron: [APPLICANTS_TABLE_NAME],
       description: expect.arrayContaining([APPLICANTS_TABLE_NAME, COMPANIES_TABLE_NAME]),
       userUuid: [APPLICANTS_TABLE_NAME],
-      approvalStatus: expect.arrayContaining([COMPANIES_TABLE_NAME, APPLICANTS_TABLE_NAME]),
+      approvalStatus: expect.arrayContaining([
+        COMPANIES_TABLE_NAME,
+        APPLICANTS_TABLE_NAME,
+        JOB_APPLICATION_TABLE_NAME
+      ]),
       cuit: [COMPANIES_TABLE_NAME],
       companyName: [COMPANIES_TABLE_NAME],
       slogan: [COMPANIES_TABLE_NAME],
@@ -36,8 +39,8 @@ describe("groupTableNamesByColumn", () => {
       targetApplicantType: [OFFER_TABLE_NAME],
       applicantUuid: [JOB_APPLICATION_TABLE_NAME],
       offerUuid: [JOB_APPLICATION_TABLE_NAME],
-      graduadosApprovalStatus: expect.arrayContaining(SEPARATE_APPROVAL_MODELS_TABLES_NAMES),
-      extensionApprovalStatus: expect.arrayContaining(SEPARATE_APPROVAL_MODELS_TABLES_NAMES),
+      graduadosApprovalStatus: [OFFER_TABLE_NAME],
+      extensionApprovalStatus: [OFFER_TABLE_NAME],
       createdAt: expect.arrayContaining(ALL_TABLE_NAMES),
       updatedAt: expect.arrayContaining(ALL_TABLE_NAMES),
       tableNameColumn: expect.arrayContaining(ALL_TABLE_NAMES)
@@ -105,8 +108,7 @@ describe("groupTableNamesByColumn", () => {
       uuid: [JOB_APPLICATION_TABLE_NAME],
       offerUuid: [JOB_APPLICATION_TABLE_NAME],
       applicantUuid: [JOB_APPLICATION_TABLE_NAME],
-      graduadosApprovalStatus: [JOB_APPLICATION_TABLE_NAME],
-      extensionApprovalStatus: [JOB_APPLICATION_TABLE_NAME],
+      approvalStatus: [JOB_APPLICATION_TABLE_NAME],
       createdAt: [JOB_APPLICATION_TABLE_NAME],
       updatedAt: [JOB_APPLICATION_TABLE_NAME],
       tableNameColumn: [JOB_APPLICATION_TABLE_NAME]

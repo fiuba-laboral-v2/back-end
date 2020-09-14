@@ -181,12 +181,6 @@ describe("OfferRepository", () => {
     });
 
     describe("applicantCanApply", () => {
-      let admin: Admin;
-
-      beforeAll(async () => {
-        admin = await AdminGenerator.instance({ secretary: Secretary.extension });
-      });
-
       const createOfferFor = async (targetApplicantType: ApplicantType, status: ApprovalStatus) => {
         const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
         const { uuid } = await OfferRepository.create(
@@ -195,6 +189,10 @@ describe("OfferRepository", () => {
             targetApplicantType
           })
         );
+        let admin = graduadosAdmin;
+        if (targetApplicantType === ApplicantType.student) admin = extensionAdmin;
+        if (targetApplicantType === ApplicantType.graduate) admin = graduadosAdmin;
+
         return await OfferRepository.updateApprovalStatus({ uuid, status, admin });
       };
 
@@ -329,40 +327,93 @@ describe("OfferRepository", () => {
   });
 
   describe("UpdateApprovalStatus", () => {
-    it("updates the status for the secretary graduados successfully", async () => {
+    it("graduados admin approves offer for graduates", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const attributes = OfferGenerator.data.withObligatoryData({ companyUuid });
-      const { uuid } = await OfferRepository.create(attributes);
+      const { uuid } = await OfferGenerator.instance.forGraduates({ companyUuid });
       const newStatus = ApprovalStatus.approved;
-      const params = {
+      await OfferRepository.updateApprovalStatus({
         uuid,
         admin: graduadosAdmin,
         status: newStatus
-      };
-      await OfferRepository.updateApprovalStatus(params);
+      });
 
       expect((await OfferRepository.findByUuid(uuid)).graduadosApprovalStatus).toEqual(newStatus);
     });
 
-    it("updates the status for the secretary extension successfully", async () => {
+    it("graduados admin approves offer for graduates and students", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const attributes = OfferGenerator.data.withObligatoryData({ companyUuid });
-      const { uuid } = await OfferRepository.create(attributes);
+      const { uuid } = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
       const newStatus = ApprovalStatus.approved;
-      const params = {
+      await OfferRepository.updateApprovalStatus({
+        uuid,
+        admin: graduadosAdmin,
+        status: newStatus
+      });
+
+      expect((await OfferRepository.findByUuid(uuid)).graduadosApprovalStatus).toEqual(newStatus);
+    });
+
+    it("extension admin approves offer for students", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const { uuid } = await OfferGenerator.instance.forStudents({ companyUuid });
+      const newStatus = ApprovalStatus.approved;
+      await OfferRepository.updateApprovalStatus({
         uuid,
         admin: extensionAdmin,
         status: newStatus
-      };
-      await OfferRepository.updateApprovalStatus(params);
+      });
 
       expect((await OfferRepository.findByUuid(uuid)).extensionApprovalStatus).toEqual(newStatus);
     });
 
+    it("extension admin approves offer for students and graduates", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const { uuid } = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
+      const newStatus = ApprovalStatus.approved;
+      await OfferRepository.updateApprovalStatus({
+        uuid,
+        admin: extensionAdmin,
+        status: newStatus
+      });
+
+      expect((await OfferRepository.findByUuid(uuid)).extensionApprovalStatus).toEqual(newStatus);
+    });
+
+    it("throws an error if extension admin approves offer graduates", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const { uuid } = await OfferGenerator.instance.forGraduates({ companyUuid });
+      const newStatus = ApprovalStatus.approved;
+      await expect(
+        OfferRepository.updateApprovalStatus({
+          uuid,
+          admin: extensionAdmin,
+          status: newStatus
+        })
+      ).rejects.toThrowErrorWithMessage(
+        OfferNotUpdatedError,
+        OfferNotUpdatedError.buildMessage(uuid)
+      );
+    });
+
+    it("throws an error if graduados admin approves offer students", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const { uuid } = await OfferGenerator.instance.forStudents({ companyUuid });
+      const newStatus = ApprovalStatus.approved;
+      await expect(
+        OfferRepository.updateApprovalStatus({
+          uuid,
+          admin: graduadosAdmin,
+          status: newStatus
+        })
+      ).rejects.toThrowErrorWithMessage(
+        OfferNotUpdatedError,
+        OfferNotUpdatedError.buildMessage(uuid)
+      );
+    });
+
     it("creates an entry on OfferApprovalEvents table", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const attributes = OfferGenerator.data.withObligatoryData({ companyUuid });
-      const { uuid } = await OfferRepository.create(attributes);
+      const { uuid } = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
       const newStatus = ApprovalStatus.approved;
       const params = {
         uuid,
@@ -391,8 +442,7 @@ describe("OfferRepository", () => {
 
     it("throws an error if the status is not a valid ApprovalStatus value", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const attributes = OfferGenerator.data.withObligatoryData({ companyUuid });
-      const { uuid } = await OfferRepository.create(attributes);
+      const { uuid } = await OfferGenerator.instance.forStudents({ companyUuid });
       const newStatus = "pepito" as ApprovalStatus;
       const params = {
         uuid,
