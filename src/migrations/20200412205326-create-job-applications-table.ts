@@ -23,12 +23,7 @@ export = {
             onDelete: "CASCADE",
             type: UUID
           },
-          extensionApprovalStatus: {
-            allowNull: false,
-            type: "approval_status",
-            defaultValue: "pending"
-          },
-          graduadosApprovalStatus: {
+          approvalStatus: {
             allowNull: false,
             type: "approval_status",
             defaultValue: "pending"
