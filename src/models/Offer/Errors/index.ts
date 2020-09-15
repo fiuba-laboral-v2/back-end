@@ -1,2 +1,2 @@
-export { OfferNotFound } from "./OfferNotFound";
+export { OfferNotFoundError } from "./OfferNotFoundError";
 export { OfferNotUpdatedError } from "./OfferNotUpdatedError";

@@ -8,7 +8,7 @@ import { Secretary } from "$models/Admin";
 import { Company, Career } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
-import { OfferNotFound } from "$models/Offer/Errors";
+import { OfferNotFoundError } from "$models/Offer/Errors";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 import { OfferGenerator } from "$generators/Offer";
@@ -199,8 +199,8 @@ describe("saveJobApplication", () => {
         variables: { offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da" }
       });
 
-      expect(errors![0].extensions!.data).toMatchObject({
-        errorType: OfferNotFound.name
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: OfferNotFoundError.name
       });
     });
   });
