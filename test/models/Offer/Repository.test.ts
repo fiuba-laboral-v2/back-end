@@ -310,6 +310,17 @@ describe("OfferRepository", () => {
         OfferRepository.findByUuidTargetedTo(uuid, student)
       ).rejects.toThrowErrorWithMessage(OfferNotFoundError, OfferNotFoundError.buildMessage(uuid));
     });
+
+    it("throws an error if the offer does not exist", async () => {
+      const graduate = await ApplicantGenerator.instance.graduate();
+      const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+      await expect(
+        OfferRepository.findByUuidTargetedTo(randomUuid, graduate)
+      ).rejects.toThrowErrorWithMessage(
+        OfferNotFoundError,
+        OfferNotFoundError.buildMessage(randomUuid)
+      );
+    });
   });
 
   describe("Update", () => {
