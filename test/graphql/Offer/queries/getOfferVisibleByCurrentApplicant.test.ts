@@ -2,6 +2,7 @@ import { gql } from "apollo-server";
 import { client } from "$test/graphql/ApolloTestClient";
 import { CareerRepository } from "$models/Career";
 import { CompanyRepository } from "$models/Company";
+import { JobApplicationRepository } from "$models/JobApplication";
 import { UserRepository } from "$models/User";
 import { OfferNotFoundError } from "$models/Offer/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
@@ -17,7 +18,7 @@ import { CareerGenerator } from "$generators/Career";
 import { CompanyGenerator } from "$generators/Company";
 import { TestClientGenerator } from "$generators/TestClient";
 import { AdminGenerator } from "$generators/Admin";
-import { JobApplicationRepository } from "$models/JobApplication";
+import generateUuid from "uuid/v4";
 
 const GET_OFFER_VISIBLE_BY_CURRENT_APPLICANT = gql`
   query($uuid: ID!) {
@@ -185,10 +186,9 @@ describe("getOfferVisibleByCurrentApplicant", () => {
   describe("query permissions", () => {
     it("returns error if there is no current user", async () => {
       const apolloClient = await client.loggedOut();
-      const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       const { errors } = await apolloClient.query({
         query: GET_OFFER_VISIBLE_BY_CURRENT_APPLICANT,
-        variables: { uuid: randomUuid }
+        variables: { uuid: generateUuid() }
       });
 
       expect(errors![0].extensions!.data).toEqual({
@@ -198,10 +198,9 @@ describe("getOfferVisibleByCurrentApplicant", () => {
 
     it("returns error if current user is an admin", async () => {
       const { apolloClient } = await TestClientGenerator.admin();
-      const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       const { errors } = await apolloClient.query({
         query: GET_OFFER_VISIBLE_BY_CURRENT_APPLICANT,
-        variables: { uuid: randomUuid }
+        variables: { uuid: generateUuid() }
       });
 
       expect(errors![0].extensions!.data).toEqual({
@@ -211,10 +210,9 @@ describe("getOfferVisibleByCurrentApplicant", () => {
 
     it("returns error if current user is from a company", async () => {
       const { apolloClient } = await TestClientGenerator.company();
-      const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       const { errors } = await apolloClient.query({
         query: GET_OFFER_VISIBLE_BY_CURRENT_APPLICANT,
-        variables: { uuid: randomUuid }
+        variables: { uuid: generateUuid() }
       });
 
       expect(errors![0].extensions!.data).toEqual({
@@ -229,10 +227,9 @@ describe("getOfferVisibleByCurrentApplicant", () => {
           admin: admins[Secretary.graduados]
         }
       });
-      const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       const { errors } = await apolloClient.query({
         query: GET_OFFER_VISIBLE_BY_CURRENT_APPLICANT,
-        variables: { uuid: randomUuid }
+        variables: { uuid: generateUuid() }
       });
 
       expect(errors![0].extensions!.data).toEqual({
@@ -247,10 +244,9 @@ describe("getOfferVisibleByCurrentApplicant", () => {
           admin: admins[Secretary.graduados]
         }
       });
-      const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       const { errors } = await apolloClient.query({
         query: GET_OFFER_VISIBLE_BY_CURRENT_APPLICANT,
-        variables: { uuid: randomUuid }
+        variables: { uuid: generateUuid() }
       });
 
       expect(errors![0].extensions!.data).toEqual({
