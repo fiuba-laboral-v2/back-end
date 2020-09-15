@@ -4,6 +4,8 @@ import { CareerRepository } from "$models/Career";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
 import { OfferNotFoundError } from "$models/Offer/Errors";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { Secretary } from "$models/Admin";
 import { Admin } from "$models";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
@@ -11,12 +13,11 @@ import { Constructable } from "$test/types/Constructable";
 import { CareerGenerator } from "$generators/Career";
 import { OfferGenerator } from "$generators/Offer";
 import { AdminGenerator } from "$generators/Admin";
+import { CompanyGenerator } from "$generators/Company";
 import { TestClientGenerator } from "$generators/TestClient";
 
 import { ApolloServerTestClient } from "apollo-server-testing";
 import generateUuid from "uuid/v4";
-import { ApprovalStatus } from "$models/ApprovalStatus";
-import { Secretary } from "$models/Admin";
 
 const GET_OFFER_BY_UUID = gql`
   query($uuid: ID!) {
@@ -129,6 +130,38 @@ describe("getOfferByUuid", () => {
         }
       });
     });
+
+    it("returns an error if the company request the hasApplied field", async () => {
+      const { company, apolloClient } = await TestClientGenerator.company({
+        status: {
+          approvalStatus: ApprovalStatus.approved,
+          admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+        }
+      });
+      const { offer } = await createOffer(company);
+      const { errors } = await apolloClient.query({
+        query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
+        variables: { uuid: offer.uuid }
+      });
+
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: UnauthorizedError.name
+      });
+    });
+
+    it("returns an error if an admin request the hasApplied field", async () => {
+      const { apolloClient } = await TestClientGenerator.admin();
+      const company = await CompanyGenerator.instance.withCompleteData();
+      const { offer } = await createOffer(company);
+      const { errors } = await apolloClient.query({
+        query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
+        variables: { uuid: offer.uuid }
+      });
+
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: UnauthorizedError.name
+      });
+    });
   });
 
   it("throws and error if no offer exist", async () => {
@@ -154,7 +187,7 @@ describe("getOfferByUuid", () => {
       error: Constructable
     ) => {
       const { errors } = await apolloClient.query({
-        query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
+        query: GET_OFFER_BY_UUID,
         variables: { uuid: generateUuid() }
       });
       expect(errors![0].extensions!.data).toEqual({
