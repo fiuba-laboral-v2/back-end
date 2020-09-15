@@ -8,6 +8,7 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Offer";
 import { Secretary } from "$models/Admin";
 import { Offer } from "$models";
+import { OfferNotVisibleByApplicantError } from "$graphql/Offer/Queries/Errors";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 import { Constructable } from "$test/types/Constructable";
@@ -137,12 +138,12 @@ describe("getOfferVisibleByCurrentApplicant", () => {
 
   it("returns error if the offer is targeted to students for a graduate applicant", async () => {
     const offer = await OfferGenerator.instance.forStudents({ companyUuid });
-    await expectToReturnError(ApplicantType.graduate, offer, OfferNotFoundError);
+    await expectToReturnError(ApplicantType.graduate, offer, OfferNotVisibleByApplicantError);
   });
 
   it("returns error if the offer is targeted to graduates for a student applicant", async () => {
     const offer = await OfferGenerator.instance.forGraduates({ companyUuid });
-    await expectToReturnError(ApplicantType.student, offer, OfferNotFoundError);
+    await expectToReturnError(ApplicantType.student, offer, OfferNotVisibleByApplicantError);
   });
 
   it("returns error if the offer does not exists", async () => {
