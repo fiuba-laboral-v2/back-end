@@ -1,1 +1,1 @@
-export { admin } from "./admin";
+export { extensionAdmin } from "./extensionAdmin";
