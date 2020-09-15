@@ -6,7 +6,7 @@ import { UserRepository } from "$models/User";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { OfferApprovalEventRepository } from "$models/Offer/OfferApprovalEvent";
-import { OfferNotFound, OfferNotUpdatedError } from "$models/Offer/Errors";
+import { OfferNotFoundError, OfferNotUpdatedError } from "$models/Offer/Errors";
 import { Admin, Offer, OfferCareer, OfferSection } from "$models";
 import { isApprovalStatus } from "$models/SequelizeModelValidators";
 
@@ -300,7 +300,7 @@ describe("OfferRepository", () => {
       const { uuid } = await OfferGenerator.instance.forStudents({ companyUuid });
       await expect(
         OfferRepository.findByUuidTargetedTo(uuid, graduate)
-      ).rejects.toThrowErrorWithMessage(OfferNotFound, OfferNotFound.buildMessage(uuid));
+      ).rejects.toThrowErrorWithMessage(OfferNotFoundError, OfferNotFoundError.buildMessage(uuid));
     });
 
     it("throws an error if the offer is for graduates and the applicant is a student", async () => {
@@ -308,7 +308,7 @@ describe("OfferRepository", () => {
       const { uuid } = await OfferGenerator.instance.forGraduates({ companyUuid });
       await expect(
         OfferRepository.findByUuidTargetedTo(uuid, student)
-      ).rejects.toThrowErrorWithMessage(OfferNotFound, OfferNotFound.buildMessage(uuid));
+      ).rejects.toThrowErrorWithMessage(OfferNotFoundError, OfferNotFoundError.buildMessage(uuid));
     });
   });
 
@@ -627,7 +627,7 @@ describe("OfferRepository", () => {
     it("throws an error if offer does not exists", async () => {
       await expect(
         OfferRepository.findByUuid("4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da")
-      ).rejects.toThrow(OfferNotFound);
+      ).rejects.toThrow(OfferNotFoundError);
     });
   });
 
@@ -638,7 +638,7 @@ describe("OfferRepository", () => {
         OfferGenerator.data.withObligatoryData({ companyUuid })
       );
       await CompanyRepository.truncate();
-      await expect(OfferRepository.findByUuid(offer.uuid)).rejects.toThrow(OfferNotFound);
+      await expect(OfferRepository.findByUuid(offer.uuid)).rejects.toThrow(OfferNotFoundError);
     });
 
     it("deletes all offersCareers if all offers are deleted", async () => {

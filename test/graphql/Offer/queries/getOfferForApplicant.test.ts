@@ -3,7 +3,7 @@ import { client } from "$test/graphql/ApolloTestClient";
 import { CareerRepository } from "$models/Career";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
-import { OfferNotFound } from "$models/Offer/Errors";
+import { OfferNotFoundError } from "$models/Offer/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Offer";
 import { Secretary } from "$models/Admin";
@@ -137,17 +137,17 @@ describe("getOfferForApplicant", () => {
 
   it("returns error if the offer is targeted to students for a graduate applicant", async () => {
     const offer = await OfferGenerator.instance.forStudents({ companyUuid });
-    await expectToReturnError(ApplicantType.graduate, offer, OfferNotFound);
+    await expectToReturnError(ApplicantType.graduate, offer, OfferNotFoundError);
   });
 
   it("returns error if the offer is targeted to graduates for a student applicant", async () => {
     const offer = await OfferGenerator.instance.forGraduates({ companyUuid });
-    await expectToReturnError(ApplicantType.student, offer, OfferNotFound);
+    await expectToReturnError(ApplicantType.student, offer, OfferNotFoundError);
   });
 
   it("returns error if the offer does not exists", async () => {
     const offer = new Offer({ uuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da" });
-    await expectToReturnError(ApplicantType.graduate, offer, OfferNotFound);
+    await expectToReturnError(ApplicantType.graduate, offer, OfferNotFoundError);
   });
 
   describe("query permissions", () => {

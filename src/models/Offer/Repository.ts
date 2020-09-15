@@ -8,7 +8,7 @@ import { IOfferSection } from "./OfferSection";
 import { IOfferCareer } from "./OfferCareer";
 import { OfferApprovalEventRepository } from "./OfferApprovalEvent/Repository";
 import { Secretary } from "$models/Admin";
-import { OfferNotFound, OfferNotUpdatedError } from "./Errors";
+import { OfferNotFoundError, OfferNotUpdatedError } from "./Errors";
 import { Applicant, Offer, OfferCareer, OfferSection } from "$models";
 
 export const OfferRepository = {
@@ -92,7 +92,7 @@ export const OfferRepository = {
     }),
   findByUuid: async (uuid: string) => {
     const offer = await Offer.findByPk(uuid);
-    if (!offer) throw new OfferNotFound(uuid);
+    if (!offer) throw new OfferNotFoundError(uuid);
 
     return offer;
   },
@@ -108,7 +108,7 @@ export const OfferRepository = {
       }
     });
 
-    if (!offer) throw new OfferNotFound(uuid);
+    if (!offer) throw new OfferNotFoundError(uuid);
 
     return offer;
   },

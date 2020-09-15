@@ -4,7 +4,7 @@ import { CareerRepository } from "$models/Career";
 import { CompanyRepository } from "$models/Company";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { UserRepository } from "$models/User";
-import { OfferNotFound } from "$models/Offer/Errors";
+import { OfferNotFoundError } from "$models/Offer/Errors";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 import { CareerGenerator } from "$generators/Career";
@@ -189,7 +189,7 @@ describe("getOfferByUuid", () => {
         variables: { uuid: randomUuid }
       });
       expect(errors![0].extensions!.data).toEqual({
-        errorType: OfferNotFound.name
+        errorType: OfferNotFoundError.name
       });
     });
 
