@@ -4,7 +4,7 @@ import { OfferRepository } from "$models/Offer";
 import { IApplicantUser } from "$graphql/Context";
 import { ApplicantRepository } from "$models/Applicant";
 
-export const getApplicantOfferByUuid = {
+export const getOfferVisibleByCurrentApplicant = {
   type: GraphQLOffer,
   args: {
     uuid: {
