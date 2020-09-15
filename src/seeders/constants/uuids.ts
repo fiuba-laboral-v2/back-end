@@ -13,7 +13,10 @@ export const uuids = {
     ruby_junior: generateUuid(),
     ruby_semi_senior: generateUuid()
   },
-  admin: {
+  extensionAdmin: {
+    user: generateUuid()
+  },
+  graduadosAdmin: {
     user: generateUuid()
   },
   sebastian: {
