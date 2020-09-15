@@ -252,6 +252,66 @@ describe("OfferRepository", () => {
     });
   });
 
+  describe("findByUuidTargetedTo", () => {
+    let companyUuid: string;
+
+    beforeAll(async () => {
+      const company = await CompanyGenerator.instance.withCompleteData();
+      companyUuid = company.uuid;
+    });
+
+    it("returns offer targeted to students for a student", async () => {
+      const student = await ApplicantGenerator.instance.student();
+      const { uuid } = await OfferGenerator.instance.forStudents({ companyUuid });
+      const offer = await OfferRepository.findByUuidTargetedTo(uuid, student);
+      expect(offer.uuid).toEqual(uuid);
+    });
+
+    it("returns offer targeted to graduates for a graduate", async () => {
+      const graduate = await ApplicantGenerator.instance.graduate();
+      const { uuid } = await OfferGenerator.instance.forGraduates({ companyUuid });
+      const offer = await OfferRepository.findByUuidTargetedTo(uuid, graduate);
+      expect(offer.uuid).toEqual(uuid);
+    });
+
+    it("returns offer targeted to both for a graduate and student applicant", async () => {
+      const graduateAndStudent = await ApplicantGenerator.instance.studentAndGraduate();
+      const { uuid } = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
+      const offer = await OfferRepository.findByUuidTargetedTo(uuid, graduateAndStudent);
+      expect(offer.uuid).toEqual(uuid);
+    });
+
+    it("returns offer targeted to both for a graduate applicant", async () => {
+      const graduate = await ApplicantGenerator.instance.graduate();
+      const { uuid } = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
+      const offer = await OfferRepository.findByUuidTargetedTo(uuid, graduate);
+      expect(offer.uuid).toEqual(uuid);
+    });
+
+    it("returns offer targeted to both for a student applicant", async () => {
+      const student = await ApplicantGenerator.instance.student();
+      const { uuid } = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
+      const offer = await OfferRepository.findByUuidTargetedTo(uuid, student);
+      expect(offer.uuid).toEqual(uuid);
+    });
+
+    it("throws an error if the offer is for students and the applicant is a graduate", async () => {
+      const graduate = await ApplicantGenerator.instance.graduate();
+      const { uuid } = await OfferGenerator.instance.forStudents({ companyUuid });
+      await expect(
+        OfferRepository.findByUuidTargetedTo(uuid, graduate)
+      ).rejects.toThrowErrorWithMessage(OfferNotFound, OfferNotFound.buildMessage(uuid));
+    });
+
+    it("throws an error if the offer is for graduates and the applicant is a student", async () => {
+      const student = await ApplicantGenerator.instance.student();
+      const { uuid } = await OfferGenerator.instance.forGraduates({ companyUuid });
+      await expect(
+        OfferRepository.findByUuidTargetedTo(uuid, student)
+      ).rejects.toThrowErrorWithMessage(OfferNotFound, OfferNotFound.buildMessage(uuid));
+    });
+  });
+
   describe("Update", () => {
     const expectToUpdateTargetApplicantTypeTo = async (targetApplicantType: ApplicantType) => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();

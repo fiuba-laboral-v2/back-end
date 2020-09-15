@@ -9,7 +9,7 @@ import { IOfferCareer } from "./OfferCareer";
 import { OfferApprovalEventRepository } from "./OfferApprovalEvent/Repository";
 import { Secretary } from "$models/Admin";
 import { OfferNotFound, OfferNotUpdatedError } from "./Errors";
-import { Offer, OfferCareer, OfferSection } from "$models";
+import { Applicant, Offer, OfferCareer, OfferSection } from "$models";
 
 export const OfferRepository = {
   create: ({ careers = [], sections = [], ...attributes }: ICreateOffer) => {
@@ -92,6 +92,22 @@ export const OfferRepository = {
     }),
   findByUuid: async (uuid: string) => {
     const offer = await Offer.findByPk(uuid);
+    if (!offer) throw new OfferNotFound(uuid);
+
+    return offer;
+  },
+  findByUuidTargetedTo: async (uuid: string, applicant: Applicant) => {
+    const applicantType = await applicant.getType();
+    const offer = await Offer.findOne({
+      where: {
+        uuid,
+        [Op.or]: [
+          { targetApplicantType: ApplicantType.both },
+          { targetApplicantType: applicantType }
+        ]
+      }
+    });
+
     if (!offer) throw new OfferNotFound(uuid);
 
     return offer;
