@@ -76,227 +76,225 @@ describe("getOfferForApplicant", () => {
     ];
   });
 
-  describe("when and offer exists", () => {
-    it("returns offer targeted to students for a student", async () => {
-      const { apolloClient } = await TestClientGenerator.applicant({
-        careers: studentCareers,
-        status: {
-          approvalStatus: ApprovalStatus.approved,
-          admin: extensionAdmin
-        }
-      });
-      const { uuid } = await OfferGenerator.instance.forStudents({ companyUuid });
-      const { data, errors } = await apolloClient.query({
-        query: GET_OFFER_FOR_APPLICANT,
-        variables: { uuid }
-      });
-
-      expect(errors).toBeUndefined();
-      expect(data!.getOfferForApplicant.uuid).toEqual(uuid);
+  it("returns offer targeted to students for a student", async () => {
+    const { apolloClient } = await TestClientGenerator.applicant({
+      careers: studentCareers,
+      status: {
+        approvalStatus: ApprovalStatus.approved,
+        admin: extensionAdmin
+      }
+    });
+    const { uuid } = await OfferGenerator.instance.forStudents({ companyUuid });
+    const { data, errors } = await apolloClient.query({
+      query: GET_OFFER_FOR_APPLICANT,
+      variables: { uuid }
     });
 
-    it("returns offer targeted to graduates for a graduate", async () => {
-      const { apolloClient } = await TestClientGenerator.applicant({
-        careers: graduateCareers,
-        status: {
-          approvalStatus: ApprovalStatus.approved,
-          admin: graduadosAdmin
-        }
-      });
-      const { uuid } = await OfferGenerator.instance.forGraduates({ companyUuid });
-      const { data, errors } = await apolloClient.query({
-        query: GET_OFFER_FOR_APPLICANT,
-        variables: { uuid }
-      });
+    expect(errors).toBeUndefined();
+    expect(data!.getOfferForApplicant.uuid).toEqual(uuid);
+  });
 
-      expect(errors).toBeUndefined();
-      expect(data!.getOfferForApplicant.uuid).toEqual(uuid);
+  it("returns offer targeted to graduates for a graduate", async () => {
+    const { apolloClient } = await TestClientGenerator.applicant({
+      careers: graduateCareers,
+      status: {
+        approvalStatus: ApprovalStatus.approved,
+        admin: graduadosAdmin
+      }
+    });
+    const { uuid } = await OfferGenerator.instance.forGraduates({ companyUuid });
+    const { data, errors } = await apolloClient.query({
+      query: GET_OFFER_FOR_APPLICANT,
+      variables: { uuid }
     });
 
-    it("returns offer targeted to both for a student and graduate applicant", async () => {
-      const { apolloClient } = await TestClientGenerator.applicant({
-        careers: studentAndGraduateCareers,
-        status: {
-          approvalStatus: ApprovalStatus.approved,
-          admin: graduadosAdmin
-        }
-      });
-      const { uuid } = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
-      const { data, errors } = await apolloClient.query({
-        query: GET_OFFER_FOR_APPLICANT,
-        variables: { uuid }
-      });
+    expect(errors).toBeUndefined();
+    expect(data!.getOfferForApplicant.uuid).toEqual(uuid);
+  });
 
-      expect(errors).toBeUndefined();
-      expect(data!.getOfferForApplicant.uuid).toEqual(uuid);
+  it("returns offer targeted to both for a student and graduate applicant", async () => {
+    const { apolloClient } = await TestClientGenerator.applicant({
+      careers: studentAndGraduateCareers,
+      status: {
+        approvalStatus: ApprovalStatus.approved,
+        admin: graduadosAdmin
+      }
+    });
+    const { uuid } = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
+    const { data, errors } = await apolloClient.query({
+      query: GET_OFFER_FOR_APPLICANT,
+      variables: { uuid }
     });
 
-    it("returns offer targeted to both for a student", async () => {
-      const { apolloClient } = await TestClientGenerator.applicant({
-        careers: studentCareers,
-        status: {
-          approvalStatus: ApprovalStatus.approved,
-          admin: extensionAdmin
-        }
-      });
-      const { uuid } = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
-      const { data, errors } = await apolloClient.query({
-        query: GET_OFFER_FOR_APPLICANT,
-        variables: { uuid }
-      });
+    expect(errors).toBeUndefined();
+    expect(data!.getOfferForApplicant.uuid).toEqual(uuid);
+  });
 
-      expect(errors).toBeUndefined();
-      expect(data!.getOfferForApplicant.uuid).toEqual(uuid);
+  it("returns offer targeted to both for a student", async () => {
+    const { apolloClient } = await TestClientGenerator.applicant({
+      careers: studentCareers,
+      status: {
+        approvalStatus: ApprovalStatus.approved,
+        admin: extensionAdmin
+      }
+    });
+    const { uuid } = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
+    const { data, errors } = await apolloClient.query({
+      query: GET_OFFER_FOR_APPLICANT,
+      variables: { uuid }
     });
 
-    it("returns offer targeted to both for a graduate", async () => {
-      const { apolloClient } = await TestClientGenerator.applicant({
-        careers: graduateCareers,
-        status: {
-          approvalStatus: ApprovalStatus.approved,
-          admin: graduadosAdmin
-        }
-      });
-      const { uuid } = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
-      const { data, errors } = await apolloClient.query({
-        query: GET_OFFER_FOR_APPLICANT,
-        variables: { uuid }
-      });
+    expect(errors).toBeUndefined();
+    expect(data!.getOfferForApplicant.uuid).toEqual(uuid);
+  });
 
-      expect(errors).toBeUndefined();
-      expect(data!.getOfferForApplicant.uuid).toEqual(uuid);
+  it("returns offer targeted to both for a graduate", async () => {
+    const { apolloClient } = await TestClientGenerator.applicant({
+      careers: graduateCareers,
+      status: {
+        approvalStatus: ApprovalStatus.approved,
+        admin: graduadosAdmin
+      }
+    });
+    const { uuid } = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
+    const { data, errors } = await apolloClient.query({
+      query: GET_OFFER_FOR_APPLICANT,
+      variables: { uuid }
     });
 
-    it("returns error if the offer is targeted to students for a graduate applicant", async () => {
-      const { apolloClient } = await TestClientGenerator.applicant({
-        careers: graduateCareers,
-        status: {
-          approvalStatus: ApprovalStatus.approved,
-          admin: graduadosAdmin
-        }
-      });
-      const { uuid } = await OfferGenerator.instance.forStudents({ companyUuid });
-      const { errors } = await apolloClient.query({
-        query: GET_OFFER_FOR_APPLICANT,
-        variables: { uuid }
-      });
+    expect(errors).toBeUndefined();
+    expect(data!.getOfferForApplicant.uuid).toEqual(uuid);
+  });
 
-      expect(errors![0].extensions!.data).toEqual({
-        errorType: OfferNotFound.name
-      });
+  it("returns error if the offer is targeted to students for a graduate applicant", async () => {
+    const { apolloClient } = await TestClientGenerator.applicant({
+      careers: graduateCareers,
+      status: {
+        approvalStatus: ApprovalStatus.approved,
+        admin: graduadosAdmin
+      }
+    });
+    const { uuid } = await OfferGenerator.instance.forStudents({ companyUuid });
+    const { errors } = await apolloClient.query({
+      query: GET_OFFER_FOR_APPLICANT,
+      variables: { uuid }
     });
 
-    it("returns error if the offer is targeted to graduates for a student applicant", async () => {
-      const { apolloClient } = await TestClientGenerator.applicant({
-        careers: studentCareers,
-        status: {
-          approvalStatus: ApprovalStatus.approved,
-          admin: graduadosAdmin
-        }
-      });
-      const { uuid } = await OfferGenerator.instance.forGraduates({ companyUuid });
-      const { errors } = await apolloClient.query({
-        query: GET_OFFER_FOR_APPLICANT,
-        variables: { uuid }
-      });
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: OfferNotFound.name
+    });
+  });
 
-      expect(errors![0].extensions!.data).toEqual({
-        errorType: OfferNotFound.name
-      });
+  it("returns error if the offer is targeted to graduates for a student applicant", async () => {
+    const { apolloClient } = await TestClientGenerator.applicant({
+      careers: studentCareers,
+      status: {
+        approvalStatus: ApprovalStatus.approved,
+        admin: graduadosAdmin
+      }
+    });
+    const { uuid } = await OfferGenerator.instance.forGraduates({ companyUuid });
+    const { errors } = await apolloClient.query({
+      query: GET_OFFER_FOR_APPLICANT,
+      variables: { uuid }
     });
 
-    it("returns error if the offer does not exists", async () => {
-      const { apolloClient } = await TestClientGenerator.applicant({
-        careers: studentCareers,
-        status: {
-          approvalStatus: ApprovalStatus.approved,
-          admin: graduadosAdmin
-        }
-      });
-      const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
-      const { errors } = await apolloClient.query({
-        query: GET_OFFER_FOR_APPLICANT,
-        variables: { uuid: randomUuid }
-      });
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: OfferNotFound.name
+    });
+  });
 
-      expect(errors![0].extensions!.data).toEqual({
-        errorType: OfferNotFound.name
-      });
+  it("returns error if the offer does not exists", async () => {
+    const { apolloClient } = await TestClientGenerator.applicant({
+      careers: studentCareers,
+      status: {
+        approvalStatus: ApprovalStatus.approved,
+        admin: graduadosAdmin
+      }
+    });
+    const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+    const { errors } = await apolloClient.query({
+      query: GET_OFFER_FOR_APPLICANT,
+      variables: { uuid: randomUuid }
     });
 
-    it("returns error if there is no current user", async () => {
-      const apolloClient = await client.loggedOut();
-      const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
-      const { errors } = await apolloClient.query({
-        query: GET_OFFER_FOR_APPLICANT,
-        variables: { uuid: randomUuid }
-      });
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: OfferNotFound.name
+    });
+  });
 
-      expect(errors![0].extensions!.data).toEqual({
-        errorType: AuthenticationError.name
-      });
+  it("returns error if there is no current user", async () => {
+    const apolloClient = await client.loggedOut();
+    const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+    const { errors } = await apolloClient.query({
+      query: GET_OFFER_FOR_APPLICANT,
+      variables: { uuid: randomUuid }
     });
 
-    it("returns error if current user is an admin", async () => {
-      const { apolloClient } = await TestClientGenerator.admin();
-      const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
-      const { errors } = await apolloClient.query({
-        query: GET_OFFER_FOR_APPLICANT,
-        variables: { uuid: randomUuid }
-      });
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: AuthenticationError.name
+    });
+  });
 
-      expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name
-      });
+  it("returns error if current user is an admin", async () => {
+    const { apolloClient } = await TestClientGenerator.admin();
+    const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+    const { errors } = await apolloClient.query({
+      query: GET_OFFER_FOR_APPLICANT,
+      variables: { uuid: randomUuid }
     });
 
-    it("returns error if current user is from a company", async () => {
-      const { apolloClient } = await TestClientGenerator.company();
-      const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
-      const { errors } = await apolloClient.query({
-        query: GET_OFFER_FOR_APPLICANT,
-        variables: { uuid: randomUuid }
-      });
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: UnauthorizedError.name
+    });
+  });
 
-      expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name
-      });
+  it("returns error if current user is from a company", async () => {
+    const { apolloClient } = await TestClientGenerator.company();
+    const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+    const { errors } = await apolloClient.query({
+      query: GET_OFFER_FOR_APPLICANT,
+      variables: { uuid: randomUuid }
     });
 
-    it("returns error if current user a rejected applicant", async () => {
-      const { apolloClient } = await TestClientGenerator.applicant({
-        status: {
-          approvalStatus: ApprovalStatus.rejected,
-          admin: extensionAdmin
-        }
-      });
-      const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
-      const { errors } = await apolloClient.query({
-        query: GET_OFFER_FOR_APPLICANT,
-        variables: { uuid: randomUuid }
-      });
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: UnauthorizedError.name
+    });
+  });
 
-      expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name
-      });
+  it("returns error if current user a rejected applicant", async () => {
+    const { apolloClient } = await TestClientGenerator.applicant({
+      status: {
+        approvalStatus: ApprovalStatus.rejected,
+        admin: extensionAdmin
+      }
+    });
+    const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+    const { errors } = await apolloClient.query({
+      query: GET_OFFER_FOR_APPLICANT,
+      variables: { uuid: randomUuid }
     });
 
-    it("returns error if current user a pending applicant", async () => {
-      const { apolloClient } = await TestClientGenerator.applicant({
-        status: {
-          approvalStatus: ApprovalStatus.pending,
-          admin: extensionAdmin
-        }
-      });
-      const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
-      const { errors } = await apolloClient.query({
-        query: GET_OFFER_FOR_APPLICANT,
-        variables: { uuid: randomUuid }
-      });
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: UnauthorizedError.name
+    });
+  });
 
-      expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name
-      });
+  it("returns error if current user a pending applicant", async () => {
+    const { apolloClient } = await TestClientGenerator.applicant({
+      status: {
+        approvalStatus: ApprovalStatus.pending,
+        admin: extensionAdmin
+      }
+    });
+    const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+    const { errors } = await apolloClient.query({
+      query: GET_OFFER_FOR_APPLICANT,
+      variables: { uuid: randomUuid }
+    });
+
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: UnauthorizedError.name
     });
   });
 });
