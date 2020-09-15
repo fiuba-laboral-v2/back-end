@@ -17,12 +17,14 @@ import { CareerGenerator } from "$generators/Career";
 import { CompanyGenerator } from "$generators/Company";
 import { TestClientGenerator } from "$generators/TestClient";
 import { AdminGenerator } from "$generators/Admin";
+import { JobApplicationRepository } from "$models/JobApplication";
 
 const GET_OFFER_VISIBLE_BY_CURRENT_APPLICANT = gql`
   query($uuid: ID!) {
     getOfferVisibleByCurrentApplicant(uuid: $uuid) {
       uuid
       targetApplicantType
+      hasApplied
     }
   }
 `;
@@ -77,19 +79,23 @@ describe("getOfferVisibleByCurrentApplicant", () => {
     };
   });
 
-  const getOffer = async (applicantType: ApplicantType, offer: Offer) => {
+  const approvedApplicantTestClient = async (applicantType: ApplicantType) => {
     let secretary = Secretary.graduados;
     if (applicantType === ApplicantType.both) secretary = Secretary.graduados;
     if (applicantType === ApplicantType.graduate) secretary = Secretary.graduados;
     if (applicantType === ApplicantType.student) secretary = Secretary.extension;
 
-    const { apolloClient } = await TestClientGenerator.applicant({
+    return TestClientGenerator.applicant({
       careers: applicantCareers[applicantType],
       status: {
         approvalStatus: ApprovalStatus.approved,
         admin: admins[secretary]
       }
     });
+  };
+
+  const getOffer = async (applicantType: ApplicantType, offer: Offer) => {
+    const { apolloClient } = await approvedApplicantTestClient(applicantType);
     return apolloClient.query({
       query: GET_OFFER_VISIBLE_BY_CURRENT_APPLICANT,
       variables: { uuid: offer.uuid }
@@ -149,6 +155,31 @@ describe("getOfferVisibleByCurrentApplicant", () => {
   it("returns error if the offer does not exists", async () => {
     const offer = new Offer({ uuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da" });
     await expectToReturnError(ApplicantType.graduate, offer, OfferNotFoundError);
+  });
+
+  it("finds an offer with hasApplied in true", async () => {
+    const { apolloClient, applicant } = await approvedApplicantTestClient(ApplicantType.both);
+    const offer = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
+    await JobApplicationRepository.apply(applicant, offer);
+    const { data, errors } = await apolloClient.query({
+      query: GET_OFFER_VISIBLE_BY_CURRENT_APPLICANT,
+      variables: { uuid: offer.uuid }
+    });
+
+    expect(errors).toBeUndefined();
+    expect(data!.getOfferVisibleByCurrentApplicant.hasApplied).toBe(true);
+  });
+
+  it("finds an offer with hasApplied in false", async () => {
+    const { apolloClient } = await approvedApplicantTestClient(ApplicantType.both);
+    const offer = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
+    const { data, errors } = await apolloClient.query({
+      query: GET_OFFER_VISIBLE_BY_CURRENT_APPLICANT,
+      variables: { uuid: offer.uuid }
+    });
+
+    expect(errors).toBeUndefined();
+    expect(data!.getOfferVisibleByCurrentApplicant.hasApplied).toBe(false);
   });
 
   describe("query permissions", () => {
