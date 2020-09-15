@@ -17,16 +17,16 @@ import { CompanyGenerator } from "$generators/Company";
 import { TestClientGenerator } from "$generators/TestClient";
 import { AdminGenerator } from "$generators/Admin";
 
-const GET_OFFER_FOR_APPLICANT = gql`
+const GET_APPLICANT_OFFER_BY_UUID = gql`
   query($uuid: ID!) {
-    getOfferForApplicant(uuid: $uuid) {
+    getApplicantOfferByUuid(uuid: $uuid) {
       uuid
       targetApplicantType
     }
   }
 `;
 
-describe("getOfferForApplicant", () => {
+describe("getApplicantOfferByUuid", () => {
   let companyUuid: string;
   let applicantCareers: object;
   let admins: object;
@@ -90,7 +90,7 @@ describe("getOfferForApplicant", () => {
       }
     });
     return apolloClient.query({
-      query: GET_OFFER_FOR_APPLICANT,
+      query: GET_APPLICANT_OFFER_BY_UUID,
       variables: { uuid: offer.uuid }
     });
   };
@@ -98,7 +98,7 @@ describe("getOfferForApplicant", () => {
   const expectToGetOffer = async (applicantType: ApplicantType, offer: Offer) => {
     const { data, errors } = await getOffer(applicantType, offer);
     expect(errors).toBeUndefined();
-    expect(data!.getOfferForApplicant.uuid).toEqual(offer.uuid);
+    expect(data!.getApplicantOfferByUuid.uuid).toEqual(offer.uuid);
   };
 
   const expectToReturnError = async (
@@ -155,7 +155,7 @@ describe("getOfferForApplicant", () => {
       const apolloClient = await client.loggedOut();
       const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       const { errors } = await apolloClient.query({
-        query: GET_OFFER_FOR_APPLICANT,
+        query: GET_APPLICANT_OFFER_BY_UUID,
         variables: { uuid: randomUuid }
       });
 
@@ -168,7 +168,7 @@ describe("getOfferForApplicant", () => {
       const { apolloClient } = await TestClientGenerator.admin();
       const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       const { errors } = await apolloClient.query({
-        query: GET_OFFER_FOR_APPLICANT,
+        query: GET_APPLICANT_OFFER_BY_UUID,
         variables: { uuid: randomUuid }
       });
 
@@ -181,7 +181,7 @@ describe("getOfferForApplicant", () => {
       const { apolloClient } = await TestClientGenerator.company();
       const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       const { errors } = await apolloClient.query({
-        query: GET_OFFER_FOR_APPLICANT,
+        query: GET_APPLICANT_OFFER_BY_UUID,
         variables: { uuid: randomUuid }
       });
 
@@ -199,7 +199,7 @@ describe("getOfferForApplicant", () => {
       });
       const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       const { errors } = await apolloClient.query({
-        query: GET_OFFER_FOR_APPLICANT,
+        query: GET_APPLICANT_OFFER_BY_UUID,
         variables: { uuid: randomUuid }
       });
 
@@ -217,7 +217,7 @@ describe("getOfferForApplicant", () => {
       });
       const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       const { errors } = await apolloClient.query({
-        query: GET_OFFER_FOR_APPLICANT,
+        query: GET_APPLICANT_OFFER_BY_UUID,
         variables: { uuid: randomUuid }
       });
 
