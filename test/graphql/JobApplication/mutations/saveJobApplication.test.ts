@@ -199,7 +199,7 @@ describe("saveJobApplication", () => {
         variables: { offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da" }
       });
 
-      expect(errors![0].extensions!.data).toMatchObject({
+      expect(errors![0].extensions!.data).toEqual({
         errorType: OfferNotFoundError.name
       });
     });
