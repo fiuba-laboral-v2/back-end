@@ -20,12 +20,16 @@ const GET_COMPANIES = gql`
 `;
 
 describe("getCompanies", () => {
-  beforeAll(() => {
-    return Promise.all([CompanyRepository.truncate(), UserRepository.truncate()]);
+  let companies;
+  beforeAll(async () => {
+    Promise.all([CompanyRepository.truncate(), UserRepository.truncate()]);
+    companies = [
+      await CompanyGenerator.instance.withCompleteData(),
+      await CompanyGenerator.instance.withCompleteData()
+    ];
   });
 
-  it("returns all companies", async () => {
-    const company = await CompanyGenerator.instance.withCompleteData();
+  it("returns all companies if an Applicant makes the request", async () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.approved,
@@ -36,12 +40,31 @@ describe("getCompanies", () => {
 
     expect(response.errors).toBeUndefined();
     expect(response.data).not.toBeUndefined();
-    expect(response.data!.getCompanies).toEqual([
-      {
-        cuit: company.cuit,
-        companyName: company.companyName
-      }
-    ]);
+    expect(response.data!.getCompanies).toEqual(
+      expect.arrayContaining(companies.map(({ companyName, cuit }) => ({ companyName, cuit })))
+    );
+  });
+
+  it("returns all companies if an Admin from graduados makes the request", async () => {
+    const { apolloClient } = await TestClientGenerator.admin({ secretary: Secretary.graduados });
+    const response = await apolloClient.query({ query: GET_COMPANIES });
+
+    expect(response.errors).toBeUndefined();
+    expect(response.data).not.toBeUndefined();
+    expect(response.data!.getCompanies).toEqual(
+      companies.map(({ companyName, cuit }) => ({ companyName, cuit }))
+    );
+  });
+
+  it("returns all companies if an Admin from extension makes the request", async () => {
+    const { apolloClient } = await TestClientGenerator.admin({ secretary: Secretary.extension });
+    const response = await apolloClient.query({ query: GET_COMPANIES });
+
+    expect(response.errors).toBeUndefined();
+    expect(response.data).not.toBeUndefined();
+    expect(response.data!.getCompanies).toEqual(
+      companies.map(({ companyName, cuit }) => ({ companyName, cuit }))
+    );
   });
 
   describe("Errors", () => {
@@ -56,14 +79,6 @@ describe("getCompanies", () => {
 
     it("returns an error if the user is from a company", async () => {
       const { apolloClient } = await TestClientGenerator.company();
-      const { errors } = await apolloClient.query({ query: GET_COMPANIES });
-      expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name
-      });
-    });
-
-    it("returns an error if the user is an admin", async () => {
-      const { apolloClient } = await TestClientGenerator.admin();
       const { errors } = await apolloClient.query({ query: GET_COMPANIES });
       expect(errors![0].extensions!.data).toEqual({
         errorType: UnauthorizedError.name
