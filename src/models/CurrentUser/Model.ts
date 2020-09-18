@@ -1,5 +1,9 @@
-import { ApplicantRole, IRole } from "./Roles";
-import { CurrentUserHasNoApplicantRoleError } from "./Errors";
+import { ApplicantRole, CompanyRole, AdminRole, IRole } from "./Roles";
+import {
+  CurrentUserHasNoApplicantRoleError,
+  CurrentUserHasNoAdminRoleError,
+  CurrentUserHasNoCompanyRoleError
+} from "./Errors";
 import { UserPermissions } from "$models/Permissions";
 
 export class CurrentUser {
@@ -18,6 +22,20 @@ export class CurrentUser {
     if (!applicantRole) throw new CurrentUserHasNoApplicantRoleError();
 
     return applicantRole;
+  }
+
+  public getCompany() {
+    const companyRole = this.roles.find(role => role instanceof CompanyRole);
+    if (!companyRole) throw new CurrentUserHasNoCompanyRoleError();
+
+    return companyRole;
+  }
+
+  public getAdmin() {
+    const adminRole = this.roles.find(role => role instanceof AdminRole);
+    if (!adminRole) throw new CurrentUserHasNoAdminRoleError();
+
+    return adminRole;
   }
 
   public getPermissions() {

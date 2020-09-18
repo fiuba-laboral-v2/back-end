@@ -1,5 +1,9 @@
 import { ApplicantRole, CompanyRole, AdminRole, CurrentUser } from "$models/CurrentUser";
-import { CurrentUserHasNoApplicantRoleError } from "$models/CurrentUser/Errors";
+import {
+  CurrentUserHasNoApplicantRoleError,
+  CurrentUserHasNoAdminRoleError,
+  CurrentUserHasNoCompanyRoleError
+} from "$models/CurrentUser/Errors";
 import { UserPermissions } from "$models/Permissions";
 import generateUuid from "uuid/v4";
 
@@ -27,6 +31,20 @@ describe("CurrentUser", () => {
       const currentUser = new CurrentUser(generateUuid(), "applicant@mail.com", [applicantRole]);
       expect(currentUser.getApplicant()).toEqual(applicantRole);
     });
+
+    it("throws an error if the current user has no company role", async () => {
+      const currentUser = new CurrentUser(generateUuid(), "applicant@mail.com", [
+        new ApplicantRole(generateUuid())
+      ]);
+      expect(() => currentUser.getCompany()).toThrow(CurrentUserHasNoCompanyRoleError);
+    });
+
+    it("throws an error if the current user has no admin role", async () => {
+      const currentUser = new CurrentUser(generateUuid(), "applicant@mail.com", [
+        new ApplicantRole(generateUuid())
+      ]);
+      expect(() => currentUser.getAdmin()).toThrow(CurrentUserHasNoAdminRoleError);
+    });
   });
 
   describe("when the current user is from a company", () => {
@@ -47,11 +65,24 @@ describe("CurrentUser", () => {
       expect(currentUser.getPermissions()).toBeInstanceOf(UserPermissions);
     });
 
+    it("returns a company role", async () => {
+      const companyRole = new CompanyRole(generateUuid());
+      const currentUser = new CurrentUser(generateUuid(), "company@mail.com", [companyRole]);
+      expect(currentUser.getCompany()).toEqual(companyRole);
+    });
+
     it("throws an error if the current user has no applicant role", async () => {
       const currentUser = new CurrentUser(generateUuid(), "company@mail.com", [
         new CompanyRole(generateUuid())
       ]);
       expect(() => currentUser.getApplicant()).toThrow(CurrentUserHasNoApplicantRoleError);
+    });
+
+    it("throws an error if the current user has no admin role", async () => {
+      const currentUser = new CurrentUser(generateUuid(), "company@mail.com", [
+        new CompanyRole(generateUuid())
+      ]);
+      expect(() => currentUser.getAdmin()).toThrow(CurrentUserHasNoAdminRoleError);
     });
   });
 
@@ -73,11 +104,24 @@ describe("CurrentUser", () => {
       expect(currentUser.getPermissions()).toBeInstanceOf(UserPermissions);
     });
 
+    it("returns an admin role", async () => {
+      const adminRole = new AdminRole(generateUuid());
+      const currentUser = new CurrentUser(generateUuid(), "admin@mail.com", [adminRole]);
+      expect(currentUser.getAdmin()).toEqual(adminRole);
+    });
+
     it("throws an error if the current user has no applicant role", async () => {
       const currentUser = new CurrentUser(generateUuid(), "admin@mail.com", [
         new AdminRole(generateUuid())
       ]);
       expect(() => currentUser.getApplicant()).toThrow(CurrentUserHasNoApplicantRoleError);
+    });
+
+    it("throws an error if the current user has no company role", async () => {
+      const currentUser = new CurrentUser(generateUuid(), "admin@mail.com", [
+        new AdminRole(generateUuid())
+      ]);
+      expect(() => currentUser.getCompany()).toThrow(CurrentUserHasNoCompanyRoleError);
     });
   });
 });
