@@ -118,7 +118,7 @@ describe("UserPermissions", () => {
       });
     });
 
-    describe("when the current user is and admin and an applicant", () => {
+    describe("when the current user is an admin and an applicant", () => {
       it("returns true for any offer from any company", async () => {
         const { uuid } = await CompanyGenerator.instance.withCompleteData();
         const firstOffer = await OfferGenerator.instance.forStudents({ companyUuid });
