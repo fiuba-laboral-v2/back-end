@@ -33,7 +33,7 @@ describe("CurrentUser", () => {
     expect(currentApplicant.roles).toHaveLength(1);
   });
 
-  it("return an instance of UserPermissions", async () => {
+  it("returns an instance of UserPermissions", async () => {
     const currentApplicant = new CurrentUser(generateUuid(), "admin@mail.com", [
       new AdminRole(generateUuid())
     ]);
