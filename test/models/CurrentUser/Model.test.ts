@@ -1,50 +1,34 @@
-import { CurrentUser } from "$models/CurrentUser";
-import { ApplicantPermissions, CompanyPermissions, AdminPermissions } from "$models/Permissions";
+import { ApplicantRole, CompanyRole, AdminRole, CurrentUser } from "$models/CurrentUser";
 import generateUuid from "uuid/v4";
 
 describe("CurrentUser", () => {
-  describe("getPermissions", () => {
-    it("returns an ApplicantPermissions instance", async () => {
-      const currentApplicant = new CurrentUser({
-        uuid: generateUuid(),
-        email: "applicant@mail.com",
-        applicant: {
-          uuid: generateUuid()
-        }
-      });
-      expect(currentApplicant.getPermissions()).toBeInstanceOf(ApplicantPermissions);
-    });
+  it("creates a currentUser with an ApplicantRole", async () => {
+    const userUuid = generateUuid();
+    const applicantUuid = generateUuid();
+    const email = "applicant@mail.com";
+    const currentApplicant = new CurrentUser(userUuid, email, [new ApplicantRole(applicantUuid)]);
+    expect(currentApplicant.uuid).toEqual(userUuid);
+    expect(currentApplicant.email).toEqual(email);
+    expect(currentApplicant.roles).toHaveLength(1);
+  });
 
-    it("returns a CompanyPermissions instance", async () => {
-      const currentCompany = new CurrentUser({
-        uuid: generateUuid(),
-        email: "company@mail.com",
-        company: {
-          uuid: generateUuid()
-        }
-      });
-      expect(currentCompany.getPermissions()).toBeInstanceOf(CompanyPermissions);
-    });
+  it("creates a currentUser with a CompanyRole", async () => {
+    const userUuid = generateUuid();
+    const companyUuid = generateUuid();
+    const email = "company@mail.com";
+    const currentApplicant = new CurrentUser(userUuid, email, [new CompanyRole(companyUuid)]);
+    expect(currentApplicant.uuid).toEqual(userUuid);
+    expect(currentApplicant.email).toEqual(email);
+    expect(currentApplicant.roles).toHaveLength(1);
+  });
 
-    it("returns an AdminPermissions instance", async () => {
-      const currentAdmin = new CurrentUser({
-        uuid: generateUuid(),
-        email: "admin@mail.com",
-        admin: {
-          userUuid: generateUuid()
-        }
-      });
-      expect(currentAdmin.getPermissions()).toBeInstanceOf(AdminPermissions);
-    });
-
-    it("throws an error if the user is not an applicant, company or admin", async () => {
-      const currentAdmin = new CurrentUser({
-        uuid: generateUuid(),
-        email: "admin@mail.com"
-      });
-      expect(() => currentAdmin.getPermissions()).toThrow(
-        "the user should be an applicant, admin or from a company"
-      );
-    });
+  it("creates a currentUser with an AdminRole", async () => {
+    const userUuid = generateUuid();
+    const adminUserUuid = generateUuid();
+    const email = "admin@mail.com";
+    const currentApplicant = new CurrentUser(userUuid, email, [new AdminRole(adminUserUuid)]);
+    expect(currentApplicant.uuid).toEqual(userUuid);
+    expect(currentApplicant.email).toEqual(email);
+    expect(currentApplicant.roles).toHaveLength(1);
   });
 });

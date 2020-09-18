@@ -1,6 +1,7 @@
 import { AdminPermissions } from "$models/Permissions";
+import { IRole } from "../Interface";
 
-export class AdminRole {
+export class AdminRole implements IRole {
   public adminUserUuid: string;
 
   constructor(adminUserUuid: string) {

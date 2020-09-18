@@ -1,6 +1,7 @@
 import { CompanyPermissions } from "$models/Permissions";
+import { IRole } from "../Interface";
 
-export class CompanyRole {
+export class CompanyRole implements IRole {
   public companyUuid: string;
 
   constructor(companyUuid: string) {
