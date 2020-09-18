@@ -10,6 +10,7 @@ const SAVE_COMPANY_WITH_COMPLETE_DATA = gql`
     $user: UserInput!
     $cuit: String!
     $companyName: String!
+    $businessName: String!
     $slogan: String
     $description: String
     $logo: String
@@ -22,6 +23,7 @@ const SAVE_COMPANY_WITH_COMPLETE_DATA = gql`
       user: $user
       cuit: $cuit
       companyName: $companyName
+      businessName: $businessName
       slogan: $slogan
       description: $description
       logo: $logo
@@ -32,6 +34,7 @@ const SAVE_COMPANY_WITH_COMPLETE_DATA = gql`
     ) {
       cuit
       companyName
+      businessName
       slogan
       description
       logo
@@ -45,10 +48,16 @@ const SAVE_COMPANY_WITH_COMPLETE_DATA = gql`
 `;
 
 const SAVE_COMPANY_WITH_MINIMUM_DATA = gql`
-  mutation($cuit: String!, $companyName: String!, $user: UserInput!) {
-    createCompany(cuit: $cuit, companyName: $companyName, user: $user) {
+  mutation($cuit: String!, $companyName: String!, $businessName: String!, $user: UserInput!) {
+    createCompany(
+      cuit: $cuit
+      companyName: $companyName
+      businessName: $businessName
+      user: $user
+    ) {
       cuit
       companyName
+      businessName
     }
   }
 `;
@@ -77,14 +86,14 @@ describe("createCompany", () => {
     });
 
     it("creates company with only obligatory data", async () => {
-      const { user, cuit, companyName } = CompanyGenerator.data.completeData();
+      const { user, cuit, businessName, companyName } = CompanyGenerator.data.completeData();
       const response = await client.loggedOut().mutate({
         mutation: SAVE_COMPANY_WITH_MINIMUM_DATA,
-        variables: { user, cuit, companyName }
+        variables: { user, cuit, businessName, companyName }
       });
       expect(response.errors).toBeUndefined();
       expect(response.data).not.toBeUndefined();
-      expect(response.data).toEqual({ createCompany: { cuit, companyName } });
+      expect(response.data).toEqual({ createCompany: { cuit, companyName, businessName } });
     });
   });
 

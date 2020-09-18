@@ -19,6 +19,10 @@ export = {
             allowNull: false,
             type: STRING
           },
+          businessName: {
+            allowNull: false,
+            type: STRING
+          },
           slogan: {
             type: STRING
           },
@@ -48,6 +52,11 @@ export = {
       await queryInterface.addConstraint("Companies", ["cuit"], {
         type: "unique",
         name: "Companies_cuit_key",
+        transaction
+      });
+      await queryInterface.addConstraint("Companies", ["businessName"], {
+        type: "unique",
+        name: "Companies_businessName_key",
         transaction
       });
     });

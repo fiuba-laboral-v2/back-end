@@ -3,6 +3,7 @@ import { IUser } from "$models/User";
 export interface ICompany {
   cuit: string;
   companyName: string;
+  businessName: string;
   slogan?: string;
   description?: string;
   logo?: string;
@@ -16,6 +17,7 @@ export interface ICompany {
 export interface ICreateCompany {
   cuit?: string;
   companyName?: string;
+  businessName?: string;
   slogan?: string;
   description?: string;
   logo?: string;

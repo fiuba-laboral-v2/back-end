@@ -19,6 +19,7 @@ import {
   validateName,
   validateURL
 } from "validations-fiuba-laboral-v2";
+import { isNotEmptyString } from "../SequelizeModelValidators";
 
 @Table({ tableName: "Companies", timestamps: true })
 export class Company extends Model<Company> {
@@ -39,6 +40,10 @@ export class Company extends Model<Company> {
   @Is("name", validateName)
   @Column(STRING)
   public companyName: string;
+
+  @AllowNull(false)
+  @Column({ type: STRING, ...isNotEmptyString })
+  public businessName: string;
 
   @Column(STRING)
   public slogan: string;
