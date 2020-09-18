@@ -6,7 +6,7 @@ export class CurrentUser {
   public email: string;
   public roles: IRole[];
 
-  constructor(uuid: string, email: string, roles: IRole[]) {
+  constructor({ uuid, email, roles }: ICurrentUser) {
     this.uuid = uuid;
     this.email = email;
     this.roles = roles;
@@ -27,4 +27,10 @@ export class CurrentUser {
   public getPermissions() {
     return new UserPermissions(this);
   }
+}
+
+interface ICurrentUser {
+  uuid: string;
+  email: string;
+  roles: IRole[];
 }

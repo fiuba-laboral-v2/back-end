@@ -32,7 +32,11 @@ describe("UserPermissions", () => {
       it("returns true if the offer is for students and the applicant is a student", async () => {
         const offer = await OfferGenerator.instance.forStudents({ companyUuid });
         const { uuid, userUuid } = await ApplicantGenerator.instance.student();
-        const currentUser = new CurrentUser(userUuid, "email@email.com", [new ApplicantRole(uuid)]);
+        const currentUser = new CurrentUser({
+          uuid: userUuid,
+          email: "email@email.com",
+          roles: [new ApplicantRole(uuid)]
+        });
         const permissions = new UserPermissions(currentUser);
         expect(await permissions.canSeeOffer(offer)).toBe(true);
       });
@@ -40,7 +44,11 @@ describe("UserPermissions", () => {
       it("returns true if the offer is for students and the applicant is both", async () => {
         const offer = await OfferGenerator.instance.forStudents({ companyUuid });
         const { uuid, userUuid } = await ApplicantGenerator.instance.studentAndGraduate();
-        const currentUser = new CurrentUser(userUuid, "email@email.com", [new ApplicantRole(uuid)]);
+        const currentUser = new CurrentUser({
+          uuid: userUuid,
+          email: "email@email.com",
+          roles: [new ApplicantRole(uuid)]
+        });
         const permissions = new UserPermissions(currentUser);
         expect(await permissions.canSeeOffer(offer)).toBe(true);
       });
@@ -48,7 +56,11 @@ describe("UserPermissions", () => {
       it("returns true if the offer is for graduates and the applicant is a graduate", async () => {
         const offer = await OfferGenerator.instance.forGraduates({ companyUuid });
         const { uuid, userUuid } = await ApplicantGenerator.instance.graduate();
-        const currentUser = new CurrentUser(userUuid, "email@email.com", [new ApplicantRole(uuid)]);
+        const currentUser = new CurrentUser({
+          uuid: userUuid,
+          email: "email@email.com",
+          roles: [new ApplicantRole(uuid)]
+        });
         const permissions = new UserPermissions(currentUser);
         expect(await permissions.canSeeOffer(offer)).toBe(true);
       });
@@ -56,7 +68,11 @@ describe("UserPermissions", () => {
       it("returns true if the offer is for both and the applicant is both", async () => {
         const offer = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
         const { uuid, userUuid } = await ApplicantGenerator.instance.studentAndGraduate();
-        const currentUser = new CurrentUser(userUuid, "email@email.com", [new ApplicantRole(uuid)]);
+        const currentUser = new CurrentUser({
+          uuid: userUuid,
+          email: "email@email.com",
+          roles: [new ApplicantRole(uuid)]
+        });
         const permissions = new UserPermissions(currentUser);
         expect(await permissions.canSeeOffer(offer)).toBe(true);
       });
@@ -64,7 +80,11 @@ describe("UserPermissions", () => {
       it("returns false if the offer is for students and the applicant is a graduate", async () => {
         const offer = await OfferGenerator.instance.forStudents({ companyUuid });
         const { uuid, userUuid } = await ApplicantGenerator.instance.graduate();
-        const currentUser = new CurrentUser(userUuid, "email@email.com", [new ApplicantRole(uuid)]);
+        const currentUser = new CurrentUser({
+          uuid: userUuid,
+          email: "email@email.com",
+          roles: [new ApplicantRole(uuid)]
+        });
         const permissions = new UserPermissions(currentUser);
         expect(await permissions.canSeeOffer(offer)).toBe(false);
       });
@@ -72,7 +92,11 @@ describe("UserPermissions", () => {
       it("returns false if the offer is for graduates and the applicant is a student", async () => {
         const offer = await OfferGenerator.instance.forGraduates({ companyUuid });
         const { uuid, userUuid } = await ApplicantGenerator.instance.student();
-        const currentUser = new CurrentUser(userUuid, "email@email.com", [new ApplicantRole(uuid)]);
+        const currentUser = new CurrentUser({
+          uuid: userUuid,
+          email: "email@email.com",
+          roles: [new ApplicantRole(uuid)]
+        });
         const permissions = new UserPermissions(currentUser);
         expect(await permissions.canSeeOffer(offer)).toBe(false);
       });
@@ -82,9 +106,11 @@ describe("UserPermissions", () => {
       it("returns true if the offer belongs to the company", async () => {
         const offer = await OfferGenerator.instance.forGraduates({ companyUuid });
         const [user] = await company.getUsers();
-        const currentUser = new CurrentUser(user.uuid, "email@email.com", [
-          new CompanyRole(companyUuid)
-        ]);
+        const currentUser = new CurrentUser({
+          uuid: user.uuid,
+          email: "email@email.com",
+          roles: [new CompanyRole(companyUuid)]
+        });
         const permissions = new UserPermissions(currentUser);
         expect(await permissions.canSeeOffer(offer)).toBe(true);
       });
@@ -93,9 +119,11 @@ describe("UserPermissions", () => {
         const offer = await OfferGenerator.instance.forGraduates({ companyUuid });
         const anotherCompany = await CompanyGenerator.instance.withCompleteData();
         const [user] = await anotherCompany.getUsers();
-        const currentUser = new CurrentUser(user.uuid, "email@email.com", [
-          new CompanyRole(anotherCompany.uuid)
-        ]);
+        const currentUser = new CurrentUser({
+          uuid: user.uuid,
+          email: "email@email.com",
+          roles: [new CompanyRole(anotherCompany.uuid)]
+        });
         const permissions = new UserPermissions(currentUser);
         expect(await permissions.canSeeOffer(offer)).toBe(false);
       });
@@ -109,7 +137,11 @@ describe("UserPermissions", () => {
         const thirdOffer = await OfferGenerator.instance.forGraduates({ companyUuid: uuid });
         const fourthOffer = await OfferGenerator.instance.forGraduates({ companyUuid: uuid });
         const { userUuid } = await AdminGenerator.instance({ secretary: Secretary.graduados });
-        const currentUser = new CurrentUser(userUuid, "admin@email.com", [new AdminRole(userUuid)]);
+        const currentUser = new CurrentUser({
+          uuid: userUuid,
+          email: "email@email.com",
+          roles: [new AdminRole(userUuid)]
+        });
         const permissions = new UserPermissions(currentUser);
         expect(await permissions.canSeeOffer(firstOffer)).toBe(true);
         expect(await permissions.canSeeOffer(secondOffer)).toBe(true);
@@ -129,11 +161,11 @@ describe("UserPermissions", () => {
         const applicant = await Applicant.create({ userUuid: user.uuid, padron: 98533 });
         await ApplicantCareersRepository.bulkCreate([{ careerCode, isGraduate: true }], applicant);
         const admin = await Admin.create({ userUuid: user.uuid, secretary: Secretary.extension });
-
-        const currentUser = new CurrentUser(user.uuid, "admin@email.com", [
-          new AdminRole(admin.userUuid),
-          new ApplicantRole(applicant.uuid)
-        ]);
+        const currentUser = new CurrentUser({
+          uuid: user.uuid,
+          email: "email@email.com",
+          roles: [new AdminRole(admin.userUuid), new ApplicantRole(applicant.uuid)]
+        });
         const permissions = new UserPermissions(currentUser);
         expect(await permissions.canSeeOffer(firstOffer)).toBe(true);
         expect(await permissions.canSeeOffer(thirdOffer)).toBe(true);
