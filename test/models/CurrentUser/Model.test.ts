@@ -1,4 +1,5 @@
 import { ApplicantRole, CompanyRole, AdminRole, CurrentUser } from "$models/CurrentUser";
+import { UserPermissions } from "$models/Permissions";
 import generateUuid from "uuid/v4";
 
 describe("CurrentUser", () => {
@@ -30,5 +31,12 @@ describe("CurrentUser", () => {
     expect(currentApplicant.uuid).toEqual(userUuid);
     expect(currentApplicant.email).toEqual(email);
     expect(currentApplicant.roles).toHaveLength(1);
+  });
+
+  it("return an instance of UserPermissions", async () => {
+    const currentApplicant = new CurrentUser(generateUuid(), "admin@mail.com", [
+      new AdminRole(generateUuid())
+    ]);
+    expect(currentApplicant.getPermissions()).toBeInstanceOf(UserPermissions);
   });
 });
