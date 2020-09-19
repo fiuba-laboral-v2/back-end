@@ -3,6 +3,6 @@ import { IPermission } from "../Interface";
 
 export class AdminPermissions implements IPermission {
   public canSeeOffer(offer: Offer) {
-    return true;
+    return Promise.resolve(true);
   }
 }

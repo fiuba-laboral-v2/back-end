@@ -9,6 +9,6 @@ export class CompanyPermissions implements IPermission {
   }
 
   public canSeeOffer(offer: Offer) {
-    return offer.companyUuid === this.companyUuid;
+    return Promise.resolve(offer.companyUuid === this.companyUuid);
   }
 }
