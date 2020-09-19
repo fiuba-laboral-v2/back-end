@@ -1,6 +1,7 @@
 import { Offer } from "$models";
 import { IPermission } from "../Interface";
 import { CurrentUser } from "$models/CurrentUser";
+import { some } from "lodash";
 
 export class UserPermissions implements IPermission {
   private readonly permissions: IPermission[];
@@ -10,8 +11,10 @@ export class UserPermissions implements IPermission {
   }
 
   public async canSeeOffer(offer: Offer) {
-    return (
-      await Promise.all(this.permissions.map(permission => permission.canSeeOffer(offer)))
-    ).some(canSeeOffer => canSeeOffer);
+    return this.hasPermission(permission => permission.canSeeOffer(offer));
+  }
+
+  private async hasPermission(callback: (permission: IPermission) => Promise<boolean> | boolean) {
+    return some(await Promise.all(this.permissions.map(callback)));
   }
 }
