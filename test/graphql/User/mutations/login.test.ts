@@ -1,17 +1,19 @@
 import { gql } from "apollo-server";
-import { client, executeMutation } from "../../ApolloTestClient";
-import { User } from "$models";
+import { client, executeMutation } from "$test/graphql/ApolloTestClient";
+import { AuthConfig } from "$config/AuthConfig";
+import { JWT } from "$src/JWT";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
+import { Secretary } from "$models/Admin";
+import { CurrentUserBuilder, CurrentUser } from "$models/CurrentUser";
+import { User } from "$models";
+import { BadCredentialsError } from "$graphql/User/Errors";
+import { UserNotFoundError } from "$models/User/Errors";
+
 import { UserGenerator } from "$generators/User";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { AdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
-import { JWT } from "../../../../src/JWT";
-import { BadCredentialsError } from "$graphql/User/Errors";
-import { UserNotFoundError } from "$models/User/Errors";
-import { AuthConfig } from "$config/AuthConfig";
-import { Secretary } from "$models/Admin";
 
 const LOGIN = gql`
   mutation($email: String!, $password: String!) {
@@ -43,7 +45,7 @@ describe("login", () => {
   }: {
     user: User;
     password: string;
-    result: object;
+    result: CurrentUser;
   }) => {
     const expressContext = createExpressContext();
     const apolloClient = client.loggedOut({ expressContext });
@@ -66,10 +68,10 @@ describe("login", () => {
     await testToken({
       user,
       password,
-      result: {
+      result: CurrentUserBuilder.build({
         uuid: user.uuid,
         email: user.email
-      }
+      })
     });
   });
 
@@ -82,13 +84,13 @@ describe("login", () => {
     await testToken({
       user,
       password,
-      result: {
+      result: CurrentUserBuilder.build({
         uuid: user.uuid,
         email: user.email,
         applicant: {
           uuid: applicant.uuid
         }
-      }
+      })
     });
   });
 
@@ -101,13 +103,13 @@ describe("login", () => {
     await testToken({
       user,
       password,
-      result: {
+      result: CurrentUserBuilder.build({
         uuid: user.uuid,
         email: user.email,
         company: {
           uuid: company.uuid
         }
-      }
+      })
     });
   });
 
@@ -118,13 +120,13 @@ describe("login", () => {
     await testToken({
       user,
       password,
-      result: {
+      result: CurrentUserBuilder.build({
         uuid: user.uuid,
         email: user.email,
         admin: {
           userUuid: admin.userUuid
         }
-      }
+      })
     });
   });
 

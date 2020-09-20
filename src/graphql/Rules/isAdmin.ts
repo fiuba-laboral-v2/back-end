@@ -5,7 +5,7 @@ import { isUser } from "./isUser";
 import { rule } from "./rule";
 
 const userIsAdmin = rule(async (parent, args, context: IApolloServerContext) => {
-  if (!context.currentUser.admin) return new UnauthorizedError();
+  if (!context.currentUser.getAdmin()) return new UnauthorizedError();
   return true;
 });
 
