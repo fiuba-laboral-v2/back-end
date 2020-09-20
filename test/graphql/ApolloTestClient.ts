@@ -11,37 +11,26 @@ export const defaultCurrentUser = CurrentUserBuilder.build({
   applicant: { uuid: "f1866416-bbb7-4890-9c19-603ac02c3dec" }
 });
 
-const LoggedInTestClient = ({
-  currentUser = defaultCurrentUser,
-  expressContext = expressContextMock()
-}: IClient) =>
-  createTestClient(
-    new Server({
-      schema,
-      formatError: apolloErrorConverter({ logger: false }),
-      context: () => ({
-        ...expressContext,
-        currentUser
-      })
-    })
-  );
-
-const LoggedOutTestClient = ({ expressContext = expressContextMock() }: IClient) =>
-  createTestClient(
-    new Server({
-      schema,
-      formatError: apolloErrorConverter({ logger: false }),
-      context: () => expressContext
-    })
-  );
-
 export const client = {
   loggedIn: ({
     currentUser = defaultCurrentUser,
     expressContext = expressContextMock()
-  }: IClient = {}) => LoggedInTestClient({ currentUser, expressContext }),
+  }: IClient = {}) =>
+    createTestClient(
+      new Server({
+        schema,
+        formatError: apolloErrorConverter({ logger: false }),
+        context: () => ({ ...expressContext, currentUser })
+      })
+    ),
   loggedOut: ({ expressContext = expressContextMock() }: IClient = {}) =>
-    LoggedOutTestClient({ expressContext })
+    createTestClient(
+      new Server({
+        schema,
+        formatError: apolloErrorConverter({ logger: false }),
+        context: () => expressContext
+      })
+    )
 };
 
 interface IClient {
