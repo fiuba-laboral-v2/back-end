@@ -1,5 +1,4 @@
 import { createTestClient } from "apollo-server-testing";
-import { DocumentNode } from "graphql";
 import { apolloErrorConverter } from "$src/FormatErrors";
 import { CurrentUser, CurrentUserBuilder } from "$models/CurrentUser";
 import { ApolloServer as Server } from "apollo-server-express";
@@ -39,20 +38,6 @@ const LoggedOutTestClient = ({ expressContext = expressContextMock() }: IClient)
       context: () => expressContext
     })
   );
-
-const defaultClient = (loggedIn: boolean) =>
-  loggedIn ? LoggedInTestClient({ currentUser: defaultCurrentUser }) : LoggedOutTestClient({});
-
-export const executeQuery = (
-  query: DocumentNode,
-  variables?: object,
-  { loggedIn }: { loggedIn: boolean } = { loggedIn: true }
-) => {
-  return defaultClient(loggedIn).query({
-    query: query,
-    variables: variables
-  });
-};
 
 export const client = {
   loggedIn: ({
