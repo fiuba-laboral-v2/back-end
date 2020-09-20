@@ -1,5 +1,5 @@
 import { gql } from "apollo-server";
-import { client, executeMutation } from "$test/graphql/ApolloTestClient";
+import { client } from "$test/graphql/ApolloTestClient";
 import { AuthConfig } from "$config/AuthConfig";
 import { JWT } from "$src/JWT";
 import { UserRepository } from "$models/User";
@@ -131,9 +131,12 @@ describe("login", () => {
   });
 
   it("returns error if user is not registered", async () => {
-    const { errors } = await executeMutation(LOGIN, {
-      email: "asd@asd.com",
-      password: "AValidPassword000"
+    const { errors } = await client.loggedOut().mutate({
+      mutation: LOGIN,
+      variables: {
+        email: "asd@asd.com",
+        password: "AValidPassword000"
+      }
     });
     expect(errors![0].extensions!.data).toEqual({
       errorType: UserNotFoundError.name
@@ -148,9 +151,12 @@ describe("login", () => {
       name: "name",
       surname: "surname"
     });
-    const { errors } = await executeMutation(LOGIN, {
-      email: email,
-      password: "AValidPassword22"
+    const { errors } = await client.loggedOut().mutate({
+      mutation: LOGIN,
+      variables: {
+        email: email,
+        password: "AValidPassword22"
+      }
     });
     expect(errors![0].extensions!.data).toEqual({
       errorType: BadCredentialsError.name

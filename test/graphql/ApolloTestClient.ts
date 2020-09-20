@@ -54,17 +54,6 @@ export const executeQuery = (
   });
 };
 
-export const executeMutation = (
-  mutation: DocumentNode,
-  variables?: object,
-  { loggedIn }: { loggedIn: boolean } = { loggedIn: true }
-) => {
-  return defaultClient(loggedIn).mutate({
-    mutation: mutation,
-    variables: variables
-  });
-};
-
 export const client = {
   loggedIn: ({
     currentUser = defaultCurrentUser,
