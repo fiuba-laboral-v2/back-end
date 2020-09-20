@@ -218,9 +218,9 @@ export const defaultTranslations = {
   adminCompanyListHeader: [
     { key: "companyName", value: "Nombre" },
     { key: "businessName", value: "Razón social" },
-    { key: "cuit", value: "cuit" },
+    { key: "cuit", value: "CUIT" },
     { key: "state", value: "Estado" },
-    { key: "updatedAt", value: "Actualizado en" }
+    { key: "updatedAt", value: "Última actualización" }
   ],
   statusLabel: [
     { key: "approved", value: "Aprobado" },
