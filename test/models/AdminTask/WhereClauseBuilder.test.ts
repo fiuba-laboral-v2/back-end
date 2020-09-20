@@ -4,6 +4,30 @@ import { Secretary } from "$models/Admin";
 import { ApplicantType } from "$models/Offer";
 
 describe("WhereClauseBuilder", () => {
+  it("builds pending status where clause for graduados secretary", async () => {
+    const whereClause = WhereClauseBuilder.build({
+      statuses: [ApprovalStatus.pending],
+      secretary: Secretary.graduados,
+      approvalStatusOptions: {
+        includesSeparateApprovalModel: true,
+        includesSharedApprovalModel: true
+      },
+      isTargeted: true
+    });
+    expect(whereClause).toEqualIgnoringSpacing(`
+      (
+        "AdminTask"."approvalStatus" = '${ApprovalStatus.pending}'
+        OR "AdminTask"."graduadosApprovalStatus" = '${ApprovalStatus.pending}'
+      )
+      AND
+      (
+        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
+        OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
+        OR "AdminTask"."targetApplicantType" IS NULL
+      )
+    `);
+  });
+
   it("builds approved status where clause for graduados secretary", async () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.approved],
@@ -28,26 +52,20 @@ describe("WhereClauseBuilder", () => {
     `);
   });
 
-  it("builds pending status where clause for graduados secretary", async () => {
+  it("builds where clause for not targeted tasks", async () => {
     const whereClause = WhereClauseBuilder.build({
-      statuses: [ApprovalStatus.pending],
+      statuses: [ApprovalStatus.approved],
       secretary: Secretary.graduados,
       approvalStatusOptions: {
         includesSeparateApprovalModel: true,
         includesSharedApprovalModel: true
       },
-      isTargeted: true
+      isTargeted: false
     });
     expect(whereClause).toEqualIgnoringSpacing(`
       (
-        "AdminTask"."approvalStatus" = '${ApprovalStatus.pending}'
-        OR "AdminTask"."graduadosApprovalStatus" = '${ApprovalStatus.pending}'
-      )
-      AND
-      (
-        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-        OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
-        OR "AdminTask"."targetApplicantType" IS NULL
+        "AdminTask"."approvalStatus" = '${ApprovalStatus.approved}'
+        OR "AdminTask"."graduadosApprovalStatus" = '${ApprovalStatus.approved}'
       )
     `);
   });
