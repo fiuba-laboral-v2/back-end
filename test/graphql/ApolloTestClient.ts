@@ -5,14 +5,10 @@ import { ApolloServer as Server } from "apollo-server-express";
 import { schema } from "$graphql/Schema";
 import { expressContextMock, IExpressContext } from "./ExpressContext";
 
-export const testCurrentUserEmail = "test@test.test";
-export const defaultUserUuid = "5bca6c9d-8367-4500-be05-0db55066b2a1";
-export const defaultApplicantUuid = "f1866416-bbb7-4890-9c19-603ac02c3dec";
-
 export const defaultCurrentUser = CurrentUserBuilder.build({
-  uuid: defaultUserUuid,
-  email: testCurrentUserEmail,
-  applicant: { uuid: defaultApplicantUuid }
+  uuid: "5bca6c9d-8367-4500-be05-0db55066b2a1",
+  email: "test@test.test",
+  applicant: { uuid: "f1866416-bbb7-4890-9c19-603ac02c3dec" }
 });
 
 const LoggedInTestClient = ({
