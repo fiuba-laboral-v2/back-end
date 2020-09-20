@@ -27,10 +27,7 @@ describe("login", () => {
 
   const createExpressContext = () => ({ res: { cookie: jest.fn() } });
 
-  const expectCookieToBeSet = async (
-    user: User,
-    expressContext: { res: { cookie: jest.Mock } }
-  ) => {
+  const expectCookieToBeSet = async (expressContext: { res: { cookie: jest.Mock } }) => {
     expect(expressContext.res.cookie.mock.calls).toEqual([
       [AuthConfig.cookieName, expect.any(String), AuthConfig.cookieOptions]
     ]);
@@ -55,7 +52,7 @@ describe("login", () => {
       }
     });
     expect(errors).toBeUndefined();
-    await expectCookieToBeSet(user, expressContext);
+    await expectCookieToBeSet(expressContext);
     const token: string = expressContext.res.cookie.mock.calls[0][1];
     expect(JWT.decodeToken(token)).toBeObjectContaining(result);
   };

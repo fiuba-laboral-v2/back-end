@@ -4,7 +4,7 @@ import { UnauthorizedError } from "../Errors";
 import { isUser } from "./isUser";
 import { rule } from "./rule";
 
-const userIsAdmin = rule(async (parent, args, context: IApolloServerContext) => {
+const userIsAdmin = rule(async (_, __, context: IApolloServerContext) => {
   if (!context.currentUser.admin) return new UnauthorizedError();
   return true;
 });
