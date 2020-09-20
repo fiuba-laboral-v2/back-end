@@ -66,7 +66,7 @@ describe("Company", () => {
     );
   });
 
-  it("throws an error if companyName and cuit is null and businessName", async () => {
+  it("throws an error if companyName, cuit and businessName are null", async () => {
     const company: Company = new Company({ cuit: null, companyName: null, businessName: null });
     await expect(company.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,

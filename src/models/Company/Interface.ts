@@ -14,7 +14,8 @@ export interface ICompany {
   user: IUser;
 }
 
-export interface ICreateCompany {
+export interface IUpdateCompany {
+  uuid: string;
   cuit?: string;
   companyName?: string;
   businessName?: string;
@@ -25,8 +26,4 @@ export interface ICreateCompany {
   email?: string;
   phoneNumbers?: string[];
   photos?: string[];
-}
-
-export interface IUpdateCompany extends ICreateCompany {
-  uuid: string;
 }

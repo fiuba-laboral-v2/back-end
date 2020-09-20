@@ -79,7 +79,7 @@ describe("CompanyRepository", () => {
     ).rejects.toThrow(UniqueConstraintError);
   });
 
-  it("should throw an error if cuit is null", async () => {
+  it("throws an error if cuit is null", async () => {
     await expect(
       CompanyRepository.create({
         ...CompanyGenerator.data.completeData(),
@@ -88,7 +88,7 @@ describe("CompanyRepository", () => {
     ).rejects.toThrow(ValidationError);
   });
 
-  it("should throw an error if businessName is null", async () => {
+  it("throws an error if businessName is null", async () => {
     await expect(
       CompanyRepository.create({
         ...CompanyGenerator.data.completeData(),
@@ -97,7 +97,7 @@ describe("CompanyRepository", () => {
     ).rejects.toThrow(ValidationError);
   });
 
-  it("should throw an error if companyName is null", async () => {
+  it("throws an error if companyName is null", async () => {
     await expect(
       CompanyRepository.create({
         ...CompanyGenerator.data.completeData(),
