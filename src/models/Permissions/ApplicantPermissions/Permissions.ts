@@ -1,8 +1,9 @@
 import { Offer } from "$models";
 import { ApplicantRepository } from "$models/Applicant";
 import { ApplicantType } from "$models/Offer";
+import { IPermission } from "../Interface";
 
-export class ApplicantPermissions {
+export class ApplicantPermissions implements IPermission {
   private readonly applicantUuid: string;
 
   constructor(applicantUuid: string) {
