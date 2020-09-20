@@ -27,7 +27,7 @@ describe("CurrentUser", () => {
       expect(currentUser.getPermissions()).toBeInstanceOf(UserPermissions);
     });
 
-    it("throws an error if the current user has no company role", async () => {
+    it("returns undefined if the current user has no company role", async () => {
       const currentUser = new CurrentUser({
         uuid: generateUuid(),
         email: "applicant@mail.com",
@@ -36,7 +36,7 @@ describe("CurrentUser", () => {
       expect(currentUser.getCompany()).toBeUndefined();
     });
 
-    it("throws an error if the current user has no admin role", async () => {
+    it("returns undefined if the current user has no admin role", async () => {
       const currentUser = new CurrentUser({
         uuid: generateUuid(),
         email: "applicant@mail.com",
@@ -70,7 +70,7 @@ describe("CurrentUser", () => {
       expect(currentUser.getPermissions()).toBeInstanceOf(UserPermissions);
     });
 
-    it("throws an error if the current user has no applicant role", async () => {
+    it("returns undefined if the current user has no applicant role", async () => {
       const currentUser = new CurrentUser({
         uuid: generateUuid(),
         email: "company@mail.com",
@@ -79,7 +79,7 @@ describe("CurrentUser", () => {
       expect(currentUser.getApplicant()).toBeUndefined();
     });
 
-    it("throws an error if the current user has no admin role", async () => {
+    it("returns undefined if the current user has no admin role", async () => {
       const currentUser = new CurrentUser({
         uuid: generateUuid(),
         email: "company@mail.com",
@@ -114,7 +114,7 @@ describe("CurrentUser", () => {
       expect(currentUser.getPermissions()).toBeInstanceOf(UserPermissions);
     });
 
-    it("throws an error if the current user has no applicant role", async () => {
+    it("returns undefined if the current user has no applicant role", async () => {
       const userUuid = generateUuid();
       const currentUser = new CurrentUser({
         uuid: userUuid,
@@ -124,7 +124,7 @@ describe("CurrentUser", () => {
       expect(currentUser.getApplicant()).toBeUndefined();
     });
 
-    it("throws an error if the current user has no company role", async () => {
+    it("returns undefined if the current user has no company role", async () => {
       const userUuid = generateUuid();
       const currentUser = new CurrentUser({
         uuid: userUuid,
