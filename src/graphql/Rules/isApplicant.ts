@@ -4,7 +4,7 @@ import { UnauthorizedError } from "../Errors";
 import { isUser } from "./isUser";
 import { rule } from "./rule";
 
-const userHasApplicant = rule(async (parent, args, context: IApolloServerContext) => {
+const userHasApplicant = rule(async (_, __, context: IApolloServerContext) => {
   if (!context.currentUser.getApplicant()) return new UnauthorizedError();
   return true;
 });
