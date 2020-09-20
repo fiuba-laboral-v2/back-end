@@ -1,1 +1,1 @@
-export { IApolloServerContext } from "./graphqlContext";
+export * from "./graphqlContext";
