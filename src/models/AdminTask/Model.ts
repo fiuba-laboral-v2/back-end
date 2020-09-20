@@ -14,6 +14,9 @@ export enum AdminTaskType {
   Offer = "Offer",
   JobApplication = "JobApplication"
 }
+
+export const targetedAdminTasks = [AdminTaskType.Offer];
+
 export const SharedApprovalAdminTaskTypes = [
   AdminTaskType.Company,
   AdminTaskType.Applicant,

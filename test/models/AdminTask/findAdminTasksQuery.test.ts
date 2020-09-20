@@ -7,9 +7,6 @@ import { Secretary } from "$models/Admin";
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 
 describe("findAdminTasksQuery", () => {
-  const secretaryColumn = (secretary: Secretary) =>
-    secretary === Secretary.graduados ? "graduadosApprovalStatus" : "extensionApprovalStatus";
-
   it("throws an error if no adminTaskTypes are provided", async () => {
     expect(() =>
       findAdminTasksQuery({
@@ -131,12 +128,16 @@ describe("findAdminTasksQuery", () => {
         )
       )
       SELECT * FROM "AdminTask"
-      WHERE ${WhereClauseBuilder.build(
+      WHERE ${WhereClauseBuilder.build({
         statuses,
         secretary,
-        { includesSharedApprovalModel: true, includesSeparateApprovalModel: true },
-        updatedBeforeThan
-      )}
+        approvalStatusOptions: {
+          includesSharedApprovalModel: true,
+          includesSeparateApprovalModel: true
+        },
+        updatedBeforeThan,
+        isTargeted: true
+      })}
       ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
       LIMIT ${limit}
     `;
@@ -326,9 +327,15 @@ describe("findAdminTasksQuery", () => {
         FROM (SELECT *, 'Offers' AS "tableNameColumn" FROM "Offers" ) AS Offers
       )
       SELECT * FROM "AdminTask"
-      WHERE (
-        "AdminTask"."${secretaryColumn(secretary)}" = '${status}'
-      )
+      WHERE ${WhereClauseBuilder.build({
+        statuses: [status],
+        secretary,
+        approvalStatusOptions: {
+          includesSeparateApprovalModel: true,
+          includesSharedApprovalModel: false
+        },
+        isTargeted: true
+      })}
       ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
       LIMIT ${limit}
     `;

@@ -4,7 +4,8 @@ import {
   AdminTaskType,
   TABLE_NAME_COLUMN,
   SeparateApprovalAdminTaskTypes,
-  SharedApprovalAdminTaskTypes
+  SharedApprovalAdminTaskTypes,
+  targetedAdminTasks
 } from "./Model";
 import { IAdminTasksFilter } from "./Interfaces";
 import { AdminTaskTypesIsEmptyError, StatusesIsEmptyError } from "./Errors";
@@ -74,7 +75,13 @@ export const findAdminTasksQuery = ({
   return `
     WITH "AdminTask" AS (${findAdminTasksByTypeQuery(adminTaskTypes)})
     SELECT * FROM "AdminTask"
-    WHERE ${WhereClauseBuilder.build(statuses, secretary, approvalStatusOptions, updatedBeforeThan)}
+    WHERE ${WhereClauseBuilder.build({
+      statuses,
+      secretary,
+      approvalStatusOptions,
+      updatedBeforeThan,
+      isTargeted: intersection(adminTaskTypes, targetedAdminTasks).length > 0
+    })}
     ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
     LIMIT ${limit}
   `;
