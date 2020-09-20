@@ -1,6 +1,6 @@
 import { GraphQLJobApplication } from "../Types/GraphQLJobApplication";
 import { JobApplicationRepository } from "$models/JobApplication";
-import { ICompanyUser } from "$graphql/Context";
+import { CurrentUser } from "$models/CurrentUser";
 import {
   GraphQLPaginatedInput,
   IPaginatedInput
@@ -17,10 +17,10 @@ export const getMyLatestJobApplications = {
   resolve: async (
     _: undefined,
     { updatedBeforeThan }: { updatedBeforeThan?: IPaginatedInput },
-    { currentUser }: { currentUser: ICompanyUser }
+    { currentUser }: { currentUser: CurrentUser }
   ) =>
     JobApplicationRepository.findLatestByCompanyUuid({
-      companyUuid: currentUser.company.uuid,
+      companyUuid: currentUser.getCompany().companyUuid,
       updatedBeforeThan
     })
 };

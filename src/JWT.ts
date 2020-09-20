@@ -1,9 +1,9 @@
 import { User } from "./models";
+import { CurrentUser, CurrentUserBuilder, ICurrentUserTokenData } from "./models/CurrentUser";
 import { Environment } from "./config/Environment";
 import { sign, verify } from "jsonwebtoken";
 import { Application } from "express";
 import jwt from "express-jwt";
-import { ICurrentUser } from "./graphql/Context";
 import { AuthConfig } from "./config/AuthConfig";
 
 let JWT_SECRET: string;
@@ -31,9 +31,9 @@ export const JWT = {
 
     return sign(payload, JWT_SECRET, { expiresIn: AuthConfig.JWT.expiresIn });
   },
-  decodeToken: (token: string): ICurrentUser | undefined => {
+  decodeToken: (token: string): CurrentUser | undefined => {
     try {
-      return verify(token, JWT_SECRET) as ICurrentUser;
+      return CurrentUserBuilder.build(verify(token, JWT_SECRET) as ICurrentUserTokenData);
     } catch (e) {
       return;
     }
@@ -47,5 +47,5 @@ export const JWT = {
       })
     );
   },
-  extractTokenPayload: (token: string): ICurrentUser | undefined => JWT.decodeToken(token)
+  extractTokenPayload: (token: string): CurrentUser | undefined => JWT.decodeToken(token)
 };

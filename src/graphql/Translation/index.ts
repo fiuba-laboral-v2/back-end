@@ -1,3 +1,2 @@
-import translationQueries from "./queries";
-
-export { translationQueries };
+export { translationQueries } from "./Queries";
+export { translationTypes } from "./Types";

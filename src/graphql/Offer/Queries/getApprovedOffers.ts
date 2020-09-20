@@ -5,7 +5,7 @@ import {
   GraphQLPaginatedInput,
   IPaginatedInput
 } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
-import { IApplicantUser } from "$graphql/Context";
+import { CurrentUser } from "$models/CurrentUser";
 import { GraphQLPaginatedResults } from "$graphql/Pagination/Types/GraphQLPaginatedResults";
 import { ID, List, nonNull } from "$graphql/fieldTypes";
 
@@ -22,9 +22,11 @@ export const getApprovedOffers = {
   resolve: async (
     _: undefined,
     { updatedBeforeThan, careerCodes }: IGetApprovedOffersArguments,
-    { currentUser }: { currentUser: IApplicantUser }
+    { currentUser }: { currentUser: CurrentUser }
   ) => {
-    const applicant = await ApplicantRepository.findByUuid(currentUser.applicant.uuid);
+    const applicant = await ApplicantRepository.findByUuid(
+      currentUser.getApplicant().applicantUuid
+    );
     const applicantType = await applicant.getType();
     return OfferRepository.findAll({
       updatedBeforeThan,

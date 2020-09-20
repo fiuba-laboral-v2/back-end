@@ -11,7 +11,7 @@ export const CurrentUserBuilder = {
   }
 };
 
-interface ICurrentUserTokenData {
+export interface ICurrentUserTokenData {
   uuid: string;
   email: string;
   admin?: { userUuid: string };

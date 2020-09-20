@@ -3,7 +3,7 @@ import { GraphQLOfferCareerInput } from "../Types/GraphQLOfferCareer";
 import { GraphQLOfferSectionInput } from "../Types/GraphQLOfferSection";
 import { GraphQLApplicantType } from "../../Applicant/Types/GraphQLApplicantType";
 import { OfferRepository } from "$models/Offer";
-import { ICompanyUser } from "$graphql/Context";
+import { CurrentUser } from "$models/CurrentUser";
 import { Int, List, nonNull, String } from "$graphql/fieldTypes";
 import { ICreateOffer } from "$models/Offer/Interface";
 
@@ -38,10 +38,10 @@ export const createOffer = {
   resolve: (
     _: undefined,
     attributes: ICreateOffer,
-    { currentUser }: { currentUser: ICompanyUser }
+    { currentUser }: { currentUser: CurrentUser }
   ) =>
     OfferRepository.create({
       ...attributes,
-      companyUuid: currentUser.company.uuid
+      companyUuid: currentUser.getCompany().companyUuid
     })
 };
