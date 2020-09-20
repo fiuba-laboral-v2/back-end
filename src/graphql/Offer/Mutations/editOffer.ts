@@ -3,7 +3,7 @@ import { GraphQLOfferCareerInput } from "../Types/GraphQLOfferCareer";
 import { GraphQLOfferSectionInput } from "../Types/GraphQLOfferSection";
 import { GraphQLApplicantType } from "../../Applicant/Types/GraphQLApplicantType";
 import { OfferRepository } from "$models/Offer";
-import { ICompanyUser } from "$graphql/Context";
+import { CurrentUser } from "$models/CurrentUser";
 import { ID, Int, List, nonNull, String } from "$graphql/fieldTypes";
 import { IUpdateOffer } from "$models/Offer/Interface";
 
@@ -41,10 +41,10 @@ export const editOffer = {
   resolve: async (
     _: undefined,
     attributes: IUpdateOffer,
-    { currentUser }: { currentUser: ICompanyUser }
+    { currentUser }: { currentUser: CurrentUser }
   ) =>
     OfferRepository.update({
       ...attributes,
-      companyUuid: currentUser.company.uuid
+      companyUuid: currentUser.getCompany().companyUuid
     })
 };

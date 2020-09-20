@@ -5,7 +5,7 @@ import { isUser } from "./isUser";
 import { rule } from "./rule";
 
 const userHasCompany = rule(async (_, __, context: IApolloServerContext) => {
-  if (!context.currentUser.company) return new UnauthorizedError();
+  if (!context.currentUser.getCompany()) return new UnauthorizedError();
   return true;
 });
 

@@ -6,7 +6,7 @@ import { jobApplicationTypes } from "./JobApplication";
 import { careerTypes } from "./Career/Types";
 import { userTypes } from "./User/Types";
 import { capabilityTypes } from "./Capability";
-import { translationTypes } from "./Translation/Types";
+import { translationTypes } from "./Translation";
 import { approvalStatusTypes } from "./ApprovalStatus";
 import { adminTaskTypes } from "./AdminTask/Types";
 
