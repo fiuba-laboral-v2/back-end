@@ -2,7 +2,7 @@ import { nonNull, String, List } from "$graphql/fieldTypes";
 import { TranslationRepository } from "$models/Translation";
 import { GraphQLTranslation } from "./Types/Translation";
 
-const translationQueries = {
+export const translationQueries = {
   getTranslations: {
     type: nonNull(List(nonNull(GraphQLTranslation))),
     args: {
@@ -15,5 +15,3 @@ const translationQueries = {
     }
   }
 };
-
-export default translationQueries;
