@@ -27,6 +27,7 @@ describe("CompanyRepository", () => {
       expect.objectContaining({
         cuit: companyCompleteData.cuit,
         companyName: companyCompleteData.companyName,
+        businessName: companyCompleteData.businessName,
         slogan: companyCompleteData.slogan,
         description: companyCompleteData.description,
         logo: companyCompleteData.logo,
@@ -66,17 +67,19 @@ describe("CompanyRepository", () => {
   it("throws an error if new company has an already existing cuit", async () => {
     const companyCompleteData = CompanyGenerator.data.completeData();
     const cuit = companyCompleteData.cuit;
+    const businessName = companyCompleteData.businessName;
     await CompanyRepository.create(companyCompleteData);
     await expect(
       CompanyRepository.create({
-        cuit: cuit,
+        cuit,
         companyName: "Devartis Clone SA",
+        businessName,
         user: CompanyGenerator.data.completeData().user
       })
     ).rejects.toThrow(UniqueConstraintError);
   });
 
-  it("should throw an error if cuit is null", async () => {
+  it("throws an error if cuit is null", async () => {
     await expect(
       CompanyRepository.create({
         ...CompanyGenerator.data.completeData(),
@@ -85,7 +88,16 @@ describe("CompanyRepository", () => {
     ).rejects.toThrow(ValidationError);
   });
 
-  it("should throw an error if companyName is null", async () => {
+  it("throws an error if businessName is null", async () => {
+    await expect(
+      CompanyRepository.create({
+        ...CompanyGenerator.data.completeData(),
+        businessName: null as any
+      })
+    ).rejects.toThrow(ValidationError);
+  });
+
+  it("throws an error if companyName is null", async () => {
     await expect(
       CompanyRepository.create({
         ...CompanyGenerator.data.completeData(),
@@ -164,6 +176,7 @@ describe("CompanyRepository", () => {
       const dataToUpdate = {
         cuit: "30711311773",
         companyName: "Devartis SA",
+        businessName: "entre ca S.A.",
         slogan: "new slogan",
         description: "new description",
         logo: "",

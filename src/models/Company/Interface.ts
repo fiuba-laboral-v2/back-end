@@ -3,6 +3,7 @@ import { IUser } from "$models/User";
 export interface ICompany {
   cuit: string;
   companyName: string;
+  businessName: string;
   slogan?: string;
   description?: string;
   logo?: string;
@@ -13,9 +14,11 @@ export interface ICompany {
   user: IUser;
 }
 
-export interface ICreateCompany {
+export interface IUpdateCompany {
+  uuid: string;
   cuit?: string;
   companyName?: string;
+  businessName?: string;
   slogan?: string;
   description?: string;
   logo?: string;
@@ -23,8 +26,4 @@ export interface ICreateCompany {
   email?: string;
   phoneNumbers?: string[];
   photos?: string[];
-}
-
-export interface IUpdateCompany extends ICreateCompany {
-  uuid: string;
 }

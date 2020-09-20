@@ -80,6 +80,7 @@ export const defaultTranslations = {
     { key: "cuit", value: "CUIT" },
     { key: "email", value: "Email de la empresa" },
     { key: "companyName", value: "Nombre de la empresa" },
+    { key: "businessName", value: "Razón social" },
     { key: "slogan", value: "Slogan" },
     { key: "description", value: "Descripción" },
     { key: "website", value: "Sitio" }

@@ -12,6 +12,9 @@ export const createCompany = {
     companyName: {
       type: nonNull(String)
     },
+    businessName: {
+      type: nonNull(String)
+    },
     slogan: {
       type: String
     },
