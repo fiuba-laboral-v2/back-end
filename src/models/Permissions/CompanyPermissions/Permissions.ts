@@ -1,6 +1,7 @@
 import { Offer } from "$models";
+import { IPermission } from "../Interface";
 
-export class CompanyPermissions {
+export class CompanyPermissions implements IPermission {
   private readonly companyUuid: string;
 
   constructor(companyUuid: string) {
@@ -8,6 +9,6 @@ export class CompanyPermissions {
   }
 
   public canSeeOffer(offer: Offer) {
-    return offer.companyUuid === this.companyUuid;
+    return Promise.resolve(offer.companyUuid === this.companyUuid);
   }
 }
