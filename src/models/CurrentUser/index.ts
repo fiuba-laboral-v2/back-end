@@ -1,3 +1,3 @@
 export { CurrentUser } from "./Model";
-export { CurrentUserSerializer } from "./Serializer";
+export { CurrentUserBuilder } from "./Builder";
 export * from "./Roles";

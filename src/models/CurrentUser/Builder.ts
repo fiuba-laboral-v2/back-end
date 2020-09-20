@@ -1,8 +1,8 @@
 import { AdminRole, ApplicantRole, CompanyRole, IRole } from "$models/CurrentUser/Roles";
 import { CurrentUser } from "$models/CurrentUser/Model";
 
-export const CurrentUserSerializer = {
-  deserialize: ({ uuid, email, admin, applicant, company }: ICurrentUserTokenData) => {
+export const CurrentUserBuilder = {
+  build: ({ uuid, email, admin, applicant, company }: ICurrentUserTokenData) => {
     const roles: IRole[] = [];
     if (admin) roles.push(new AdminRole(admin.userUuid));
     if (company) roles.push(new CompanyRole(company.uuid));

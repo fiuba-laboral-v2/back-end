@@ -1,15 +1,14 @@
-import { CurrentUserSerializer } from "$models/CurrentUser/Serializer";
-import { AdminRole, ApplicantRole, CompanyRole } from "$models/CurrentUser";
+import { CurrentUserBuilder, AdminRole, ApplicantRole, CompanyRole } from "$models/CurrentUser";
 import generateUuid from "uuid/v4";
 
-describe("CurrentUserSerializer", () => {
+describe("CurrentUserBuilder", () => {
   it("returns a new current user with an applicant role", () => {
     const currentUserTokenData = {
       uuid: generateUuid(),
       email: "applicant@mail.com",
       applicant: { uuid: generateUuid() }
     };
-    const currentUser = CurrentUserSerializer.deserialize(currentUserTokenData);
+    const currentUser = CurrentUserBuilder.build(currentUserTokenData);
     const applicantRole = currentUser.getApplicant();
 
     expect(currentUser.uuid).toEqual(currentUserTokenData.uuid);
@@ -26,7 +25,7 @@ describe("CurrentUserSerializer", () => {
       email: "company@mail.com",
       company: { uuid: generateUuid() }
     };
-    const currentUser = CurrentUserSerializer.deserialize(currentUserTokenData);
+    const currentUser = CurrentUserBuilder.build(currentUserTokenData);
     const companyRole = currentUser.getCompany();
 
     expect(currentUser.uuid).toEqual(currentUserTokenData.uuid);
@@ -43,7 +42,7 @@ describe("CurrentUserSerializer", () => {
       email: "admin@mail.com",
       admin: { userUuid: generateUuid() }
     };
-    const currentUser = CurrentUserSerializer.deserialize(currentUserTokenData);
+    const currentUser = CurrentUserBuilder.build(currentUserTokenData);
     const adminRole = currentUser.getAdmin();
 
     expect(currentUser.uuid).toEqual(currentUserTokenData.uuid);
@@ -61,7 +60,7 @@ describe("CurrentUserSerializer", () => {
       admin: { userUuid: generateUuid() },
       applicant: { uuid: generateUuid() }
     };
-    const currentUser = CurrentUserSerializer.deserialize(currentUserTokenData);
+    const currentUser = CurrentUserBuilder.build(currentUserTokenData);
     const applicantRole = currentUser.getApplicant();
     const adminRole = currentUser.getAdmin();
 
