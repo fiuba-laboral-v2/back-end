@@ -1,1 +1,1 @@
-export { translationQueries } from "./queries";
+export { translationQueries } from "./Queries";

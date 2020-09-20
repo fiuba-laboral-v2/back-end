@@ -1,1 +1,5 @@
-export { getTranslations } from "./getTranslations";
+import { getTranslations } from "./getTranslations";
+
+export const translationQueries = {
+  getTranslations
+};
