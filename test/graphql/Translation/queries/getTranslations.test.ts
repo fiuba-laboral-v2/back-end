@@ -1,5 +1,5 @@
 import { gql } from "apollo-server";
-import { client } from "../../ApolloTestClient";
+import { client } from "$test/graphql/ApolloTestClient";
 import { MissingTranslationError } from "$models/Translation/Errors";
 
 const GET_TRANSLATIONS = gql`
