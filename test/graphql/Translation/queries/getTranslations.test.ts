@@ -12,7 +12,7 @@ const GET_TRANSLATIONS = gql`
 `;
 
 describe("getTranslations", () => {
-  it("find translations given their translationGroup", async () => {
+  it("finds translations given their translationGroup", async () => {
     const { data, errors } = await client.loggedOut().query({
       query: GET_TRANSLATIONS,
       variables: {
@@ -30,7 +30,7 @@ describe("getTranslations", () => {
     });
   });
 
-  it("should return an error if a translationGroup doesn't exist", async () => {
+  it("returns an error if a translationGroup doesn't exist", async () => {
     const { errors } = await client.loggedOut().query({
       query: GET_TRANSLATIONS,
       variables: {
