@@ -4,73 +4,73 @@ import generateUuid from "uuid/v4";
 
 describe("CurrentUserSerializer", () => {
   it("returns a new current user with an applicant role", () => {
-    const serializedCurrentUser = {
+    const currentUserTokenData = {
       uuid: generateUuid(),
       email: "applicant@mail.com",
       applicant: { uuid: generateUuid() }
     };
-    const currentUser = CurrentUserSerializer.deserialize(serializedCurrentUser);
+    const currentUser = CurrentUserSerializer.deserialize(currentUserTokenData);
     const applicantRole = currentUser.getApplicant();
 
-    expect(currentUser.uuid).toEqual(serializedCurrentUser.uuid);
-    expect(currentUser.email).toEqual(serializedCurrentUser.email);
+    expect(currentUser.uuid).toEqual(currentUserTokenData.uuid);
+    expect(currentUser.email).toEqual(currentUserTokenData.email);
     expect(applicantRole).toBeInstanceOf(ApplicantRole);
-    expect(applicantRole.applicantUuid).toEqual(serializedCurrentUser.applicant.uuid);
+    expect(applicantRole.applicantUuid).toEqual(currentUserTokenData.applicant.uuid);
     expect(currentUser.getAdmin()).toBeUndefined();
     expect(currentUser.getCompany()).toBeUndefined();
   });
 
   it("returns a new current user with a company role", () => {
-    const serializedCurrentUser = {
+    const currentUserTokenData = {
       uuid: generateUuid(),
       email: "company@mail.com",
       company: { uuid: generateUuid() }
     };
-    const currentUser = CurrentUserSerializer.deserialize(serializedCurrentUser);
+    const currentUser = CurrentUserSerializer.deserialize(currentUserTokenData);
     const companyRole = currentUser.getCompany();
 
-    expect(currentUser.uuid).toEqual(serializedCurrentUser.uuid);
-    expect(currentUser.email).toEqual(serializedCurrentUser.email);
+    expect(currentUser.uuid).toEqual(currentUserTokenData.uuid);
+    expect(currentUser.email).toEqual(currentUserTokenData.email);
     expect(currentUser.getApplicant()).toBeUndefined();
     expect(currentUser.getAdmin()).toBeUndefined();
     expect(companyRole).toBeInstanceOf(CompanyRole);
-    expect(companyRole.companyUuid).toEqual(serializedCurrentUser.company.uuid);
+    expect(companyRole.companyUuid).toEqual(currentUserTokenData.company.uuid);
   });
 
   it("returns a new current user with an admin role", () => {
-    const serializedCurrentUser = {
+    const currentUserTokenData = {
       uuid: generateUuid(),
       email: "admin@mail.com",
       admin: { userUuid: generateUuid() }
     };
-    const currentUser = CurrentUserSerializer.deserialize(serializedCurrentUser);
+    const currentUser = CurrentUserSerializer.deserialize(currentUserTokenData);
     const adminRole = currentUser.getAdmin();
 
-    expect(currentUser.uuid).toEqual(serializedCurrentUser.uuid);
-    expect(currentUser.email).toEqual(serializedCurrentUser.email);
+    expect(currentUser.uuid).toEqual(currentUserTokenData.uuid);
+    expect(currentUser.email).toEqual(currentUserTokenData.email);
     expect(currentUser.getApplicant()).toBeUndefined();
     expect(adminRole).toBeInstanceOf(AdminRole);
-    expect(adminRole.adminUserUuid).toEqual(serializedCurrentUser.admin.userUuid);
+    expect(adminRole.adminUserUuid).toEqual(currentUserTokenData.admin.userUuid);
     expect(currentUser.getCompany()).toBeUndefined();
   });
 
   it("returns a new current user with an admin and an applicant role", () => {
-    const serializedCurrentUser = {
+    const currentUserTokenData = {
       uuid: generateUuid(),
       email: "adminAndApplicant@mail.com",
       admin: { userUuid: generateUuid() },
       applicant: { uuid: generateUuid() }
     };
-    const currentUser = CurrentUserSerializer.deserialize(serializedCurrentUser);
+    const currentUser = CurrentUserSerializer.deserialize(currentUserTokenData);
     const applicantRole = currentUser.getApplicant();
     const adminRole = currentUser.getAdmin();
 
-    expect(currentUser.uuid).toEqual(serializedCurrentUser.uuid);
-    expect(currentUser.email).toEqual(serializedCurrentUser.email);
+    expect(currentUser.uuid).toEqual(currentUserTokenData.uuid);
+    expect(currentUser.email).toEqual(currentUserTokenData.email);
     expect(applicantRole).toBeInstanceOf(ApplicantRole);
-    expect(applicantRole.applicantUuid).toEqual(serializedCurrentUser.applicant.uuid);
+    expect(applicantRole.applicantUuid).toEqual(currentUserTokenData.applicant.uuid);
     expect(adminRole).toBeInstanceOf(AdminRole);
-    expect(adminRole.adminUserUuid).toEqual(serializedCurrentUser.admin.userUuid);
+    expect(adminRole.adminUserUuid).toEqual(currentUserTokenData.admin.userUuid);
     expect(currentUser.getCompany()).toBeUndefined();
   });
 });
