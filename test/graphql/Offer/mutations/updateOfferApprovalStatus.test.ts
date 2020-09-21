@@ -10,13 +10,17 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Offer } from "$models";
 
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
-import { AdminCannotModerateOfferError, OfferNotFoundError } from "$models/Offer/Errors";
+import {
+  AdminCannotModerateOfferError,
+  OfferNotFoundError
+} from "$models/Offer/Errors";
 
 import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyGenerator } from "$generators/Company";
-import { OfferGenerator } from "$test/generators/Offer";
+import { IForAllTargets, OfferGenerator } from "$test/generators/Offer";
 
 import generateUuid from "uuid/v4";
+import { ApplicantType } from "$models/Applicant";
 
 const UPDATE_OFFER_APPROVAL_STATUS = gql`
   mutation($uuid: ID!, $approvalStatus: ApprovalStatus!) {
@@ -29,19 +33,13 @@ const UPDATE_OFFER_APPROVAL_STATUS = gql`
 `;
 
 describe("updateOfferApprovalStatus", () => {
-  let offerForGraduates: Offer;
-  let offerForStudents: Offer;
-  let offerForStudentsAndGraduates: Offer;
+  let offers: IForAllTargets;
 
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-    offerForGraduates = await OfferGenerator.instance.forGraduates({ companyUuid });
-    offerForStudents = await OfferGenerator.instance.forStudents({ companyUuid });
-    offerForStudentsAndGraduates = await OfferGenerator.instance.forStudentsAndGraduates({
-      companyUuid
-    });
+    offers = await OfferGenerator.instance.forAllTargets({ companyUuid });
   });
 
   beforeEach(() => OfferApprovalEventRepository.truncate());
@@ -87,7 +85,7 @@ describe("updateOfferApprovalStatus", () => {
     await expectToUpdateStatusAndLogEvent(
       ApprovalStatus.approved,
       Secretary.extension,
-      offerForStudents
+      offers[ApplicantType.student]
     );
   });
 
@@ -95,7 +93,7 @@ describe("updateOfferApprovalStatus", () => {
     await expectToUpdateStatusAndLogEvent(
       ApprovalStatus.rejected,
       Secretary.extension,
-      offerForStudents
+      offers[ApplicantType.student]
     );
   });
 
@@ -103,7 +101,7 @@ describe("updateOfferApprovalStatus", () => {
     await expectToUpdateStatusAndLogEvent(
       ApprovalStatus.pending,
       Secretary.extension,
-      offerForStudents
+      offers[ApplicantType.student]
     );
   });
 
@@ -111,7 +109,7 @@ describe("updateOfferApprovalStatus", () => {
     await expectToUpdateStatusAndLogEvent(
       ApprovalStatus.approved,
       Secretary.extension,
-      offerForStudentsAndGraduates
+      offers[ApplicantType.both]
     );
   });
 
@@ -119,7 +117,7 @@ describe("updateOfferApprovalStatus", () => {
     await expectToUpdateStatusAndLogEvent(
       ApprovalStatus.rejected,
       Secretary.extension,
-      offerForStudentsAndGraduates
+      offers[ApplicantType.both]
     );
   });
 
@@ -127,7 +125,7 @@ describe("updateOfferApprovalStatus", () => {
     await expectToUpdateStatusAndLogEvent(
       ApprovalStatus.pending,
       Secretary.extension,
-      offerForStudentsAndGraduates
+      offers[ApplicantType.both]
     );
   });
 
@@ -135,7 +133,7 @@ describe("updateOfferApprovalStatus", () => {
     await expectToUpdateStatusAndLogEvent(
       ApprovalStatus.approved,
       Secretary.graduados,
-      offerForGraduates
+      offers[ApplicantType.graduate]
     );
   });
 
@@ -143,7 +141,7 @@ describe("updateOfferApprovalStatus", () => {
     await expectToUpdateStatusAndLogEvent(
       ApprovalStatus.rejected,
       Secretary.graduados,
-      offerForGraduates
+      offers[ApplicantType.graduate]
     );
   });
 
@@ -151,7 +149,7 @@ describe("updateOfferApprovalStatus", () => {
     await expectToUpdateStatusAndLogEvent(
       ApprovalStatus.pending,
       Secretary.graduados,
-      offerForGraduates
+      offers[ApplicantType.graduate]
     );
   });
 
@@ -159,7 +157,7 @@ describe("updateOfferApprovalStatus", () => {
     await expectToUpdateStatusAndLogEvent(
       ApprovalStatus.approved,
       Secretary.graduados,
-      offerForStudentsAndGraduates
+      offers[ApplicantType.both]
     );
   });
 
@@ -167,7 +165,7 @@ describe("updateOfferApprovalStatus", () => {
     await expectToUpdateStatusAndLogEvent(
       ApprovalStatus.rejected,
       Secretary.graduados,
-      offerForStudentsAndGraduates
+      offers[ApplicantType.both]
     );
   });
 
@@ -175,14 +173,14 @@ describe("updateOfferApprovalStatus", () => {
     await expectToUpdateStatusAndLogEvent(
       ApprovalStatus.pending,
       Secretary.graduados,
-      offerForStudentsAndGraduates
+      offers[ApplicantType.both]
     );
   });
 
   it("throws an error if the offer is for graduates and the admin is from extension", async () => {
     const { apolloClient } = await TestClientGenerator.admin({ secretary: Secretary.extension });
     const { errors } = await performMutation(apolloClient, {
-      uuid: offerForGraduates.uuid,
+      uuid: offers[ApplicantType.graduate].uuid,
       approvalStatus: ApprovalStatus.approved
     });
     expect(errors![0].extensions!.data).toEqual({
@@ -193,7 +191,7 @@ describe("updateOfferApprovalStatus", () => {
   it("throws an error if the offer is for students and the admin is from graduados", async () => {
     const { apolloClient } = await TestClientGenerator.admin({ secretary: Secretary.graduados });
     const { errors } = await performMutation(apolloClient, {
-      uuid: offerForStudents.uuid,
+      uuid: offers[ApplicantType.student].uuid,
       approvalStatus: ApprovalStatus.approved
     });
     expect(errors![0].extensions!.data).toEqual({
@@ -203,7 +201,7 @@ describe("updateOfferApprovalStatus", () => {
 
   it("returns an error if no user is logged in", async () => {
     const { errors } = await performMutation(client.loggedOut(), {
-      uuid: offerForStudents.uuid,
+      uuid: offers[ApplicantType.student].uuid,
       approvalStatus: ApprovalStatus.approved
     });
     expect(errors![0].extensions!.data).toEqual({
@@ -214,7 +212,7 @@ describe("updateOfferApprovalStatus", () => {
   it("returns an error if the current user is an applicant", async () => {
     const { apolloClient } = await TestClientGenerator.applicant();
     const { errors } = await performMutation(apolloClient, {
-      uuid: offerForStudentsAndGraduates.uuid,
+      uuid: offers[ApplicantType.both].uuid,
       approvalStatus: ApprovalStatus.approved
     });
     expect(errors![0].extensions!.data).toEqual({
@@ -225,7 +223,7 @@ describe("updateOfferApprovalStatus", () => {
   it("returns an error if the current user is from a company", async () => {
     const { apolloClient } = await TestClientGenerator.company();
     const { errors } = await performMutation(apolloClient, {
-      uuid: offerForStudentsAndGraduates.uuid,
+      uuid: offers[ApplicantType.both].uuid,
       approvalStatus: ApprovalStatus.approved
     });
     expect(errors![0].extensions!.data).toEqual({
@@ -247,7 +245,7 @@ describe("updateOfferApprovalStatus", () => {
   it("returns an error if the approvalStatus is invalid", async () => {
     const { apolloClient } = await TestClientGenerator.admin();
     const { errors } = await performMutation(apolloClient, {
-      uuid: offerForStudentsAndGraduates.uuid,
+      uuid: offers[ApplicantType.both].uuid,
       approvalStatus: "invalidApprovalStatus"
     });
     expect(errors).not.toBeUndefined();

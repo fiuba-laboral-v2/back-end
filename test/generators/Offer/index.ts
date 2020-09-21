@@ -3,7 +3,7 @@ import { withOneSection } from "./withOneSection";
 import { AdminGenerator } from "$generators/Admin";
 import { OfferRepository } from "$models/Offer";
 import { ApplicantType } from "$models/Applicant";
-import { Admin } from "$models";
+import { Admin, Offer } from "$models";
 import { IOfferCareer } from "$models/Offer/OfferCareer";
 import { IOfferSection } from "$models/Offer/OfferSection";
 import { ApprovalStatus } from "$models/ApprovalStatus";
@@ -19,6 +19,12 @@ export interface IOfferInput {
 interface IUpdatedWithStatus {
   status: ApprovalStatus;
   admin: Admin;
+}
+
+export interface IForAllTargets {
+  [ApplicantType.student]: Offer;
+  [ApplicantType.graduate]: Offer;
+  [ApplicantType.both]: Offer;
 }
 
 export const OfferGenerator = {
@@ -74,7 +80,12 @@ export const OfferGenerator = {
         admin: graduadosAdmin,
         status: ApprovalStatus.approved
       });
-    }
+    },
+    forAllTargets: async (variables: IOfferInput): Promise<IForAllTargets> => ({
+      [ApplicantType.student]: await OfferGenerator.instance.forStudents(variables),
+      [ApplicantType.graduate]: await OfferGenerator.instance.forGraduates(variables),
+      [ApplicantType.both]: await OfferGenerator.instance.forStudentsAndGraduates(variables)
+    })
   },
   data: {
     withObligatoryData: (variables: IOfferInput) =>
