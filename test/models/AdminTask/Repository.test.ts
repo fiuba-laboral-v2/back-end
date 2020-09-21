@@ -50,6 +50,24 @@ describe("AdminTaskRepository", () => {
     expect(result.shouldFetchMore).toEqual(false);
   };
 
+  const expectToSortAllTasksFor = async (secretary: Secretary) => {
+    const result = await AdminTaskRepository.find({
+      adminTaskTypes: [
+        AdminTaskType.Applicant,
+        AdminTaskType.Company,
+        AdminTaskType.Offer,
+        AdminTaskType.JobApplication
+      ],
+      statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
+      secretary
+    });
+    expect(result.results.map(adminTask => adminTask.uuid)).toEqual(
+      setup.allTasksByDescUpdatedAtForSecretary(secretary).map(task => task.uuid)
+    );
+    expect(result.results).toBeSortedBy({ key: "updatedAt", order: "desc" });
+    expect(result.shouldFetchMore).toEqual(false);
+  };
+
   it("returns an empty array if no statuses are provided", async () => {
     const result = await AdminTaskRepository.find({
       adminTaskTypes: [AdminTaskType.Applicant],
@@ -244,23 +262,12 @@ describe("AdminTaskRepository", () => {
     );
   });
 
-  it("sorts all pending tasks by updatedAt in any status for extension secretary", async () => {
-    const secretary = setup.extensionAdmin.secretary;
-    const result = await AdminTaskRepository.find({
-      adminTaskTypes: [
-        AdminTaskType.Applicant,
-        AdminTaskType.Company,
-        AdminTaskType.Offer,
-        AdminTaskType.JobApplication
-      ],
-      statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
-      secretary
-    });
-    expect(result.results.map(adminTask => adminTask.uuid)).toEqual(
-      setup.allTasksByDescUpdatedAtForSecretary(secretary).map(task => task.uuid)
-    );
-    expect(result.results).toBeSortedBy({ key: "updatedAt", order: "desc" });
-    expect(result.shouldFetchMore).toEqual(false);
+  it("sorts all tasks by updatedAt in any status for extension secretary", async () => {
+    await expectToSortAllTasksFor(setup.extensionAdmin.secretary);
+  });
+
+  it("sorts all tasks by updatedAt in any status for graduados secretary", async () => {
+    await expectToSortAllTasksFor(setup.graduadosAdmin.secretary);
   });
 
   it("limits to itemsPerPage results", async () => {
