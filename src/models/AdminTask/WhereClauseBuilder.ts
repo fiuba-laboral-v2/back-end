@@ -3,6 +3,7 @@ import { Secretary } from "$models/Admin";
 import { IApprovalStatusOptions } from "$models/AdminTask/Interfaces";
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { ApplicantType } from "$models/Offer";
+import { Offer } from "$models";
 
 export const WhereClauseBuilder = {
   build: ({
@@ -45,7 +46,7 @@ export const WhereClauseBuilder = {
     return `
       "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
       OR "AdminTask"."targetApplicantType" = '${targetApplicantType}'
-      OR "AdminTask"."targetApplicantType" IS NULL
+      OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
     `;
   },
   getStatusWhereClause: (

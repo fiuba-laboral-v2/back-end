@@ -2,6 +2,7 @@ import { WhereClauseBuilder } from "$models/AdminTask/WhereClauseBuilder";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
 import { ApplicantType } from "$models/Offer";
+import { Offer } from "$models";
 
 describe("WhereClauseBuilder", () => {
   it("builds pending status where clause for graduados secretary", async () => {
@@ -23,7 +24,7 @@ describe("WhereClauseBuilder", () => {
       (
         "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
         OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
-        OR "AdminTask"."targetApplicantType" IS NULL
+        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
       )
     `);
   });
@@ -47,7 +48,7 @@ describe("WhereClauseBuilder", () => {
       (
         "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
         OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
-        OR "AdminTask"."targetApplicantType" IS NULL
+        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
       )
     `);
   });
@@ -89,7 +90,7 @@ describe("WhereClauseBuilder", () => {
       (
         "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
         OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
-        OR "AdminTask"."targetApplicantType" IS NULL
+        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
       )
     `);
   });
@@ -113,7 +114,7 @@ describe("WhereClauseBuilder", () => {
       (
         "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
         OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
-        OR "AdminTask"."targetApplicantType" IS NULL
+        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
       )
     `);
   });
@@ -137,7 +138,7 @@ describe("WhereClauseBuilder", () => {
       (
         "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
         OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
-        OR "AdminTask"."targetApplicantType" IS NULL
+        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
       )
     `);
   });
@@ -161,7 +162,7 @@ describe("WhereClauseBuilder", () => {
       (
         "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
         OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
-        OR "AdminTask"."targetApplicantType" IS NULL
+        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
       )
     `);
   });
@@ -186,7 +187,7 @@ describe("WhereClauseBuilder", () => {
       (
         "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
         OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
-        OR "AdminTask"."targetApplicantType" IS NULL
+        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
       )
     `);
   });
@@ -211,7 +212,7 @@ describe("WhereClauseBuilder", () => {
       (
         "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
         OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
-        OR "AdminTask"."targetApplicantType" IS NULL
+        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
       )
     `);
   });
@@ -236,7 +237,7 @@ describe("WhereClauseBuilder", () => {
       (
         "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
         OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
-        OR "AdminTask"."targetApplicantType" IS NULL
+        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
       )
     `);
   });
@@ -264,7 +265,7 @@ describe("WhereClauseBuilder", () => {
       (
         "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
         OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
-        OR "AdminTask"."targetApplicantType" IS NULL
+        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
       )
     `);
   });
@@ -292,7 +293,7 @@ describe("WhereClauseBuilder", () => {
       (
         "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
         OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
-        OR "AdminTask"."targetApplicantType" IS NULL
+        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
       )
     `);
   });
@@ -324,7 +325,7 @@ describe("WhereClauseBuilder", () => {
       (
         "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
         OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
-        OR "AdminTask"."targetApplicantType" IS NULL
+        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
       )
       AND (
         (
