@@ -1,4 +1,4 @@
-import { ApplicantType } from "$models/Offer";
+import { ApplicantType } from "$models/Applicant";
 
 export class OfferNotTargetedForApplicantError extends Error {
   public static buildMessage(applicantType: ApplicantType, targetApplicantType: ApplicantType) {

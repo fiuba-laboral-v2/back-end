@@ -1,7 +1,7 @@
 import { uuids } from "../../../uuids";
 import { sections } from "../sections";
 import { description } from "../description";
-import { ApplicantType } from "../../../../../models/Offer/Interface";
+import { ApplicantType } from "../../../../../models/Applicant/Interface";
 
 export const javaJunior = {
   offer: {

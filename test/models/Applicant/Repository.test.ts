@@ -15,7 +15,7 @@ import { ApplicantGenerator } from "$generators/Applicant";
 import { CareerGenerator } from "$generators/Career";
 import { AdminGenerator } from "$generators/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { ApplicantType } from "$models/Offer";
+import { ApplicantType } from "$models/Applicant";
 import { FiubaUsersService } from "$services/FiubaUsers";
 import { Secretary } from "$models/Admin";
 import { UUID_REGEX } from "$test/models";

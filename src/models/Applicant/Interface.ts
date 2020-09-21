@@ -33,3 +33,11 @@ export type TSection = {
   text: string;
   displayOrder: number;
 };
+
+export enum ApplicantType {
+  graduate = "graduate",
+  student = "student",
+  both = "both"
+}
+
+export const targetApplicantTypeEnumValues = Object.keys(ApplicantType);

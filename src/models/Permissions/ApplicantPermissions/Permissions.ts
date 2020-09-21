@@ -1,6 +1,6 @@
 import { Offer } from "$models";
 import { ApplicantRepository } from "$models/Applicant";
-import { ApplicantType } from "$models/Offer";
+import { ApplicantType } from "$models/Applicant";
 import { IPermission } from "../Interface";
 
 export class ApplicantPermissions implements IPermission {

@@ -1,7 +1,8 @@
 import { withObligatoryData } from "./withObligatoryData";
 import { withOneSection } from "./withOneSection";
 import { AdminGenerator } from "$generators/Admin";
-import { ApplicantType, OfferRepository } from "$models/Offer";
+import { OfferRepository } from "$models/Offer";
+import { ApplicantType } from "$models/Applicant";
 import { Admin } from "$models";
 import { IOfferCareer } from "$models/Offer/OfferCareer";
 import { IOfferSection } from "$models/Offer/OfferSection";

@@ -1,14 +1,7 @@
 import { IOfferSection } from "./OfferSection/Interface";
 import { IOfferCareer } from "./OfferCareer/Interface";
+import { ApplicantType } from "$models/Applicant";
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
-
-export enum ApplicantType {
-  graduate = "graduate",
-  student = "student",
-  both = "both"
-}
-
-export const targetApplicantTypeEnumValues = Object.keys(ApplicantType);
 
 export interface ICreateOffer {
   title: string;
