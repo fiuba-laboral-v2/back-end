@@ -1,7 +1,7 @@
 import { Boolean, nonNull, String } from "$graphql/fieldTypes";
 import { UserRepository } from "$models/User";
 import { JWT } from "$src/JWT";
-import { Context } from "$graphql/Context/graphqlContext";
+import { Context } from "$graphql/Context";
 import { AuthConfig } from "$config/AuthConfig";
 
 export const login = {

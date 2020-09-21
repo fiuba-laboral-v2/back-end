@@ -196,6 +196,7 @@ export const defaultTranslations = {
     { key: "pending", value: "Pendiente" }
   ],
   adminCompanyMainTitle: [{ key: "title", value: "Empresa" }],
+  adminCompanyListMainTitle: [{ key: "title", value: "Empresas" }],
   adminApplicantMainTitle: [{ key: "title", value: "Postulante" }],
   adminApplicantListMainTitle: [{ key: "title", value: "Postulantes" }],
   adminJobApplicationMainTitle: [{ key: "title", value: "Postulación" }],
@@ -213,6 +214,13 @@ export const defaultTranslations = {
     { key: "dni", value: "DNI" },
     { key: "studies", value: "Estudios" },
     { key: "state", value: "Estado" }
+  ],
+  adminCompanyListHeader: [
+    { key: "companyName", value: "Nombre" },
+    { key: "businessName", value: "Razón social" },
+    { key: "cuit", value: "CUIT" },
+    { key: "state", value: "Estado" },
+    { key: "updatedAt", value: "Última actualización" }
   ],
   statusLabel: [
     { key: "approved", value: "Aprobado" },

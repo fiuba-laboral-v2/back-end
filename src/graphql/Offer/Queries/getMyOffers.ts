@@ -1,6 +1,6 @@
 import { GraphQLOffer } from "../Types/GraphQLOffer";
 import { OfferRepository } from "$models/Offer";
-import { ICompanyUser } from "src/graphql/Context";
+import { CurrentUser } from "$models/CurrentUser";
 import {
   GraphQLPaginatedInput,
   IPaginatedInput
@@ -17,8 +17,12 @@ const getMyOffers = {
   resolve: (
     _: undefined,
     { updatedBeforeThan }: { updatedBeforeThan?: IPaginatedInput },
-    { currentUser }: { currentUser: ICompanyUser }
-  ) => OfferRepository.findAll({ companyUuid: currentUser.company.uuid, updatedBeforeThan })
+    { currentUser }: { currentUser: CurrentUser }
+  ) =>
+    OfferRepository.findAll({
+      companyUuid: currentUser.getCompany().companyUuid,
+      updatedBeforeThan
+    })
 };
 
 export { getMyOffers };

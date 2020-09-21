@@ -1,8 +1,8 @@
 import { gql } from "apollo-server";
-import { executeQuery } from "../../ApolloTestClient";
+import { client } from "$test/graphql/ApolloTestClient";
 import { MissingTranslationError } from "$models/Translation/Errors";
 
-const query = gql`
+const GET_TRANSLATIONS = gql`
   query getTranslations($translationGroup: String!) {
     getTranslations(translationGroup: $translationGroup) {
       key
@@ -12,9 +12,12 @@ const query = gql`
 `;
 
 describe("getTranslations", () => {
-  it("find translations given their translationGroup", async () => {
-    const { data, errors } = await executeQuery(query, {
-      translationGroup: "applicantProfileDetail"
+  it("finds translations given their translationGroup", async () => {
+    const { data, errors } = await client.loggedOut().query({
+      query: GET_TRANSLATIONS,
+      variables: {
+        translationGroup: "applicantProfileDetail"
+      }
     });
 
     expect(errors).toBeUndefined();
@@ -27,9 +30,12 @@ describe("getTranslations", () => {
     });
   });
 
-  it("should return an error if a translationGroup doesn't exist", async () => {
-    const { errors } = await executeQuery(query, {
-      translationGroup: "falalala"
+  it("returns an error if a translationGroup doesn't exist", async () => {
+    const { errors } = await client.loggedOut().query({
+      query: GET_TRANSLATIONS,
+      variables: {
+        translationGroup: "falalala"
+      }
     });
 
     expect(errors).toHaveLength(1);
