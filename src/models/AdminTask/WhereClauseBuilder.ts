@@ -55,11 +55,10 @@ export const WhereClauseBuilder = {
   ) => {
     const conditions: string[] = [];
     const columns: string[] = [];
-    const { includesSeparateApprovalModel, includesSharedApprovalModel } = includeStatus(
-      adminTaskTypes
-    );
-    if (includesSharedApprovalModel) columns.push("approvalStatus");
-    if (includesSeparateApprovalModel) {
+    if (intersection(adminTaskTypes, SharedApprovalAdminTaskTypes).length > 0) {
+      columns.push("approvalStatus");
+    }
+    if (intersection(adminTaskTypes, SeparateApprovalAdminTaskTypes).length > 0) {
       columns.push(
         secretary === Secretary.graduados ? "graduadosApprovalStatus" : "extensionApprovalStatus"
       );
@@ -72,15 +71,6 @@ export const WhereClauseBuilder = {
     }
     return conditions.join(" OR ");
   }
-};
-
-const includeStatus = (adminTaskTypes: AdminTaskType[]) => {
-  return {
-    includesSharedApprovalModel:
-      intersection(adminTaskTypes, SharedApprovalAdminTaskTypes).length >= 1,
-    includesSeparateApprovalModel:
-      intersection(adminTaskTypes, SeparateApprovalAdminTaskTypes).length >= 1
-  };
 };
 
 interface IWhereClauseBuilder {
