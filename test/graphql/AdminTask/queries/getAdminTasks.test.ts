@@ -150,7 +150,7 @@ describe("getAdminTasks", () => {
 
   it("returns only pending offers", async () => {
     await expectToFindAdminTaskWithStatuses(
-      [setup.pendingOffer],
+      [setup.pendingOfferForStudents],
       [ApprovalStatus.pending],
       setup.extensionAdmin.secretary
     );
@@ -158,7 +158,7 @@ describe("getAdminTasks", () => {
 
   it("returns only approved offers", async () => {
     await expectToFindAdminTaskWithStatuses(
-      [setup.approvedOffer],
+      [setup.approvedOfferForStudents],
       [ApprovalStatus.approved],
       setup.extensionAdmin.secretary
     );
@@ -166,7 +166,7 @@ describe("getAdminTasks", () => {
 
   it("returns only rejected offers", async () => {
     await expectToFindAdminTaskWithStatuses(
-      [setup.rejectedOffer],
+      [setup.rejectedOfferForStudents],
       [ApprovalStatus.rejected],
       setup.extensionAdmin.secretary
     );
@@ -229,6 +229,7 @@ describe("getAdminTasks", () => {
   });
 
   it("sorts all applicants, companies, offers and JobApplications in any status by updated timestamp", async () => {
+    const { secretary } = setup.extensionAdmin;
     const result = await getAdminTasks({
       adminTaskTypes: [
         AdminTaskType.Applicant,
@@ -237,20 +238,22 @@ describe("getAdminTasks", () => {
         AdminTaskType.JobApplication
       ],
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
-      secretary: setup.extensionAdmin.secretary
+      secretary
     });
     expect(result.results.map(adminTask => adminTask.uuid)).toEqual(
-      setup.allTasksByDescUpdatedAt.map(task => task.uuid)
+      setup.allTasksByDescUpdatedAtForSecretary(secretary).map(task => task.uuid)
     );
     expect(result.results).toBeSortedBy({ key: "updatedAt", order: "desc" });
     expect(result.shouldFetchMore).toEqual(false);
   });
 
   it("limits to itemsPerPage results", async () => {
+    const { secretary } = setup.extensionAdmin;
+    const allTasksByDescUpdatedAt = setup.allTasksByDescUpdatedAtForSecretary(secretary);
     const itemsPerPage = 6;
     mockItemsPerPage(itemsPerPage);
-    const lastTaskIndex = 27;
-    const lastTask = setup.allTasksByDescUpdatedAt[lastTaskIndex];
+    const lastTaskIndex = allTasksByDescUpdatedAt.length - 1;
+    const lastTask = allTasksByDescUpdatedAt[lastTaskIndex];
     const result = await getAdminTasks({
       adminTaskTypes: [
         AdminTaskType.Applicant,
@@ -263,11 +266,11 @@ describe("getAdminTasks", () => {
         dateTime: lastTask.updatedAt.toISOString(),
         uuid: lastTask.uuid
       },
-      secretary: setup.extensionAdmin.secretary
+      secretary
     });
     expect(result.shouldFetchMore).toEqual(false);
     expect(result.results.map(task => task.uuid)).toEqual(
-      setup.allTasksByDescUpdatedAt
+      allTasksByDescUpdatedAt
         .map(task => task.uuid)
         .slice(lastTaskIndex + 1, lastTaskIndex + 1 + itemsPerPage)
     );
