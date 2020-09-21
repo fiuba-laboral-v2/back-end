@@ -1,5 +1,5 @@
 import { ID, nonNull } from "$graphql/fieldTypes";
-import { OfferRepository } from "$models/Offer";
+import { OfferRepository, AdminCannotModerateOfferError } from "$models/Offer";
 import { GraphQLOffer } from "../Types/GraphQLOffer";
 import { CurrentUser } from "$models/CurrentUser";
 import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
@@ -21,7 +21,11 @@ export const updateOfferApprovalStatus = {
     { uuid, approvalStatus }: IUpdateOfferApprovalStatusArguments,
     { currentUser }: { currentUser: CurrentUser }
   ) => {
+    const offer = await OfferRepository.findByUuid(uuid);
     const admin = await AdminRepository.findByUserUuid(currentUser.getAdmin().adminUserUuid);
+    const canModerateOffer = await currentUser.getPermissions().canModerateOffer(offer);
+    if (!canModerateOffer) throw new AdminCannotModerateOfferError(admin, offer);
+
     return OfferRepository.updateApprovalStatus({
       uuid,
       admin,
