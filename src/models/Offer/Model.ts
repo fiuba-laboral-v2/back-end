@@ -21,7 +21,7 @@ import { Career, Company, OfferCareer, OfferSection, OfferApprovalEvent, Applica
 import { validateIntegerInRange, validateSalaryRange } from "validations-fiuba-laboral-v2";
 import { approvalStatuses, ApprovalStatus } from "$models/ApprovalStatus";
 import { isApprovalStatus, isTargetApplicantType } from "$models/SequelizeModelValidators";
-import { ApplicantType, targetApplicantTypeEnumValues } from "./Interface";
+import { ApplicantType, targetApplicantTypeEnumValues } from "$models/Applicant";
 
 @Table({
   tableName: "Offers",

@@ -1,5 +1,5 @@
 import { uuids } from "../../../uuids";
-import { ApplicantType } from "../../../../../models/Offer/Interface";
+import { ApplicantType } from "../../../../../models/Applicant/Interface";
 
 export const javaSenior = {
   offer: {

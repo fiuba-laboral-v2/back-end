@@ -11,7 +11,7 @@ import generateUuid from "uuid/v4";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { OfferNotUpdatedError } from "$models/Offer/Errors";
 import { Secretary } from "$models/Admin";
-import { ApplicantType } from "$models/Offer";
+import { ApplicantType } from "$models/Applicant";
 
 const EDIT_OFFER = gql`
   mutation editOffer(

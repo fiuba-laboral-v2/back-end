@@ -31,7 +31,7 @@ import {
   User
 } from "$models";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
-import { ApplicantType } from "$models/Offer";
+import { ApplicantType } from "$models/Applicant";
 import { isApprovalStatus } from "$models/SequelizeModelValidators";
 import { ApplicantWithNoCareersError } from "./Errors";
 

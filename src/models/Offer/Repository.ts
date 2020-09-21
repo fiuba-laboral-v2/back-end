@@ -1,7 +1,8 @@
 import { Database } from "$config";
 import { PaginationConfig } from "$config/PaginationConfig";
 import { Op } from "sequelize";
-import { IFindAll, IOffer, ApplicantType } from "./Interface";
+import { IFindAll, IOffer } from "./Interface";
+import { ApplicantType } from "$models/Applicant";
 import { ICreateOffer } from "$models/Offer/Interface";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { IOfferSection } from "./OfferSection";

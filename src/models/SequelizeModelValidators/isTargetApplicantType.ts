@@ -1,4 +1,4 @@
-import { targetApplicantTypeEnumValues } from "$models/Offer/Interface";
+import { targetApplicantTypeEnumValues } from "$models/Applicant/Interface";
 
 export const isTargetApplicantType = {
   validate: {

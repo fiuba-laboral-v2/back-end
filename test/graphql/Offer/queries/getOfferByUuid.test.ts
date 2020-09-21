@@ -7,7 +7,7 @@ import { JobApplicationRepository } from "$models/JobApplication";
 import { UserRepository } from "$models/User";
 import { OfferNotFoundError } from "$models/Offer/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { ApplicantType } from "$models/Offer";
+import { ApplicantType } from "$models/Applicant";
 import { Secretary } from "$models/Admin";
 import { Offer } from "$models";
 import { OfferNotVisibleByCurrentUserError } from "$graphql/Offer/Queries/Errors";

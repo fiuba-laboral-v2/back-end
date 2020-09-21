@@ -1,5 +1,6 @@
 import { IVariables } from "./interfaces";
-import { IOfferAttributes, ApplicantType } from "$models/Offer/Interface";
+import { IOfferAttributes } from "$models/Offer/Interface";
+import { ApplicantType } from "$models/Applicant";
 
 export const withObligatoryData = ({
   index,

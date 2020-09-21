@@ -1,6 +1,7 @@
 import { UniqueConstraintError, ValidationError } from "sequelize";
 import { CareerRepository } from "$models/Career";
-import { ApplicantType, OfferRepository } from "$models/Offer";
+import { OfferRepository } from "$models/Offer";
+import { ApplicantType } from "$models/Applicant";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
 import { Secretary } from "$models/Admin";
