@@ -131,6 +131,15 @@ describe("getOfferByUuid", () => {
     });
   };
 
+  const companyTestClient = async (approvalStatus: ApprovalStatus) => {
+    return TestClientGenerator.company({
+      status: {
+        approvalStatus,
+        admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+      }
+    });
+  };
+
   const getOffer = async (apolloClient: ApolloServerTestClient, offer: Offer) => {
     return apolloClient.query({
       query: GET_OFFER_BY_UUID,
@@ -187,15 +196,27 @@ describe("getOfferByUuid", () => {
     expect(errors![0].extensions!.data).toEqual({ errorType: error.name });
   };
 
-  it("returns an offer for the company", async () => {
-    const { company, apolloClient } = await TestClientGenerator.company({
-      status: {
-        approvalStatus: ApprovalStatus.approved,
-        admin: await AdminGenerator.instance({ secretary: Secretary.extension })
-      }
+  it("returns any offer for an admin", async () => {
+    const { apolloClient } = await TestClientGenerator.admin();
+    const anotherCompany = await CompanyGenerator.instance.withCompleteData();
+    const firstOffer = await OfferGenerator.instance.forStudents({ companyUuid });
+    const secondOffer = await OfferGenerator.instance.forStudents({
+      companyUuid: anotherCompany.uuid
     });
+    await expectToGetOffer(apolloClient, firstOffer);
+    await expectToGetOffer(apolloClient, secondOffer);
+  });
+
+  it("returns an offer that belong to my company", async () => {
+    const { company, apolloClient } = await companyTestClient(ApprovalStatus.approved);
     const offer = await OfferGenerator.instance.forStudents({ companyUuid: company.uuid });
     await expectToGetOffer(apolloClient, offer);
+  });
+
+  it("returns error if the offer does not belong to my company", async () => {
+    const { apolloClient } = await companyTestClient(ApprovalStatus.approved);
+    const offer = await OfferGenerator.instance.forStudents({ companyUuid });
+    await expectToReturnError(apolloClient, offer, OfferNotVisibleByCurrentUserError);
   });
 
   it("returns offer targeted to students for a student", async () => {
@@ -240,35 +261,75 @@ describe("getOfferByUuid", () => {
     await expectToReturnError(apolloClient, offer, OfferNotVisibleByCurrentUserError);
   });
 
-  it("returns error if the offer does not exists", async () => {
+  it("returns error if the offer does not exists for a current applicant", async () => {
     const offer = new Offer({ uuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da" });
     const { apolloClient } = await approvedApplicantTestClient(ApplicantType.graduate);
     await expectToReturnError(apolloClient, offer, OfferNotFoundError);
   });
 
-  it("finds an offer with hasApplied in true", async () => {
-    const { apolloClient, applicant } = await approvedApplicantTestClient(ApplicantType.both);
-    const offer = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
-    await JobApplicationRepository.apply(applicant, offer);
-    const { data, errors } = await apolloClient.query({
-      query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
-      variables: { uuid: offer.uuid }
-    });
-
-    expect(errors).toBeUndefined();
-    expect(data!.getOfferByUuid.hasApplied).toBe(true);
+  it("returns error if the offer does not exists for a current admin", async () => {
+    const offer = new Offer({ uuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da" });
+    const { apolloClient } = await TestClientGenerator.admin();
+    await expectToReturnError(apolloClient, offer, OfferNotFoundError);
   });
 
-  it("finds an offer with hasApplied in false", async () => {
-    const { apolloClient } = await approvedApplicantTestClient(ApplicantType.both);
-    const offer = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
-    const { data, errors } = await apolloClient.query({
-      query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
-      variables: { uuid: offer.uuid }
+  it("returns error if the offer does not exists for a current company user", async () => {
+    const offer = new Offer({ uuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da" });
+    const { apolloClient } = await companyTestClient(ApprovalStatus.approved);
+    await expectToReturnError(apolloClient, offer, OfferNotFoundError);
+  });
+
+  describe("hasApplied", () => {
+    it("finds an offer with hasApplied in true", async () => {
+      const { apolloClient, applicant } = await approvedApplicantTestClient(ApplicantType.both);
+      const offer = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
+      await JobApplicationRepository.apply(applicant, offer);
+      const { data, errors } = await apolloClient.query({
+        query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
+        variables: { uuid: offer.uuid }
+      });
+
+      expect(errors).toBeUndefined();
+      expect(data!.getOfferByUuid.hasApplied).toBe(true);
     });
 
-    expect(errors).toBeUndefined();
-    expect(data!.getOfferByUuid.hasApplied).toBe(false);
+    it("finds an offer with hasApplied in false", async () => {
+      const { apolloClient } = await approvedApplicantTestClient(ApplicantType.both);
+      const offer = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
+      const { data, errors } = await apolloClient.query({
+        query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
+        variables: { uuid: offer.uuid }
+      });
+
+      expect(errors).toBeUndefined();
+      expect(data!.getOfferByUuid.hasApplied).toBe(false);
+    });
+
+    it("return an error if a company request the hasApplied field", async () => {
+      const { company, apolloClient } = await companyTestClient(ApprovalStatus.approved);
+      const offer = await OfferGenerator.instance.forStudents({ companyUuid: company.uuid });
+      const { errors } = await apolloClient.query({
+        query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
+        variables: { uuid: offer.uuid }
+      });
+
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: UnauthorizedError.name
+      });
+    });
+
+    it("return an error if an admin request the hasApplied field", async () => {
+      const { apolloClient } = await TestClientGenerator.admin();
+      const offer = await OfferGenerator.instance.forStudents({ companyUuid });
+      const { errors } = await apolloClient.query({
+        query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
+        variables: { uuid: offer.uuid }
+      });
+
+      expect(errors![0].extensions!.data).toEqual({
+        errorType: UnauthorizedError.name
+      });
+    });
   });
 
   describe("query permissions", () => {
@@ -285,7 +346,7 @@ describe("getOfferByUuid", () => {
     });
 
     it("returns error if current user is from a pending company", async () => {
-      const { apolloClient } = await TestClientGenerator.company();
+      const { apolloClient } = await companyTestClient(ApprovalStatus.pending);
       const { errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID,
         variables: { uuid: generateUuid() }
@@ -297,12 +358,7 @@ describe("getOfferByUuid", () => {
     });
 
     it("returns error if current user is from a rejected company", async () => {
-      const { apolloClient } = await TestClientGenerator.company({
-        status: {
-          approvalStatus: ApprovalStatus.rejected,
-          admin: await AdminGenerator.instance({ secretary: Secretary.extension })
-        }
-      });
+      const { apolloClient } = await companyTestClient(ApprovalStatus.rejected);
       const { errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID,
         variables: { uuid: generateUuid() }
