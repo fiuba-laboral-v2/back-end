@@ -9,7 +9,8 @@ import { Admin, Applicant, Company, JobApplication, Offer } from "$models";
 import { AdminTask } from "$models/AdminTask";
 import { AdminGenerator } from "$generators/Admin";
 import { Secretary } from "$models/Admin";
-import { ApplicantType, OfferRepository } from "$models/Offer";
+import { ApplicantType } from "$models/Applicant";
+import { OfferRepository } from "$models/Offer";
 
 export class AdminTaskTestSetup {
   public graduadosApolloClient: ApolloServerTestClient;

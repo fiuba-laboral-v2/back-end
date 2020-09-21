@@ -1,7 +1,7 @@
 import { WhereClauseBuilder } from "$models/AdminTask/WhereClauseBuilder";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
-import { ApplicantType } from "$models/Offer";
+import { ApplicantType } from "$models/Applicant";
 import { Offer } from "$models";
 import { AdminTaskType } from "$models/AdminTask";
 
