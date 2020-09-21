@@ -40,13 +40,14 @@ describe("findAdminTasksQuery", () => {
     ) => {
       const limit = 15;
       const statuses = [status].flat();
+      const adminTaskTypes = [
+        AdminTaskType.Applicant,
+        AdminTaskType.Company,
+        AdminTaskType.Offer,
+        AdminTaskType.JobApplication
+      ];
       const query = findAdminTasksQuery({
-        adminTaskTypes: [
-          AdminTaskType.Applicant,
-          AdminTaskType.Company,
-          AdminTaskType.Offer,
-          AdminTaskType.JobApplication
-        ],
+        adminTaskTypes,
         statuses,
         limit,
         secretary,
@@ -131,12 +132,8 @@ describe("findAdminTasksQuery", () => {
       WHERE ${WhereClauseBuilder.build({
         statuses,
         secretary,
-        approvalStatusOptions: {
-          includesSharedApprovalModel: true,
-          includesSeparateApprovalModel: true
-        },
         updatedBeforeThan,
-        isTargeted: true
+        adminTaskTypes
       })}
       ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
       LIMIT ${limit}
@@ -330,11 +327,7 @@ describe("findAdminTasksQuery", () => {
       WHERE ${WhereClauseBuilder.build({
         statuses: [status],
         secretary,
-        approvalStatusOptions: {
-          includesSeparateApprovalModel: true,
-          includesSharedApprovalModel: false
-        },
-        isTargeted: true
+        adminTaskTypes: [AdminTaskType.Offer]
       })}
       ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
       LIMIT ${limit}
