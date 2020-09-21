@@ -1,17 +1,20 @@
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
-import { IApprovalStatusOptions } from "$models/AdminTask/Interfaces";
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
+import { ApplicantType } from "$models/Offer";
+import { Offer } from "$models";
+import {
+  AdminTaskType,
+  SeparateApprovalAdminTaskTypes,
+  SharedApprovalAdminTaskTypes
+} from "$models/AdminTask/Model";
+import intersection from "lodash/intersection";
 
 export const WhereClauseBuilder = {
-  build: (
-    statuses: ApprovalStatus[],
-    secretary: Secretary,
-    approvalStatusOptions: IApprovalStatusOptions,
-    updatedBeforeThan?: IPaginatedInput
-  ) =>
+  build: ({ statuses, secretary, adminTaskTypes, updatedBeforeThan }: IWhereClauseBuilder) =>
     [
-      WhereClauseBuilder.getStatusWhereClause(statuses, secretary, approvalStatusOptions),
+      WhereClauseBuilder.getStatusWhereClause(statuses, secretary, adminTaskTypes),
+      WhereClauseBuilder.getTargetWhereClause(secretary, adminTaskTypes),
       WhereClauseBuilder.getUpdatedAtWhereClause(updatedBeforeThan)
     ]
       .filter(clause => clause)
@@ -29,15 +32,33 @@ export const WhereClauseBuilder = {
       )
     `;
   },
+  getTargetWhereClause: (secretary: Secretary, adminTaskTypes: AdminTaskType[]) => {
+    if (!adminTaskTypes.includes(AdminTaskType.Offer)) return;
+
+    let targetApplicantType: ApplicantType;
+    if (secretary === Secretary.graduados) {
+      targetApplicantType = ApplicantType.graduate;
+    } else {
+      targetApplicantType = ApplicantType.student;
+    }
+
+    return `
+      "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
+      OR "AdminTask"."targetApplicantType" = '${targetApplicantType}'
+      OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
+    `;
+  },
   getStatusWhereClause: (
     statuses: ApprovalStatus[],
     secretary: Secretary,
-    { includesSharedApprovalModel, includesSeparateApprovalModel }: IApprovalStatusOptions
+    adminTaskTypes: AdminTaskType[]
   ) => {
     const conditions: string[] = [];
     const columns: string[] = [];
-    if (includesSharedApprovalModel) columns.push("approvalStatus");
-    if (includesSeparateApprovalModel) {
+    if (intersection(adminTaskTypes, SharedApprovalAdminTaskTypes).length > 0) {
+      columns.push("approvalStatus");
+    }
+    if (intersection(adminTaskTypes, SeparateApprovalAdminTaskTypes).length > 0) {
       columns.push(
         secretary === Secretary.graduados ? "graduadosApprovalStatus" : "extensionApprovalStatus"
       );
@@ -51,3 +72,10 @@ export const WhereClauseBuilder = {
     return conditions.join(" OR ");
   }
 };
+
+interface IWhereClauseBuilder {
+  statuses: ApprovalStatus[];
+  secretary: Secretary;
+  adminTaskTypes: AdminTaskType[];
+  updatedBeforeThan?: IPaginatedInput;
+}
