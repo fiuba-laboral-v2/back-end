@@ -49,31 +49,31 @@ describe("JobApplicationRepository", () => {
       });
     };
 
-    it("student applies to an offer for students", async () => {
+    it("allows student to apply to an offer for students", async () => {
       await expectToApply(student, offerForStudents);
     });
 
-    it("student applies to an offer for students and graduates", async () => {
+    it("allows student to apply to an offer for students and graduates", async () => {
       await expectToApply(student, offerForStudentsAndGraduates);
     });
 
-    it("graduate applies to an offer for graduates", async () => {
+    it("allows graduate to apply to an offer for graduates", async () => {
       await expectToApply(graduate, offerForGraduates);
     });
 
-    it("graduate applies to an offer for graduates and students", async () => {
+    it("allows graduate to apply to an offer for graduates and students", async () => {
       await expectToApply(graduate, offerForStudentsAndGraduates);
     });
 
-    it("student and graduate applies to an offer for graduates", async () => {
+    it("allows student and graduate to apply to an offer for graduates", async () => {
       await expectToApply(studentAndGraduate, offerForGraduates);
     });
 
-    it("student and graduate applies to an offer for students", async () => {
+    it("allows student and graduate to apply to an offer for students", async () => {
       await expectToApply(studentAndGraduate, offerForStudents);
     });
 
-    it("student and graduate applies to an offer for students and graduates", async () => {
+    it("allows student and graduate to apply to an offer for students and graduates", async () => {
       await expectToApply(studentAndGraduate, offerForStudentsAndGraduates);
     });
 

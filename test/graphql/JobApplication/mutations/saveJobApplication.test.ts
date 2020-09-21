@@ -125,37 +125,37 @@ describe("saveJobApplication", () => {
     });
   };
 
-  it("student applies to an offer for students", async () => {
+  it("allows student to apply to an offer for students", async () => {
     const { applicant, apolloClient } = studentClient;
     await expectToApply(apolloClient, offerForStudents, applicant);
   });
 
-  it("student applies to an offer for students and graduates", async () => {
+  it("allows student to apply to an offer for students and graduates", async () => {
     const { applicant, apolloClient } = studentClient;
     await expectToApply(apolloClient, offerForStudentsAndGraduates, applicant);
   });
 
-  it("graduate applies to an offer for graduates", async () => {
+  it("allows graduate to apply to an offer for graduates", async () => {
     const { applicant, apolloClient } = graduateClient;
     await expectToApply(apolloClient, offerForGraduates, applicant);
   });
 
-  it("graduate applies to an offer for graduates and students", async () => {
+  it("allows graduate to apply to an offer for graduates and students", async () => {
     const { applicant, apolloClient } = graduateClient;
     await expectToApply(apolloClient, offerForStudentsAndGraduates, applicant);
   });
 
-  it("student and graduate applies to an offer for graduates", async () => {
+  it("allows student and graduate to apply to an offer for graduates", async () => {
     const { applicant, apolloClient } = studentAndGraduateClient;
     await expectToApply(apolloClient, offerForGraduates, applicant);
   });
 
-  it("student and graduate applies to an offer for students", async () => {
+  it("allows student and graduate to apply to an offer for students", async () => {
     const { applicant, apolloClient } = studentAndGraduateClient;
     await expectToApply(apolloClient, offerForStudents, applicant);
   });
 
-  it("student and graduate applies to an offer for students and graduates", async () => {
+  it("allows student and graduate to apply to an offer for students and graduates", async () => {
     const { applicant, apolloClient } = studentAndGraduateClient;
     await expectToApply(apolloClient, offerForStudentsAndGraduates, applicant);
   });
