@@ -38,7 +38,7 @@ describe("CompanyPermissions", () => {
       anotherCompany = await CompanyGenerator.instance.withCompleteData();
     });
 
-    it("does not allow a company to moderate my offer for students", async () => {
+    it("does not allow a company to moderate its offer for students", async () => {
       const permissions = new CompanyPermissions(company.uuid);
       const offerForStudents = await OfferGenerator.instance.forStudents({
         companyUuid: company.uuid
@@ -46,7 +46,7 @@ describe("CompanyPermissions", () => {
       expect(await permissions.canModerateOffer(offerForStudents)).toBe(false);
     });
 
-    it("does not allow a company to moderate my offer for graduates", async () => {
+    it("does not allow a company to moderate its offer for graduates", async () => {
       const permissions = new CompanyPermissions(company.uuid);
       const offerForGraduates = await OfferGenerator.instance.forGraduates({
         companyUuid: company.uuid
@@ -54,7 +54,7 @@ describe("CompanyPermissions", () => {
       expect(await permissions.canModerateOffer(offerForGraduates)).toBe(false);
     });
 
-    it("does not allow a company to moderate my offer for both", async () => {
+    it("does not allow a company to moderate its offer for both", async () => {
       const permissions = new CompanyPermissions(company.uuid);
       const offerForStudentsAndGraduates = await OfferGenerator.instance.forStudentsAndGraduates({
         companyUuid: company.uuid

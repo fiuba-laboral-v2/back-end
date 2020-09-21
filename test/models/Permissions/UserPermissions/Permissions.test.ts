@@ -4,7 +4,7 @@ import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { Secretary } from "$models/Admin";
-import { Company, Admin, Applicant } from "$models";
+import { Company, Admin, Applicant, Offer } from "$models";
 
 import { OfferGenerator } from "$generators/Offer";
 import { CompanyGenerator } from "$generators/Company";
@@ -169,6 +169,204 @@ describe("UserPermissions", () => {
         const permissions = new UserPermissions(currentUser);
         expect(await permissions.canSeeOffer(firstOffer)).toBe(true);
         expect(await permissions.canSeeOffer(thirdOffer)).toBe(true);
+      });
+    });
+  });
+
+  describe("canModerateOffer", () => {
+    let offerForGraduates: Offer;
+    let offerForStudents: Offer;
+    let offerForStudentsAndGraduates: Offer;
+    let student: Applicant;
+    let graduate: Applicant;
+    let studentAndGraduate: Applicant;
+
+    beforeAll(async () => {
+      offerForGraduates = await OfferGenerator.instance.forGraduates({ companyUuid });
+      offerForStudents = await OfferGenerator.instance.forStudents({ companyUuid });
+      offerForStudentsAndGraduates = await OfferGenerator.instance.forStudentsAndGraduates({
+        companyUuid
+      });
+
+      student = await ApplicantGenerator.instance.student();
+      graduate = await ApplicantGenerator.instance.graduate();
+      studentAndGraduate = await ApplicantGenerator.instance.studentAndGraduate();
+    });
+
+    describe("when the current user is an admin", () => {
+      let currentGraduadosAdminUser: CurrentUser;
+      let currentExtensionAdminUser: CurrentUser;
+
+      beforeAll(async () => {
+        const { userUuid: graduadosUserUuid } = await AdminGenerator.graduados();
+        currentGraduadosAdminUser = new CurrentUser({
+          uuid: graduadosUserUuid,
+          email: "graduados@admin.com",
+          roles: [new AdminRole(graduadosUserUuid)]
+        });
+
+        const { userUuid: extensionUserUuid } = await AdminGenerator.extension();
+        currentExtensionAdminUser = new CurrentUser({
+          uuid: extensionUserUuid,
+          email: "extension@admin.com",
+          roles: [new AdminRole(extensionUserUuid)]
+        });
+      });
+
+      it("returns true if the offer is for students and the admin from extension", async () => {
+        const permissions = currentExtensionAdminUser.getPermissions();
+        expect(await permissions.canModerateOffer(offerForStudents)).toBe(true);
+      });
+
+      it("returns false if the offer is for graduates and the admin from extension", async () => {
+        const permissions = currentExtensionAdminUser.getPermissions();
+        expect(await permissions.canModerateOffer(offerForGraduates)).toBe(false);
+      });
+
+      it("returns true if the offer is for both and the admin from extension", async () => {
+        const permissions = currentExtensionAdminUser.getPermissions();
+        expect(await permissions.canModerateOffer(offerForStudentsAndGraduates)).toBe(true);
+      });
+
+      it("returns false if the offer is for students and the admin from graduados", async () => {
+        const permissions = currentGraduadosAdminUser.getPermissions();
+        expect(await permissions.canModerateOffer(offerForStudents)).toBe(false);
+      });
+
+      it("returns true if the offer is for graduates and the admin from graduados", async () => {
+        const permissions = currentGraduadosAdminUser.getPermissions();
+        expect(await permissions.canModerateOffer(offerForGraduates)).toBe(true);
+      });
+
+      it("returns true if the offer is for both and the admin from graduados", async () => {
+        const permissions = currentGraduadosAdminUser.getPermissions();
+        expect(await permissions.canModerateOffer(offerForStudentsAndGraduates)).toBe(true);
+      });
+    });
+
+    describe("when the current user is an applicant", () => {
+      let currentStudent: CurrentUser;
+      let currentGraduate: CurrentUser;
+      let currentStudentAndGraduate: CurrentUser;
+
+      beforeAll(async () => {
+        currentStudent = new CurrentUser({
+          uuid: student.userUuid,
+          email: "student@applicant.com",
+          roles: [new ApplicantRole(student.uuid)]
+        });
+
+        currentGraduate = new CurrentUser({
+          uuid: graduate.userUuid,
+          email: "graduate@applicant.com",
+          roles: [new ApplicantRole(graduate.uuid)]
+        });
+
+        currentStudentAndGraduate = new CurrentUser({
+          uuid: studentAndGraduate.userUuid,
+          email: "studentAndGraduate@applicant.com",
+          roles: [new ApplicantRole(studentAndGraduate.uuid)]
+        });
+      });
+
+      it("does not allow a student to moderate offer for students", async () => {
+        const permissions = currentStudent.getPermissions();
+        expect(await permissions.canModerateOffer(offerForStudents)).toBe(false);
+      });
+
+      it("does not allow a student to moderate offer for graduates", async () => {
+        const permissions = currentStudent.getPermissions();
+        expect(await permissions.canModerateOffer(offerForGraduates)).toBe(false);
+      });
+
+      it("does not allow a student to moderate offer for both", async () => {
+        const permissions = currentStudent.getPermissions();
+        expect(await permissions.canModerateOffer(offerForStudentsAndGraduates)).toBe(false);
+      });
+
+      it("does not allow a graduate to moderate offer for students", async () => {
+        const permissions = currentGraduate.getPermissions();
+        expect(await permissions.canModerateOffer(offerForStudents)).toBe(false);
+      });
+
+      it("does not allow a graduate to moderate offer for graduates", async () => {
+        const permissions = currentGraduate.getPermissions();
+        expect(await permissions.canModerateOffer(offerForGraduates)).toBe(false);
+      });
+
+      it("does not allow a graduate to moderate offer for both", async () => {
+        const permissions = currentGraduate.getPermissions();
+        expect(await permissions.canModerateOffer(offerForStudentsAndGraduates)).toBe(false);
+      });
+
+      it("does not allow a student and graduate to moderate offer for students", async () => {
+        const permissions = currentStudentAndGraduate.getPermissions();
+        expect(await permissions.canModerateOffer(offerForStudents)).toBe(false);
+      });
+
+      it("does not allow a student and graduate to moderate offer for graduates", async () => {
+        const permissions = currentStudentAndGraduate.getPermissions();
+        expect(await permissions.canModerateOffer(offerForGraduates)).toBe(false);
+      });
+
+      it("does not allow a student and graduate to moderate offer for both", async () => {
+        const permissions = currentStudentAndGraduate.getPermissions();
+        expect(await permissions.canModerateOffer(offerForStudentsAndGraduates)).toBe(false);
+      });
+    });
+
+    describe("when the current user is from a company", () => {
+      let currentCompanyUser: CurrentUser;
+      let anotherCompany: Company;
+
+      beforeAll(async () => {
+        const [user] = await company.getUsers();
+        currentCompanyUser = new CurrentUser({
+          uuid: user.uuid,
+          email: "company@mail.com",
+          roles: [new CompanyRole(company.uuid)]
+        });
+
+        anotherCompany = await CompanyGenerator.instance.withCompleteData();
+      });
+
+      it("does not allow a company to moderate its offer for students", async () => {
+        const permissions = currentCompanyUser.getPermissions();
+        expect(await permissions.canModerateOffer(offerForStudents)).toBe(false);
+      });
+
+      it("does not allow a company to moderate its offer for graduates", async () => {
+        const permissions = currentCompanyUser.getPermissions();
+        expect(await permissions.canModerateOffer(offerForGraduates)).toBe(false);
+      });
+
+      it("does not allow a company to moderate its offer for both", async () => {
+        const permissions = currentCompanyUser.getPermissions();
+        expect(await permissions.canModerateOffer(offerForStudentsAndGraduates)).toBe(false);
+      });
+
+      it("does not allow a company to moderate an offer for students", async () => {
+        const permissions = currentCompanyUser.getPermissions();
+        const offer = await OfferGenerator.instance.forStudents({
+          companyUuid: anotherCompany.uuid
+        });
+        expect(await permissions.canModerateOffer(offer)).toBe(false);
+      });
+
+      it("does not allow a company to moderate an offer for graduates", async () => {
+        const permissions = currentCompanyUser.getPermissions();
+        const offer = await OfferGenerator.instance.forGraduates({
+          companyUuid: anotherCompany.uuid
+        });
+        expect(await permissions.canModerateOffer(offer)).toBe(false);
+      });
+
+      it("does not allow a company to moderate an offer for both", async () => {
+        const permissions = currentCompanyUser.getPermissions();
+        const offer = await OfferGenerator.instance.forStudentsAndGraduates({
+          companyUuid: anotherCompany.uuid
+        });
+        expect(await permissions.canModerateOffer(offer)).toBe(false);
       });
     });
   });
