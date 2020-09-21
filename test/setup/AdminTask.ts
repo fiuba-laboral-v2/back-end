@@ -9,6 +9,7 @@ import { Admin, Applicant, Company, JobApplication, Offer } from "$models";
 import { AdminTask } from "$models/AdminTask";
 import { AdminGenerator } from "$generators/Admin";
 import { Secretary } from "$models/Admin";
+import { ApplicantType, OfferRepository } from "$models/Offer";
 
 export class AdminTaskTestSetup {
   public graduadosApolloClient: ApolloServerTestClient;
@@ -21,9 +22,17 @@ export class AdminTaskTestSetup {
   public approvedApplicant: Applicant;
   public rejectedApplicant: Applicant;
   public pendingApplicant: Applicant;
-  public approvedOffer: Offer;
-  public rejectedOffer: Offer;
-  public pendingOffer: Offer;
+
+  public approvedOfferForStudents: Offer;
+  public approvedOfferForGraduates: Offer;
+  public approvedOfferForBoth: Offer;
+  public rejectedOfferForStudents: Offer;
+  public rejectedOfferForGraduates: Offer;
+  public rejectedOfferForBoth: Offer;
+  public pendingOfferForStudents: Offer;
+  public pendingOfferForGraduates: Offer;
+  public pendingOfferForBoth: Offer;
+
   public approvedByExtensionJobApplication: JobApplication;
   public rejectedByExtensionJobApplication: JobApplication;
   public pendingByExtensionJobApplication: JobApplication;
@@ -64,23 +73,7 @@ export class AdminTaskTestSetup {
 
     this.pendingApplicant = await ApplicantGenerator.instance.updatedWithStatus();
 
-    this.rejectedOffer = await OfferGenerator.instance.updatedWithStatus({
-      admin: this.extensionAdmin,
-      companyUuid: this.approvedCompany.uuid,
-      status: ApprovalStatus.rejected
-    });
-
-    this.approvedOffer = await OfferGenerator.instance.updatedWithStatus({
-      admin: this.extensionAdmin,
-      companyUuid: this.approvedCompany.uuid,
-      status: ApprovalStatus.approved
-    });
-
-    this.pendingOffer = await OfferGenerator.instance.updatedWithStatus({
-      admin: this.extensionAdmin,
-      companyUuid: this.approvedCompany.uuid,
-      status: ApprovalStatus.pending
-    });
+    const offers = await this.setOffers();
 
     this.pendingByExtensionJobApplication = await JobApplicationGenerator.instance.updatedWithStatus(
       { admin: this.extensionAdmin, status: ApprovalStatus.pending }
@@ -113,9 +106,7 @@ export class AdminTaskTestSetup {
       this.rejectedApplicant,
       this.approvedApplicant,
       this.pendingApplicant,
-      this.rejectedOffer,
-      this.approvedOffer,
-      this.pendingOffer,
+      ...offers,
       ...(await this.getJobApplicationAssociations(this.pendingByExtensionJobApplication)),
       ...(await this.getJobApplicationAssociations(this.approvedByExtensionJobApplication)),
       ...(await this.getJobApplicationAssociations(this.rejectedByExtensionJobApplication)),
@@ -125,9 +116,124 @@ export class AdminTaskTestSetup {
     ].sort(task => -task.updatedAt);
   }
 
+  public allTasksByDescUpdatedAtForSecretary(secretary: Secretary) {
+    let targetApplicantType: ApplicantType;
+    if (secretary === Secretary.graduados) {
+      targetApplicantType = ApplicantType.graduate;
+    } else {
+      targetApplicantType = ApplicantType.student;
+    }
+    const posibleTargets = [ApplicantType.both, targetApplicantType];
+    return this.allTasksByDescUpdatedAt
+      .filter(task => {
+        if (!(task instanceof Offer)) return true;
+        return posibleTargets.includes(task.targetApplicantType);
+      })
+      .sort((task1, task2) => {
+        if (task1.updatedAt !== task2.updatedAt) {
+          return task1.updatedAt < task2.updatedAt ? 1 : -1;
+        }
+        return task1.uuid < task2.uuid ? 1 : -1;
+      });
+  }
+
   public getApolloClient(secretary: Secretary) {
     if (secretary === Secretary.graduados) return this.graduadosApolloClient;
     return this.extensionApolloClient;
+  }
+
+  private async setOffers() {
+    this.rejectedOfferForStudents = await OfferGenerator.instance.updatedWithStatus({
+      admin: this.extensionAdmin,
+      companyUuid: this.approvedCompany.uuid,
+      status: ApprovalStatus.rejected,
+      targetApplicantType: ApplicantType.student
+    });
+
+    this.rejectedOfferForGraduates = await OfferGenerator.instance.updatedWithStatus({
+      admin: this.graduadosAdmin,
+      companyUuid: this.approvedCompany.uuid,
+      status: ApprovalStatus.rejected,
+      targetApplicantType: ApplicantType.graduate
+    });
+
+    this.rejectedOfferForBoth = await OfferGenerator.instance.updatedWithStatus({
+      admin: this.graduadosAdmin,
+      companyUuid: this.approvedCompany.uuid,
+      status: ApprovalStatus.rejected,
+      targetApplicantType: ApplicantType.both
+    });
+    this.rejectedOfferForBoth = await OfferRepository.updateApprovalStatus({
+      uuid: this.rejectedOfferForBoth.uuid,
+      admin: this.extensionAdmin,
+      status: ApprovalStatus.rejected
+    });
+
+    this.approvedOfferForStudents = await OfferGenerator.instance.updatedWithStatus({
+      admin: this.extensionAdmin,
+      companyUuid: this.approvedCompany.uuid,
+      status: ApprovalStatus.approved,
+      targetApplicantType: ApplicantType.student
+    });
+
+    this.approvedOfferForGraduates = await OfferGenerator.instance.updatedWithStatus({
+      admin: this.graduadosAdmin,
+      companyUuid: this.approvedCompany.uuid,
+      status: ApprovalStatus.approved,
+      targetApplicantType: ApplicantType.graduate
+    });
+
+    this.approvedOfferForBoth = await OfferGenerator.instance.updatedWithStatus({
+      admin: this.graduadosAdmin,
+      companyUuid: this.approvedCompany.uuid,
+      status: ApprovalStatus.approved,
+      targetApplicantType: ApplicantType.both
+    });
+
+    this.approvedOfferForBoth = await OfferRepository.updateApprovalStatus({
+      uuid: this.approvedOfferForBoth.uuid,
+      admin: this.extensionAdmin,
+      status: ApprovalStatus.approved
+    });
+
+    this.pendingOfferForStudents = await OfferGenerator.instance.updatedWithStatus({
+      admin: this.extensionAdmin,
+      companyUuid: this.approvedCompany.uuid,
+      status: ApprovalStatus.pending,
+      targetApplicantType: ApplicantType.student
+    });
+
+    this.pendingOfferForGraduates = await OfferGenerator.instance.updatedWithStatus({
+      admin: this.graduadosAdmin,
+      companyUuid: this.approvedCompany.uuid,
+      status: ApprovalStatus.pending,
+      targetApplicantType: ApplicantType.graduate
+    });
+
+    this.pendingOfferForBoth = await OfferGenerator.instance.updatedWithStatus({
+      admin: this.graduadosAdmin,
+      companyUuid: this.approvedCompany.uuid,
+      status: ApprovalStatus.pending,
+      targetApplicantType: ApplicantType.both
+    });
+
+    this.pendingOfferForBoth = await OfferRepository.updateApprovalStatus({
+      uuid: this.pendingOfferForBoth.uuid,
+      admin: this.extensionAdmin,
+      status: ApprovalStatus.pending
+    });
+
+    return [
+      this.approvedOfferForStudents,
+      this.approvedOfferForGraduates,
+      this.approvedOfferForBoth,
+      this.rejectedOfferForStudents,
+      this.rejectedOfferForGraduates,
+      this.rejectedOfferForBoth,
+      this.pendingOfferForStudents,
+      this.pendingOfferForGraduates,
+      this.pendingOfferForBoth
+    ];
   }
 
   private async setAdmins() {

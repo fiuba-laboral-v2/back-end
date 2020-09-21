@@ -9,8 +9,3 @@ export interface IAdminTasksFilter {
   updatedBeforeThan?: IPaginatedInput;
   secretary: Secretary;
 }
-
-export interface IApprovalStatusOptions {
-  includesSharedApprovalModel: boolean;
-  includesSeparateApprovalModel: boolean;
-}

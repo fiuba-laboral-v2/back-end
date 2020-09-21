@@ -10,7 +10,7 @@ import { CompanyGenerator } from "$generators/Company";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import { Secretary } from "$models/Admin";
 import MockDate from "mockdate";
-import { range } from "lodash";
+import { range, uniq } from "lodash";
 import { OfferRepository } from "$models/Offer";
 
 describe("AdminTaskRepository", () => {
@@ -25,21 +25,46 @@ describe("AdminTaskRepository", () => {
     await setup.execute();
   });
 
+  const findAdminTasks = (
+    adminTasks: AdminTask[],
+    statuses: ApprovalStatus[],
+    secretary: Secretary
+  ) =>
+    AdminTaskRepository.find({
+      adminTaskTypes: uniq(adminTasks.map(adminTask => adminTask.constructor.name)) as any,
+      statuses,
+      secretary
+    });
+
   const expectToFindAdminTasksWithStatuses = async (
     adminTasks: AdminTask[],
     statuses: ApprovalStatus[],
     secretary: Secretary
   ) => {
-    const result = await AdminTaskRepository.find({
-      adminTaskTypes: adminTasks.map(adminTask => adminTask.constructor.name) as any,
-      statuses,
-      secretary
-    });
+    const result = await findAdminTasks(adminTasks, statuses, secretary);
     expect(result.results).toEqual(
       expect.arrayContaining(
         adminTasks.map(adminTask => expect.objectContaining(adminTask.toJSON()))
       )
     );
+    expect(result.shouldFetchMore).toEqual(false);
+  };
+
+  const expectToSortAllTasksFor = async (secretary: Secretary) => {
+    const result = await AdminTaskRepository.find({
+      adminTaskTypes: [
+        AdminTaskType.Applicant,
+        AdminTaskType.Company,
+        AdminTaskType.Offer,
+        AdminTaskType.JobApplication
+      ],
+      statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
+      secretary
+    });
+    expect(result.results.map(adminTask => adminTask.uuid)).toEqual(
+      setup.allTasksByDescUpdatedAtForSecretary(secretary).map(task => task.uuid)
+    );
+    expect(result.results).toBeSortedBy({ key: "updatedAt", order: "desc" });
     expect(result.shouldFetchMore).toEqual(false);
   };
 
@@ -118,27 +143,51 @@ describe("AdminTaskRepository", () => {
     );
   });
 
-  it("returns only pending offers", async () => {
+  it("returns only pending offers targeted for students", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.pendingOffer],
+      [setup.pendingOfferForStudents, setup.pendingOfferForBoth],
       [ApprovalStatus.pending],
       setup.extensionAdmin.secretary
     );
   });
 
-  it("returns only approved offers", async () => {
+  it("returns only pending offers targeted for graduates", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.approvedOffer],
+      [setup.pendingOfferForGraduates, setup.pendingOfferForBoth],
+      [ApprovalStatus.pending],
+      setup.graduadosAdmin.secretary
+    );
+  });
+
+  it("returns only approved offers targeted for students", async () => {
+    await expectToFindAdminTasksWithStatuses(
+      [setup.approvedOfferForStudents, setup.approvedOfferForBoth],
       [ApprovalStatus.approved],
       setup.extensionAdmin.secretary
     );
   });
 
-  it("returns only rejected offers", async () => {
+  it("returns only approved offers targeted for graduates", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.rejectedOffer],
+      [setup.approvedOfferForGraduates, setup.approvedOfferForBoth],
+      [ApprovalStatus.approved],
+      setup.graduadosAdmin.secretary
+    );
+  });
+
+  it("returns only rejected offers targeted for students", async () => {
+    await expectToFindAdminTasksWithStatuses(
+      [setup.rejectedOfferForStudents, setup.rejectedOfferForBoth],
       [ApprovalStatus.rejected],
       setup.extensionAdmin.secretary
+    );
+  });
+
+  it("returns only rejected offers targeted for graduates", async () => {
+    await expectToFindAdminTasksWithStatuses(
+      [setup.rejectedOfferForGraduates, setup.rejectedOfferForBoth],
+      [ApprovalStatus.rejected],
+      setup.graduadosAdmin.secretary
     );
   });
 
@@ -192,7 +241,7 @@ describe("AdminTaskRepository", () => {
 
   it("returns only pending applicants, companies and Offers", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.pendingCompany, setup.pendingApplicant, setup.pendingOffer],
+      [setup.pendingCompany, setup.pendingApplicant, setup.pendingOfferForStudents],
       [ApprovalStatus.pending],
       setup.extensionAdmin.secretary
     );
@@ -205,30 +254,20 @@ describe("AdminTaskRepository", () => {
         setup.rejectedCompany,
         setup.approvedApplicant,
         setup.rejectedApplicant,
-        setup.approvedOffer,
-        setup.rejectedOffer
+        setup.approvedOfferForStudents,
+        setup.rejectedOfferForStudents
       ],
       [ApprovalStatus.approved, ApprovalStatus.rejected],
       setup.extensionAdmin.secretary
     );
   });
 
-  it("sorts pending applicants, companies, offers and jobApplications by updatedAt in any status", async () => {
-    const result = await AdminTaskRepository.find({
-      adminTaskTypes: [
-        AdminTaskType.Applicant,
-        AdminTaskType.Company,
-        AdminTaskType.Offer,
-        AdminTaskType.JobApplication
-      ],
-      statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
-      secretary: setup.extensionAdmin.secretary
-    });
-    expect(result.results.map(adminTask => adminTask.uuid)).toEqual(
-      setup.allTasksByDescUpdatedAt.map(task => task.uuid)
-    );
-    expect(result.results).toBeSortedBy({ key: "updatedAt", order: "desc" });
-    expect(result.shouldFetchMore).toEqual(false);
+  it("sorts all tasks by updatedAt in any status for extension secretary", async () => {
+    await expectToSortAllTasksFor(setup.extensionAdmin.secretary);
+  });
+
+  it("sorts all tasks by updatedAt in any status for graduados secretary", async () => {
+    await expectToSortAllTasksFor(setup.graduadosAdmin.secretary);
   });
 
   it("limits to itemsPerPage results", async () => {

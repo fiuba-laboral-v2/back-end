@@ -7,9 +7,6 @@ import { Secretary } from "$models/Admin";
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 
 describe("findAdminTasksQuery", () => {
-  const secretaryColumn = (secretary: Secretary) =>
-    secretary === Secretary.graduados ? "graduadosApprovalStatus" : "extensionApprovalStatus";
-
   it("throws an error if no adminTaskTypes are provided", async () => {
     expect(() =>
       findAdminTasksQuery({
@@ -43,13 +40,14 @@ describe("findAdminTasksQuery", () => {
     ) => {
       const limit = 15;
       const statuses = [status].flat();
+      const adminTaskTypes = [
+        AdminTaskType.Applicant,
+        AdminTaskType.Company,
+        AdminTaskType.Offer,
+        AdminTaskType.JobApplication
+      ];
       const query = findAdminTasksQuery({
-        adminTaskTypes: [
-          AdminTaskType.Applicant,
-          AdminTaskType.Company,
-          AdminTaskType.Offer,
-          AdminTaskType.JobApplication
-        ],
+        adminTaskTypes,
         statuses,
         limit,
         secretary,
@@ -131,12 +129,12 @@ describe("findAdminTasksQuery", () => {
         )
       )
       SELECT * FROM "AdminTask"
-      WHERE ${WhereClauseBuilder.build(
+      WHERE ${WhereClauseBuilder.build({
         statuses,
         secretary,
-        { includesSharedApprovalModel: true, includesSeparateApprovalModel: true },
-        updatedBeforeThan
-      )}
+        updatedBeforeThan,
+        adminTaskTypes
+      })}
       ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
       LIMIT ${limit}
     `;
@@ -326,9 +324,11 @@ describe("findAdminTasksQuery", () => {
         FROM (SELECT *, 'Offers' AS "tableNameColumn" FROM "Offers" ) AS Offers
       )
       SELECT * FROM "AdminTask"
-      WHERE (
-        "AdminTask"."${secretaryColumn(secretary)}" = '${status}'
-      )
+      WHERE ${WhereClauseBuilder.build({
+        statuses: [status],
+        secretary,
+        adminTaskTypes: [AdminTaskType.Offer]
+      })}
       ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
       LIMIT ${limit}
     `;
