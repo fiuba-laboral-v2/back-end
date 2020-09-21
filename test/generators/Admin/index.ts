@@ -1,6 +1,6 @@
 import { AdminRepository, Secretary } from "$models/Admin";
 import { withCompleteData } from "./withCompleteData";
-import { IAdminGeneratorAttributes } from "$generators/interfaces";
+import { IAdminGeneratorAttributes, IUserGeneratorAttributes } from "$generators/interfaces";
 
 export const AdminGenerator = {
   index: 0,
@@ -16,6 +16,10 @@ export const AdminGenerator = {
         ...variables
       })
     ),
+  extension: (variables?: IUserGeneratorAttributes) =>
+    AdminGenerator.instance({ secretary: Secretary.extension, ...variables }),
+  graduados: (variables?: IUserGeneratorAttributes) =>
+    AdminGenerator.instance({ secretary: Secretary.graduados, ...variables }),
   data: (secretary: Secretary) =>
     withCompleteData({
       index: AdminGenerator.getIndex(),

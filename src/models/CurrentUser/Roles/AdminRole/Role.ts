@@ -9,6 +9,6 @@ export class AdminRole implements IRole {
   }
 
   public getPermissions() {
-    return new AdminPermissions();
+    return new AdminPermissions(this.adminUserUuid);
   }
 }
