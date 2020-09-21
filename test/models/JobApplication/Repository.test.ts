@@ -2,7 +2,6 @@ import { ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
 import { CareerRepository } from "$models/Career";
 import { CompanyRepository } from "$models/Company";
 import { OfferRepository } from "$models/Offer";
-import { ApplicantType } from "$models/Applicant";
 import { JobApplicationRepository, JobApplicationNotFoundError } from "$models/JobApplication";
 import { Admin, Applicant, Company, JobApplication, Offer } from "$models";
 import { UserRepository } from "$models/User";
@@ -80,8 +79,6 @@ describe("JobApplicationRepository", () => {
 
     it("throws an error if given applicantUuid that does not exist", async () => {
       const applicant = new Applicant();
-      jest.spyOn(applicant, "getType").mockResolvedValueOnce(ApplicantType.student);
-      jest.spyOn(offerForStudents, "applicantCanApply").mockResolvedValueOnce(true);
       await expect(
         JobApplicationRepository.apply(applicant, offerForStudents)
       ).rejects.toThrowErrorWithMessage(
