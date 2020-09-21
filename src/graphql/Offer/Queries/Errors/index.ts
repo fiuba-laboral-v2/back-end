@@ -1,1 +1,1 @@
-export { OfferNotVisibleByApplicantError } from "./OfferNotVisibleByApplicantError";
+export { OfferNotVisibleByCurrentUserError } from "./OfferNotVisibleByCurrentUserError";

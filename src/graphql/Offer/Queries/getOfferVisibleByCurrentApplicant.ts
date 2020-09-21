@@ -3,7 +3,7 @@ import { ID, nonNull } from "$graphql/fieldTypes";
 import { OfferRepository } from "$models/Offer";
 import { CurrentUser } from "$models/CurrentUser";
 import { ApplicantRepository } from "$models/Applicant";
-import { OfferNotVisibleByApplicantError } from "./Errors";
+import { OfferNotVisibleByCurrentUserError } from "./Errors";
 
 export const getOfferVisibleByCurrentApplicant = {
   type: GraphQLOffer,
@@ -21,7 +21,7 @@ export const getOfferVisibleByCurrentApplicant = {
       currentUser.getApplicant().applicantUuid
     );
     const offer = await OfferRepository.findByUuid(uuid);
-    if (!(await offer.applicantCanApply(applicant))) throw new OfferNotVisibleByApplicantError();
+    if (!(await offer.applicantCanApply(applicant))) throw new OfferNotVisibleByCurrentUserError();
     return offer;
   }
 };

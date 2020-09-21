@@ -208,16 +208,6 @@ describe("getOfferByUuid", () => {
       await expectAuthenticationError(apolloClient);
     });
 
-    it("returns an error if the current user is an approved applicant", async () => {
-      const { apolloClient } = await TestClientGenerator.applicant({
-        status: {
-          admin,
-          approvalStatus: ApprovalStatus.approved
-        }
-      });
-      await expectUnauthorizedError(apolloClient);
-    });
-
     it("returns an error if the current user is a rejected applicant", async () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
