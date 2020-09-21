@@ -148,27 +148,51 @@ describe("getAdminTasks", () => {
     );
   });
 
-  it("returns only pending offers", async () => {
+  it("returns only pending offers targeted for students", async () => {
     await expectToFindAdminTaskWithStatuses(
-      [setup.pendingOfferForStudents],
+      [setup.pendingOfferForStudents, setup.pendingOfferForBoth],
       [ApprovalStatus.pending],
       setup.extensionAdmin.secretary
     );
   });
 
-  it("returns only approved offers", async () => {
+  it("returns only pending offers targeted for graduates", async () => {
     await expectToFindAdminTaskWithStatuses(
-      [setup.approvedOfferForStudents],
+      [setup.pendingOfferForGraduates, setup.pendingOfferForBoth],
+      [ApprovalStatus.pending],
+      setup.graduadosAdmin.secretary
+    );
+  });
+
+  it("returns only approved offers targeted for students", async () => {
+    await expectToFindAdminTaskWithStatuses(
+      [setup.approvedOfferForStudents, setup.approvedOfferForBoth],
       [ApprovalStatus.approved],
       setup.extensionAdmin.secretary
     );
   });
 
-  it("returns only rejected offers", async () => {
+  it("returns only approved offers targeted for graduates", async () => {
     await expectToFindAdminTaskWithStatuses(
-      [setup.rejectedOfferForStudents],
+      [setup.approvedOfferForGraduates, setup.approvedOfferForBoth],
+      [ApprovalStatus.approved],
+      setup.graduadosAdmin.secretary
+    );
+  });
+
+  it("returns only rejected offers targeted for students", async () => {
+    await expectToFindAdminTaskWithStatuses(
+      [setup.rejectedOfferForStudents, setup.rejectedOfferForBoth],
       [ApprovalStatus.rejected],
       setup.extensionAdmin.secretary
+    );
+  });
+
+  it("returns only rejected offers targeted for graduates", async () => {
+    await expectToFindAdminTaskWithStatuses(
+      [setup.rejectedOfferForGraduates, setup.rejectedOfferForBoth],
+      [ApprovalStatus.rejected],
+      setup.graduadosAdmin.secretary
     );
   });
 
