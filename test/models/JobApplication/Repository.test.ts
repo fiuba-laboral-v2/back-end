@@ -87,10 +87,7 @@ describe("JobApplicationRepository", () => {
         JobApplicationRepository.apply(student, offerForGraduates)
       ).rejects.toThrowErrorWithMessage(
         OfferNotTargetedForApplicantError,
-        OfferNotTargetedForApplicantError.buildMessage(
-          await student.getType(),
-          offerForGraduates.targetApplicantType
-        )
+        OfferNotTargetedForApplicantError.buildMessage()
       );
     });
 
@@ -99,10 +96,7 @@ describe("JobApplicationRepository", () => {
         JobApplicationRepository.apply(graduate, offerForStudents)
       ).rejects.toThrowErrorWithMessage(
         OfferNotTargetedForApplicantError,
-        OfferNotTargetedForApplicantError.buildMessage(
-          await graduate.getType(),
-          offerForStudents.targetApplicantType
-        )
+        OfferNotTargetedForApplicantError.buildMessage()
       );
     });
 
