@@ -4,8 +4,7 @@ import {
   AdminTaskType,
   TABLE_NAME_COLUMN,
   SeparateApprovalAdminTaskTypes,
-  SharedApprovalAdminTaskTypes,
-  targetedAdminTasks
+  SharedApprovalAdminTaskTypes
 } from "./Model";
 import { IAdminTasksFilter } from "./Interfaces";
 import { AdminTaskTypesIsEmptyError, StatusesIsEmptyError } from "./Errors";
@@ -80,7 +79,7 @@ export const findAdminTasksQuery = ({
       secretary,
       approvalStatusOptions,
       updatedBeforeThan,
-      isTargeted: intersection(adminTaskTypes, targetedAdminTasks).length > 0
+      isTargeted: adminTaskTypes.includes(AdminTaskType.Offer)
     })}
     ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
     LIMIT ${limit}
