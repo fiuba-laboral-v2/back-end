@@ -3,11 +3,7 @@ import { CareerRepository } from "$models/Career";
 import { CompanyRepository } from "$models/Company";
 import { OfferRepository } from "$models/Offer";
 import { ApplicantType } from "$models/Applicant";
-import {
-  JobApplicationRepository,
-  JobApplicationNotFoundError,
-  OfferNotTargetedForApplicantError
-} from "$models/JobApplication";
+import { JobApplicationRepository, JobApplicationNotFoundError } from "$models/JobApplication";
 import { Admin, Applicant, Company, JobApplication, Offer } from "$models";
 import { UserRepository } from "$models/User";
 import { JobApplicationGenerator } from "$generators/JobApplication";
@@ -80,24 +76,6 @@ describe("JobApplicationRepository", () => {
 
     it("student and graduate applies to an offer for students and graduates", async () => {
       await expectToApply(studentAndGraduate, offerForStudentsAndGraduates);
-    });
-
-    it("throws an error if a student applies to an offer for graduates", async () => {
-      await expect(
-        JobApplicationRepository.apply(student, offerForGraduates)
-      ).rejects.toThrowErrorWithMessage(
-        OfferNotTargetedForApplicantError,
-        OfferNotTargetedForApplicantError.buildMessage()
-      );
-    });
-
-    it("throws an error if graduate applies to an offer for students", async () => {
-      await expect(
-        JobApplicationRepository.apply(graduate, offerForStudents)
-      ).rejects.toThrowErrorWithMessage(
-        OfferNotTargetedForApplicantError,
-        OfferNotTargetedForApplicantError.buildMessage()
-      );
     });
 
     it("throws an error if given applicantUuid that does not exist", async () => {
