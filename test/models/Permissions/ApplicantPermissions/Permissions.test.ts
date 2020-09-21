@@ -88,7 +88,6 @@ describe("ApplicantPermissions", () => {
   });
 
   describe("canModerateOffer", () => {
-    let companyUuid: string;
     let offerForGraduates: Offer;
     let offerForStudents: Offer;
     let offerForStudentsAndGraduates: Offer;
@@ -97,7 +96,7 @@ describe("ApplicantPermissions", () => {
     let studentAndGraduate: Applicant;
 
     beforeAll(async () => {
-      companyUuid = (await CompanyGenerator.instance.withCompleteData()).uuid;
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withCompleteData();
 
       offerForGraduates = await OfferGenerator.instance.forGraduates({ companyUuid });
       offerForStudents = await OfferGenerator.instance.forStudents({ companyUuid });
