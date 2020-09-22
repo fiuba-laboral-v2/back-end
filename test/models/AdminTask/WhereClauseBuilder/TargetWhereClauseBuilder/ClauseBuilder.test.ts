@@ -11,11 +11,9 @@ describe("TargetWhereClauseBuilder", () => {
       adminTaskTypes: [AdminTaskType.Offer]
     });
     expect(whereClause).toEqualIgnoringSpacing(`
-      (
-        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-        OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
-        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
-      )
+      "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
+      OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
+      OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
     `);
   });
 
@@ -25,11 +23,9 @@ describe("TargetWhereClauseBuilder", () => {
       adminTaskTypes: [AdminTaskType.Offer]
     });
     expect(whereClause).toEqualIgnoringSpacing(`
-      (
-        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-        OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
-        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
-      )
+      "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
+      OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
+      OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
     `);
   });
 
@@ -47,11 +43,9 @@ describe("TargetWhereClauseBuilder", () => {
       adminTaskTypes: Object.keys(AdminTaskType) as AdminTaskType[]
     });
     expect(whereClause).toEqualIgnoringSpacing(`
-      (
-        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-        OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
-        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
-      )
+      "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
+      OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
+      OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
     `);
   });
 
@@ -61,11 +55,9 @@ describe("TargetWhereClauseBuilder", () => {
       adminTaskTypes: Object.keys(AdminTaskType) as AdminTaskType[]
     });
     expect(whereClause).toEqualIgnoringSpacing(`
-      (
-        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-        OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
-        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
-      )
+      "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
+      OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
+      OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
     `);
   });
 });

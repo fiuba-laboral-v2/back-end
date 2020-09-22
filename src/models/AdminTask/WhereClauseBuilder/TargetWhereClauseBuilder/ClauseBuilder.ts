@@ -7,7 +7,6 @@ export const TargetWhereClauseBuilder = {
   build: (variables: ITargetWhereClauseBuilder) =>
     [TargetWhereClauseBuilder.getOfferTargetWhereClause(variables)]
       .filter(clause => !!clause)
-      .map(clause => `(${clause})`)
       .join(" AND "),
   getOfferTargetWhereClause: ({ secretary, adminTaskTypes }: ITargetWhereClauseBuilder) => {
     if (!adminTaskTypes.includes(AdminTaskType.Offer)) return;
