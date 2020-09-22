@@ -3,11 +3,7 @@ import { CareerRepository } from "$models/Career";
 import { CompanyRepository } from "$models/Company";
 import { OfferRepository } from "$models/Offer";
 import { ApplicantType } from "$models/Applicant";
-import {
-  JobApplicationNotFoundError,
-  JobApplicationRepository,
-  OfferNotTargetedForApplicantError
-} from "$models/JobApplication";
+import { JobApplicationNotFoundError, JobApplicationRepository } from "$models/JobApplication";
 import { Admin, Applicant, Company, JobApplication, Offer } from "$models";
 import { UserRepository } from "$models/User";
 import { JobApplicationGenerator } from "$generators/JobApplication";
@@ -49,62 +45,36 @@ describe("JobApplicationRepository", () => {
       });
     };
 
-    it("student applies to an offer for students", async () => {
+    it("allows student to apply to an offer for students", async () => {
       await expectToApply(student, offers[ApplicantType.student]);
     });
 
-    it("student applies to an offer for students and graduates", async () => {
+    it("allows student to apply to an offer for students and graduates", async () => {
       await expectToApply(student, offers[ApplicantType.both]);
     });
 
-    it("graduate applies to an offer for graduates", async () => {
+    it("allows graduate to apply to an offer for graduates", async () => {
       await expectToApply(graduate, offers[ApplicantType.graduate]);
     });
 
-    it("graduate applies to an offer for graduates and students", async () => {
+    it("allows graduate to apply to an offer for graduates and students", async () => {
       await expectToApply(graduate, offers[ApplicantType.both]);
     });
 
-    it("student and graduate applies to an offer for graduates", async () => {
+    it("allows student and graduate to apply to an offer for graduates", async () => {
       await expectToApply(studentAndGraduate, offers[ApplicantType.graduate]);
     });
 
-    it("student and graduate applies to an offer for students", async () => {
+    it("allows student and graduate to apply to an offer for students", async () => {
       await expectToApply(studentAndGraduate, offers[ApplicantType.student]);
     });
 
-    it("student and graduate applies to an offer for students and graduates", async () => {
+    it("allows student and graduate to apply to an offer for students and graduates", async () => {
       await expectToApply(studentAndGraduate, offers[ApplicantType.both]);
-    });
-
-    it("throws an error if a student applies to an offer for graduates", async () => {
-      await expect(
-        JobApplicationRepository.apply(student, offers[ApplicantType.graduate])
-      ).rejects.toThrowErrorWithMessage(
-        OfferNotTargetedForApplicantError,
-        OfferNotTargetedForApplicantError.buildMessage(
-          await student.getType(),
-          offers[ApplicantType.graduate].targetApplicantType
-        )
-      );
-    });
-
-    it("throws an error if graduate applies to an offer for students", async () => {
-      await expect(
-        JobApplicationRepository.apply(graduate, offers[ApplicantType.student])
-      ).rejects.toThrowErrorWithMessage(
-        OfferNotTargetedForApplicantError,
-        OfferNotTargetedForApplicantError.buildMessage(
-          await graduate.getType(),
-          offers[ApplicantType.student].targetApplicantType
-        )
-      );
     });
 
     it("throws an error if given applicantUuid that does not exist", async () => {
       const applicant = new Applicant();
-      jest.spyOn(applicant, "getType").mockResolvedValueOnce(ApplicantType.student);
-      jest.spyOn(offers[ApplicantType.student], "applicantCanApply").mockResolvedValueOnce(true);
       await expect(
         JobApplicationRepository.apply(applicant, offers[ApplicantType.student])
       ).rejects.toThrowErrorWithMessage(
