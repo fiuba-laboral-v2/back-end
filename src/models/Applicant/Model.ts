@@ -112,6 +112,8 @@ export class Applicant extends Model<Applicant> {
 
   public getApprovalEvents: HasManyGetAssociationsMixin<ApplicantApprovalEvent>;
 
+  public findAll;
+
   public async getType() {
     const applicantCareers = await this.getApplicantCareers();
     const isGraduate = applicantCareers.some(applicantCareer => applicantCareer.isGraduate);

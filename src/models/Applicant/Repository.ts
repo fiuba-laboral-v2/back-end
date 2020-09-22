@@ -10,8 +10,7 @@ import { ApplicantLinkRepository } from "./Link";
 import { UserRepository } from "../User";
 import { ApprovalStatus } from "../ApprovalStatus";
 import { Applicant } from "..";
-import { Op } from "sequelize";
-import { PaginationConfig } from "$config/PaginationConfig";
+import { PaginationQueryBuilder } from "../PaginationQueryBuilder";
 
 export const ApplicantRepository = {
   create: ({
@@ -31,37 +30,12 @@ export const ApplicantRepository = {
       await ApplicantCapabilityRepository.update(capabilities, applicant, transaction);
       return applicant;
     }),
-  findLatest: async (updatedBeforeThan?: IPaginatedInput) => {
-    const limit = PaginationConfig.itemsPerPage() + 1;
-    const result = await Applicant.findAll({
-      ...(updatedBeforeThan && {
-        where: {
-          [Op.or]: [
-            {
-              updatedAt: {
-                [Op.lt]: updatedBeforeThan.dateTime.toISOString()
-              }
-            },
-            {
-              updatedAt: updatedBeforeThan.dateTime.toISOString(),
-              uuid: {
-                [Op.lt]: updatedBeforeThan.uuid
-              }
-            }
-          ]
-        }
-      }),
-      order: [
-        ["updatedAt", "DESC"],
-        ["uuid", "DESC"]
-      ],
-      limit
-    });
-    return {
-      shouldFetchMore: result.length === limit,
-      results: result.slice(0, limit - 1)
-    };
-  },
+  findLatest: (updatedBeforeThan?: IPaginatedInput) =>
+    PaginationQueryBuilder.findLatest<Applicant>({
+      updatedBeforeThan,
+      modelCallback: (where: any, order: any, limit: number) =>
+        Applicant.findAll({ ...where, ...order, limit })
+    }),
   findByUuid: async (uuid: string) => {
     const applicant = await Applicant.findByPk(uuid);
     if (!applicant) throw new ApplicantNotFound(uuid);
