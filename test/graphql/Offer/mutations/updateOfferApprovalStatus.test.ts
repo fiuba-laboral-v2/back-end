@@ -10,10 +10,7 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Offer } from "$models";
 
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
-import {
-  AdminCannotModerateOfferError,
-  OfferNotFoundError
-} from "$models/Offer/Errors";
+import { AdminCannotModerateOfferError, OfferNotFoundError } from "$models/Offer/Errors";
 
 import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyGenerator } from "$generators/Company";
