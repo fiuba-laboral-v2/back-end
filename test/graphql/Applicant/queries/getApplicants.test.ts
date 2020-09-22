@@ -16,37 +16,40 @@ import { Secretary } from "$models/Admin";
 import { Admin } from "$models";
 
 const GET_APPLICANTS = gql`
-  query getApplicants {
-    getApplicants {
-      uuid
-      user {
-        email
-        name
-        surname
-      }
-      padron
-      description
-      capabilities {
+  query GetApplicants($updatedBeforeThan: PaginatedInput) {
+    getApplicants(updatedBeforeThan: $updatedBeforeThan) {
+      shouldFetchMore
+      results {
         uuid
+        user {
+          email
+          name
+          surname
+        }
+        padron
         description
-      }
-      careers {
-        careerCode
-        career {
-          code
+        capabilities {
+          uuid
           description
         }
-        approvedSubjectCount
-        currentCareerYear
-        isGraduate
-      }
-      sections {
-        title
-        text
-      }
-      links {
-        name
-        url
+        careers {
+          careerCode
+          career {
+            code
+            description
+          }
+          approvedSubjectCount
+          currentCareerYear
+          isGraduate
+        }
+        sections {
+          title
+          text
+        }
+        links {
+          name
+          url
+        }
       }
     }
   }
@@ -67,7 +70,8 @@ describe("getApplicants", () => {
       const { apolloClient } = await TestClientGenerator.admin();
       const { data, errors } = await apolloClient.query({ query: GET_APPLICANTS });
       expect(errors).toBeUndefined();
-      expect(data!.getApplicants).toEqual([]);
+      expect(data!.getApplicants.shouldFetchMore).toEqual(false);
+      expect(data!.getApplicants.results).toEqual([]);
     });
   });
 
@@ -85,7 +89,8 @@ describe("getApplicants", () => {
       expect(errors).toBeUndefined();
       const [career] = await applicant.getCareers();
       const capabilities = await applicant.getCapabilities();
-      expect(data!.getApplicants).toEqual(
+      expect(data!.getApplicants.shouldFetchMore).toEqual(false);
+      expect(data!.getApplicants.results).toEqual(
         expect.arrayContaining([
           {
             uuid: applicant.uuid,
@@ -165,7 +170,8 @@ describe("getApplicants", () => {
           };
         })
       );
-      expect(data!.getApplicants).toEqual(expect.arrayContaining(expectedApplicants));
+      expect(data!.getApplicants.shouldFetchMore).toEqual(false);
+      expect(data!.getApplicants.results).toEqual(expect.arrayContaining(expectedApplicants));
     });
   });
 

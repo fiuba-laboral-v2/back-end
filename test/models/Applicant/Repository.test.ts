@@ -24,6 +24,7 @@ import {
   MissingApprovedSubjectCountError
 } from "$models/Applicant/ApplicantCareer/Errors";
 import { isApprovalStatus } from "$models/SequelizeModelValidators";
+import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 
 describe("ApplicantRepository", () => {
   beforeAll(async () => {
@@ -257,6 +258,107 @@ describe("ApplicantRepository", () => {
     it("throws ApplicantNotFound if the applicant doesn't exists", async () => {
       const { padron } = ApplicantGenerator.data.minimum();
       await expect(ApplicantRepository.findByPadron(padron)).rejects.toThrow(ApplicantNotFound);
+    });
+
+    describe("findLatest", () => {
+      let applicant1;
+      let applicant2;
+      let applicant3;
+
+      const generateApplicants = async () => {
+        const applicantData = ApplicantGenerator.data.minimum();
+        const applicantData2 = ApplicantGenerator.data.minimum();
+        const applicantData3 = ApplicantGenerator.data.minimum();
+        const career = await CareerGenerator.instance();
+        const applicantCareerData = { careerCode: career.code, isGraduate: true };
+        const first = await ApplicantRepository.create({
+          ...applicantData,
+          careers: [applicantCareerData],
+          capabilities: ["GO"]
+        });
+        const second = await ApplicantRepository.create({
+          ...applicantData2,
+          careers: [applicantCareerData],
+          capabilities: ["GO"]
+        });
+        const third = await ApplicantRepository.create({
+          ...applicantData3,
+          careers: [applicantCareerData],
+          capabilities: ["GO"]
+        });
+
+        return [first, second, third];
+      };
+
+      beforeAll(async () => {
+        [applicant1, applicant2, applicant3] = await generateApplicants();
+      });
+
+      it("returns the latest applicant first", async () => {
+        const applicants = await ApplicantRepository.findLatest();
+        const first2 = [applicants.results[0], applicants.results[1], applicants.results[2]];
+
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(first2).toEqual([
+          expect.objectContaining({
+            uuid: applicant3.uuid,
+            padron: applicant3.padron,
+            approvalStatus: ApprovalStatus.pending
+          }),
+          expect.objectContaining({
+            uuid: applicant2.uuid,
+            padron: applicant2.padron,
+            approvalStatus: ApprovalStatus.pending
+          }),
+          expect.objectContaining({
+            uuid: applicant1.uuid,
+            padron: applicant1.padron,
+            approvalStatus: ApprovalStatus.pending
+          })
+        ]);
+      });
+
+      describe("fetchMore", () => {
+        let applicant4;
+        let applicant5;
+        let applicant6;
+        let applicant7;
+
+        beforeAll(async () => {
+          [applicant4, applicant5, applicant6] = await generateApplicants();
+          [applicant7, ,] = await generateApplicants();
+        });
+
+        it("gets the next 3 Applicants", async () => {
+          const itemsPerPage = 3;
+          mockItemsPerPage(itemsPerPage);
+
+          const updatedBeforeThan = {
+            dateTime: applicant7.updatedAt,
+            uuid: applicant7.uuid
+          };
+
+          const jobApplications = await ApplicantRepository.findLatest(updatedBeforeThan);
+          expect(jobApplications.results).toEqual([
+            expect.objectContaining({
+              uuid: applicant6.uuid,
+              padron: applicant6.padron,
+              approvalStatus: ApprovalStatus.pending
+            }),
+            expect.objectContaining({
+              uuid: applicant5.uuid,
+              padron: applicant5.padron,
+              approvalStatus: ApprovalStatus.pending
+            }),
+            expect.objectContaining({
+              uuid: applicant4.uuid,
+              padron: applicant4.padron,
+              approvalStatus: ApprovalStatus.pending
+            })
+          ]);
+          expect(jobApplications.shouldFetchMore).toBe(true);
+        });
+      });
     });
   });
 
