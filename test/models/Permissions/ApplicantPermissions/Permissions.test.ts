@@ -3,10 +3,11 @@ import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 
-import { OfferGenerator } from "$generators/Offer";
+import { IForAllTargets, OfferGenerator } from "$generators/Offer";
 import { CompanyGenerator } from "$generators/Company";
 import { ApplicantGenerator } from "$generators/Applicant";
-import { Applicant, Offer } from "$models";
+import { Applicant } from "$models";
+import { ApplicantType } from "$models/Applicant";
 
 describe("ApplicantPermissions", () => {
   beforeAll(async () => {
@@ -88,21 +89,14 @@ describe("ApplicantPermissions", () => {
   });
 
   describe("canModerateOffer", () => {
-    let offerForGraduates: Offer;
-    let offerForStudents: Offer;
-    let offerForStudentsAndGraduates: Offer;
+    let offers: IForAllTargets;
     let student: Applicant;
     let graduate: Applicant;
     let studentAndGraduate: Applicant;
 
     beforeAll(async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withCompleteData();
-
-      offerForGraduates = await OfferGenerator.instance.forGraduates({ companyUuid });
-      offerForStudents = await OfferGenerator.instance.forStudents({ companyUuid });
-      offerForStudentsAndGraduates = await OfferGenerator.instance.forStudentsAndGraduates({
-        companyUuid
-      });
+      offers = await OfferGenerator.instance.forAllTargets({ companyUuid });
 
       student = await ApplicantGenerator.instance.student();
       graduate = await ApplicantGenerator.instance.graduate();
@@ -110,48 +104,48 @@ describe("ApplicantPermissions", () => {
     });
 
     it("does not allow a student to moderate offer for students", async () => {
-      const applicantPermissions = new ApplicantPermissions(student.uuid);
-      expect(await applicantPermissions.canModerateOffer(offerForStudents)).toBe(false);
+      const permissions = new ApplicantPermissions(student.uuid);
+      expect(await permissions.canModerateOffer(offers[ApplicantType.student])).toBe(false);
     });
 
     it("does not allow a student to moderate offer for graduates", async () => {
-      const applicantPermissions = new ApplicantPermissions(student.uuid);
-      expect(await applicantPermissions.canModerateOffer(offerForGraduates)).toBe(false);
+      const permissions = new ApplicantPermissions(student.uuid);
+      expect(await permissions.canModerateOffer(offers[ApplicantType.graduate])).toBe(false);
     });
 
     it("does not allow a student to moderate offer for both", async () => {
-      const applicantPermissions = new ApplicantPermissions(student.uuid);
-      expect(await applicantPermissions.canModerateOffer(offerForStudentsAndGraduates)).toBe(false);
+      const permissions = new ApplicantPermissions(student.uuid);
+      expect(await permissions.canModerateOffer(offers[ApplicantType.both])).toBe(false);
     });
 
     it("does not allow a graduate to moderate offer for students", async () => {
-      const applicantPermissions = new ApplicantPermissions(graduate.uuid);
-      expect(await applicantPermissions.canModerateOffer(offerForStudents)).toBe(false);
+      const permissions = new ApplicantPermissions(graduate.uuid);
+      expect(await permissions.canModerateOffer(offers[ApplicantType.student])).toBe(false);
     });
 
     it("does not allow a graduate to moderate offer for graduates", async () => {
-      const applicantPermissions = new ApplicantPermissions(graduate.uuid);
-      expect(await applicantPermissions.canModerateOffer(offerForGraduates)).toBe(false);
+      const permissions = new ApplicantPermissions(graduate.uuid);
+      expect(await permissions.canModerateOffer(offers[ApplicantType.graduate])).toBe(false);
     });
 
     it("does not allow a graduate to moderate offer for both", async () => {
-      const applicantPermissions = new ApplicantPermissions(graduate.uuid);
-      expect(await applicantPermissions.canModerateOffer(offerForStudentsAndGraduates)).toBe(false);
+      const permissions = new ApplicantPermissions(graduate.uuid);
+      expect(await permissions.canModerateOffer(offers[ApplicantType.both])).toBe(false);
     });
 
     it("does not allow a student and graduate to moderate offer for students", async () => {
-      const applicantPermissions = new ApplicantPermissions(studentAndGraduate.uuid);
-      expect(await applicantPermissions.canModerateOffer(offerForStudents)).toBe(false);
+      const permissions = new ApplicantPermissions(studentAndGraduate.uuid);
+      expect(await permissions.canModerateOffer(offers[ApplicantType.student])).toBe(false);
     });
 
     it("does not allow a student and graduate to moderate offer for graduates", async () => {
-      const applicantPermissions = new ApplicantPermissions(studentAndGraduate.uuid);
-      expect(await applicantPermissions.canModerateOffer(offerForGraduates)).toBe(false);
+      const permissions = new ApplicantPermissions(studentAndGraduate.uuid);
+      expect(await permissions.canModerateOffer(offers[ApplicantType.graduate])).toBe(false);
     });
 
     it("does not allow a student and graduate to moderate offer for both", async () => {
-      const applicantPermissions = new ApplicantPermissions(studentAndGraduate.uuid);
-      expect(await applicantPermissions.canModerateOffer(offerForStudentsAndGraduates)).toBe(false);
+      const permissions = new ApplicantPermissions(studentAndGraduate.uuid);
+      expect(await permissions.canModerateOffer(offers[ApplicantType.both])).toBe(false);
     });
   });
 });
