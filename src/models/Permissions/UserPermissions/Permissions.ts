@@ -14,6 +14,10 @@ export class UserPermissions implements IPermission {
     return this.hasPermission(permission => permission.canSeeOffer(offer));
   }
 
+  public async canModerateOffer(offer: Offer) {
+    return this.hasPermission(permission => permission.canModerateOffer(offer));
+  }
+
   private async hasPermission(callback: (permission: IPermission) => Promise<boolean>) {
     return some(await Promise.all(this.permissions.map(callback)));
   }

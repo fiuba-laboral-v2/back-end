@@ -18,4 +18,8 @@ export class ApplicantPermissions implements IPermission {
     if (applicantType === ApplicantType.both) return true;
     return offer.targetApplicantType === applicantType;
   }
+
+  public async canModerateOffer(_: Offer) {
+    return Promise.resolve(false);
+  }
 }

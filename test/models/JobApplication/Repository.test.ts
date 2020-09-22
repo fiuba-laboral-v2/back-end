@@ -2,13 +2,14 @@ import { ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
 import { CareerRepository } from "$models/Career";
 import { CompanyRepository } from "$models/Company";
 import { OfferRepository } from "$models/Offer";
-import { JobApplicationRepository, JobApplicationNotFoundError } from "$models/JobApplication";
+import { ApplicantType } from "$models/Applicant";
+import { JobApplicationNotFoundError, JobApplicationRepository } from "$models/JobApplication";
 import { Admin, Applicant, Company, JobApplication, Offer } from "$models";
 import { UserRepository } from "$models/User";
 import { JobApplicationGenerator } from "$generators/JobApplication";
 import { CompanyGenerator } from "$generators/Company";
 import { ApplicantGenerator } from "$generators/Applicant";
-import { OfferGenerator } from "$generators/Offer";
+import { IForAllTargets, OfferGenerator } from "$generators/Offer";
 import { AdminGenerator } from "$generators/Admin";
 import { range } from "lodash";
 import { ApprovalStatus } from "$models/ApprovalStatus";
@@ -19,24 +20,19 @@ describe("JobApplicationRepository", () => {
   let student: Applicant;
   let graduate: Applicant;
   let studentAndGraduate: Applicant;
-  let offerForStudents: Offer;
-  let offerForGraduates: Offer;
-  let offerForStudentsAndGraduates: Offer;
+  let offers: IForAllTargets;
 
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     await CareerRepository.truncate();
+
     const company = await CompanyGenerator.instance.withMinimumData();
+    offers = await OfferGenerator.instance.forAllTargets({ companyUuid: company.uuid });
+
     student = await ApplicantGenerator.instance.student();
     graduate = await ApplicantGenerator.instance.graduate();
     studentAndGraduate = await ApplicantGenerator.instance.studentAndGraduate();
-
-    offerForStudents = await OfferGenerator.instance.forStudents({ companyUuid: company.uuid });
-    offerForGraduates = await OfferGenerator.instance.forGraduates({ companyUuid: company.uuid });
-    offerForStudentsAndGraduates = await OfferGenerator.instance.forStudentsAndGraduates({
-      companyUuid: company.uuid
-    });
   });
 
   describe("Apply", () => {
@@ -50,37 +46,37 @@ describe("JobApplicationRepository", () => {
     };
 
     it("allows student to apply to an offer for students", async () => {
-      await expectToApply(student, offerForStudents);
+      await expectToApply(student, offers[ApplicantType.student]);
     });
 
     it("allows student to apply to an offer for students and graduates", async () => {
-      await expectToApply(student, offerForStudentsAndGraduates);
+      await expectToApply(student, offers[ApplicantType.both]);
     });
 
     it("allows graduate to apply to an offer for graduates", async () => {
-      await expectToApply(graduate, offerForGraduates);
+      await expectToApply(graduate, offers[ApplicantType.graduate]);
     });
 
     it("allows graduate to apply to an offer for graduates and students", async () => {
-      await expectToApply(graduate, offerForStudentsAndGraduates);
+      await expectToApply(graduate, offers[ApplicantType.both]);
     });
 
     it("allows student and graduate to apply to an offer for graduates", async () => {
-      await expectToApply(studentAndGraduate, offerForGraduates);
+      await expectToApply(studentAndGraduate, offers[ApplicantType.graduate]);
     });
 
     it("allows student and graduate to apply to an offer for students", async () => {
-      await expectToApply(studentAndGraduate, offerForStudents);
+      await expectToApply(studentAndGraduate, offers[ApplicantType.student]);
     });
 
     it("allows student and graduate to apply to an offer for students and graduates", async () => {
-      await expectToApply(studentAndGraduate, offerForStudentsAndGraduates);
+      await expectToApply(studentAndGraduate, offers[ApplicantType.both]);
     });
 
     it("throws an error if given applicantUuid that does not exist", async () => {
       const applicant = new Applicant();
       await expect(
-        JobApplicationRepository.apply(applicant, offerForStudents)
+        JobApplicationRepository.apply(applicant, offers[ApplicantType.student])
       ).rejects.toThrowErrorWithMessage(
         ForeignKeyConstraintError,
         'insert or update on table "JobApplications" violates foreign key ' +
@@ -103,9 +99,9 @@ describe("JobApplicationRepository", () => {
 
     it("throws an error if jobApplication already exists", async () => {
       const applicant = await ApplicantGenerator.instance.studentAndGraduate();
-      await JobApplicationRepository.apply(applicant, offerForGraduates);
+      await JobApplicationRepository.apply(applicant, offers[ApplicantType.graduate]);
       await expect(
-        JobApplicationRepository.apply(applicant, offerForGraduates)
+        JobApplicationRepository.apply(applicant, offers[ApplicantType.graduate])
       ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
     });
   });
@@ -113,16 +109,21 @@ describe("JobApplicationRepository", () => {
   describe("Associations", () => {
     it("gets Applicant and offer from a jobApplication", async () => {
       const applicant = await ApplicantGenerator.instance.graduate();
-      const jobApplication = await JobApplicationRepository.apply(applicant, offerForGraduates);
+      const jobApplication = await JobApplicationRepository.apply(
+        applicant,
+        offers[ApplicantType.graduate]
+      );
       expect((await jobApplication.getApplicant()).toJSON()).toMatchObject(applicant.toJSON());
-      expect((await jobApplication.getOffer()).toJSON()).toMatchObject(offerForGraduates.toJSON());
+      expect((await jobApplication.getOffer()).toJSON()).toMatchObject(
+        offers[ApplicantType.graduate].toJSON()
+      );
     });
 
     it("gets all applicant's jobApplications", async () => {
       const graduateApplicant = await ApplicantGenerator.instance.graduate();
       const jobApplication = await JobApplicationRepository.apply(
         graduateApplicant,
-        offerForGraduates
+        offers[ApplicantType.graduate]
       );
       const applicantsJobApplications = await graduateApplicant.getJobApplications();
       expect(applicantsJobApplications.map(aJobApplication => aJobApplication.toJSON())).toEqual([
@@ -134,15 +135,19 @@ describe("JobApplicationRepository", () => {
   describe("hasApplied", () => {
     it("returns true if applicant applied for offer", async () => {
       const applicant = await ApplicantGenerator.instance.graduate();
-      await JobApplicationRepository.apply(applicant, offerForStudentsAndGraduates);
-      expect(
-        await JobApplicationRepository.hasApplied(applicant, offerForStudentsAndGraduates)
-      ).toBe(true);
+      await JobApplicationRepository.apply(applicant, offers[ApplicantType.both]);
+      const hasApplied = await JobApplicationRepository.hasApplied(
+        applicant,
+        offers[ApplicantType.both]
+      );
+      expect(hasApplied).toBe(true);
     });
 
     it("returns false if applicant has not applied to the offer", async () => {
       const applicant = await ApplicantGenerator.instance.graduate();
-      expect(await JobApplicationRepository.hasApplied(applicant, offerForGraduates)).toBe(false);
+      expect(
+        await JobApplicationRepository.hasApplied(applicant, offers[ApplicantType.graduate])
+      ).toBe(false);
     });
   });
 

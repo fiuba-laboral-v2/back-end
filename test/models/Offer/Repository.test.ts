@@ -308,38 +308,6 @@ describe("OfferRepository", () => {
       expect((await OfferRepository.findByUuid(uuid)).extensionApprovalStatus).toEqual(newStatus);
     });
 
-    it("throws an error if extension admin approves offer graduates", async () => {
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { uuid } = await OfferGenerator.instance.forGraduates({ companyUuid });
-      const newStatus = ApprovalStatus.approved;
-      await expect(
-        OfferRepository.updateApprovalStatus({
-          uuid,
-          admin: extensionAdmin,
-          status: newStatus
-        })
-      ).rejects.toThrowErrorWithMessage(
-        OfferNotUpdatedError,
-        OfferNotUpdatedError.buildMessage(uuid)
-      );
-    });
-
-    it("throws an error if graduados admin approves offer students", async () => {
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { uuid } = await OfferGenerator.instance.forStudents({ companyUuid });
-      const newStatus = ApprovalStatus.approved;
-      await expect(
-        OfferRepository.updateApprovalStatus({
-          uuid,
-          admin: graduadosAdmin,
-          status: newStatus
-        })
-      ).rejects.toThrowErrorWithMessage(
-        OfferNotUpdatedError,
-        OfferNotUpdatedError.buildMessage(uuid)
-      );
-    });
-
     it("creates an entry on OfferApprovalEvents table", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const { uuid } = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });

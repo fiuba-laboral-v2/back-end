@@ -51,18 +51,7 @@ export const OfferRepository = {
       };
 
       const [, [updatedOffer]] = await Offer.update(offerAttributes, {
-        where: {
-          uuid,
-          [Op.or]: [
-            { targetApplicantType: ApplicantType.both },
-            admin.secretary === Secretary.graduados && {
-              targetApplicantType: ApplicantType.graduate
-            },
-            admin.secretary === Secretary.extension && {
-              targetApplicantType: ApplicantType.student
-            }
-          ]
-        },
+        where: { uuid },
         returning: true,
         transaction
       });

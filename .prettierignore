@@ -7,3 +7,4 @@ data
 dist_migrations
 dist_seeders
 dist-test
+report.*.json
