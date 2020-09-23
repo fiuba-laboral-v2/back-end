@@ -1,10 +1,10 @@
 import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedInput";
 
-import { Applicant } from "..";
+import { Applicant, Offer } from "..";
 import { Op } from "sequelize";
 import { PaginationConfig } from "$config/PaginationConfig";
 
-type PaginatedModel = Applicant;
+type PaginatedModel = Applicant | Offer;
 
 interface IFindLatest<T extends PaginatedModel> {
   updatedBeforeThan?: IPaginatedInput;
@@ -47,7 +47,7 @@ export const PaginationQueryBuilder = {
       ]
     };
 
-    const result = await modelCallback(defaultWhere || whereClause, defaultOrder || orderBy, limit);
+    const result = await modelCallback(whereClause || defaultWhere, orderBy || defaultOrder, limit);
 
     return {
       shouldFetchMore: result.length === limit,
