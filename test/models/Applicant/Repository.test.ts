@@ -266,28 +266,10 @@ describe("ApplicantRepository", () => {
       let applicant3;
 
       const generateApplicants = async () => {
-        const applicantData = ApplicantGenerator.data.minimum();
-        const applicantData2 = ApplicantGenerator.data.minimum();
-        const applicantData3 = ApplicantGenerator.data.minimum();
-        const career = await CareerGenerator.instance();
-        const applicantCareerData = { careerCode: career.code, isGraduate: true };
-
         return [
-          await ApplicantRepository.create({
-            ...applicantData,
-            careers: [applicantCareerData],
-            capabilities: ["GO"]
-          }),
-          await ApplicantRepository.create({
-            ...applicantData2,
-            careers: [applicantCareerData],
-            capabilities: ["GO"]
-          }),
-          await ApplicantRepository.create({
-            ...applicantData3,
-            careers: [applicantCareerData],
-            capabilities: ["GO"]
-          })
+          await ApplicantGenerator.instance.withMinimumData(),
+          await ApplicantGenerator.instance.withMinimumData(),
+          await ApplicantGenerator.instance.withMinimumData()
         ];
       };
 
