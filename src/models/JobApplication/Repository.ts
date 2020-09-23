@@ -4,8 +4,7 @@ import { IUpdateApprovalStatus } from "./Interfaces";
 import { JobApplicationApprovalEventRepository } from "./JobApplicationsApprovalEvent";
 import { JobApplicationNotFoundError, OfferNotTargetedForApplicantError } from "./Errors";
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
-import { Op } from "sequelize";
-import { PaginationConfig } from "$config/PaginationConfig";
+import { PaginationQueryBuilder } from "../PaginationQueryBuilder";
 
 export const JobApplicationRepository = {
   apply: async (applicant: Applicant, offer: Offer) => {
@@ -42,43 +41,30 @@ export const JobApplicationRepository = {
     companyUuid: string;
     updatedBeforeThan?: IPaginatedInput;
   }) => {
-    const limit = PaginationConfig.itemsPerPage() + 1;
-    const result = await JobApplication.findAll({
-      include: [
-        {
-          model: Offer,
-          where: { companyUuid },
-          attributes: []
-        }
-      ],
-      ...(updatedBeforeThan && {
-        where: {
-          [Op.or]: [
-            {
-              updatedAt: {
-                [Op.lt]: updatedBeforeThan.dateTime.toISOString()
-              }
-            },
-            {
-              updatedAt: updatedBeforeThan.dateTime.toISOString(),
-              uuid: {
-                [Op.lt]: updatedBeforeThan.uuid
-              }
-            }
-          ]
-        }
-      }),
+    const orderBy = {
       order: [
         ["updatedAt", "DESC"],
         ["offerUuid", "DESC"],
         ["applicantUuid", "DESC"]
-      ],
-      limit
-    });
-    return {
-      shouldFetchMore: result.length === limit,
-      results: result.slice(0, limit - 1)
+      ]
     };
+    return PaginationQueryBuilder.findLatest<JobApplication>({
+      updatedBeforeThan,
+      orderBy,
+      modelCallback: (where: any, order: any, limit: number) =>
+        JobApplication.findAll({
+          ...where,
+          include: [
+            {
+              model: Offer,
+              where: { companyUuid },
+              attributes: []
+            }
+          ],
+          ...order,
+          limit
+        })
+    });
   },
   updateApprovalStatus: async ({
     admin: { userUuid: adminUserUuid },

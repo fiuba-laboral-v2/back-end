@@ -1,10 +1,10 @@
 import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedInput";
 
-import { Applicant, Offer } from "..";
+import { Applicant, JobApplication, Offer } from "..";
 import { Op } from "sequelize";
 import { PaginationConfig } from "$config/PaginationConfig";
 
-type PaginatedModel = Applicant | Offer;
+type PaginatedModel = Applicant | Offer | JobApplication;
 
 interface IFindLatest<T extends PaginatedModel> {
   updatedBeforeThan?: IPaginatedInput;
