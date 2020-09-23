@@ -271,23 +271,24 @@ describe("ApplicantRepository", () => {
         const applicantData3 = ApplicantGenerator.data.minimum();
         const career = await CareerGenerator.instance();
         const applicantCareerData = { careerCode: career.code, isGraduate: true };
-        const first = await ApplicantRepository.create({
-          ...applicantData,
-          careers: [applicantCareerData],
-          capabilities: ["GO"]
-        });
-        const second = await ApplicantRepository.create({
-          ...applicantData2,
-          careers: [applicantCareerData],
-          capabilities: ["GO"]
-        });
-        const third = await ApplicantRepository.create({
-          ...applicantData3,
-          careers: [applicantCareerData],
-          capabilities: ["GO"]
-        });
 
-        return [first, second, third];
+        return [
+          await ApplicantRepository.create({
+            ...applicantData,
+            careers: [applicantCareerData],
+            capabilities: ["GO"]
+          }),
+          await ApplicantRepository.create({
+            ...applicantData2,
+            careers: [applicantCareerData],
+            capabilities: ["GO"]
+          }),
+          await ApplicantRepository.create({
+            ...applicantData3,
+            careers: [applicantCareerData],
+            capabilities: ["GO"]
+          })
+        ];
       };
 
       beforeAll(async () => {
@@ -296,10 +297,14 @@ describe("ApplicantRepository", () => {
 
       it("returns the latest applicant first", async () => {
         const applicants = await ApplicantRepository.findLatest();
-        const first2 = [applicants.results[0], applicants.results[1], applicants.results[2]];
+        const firstApplicantInList = [
+          applicants.results[0],
+          applicants.results[1],
+          applicants.results[2]
+        ];
 
         expect(applicants.shouldFetchMore).toEqual(false);
-        expect(first2).toEqual([
+        expect(firstApplicantInList).toEqual([
           expect.objectContaining({
             uuid: applicant3.uuid,
             padron: applicant3.padron,
