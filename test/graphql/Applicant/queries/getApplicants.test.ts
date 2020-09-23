@@ -29,6 +29,7 @@ const GET_APPLICANTS = gql`
         }
         padron
         description
+        updatedAt
         capabilities {
           uuid
           description
@@ -102,6 +103,7 @@ describe("getApplicants", () => {
             },
             padron: applicant.padron,
             description: applicant.description,
+            updatedAt: applicant.updatedAt.toISOString(),
             capabilities: capabilities.map(({ uuid, description }) => ({ uuid, description })),
             careers: [
               {
@@ -156,6 +158,7 @@ describe("getApplicants", () => {
             },
             padron: applicant.padron,
             description: applicant.description,
+            updatedAt: applicant.updatedAt.toISOString(),
             careers: [
               {
                 career: {
