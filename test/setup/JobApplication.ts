@@ -27,42 +27,42 @@ export class JobApplicationTestSetup {
   public async execute() {
     this.approvedByExtension = await this.createJobApplication(
       this.applicants.approvedStudentAndGraduate,
-      this.offers.approvedOfferForBoth,
+      this.offers.approvedForBoth,
       ApprovalStatus.approved,
       this.admins.extension
     );
 
     this.rejectedByExtension = await this.createJobApplication(
       this.applicants.approvedStudentAndGraduate,
-      this.offers.approvedOfferForGraduates,
+      this.offers.approvedForGraduates,
       ApprovalStatus.rejected,
       this.admins.extension
     );
 
     this.pendingByExtension = await this.createJobApplication(
       this.applicants.approvedStudentAndGraduate,
-      this.offers.approvedOfferForStudents,
+      this.offers.approvedForStudents,
       ApprovalStatus.pending,
       this.admins.extension
     );
 
     this.approvedByGraduados = await this.createJobApplication(
       this.applicants.approvedStudentAndGraduate,
-      this.offers.rejectedOfferForBoth,
+      this.offers.rejectedForBoth,
       ApprovalStatus.approved,
       this.admins.graduados
     );
 
     this.rejectedByGraduados = await this.createJobApplication(
       this.applicants.approvedStudentAndGraduate,
-      this.offers.rejectedOfferForGraduates,
+      this.offers.rejectedForGraduates,
       ApprovalStatus.rejected,
       this.admins.graduados
     );
 
     this.pendingByGraduados = await this.createJobApplication(
       this.applicants.approvedStudentAndGraduate,
-      this.offers.rejectedOfferForStudents,
+      this.offers.rejectedForStudents,
       ApprovalStatus.pending,
       this.admins.graduados
     );

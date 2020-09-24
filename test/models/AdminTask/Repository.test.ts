@@ -170,7 +170,7 @@ describe("AdminTaskRepository", () => {
 
   it("returns only pending offers targeted for students", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.offers.pendingOfferForStudents, setup.offers.pendingOfferForBoth],
+      [setup.offers.pendingForStudents, setup.offers.pendingForBoth],
       [ApprovalStatus.pending],
       setup.admins.extension.secretary
     );
@@ -178,7 +178,7 @@ describe("AdminTaskRepository", () => {
 
   it("returns only pending offers targeted for graduates", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.offers.pendingOfferForGraduates, setup.offers.pendingOfferForBoth],
+      [setup.offers.pendingForGraduates, setup.offers.pendingForBoth],
       [ApprovalStatus.pending],
       setup.admins.graduados.secretary
     );
@@ -186,7 +186,7 @@ describe("AdminTaskRepository", () => {
 
   it("returns only approved offers targeted for students", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.offers.approvedOfferForStudents, setup.offers.approvedOfferForBoth],
+      [setup.offers.approvedForStudents, setup.offers.approvedForBoth],
       [ApprovalStatus.approved],
       setup.admins.extension.secretary
     );
@@ -194,7 +194,7 @@ describe("AdminTaskRepository", () => {
 
   it("returns only approved offers targeted for graduates", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.offers.approvedOfferForGraduates, setup.offers.approvedOfferForBoth],
+      [setup.offers.approvedForGraduates, setup.offers.approvedForBoth],
       [ApprovalStatus.approved],
       setup.admins.graduados.secretary
     );
@@ -202,7 +202,7 @@ describe("AdminTaskRepository", () => {
 
   it("returns only rejected offers targeted for students", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.offers.rejectedOfferForStudents, setup.offers.rejectedOfferForBoth],
+      [setup.offers.rejectedForStudents, setup.offers.rejectedForBoth],
       [ApprovalStatus.rejected],
       setup.admins.extension.secretary
     );
@@ -210,7 +210,7 @@ describe("AdminTaskRepository", () => {
 
   it("returns only rejected offers targeted for graduates", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.offers.rejectedOfferForGraduates, setup.offers.rejectedOfferForBoth],
+      [setup.offers.rejectedForGraduates, setup.offers.rejectedForBoth],
       [ApprovalStatus.rejected],
       setup.admins.graduados.secretary
     );
@@ -270,8 +270,8 @@ describe("AdminTaskRepository", () => {
         setup.companies.pending,
         setup.applicants.pendingStudentAndGraduate,
         setup.applicants.pendingGraduate,
-        setup.offers.pendingOfferForGraduates,
-        setup.offers.pendingOfferForBoth
+        setup.offers.pendingForGraduates,
+        setup.offers.pendingForBoth
       ],
       [ApprovalStatus.pending],
       setup.admins.graduados.secretary
@@ -283,8 +283,8 @@ describe("AdminTaskRepository", () => {
       [
         setup.companies.pending,
         setup.applicants.pendingStudent,
-        setup.offers.pendingOfferForStudents,
-        setup.offers.pendingOfferForBoth
+        setup.offers.pendingForStudents,
+        setup.offers.pendingForBoth
       ],
       [ApprovalStatus.pending],
       setup.admins.extension.secretary
@@ -300,10 +300,10 @@ describe("AdminTaskRepository", () => {
         setup.applicants.rejectedStudentAndGraduate,
         setup.applicants.approvedGraduate,
         setup.applicants.rejectedGraduate,
-        setup.offers.approvedOfferForGraduates,
-        setup.offers.rejectedOfferForGraduates,
-        setup.offers.approvedOfferForBoth,
-        setup.offers.rejectedOfferForBoth
+        setup.offers.approvedForGraduates,
+        setup.offers.rejectedForGraduates,
+        setup.offers.approvedForBoth,
+        setup.offers.rejectedForBoth
       ],
       [ApprovalStatus.approved, ApprovalStatus.rejected],
       setup.admins.graduados.secretary
@@ -317,10 +317,10 @@ describe("AdminTaskRepository", () => {
         setup.companies.rejected,
         setup.applicants.approvedStudent,
         setup.applicants.rejectedStudent,
-        setup.offers.approvedOfferForStudents,
-        setup.offers.rejectedOfferForStudents,
-        setup.offers.approvedOfferForBoth,
-        setup.offers.rejectedOfferForBoth
+        setup.offers.approvedForStudents,
+        setup.offers.rejectedForStudents,
+        setup.offers.approvedForBoth,
+        setup.offers.rejectedForBoth
       ],
       [ApprovalStatus.approved, ApprovalStatus.rejected],
       setup.admins.extension.secretary
