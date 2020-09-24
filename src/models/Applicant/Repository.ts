@@ -10,7 +10,7 @@ import { ApplicantLinkRepository } from "./Link";
 import { UserRepository } from "../User";
 import { ApprovalStatus } from "../ApprovalStatus";
 import { Applicant } from "..";
-import { PaginationQueryBuilder } from "../PaginationQueryBuilder";
+import { PaginationQuery } from "../PaginationQuery";
 
 export const ApplicantRepository = {
   create: ({
@@ -31,10 +31,9 @@ export const ApplicantRepository = {
       return applicant;
     }),
   findLatest: (updatedBeforeThan?: IPaginatedInput) =>
-    PaginationQueryBuilder.findLatest<Applicant>({
+    PaginationQuery.findLatest({
       updatedBeforeThan,
-      modelCallback: (where: any, order: any, limit: number) =>
-        Applicant.findAll({ ...where, ...order, limit })
+      query: options => Applicant.findAll(options)
     }),
   findByUuid: async (uuid: string) => {
     const applicant = await Applicant.findByPk(uuid);

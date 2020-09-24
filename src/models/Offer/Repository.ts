@@ -10,7 +10,7 @@ import { OfferApprovalEventRepository } from "./OfferApprovalEvent/Repository";
 import { Secretary } from "$models/Admin";
 import { OfferNotFoundError, OfferNotUpdatedError } from "./Errors";
 import { Offer, OfferCareer, OfferSection } from "$models";
-import { PaginationQueryBuilder } from "../PaginationQueryBuilder";
+import { PaginationQuery } from "../PaginationQuery";
 
 export const OfferRepository = {
   create: ({ careers = [], sections = [], ...attributes }: ICreateOffer) => {
@@ -98,21 +98,6 @@ export const OfferRepository = {
     return offer;
   },
   findAll: ({ updatedBeforeThan, companyUuid, applicantType, careerCodes }: IFindAll) => {
-    const paginationWhereClause: any = updatedBeforeThan && {
-      [Op.or]: [
-        {
-          updatedAt: {
-            [Op.lt]: updatedBeforeThan.dateTime.toISOString()
-          }
-        },
-        {
-          updatedAt: updatedBeforeThan.dateTime.toISOString(),
-          uuid: {
-            [Op.lt]: updatedBeforeThan.uuid
-          }
-        }
-      ]
-    };
     const targetsBoth = applicantType === ApplicantType.both;
     const targetsStudents = targetsBoth || applicantType === ApplicantType.student;
     const targetsGraduates = targetsBoth || applicantType === ApplicantType.graduate;
@@ -141,36 +126,23 @@ export const OfferRepository = {
         }
       ]
     };
-    const whereClause = {
-      where: {
-        [Op.and]: [
-          paginationWhereClause,
-          companyUuid && { companyUuid },
-          approvalStatusWhereClause
-        ].filter(clause => !!clause)
-      }
-    };
 
-    const hasWhereClause = updatedBeforeThan || companyUuid || applicantType;
-
-    return PaginationQueryBuilder.findLatest<Offer>({
+    return PaginationQuery.findLatest({
       updatedBeforeThan,
-      whereClause: (hasWhereClause && whereClause) || {},
-      modelCallback: (where: any, order: any, limit: number) =>
-        Offer.findAll({
-          ...where,
-          ...(careerCodes && {
-            include: [
-              {
-                model: OfferCareer,
-                where: { careerCode: { [Op.in]: careerCodes } },
-                attributes: []
-              }
-            ]
-          }),
-          ...order,
-          limit
-        })
+      query: options => Offer.findAll(options),
+      where: {
+        ...(companyUuid && { companyUuid }),
+        ...approvalStatusWhereClause
+      },
+      ...(careerCodes && {
+        include: [
+          {
+            model: OfferCareer,
+            where: { careerCode: { [Op.in]: careerCodes } },
+            attributes: []
+          }
+        ]
+      })
     });
   },
   truncate: () => Offer.truncate({ cascade: true })

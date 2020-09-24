@@ -1,29 +1,27 @@
 import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedInput";
-
-import { Applicant, JobApplication, Offer } from "..";
-import { Op, Order, WhereOptions } from "sequelize";
+import { FindOptions, Op } from "sequelize";
 import { PaginationConfig } from "$config/PaginationConfig";
 
-type PaginatedModel = Applicant | Offer | JobApplication;
-
-interface IFindLatest<T extends PaginatedModel> {
+interface IFindLatest<Model> extends FindOptions {
   updatedBeforeThan?: IPaginatedInput;
-  modelCallback: (where: WhereOptions, order: Order, limit: number) => Promise<T[]>;
-  whereClause?: any;
-  orderBy?: any;
+  query: (options?: FindOptions) => Promise<Model[]>;
 }
 
-export const PaginationQueryBuilder = {
-  findLatest: async <T extends PaginatedModel>({
-    modelCallback,
+export const PaginationQuery = {
+  findLatest: async <Model>({
     updatedBeforeThan,
-    whereClause,
-    orderBy
-  }: IFindLatest<T>) => {
+    query,
+    where,
+    order,
+    ...findOptions
+  }: IFindLatest<Model>) => {
     const limit = PaginationConfig.itemsPerPage() + 1;
-    const defaultWhere = {
-      ...(updatedBeforeThan && {
-        where: {
+
+    const result = await query({
+      ...findOptions,
+      where: {
+        ...where,
+        ...(updatedBeforeThan && {
           [Op.or]: [
             {
               updatedAt: {
@@ -37,17 +35,14 @@ export const PaginationQueryBuilder = {
               }
             }
           ]
-        }
-      })
-    };
-    const defaultOrder = {
-      order: [
+        })
+      },
+      order: order || [
         ["updatedAt", "DESC"],
         ["uuid", "DESC"]
-      ]
-    };
-
-    const result = await modelCallback(whereClause || defaultWhere, orderBy || defaultOrder, limit);
+      ],
+      limit
+    });
 
     return {
       shouldFetchMore: result.length === limit,
