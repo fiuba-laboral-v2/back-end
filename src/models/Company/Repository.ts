@@ -59,9 +59,6 @@ export const CompanyRepository = {
 
     return company;
   },
-  findAll: async () => {
-    return Company.findAll();
-  },
   findLatest: (updatedBeforeThan?: IPaginatedInput) =>
     PaginationQuery.findLatest({
       updatedBeforeThan,
