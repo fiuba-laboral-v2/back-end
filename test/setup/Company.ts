@@ -5,9 +5,9 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AdminTestSetup } from "./Admin";
 
 export class CompanyTestSetup {
-  public approvedCompany: Company;
-  public rejectedCompany: Company;
-  public pendingCompany: Company;
+  public approved: Company;
+  public rejected: Company;
+  public pending: Company;
   public tasks: AdminTask[];
   public admins: AdminTestSetup;
 
@@ -16,21 +16,21 @@ export class CompanyTestSetup {
   }
 
   public async execute() {
-    this.rejectedCompany = await CompanyGenerator.instance.updatedWithStatus({
+    this.rejected = await CompanyGenerator.instance.updatedWithStatus({
       status: ApprovalStatus.rejected,
       admin: this.admins.extension
     });
 
-    this.approvedCompany = await CompanyGenerator.instance.updatedWithStatus({
+    this.approved = await CompanyGenerator.instance.updatedWithStatus({
       status: ApprovalStatus.approved,
       admin: this.admins.graduados
     });
 
-    this.pendingCompany = await CompanyGenerator.instance.updatedWithStatus({
+    this.pending = await CompanyGenerator.instance.updatedWithStatus({
       status: ApprovalStatus.pending,
       admin: this.admins.extension
     });
 
-    this.tasks = [this.rejectedCompany, this.approvedCompany, this.pendingCompany];
+    this.tasks = [this.rejected, this.approved, this.pending];
   }
 }

@@ -98,7 +98,7 @@ describe("AdminTaskRepository", () => {
 
   it("returns only pending companies", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.companies.pendingCompany],
+      [setup.companies.pending],
       [ApprovalStatus.pending],
       setup.admins.extension.secretary
     );
@@ -106,7 +106,7 @@ describe("AdminTaskRepository", () => {
 
   it("returns only approved companies", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.companies.approvedCompany],
+      [setup.companies.approved],
       [ApprovalStatus.approved],
       setup.admins.extension.secretary
     );
@@ -114,7 +114,7 @@ describe("AdminTaskRepository", () => {
 
   it("returns only rejected companies", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.companies.rejectedCompany],
+      [setup.companies.rejected],
       [ApprovalStatus.rejected],
       setup.admins.extension.secretary
     );
@@ -285,7 +285,7 @@ describe("AdminTaskRepository", () => {
   it("returns only pending graduates, studentsAndGraduates, companies and Offers", async () => {
     await expectToFindAdminTasksWithStatuses(
       [
-        setup.companies.pendingCompany,
+        setup.companies.pending,
         setup.applicants.pendingStudentAndGraduate,
         setup.applicants.pendingGraduate,
         setup.offers.pendingOfferForGraduates,
@@ -299,7 +299,7 @@ describe("AdminTaskRepository", () => {
   it("returns only pending students companies and Offers for students and both for extensionAdmin", async () => {
     await expectToFindAdminTasksWithStatuses(
       [
-        setup.companies.pendingCompany,
+        setup.companies.pending,
         setup.applicants.pendingStudent,
         setup.offers.pendingOfferForStudents,
         setup.offers.pendingOfferForBoth
@@ -312,8 +312,8 @@ describe("AdminTaskRepository", () => {
   it("returns approved and rejected graduates and both, companies and Offers for graduates and both", async () => {
     await expectToFindAdminTasksWithStatuses(
       [
-        setup.companies.approvedCompany,
-        setup.companies.rejectedCompany,
+        setup.companies.approved,
+        setup.companies.rejected,
         setup.applicants.approvedStudentAndGraduate,
         setup.applicants.rejectedStudentAndGraduate,
         setup.applicants.approvedGraduate,
@@ -331,8 +331,8 @@ describe("AdminTaskRepository", () => {
   it("returns approved and rejected students, companies and Offers for students and both", async () => {
     await expectToFindAdminTasksWithStatuses(
       [
-        setup.companies.approvedCompany,
-        setup.companies.rejectedCompany,
+        setup.companies.approved,
+        setup.companies.rejected,
         setup.applicants.approvedStudent,
         setup.applicants.rejectedStudent,
         setup.offers.approvedOfferForStudents,

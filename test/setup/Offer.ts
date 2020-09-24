@@ -30,21 +30,21 @@ export class OfferTestSetup {
   public async execute() {
     this.rejectedOfferForStudents = await OfferGenerator.instance.updatedWithStatus({
       admin: this.admins.extension,
-      companyUuid: this.companies.approvedCompany.uuid,
+      companyUuid: this.companies.approved.uuid,
       status: ApprovalStatus.rejected,
       targetApplicantType: ApplicantType.student
     });
 
     this.rejectedOfferForGraduates = await OfferGenerator.instance.updatedWithStatus({
       admin: this.admins.graduados,
-      companyUuid: this.companies.approvedCompany.uuid,
+      companyUuid: this.companies.approved.uuid,
       status: ApprovalStatus.rejected,
       targetApplicantType: ApplicantType.graduate
     });
 
     this.rejectedOfferForBoth = await OfferGenerator.instance.updatedWithStatus({
       admin: this.admins.graduados,
-      companyUuid: this.companies.approvedCompany.uuid,
+      companyUuid: this.companies.approved.uuid,
       status: ApprovalStatus.rejected,
       targetApplicantType: ApplicantType.both
     });
@@ -56,21 +56,21 @@ export class OfferTestSetup {
 
     this.approvedOfferForStudents = await OfferGenerator.instance.updatedWithStatus({
       admin: this.admins.extension,
-      companyUuid: this.companies.approvedCompany.uuid,
+      companyUuid: this.companies.approved.uuid,
       status: ApprovalStatus.approved,
       targetApplicantType: ApplicantType.student
     });
 
     this.approvedOfferForGraduates = await OfferGenerator.instance.updatedWithStatus({
       admin: this.admins.graduados,
-      companyUuid: this.companies.approvedCompany.uuid,
+      companyUuid: this.companies.approved.uuid,
       status: ApprovalStatus.approved,
       targetApplicantType: ApplicantType.graduate
     });
 
     this.approvedOfferForBoth = await OfferGenerator.instance.updatedWithStatus({
       admin: this.admins.graduados,
-      companyUuid: this.companies.approvedCompany.uuid,
+      companyUuid: this.companies.approved.uuid,
       status: ApprovalStatus.approved,
       targetApplicantType: ApplicantType.both
     });
@@ -83,21 +83,21 @@ export class OfferTestSetup {
 
     this.pendingOfferForStudents = await OfferGenerator.instance.updatedWithStatus({
       admin: this.admins.extension,
-      companyUuid: this.companies.approvedCompany.uuid,
+      companyUuid: this.companies.approved.uuid,
       status: ApprovalStatus.pending,
       targetApplicantType: ApplicantType.student
     });
 
     this.pendingOfferForGraduates = await OfferGenerator.instance.updatedWithStatus({
       admin: this.admins.graduados,
-      companyUuid: this.companies.approvedCompany.uuid,
+      companyUuid: this.companies.approved.uuid,
       status: ApprovalStatus.pending,
       targetApplicantType: ApplicantType.graduate
     });
 
     this.pendingOfferForBoth = await OfferGenerator.instance.updatedWithStatus({
       admin: this.admins.graduados,
-      companyUuid: this.companies.approvedCompany.uuid,
+      companyUuid: this.companies.approved.uuid,
       status: ApprovalStatus.pending,
       targetApplicantType: ApplicantType.both
     });
