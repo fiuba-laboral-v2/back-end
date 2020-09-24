@@ -1,44 +1,32 @@
-import { ApolloServerTestClient } from "apollo-server-testing";
-import { TestClientGenerator } from "$generators/TestClient";
-import { Admin } from "$models";
 import { AdminTask } from "$models/AdminTask";
-import { AdminGenerator } from "$generators/Admin";
 import { Secretary } from "$models/Admin";
 import { ApplicantTestSetup } from "./Applicant";
 import { CompanyTestSetup } from "./Company";
 import { OfferTestSetup } from "./Offer";
+import { AdminTestSetup } from "./Admin";
 import { JobApplicationTestSetup } from "./JobApplication";
 
 export class AdminTaskTestSetup {
-  public graduadosApolloClient: ApolloServerTestClient;
-  public extensionApolloClient: ApolloServerTestClient;
-  public extensionAdmin: Admin;
-  public graduadosAdmin: Admin;
-
   public tasks: AdminTask[];
-  public graphqlSetup: boolean;
 
   public applicants: ApplicantTestSetup;
   public companies: CompanyTestSetup;
   public offers: OfferTestSetup;
   public jobApplications: JobApplicationTestSetup;
+  public admins: AdminTestSetup;
 
   constructor({ graphqlSetup }: { graphqlSetup: boolean }) {
-    this.graphqlSetup = graphqlSetup;
+    this.admins = new AdminTestSetup({ graphqlSetup });
   }
 
   public async execute() {
-    await this.setAdmins();
+    await this.admins.execute();
 
     this.applicants = new ApplicantTestSetup();
-    this.companies = new CompanyTestSetup(this.extensionAdmin);
-    this.offers = new OfferTestSetup(this.companies, this.extensionAdmin, this.graduadosAdmin);
-    this.jobApplications = new JobApplicationTestSetup(
-      this.applicants,
-      this.offers,
-      this.graduadosAdmin,
-      this.extensionAdmin
-    );
+    this.companies = new CompanyTestSetup(this.admins);
+    this.offers = new OfferTestSetup(this.companies, this.admins);
+    this.jobApplications = new JobApplicationTestSetup(this.applicants, this.offers, this.admins);
+
     await this.companies.execute();
     await this.applicants.execute();
     await this.offers.execute();
@@ -63,8 +51,8 @@ export class AdminTaskTestSetup {
   }
 
   public getApolloClient(secretary: Secretary) {
-    if (secretary === Secretary.graduados) return this.graduadosApolloClient;
-    return this.extensionApolloClient;
+    if (secretary === Secretary.graduados) return this.admins.graduadosApolloClient;
+    return this.admins.extensionApolloClient;
   }
 
   private sortTasks(tasks: AdminTask[]) {
@@ -74,19 +62,5 @@ export class AdminTaskTestSetup {
       }
       return task1.uuid < task2.uuid ? 1 : -1;
     });
-  }
-
-  private async setAdmins() {
-    if (this.graphqlSetup) {
-      const extension = await TestClientGenerator.admin({ secretary: Secretary.extension });
-      const graduados = await TestClientGenerator.admin({ secretary: Secretary.graduados });
-      this.extensionAdmin = extension.admin;
-      this.extensionApolloClient = extension.apolloClient;
-      this.graduadosAdmin = graduados.admin;
-      this.graduadosApolloClient = graduados.apolloClient;
-    } else {
-      this.extensionAdmin = await AdminGenerator.instance({ secretary: Secretary.extension });
-      this.graduadosAdmin = await AdminGenerator.instance({ secretary: Secretary.graduados });
-    }
   }
 }

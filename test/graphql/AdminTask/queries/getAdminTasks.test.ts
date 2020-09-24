@@ -95,7 +95,7 @@ describe("getAdminTasks", () => {
     const result = await getAdminTasks({
       adminTaskTypes: [],
       statuses: [ApprovalStatus.pending],
-      secretary: setup.extensionAdmin.secretary
+      secretary: setup.admins.extensionAdmin.secretary
     });
     expect(result).toEqual({ results: [], shouldFetchMore: false });
   });
@@ -104,7 +104,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.companies.pendingCompany],
       [ApprovalStatus.pending],
-      setup.extensionAdmin.secretary
+      setup.admins.extensionAdmin.secretary
     );
   });
 
@@ -112,7 +112,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.companies.approvedCompany],
       [ApprovalStatus.approved],
-      setup.extensionAdmin.secretary
+      setup.admins.extensionAdmin.secretary
     );
   });
 
@@ -120,7 +120,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.companies.rejectedCompany],
       [ApprovalStatus.rejected],
-      setup.extensionAdmin.secretary
+      setup.admins.extensionAdmin.secretary
     );
   });
 
@@ -128,7 +128,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.applicants.pendingStudentAndGraduate],
       [ApprovalStatus.pending],
-      setup.graduadosAdmin.secretary
+      setup.admins.graduadosAdmin.secretary
     );
   });
 
@@ -136,7 +136,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.applicants.approvedStudentAndGraduate],
       [ApprovalStatus.approved],
-      setup.graduadosAdmin.secretary
+      setup.admins.graduadosAdmin.secretary
     );
   });
 
@@ -144,7 +144,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.applicants.rejectedStudentAndGraduate],
       [ApprovalStatus.rejected],
-      setup.graduadosAdmin.secretary
+      setup.admins.graduadosAdmin.secretary
     );
   });
 
@@ -152,7 +152,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.offers.pendingOfferForStudents, setup.offers.pendingOfferForBoth],
       [ApprovalStatus.pending],
-      setup.extensionAdmin.secretary
+      setup.admins.extensionAdmin.secretary
     );
   });
 
@@ -160,7 +160,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.offers.pendingOfferForGraduates, setup.offers.pendingOfferForBoth],
       [ApprovalStatus.pending],
-      setup.graduadosAdmin.secretary
+      setup.admins.graduadosAdmin.secretary
     );
   });
 
@@ -168,7 +168,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.offers.approvedOfferForStudents, setup.offers.approvedOfferForBoth],
       [ApprovalStatus.approved],
-      setup.extensionAdmin.secretary
+      setup.admins.extensionAdmin.secretary
     );
   });
 
@@ -176,7 +176,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.offers.approvedOfferForGraduates, setup.offers.approvedOfferForBoth],
       [ApprovalStatus.approved],
-      setup.graduadosAdmin.secretary
+      setup.admins.graduadosAdmin.secretary
     );
   });
 
@@ -184,7 +184,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.offers.rejectedOfferForStudents, setup.offers.rejectedOfferForBoth],
       [ApprovalStatus.rejected],
-      setup.extensionAdmin.secretary
+      setup.admins.extensionAdmin.secretary
     );
   });
 
@@ -192,7 +192,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.offers.rejectedOfferForGraduates, setup.offers.rejectedOfferForBoth],
       [ApprovalStatus.rejected],
-      setup.graduadosAdmin.secretary
+      setup.admins.graduadosAdmin.secretary
     );
   });
 
@@ -200,7 +200,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.jobApplications.pendingByExtensionJobApplication],
       [ApprovalStatus.pending],
-      setup.extensionAdmin.secretary
+      setup.admins.extensionAdmin.secretary
     );
   });
 
@@ -208,7 +208,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.jobApplications.approvedByExtensionJobApplication],
       [ApprovalStatus.approved],
-      setup.extensionAdmin.secretary
+      setup.admins.extensionAdmin.secretary
     );
   });
 
@@ -216,7 +216,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.jobApplications.rejectedByExtensionJobApplication],
       [ApprovalStatus.rejected],
-      setup.extensionAdmin.secretary
+      setup.admins.extensionAdmin.secretary
     );
   });
 
@@ -224,7 +224,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.jobApplications.pendingByGraduadosJobApplication],
       [ApprovalStatus.pending],
-      setup.graduadosAdmin.secretary
+      setup.admins.graduadosAdmin.secretary
     );
   });
 
@@ -232,7 +232,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.jobApplications.approvedByGraduadosJobApplication],
       [ApprovalStatus.approved],
-      setup.graduadosAdmin.secretary
+      setup.admins.graduadosAdmin.secretary
     );
   });
 
@@ -240,7 +240,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.jobApplications.rejectedByGraduadosJobApplication],
       [ApprovalStatus.rejected],
-      setup.graduadosAdmin.secretary
+      setup.admins.graduadosAdmin.secretary
     );
   });
 
@@ -248,12 +248,12 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.applicants.pendingStudentAndGraduate, setup.companies.pendingCompany],
       [ApprovalStatus.pending],
-      setup.graduadosAdmin.secretary
+      setup.admins.graduadosAdmin.secretary
     );
   });
 
   it("sorts all applicants, companies, offers and JobApplications in any status by updated timestamp", async () => {
-    const { secretary } = setup.extensionAdmin;
+    const { secretary } = setup.admins.extensionAdmin;
     const result = await getAdminTasks({
       adminTaskTypes: [
         AdminTaskType.Applicant,
@@ -272,7 +272,7 @@ describe("getAdminTasks", () => {
   });
 
   it("limits to itemsPerPage results", async () => {
-    const { secretary } = setup.extensionAdmin;
+    const { secretary } = setup.admins.extensionAdmin;
     const allTasksByDescUpdatedAt = await setup.allTasksByDescUpdatedAtForSecretary(secretary);
     const itemsPerPage = 6;
     mockItemsPerPage(itemsPerPage);
@@ -302,7 +302,7 @@ describe("getAdminTasks", () => {
 
   describe("when the variables are incorrect", () => {
     it("returns an error if no filter is provided", async () => {
-      const { errors } = await setup.extensionApolloClient.query({
+      const { errors } = await setup.admins.extensionApolloClient.query({
         query: GET_ADMIN_TASKS,
         variables: {}
       });

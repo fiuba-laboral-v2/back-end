@@ -3,6 +3,7 @@ import { Admin, Applicant, JobApplication, Offer } from "$models";
 import { AdminTask } from "$models/AdminTask";
 import { ApplicantTestSetup } from "./Applicant";
 import { OfferTestSetup } from "./Offer";
+import { AdminTestSetup } from "./Admin";
 import { JobApplicationRepository } from "$models/JobApplication";
 
 export class JobApplicationTestSetup {
@@ -12,22 +13,15 @@ export class JobApplicationTestSetup {
   public approvedByGraduadosJobApplication: JobApplication;
   public rejectedByGraduadosJobApplication: JobApplication;
   public pendingByGraduadosJobApplication: JobApplication;
-  public graduadosAdmin: Admin;
-  public extensionAdmin: Admin;
   public tasks: AdminTask[];
   public applicants: ApplicantTestSetup;
   public offers: OfferTestSetup;
+  public admins: AdminTestSetup;
 
-  constructor(
-    applicants: ApplicantTestSetup,
-    offers: OfferTestSetup,
-    graduadosAdmin: Admin,
-    extensionAdmin: Admin
-  ) {
+  constructor(applicants: ApplicantTestSetup, offers: OfferTestSetup, admins: AdminTestSetup) {
     this.applicants = applicants;
     this.offers = offers;
-    this.graduadosAdmin = graduadosAdmin;
-    this.extensionAdmin = extensionAdmin;
+    this.admins = admins;
   }
 
   public async execute() {
@@ -35,42 +29,42 @@ export class JobApplicationTestSetup {
       this.applicants.approvedStudentAndGraduate,
       this.offers.approvedOfferForBoth,
       ApprovalStatus.approved,
-      this.extensionAdmin
+      this.admins.extensionAdmin
     );
 
     this.rejectedByExtensionJobApplication = await this.createJobApplication(
       this.applicants.approvedStudentAndGraduate,
       this.offers.approvedOfferForGraduates,
       ApprovalStatus.rejected,
-      this.extensionAdmin
+      this.admins.extensionAdmin
     );
 
     this.pendingByExtensionJobApplication = await this.createJobApplication(
       this.applicants.approvedStudentAndGraduate,
       this.offers.approvedOfferForStudents,
       ApprovalStatus.pending,
-      this.extensionAdmin
+      this.admins.extensionAdmin
     );
 
     this.approvedByGraduadosJobApplication = await this.createJobApplication(
       this.applicants.approvedStudentAndGraduate,
       this.offers.rejectedOfferForBoth,
       ApprovalStatus.approved,
-      this.graduadosAdmin
+      this.admins.graduadosAdmin
     );
 
     this.rejectedByGraduadosJobApplication = await this.createJobApplication(
       this.applicants.approvedStudentAndGraduate,
       this.offers.rejectedOfferForGraduates,
       ApprovalStatus.rejected,
-      this.graduadosAdmin
+      this.admins.graduadosAdmin
     );
 
     this.pendingByGraduadosJobApplication = await this.createJobApplication(
       this.applicants.approvedStudentAndGraduate,
       this.offers.rejectedOfferForStudents,
       ApprovalStatus.pending,
-      this.graduadosAdmin
+      this.admins.graduadosAdmin
     );
 
     this.tasks = [
