@@ -128,7 +128,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.pendingApplicant],
       [ApprovalStatus.pending],
-      setup.extensionAdmin.secretary
+      setup.graduadosAdmin.secretary
     );
   });
 
@@ -136,7 +136,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.approvedApplicant],
       [ApprovalStatus.approved],
-      setup.extensionAdmin.secretary
+      setup.graduadosAdmin.secretary
     );
   });
 
@@ -144,7 +144,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.rejectedApplicant],
       [ApprovalStatus.rejected],
-      setup.extensionAdmin.secretary
+      setup.graduadosAdmin.secretary
     );
   });
 
@@ -248,7 +248,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.pendingApplicant, setup.pendingCompany],
       [ApprovalStatus.pending],
-      setup.extensionAdmin.secretary
+      setup.graduadosAdmin.secretary
     );
   });
 
@@ -265,7 +265,7 @@ describe("getAdminTasks", () => {
       secretary
     });
     expect(result.results.map(adminTask => adminTask.uuid)).toEqual(
-      setup.allTasksByDescUpdatedAtForSecretary(secretary).map(task => task.uuid)
+      (await setup.allTasksByDescUpdatedAtForSecretary(secretary)).map(task => task.uuid)
     );
     expect(result.results).toBeSortedBy({ key: "updatedAt", order: "desc" });
     expect(result.shouldFetchMore).toEqual(false);
@@ -273,7 +273,7 @@ describe("getAdminTasks", () => {
 
   it("limits to itemsPerPage results", async () => {
     const { secretary } = setup.extensionAdmin;
-    const allTasksByDescUpdatedAt = setup.allTasksByDescUpdatedAtForSecretary(secretary);
+    const allTasksByDescUpdatedAt = await setup.allTasksByDescUpdatedAtForSecretary(secretary);
     const itemsPerPage = 6;
     mockItemsPerPage(itemsPerPage);
     const lastTaskIndex = allTasksByDescUpdatedAt.length - 1;

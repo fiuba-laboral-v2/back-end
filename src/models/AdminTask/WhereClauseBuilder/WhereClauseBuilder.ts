@@ -17,17 +17,17 @@ export const WhereClauseBuilder = {
       WhereClauseBuilder.getUpdatedAtWhereClause(updatedBeforeThan)
     ]
       .filter(clause => clause)
-      .map(clause => `(${clause})`)
       .join(" AND "),
   getUpdatedAtWhereClause: (updatedBeforeThan?: IPaginatedInput) => {
     if (!updatedBeforeThan) return;
     const updatedAtString = updatedBeforeThan.dateTime.toISOString();
     return `
       (
-        "AdminTask"."updatedAt" < '${updatedAtString}'
-      ) OR (
-        "AdminTask"."updatedAt" = '${updatedAtString}'
-        AND "AdminTask"."uuid" < '${updatedBeforeThan.uuid}'
+        ("AdminTask"."updatedAt" < '${updatedAtString}')
+        OR (
+          "AdminTask"."updatedAt" = '${updatedAtString}'
+          AND "AdminTask"."uuid" < '${updatedBeforeThan.uuid}'
+        )
       )
     `;
   },
@@ -52,7 +52,7 @@ export const WhereClauseBuilder = {
         conditions.push(`"AdminTask"."${column}" = '${status}'`);
       }
     }
-    return conditions.join(" OR ");
+    return `(${conditions.join(" OR ")})`;
   }
 };
 

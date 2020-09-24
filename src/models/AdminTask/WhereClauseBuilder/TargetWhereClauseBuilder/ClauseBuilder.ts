@@ -1,11 +1,14 @@
 import { Secretary } from "$models/Admin";
 import { ApplicantType } from "$models/Applicant";
-import { Offer } from "$models";
+import { Applicant, ApplicantCareer, Offer } from "$models";
 import { AdminTaskType } from "$models/AdminTask/Model";
 
 export const TargetWhereClauseBuilder = {
   build: (variables: ITargetWhereClauseBuilder) =>
-    [TargetWhereClauseBuilder.getOfferTargetWhereClause(variables)]
+    [
+      TargetWhereClauseBuilder.getOfferTargetWhereClause(variables),
+      TargetWhereClauseBuilder.getApplicantTypeWhereClause(variables)
+    ]
       .filter(clause => !!clause)
       .join(" AND "),
   getOfferTargetWhereClause: ({ secretary, adminTaskTypes }: ITargetWhereClauseBuilder) => {
@@ -19,9 +22,27 @@ export const TargetWhereClauseBuilder = {
     }
 
     return `
-      "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-      OR "AdminTask"."targetApplicantType" = '${targetApplicantType}'
-      OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
+      (
+        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
+        OR "AdminTask"."targetApplicantType" = '${targetApplicantType}'
+        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
+      )
+    `;
+  },
+  getApplicantTypeWhereClause: ({ secretary, adminTaskTypes }: ITargetWhereClauseBuilder) => {
+    if (!adminTaskTypes.includes(AdminTaskType.Applicant)) return;
+    const isGraduate = secretary === Secretary.graduados;
+    const notOperator = isGraduate ? "" : "NOT";
+
+    return `
+      (
+        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
+        OR ${notOperator} EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = ${true}
+        )
+      )
     `;
   }
 };

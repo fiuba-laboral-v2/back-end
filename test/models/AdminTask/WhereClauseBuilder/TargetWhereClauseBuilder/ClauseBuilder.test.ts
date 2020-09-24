@@ -2,7 +2,7 @@ import { TargetWhereClauseBuilder } from "$models/AdminTask/WhereClauseBuilder";
 import { Secretary } from "$models/Admin";
 import { AdminTaskType } from "$models/AdminTask";
 import { ApplicantType } from "$models/Applicant";
-import { Offer } from "$models";
+import { Applicant, ApplicantCareer, Offer } from "$models";
 
 describe("TargetWhereClauseBuilder", () => {
   it("builds where clause for offers targeted to graduates", async () => {
@@ -11,9 +11,11 @@ describe("TargetWhereClauseBuilder", () => {
       adminTaskTypes: [AdminTaskType.Offer]
     });
     expect(whereClause).toEqualIgnoringSpacing(`
-      "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-      OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
-      OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
+      (
+        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
+        OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
+        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
+      )
     `);
   });
 
@@ -23,16 +25,18 @@ describe("TargetWhereClauseBuilder", () => {
       adminTaskTypes: [AdminTaskType.Offer]
     });
     expect(whereClause).toEqualIgnoringSpacing(`
-      "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-      OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
-      OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
+      (
+        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
+        OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
+        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
+      )
     `);
   });
 
   it("does not build where clause for not targeted tasks", async () => {
     const whereClause = TargetWhereClauseBuilder.build({
       secretary: Secretary.extension,
-      adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company, AdminTaskType.JobApplication]
+      adminTaskTypes: [AdminTaskType.Company, AdminTaskType.JobApplication]
     });
     expect(whereClause).toEqualIgnoringSpacing("");
   });
@@ -43,9 +47,20 @@ describe("TargetWhereClauseBuilder", () => {
       adminTaskTypes: Object.keys(AdminTaskType) as AdminTaskType[]
     });
     expect(whereClause).toEqualIgnoringSpacing(`
-      "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-      OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
-      OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
+      (
+        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
+        OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
+        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
+      )
+      AND
+      (
+        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
+        OR EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = ${true}
+        )
+      )
     `);
   });
 
@@ -55,9 +70,20 @@ describe("TargetWhereClauseBuilder", () => {
       adminTaskTypes: Object.keys(AdminTaskType) as AdminTaskType[]
     });
     expect(whereClause).toEqualIgnoringSpacing(`
-      "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-      OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
-      OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
+      (
+        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
+        OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
+        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
+      )
+      AND
+      (
+        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
+        OR NOT EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = ${true}
+        )
+      )
     `);
   });
 });

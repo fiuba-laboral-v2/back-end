@@ -62,17 +62,17 @@ export class AdminTaskTestSetup {
 
     this.pendingCompany = await CompanyGenerator.instance.updatedWithStatus();
 
-    this.rejectedApplicant = await ApplicantGenerator.instance.updatedWithStatus({
-      status: ApprovalStatus.rejected,
-      admin: this.extensionAdmin
-    });
+    this.rejectedApplicant = await ApplicantGenerator.instance.studentAndGraduate(
+      ApprovalStatus.rejected
+    );
 
-    this.approvedApplicant = await ApplicantGenerator.instance.updatedWithStatus({
-      status: ApprovalStatus.approved,
-      admin: this.extensionAdmin
-    });
+    this.approvedApplicant = await ApplicantGenerator.instance.studentAndGraduate(
+      ApprovalStatus.approved
+    );
 
-    this.pendingApplicant = await ApplicantGenerator.instance.updatedWithStatus();
+    this.pendingApplicant = await ApplicantGenerator.instance.studentAndGraduate(
+      ApprovalStatus.pending
+    );
 
     const offers = await this.setOffers();
 
@@ -117,25 +117,35 @@ export class AdminTaskTestSetup {
     ].sort(task => -task.updatedAt);
   }
 
-  public allTasksByDescUpdatedAtForSecretary(secretary: Secretary) {
-    let targetApplicantType: ApplicantType;
-    if (secretary === Secretary.graduados) {
-      targetApplicantType = ApplicantType.graduate;
-    } else {
-      targetApplicantType = ApplicantType.student;
+  public async allTasksByDescUpdatedAtForSecretary(secretary: Secretary) {
+    let allTasks = this.filterOffers(this.allTasksByDescUpdatedAt, secretary);
+    allTasks = await allTasks.filter(async task => {
+      if (!(task instanceof Applicant)) return true;
+      const type = await task.getType();
+      const graduateTypes = [ApplicantType.both, ApplicantType.graduate];
+      const isGraduate = secretary === Secretary.graduados;
+      if (isGraduate && graduateTypes.includes(type)) return true;
+      return !isGraduate && !graduateTypes.includes(type);
+    });
+    const all: AdminTask[] = [];
+    for (const task of allTasks) {
+      if (!(task instanceof Applicant)) {
+        all.push(task);
+        continue;
+      }
+      const type = await task.getType();
+      const graduateTypes = [ApplicantType.both, ApplicantType.graduate];
+      const isGraduate = secretary === Secretary.graduados;
+      if (isGraduate && graduateTypes.includes(type)) all.push(task);
+      if (!isGraduate && !graduateTypes.includes(type)) all.push(task);
     }
-    const posibleTargets = [ApplicantType.both, targetApplicantType];
-    return this.allTasksByDescUpdatedAt
-      .filter(task => {
-        if (!(task instanceof Offer)) return true;
-        return posibleTargets.includes(task.targetApplicantType);
-      })
-      .sort((task1, task2) => {
-        if (task1.updatedAt !== task2.updatedAt) {
-          return task1.updatedAt < task2.updatedAt ? 1 : -1;
-        }
-        return task1.uuid < task2.uuid ? 1 : -1;
-      });
+    allTasks = all;
+    return allTasks.sort((task1, task2) => {
+      if (task1.updatedAt !== task2.updatedAt) {
+        return task1.updatedAt < task2.updatedAt ? 1 : -1;
+      }
+      return task1.uuid < task2.uuid ? 1 : -1;
+    });
   }
 
   public getApolloClient(secretary: Secretary) {
@@ -256,5 +266,20 @@ export class AdminTaskTestSetup {
     const offer = await jobApplication.getOffer();
     const company = await offer.getCompany();
     return [applicant, company, offer, jobApplication];
+  }
+
+  private filterOffers(allTasksByDescUpdatedAt: AdminTask[], secretary: Secretary) {
+    let targetApplicantType: ApplicantType;
+    if (secretary === Secretary.graduados) {
+      targetApplicantType = ApplicantType.graduate;
+    } else {
+      targetApplicantType = ApplicantType.student;
+    }
+    const posibleTargets = [ApplicantType.both, targetApplicantType];
+
+    return allTasksByDescUpdatedAt.filter(task => {
+      if (!(task instanceof Offer)) return true;
+      return posibleTargets.includes(task.targetApplicantType);
+    });
   }
 }
