@@ -31,6 +31,7 @@ export const TargetWhereClauseBuilder = {
   },
   getApplicantTypeWhereClause: ({ secretary, adminTaskTypes }: ITargetWhereClauseBuilder) => {
     if (!adminTaskTypes.includes(AdminTaskType.Applicant)) return;
+
     const isGraduate = secretary === Secretary.graduados;
     const notOperator = isGraduate ? "" : "NOT";
 
