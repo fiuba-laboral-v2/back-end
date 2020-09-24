@@ -143,7 +143,7 @@ describe("WhereClauseBuilder", () => {
         OR EXISTS(
           SELECT *
           FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = ${true}
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
         )
       )
     `);
@@ -172,7 +172,7 @@ describe("WhereClauseBuilder", () => {
         OR EXISTS(
           SELECT *
           FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = ${true}
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
         )
       )
     `);
@@ -201,7 +201,7 @@ describe("WhereClauseBuilder", () => {
         OR EXISTS(
           SELECT *
           FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = ${true}
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
         )
       )
     `);
@@ -230,7 +230,7 @@ describe("WhereClauseBuilder", () => {
         OR NOT EXISTS(
           SELECT *
           FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = ${true}
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
         )
       )
     `);
@@ -259,7 +259,7 @@ describe("WhereClauseBuilder", () => {
         OR NOT EXISTS(
           SELECT *
           FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = ${true}
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
         )
       )
     `);
@@ -288,7 +288,7 @@ describe("WhereClauseBuilder", () => {
         OR NOT EXISTS(
           SELECT *
           FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = ${true}
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
         )
       )
     `);
@@ -325,7 +325,7 @@ describe("WhereClauseBuilder", () => {
         OR NOT EXISTS(
           SELECT *
           FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = ${true}
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
         )
       )
     `);
@@ -349,7 +349,7 @@ describe("WhereClauseBuilder", () => {
         OR EXISTS(
           SELECT *
           FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = ${true}
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
         )
       )
     `);
@@ -382,7 +382,7 @@ describe("WhereClauseBuilder", () => {
         OR EXISTS(
           SELECT *
           FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = ${true}
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
         )
       )
     `);
@@ -415,7 +415,7 @@ describe("WhereClauseBuilder", () => {
         OR NOT EXISTS(
           SELECT *
           FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = ${true}
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
         )
       )
     `);
@@ -452,7 +452,7 @@ describe("WhereClauseBuilder", () => {
         OR NOT EXISTS(
           SELECT *
           FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = ${true}
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
         )
       )
       AND (

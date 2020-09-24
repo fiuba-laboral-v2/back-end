@@ -283,7 +283,7 @@ describe("findAdminTasksQuery", () => {
             OR EXISTS(
               SELECT *
               FROM "${ApplicantCareer.tableName}"
-              WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = ${true}
+              WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
             )
         )
       ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC

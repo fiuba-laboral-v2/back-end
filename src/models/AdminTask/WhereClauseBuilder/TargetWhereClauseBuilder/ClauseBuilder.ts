@@ -38,7 +38,7 @@ export const TargetWhereClauseBuilder = {
         OR ${secretary === Secretary.graduados ? "" : "NOT"} EXISTS(
           SELECT *
           FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = ${true}
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
         )
       )
     `;
