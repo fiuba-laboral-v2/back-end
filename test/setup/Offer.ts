@@ -29,7 +29,7 @@ export class OfferTestSetup {
 
   public async execute() {
     this.rejectedOfferForStudents = await OfferGenerator.instance.updatedWithStatus({
-      admin: this.admins.extensionAdmin,
+      admin: this.admins.extension,
       companyUuid: this.companies.approvedCompany.uuid,
       status: ApprovalStatus.rejected,
       targetApplicantType: ApplicantType.student
@@ -50,12 +50,12 @@ export class OfferTestSetup {
     });
     this.rejectedOfferForBoth = await OfferRepository.updateApprovalStatus({
       uuid: this.rejectedOfferForBoth.uuid,
-      admin: this.admins.extensionAdmin,
+      admin: this.admins.extension,
       status: ApprovalStatus.rejected
     });
 
     this.approvedOfferForStudents = await OfferGenerator.instance.updatedWithStatus({
-      admin: this.admins.extensionAdmin,
+      admin: this.admins.extension,
       companyUuid: this.companies.approvedCompany.uuid,
       status: ApprovalStatus.approved,
       targetApplicantType: ApplicantType.student
@@ -77,12 +77,12 @@ export class OfferTestSetup {
 
     this.approvedOfferForBoth = await OfferRepository.updateApprovalStatus({
       uuid: this.approvedOfferForBoth.uuid,
-      admin: this.admins.extensionAdmin,
+      admin: this.admins.extension,
       status: ApprovalStatus.approved
     });
 
     this.pendingOfferForStudents = await OfferGenerator.instance.updatedWithStatus({
-      admin: this.admins.extensionAdmin,
+      admin: this.admins.extension,
       companyUuid: this.companies.approvedCompany.uuid,
       status: ApprovalStatus.pending,
       targetApplicantType: ApplicantType.student
@@ -104,7 +104,7 @@ export class OfferTestSetup {
 
     this.pendingOfferForBoth = await OfferRepository.updateApprovalStatus({
       uuid: this.pendingOfferForBoth.uuid,
-      admin: this.admins.extensionAdmin,
+      admin: this.admins.extension,
       status: ApprovalStatus.pending
     });
 

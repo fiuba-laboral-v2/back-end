@@ -95,7 +95,7 @@ describe("getAdminTasks", () => {
     const result = await getAdminTasks({
       adminTaskTypes: [],
       statuses: [ApprovalStatus.pending],
-      secretary: setup.admins.extensionAdmin.secretary
+      secretary: setup.admins.extension.secretary
     });
     expect(result).toEqual({ results: [], shouldFetchMore: false });
   });
@@ -104,7 +104,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.companies.pendingCompany],
       [ApprovalStatus.pending],
-      setup.admins.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
@@ -112,7 +112,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.companies.approvedCompany],
       [ApprovalStatus.approved],
-      setup.admins.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
@@ -120,7 +120,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.companies.rejectedCompany],
       [ApprovalStatus.rejected],
-      setup.admins.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
@@ -152,7 +152,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.offers.pendingOfferForStudents, setup.offers.pendingOfferForBoth],
       [ApprovalStatus.pending],
-      setup.admins.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
@@ -168,7 +168,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.offers.approvedOfferForStudents, setup.offers.approvedOfferForBoth],
       [ApprovalStatus.approved],
-      setup.admins.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
@@ -184,7 +184,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.offers.rejectedOfferForStudents, setup.offers.rejectedOfferForBoth],
       [ApprovalStatus.rejected],
-      setup.admins.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
@@ -200,7 +200,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.jobApplications.pendingByExtensionJobApplication],
       [ApprovalStatus.pending],
-      setup.admins.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
@@ -208,7 +208,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.jobApplications.approvedByExtensionJobApplication],
       [ApprovalStatus.approved],
-      setup.admins.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
@@ -216,7 +216,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.jobApplications.rejectedByExtensionJobApplication],
       [ApprovalStatus.rejected],
-      setup.admins.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
@@ -253,7 +253,7 @@ describe("getAdminTasks", () => {
   });
 
   it("sorts all applicants, companies, offers and JobApplications in any status by updated timestamp", async () => {
-    const { secretary } = setup.admins.extensionAdmin;
+    const { secretary } = setup.admins.extension;
     const result = await getAdminTasks({
       adminTaskTypes: [
         AdminTaskType.Applicant,
@@ -272,7 +272,7 @@ describe("getAdminTasks", () => {
   });
 
   it("limits to itemsPerPage results", async () => {
-    const { secretary } = setup.admins.extensionAdmin;
+    const { secretary } = setup.admins.extension;
     const allTasksByDescUpdatedAt = await setup.allTasksByDescUpdatedAtForSecretary(secretary);
     const itemsPerPage = 6;
     mockItemsPerPage(itemsPerPage);

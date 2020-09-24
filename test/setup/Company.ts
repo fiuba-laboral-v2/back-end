@@ -18,7 +18,7 @@ export class CompanyTestSetup {
   public async execute() {
     this.rejectedCompany = await CompanyGenerator.instance.updatedWithStatus({
       status: ApprovalStatus.rejected,
-      admin: this.admins.extensionAdmin
+      admin: this.admins.extension
     });
 
     this.approvedCompany = await CompanyGenerator.instance.updatedWithStatus({
@@ -28,7 +28,7 @@ export class CompanyTestSetup {
 
     this.pendingCompany = await CompanyGenerator.instance.updatedWithStatus({
       status: ApprovalStatus.pending,
-      admin: this.admins.extensionAdmin
+      admin: this.admins.extension
     });
 
     this.tasks = [this.rejectedCompany, this.approvedCompany, this.pendingCompany];

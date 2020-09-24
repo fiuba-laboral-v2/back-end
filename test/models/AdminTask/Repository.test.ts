@@ -73,7 +73,7 @@ describe("AdminTaskRepository", () => {
     const result = await AdminTaskRepository.find({
       adminTaskTypes: [AdminTaskType.Applicant],
       statuses: [],
-      secretary: setup.admins.extensionAdmin.secretary
+      secretary: setup.admins.extension.secretary
     });
     expect(result).toEqual({ results: [], shouldFetchMore: false });
   });
@@ -82,7 +82,7 @@ describe("AdminTaskRepository", () => {
     const result = await AdminTaskRepository.find({
       adminTaskTypes: [],
       statuses: [ApprovalStatus.pending],
-      secretary: setup.admins.extensionAdmin.secretary
+      secretary: setup.admins.extension.secretary
     });
     expect(result).toEqual({ results: [], shouldFetchMore: false });
   });
@@ -91,7 +91,7 @@ describe("AdminTaskRepository", () => {
     const result = await AdminTaskRepository.find({
       adminTaskTypes: [],
       statuses: [],
-      secretary: setup.admins.extensionAdmin.secretary
+      secretary: setup.admins.extension.secretary
     });
     expect(result).toEqual({ results: [], shouldFetchMore: false });
   });
@@ -100,7 +100,7 @@ describe("AdminTaskRepository", () => {
     await expectToFindAdminTasksWithStatuses(
       [setup.companies.pendingCompany],
       [ApprovalStatus.pending],
-      setup.admins.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
@@ -108,7 +108,7 @@ describe("AdminTaskRepository", () => {
     await expectToFindAdminTasksWithStatuses(
       [setup.companies.approvedCompany],
       [ApprovalStatus.approved],
-      setup.admins.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
@@ -116,7 +116,7 @@ describe("AdminTaskRepository", () => {
     await expectToFindAdminTasksWithStatuses(
       [setup.companies.rejectedCompany],
       [ApprovalStatus.rejected],
-      setup.admins.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
@@ -132,7 +132,7 @@ describe("AdminTaskRepository", () => {
     await expectToFindAdminTasksWithStatuses(
       [setup.applicants.pendingStudent],
       [ApprovalStatus.pending],
-      setup.admins.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
@@ -148,7 +148,7 @@ describe("AdminTaskRepository", () => {
     await expectToFindAdminTasksWithStatuses(
       [setup.applicants.approvedStudent],
       [ApprovalStatus.approved],
-      setup.admins.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
@@ -164,7 +164,7 @@ describe("AdminTaskRepository", () => {
     await expectToFindAdminTasksWithStatuses(
       [setup.applicants.rejectedStudent],
       [ApprovalStatus.rejected],
-      setup.admins.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
@@ -172,7 +172,7 @@ describe("AdminTaskRepository", () => {
     await expectToFindAdminTasksWithStatuses(
       [setup.offers.pendingOfferForStudents, setup.offers.pendingOfferForBoth],
       [ApprovalStatus.pending],
-      setup.admins.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
@@ -188,7 +188,7 @@ describe("AdminTaskRepository", () => {
     await expectToFindAdminTasksWithStatuses(
       [setup.offers.approvedOfferForStudents, setup.offers.approvedOfferForBoth],
       [ApprovalStatus.approved],
-      setup.admins.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
@@ -204,7 +204,7 @@ describe("AdminTaskRepository", () => {
     await expectToFindAdminTasksWithStatuses(
       [setup.offers.rejectedOfferForStudents, setup.offers.rejectedOfferForBoth],
       [ApprovalStatus.rejected],
-      setup.admins.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
@@ -223,7 +223,7 @@ describe("AdminTaskRepository", () => {
         setup.jobApplications.pendingByGraduadosJobApplication
       ],
       [ApprovalStatus.pending],
-      setup.admins.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
@@ -234,7 +234,7 @@ describe("AdminTaskRepository", () => {
         setup.jobApplications.approvedByGraduadosJobApplication
       ],
       [ApprovalStatus.approved],
-      setup.admins.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
@@ -245,7 +245,7 @@ describe("AdminTaskRepository", () => {
         setup.jobApplications.rejectedByGraduadosJobApplication
       ],
       [ApprovalStatus.rejected],
-      setup.admins.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
@@ -305,7 +305,7 @@ describe("AdminTaskRepository", () => {
         setup.offers.pendingOfferForBoth
       ],
       [ApprovalStatus.pending],
-      setup.admins.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
@@ -341,12 +341,12 @@ describe("AdminTaskRepository", () => {
         setup.offers.rejectedOfferForBoth
       ],
       [ApprovalStatus.approved, ApprovalStatus.rejected],
-      setup.admins.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
   it("sorts all tasks by updatedAt in any status for extension secretary", async () => {
-    await expectToSortAllTasksFor(setup.admins.extensionAdmin.secretary);
+    await expectToSortAllTasksFor(setup.admins.extension.secretary);
   });
 
   it("sorts all tasks by updatedAt in any status for graduados secretary", async () => {
@@ -354,7 +354,7 @@ describe("AdminTaskRepository", () => {
   });
 
   it("limits to itemsPerPage results", async () => {
-    const { secretary } = setup.admins.extensionAdmin;
+    const { secretary } = setup.admins.extension;
     const itemsPerPage = 3;
     mockItemsPerPage(itemsPerPage);
     const lastTaskIndex = 1;
@@ -375,7 +375,7 @@ describe("AdminTaskRepository", () => {
     });
     expect(result.shouldFetchMore).toEqual(true);
     expect(result.results.map(task => task.uuid)).toEqual(
-      (await setup.allTasksByDescUpdatedAtForSecretary(setup.admins.extensionAdmin.secretary))
+      (await setup.allTasksByDescUpdatedAtForSecretary(setup.admins.extension.secretary))
         .map(task => task.uuid)
         .slice(lastTaskIndex + 1, lastTaskIndex + 1 + itemsPerPage)
     );
@@ -402,7 +402,7 @@ describe("AdminTaskRepository", () => {
           dateTime: firstTask.updatedAt,
           uuid: firstTask.uuid
         },
-        secretary: setup.admins.extensionAdmin.secretary
+        secretary: setup.admins.extension.secretary
       });
       expect(result.shouldFetchMore).toEqual(false);
       expect(result.results.map(task => task.uuid)).toEqual(

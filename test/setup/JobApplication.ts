@@ -29,21 +29,21 @@ export class JobApplicationTestSetup {
       this.applicants.approvedStudentAndGraduate,
       this.offers.approvedOfferForBoth,
       ApprovalStatus.approved,
-      this.admins.extensionAdmin
+      this.admins.extension
     );
 
     this.rejectedByExtensionJobApplication = await this.createJobApplication(
       this.applicants.approvedStudentAndGraduate,
       this.offers.approvedOfferForGraduates,
       ApprovalStatus.rejected,
-      this.admins.extensionAdmin
+      this.admins.extension
     );
 
     this.pendingByExtensionJobApplication = await this.createJobApplication(
       this.applicants.approvedStudentAndGraduate,
       this.offers.approvedOfferForStudents,
       ApprovalStatus.pending,
-      this.admins.extensionAdmin
+      this.admins.extension
     );
 
     this.approvedByGraduadosJobApplication = await this.createJobApplication(

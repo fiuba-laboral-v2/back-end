@@ -8,7 +8,7 @@ import { AdminGenerator } from "$generators/Admin";
 export class AdminTestSetup {
   public graduadosApolloClient: ApolloServerTestClient;
   public extensionApolloClient: ApolloServerTestClient;
-  public extensionAdmin: Admin;
+  public extension: Admin;
   public graduadosAdmin: Admin;
   public graphqlSetup: boolean;
   public tasks: AdminTask[];
@@ -21,12 +21,12 @@ export class AdminTestSetup {
     if (this.graphqlSetup) {
       const extension = await TestClientGenerator.admin({ secretary: Secretary.extension });
       const graduados = await TestClientGenerator.admin({ secretary: Secretary.graduados });
-      this.extensionAdmin = extension.admin;
+      this.extension = extension.admin;
       this.extensionApolloClient = extension.apolloClient;
       this.graduadosAdmin = graduados.admin;
       this.graduadosApolloClient = graduados.apolloClient;
     } else {
-      this.extensionAdmin = await AdminGenerator.extension();
+      this.extension = await AdminGenerator.extension();
       this.graduadosAdmin = await AdminGenerator.graduados();
     }
   }
