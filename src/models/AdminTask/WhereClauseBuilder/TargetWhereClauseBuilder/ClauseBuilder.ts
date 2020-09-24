@@ -32,13 +32,10 @@ export const TargetWhereClauseBuilder = {
   getApplicantTypeWhereClause: ({ secretary, adminTaskTypes }: ITargetWhereClauseBuilder) => {
     if (!adminTaskTypes.includes(AdminTaskType.Applicant)) return;
 
-    const isGraduate = secretary === Secretary.graduados;
-    const notOperator = isGraduate ? "" : "NOT";
-
     return `
       (
         "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
-        OR ${notOperator} EXISTS(
+        OR ${secretary === Secretary.graduados ? "" : "NOT"} EXISTS(
           SELECT *
           FROM "${ApplicantCareer.tableName}"
           WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = ${true}
