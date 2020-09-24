@@ -278,6 +278,44 @@ describe("getApprovedOffers", () => {
     });
   });
 
+  describe("pagination (student only)", () => {
+    let studentOffer: Offer;
+    let apolloClient: ApolloServerTestClient;
+
+    beforeAll(async () => {
+      await CompanyRepository.truncate();
+      await UserRepository.truncate();
+
+      apolloClient = await approvedApplicantTestClient([
+        {
+          careerCode: secondCareer.code,
+          currentCareerYear: 4,
+          approvedSubjectCount: 40,
+          isGraduate: false
+        }
+      ]);
+
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      await OfferGenerator.instance.forGraduates({ companyUuid });
+      studentOffer = await OfferGenerator.instance.forStudents({ companyUuid });
+    });
+
+    it("does not retrieve graduate offer in second page", async () => {
+      mockItemsPerPage(1);
+      const { data } = await apolloClient.query({
+        query: GET_APPROVED_OFFERS,
+        variables: {
+          updatedBeforeThan: {
+            dateTime: studentOffer.updatedAt.toISOString(),
+            uuid: studentOffer.uuid
+          }
+        }
+      });
+      expect(data!.getApprovedOffers.results.length).toEqual(0);
+      expect(data!.getApprovedOffers.shouldFetchMore).toEqual(false);
+    });
+  });
+
   it("filters offers by career code", async () => {
     const { code: careerCode1 } = await CareerGenerator.instance();
     const { code: careerCode2 } = await CareerGenerator.instance();

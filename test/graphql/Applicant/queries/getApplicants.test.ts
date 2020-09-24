@@ -14,39 +14,44 @@ import { AdminGenerator } from "$generators/Admin";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { Secretary } from "$models/Admin";
 import { Admin } from "$models";
+import { mockItemsPerPage } from "$test/mocks/config/PaginationConfig";
 
 const GET_APPLICANTS = gql`
-  query getApplicants {
-    getApplicants {
-      uuid
-      user {
-        email
-        name
-        surname
-      }
-      padron
-      description
-      capabilities {
+  query GetApplicants($updatedBeforeThan: PaginatedInput) {
+    getApplicants(updatedBeforeThan: $updatedBeforeThan) {
+      shouldFetchMore
+      results {
         uuid
+        user {
+          email
+          name
+          surname
+        }
+        padron
         description
-      }
-      careers {
-        careerCode
-        career {
-          code
+        updatedAt
+        capabilities {
+          uuid
           description
         }
-        approvedSubjectCount
-        currentCareerYear
-        isGraduate
-      }
-      sections {
-        title
-        text
-      }
-      links {
-        name
-        url
+        careers {
+          careerCode
+          career {
+            code
+            description
+          }
+          approvedSubjectCount
+          currentCareerYear
+          isGraduate
+        }
+        sections {
+          title
+          text
+        }
+        links {
+          name
+          url
+        }
       }
     }
   }
@@ -67,7 +72,8 @@ describe("getApplicants", () => {
       const { apolloClient } = await TestClientGenerator.admin();
       const { data, errors } = await apolloClient.query({ query: GET_APPLICANTS });
       expect(errors).toBeUndefined();
-      expect(data!.getApplicants).toEqual([]);
+      expect(data!.getApplicants.shouldFetchMore).toEqual(false);
+      expect(data!.getApplicants.results).toEqual([]);
     });
   });
 
@@ -85,7 +91,8 @@ describe("getApplicants", () => {
       expect(errors).toBeUndefined();
       const [career] = await applicant.getCareers();
       const capabilities = await applicant.getCapabilities();
-      expect(data!.getApplicants).toEqual(
+      expect(data!.getApplicants.shouldFetchMore).toEqual(false);
+      expect(data!.getApplicants.results).toEqual(
         expect.arrayContaining([
           {
             uuid: applicant.uuid,
@@ -96,6 +103,7 @@ describe("getApplicants", () => {
             },
             padron: applicant.padron,
             description: applicant.description,
+            updatedAt: applicant.updatedAt.toISOString(),
             capabilities: capabilities.map(({ uuid, description }) => ({ uuid, description })),
             careers: [
               {
@@ -150,6 +158,7 @@ describe("getApplicants", () => {
             },
             padron: applicant.padron,
             description: applicant.description,
+            updatedAt: applicant.updatedAt.toISOString(),
             careers: [
               {
                 career: {
@@ -165,7 +174,18 @@ describe("getApplicants", () => {
           };
         })
       );
-      expect(data!.getApplicants).toEqual(expect.arrayContaining(expectedApplicants));
+      expect(data!.getApplicants.shouldFetchMore).toEqual(false);
+      expect(data!.getApplicants.results).toEqual(expect.arrayContaining(expectedApplicants));
+    });
+
+    it("gets the next 2 Applicants and should fetch more should be true", async () => {
+      const itemsPerPage = 2;
+      mockItemsPerPage(itemsPerPage);
+      const { apolloClient } = await TestClientGenerator.admin();
+      const { data, errors } = await apolloClient.query({ query: GET_APPLICANTS });
+      expect(errors).toBeUndefined();
+      expect(data!.getApplicants.shouldFetchMore).toBe(true);
+      expect(data!.getApplicants.results.length).toEqual(2);
     });
   });
 
