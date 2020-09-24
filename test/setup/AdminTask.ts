@@ -1,260 +1,66 @@
-import { ApolloServerTestClient } from "apollo-server-testing";
-import { CompanyGenerator } from "$generators/Company";
-import { ApprovalStatus } from "$models/ApprovalStatus";
-import { TestClientGenerator } from "$generators/TestClient";
-import { ApplicantGenerator } from "$generators/Applicant";
-import { OfferGenerator } from "$generators/Offer";
-import { JobApplicationGenerator } from "$generators/JobApplication";
-import { Admin, Applicant, Company, JobApplication, Offer } from "$models";
 import { AdminTask } from "$models/AdminTask";
-import { AdminGenerator } from "$generators/Admin";
 import { Secretary } from "$models/Admin";
-import { ApplicantType } from "$models/Applicant";
-import { OfferRepository } from "$models/Offer";
+import { ApplicantTestSetup } from "./Applicant";
+import { CompanyTestSetup } from "./Company";
+import { OfferTestSetup } from "./Offer";
+import { AdminTestSetup } from "./Admin";
+import { JobApplicationTestSetup } from "./JobApplication";
 
 export class AdminTaskTestSetup {
-  public graduadosApolloClient: ApolloServerTestClient;
-  public extensionApolloClient: ApolloServerTestClient;
-  public extensionAdmin: Admin;
-  public graduadosAdmin: Admin;
-  public approvedCompany: Company;
-  public rejectedCompany: Company;
-  public pendingCompany: Company;
-  public approvedApplicant: Applicant;
-  public rejectedApplicant: Applicant;
-  public pendingApplicant: Applicant;
+  public tasks: AdminTask[];
 
-  public approvedOfferForStudents: Offer;
-  public approvedOfferForGraduates: Offer;
-  public approvedOfferForBoth: Offer;
-  public rejectedOfferForStudents: Offer;
-  public rejectedOfferForGraduates: Offer;
-  public rejectedOfferForBoth: Offer;
-  public pendingOfferForStudents: Offer;
-  public pendingOfferForGraduates: Offer;
-  public pendingOfferForBoth: Offer;
-
-  public approvedByExtensionJobApplication: JobApplication;
-  public rejectedByExtensionJobApplication: JobApplication;
-  public pendingByExtensionJobApplication: JobApplication;
-  public approvedByGraduadosJobApplication: JobApplication;
-  public rejectedByGraduadosJobApplication: JobApplication;
-  public pendingByGraduadosJobApplication: JobApplication;
-  public allTasksByDescUpdatedAt: AdminTask[];
-  public graphqlSetup: boolean;
+  public applicants: ApplicantTestSetup;
+  public companies: CompanyTestSetup;
+  public offers: OfferTestSetup;
+  public jobApplications: JobApplicationTestSetup;
+  public admins: AdminTestSetup;
 
   constructor({ graphqlSetup }: { graphqlSetup: boolean }) {
-    this.graphqlSetup = graphqlSetup;
+    this.admins = new AdminTestSetup({ graphqlSetup });
   }
 
   public async execute() {
-    await this.setAdmins();
+    await this.admins.execute();
 
-    this.rejectedCompany = await CompanyGenerator.instance.updatedWithStatus({
-      status: ApprovalStatus.rejected,
-      admin: this.extensionAdmin
-    });
+    this.applicants = new ApplicantTestSetup();
+    this.companies = new CompanyTestSetup(this.admins);
+    this.offers = new OfferTestSetup(this.companies, this.admins);
+    this.jobApplications = new JobApplicationTestSetup(this.applicants, this.offers, this.admins);
 
-    this.approvedCompany = await CompanyGenerator.instance.updatedWithStatus({
-      status: ApprovalStatus.approved,
-      admin: this.extensionAdmin
-    });
+    await this.companies.execute();
+    await this.applicants.execute();
+    await this.offers.execute();
+    await this.jobApplications.execute();
 
-    this.pendingCompany = await CompanyGenerator.instance.updatedWithStatus();
-
-    this.rejectedApplicant = await ApplicantGenerator.instance.updatedWithStatus({
-      status: ApprovalStatus.rejected,
-      admin: this.extensionAdmin
-    });
-
-    this.approvedApplicant = await ApplicantGenerator.instance.updatedWithStatus({
-      status: ApprovalStatus.approved,
-      admin: this.extensionAdmin
-    });
-
-    this.pendingApplicant = await ApplicantGenerator.instance.updatedWithStatus();
-
-    const offers = await this.setOffers();
-
-    this.pendingByExtensionJobApplication = await JobApplicationGenerator.instance.updatedWithStatus(
-      { admin: this.extensionAdmin, status: ApprovalStatus.pending }
-    );
-
-    this.approvedByExtensionJobApplication = await JobApplicationGenerator.instance.updatedWithStatus(
-      { admin: this.extensionAdmin, status: ApprovalStatus.approved }
-    );
-
-    this.rejectedByExtensionJobApplication = await JobApplicationGenerator.instance.updatedWithStatus(
-      { admin: this.extensionAdmin, status: ApprovalStatus.rejected }
-    );
-
-    this.pendingByGraduadosJobApplication = await JobApplicationGenerator.instance.updatedWithStatus(
-      { admin: this.graduadosAdmin, status: ApprovalStatus.pending }
-    );
-
-    this.approvedByGraduadosJobApplication = await JobApplicationGenerator.instance.updatedWithStatus(
-      { admin: this.graduadosAdmin, status: ApprovalStatus.approved }
-    );
-
-    this.rejectedByGraduadosJobApplication = await JobApplicationGenerator.instance.updatedWithStatus(
-      { admin: this.graduadosAdmin, status: ApprovalStatus.rejected }
-    );
-
-    this.allTasksByDescUpdatedAt = [
-      this.rejectedCompany,
-      this.approvedCompany,
-      this.pendingCompany,
-      this.rejectedApplicant,
-      this.approvedApplicant,
-      this.pendingApplicant,
-      ...offers,
-      ...(await this.getJobApplicationAssociations(this.pendingByExtensionJobApplication)),
-      ...(await this.getJobApplicationAssociations(this.approvedByExtensionJobApplication)),
-      ...(await this.getJobApplicationAssociations(this.rejectedByExtensionJobApplication)),
-      ...(await this.getJobApplicationAssociations(this.pendingByGraduadosJobApplication)),
-      ...(await this.getJobApplicationAssociations(this.approvedByGraduadosJobApplication)),
-      ...(await this.getJobApplicationAssociations(this.rejectedByGraduadosJobApplication))
-    ].sort(task => -task.updatedAt);
+    this.tasks = this.sortTasks([
+      ...this.applicants.tasks,
+      ...this.companies.tasks,
+      ...this.offers.tasks,
+      ...this.jobApplications.tasks
+    ]);
   }
 
-  public allTasksByDescUpdatedAtForSecretary(secretary: Secretary) {
-    let targetApplicantType: ApplicantType;
-    if (secretary === Secretary.graduados) {
-      targetApplicantType = ApplicantType.graduate;
-    } else {
-      targetApplicantType = ApplicantType.student;
-    }
-    const posibleTargets = [ApplicantType.both, targetApplicantType];
-    return this.allTasksByDescUpdatedAt
-      .filter(task => {
-        if (!(task instanceof Offer)) return true;
-        return posibleTargets.includes(task.targetApplicantType);
-      })
-      .sort((task1, task2) => {
-        if (task1.updatedAt !== task2.updatedAt) {
-          return task1.updatedAt < task2.updatedAt ? 1 : -1;
-        }
-        return task1.uuid < task2.uuid ? 1 : -1;
-      });
+  public async allTasksByDescUpdatedAtForSecretary(secretary: Secretary) {
+    const allTasks = [
+      ...(await this.applicants.tasksVisibleBy(secretary)),
+      ...this.companies.tasks,
+      ...this.offers.tasksVisibleBy(secretary),
+      ...this.jobApplications.tasks
+    ];
+    return this.sortTasks(allTasks);
   }
 
   public getApolloClient(secretary: Secretary) {
-    if (secretary === Secretary.graduados) return this.graduadosApolloClient;
-    return this.extensionApolloClient;
+    if (secretary === Secretary.graduados) return this.admins.graduadosApolloClient;
+    return this.admins.extensionApolloClient;
   }
 
-  private async setOffers() {
-    this.rejectedOfferForStudents = await OfferGenerator.instance.updatedWithStatus({
-      admin: this.extensionAdmin,
-      companyUuid: this.approvedCompany.uuid,
-      status: ApprovalStatus.rejected,
-      targetApplicantType: ApplicantType.student
+  private sortTasks(tasks: AdminTask[]) {
+    return tasks.sort((task1, task2) => {
+      if (task1.updatedAt !== task2.updatedAt) {
+        return task1.updatedAt < task2.updatedAt ? 1 : -1;
+      }
+      return task1.uuid < task2.uuid ? 1 : -1;
     });
-
-    this.rejectedOfferForGraduates = await OfferGenerator.instance.updatedWithStatus({
-      admin: this.graduadosAdmin,
-      companyUuid: this.approvedCompany.uuid,
-      status: ApprovalStatus.rejected,
-      targetApplicantType: ApplicantType.graduate
-    });
-
-    this.rejectedOfferForBoth = await OfferGenerator.instance.updatedWithStatus({
-      admin: this.graduadosAdmin,
-      companyUuid: this.approvedCompany.uuid,
-      status: ApprovalStatus.rejected,
-      targetApplicantType: ApplicantType.both
-    });
-    this.rejectedOfferForBoth = await OfferRepository.updateApprovalStatus({
-      uuid: this.rejectedOfferForBoth.uuid,
-      admin: this.extensionAdmin,
-      status: ApprovalStatus.rejected
-    });
-
-    this.approvedOfferForStudents = await OfferGenerator.instance.updatedWithStatus({
-      admin: this.extensionAdmin,
-      companyUuid: this.approvedCompany.uuid,
-      status: ApprovalStatus.approved,
-      targetApplicantType: ApplicantType.student
-    });
-
-    this.approvedOfferForGraduates = await OfferGenerator.instance.updatedWithStatus({
-      admin: this.graduadosAdmin,
-      companyUuid: this.approvedCompany.uuid,
-      status: ApprovalStatus.approved,
-      targetApplicantType: ApplicantType.graduate
-    });
-
-    this.approvedOfferForBoth = await OfferGenerator.instance.updatedWithStatus({
-      admin: this.graduadosAdmin,
-      companyUuid: this.approvedCompany.uuid,
-      status: ApprovalStatus.approved,
-      targetApplicantType: ApplicantType.both
-    });
-
-    this.approvedOfferForBoth = await OfferRepository.updateApprovalStatus({
-      uuid: this.approvedOfferForBoth.uuid,
-      admin: this.extensionAdmin,
-      status: ApprovalStatus.approved
-    });
-
-    this.pendingOfferForStudents = await OfferGenerator.instance.updatedWithStatus({
-      admin: this.extensionAdmin,
-      companyUuid: this.approvedCompany.uuid,
-      status: ApprovalStatus.pending,
-      targetApplicantType: ApplicantType.student
-    });
-
-    this.pendingOfferForGraduates = await OfferGenerator.instance.updatedWithStatus({
-      admin: this.graduadosAdmin,
-      companyUuid: this.approvedCompany.uuid,
-      status: ApprovalStatus.pending,
-      targetApplicantType: ApplicantType.graduate
-    });
-
-    this.pendingOfferForBoth = await OfferGenerator.instance.updatedWithStatus({
-      admin: this.graduadosAdmin,
-      companyUuid: this.approvedCompany.uuid,
-      status: ApprovalStatus.pending,
-      targetApplicantType: ApplicantType.both
-    });
-
-    this.pendingOfferForBoth = await OfferRepository.updateApprovalStatus({
-      uuid: this.pendingOfferForBoth.uuid,
-      admin: this.extensionAdmin,
-      status: ApprovalStatus.pending
-    });
-
-    return [
-      this.approvedOfferForStudents,
-      this.approvedOfferForGraduates,
-      this.approvedOfferForBoth,
-      this.rejectedOfferForStudents,
-      this.rejectedOfferForGraduates,
-      this.rejectedOfferForBoth,
-      this.pendingOfferForStudents,
-      this.pendingOfferForGraduates,
-      this.pendingOfferForBoth
-    ];
-  }
-
-  private async setAdmins() {
-    if (this.graphqlSetup) {
-      const extension = await TestClientGenerator.admin({ secretary: Secretary.extension });
-      const graduados = await TestClientGenerator.admin({ secretary: Secretary.graduados });
-      this.extensionAdmin = extension.admin;
-      this.extensionApolloClient = extension.apolloClient;
-      this.graduadosAdmin = graduados.admin;
-      this.graduadosApolloClient = graduados.apolloClient;
-    } else {
-      this.extensionAdmin = await AdminGenerator.instance({ secretary: Secretary.extension });
-      this.graduadosAdmin = await AdminGenerator.instance({ secretary: Secretary.graduados });
-    }
-  }
-
-  private async getJobApplicationAssociations(jobApplication: JobApplication) {
-    const applicant = await jobApplication.getApplicant();
-    const offer = await jobApplication.getOffer();
-    const company = await offer.getCompany();
-    return [applicant, company, offer, jobApplication];
   }
 }

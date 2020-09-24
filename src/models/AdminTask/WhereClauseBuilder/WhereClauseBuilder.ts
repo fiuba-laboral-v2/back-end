@@ -1,51 +1,34 @@
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
-import { ApplicantType } from "$models/Applicant";
-import { Offer } from "$models";
 import {
   AdminTaskType,
   SeparateApprovalAdminTaskTypes,
   SharedApprovalAdminTaskTypes
 } from "$models/AdminTask/Model";
+import { TargetWhereClauseBuilder } from "./TargetWhereClauseBuilder";
 import intersection from "lodash/intersection";
 
 export const WhereClauseBuilder = {
   build: ({ statuses, secretary, adminTaskTypes, updatedBeforeThan }: IWhereClauseBuilder) =>
     [
       WhereClauseBuilder.getStatusWhereClause(statuses, secretary, adminTaskTypes),
-      WhereClauseBuilder.getTargetWhereClause(secretary, adminTaskTypes),
+      TargetWhereClauseBuilder.build({ secretary, adminTaskTypes }),
       WhereClauseBuilder.getUpdatedAtWhereClause(updatedBeforeThan)
     ]
       .filter(clause => clause)
-      .map(clause => `(${clause})`)
       .join(" AND "),
   getUpdatedAtWhereClause: (updatedBeforeThan?: IPaginatedInput) => {
     if (!updatedBeforeThan) return;
     const updatedAtString = updatedBeforeThan.dateTime.toISOString();
     return `
       (
-        "AdminTask"."updatedAt" < '${updatedAtString}'
-      ) OR (
-        "AdminTask"."updatedAt" = '${updatedAtString}'
-        AND "AdminTask"."uuid" < '${updatedBeforeThan.uuid}'
+        ("AdminTask"."updatedAt" < '${updatedAtString}')
+        OR (
+          "AdminTask"."updatedAt" = '${updatedAtString}'
+          AND "AdminTask"."uuid" < '${updatedBeforeThan.uuid}'
+        )
       )
-    `;
-  },
-  getTargetWhereClause: (secretary: Secretary, adminTaskTypes: AdminTaskType[]) => {
-    if (!adminTaskTypes.includes(AdminTaskType.Offer)) return;
-
-    let targetApplicantType: ApplicantType;
-    if (secretary === Secretary.graduados) {
-      targetApplicantType = ApplicantType.graduate;
-    } else {
-      targetApplicantType = ApplicantType.student;
-    }
-
-    return `
-      "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-      OR "AdminTask"."targetApplicantType" = '${targetApplicantType}'
-      OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
     `;
   },
   getStatusWhereClause: (
@@ -69,7 +52,7 @@ export const WhereClauseBuilder = {
         conditions.push(`"AdminTask"."${column}" = '${status}'`);
       }
     }
-    return conditions.join(" OR ");
+    return `(${conditions.join(" OR ")})`;
   }
 };
 

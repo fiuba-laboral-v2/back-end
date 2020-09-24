@@ -2,7 +2,7 @@ import { WhereClauseBuilder } from "$models/AdminTask/WhereClauseBuilder";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
 import { ApplicantType } from "$models/Applicant";
-import { Offer } from "$models";
+import { Applicant, ApplicantCareer, Offer } from "$models";
 import { AdminTaskType } from "$models/AdminTask";
 
 describe("WhereClauseBuilder", () => {
@@ -137,6 +137,15 @@ describe("WhereClauseBuilder", () => {
         OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
         OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
       )
+      AND
+      (
+        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
+        OR EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
+        )
+      )
     `);
   });
 
@@ -156,6 +165,15 @@ describe("WhereClauseBuilder", () => {
         "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
         OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
         OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
+      )
+      AND
+      (
+        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
+        OR EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
+        )
       )
     `);
   });
@@ -177,6 +195,15 @@ describe("WhereClauseBuilder", () => {
         OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
         OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
       )
+      AND
+      (
+        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
+        OR EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
+        )
+      )
     `);
   });
 
@@ -196,6 +223,15 @@ describe("WhereClauseBuilder", () => {
         "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
         OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
         OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
+      )
+      AND
+      (
+        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
+        OR NOT EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
+        )
       )
     `);
   });
@@ -217,6 +253,15 @@ describe("WhereClauseBuilder", () => {
         OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
         OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
       )
+      AND
+      (
+        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
+        OR NOT EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
+        )
+      )
     `);
   });
 
@@ -237,6 +282,15 @@ describe("WhereClauseBuilder", () => {
         OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
         OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
       )
+      AND
+      (
+        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
+        OR NOT EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
+        )
+      )
     `);
   });
 
@@ -244,7 +298,7 @@ describe("WhereClauseBuilder", () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.approved],
       secretary: Secretary.graduados,
-      adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company, AdminTaskType.JobApplication]
+      adminTaskTypes: [AdminTaskType.Company, AdminTaskType.JobApplication]
     });
     expect(whereClause).toEqualIgnoringSpacing(`
       (
@@ -265,6 +319,15 @@ describe("WhereClauseBuilder", () => {
         OR "AdminTask"."approvalStatus" = '${ApprovalStatus.approved}'
         OR "AdminTask"."approvalStatus" = '${ApprovalStatus.rejected}'
       )
+      AND
+      (
+        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
+        OR NOT EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
+        )
+      )
     `);
   });
 
@@ -279,6 +342,15 @@ describe("WhereClauseBuilder", () => {
         "AdminTask"."approvalStatus" = '${ApprovalStatus.pending}'
         OR "AdminTask"."approvalStatus" = '${ApprovalStatus.approved}'
         OR "AdminTask"."approvalStatus" = '${ApprovalStatus.rejected}'
+      )
+      AND
+      (
+        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
+        OR EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
+        )
       )
     `);
   });
@@ -304,6 +376,15 @@ describe("WhereClauseBuilder", () => {
         OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
         OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
       )
+      AND
+      (
+        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
+        OR EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
+        )
+      )
     `);
   });
 
@@ -327,6 +408,15 @@ describe("WhereClauseBuilder", () => {
         "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
         OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
         OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
+      )
+      AND
+      (
+        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
+        OR NOT EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
+        )
       )
     `);
   });
@@ -355,6 +445,15 @@ describe("WhereClauseBuilder", () => {
         "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
         OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
         OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
+      )
+      AND
+      (
+        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
+        OR NOT EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
+        )
       )
       AND (
         (

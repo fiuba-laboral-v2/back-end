@@ -42,6 +42,7 @@ describe("AdminTaskRepository", () => {
     secretary: Secretary
   ) => {
     const result = await findAdminTasks(adminTasks, statuses, secretary);
+    expect(result.results).toHaveLength(adminTasks.length);
     expect(result.results).toEqual(
       expect.arrayContaining(
         adminTasks.map(adminTask => expect.objectContaining(adminTask.toJSON()))
@@ -62,7 +63,7 @@ describe("AdminTaskRepository", () => {
       secretary
     });
     expect(result.results.map(adminTask => adminTask.uuid)).toEqual(
-      setup.allTasksByDescUpdatedAtForSecretary(secretary).map(task => task.uuid)
+      (await setup.allTasksByDescUpdatedAtForSecretary(secretary)).map(task => task.uuid)
     );
     expect(result.results).toBeSortedBy({ key: "updatedAt", order: "desc" });
     expect(result.shouldFetchMore).toEqual(false);
@@ -72,7 +73,7 @@ describe("AdminTaskRepository", () => {
     const result = await AdminTaskRepository.find({
       adminTaskTypes: [AdminTaskType.Applicant],
       statuses: [],
-      secretary: setup.extensionAdmin.secretary
+      secretary: setup.admins.extension.secretary
     });
     expect(result).toEqual({ results: [], shouldFetchMore: false });
   });
@@ -81,7 +82,7 @@ describe("AdminTaskRepository", () => {
     const result = await AdminTaskRepository.find({
       adminTaskTypes: [],
       statuses: [ApprovalStatus.pending],
-      secretary: setup.extensionAdmin.secretary
+      secretary: setup.admins.extension.secretary
     });
     expect(result).toEqual({ results: [], shouldFetchMore: false });
   });
@@ -90,191 +91,256 @@ describe("AdminTaskRepository", () => {
     const result = await AdminTaskRepository.find({
       adminTaskTypes: [],
       statuses: [],
-      secretary: setup.extensionAdmin.secretary
+      secretary: setup.admins.extension.secretary
     });
     expect(result).toEqual({ results: [], shouldFetchMore: false });
   });
 
   it("returns only pending companies", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.pendingCompany],
+      [setup.companies.pending],
       [ApprovalStatus.pending],
-      setup.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
   it("returns only approved companies", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.approvedCompany],
+      [setup.companies.approved],
       [ApprovalStatus.approved],
-      setup.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
   it("returns only rejected companies", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.rejectedCompany],
+      [setup.companies.rejected],
       [ApprovalStatus.rejected],
-      setup.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
-  it("returns only pending applicants", async () => {
+  it("returns only pending graduates and both for graduadosAdmin", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.pendingApplicant],
+      [setup.applicants.pendingStudentAndGraduate, setup.applicants.pendingGraduate],
       [ApprovalStatus.pending],
-      setup.extensionAdmin.secretary
+      setup.admins.graduados.secretary
     );
   });
 
-  it("returns only approved applicants", async () => {
+  it("returns only pending students for extensionAdmin", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.approvedApplicant],
+      [setup.applicants.pendingStudent],
+      [ApprovalStatus.pending],
+      setup.admins.extension.secretary
+    );
+  });
+
+  it("returns only approved graduates and both for graduadosAdmin", async () => {
+    await expectToFindAdminTasksWithStatuses(
+      [setup.applicants.approvedStudentAndGraduate, setup.applicants.approvedGraduate],
       [ApprovalStatus.approved],
-      setup.extensionAdmin.secretary
+      setup.admins.graduados.secretary
     );
   });
 
-  it("returns only rejected applicants", async () => {
+  it("returns only approved students for extensionAdmin", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.rejectedApplicant],
+      [setup.applicants.approvedStudent],
+      [ApprovalStatus.approved],
+      setup.admins.extension.secretary
+    );
+  });
+
+  it("returns only rejected graduates and both for graduadosAdmin", async () => {
+    await expectToFindAdminTasksWithStatuses(
+      [setup.applicants.rejectedStudentAndGraduate, setup.applicants.rejectedGraduate],
       [ApprovalStatus.rejected],
-      setup.extensionAdmin.secretary
+      setup.admins.graduados.secretary
+    );
+  });
+
+  it("returns only rejected students for extensionAdmin", async () => {
+    await expectToFindAdminTasksWithStatuses(
+      [setup.applicants.rejectedStudent],
+      [ApprovalStatus.rejected],
+      setup.admins.extension.secretary
     );
   });
 
   it("returns only pending offers targeted for students", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.pendingOfferForStudents, setup.pendingOfferForBoth],
+      [setup.offers.pendingForStudents, setup.offers.pendingForBoth],
       [ApprovalStatus.pending],
-      setup.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
   it("returns only pending offers targeted for graduates", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.pendingOfferForGraduates, setup.pendingOfferForBoth],
+      [setup.offers.pendingForGraduates, setup.offers.pendingForBoth],
       [ApprovalStatus.pending],
-      setup.graduadosAdmin.secretary
+      setup.admins.graduados.secretary
     );
   });
 
   it("returns only approved offers targeted for students", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.approvedOfferForStudents, setup.approvedOfferForBoth],
+      [setup.offers.approvedForStudents, setup.offers.approvedForBoth],
       [ApprovalStatus.approved],
-      setup.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
   it("returns only approved offers targeted for graduates", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.approvedOfferForGraduates, setup.approvedOfferForBoth],
+      [setup.offers.approvedForGraduates, setup.offers.approvedForBoth],
       [ApprovalStatus.approved],
-      setup.graduadosAdmin.secretary
+      setup.admins.graduados.secretary
     );
   });
 
   it("returns only rejected offers targeted for students", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.rejectedOfferForStudents, setup.rejectedOfferForBoth],
+      [setup.offers.rejectedForStudents, setup.offers.rejectedForBoth],
       [ApprovalStatus.rejected],
-      setup.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
   it("returns only rejected offers targeted for graduates", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.rejectedOfferForGraduates, setup.rejectedOfferForBoth],
+      [setup.offers.rejectedForGraduates, setup.offers.rejectedForBoth],
       [ApprovalStatus.rejected],
-      setup.graduadosAdmin.secretary
+      setup.admins.graduados.secretary
     );
   });
 
-  it("returns only pending by extension secretary jobApplications", async () => {
+  it("returns only pending jobApplications by extensionAdmin", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.pendingByExtensionJobApplication],
+      [setup.jobApplications.pendingByExtension, setup.jobApplications.pendingByGraduados],
       [ApprovalStatus.pending],
-      setup.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
-  it("returns only approved by extension secretary jobApplications", async () => {
+  it("returns only approved jobApplications by extensionAdmin", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.approvedByExtensionJobApplication],
+      [setup.jobApplications.approvedByExtension, setup.jobApplications.approvedByGraduados],
       [ApprovalStatus.approved],
-      setup.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
-  it("returns only rejected by extension secretary jobApplications", async () => {
+  it("returns only rejected jobApplications by extensionAdmin", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.rejectedByExtensionJobApplication],
+      [setup.jobApplications.rejectedByExtension, setup.jobApplications.rejectedByGraduados],
       [ApprovalStatus.rejected],
-      setup.extensionAdmin.secretary
+      setup.admins.extension.secretary
     );
   });
 
-  it("returns only pending by graduados secretary jobApplications", async () => {
+  it("returns only pending jobApplications by graduadosAdmin", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.pendingByGraduadosJobApplication],
+      [setup.jobApplications.pendingByGraduados, setup.jobApplications.pendingByExtension],
       [ApprovalStatus.pending],
-      setup.graduadosAdmin.secretary
+      setup.admins.graduados.secretary
     );
   });
 
-  it("returns only approved by graduados secretary jobApplications", async () => {
+  it("returns only approved jobApplications by graduadosAdmin", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.approvedByGraduadosJobApplication],
+      [setup.jobApplications.approvedByGraduados, setup.jobApplications.approvedByExtension],
       [ApprovalStatus.approved],
-      setup.graduadosAdmin.secretary
+      setup.admins.graduados.secretary
     );
   });
 
-  it("returns only rejected by graduados secretary jobApplications", async () => {
+  it("returns only rejected jobApplications by graduadosAdmin", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.rejectedByGraduadosJobApplication],
+      [setup.jobApplications.rejectedByGraduados, setup.jobApplications.rejectedByExtension],
       [ApprovalStatus.rejected],
-      setup.graduadosAdmin.secretary
+      setup.admins.graduados.secretary
     );
   });
 
-  it("returns only pending applicants, companies and Offers", async () => {
-    await expectToFindAdminTasksWithStatuses(
-      [setup.pendingCompany, setup.pendingApplicant, setup.pendingOfferForStudents],
-      [ApprovalStatus.pending],
-      setup.extensionAdmin.secretary
-    );
-  });
-
-  it("returns only approved and rejected applicants, companies and Offers", async () => {
+  it("returns only pending graduates, studentsAndGraduates, companies and Offers", async () => {
     await expectToFindAdminTasksWithStatuses(
       [
-        setup.approvedCompany,
-        setup.rejectedCompany,
-        setup.approvedApplicant,
-        setup.rejectedApplicant,
-        setup.approvedOfferForStudents,
-        setup.rejectedOfferForStudents
+        setup.companies.pending,
+        setup.applicants.pendingStudentAndGraduate,
+        setup.applicants.pendingGraduate,
+        setup.offers.pendingForGraduates,
+        setup.offers.pendingForBoth
+      ],
+      [ApprovalStatus.pending],
+      setup.admins.graduados.secretary
+    );
+  });
+
+  it("returns only pending students companies and Offers for students and both for extensionAdmin", async () => {
+    await expectToFindAdminTasksWithStatuses(
+      [
+        setup.companies.pending,
+        setup.applicants.pendingStudent,
+        setup.offers.pendingForStudents,
+        setup.offers.pendingForBoth
+      ],
+      [ApprovalStatus.pending],
+      setup.admins.extension.secretary
+    );
+  });
+
+  it("returns approved and rejected graduates and both, companies and Offers for graduates and both", async () => {
+    await expectToFindAdminTasksWithStatuses(
+      [
+        setup.companies.approved,
+        setup.companies.rejected,
+        setup.applicants.approvedStudentAndGraduate,
+        setup.applicants.rejectedStudentAndGraduate,
+        setup.applicants.approvedGraduate,
+        setup.applicants.rejectedGraduate,
+        setup.offers.approvedForGraduates,
+        setup.offers.rejectedForGraduates,
+        setup.offers.approvedForBoth,
+        setup.offers.rejectedForBoth
       ],
       [ApprovalStatus.approved, ApprovalStatus.rejected],
-      setup.extensionAdmin.secretary
+      setup.admins.graduados.secretary
+    );
+  });
+
+  it("returns approved and rejected students, companies and Offers for students and both", async () => {
+    await expectToFindAdminTasksWithStatuses(
+      [
+        setup.companies.approved,
+        setup.companies.rejected,
+        setup.applicants.approvedStudent,
+        setup.applicants.rejectedStudent,
+        setup.offers.approvedForStudents,
+        setup.offers.rejectedForStudents,
+        setup.offers.approvedForBoth,
+        setup.offers.rejectedForBoth
+      ],
+      [ApprovalStatus.approved, ApprovalStatus.rejected],
+      setup.admins.extension.secretary
     );
   });
 
   it("sorts all tasks by updatedAt in any status for extension secretary", async () => {
-    await expectToSortAllTasksFor(setup.extensionAdmin.secretary);
+    await expectToSortAllTasksFor(setup.admins.extension.secretary);
   });
 
   it("sorts all tasks by updatedAt in any status for graduados secretary", async () => {
-    await expectToSortAllTasksFor(setup.graduadosAdmin.secretary);
+    await expectToSortAllTasksFor(setup.admins.graduados.secretary);
   });
 
   it("limits to itemsPerPage results", async () => {
+    const { secretary } = setup.admins.extension;
     const itemsPerPage = 3;
     mockItemsPerPage(itemsPerPage);
     const lastTaskIndex = 1;
-    const lastTask = setup.allTasksByDescUpdatedAt[lastTaskIndex];
+    const lastTask = (await setup.allTasksByDescUpdatedAtForSecretary(secretary))[lastTaskIndex];
     const result = await AdminTaskRepository.find({
       adminTaskTypes: [
         AdminTaskType.Applicant,
@@ -287,11 +353,11 @@ describe("AdminTaskRepository", () => {
         dateTime: lastTask.updatedAt,
         uuid: lastTask.uuid
       },
-      secretary: setup.extensionAdmin.secretary
+      secretary
     });
     expect(result.shouldFetchMore).toEqual(true);
     expect(result.results.map(task => task.uuid)).toEqual(
-      setup.allTasksByDescUpdatedAt
+      (await setup.allTasksByDescUpdatedAtForSecretary(setup.admins.extension.secretary))
         .map(task => task.uuid)
         .slice(lastTaskIndex + 1, lastTaskIndex + 1 + itemsPerPage)
     );
@@ -302,7 +368,7 @@ describe("AdminTaskRepository", () => {
     const companies: Company[] = [];
 
     beforeAll(async () => {
-      firstTask = setup.allTasksByDescUpdatedAt[setup.allTasksByDescUpdatedAt.length - 1];
+      firstTask = setup.tasks[setup.tasks.length - 1];
       MockDate.set(firstTask.updatedAt - 1);
       for (const _ of range(9)) {
         companies.push(await CompanyGenerator.instance.updatedWithStatus());
@@ -318,7 +384,7 @@ describe("AdminTaskRepository", () => {
           dateTime: firstTask.updatedAt,
           uuid: firstTask.uuid
         },
-        secretary: setup.extensionAdmin.secretary
+        secretary: setup.admins.extension.secretary
       });
       expect(result.shouldFetchMore).toEqual(false);
       expect(result.results.map(task => task.uuid)).toEqual(

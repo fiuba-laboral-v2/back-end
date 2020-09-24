@@ -5,6 +5,7 @@ import { AdminTaskTypesIsEmptyError, StatusesIsEmptyError } from "$models/AdminT
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
+import { Applicant, ApplicantCareer } from "$models";
 
 describe("findAdminTasksQuery", () => {
   it("throws an error if no adminTaskTypes are provided", async () => {
@@ -274,7 +275,17 @@ describe("findAdminTasksQuery", () => {
           FROM (SELECT *, 'Applicants' AS "tableNameColumn" FROM "Applicants") AS Applicants
         )
       SELECT * FROM "AdminTask"
-      WHERE ("AdminTask"."approvalStatus" = '${status}')
+      WHERE
+        ("AdminTask"."approvalStatus" = '${status}')
+        AND
+        (
+            "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
+            OR EXISTS(
+              SELECT *
+              FROM "${ApplicantCareer.tableName}"
+              WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
+            )
+        )
       ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
       LIMIT ${limit}
     `;
