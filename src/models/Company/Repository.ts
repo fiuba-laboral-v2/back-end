@@ -8,6 +8,8 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { CompanyUserRepository } from "$models/CompanyUser";
 import { CompanyApprovalEventRepository } from "./CompanyApprovalEvent";
 import { Company } from "$models";
+import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedInput";
+import { PaginationQuery } from "../PaginationQuery";
 
 export const CompanyRepository = {
   create: ({
@@ -60,5 +62,10 @@ export const CompanyRepository = {
   findAll: async () => {
     return Company.findAll();
   },
+  findLatest: (updatedBeforeThan?: IPaginatedInput) =>
+    PaginationQuery.findLatest({
+      updatedBeforeThan,
+      query: options => Company.findAll(options)
+    }),
   truncate: () => Company.truncate({ cascade: true })
 };
