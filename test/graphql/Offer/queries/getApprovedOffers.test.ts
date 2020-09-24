@@ -296,20 +296,8 @@ describe("getApprovedOffers", () => {
       ]);
 
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-
-      await OfferGenerator.instance.updatedWithStatus({
-        companyUuid,
-        status: ApprovalStatus.approved,
-        admin: await AdminGenerator.instance({ secretary: Secretary.graduados }),
-        targetApplicantType: ApplicantType.graduate
-      });
-
-      studentOffer = await OfferGenerator.instance.updatedWithStatus({
-        companyUuid,
-        status: ApprovalStatus.approved,
-        admin: await AdminGenerator.instance({ secretary: Secretary.extension }),
-        targetApplicantType: ApplicantType.student
-      });
+      await OfferGenerator.instance.forGraduates({ companyUuid });
+      studentOffer = await OfferGenerator.instance.forStudents({ companyUuid });
     });
 
     it("does not retrieve graduate offer in second page", async () => {
