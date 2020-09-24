@@ -325,8 +325,8 @@ describe("ApplicantRepository", () => {
             uuid: applicant7.uuid
           };
 
-          const jobApplications = await ApplicantRepository.findLatest(updatedBeforeThan);
-          expect(jobApplications.results).toEqual([
+          const applicants = await ApplicantRepository.findLatest(updatedBeforeThan);
+          expect(applicants.results).toEqual([
             expect.objectContaining({
               uuid: applicant6.uuid,
               padron: applicant6.padron,
@@ -343,7 +343,7 @@ describe("ApplicantRepository", () => {
               approvalStatus: ApprovalStatus.pending
             })
           ]);
-          expect(jobApplications.shouldFetchMore).toBe(true);
+          expect(applicants.shouldFetchMore).toBe(true);
         });
       });
     });
