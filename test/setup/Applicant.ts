@@ -9,6 +9,12 @@ export class ApplicantTestSetup {
   public approvedStudentAndGraduate: Applicant;
   public rejectedStudentAndGraduate: Applicant;
   public pendingStudentAndGraduate: Applicant;
+  public approvedStudent: Applicant;
+  public rejectedStudent: Applicant;
+  public pendingStudent: Applicant;
+  public approvedGraduate: Applicant;
+  public rejectedGraduate: Applicant;
+  public pendingGraduate: Applicant;
   public tasks: AdminTask[];
 
   public async execute() {
@@ -24,10 +30,24 @@ export class ApplicantTestSetup {
       ApprovalStatus.pending
     );
 
+    this.rejectedStudent = await ApplicantGenerator.instance.student(ApprovalStatus.rejected);
+    this.approvedStudent = await ApplicantGenerator.instance.student(ApprovalStatus.approved);
+    this.pendingStudent = await ApplicantGenerator.instance.student(ApprovalStatus.pending);
+
+    this.rejectedGraduate = await ApplicantGenerator.instance.graduate(ApprovalStatus.rejected);
+    this.approvedGraduate = await ApplicantGenerator.instance.graduate(ApprovalStatus.approved);
+    this.pendingGraduate = await ApplicantGenerator.instance.graduate(ApprovalStatus.pending);
+
     this.tasks = [
       this.rejectedStudentAndGraduate,
       this.approvedStudentAndGraduate,
-      this.pendingStudentAndGraduate
+      this.pendingStudentAndGraduate,
+      this.rejectedStudent,
+      this.approvedStudent,
+      this.pendingStudent,
+      this.rejectedGraduate,
+      this.approvedGraduate,
+      this.pendingGraduate
     ].sort(task => -task.updatedAt);
   }
 
