@@ -50,21 +50,21 @@ export class JobApplicationTestSetup {
       this.applicants.approvedStudentAndGraduate,
       this.offers.rejectedOfferForBoth,
       ApprovalStatus.approved,
-      this.admins.graduadosAdmin
+      this.admins.graduados
     );
 
     this.rejectedByGraduadosJobApplication = await this.createJobApplication(
       this.applicants.approvedStudentAndGraduate,
       this.offers.rejectedOfferForGraduates,
       ApprovalStatus.rejected,
-      this.admins.graduadosAdmin
+      this.admins.graduados
     );
 
     this.pendingByGraduadosJobApplication = await this.createJobApplication(
       this.applicants.approvedStudentAndGraduate,
       this.offers.rejectedOfferForStudents,
       ApprovalStatus.pending,
-      this.admins.graduadosAdmin
+      this.admins.graduados
     );
 
     this.tasks = [

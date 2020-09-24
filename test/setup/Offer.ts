@@ -36,14 +36,14 @@ export class OfferTestSetup {
     });
 
     this.rejectedOfferForGraduates = await OfferGenerator.instance.updatedWithStatus({
-      admin: this.admins.graduadosAdmin,
+      admin: this.admins.graduados,
       companyUuid: this.companies.approvedCompany.uuid,
       status: ApprovalStatus.rejected,
       targetApplicantType: ApplicantType.graduate
     });
 
     this.rejectedOfferForBoth = await OfferGenerator.instance.updatedWithStatus({
-      admin: this.admins.graduadosAdmin,
+      admin: this.admins.graduados,
       companyUuid: this.companies.approvedCompany.uuid,
       status: ApprovalStatus.rejected,
       targetApplicantType: ApplicantType.both
@@ -62,14 +62,14 @@ export class OfferTestSetup {
     });
 
     this.approvedOfferForGraduates = await OfferGenerator.instance.updatedWithStatus({
-      admin: this.admins.graduadosAdmin,
+      admin: this.admins.graduados,
       companyUuid: this.companies.approvedCompany.uuid,
       status: ApprovalStatus.approved,
       targetApplicantType: ApplicantType.graduate
     });
 
     this.approvedOfferForBoth = await OfferGenerator.instance.updatedWithStatus({
-      admin: this.admins.graduadosAdmin,
+      admin: this.admins.graduados,
       companyUuid: this.companies.approvedCompany.uuid,
       status: ApprovalStatus.approved,
       targetApplicantType: ApplicantType.both
@@ -89,14 +89,14 @@ export class OfferTestSetup {
     });
 
     this.pendingOfferForGraduates = await OfferGenerator.instance.updatedWithStatus({
-      admin: this.admins.graduadosAdmin,
+      admin: this.admins.graduados,
       companyUuid: this.companies.approvedCompany.uuid,
       status: ApprovalStatus.pending,
       targetApplicantType: ApplicantType.graduate
     });
 
     this.pendingOfferForBoth = await OfferGenerator.instance.updatedWithStatus({
-      admin: this.admins.graduadosAdmin,
+      admin: this.admins.graduados,
       companyUuid: this.companies.approvedCompany.uuid,
       status: ApprovalStatus.pending,
       targetApplicantType: ApplicantType.both

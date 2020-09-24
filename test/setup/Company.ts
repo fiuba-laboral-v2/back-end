@@ -23,7 +23,7 @@ export class CompanyTestSetup {
 
     this.approvedCompany = await CompanyGenerator.instance.updatedWithStatus({
       status: ApprovalStatus.approved,
-      admin: this.admins.graduadosAdmin
+      admin: this.admins.graduados
     });
 
     this.pendingCompany = await CompanyGenerator.instance.updatedWithStatus({

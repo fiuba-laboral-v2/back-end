@@ -9,7 +9,7 @@ export class AdminTestSetup {
   public graduadosApolloClient: ApolloServerTestClient;
   public extensionApolloClient: ApolloServerTestClient;
   public extension: Admin;
-  public graduadosAdmin: Admin;
+  public graduados: Admin;
   public graphqlSetup: boolean;
   public tasks: AdminTask[];
 
@@ -23,11 +23,11 @@ export class AdminTestSetup {
       const graduados = await TestClientGenerator.admin({ secretary: Secretary.graduados });
       this.extension = extension.admin;
       this.extensionApolloClient = extension.apolloClient;
-      this.graduadosAdmin = graduados.admin;
+      this.graduados = graduados.admin;
       this.graduadosApolloClient = graduados.apolloClient;
     } else {
       this.extension = await AdminGenerator.extension();
-      this.graduadosAdmin = await AdminGenerator.graduados();
+      this.graduados = await AdminGenerator.graduados();
     }
   }
 }

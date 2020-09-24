@@ -128,7 +128,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.applicants.pendingStudentAndGraduate],
       [ApprovalStatus.pending],
-      setup.admins.graduadosAdmin.secretary
+      setup.admins.graduados.secretary
     );
   });
 
@@ -136,7 +136,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.applicants.approvedStudentAndGraduate],
       [ApprovalStatus.approved],
-      setup.admins.graduadosAdmin.secretary
+      setup.admins.graduados.secretary
     );
   });
 
@@ -144,7 +144,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.applicants.rejectedStudentAndGraduate],
       [ApprovalStatus.rejected],
-      setup.admins.graduadosAdmin.secretary
+      setup.admins.graduados.secretary
     );
   });
 
@@ -160,7 +160,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.offers.pendingOfferForGraduates, setup.offers.pendingOfferForBoth],
       [ApprovalStatus.pending],
-      setup.admins.graduadosAdmin.secretary
+      setup.admins.graduados.secretary
     );
   });
 
@@ -176,7 +176,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.offers.approvedOfferForGraduates, setup.offers.approvedOfferForBoth],
       [ApprovalStatus.approved],
-      setup.admins.graduadosAdmin.secretary
+      setup.admins.graduados.secretary
     );
   });
 
@@ -192,7 +192,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.offers.rejectedOfferForGraduates, setup.offers.rejectedOfferForBoth],
       [ApprovalStatus.rejected],
-      setup.admins.graduadosAdmin.secretary
+      setup.admins.graduados.secretary
     );
   });
 
@@ -224,7 +224,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.jobApplications.pendingByGraduadosJobApplication],
       [ApprovalStatus.pending],
-      setup.admins.graduadosAdmin.secretary
+      setup.admins.graduados.secretary
     );
   });
 
@@ -232,7 +232,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.jobApplications.approvedByGraduadosJobApplication],
       [ApprovalStatus.approved],
-      setup.admins.graduadosAdmin.secretary
+      setup.admins.graduados.secretary
     );
   });
 
@@ -240,7 +240,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.jobApplications.rejectedByGraduadosJobApplication],
       [ApprovalStatus.rejected],
-      setup.admins.graduadosAdmin.secretary
+      setup.admins.graduados.secretary
     );
   });
 
@@ -248,7 +248,7 @@ describe("getAdminTasks", () => {
     await expectToFindAdminTaskWithStatuses(
       [setup.applicants.pendingStudentAndGraduate, setup.companies.pendingCompany],
       [ApprovalStatus.pending],
-      setup.admins.graduadosAdmin.secretary
+      setup.admins.graduados.secretary
     );
   });
 
