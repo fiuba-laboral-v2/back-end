@@ -20,9 +20,9 @@ export class AdminTaskTestSetup {
   public approvedCompany: Company;
   public rejectedCompany: Company;
   public pendingCompany: Company;
-  public approvedApplicant: Applicant;
-  public rejectedApplicant: Applicant;
-  public pendingApplicant: Applicant;
+  public approvedStudentAndGraduate: Applicant;
+  public rejectedStudentAndGraduate: Applicant;
+  public pendingStudentAndGraduate: Applicant;
 
   public approvedOfferForStudents: Offer;
   public approvedOfferForGraduates: Offer;
@@ -62,15 +62,15 @@ export class AdminTaskTestSetup {
 
     this.pendingCompany = await CompanyGenerator.instance.updatedWithStatus();
 
-    this.rejectedApplicant = await ApplicantGenerator.instance.studentAndGraduate(
+    this.rejectedStudentAndGraduate = await ApplicantGenerator.instance.studentAndGraduate(
       ApprovalStatus.rejected
     );
 
-    this.approvedApplicant = await ApplicantGenerator.instance.studentAndGraduate(
+    this.approvedStudentAndGraduate = await ApplicantGenerator.instance.studentAndGraduate(
       ApprovalStatus.approved
     );
 
-    this.pendingApplicant = await ApplicantGenerator.instance.studentAndGraduate(
+    this.pendingStudentAndGraduate = await ApplicantGenerator.instance.studentAndGraduate(
       ApprovalStatus.pending
     );
 
@@ -104,9 +104,9 @@ export class AdminTaskTestSetup {
       this.rejectedCompany,
       this.approvedCompany,
       this.pendingCompany,
-      this.rejectedApplicant,
-      this.approvedApplicant,
-      this.pendingApplicant,
+      this.rejectedStudentAndGraduate,
+      this.approvedStudentAndGraduate,
+      this.pendingStudentAndGraduate,
       ...offers,
       ...(await this.getJobApplicationAssociations(this.pendingByExtensionJobApplication)),
       ...(await this.getJobApplicationAssociations(this.approvedByExtensionJobApplication)),
