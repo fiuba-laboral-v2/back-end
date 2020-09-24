@@ -198,7 +198,7 @@ describe("getAdminTasks", () => {
 
   it("returns jobApplications in pending status by extension secretary", async () => {
     await expectToFindAdminTaskWithStatuses(
-      [setup.jobApplications.pendingByExtensionJobApplication],
+      [setup.jobApplications.pendingByExtension],
       [ApprovalStatus.pending],
       setup.admins.extension.secretary
     );
@@ -206,7 +206,7 @@ describe("getAdminTasks", () => {
 
   it("returns jobApplications approved by extension secretary", async () => {
     await expectToFindAdminTaskWithStatuses(
-      [setup.jobApplications.approvedByExtensionJobApplication],
+      [setup.jobApplications.approvedByExtension],
       [ApprovalStatus.approved],
       setup.admins.extension.secretary
     );
@@ -214,7 +214,7 @@ describe("getAdminTasks", () => {
 
   it("returns jobApplications rejected by extension secretary", async () => {
     await expectToFindAdminTaskWithStatuses(
-      [setup.jobApplications.rejectedByExtensionJobApplication],
+      [setup.jobApplications.rejectedByExtension],
       [ApprovalStatus.rejected],
       setup.admins.extension.secretary
     );
@@ -222,7 +222,7 @@ describe("getAdminTasks", () => {
 
   it("returns jobApplications in pending status by graduados secretary", async () => {
     await expectToFindAdminTaskWithStatuses(
-      [setup.jobApplications.pendingByGraduadosJobApplication],
+      [setup.jobApplications.pendingByGraduados],
       [ApprovalStatus.pending],
       setup.admins.graduados.secretary
     );
@@ -230,7 +230,7 @@ describe("getAdminTasks", () => {
 
   it("returns jobApplications approved by graduados secretary", async () => {
     await expectToFindAdminTaskWithStatuses(
-      [setup.jobApplications.approvedByGraduadosJobApplication],
+      [setup.jobApplications.approvedByGraduados],
       [ApprovalStatus.approved],
       setup.admins.graduados.secretary
     );
@@ -238,7 +238,7 @@ describe("getAdminTasks", () => {
 
   it("returns jobApplications rejected by graduados secretary", async () => {
     await expectToFindAdminTaskWithStatuses(
-      [setup.jobApplications.rejectedByGraduadosJobApplication],
+      [setup.jobApplications.rejectedByGraduados],
       [ApprovalStatus.rejected],
       setup.admins.graduados.secretary
     );

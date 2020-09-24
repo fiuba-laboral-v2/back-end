@@ -218,10 +218,7 @@ describe("AdminTaskRepository", () => {
 
   it("returns only pending jobApplications by extensionAdmin", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [
-        setup.jobApplications.pendingByExtensionJobApplication,
-        setup.jobApplications.pendingByGraduadosJobApplication
-      ],
+      [setup.jobApplications.pendingByExtension, setup.jobApplications.pendingByGraduados],
       [ApprovalStatus.pending],
       setup.admins.extension.secretary
     );
@@ -229,10 +226,7 @@ describe("AdminTaskRepository", () => {
 
   it("returns only approved jobApplications by extensionAdmin", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [
-        setup.jobApplications.approvedByExtensionJobApplication,
-        setup.jobApplications.approvedByGraduadosJobApplication
-      ],
+      [setup.jobApplications.approvedByExtension, setup.jobApplications.approvedByGraduados],
       [ApprovalStatus.approved],
       setup.admins.extension.secretary
     );
@@ -240,10 +234,7 @@ describe("AdminTaskRepository", () => {
 
   it("returns only rejected jobApplications by extensionAdmin", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [
-        setup.jobApplications.rejectedByExtensionJobApplication,
-        setup.jobApplications.rejectedByGraduadosJobApplication
-      ],
+      [setup.jobApplications.rejectedByExtension, setup.jobApplications.rejectedByGraduados],
       [ApprovalStatus.rejected],
       setup.admins.extension.secretary
     );
@@ -251,10 +242,7 @@ describe("AdminTaskRepository", () => {
 
   it("returns only pending jobApplications by graduadosAdmin", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [
-        setup.jobApplications.pendingByGraduadosJobApplication,
-        setup.jobApplications.pendingByExtensionJobApplication
-      ],
+      [setup.jobApplications.pendingByGraduados, setup.jobApplications.pendingByExtension],
       [ApprovalStatus.pending],
       setup.admins.graduados.secretary
     );
@@ -262,10 +250,7 @@ describe("AdminTaskRepository", () => {
 
   it("returns only approved jobApplications by graduadosAdmin", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [
-        setup.jobApplications.approvedByGraduadosJobApplication,
-        setup.jobApplications.approvedByExtensionJobApplication
-      ],
+      [setup.jobApplications.approvedByGraduados, setup.jobApplications.approvedByExtension],
       [ApprovalStatus.approved],
       setup.admins.graduados.secretary
     );
@@ -273,10 +258,7 @@ describe("AdminTaskRepository", () => {
 
   it("returns only rejected jobApplications by graduadosAdmin", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [
-        setup.jobApplications.rejectedByGraduadosJobApplication,
-        setup.jobApplications.rejectedByExtensionJobApplication
-      ],
+      [setup.jobApplications.rejectedByGraduados, setup.jobApplications.rejectedByExtension],
       [ApprovalStatus.rejected],
       setup.admins.graduados.secretary
     );
