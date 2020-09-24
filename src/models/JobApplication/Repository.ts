@@ -4,8 +4,7 @@ import { IUpdateApprovalStatus } from "./Interfaces";
 import { JobApplicationApprovalEventRepository } from "./JobApplicationsApprovalEvent";
 import { JobApplicationNotFoundError } from "./Errors";
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
-import { Op } from "sequelize";
-import { PaginationConfig } from "$config/PaginationConfig";
+import { PaginationQuery } from "../PaginationQuery";
 
 export const JobApplicationRepository = {
   apply: async ({ uuid: applicantUuid }: Applicant, { uuid: offerUuid }: Offer) =>
@@ -31,43 +30,22 @@ export const JobApplicationRepository = {
     companyUuid: string;
     updatedBeforeThan?: IPaginatedInput;
   }) => {
-    const limit = PaginationConfig.itemsPerPage() + 1;
-    const result = await JobApplication.findAll({
+    return PaginationQuery.findLatest({
+      updatedBeforeThan,
+      query: options => JobApplication.findAll(options),
+      order: [
+        ["updatedAt", "DESC"],
+        ["offerUuid", "DESC"],
+        ["applicantUuid", "DESC"]
+      ],
       include: [
         {
           model: Offer,
           where: { companyUuid },
           attributes: []
         }
-      ],
-      ...(updatedBeforeThan && {
-        where: {
-          [Op.or]: [
-            {
-              updatedAt: {
-                [Op.lt]: updatedBeforeThan.dateTime.toISOString()
-              }
-            },
-            {
-              updatedAt: updatedBeforeThan.dateTime.toISOString(),
-              uuid: {
-                [Op.lt]: updatedBeforeThan.uuid
-              }
-            }
-          ]
-        }
-      }),
-      order: [
-        ["updatedAt", "DESC"],
-        ["offerUuid", "DESC"],
-        ["applicantUuid", "DESC"]
-      ],
-      limit
+      ]
     });
-    return {
-      shouldFetchMore: result.length === limit,
-      results: result.slice(0, limit - 1)
-    };
   },
   updateApprovalStatus: async ({
     admin: { userUuid: adminUserUuid },

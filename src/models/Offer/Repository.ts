@@ -1,5 +1,4 @@
 import { Database } from "$config";
-import { PaginationConfig } from "$config/PaginationConfig";
 import { Op } from "sequelize";
 import { IFindAll, IOffer } from "./Interface";
 import { ApplicantType } from "$models/Applicant";
@@ -11,6 +10,7 @@ import { OfferApprovalEventRepository } from "./OfferApprovalEvent/Repository";
 import { Secretary } from "$models/Admin";
 import { OfferNotFoundError, OfferNotUpdatedError } from "./Errors";
 import { Offer, OfferCareer, OfferSection } from "$models";
+import { PaginationQuery } from "../PaginationQuery";
 
 export const OfferRepository = {
   create: ({ careers = [], sections = [], ...attributes }: ICreateOffer) => {
@@ -86,23 +86,7 @@ export const OfferRepository = {
 
     return offer;
   },
-  findAll: async ({ updatedBeforeThan, companyUuid, applicantType, careerCodes }: IFindAll) => {
-    const limit = PaginationConfig.itemsPerPage() + 1;
-    const paginationWhereClause: any = updatedBeforeThan && {
-      [Op.or]: [
-        {
-          updatedAt: {
-            [Op.lt]: updatedBeforeThan.dateTime.toISOString()
-          }
-        },
-        {
-          updatedAt: updatedBeforeThan.dateTime.toISOString(),
-          uuid: {
-            [Op.lt]: updatedBeforeThan.uuid
-          }
-        }
-      ]
-    };
+  findAll: ({ updatedBeforeThan, companyUuid, applicantType, careerCodes }: IFindAll) => {
     const targetsBoth = applicantType === ApplicantType.both;
     const targetsStudents = targetsBoth || applicantType === ApplicantType.student;
     const targetsGraduates = targetsBoth || applicantType === ApplicantType.graduate;
@@ -131,16 +115,14 @@ export const OfferRepository = {
         }
       ]
     };
-    const whereClause = {
-      [Op.and]: [
-        paginationWhereClause,
-        companyUuid && { companyUuid },
-        approvalStatusWhereClause
-      ].filter(clause => !!clause)
-    };
-    const hasWhereClause = updatedBeforeThan || companyUuid || applicantType;
-    const result = await Offer.findAll({
-      ...(hasWhereClause && { where: whereClause }),
+
+    return PaginationQuery.findLatest({
+      updatedBeforeThan,
+      query: options => Offer.findAll(options),
+      where: {
+        ...(companyUuid && { companyUuid }),
+        ...approvalStatusWhereClause
+      },
       ...(careerCodes && {
         include: [
           {
@@ -149,17 +131,8 @@ export const OfferRepository = {
             attributes: []
           }
         ]
-      }),
-      order: [
-        ["updatedAt", "DESC"],
-        ["uuid", "DESC"]
-      ],
-      limit
+      })
     });
-    return {
-      shouldFetchMore: result.length === limit,
-      results: result.slice(0, limit - 1)
-    };
   },
   truncate: () => Offer.truncate({ cascade: true })
 };

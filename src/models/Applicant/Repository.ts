@@ -1,6 +1,7 @@
 import { IApplicantEditable, ISaveApplicant } from "./index";
 import { ApplicantNotFound, ApplicantNotUpdatedError } from "./Errors";
 import { Database } from "$config";
+import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedInput";
 import { ApplicantCareersRepository } from "./ApplicantCareer";
 import { ApplicantCapabilityRepository } from "../ApplicantCapability";
 import { ApplicantApprovalEventRepository } from "./ApplicantApprovalEvent";
@@ -9,6 +10,7 @@ import { ApplicantLinkRepository } from "./Link";
 import { UserRepository } from "../User";
 import { ApprovalStatus } from "../ApprovalStatus";
 import { Applicant } from "..";
+import { PaginationQuery } from "../PaginationQuery";
 
 export const ApplicantRepository = {
   create: ({
@@ -28,7 +30,11 @@ export const ApplicantRepository = {
       await ApplicantCapabilityRepository.update(capabilities, applicant, transaction);
       return applicant;
     }),
-  findAll: async () => Applicant.findAll(),
+  findLatest: (updatedBeforeThan?: IPaginatedInput) =>
+    PaginationQuery.findLatest({
+      updatedBeforeThan,
+      query: options => Applicant.findAll(options)
+    }),
   findByUuid: async (uuid: string) => {
     const applicant = await Applicant.findByPk(uuid);
     if (!applicant) throw new ApplicantNotFound(uuid);
