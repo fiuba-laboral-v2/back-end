@@ -55,6 +55,14 @@ describe("getMyLatestJobApplications", () => {
     admin = await AdminGenerator.extension();
   });
 
+  const createCompanyTestClient = (approvalStatus: ApprovalStatus) =>
+    TestClientGenerator.company({
+      status: {
+        admin,
+        approvalStatus
+      }
+    });
+
   const performQuery = (apolloClient: ApolloServerTestClient) =>
     apolloClient.query({ query: GET_MY_LATEST_JOB_APPLICATIONS });
 
@@ -72,12 +80,7 @@ describe("getMyLatestJobApplications", () => {
 
   describe("when the input is valid", () => {
     it("returns all my company approved jobApplications", async () => {
-      const { apolloClient, company } = await TestClientGenerator.company({
-        status: {
-          admin,
-          approvalStatus: ApprovalStatus.approved
-        }
-      });
+      const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
       const { jobApplication, offer, applicant } = await createJobApplication(
         company.uuid,
         ApprovalStatus.approved
@@ -109,12 +112,7 @@ describe("getMyLatestJobApplications", () => {
     });
 
     it("returns only the approved jobApplications", async () => {
-      const { apolloClient, company } = await TestClientGenerator.company({
-        status: {
-          admin,
-          approvalStatus: ApprovalStatus.approved
-        }
-      });
+      const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
       const { jobApplication } = await createJobApplication(company.uuid, ApprovalStatus.approved);
       await createJobApplication(company.uuid, ApprovalStatus.rejected);
       await createJobApplication(company.uuid, ApprovalStatus.pending);
@@ -130,12 +128,7 @@ describe("getMyLatestJobApplications", () => {
   });
 
   it("returns only the approved jobApplications from my company", async () => {
-    const { apolloClient, company } = await TestClientGenerator.company({
-      status: {
-        admin,
-        approvalStatus: ApprovalStatus.approved
-      }
-    });
+    const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
     const anotherCompany = await CompanyGenerator.instance.withCompleteData();
     const { jobApplication: firstJobApplication } = await createJobApplication(
       company.uuid,
@@ -173,12 +166,7 @@ describe("getMyLatestJobApplications", () => {
     beforeAll(async () => {
       await JobApplicationRepository.truncate();
 
-      const result = await TestClientGenerator.company({
-        status: {
-          admin,
-          approvalStatus: ApprovalStatus.approved
-        }
-      });
+      const result = await createCompanyTestClient(ApprovalStatus.approved);
       apolloClient = result.apolloClient;
       company = result.company;
 
@@ -242,9 +230,7 @@ describe("getMyLatestJobApplications", () => {
   describe("Errors", () => {
     it("return an error if there is no current user", async () => {
       const apolloClient = client.loggedOut();
-      const { errors } = await apolloClient.query({
-        query: GET_MY_LATEST_JOB_APPLICATIONS
-      });
+      const { errors } = await performQuery(apolloClient);
 
       expect(errors![0].extensions!.data).toEqual({
         errorType: AuthenticationError.name
@@ -253,9 +239,7 @@ describe("getMyLatestJobApplications", () => {
 
     it("returns an error if current user is not a companyUser", async () => {
       const { apolloClient } = await TestClientGenerator.user();
-      const { errors } = await apolloClient.query({
-        query: GET_MY_LATEST_JOB_APPLICATIONS
-      });
+      const { errors } = await performQuery(apolloClient);
 
       expect(errors![0].extensions!.data).toEqual({
         errorType: UnauthorizedError.name
@@ -263,15 +247,8 @@ describe("getMyLatestJobApplications", () => {
     });
 
     it("returns an error if the company has pending status", async () => {
-      const { apolloClient } = await TestClientGenerator.company({
-        status: {
-          admin,
-          approvalStatus: ApprovalStatus.pending
-        }
-      });
-      const { errors } = await apolloClient.query({
-        query: GET_MY_LATEST_JOB_APPLICATIONS
-      });
+      const { apolloClient } = await createCompanyTestClient(ApprovalStatus.pending);
+      const { errors } = await performQuery(apolloClient);
 
       expect(errors![0].extensions!.data).toEqual({
         errorType: UnauthorizedError.name
@@ -279,15 +256,8 @@ describe("getMyLatestJobApplications", () => {
     });
 
     it("returns an error if the company has rejected status", async () => {
-      const { apolloClient } = await TestClientGenerator.company({
-        status: {
-          admin,
-          approvalStatus: ApprovalStatus.rejected
-        }
-      });
-      const { errors } = await apolloClient.query({
-        query: GET_MY_LATEST_JOB_APPLICATIONS
-      });
+      const { apolloClient } = await createCompanyTestClient(ApprovalStatus.rejected);
+      const { errors } = await performQuery(apolloClient);
 
       expect(errors![0].extensions!.data).toEqual({
         errorType: UnauthorizedError.name
