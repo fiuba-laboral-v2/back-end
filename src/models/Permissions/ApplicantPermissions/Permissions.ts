@@ -16,7 +16,7 @@ export class ApplicantPermissions implements IPermission {
     const applicantType = await applicant.getType();
     if (!this.applicantTypeMatches(applicantType, offer.targetApplicantType)) return false;
 
-    const statusColumns = this.getStatusColumn(applicantType);
+    const statusColumns = this.getStatusColumns(applicantType);
     return some(statusColumns.map(columnName => offer[columnName] === ApprovalStatus.approved));
   }
 
@@ -24,7 +24,7 @@ export class ApplicantPermissions implements IPermission {
     return Promise.resolve(false);
   }
 
-  private getStatusColumn(applicantType: ApplicantType) {
+  private getStatusColumns(applicantType: ApplicantType) {
     return {
       [ApplicantType.student]: ["extensionApprovalStatus"],
       [ApplicantType.graduate]: ["graduadosApprovalStatus"],
