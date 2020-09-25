@@ -8,6 +8,7 @@ import { careerQueries } from "./Career";
 import { userQueries } from "./User";
 import { capabilityQueries } from "./Capability";
 import { adminTaskQueries } from "./AdminTask/Queries";
+import { adminQueries } from "./Admin";
 
 const queries = () =>
   merge(
@@ -19,7 +20,8 @@ const queries = () =>
     careerQueries,
     userQueries,
     capabilityQueries,
-    adminTaskQueries
+    adminTaskQueries,
+    adminQueries
   );
 
 export default queries;
