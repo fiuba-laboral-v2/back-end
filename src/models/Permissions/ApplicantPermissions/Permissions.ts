@@ -17,7 +17,7 @@ export class ApplicantPermissions implements IPermission {
     if (!this.applicantTypeMatches(applicantType, offer.targetApplicantType)) return false;
 
     const statusColumns = this.getStatusColumns(applicantType);
-    return some(statusColumns.map(columnName => offer[columnName] === ApprovalStatus.approved));
+    return some(statusColumns, columnName => offer[columnName] === ApprovalStatus.approved);
   }
 
   public async canModerateOffer(_: Offer) {
