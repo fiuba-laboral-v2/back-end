@@ -1,5 +1,6 @@
 import { gql } from "apollo-server";
 import { client } from "$test/graphql/ApolloTestClient";
+import { ApolloServerTestClient } from "apollo-server-testing";
 
 import { UserRepository } from "$models/User";
 import { Admin, Company, JobApplication } from "$models";
@@ -14,10 +15,10 @@ import { OfferGenerator } from "$generators/Offer";
 import { AdminGenerator } from "$generators/Admin";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { TestClientGenerator } from "$generators/TestClient";
-import { Secretary } from "$models/Admin";
+import { CompanyGenerator } from "$generators/Company";
+
 import { range } from "lodash";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
-import { ApolloServerTestClient } from "apollo-server-testing";
 
 const GET_MY_LATEST_JOB_APPLICATIONS = gql`
   query getMyLatestJobApplications($updatedBeforeThan: PaginatedInput) {
@@ -27,6 +28,7 @@ const GET_MY_LATEST_JOB_APPLICATIONS = gql`
         uuid
         updatedAt
         createdAt
+        approvalStatus
         offer {
           uuid
           title
@@ -50,24 +52,38 @@ describe("getMyLatestJobApplications", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
-    admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+    admin = await AdminGenerator.extension();
   });
 
+  const performQuery = (apolloClient: ApolloServerTestClient) =>
+    apolloClient.query({ query: GET_MY_LATEST_JOB_APPLICATIONS });
+
+  const createJobApplication = async (companyUuid: string, status: ApprovalStatus) => {
+    const applicant = await ApplicantGenerator.instance.student();
+    const offer = await OfferGenerator.instance.forStudents({ companyUuid });
+    const { uuid } = await JobApplicationRepository.apply(applicant, offer);
+    const jobApplication = await JobApplicationRepository.updateApprovalStatus({
+      uuid,
+      admin,
+      status
+    });
+    return { jobApplication, offer, applicant };
+  };
+
   describe("when the input is valid", () => {
-    it("returns all my company jobApplications", async () => {
+    it("returns all my company approved jobApplications", async () => {
       const { apolloClient, company } = await TestClientGenerator.company({
         status: {
           admin,
           approvalStatus: ApprovalStatus.approved
         }
       });
-      const applicant = await ApplicantGenerator.instance.student();
-      const offer = await OfferGenerator.instance.forStudents({ companyUuid: company.uuid });
-      const jobApplication = await JobApplicationRepository.apply(applicant, offer);
+      const { jobApplication, offer, applicant } = await createJobApplication(
+        company.uuid,
+        ApprovalStatus.approved
+      );
 
-      const { data } = await apolloClient.query({
-        query: GET_MY_LATEST_JOB_APPLICATIONS
-      });
+      const { data } = await apolloClient.query({ query: GET_MY_LATEST_JOB_APPLICATIONS });
 
       const user = await applicant.getUser();
       expect(data!.getMyLatestJobApplications.shouldFetchMore).toEqual(false);
@@ -76,6 +92,7 @@ describe("getMyLatestJobApplications", () => {
           uuid: jobApplication.uuid,
           updatedAt: jobApplication.updatedAt.toISOString(),
           createdAt: jobApplication.createdAt.toISOString(),
+          approvalStatus: ApprovalStatus.approved,
           offer: {
             uuid: offer.uuid,
             title: offer.title
@@ -90,6 +107,62 @@ describe("getMyLatestJobApplications", () => {
         }
       ]);
     });
+
+    it("returns only the approved jobApplications", async () => {
+      const { apolloClient, company } = await TestClientGenerator.company({
+        status: {
+          admin,
+          approvalStatus: ApprovalStatus.approved
+        }
+      });
+      const { jobApplication } = await createJobApplication(company.uuid, ApprovalStatus.approved);
+      await createJobApplication(company.uuid, ApprovalStatus.rejected);
+      await createJobApplication(company.uuid, ApprovalStatus.pending);
+
+      const { data } = await performQuery(apolloClient);
+      expect(data!.getMyLatestJobApplications.results).toEqual([
+        expect.objectContaining({
+          uuid: jobApplication.uuid,
+          approvalStatus: ApprovalStatus.approved
+        })
+      ]);
+    });
+  });
+
+  it("returns only the approved jobApplications from my company", async () => {
+    const { apolloClient, company } = await TestClientGenerator.company({
+      status: {
+        admin,
+        approvalStatus: ApprovalStatus.approved
+      }
+    });
+    const anotherCompany = await CompanyGenerator.instance.withCompleteData();
+    const { jobApplication: firstJobApplication } = await createJobApplication(
+      company.uuid,
+      ApprovalStatus.approved
+    );
+    const { jobApplication: secondJobApplication } = await createJobApplication(
+      company.uuid,
+      ApprovalStatus.approved
+    );
+    await createJobApplication(company.uuid, ApprovalStatus.rejected);
+    await createJobApplication(company.uuid, ApprovalStatus.pending);
+
+    await createJobApplication(anotherCompany.uuid, ApprovalStatus.pending);
+    await createJobApplication(anotherCompany.uuid, ApprovalStatus.approved);
+    await createJobApplication(anotherCompany.uuid, ApprovalStatus.rejected);
+
+    const { data } = await performQuery(apolloClient);
+    expect(data!.getMyLatestJobApplications.results).toEqual([
+      expect.objectContaining({
+        uuid: secondJobApplication.uuid,
+        approvalStatus: ApprovalStatus.approved
+      }),
+      expect.objectContaining({
+        uuid: firstJobApplication.uuid,
+        approvalStatus: ApprovalStatus.approved
+      })
+    ]);
   });
 
   describe("pagination", () => {
@@ -111,11 +184,14 @@ describe("getMyLatestJobApplications", () => {
 
       const offer = await OfferGenerator.instance.forStudents({ companyUuid: company.uuid });
       for (const _ of range(15)) {
+        const studentAndGraduate = await ApplicantGenerator.instance.studentAndGraduate();
+        const { uuid } = await JobApplicationRepository.apply(studentAndGraduate, offer);
         applicationsByDescUpdatedAt.push(
-          await JobApplicationRepository.apply(
-            await ApplicantGenerator.instance.studentAndGraduate(),
-            offer
-          )
+          await JobApplicationRepository.updateApprovalStatus({
+            uuid,
+            admin,
+            status: ApprovalStatus.approved
+          })
         );
       }
 
@@ -127,7 +203,7 @@ describe("getMyLatestJobApplications", () => {
     it("gets the latest 10 applications", async () => {
       const itemsPerPage = 10;
       mockItemsPerPage(itemsPerPage);
-      const { data } = await apolloClient.query({ query: GET_MY_LATEST_JOB_APPLICATIONS });
+      const { data } = await performQuery(apolloClient);
       expect(
         data!.getMyLatestJobApplications.results.map(application => application.applicant.uuid)
       ).toEqual(
