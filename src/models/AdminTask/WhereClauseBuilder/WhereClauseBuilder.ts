@@ -5,6 +5,7 @@ import { AdminTaskType } from "$models/AdminTask/Model";
 import { StatusWhereClause } from "./Status";
 import { OfferTargetWhereClause } from "./OfferTarget";
 import { ApplicantTypeWhereClause } from "./ApplicantType";
+import { JobApplicationTargetWhereClause } from "./JobApplicationTarget";
 import { UpdatedAtWhereClause } from "./UpdatedAt";
 
 export const WhereClauseBuilder = {
@@ -13,6 +14,7 @@ export const WhereClauseBuilder = {
       StatusWhereClause.build({ statuses, secretary, adminTaskTypes }),
       OfferTargetWhereClause.build({ secretary, adminTaskTypes }),
       ApplicantTypeWhereClause.build({ secretary, adminTaskTypes }),
+      JobApplicationTargetWhereClause.build({ secretary, adminTaskTypes }),
       UpdatedAtWhereClause.build(updatedBeforeThan)
     ]
       .filter(clause => clause)
