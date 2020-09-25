@@ -50,8 +50,8 @@ describe("saveJobApplication", () => {
     firstCareer = await CareerGenerator.instance();
     secondCareer = await CareerGenerator.instance();
 
-    extensionAdmin = await AdminGenerator.instance({ secretary: Secretary.extension });
-    graduadosAdmin = await AdminGenerator.instance({ secretary: Secretary.graduados });
+    extensionAdmin = await AdminGenerator.extension();
+    graduadosAdmin = await AdminGenerator.graduados();
 
     company = await CompanyGenerator.instance.withCompleteData();
     const companyUuid = company.uuid;
