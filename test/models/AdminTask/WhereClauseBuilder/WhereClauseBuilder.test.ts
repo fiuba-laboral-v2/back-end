@@ -2,7 +2,7 @@ import { WhereClauseBuilder } from "$models/AdminTask/WhereClauseBuilder";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
 import { ApplicantType } from "$models/Applicant";
-import { Applicant, ApplicantCareer, Offer } from "$models";
+import { Applicant, ApplicantCareer, JobApplication, Offer } from "$models";
 import { AdminTaskType } from "$models/AdminTask";
 
 describe("WhereClauseBuilder", () => {
@@ -146,6 +146,15 @@ describe("WhereClauseBuilder", () => {
           WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
         )
       )
+      AND
+      (
+        "AdminTask"."tableNameColumn" != '${JobApplication.tableName}'
+        OR EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."applicantUuid" AND "isGraduate" = true
+        )
+      )
     `);
   });
 
@@ -173,6 +182,15 @@ describe("WhereClauseBuilder", () => {
           SELECT *
           FROM "${ApplicantCareer.tableName}"
           WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
+        )
+      )
+      AND
+      (
+        "AdminTask"."tableNameColumn" != '${JobApplication.tableName}'
+        OR EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."applicantUuid" AND "isGraduate" = true
         )
       )
     `);
@@ -204,6 +222,15 @@ describe("WhereClauseBuilder", () => {
           WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
         )
       )
+      AND
+      (
+        "AdminTask"."tableNameColumn" != '${JobApplication.tableName}'
+        OR EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."applicantUuid" AND "isGraduate" = true
+        )
+      )
     `);
   });
 
@@ -231,6 +258,15 @@ describe("WhereClauseBuilder", () => {
           SELECT *
           FROM "${ApplicantCareer.tableName}"
           WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
+        )
+      )
+      AND
+      (
+        "AdminTask"."tableNameColumn" != '${JobApplication.tableName}'
+        OR NOT EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."applicantUuid" AND "isGraduate" = true
         )
       )
     `);
@@ -262,6 +298,15 @@ describe("WhereClauseBuilder", () => {
           WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
         )
       )
+      AND
+      (
+        "AdminTask"."tableNameColumn" != '${JobApplication.tableName}'
+        OR NOT EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."applicantUuid" AND "isGraduate" = true
+        )
+      )
     `);
   });
 
@@ -291,6 +336,15 @@ describe("WhereClauseBuilder", () => {
           WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
         )
       )
+      AND
+      (
+        "AdminTask"."tableNameColumn" != '${JobApplication.tableName}'
+        OR NOT EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."applicantUuid" AND "isGraduate" = true
+        )
+      )
     `);
   });
 
@@ -298,7 +352,7 @@ describe("WhereClauseBuilder", () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.approved],
       secretary: Secretary.graduados,
-      adminTaskTypes: [AdminTaskType.Company, AdminTaskType.JobApplication]
+      adminTaskTypes: [AdminTaskType.Company]
     });
     expect(whereClause).toEqualIgnoringSpacing(`
       (
@@ -328,6 +382,15 @@ describe("WhereClauseBuilder", () => {
           WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
         )
       )
+      AND
+      (
+        "AdminTask"."tableNameColumn" != '${JobApplication.tableName}'
+        OR NOT EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."applicantUuid" AND "isGraduate" = true
+        )
+      )
     `);
   });
 
@@ -350,6 +413,15 @@ describe("WhereClauseBuilder", () => {
           SELECT *
           FROM "${ApplicantCareer.tableName}"
           WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
+        )
+      )
+      AND
+      (
+        "AdminTask"."tableNameColumn" != '${JobApplication.tableName}'
+        OR EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."applicantUuid" AND "isGraduate" = true
         )
       )
     `);
@@ -385,6 +457,15 @@ describe("WhereClauseBuilder", () => {
           WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
         )
       )
+      AND
+      (
+        "AdminTask"."tableNameColumn" != '${JobApplication.tableName}'
+        OR EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."applicantUuid" AND "isGraduate" = true
+        )
+      )
     `);
   });
 
@@ -416,6 +497,15 @@ describe("WhereClauseBuilder", () => {
           SELECT *
           FROM "${ApplicantCareer.tableName}"
           WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
+        )
+      )
+      AND
+      (
+        "AdminTask"."tableNameColumn" != '${JobApplication.tableName}'
+        OR NOT EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."applicantUuid" AND "isGraduate" = true
         )
       )
     `);
@@ -453,6 +543,15 @@ describe("WhereClauseBuilder", () => {
           SELECT *
           FROM "${ApplicantCareer.tableName}"
           WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
+        )
+      )
+      AND
+      (
+        "AdminTask"."tableNameColumn" != '${JobApplication.tableName}'
+        OR NOT EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "AdminTask"."applicantUuid" AND "isGraduate" = true
         )
       )
       AND (

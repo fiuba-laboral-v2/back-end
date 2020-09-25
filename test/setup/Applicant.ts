@@ -3,7 +3,7 @@ import { ApplicantGenerator } from "$generators/Applicant";
 import { Applicant } from "$models";
 import { AdminTask } from "$models/AdminTask";
 import { Secretary } from "$models/Admin";
-import { ApplicantType } from "$models/Applicant";
+import { applicantVisibleBy } from "./applicantVisibleBy";
 
 export class ApplicantTestSetup {
   public approvedStudentAndGraduate: Applicant;
@@ -54,11 +54,8 @@ export class ApplicantTestSetup {
   public async tasksVisibleBy(secretary: Secretary) {
     const all: AdminTask[] = [];
     for (const task of this.tasks) {
-      const type = await (task as Applicant).getType();
-      const graduateTypes = [ApplicantType.both, ApplicantType.graduate];
-      const isGraduate = secretary === Secretary.graduados;
-      if (isGraduate && graduateTypes.includes(type)) all.push(task);
-      if (!isGraduate && !graduateTypes.includes(type)) all.push(task);
+      const isVisible = await applicantVisibleBy(task as Applicant, secretary);
+      if (isVisible) all.push(task);
     }
     return all;
   }

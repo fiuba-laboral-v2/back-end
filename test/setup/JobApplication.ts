@@ -5,6 +5,8 @@ import { ApplicantTestSetup } from "./Applicant";
 import { OfferTestSetup } from "./Offer";
 import { AdminTestSetup } from "./Admin";
 import { JobApplicationRepository } from "$models/JobApplication";
+import { Secretary } from "$models/Admin";
+import { applicantVisibleBy } from "./applicantVisibleBy";
 
 export class JobApplicationTestSetup {
   public approvedByExtension: JobApplication;
@@ -26,43 +28,43 @@ export class JobApplicationTestSetup {
 
   public async execute() {
     this.approvedByExtension = await this.createJobApplication(
-      this.applicants.approvedStudentAndGraduate,
+      this.applicants.approvedStudent,
       this.offers.approvedForBoth,
       ApprovalStatus.approved,
       this.admins.extension
     );
 
     this.rejectedByExtension = await this.createJobApplication(
-      this.applicants.approvedStudentAndGraduate,
-      this.offers.approvedForGraduates,
+      this.applicants.approvedStudent,
+      this.offers.approvedForStudents,
       ApprovalStatus.rejected,
       this.admins.extension
     );
 
     this.pendingByExtension = await this.createJobApplication(
-      this.applicants.approvedStudentAndGraduate,
-      this.offers.approvedForStudents,
+      this.applicants.approvedStudent,
+      this.offers.pendingForStudents,
       ApprovalStatus.pending,
       this.admins.extension
     );
 
     this.approvedByGraduados = await this.createJobApplication(
-      this.applicants.approvedStudentAndGraduate,
+      this.applicants.approvedGraduate,
       this.offers.rejectedForBoth,
       ApprovalStatus.approved,
       this.admins.graduados
     );
 
     this.rejectedByGraduados = await this.createJobApplication(
-      this.applicants.approvedStudentAndGraduate,
+      this.applicants.approvedGraduate,
       this.offers.rejectedForGraduates,
       ApprovalStatus.rejected,
       this.admins.graduados
     );
 
     this.pendingByGraduados = await this.createJobApplication(
-      this.applicants.approvedStudentAndGraduate,
-      this.offers.rejectedForStudents,
+      this.applicants.approvedGraduate,
+      this.offers.pendingForGraduates,
       ApprovalStatus.pending,
       this.admins.graduados
     );
@@ -75,6 +77,16 @@ export class JobApplicationTestSetup {
       this.approvedByGraduados,
       this.rejectedByGraduados
     ];
+  }
+
+  public async tasksVisibleBy(secretary: Secretary) {
+    const all: AdminTask[] = [];
+    for (const task of this.tasks) {
+      const applicant = await (task as JobApplication).getApplicant();
+      const isVisible = await applicantVisibleBy(applicant, secretary);
+      if (isVisible) all.push(task);
+    }
+    return all;
   }
 
   private async createJobApplication(
