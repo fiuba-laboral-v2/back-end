@@ -14,7 +14,6 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AdminGenerator } from "$generators/Admin";
 import { range } from "lodash";
 import { Offer } from "$models";
-import { Secretary } from "$models/Admin";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 
 const GET_OFFERS = gql`
@@ -199,7 +198,7 @@ describe("getOffers", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.rejected,
-        admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+        admin: await AdminGenerator.extension()
       }
     });
     const { errors } = await apolloClient.query({ query: GET_OFFERS });

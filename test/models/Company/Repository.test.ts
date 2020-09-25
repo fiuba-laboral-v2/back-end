@@ -12,7 +12,6 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { CompanyGenerator } from "$generators/Company";
 import { AdminGenerator } from "$generators/Admin";
 import { CompanyNotUpdatedError } from "$models/Company/Errors";
-import { Secretary } from "$models/Admin";
 
 describe("CompanyRepository", () => {
   beforeAll(async () => {
@@ -200,7 +199,7 @@ describe("CompanyRepository", () => {
     let admin: Admin;
 
     beforeAll(async () => {
-      admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+      admin = await AdminGenerator.extension();
     });
 
     it("approves company only by an admin and create new event", async () => {

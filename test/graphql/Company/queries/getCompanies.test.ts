@@ -33,7 +33,7 @@ describe("getCompanies", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.approved,
-        admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+        admin: await AdminGenerator.extension()
       }
     });
     const response = await apolloClient.query({ query: GET_COMPANIES });
@@ -97,7 +97,7 @@ describe("getCompanies", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.rejected,
-          admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+          admin: await AdminGenerator.extension()
         }
       });
       const { errors } = await apolloClient.query({ query: GET_COMPANIES });

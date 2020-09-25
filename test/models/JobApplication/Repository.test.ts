@@ -429,7 +429,7 @@ describe("JobApplicationRepository", () => {
 
     it("throws an error if status is invalid and does not update the jobApplication", async () => {
       const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
-      const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+      const admin = await AdminGenerator.extension();
       await expect(
         JobApplicationRepository.updateApprovalStatus({
           admin,

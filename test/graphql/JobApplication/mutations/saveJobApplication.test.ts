@@ -6,7 +6,6 @@ import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { OfferNotTargetedForApplicantError } from "$models/JobApplication";
-import { Secretary } from "$models/Admin";
 import { Admin, Applicant, Career, Company, Offer } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
@@ -343,7 +342,7 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.rejected,
-          admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+          admin: await AdminGenerator.extension()
         }
       });
       const { errors } = await apolloClient.mutate({
@@ -359,7 +358,7 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+          admin: await AdminGenerator.extension()
         },
         careers: [
           {
@@ -392,7 +391,7 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+          admin: await AdminGenerator.extension()
         }
       });
       const { errors } = await apolloClient.mutate({
