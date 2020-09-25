@@ -152,20 +152,67 @@ describe("JobApplicationRepository", () => {
   });
 
   describe("findLatestByCompanyUuid", () => {
-    it("returns the only application for my company", async () => {
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withCompleteData();
+    let admin: Admin;
+
+    beforeAll(async () => {
+      admin = await AdminGenerator.graduados();
+    });
+
+    const createJobApplication = async (companyUuid: string, status: ApprovalStatus) => {
       const offer = await OfferGenerator.instance.forStudents({ companyUuid });
-      await JobApplicationRepository.apply(studentAndGraduate, offer);
-      const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid({
-        companyUuid: offer.companyUuid
+      const { uuid } = await JobApplicationRepository.apply(studentAndGraduate, offer);
+      return JobApplicationRepository.updateApprovalStatus({ uuid, admin, status });
+    };
+
+    const expectToFindMyJobApplication = async (statuses: ApprovalStatus[]) => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withCompleteData();
+      const jobApplications = await Promise.all(
+        statuses.map(status => createJobApplication(companyUuid, status))
+      );
+      const latestJobApplications = await JobApplicationRepository.findLatestByCompanyUuid({
+        companyUuid
       });
-      expect(jobApplications.shouldFetchMore).toEqual(false);
-      expect(jobApplications.results).toMatchObject([
-        {
-          offerUuid: offer.uuid,
-          applicantUuid: studentAndGraduate.uuid
-        }
+      expect(latestJobApplications.shouldFetchMore).toEqual(false);
+      expect(latestJobApplications.results).toHaveLength(jobApplications.length);
+      expect(latestJobApplications.results).toEqual(
+        expect.arrayContaining(
+          jobApplications
+            .map(({ uuid, approvalStatus }) => expect.objectContaining({ uuid, approvalStatus }))
+            .reverse()
+        )
+      );
+    };
+
+    it("returns the only pending job applications for my company", async () => {
+      await expectToFindMyJobApplication([ApprovalStatus.pending]);
+    });
+
+    it("returns the only approved job applications for my company", async () => {
+      await expectToFindMyJobApplication([ApprovalStatus.approved]);
+    });
+
+    it("returns the only rejected job applications for my company", async () => {
+      await expectToFindMyJobApplication([ApprovalStatus.rejected]);
+    });
+
+    it("returns the only pending, approved and rejected job applications for my company", async () => {
+      await expectToFindMyJobApplication([
+        ApprovalStatus.pending,
+        ApprovalStatus.approved,
+        ApprovalStatus.rejected
       ]);
+    });
+
+    it("returns the only pending and approved job applications for my company", async () => {
+      await expectToFindMyJobApplication([ApprovalStatus.pending, ApprovalStatus.approved]);
+    });
+
+    it("returns the only pending and rejected job applications for my company", async () => {
+      await expectToFindMyJobApplication([ApprovalStatus.pending, ApprovalStatus.rejected]);
+    });
+
+    it("returns the only approved and rejected job applications for my company", async () => {
+      await expectToFindMyJobApplication([ApprovalStatus.approved, ApprovalStatus.rejected]);
     });
 
     it("returns no job applications if my company has any", async () => {
