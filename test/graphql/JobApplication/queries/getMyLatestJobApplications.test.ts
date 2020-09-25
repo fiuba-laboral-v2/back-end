@@ -14,7 +14,6 @@ import { OfferGenerator } from "$generators/Offer";
 import { AdminGenerator } from "$generators/Admin";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { TestClientGenerator } from "$generators/TestClient";
-import { Secretary } from "$models/Admin";
 import { range } from "lodash";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import { ApolloServerTestClient } from "apollo-server-testing";
@@ -50,7 +49,7 @@ describe("getMyLatestJobApplications", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
-    admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+    admin = await AdminGenerator.extension();
   });
 
   describe("when the input is valid", () => {

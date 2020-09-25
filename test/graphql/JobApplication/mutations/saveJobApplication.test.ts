@@ -6,7 +6,6 @@ import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { OfferNotTargetedForApplicantError } from "$models/JobApplication";
-import { Secretary } from "$models/Admin";
 import { Company, Career, Offer, Applicant, Admin } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
@@ -51,8 +50,8 @@ describe("saveJobApplication", () => {
     firstCareer = await CareerGenerator.instance();
     secondCareer = await CareerGenerator.instance();
 
-    extensionAdmin = await AdminGenerator.instance({ secretary: Secretary.extension });
-    graduadosAdmin = await AdminGenerator.instance({ secretary: Secretary.graduados });
+    extensionAdmin = await AdminGenerator.extension();
+    graduadosAdmin = await AdminGenerator.graduados();
 
     company = await CompanyGenerator.instance.withCompleteData();
     offerForStudents = await OfferGenerator.instance.forStudents({ companyUuid: company.uuid });
@@ -246,7 +245,7 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.rejected,
-          admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+          admin: await AdminGenerator.extension()
         }
       });
       const { errors } = await apolloClient.mutate({
@@ -262,7 +261,7 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+          admin: await AdminGenerator.extension()
         },
         careers: [
           {
@@ -292,7 +291,7 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.approved,
-          admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+          admin: await AdminGenerator.extension()
         }
       });
       const { errors } = await apolloClient.mutate({

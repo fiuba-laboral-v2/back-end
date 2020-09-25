@@ -7,7 +7,6 @@ import { Admin, Offer } from "$models";
 import { IOfferCareer } from "$models/Offer/OfferCareer";
 import { IOfferSection } from "$models/Offer/OfferSection";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { Secretary } from "$models/Admin";
 
 export interface IOfferInput {
   companyUuid: string;
@@ -49,7 +48,7 @@ export const OfferGenerator = {
       return OfferRepository.updateApprovalStatus({ uuid, admin, status });
     },
     forStudents: async (variables: IOfferInput) => {
-      const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+      const admin = await AdminGenerator.extension();
       return OfferGenerator.instance.updatedWithStatus({
         status: ApprovalStatus.approved,
         admin,
@@ -58,7 +57,7 @@ export const OfferGenerator = {
       });
     },
     forGraduates: async (variables: IOfferInput) => {
-      const admin = await AdminGenerator.instance({ secretary: Secretary.graduados });
+      const admin = await AdminGenerator.graduados();
       return OfferGenerator.instance.updatedWithStatus({
         status: ApprovalStatus.approved,
         admin,
@@ -67,8 +66,8 @@ export const OfferGenerator = {
       });
     },
     forStudentsAndGraduates: async (variables: IOfferInput) => {
-      const extensionAdmin = await AdminGenerator.instance({ secretary: Secretary.extension });
-      const graduadosAdmin = await AdminGenerator.instance({ secretary: Secretary.graduados });
+      const extensionAdmin = await AdminGenerator.extension();
+      const graduadosAdmin = await AdminGenerator.graduados();
       const { uuid } = await OfferGenerator.instance.updatedWithStatus({
         status: ApprovalStatus.approved,
         admin: extensionAdmin,

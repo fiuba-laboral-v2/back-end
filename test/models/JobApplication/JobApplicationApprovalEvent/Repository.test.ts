@@ -7,7 +7,6 @@ import { ApplicantRepository } from "$models/Applicant";
 import { AdminRepository } from "$models/Admin";
 import { Admin } from "$models";
 import { isApprovalStatus } from "$models/SequelizeModelValidators";
-import { Secretary } from "$models/Admin";
 import { JobApplicationGenerator } from "$generators/JobApplication";
 import { AdminGenerator } from "$generators/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
@@ -22,7 +21,7 @@ describe("JobApplicationApprovalEventRepository", () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     await CareerRepository.truncate();
-    admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+    admin = await AdminGenerator.extension();
   });
 
   const expectToCreateEventWithStatus = async (

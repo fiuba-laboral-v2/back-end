@@ -5,7 +5,6 @@ import { Admin } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AdminGenerator } from "$generators/Admin";
 import { CareerGenerator } from "$generators/Career";
-import { Secretary } from "$models/Admin";
 
 interface IUpdatedWithStatus {
   admin: Admin;
@@ -28,7 +27,7 @@ export const ApplicantGenerator = {
         })
       ),
     student: async (status?: ApprovalStatus) => {
-      const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+      const admin = await AdminGenerator.extension();
       const { code: careerCode } = await CareerGenerator.instance();
       return ApplicantGenerator.instance.updatedWithStatus({
         status: status || ApprovalStatus.approved,
@@ -37,7 +36,7 @@ export const ApplicantGenerator = {
       });
     },
     graduate: async (status?: ApprovalStatus) => {
-      const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+      const admin = await AdminGenerator.extension();
       const { code: careerCode } = await CareerGenerator.instance();
       return ApplicantGenerator.instance.updatedWithStatus({
         status: status || ApprovalStatus.approved,
@@ -46,7 +45,7 @@ export const ApplicantGenerator = {
       });
     },
     studentAndGraduate: async (status?: ApprovalStatus) => {
-      const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+      const admin = await AdminGenerator.extension();
       const firstCareer = await CareerGenerator.instance();
       const secondCareer = await CareerGenerator.instance();
       return ApplicantGenerator.instance.updatedWithStatus({

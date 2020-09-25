@@ -8,7 +8,6 @@ import { AdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import generateUuid from "uuid/v4";
-import { Secretary } from "$models/Admin";
 
 const query = gql`
   query($uuid: ID!) {
@@ -82,7 +81,7 @@ describe("getCompanyByUuid", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.approved,
-        admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+        admin: await AdminGenerator.extension()
       }
     });
     const notExistentUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
@@ -144,7 +143,7 @@ describe("getCompanyByUuid", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.rejected,
-        admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+        admin: await AdminGenerator.extension()
       }
     });
     const { errors } = await apolloClient.query({

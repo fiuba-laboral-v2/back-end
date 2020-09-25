@@ -137,7 +137,7 @@ describe("UserPermissions", () => {
         const secondOffer = await OfferGenerator.instance.forGraduates({ companyUuid });
         const thirdOffer = await OfferGenerator.instance.forGraduates({ companyUuid: uuid });
         const fourthOffer = await OfferGenerator.instance.forGraduates({ companyUuid: uuid });
-        const { userUuid } = await AdminGenerator.instance({ secretary: Secretary.graduados });
+        const { userUuid } = await AdminGenerator.graduados();
         const currentUser = new CurrentUser({
           uuid: userUuid,
           email: "email@email.com",

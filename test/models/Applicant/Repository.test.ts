@@ -17,7 +17,6 @@ import { AdminGenerator } from "$generators/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Applicant";
 import { FiubaUsersService } from "$services/FiubaUsers";
-import { Secretary } from "$models/Admin";
 import { UUID_REGEX } from "$test/models";
 import {
   ForbiddenCurrentCareerYearError,
@@ -826,7 +825,7 @@ describe("ApplicantRepository", () => {
   describe("updateApprovalStatus", () => {
     let admin: Admin;
     beforeAll(async () => {
-      admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+      admin = await AdminGenerator.extension();
     });
 
     const expectSuccessfulApplicantStatusUpdate = async (
