@@ -6,6 +6,7 @@ interface IFindLatest<Model> extends FindOptions {
   updatedBeforeThan?: IPaginatedInput;
   query: (options?: FindOptions) => Promise<Model[]>;
   where?: WhereAttributeHash;
+  uuidKey?: "uuid" | "userUuid";
 }
 
 export const PaginationQuery = {
@@ -14,6 +15,7 @@ export const PaginationQuery = {
     query,
     where,
     order,
+    uuidKey = "uuid",
     ...findOptions
   }: IFindLatest<Model>) => {
     const limit = PaginationConfig.itemsPerPage() + 1;
@@ -30,7 +32,7 @@ export const PaginationQuery = {
           },
           {
             updatedAt: updatedBeforeThan.dateTime.toISOString(),
-            uuid: {
+            [uuidKey]: {
               [Op.lt]: updatedBeforeThan.uuid
             }
           }

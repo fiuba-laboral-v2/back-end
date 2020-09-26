@@ -1,7 +1,5 @@
 import { getAdmins } from "./getAdmins";
 
-const adminQueries = {
+export const adminQueries = {
   getAdmins
 };
-
-export { adminQueries };

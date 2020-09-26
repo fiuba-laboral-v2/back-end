@@ -68,9 +68,9 @@ describe("AdminRepository", () => {
 
       const generateAdmins = async () => {
         return [
-          await AdminGenerator.instance({ secretary: Secretary.extension }),
-          await AdminGenerator.instance({ secretary: Secretary.graduados }),
-          await AdminGenerator.instance({ secretary: Secretary.extension })
+          await AdminGenerator.extension(),
+          await AdminGenerator.graduados(),
+          await AdminGenerator.extension()
         ];
       };
 

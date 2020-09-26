@@ -5,8 +5,7 @@ import { AdminNotFoundError } from "./Errors";
 import { Admin } from "..";
 import { PaginationQuery } from "../PaginationQuery";
 import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedInput";
-import { User } from "../User/Model";
-import { Op } from "sequelize";
+import { User } from "$models";
 
 export const AdminRepository = {
   create: ({ user: userAttributes, secretary }: ISaveAdmin) =>
@@ -23,7 +22,9 @@ export const AdminRepository = {
   findAll: () => Admin.findAll(),
   findLatest: (updatedBeforeThan?: IPaginatedInput) =>
     PaginationQuery.findLatest({
+      updatedBeforeThan,
       query: options => Admin.findAll(options),
+      uuidKey: "userUuid",
       order: [
         ["updatedAt", "DESC"],
         ["userUuid", "DESC"]
@@ -33,24 +34,7 @@ export const AdminRepository = {
           model: User,
           attributes: []
         }
-      ],
-      ...(updatedBeforeThan && {
-        where: {
-          [Op.or]: [
-            {
-              updatedAt: {
-                [Op.lt]: updatedBeforeThan.dateTime.toISOString()
-              }
-            },
-            {
-              updatedAt: updatedBeforeThan.dateTime.toISOString(),
-              userUuid: {
-                [Op.lt]: updatedBeforeThan.uuid
-              }
-            }
-          ]
-        }
-      })
+      ]
     }),
   truncate: () => Admin.truncate({ cascade: true })
 };

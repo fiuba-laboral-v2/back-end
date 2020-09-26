@@ -33,75 +33,80 @@ const GET_ADMINS = gql`
 `;
 
 describe("getAdmins", () => {
-  let admin1: Admin;
+  let adminExtension: Admin;
+  let adminGraduados: Admin;
+  let apolloClientAdminExtension;
+  let apolloClientAdminGraduados;
 
   beforeAll(async () => {
     await ApplicantRepository.truncate();
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     await AdminRepository.truncate();
-    admin1 = await AdminGenerator.instance({ secretary: Secretary.extension });
+    ({
+      admin: adminGraduados,
+      apolloClient: apolloClientAdminGraduados
+    } = await TestClientGenerator.admin({
+      secretary: Secretary.graduados
+    }));
+    ({
+      admin: adminExtension,
+      apolloClient: apolloClientAdminExtension
+    } = await TestClientGenerator.admin({
+      secretary: Secretary.extension
+    }));
   });
 
   describe("successful cases", () => {
-    it("fetches all admins for an admin from graduados", async () => {
-      const { user, admin, apolloClient } = await TestClientGenerator.admin({
-        secretary: Secretary.graduados
-      });
+    let adminExtraExtension: Admin;
+    let adminExtraGraduados: Admin;
+    let allSortedAdmins;
 
-      const { data, errors } = await apolloClient.query({ query: GET_ADMINS });
-
-      const user1 = await admin1.getUser();
-      expect(errors).toBeUndefined();
-      expect(data!.getAdmins.shouldFetchMore).toEqual(false);
-      expect(data!.getAdmins.results).toEqual(
-        expect.arrayContaining([
-          {
-            user: {
-              uuid: user.uuid,
-              email: user.email,
-              name: user.name,
-              surname: user.surname
-            },
-            updatedAt: admin.updatedAt.toISOString(),
-            secretary: admin.secretary
-          },
-          {
-            user: {
-              uuid: user1.uuid,
-              email: user1.email,
-              name: user1.name,
-              surname: user1.surname
-            },
-            updatedAt: admin1.updatedAt.toISOString(),
-            secretary: admin1.secretary
+    beforeAll(async () => {
+      adminExtraExtension = await AdminGenerator.extension();
+      adminExtraGraduados = await AdminGenerator.graduados();
+      allSortedAdmins = await Promise.all(
+        [adminExtraGraduados, adminExtraExtension, adminExtension, adminGraduados].map(
+          async admin => {
+            const user = await admin.getUser();
+            return {
+              user: {
+                uuid: user.uuid,
+                email: user.email,
+                name: user.name,
+                surname: user.surname
+              },
+              updatedAt: admin.updatedAt.toISOString(),
+              secretary: admin.secretary
+            };
           }
-        ])
+        )
       );
     });
 
-    it("fetches all admins for an admin from extension", async () => {
-      const { apolloClient } = await TestClientGenerator.admin({
-        secretary: Secretary.extension
-      });
-
-      const { data, errors } = await apolloClient.query({ query: GET_ADMINS });
+    it("fetches all admins for an admin from graduados", async () => {
+      const { data, errors } = await apolloClientAdminGraduados.query({ query: GET_ADMINS });
 
       expect(errors).toBeUndefined();
       expect(data!.getAdmins.shouldFetchMore).toEqual(false);
-      expect(data!.getAdmins.results.length).toBeGreaterThanOrEqual(2);
+      expect(data!.getAdmins.results).toEqual(allSortedAdmins);
+    });
+
+    it("fetches all admins for an admin from extension", async () => {
+      const { data, errors } = await apolloClientAdminExtension.query({ query: GET_ADMINS });
+
+      expect(errors).toBeUndefined();
+      expect(data!.getAdmins.shouldFetchMore).toEqual(false);
+      expect(data!.getAdmins.results).toEqual(allSortedAdmins);
     });
 
     it("supports pagination", async () => {
       const itemsPerPage = 2;
       mockItemsPerPage(itemsPerPage);
-      const { apolloClient } = await TestClientGenerator.admin({
-        secretary: Secretary.extension
-      });
-      const { data, errors } = await apolloClient.query({ query: GET_ADMINS });
+      const { data, errors } = await apolloClientAdminExtension.query({ query: GET_ADMINS });
       expect(errors).toBeUndefined();
       expect(data!.getAdmins.shouldFetchMore).toBe(true);
-      expect(data!.getAdmins.results.length).toBeGreaterThanOrEqual(2);
+      expect(data!.getAdmins.results).toHaveLength(2);
     });
   });
 
@@ -115,7 +120,7 @@ describe("getAdmins", () => {
 
     it("returns an error if current user is an applicant", async () => {
       const { apolloClient } = await TestClientGenerator.applicant({
-        status: { admin: admin1, approvalStatus: ApprovalStatus.approved }
+        status: { admin: adminExtension, approvalStatus: ApprovalStatus.approved }
       });
       const { errors } = await apolloClient.query({ query: GET_ADMINS });
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
@@ -123,7 +128,7 @@ describe("getAdmins", () => {
 
     it("returns an error if current user is from company", async () => {
       const { apolloClient } = await TestClientGenerator.company({
-        status: { admin: admin1, approvalStatus: ApprovalStatus.approved }
+        status: { admin: adminExtension, approvalStatus: ApprovalStatus.approved }
       });
       const { errors } = await apolloClient.query({ query: GET_ADMINS });
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
