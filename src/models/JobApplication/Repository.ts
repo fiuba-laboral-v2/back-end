@@ -1,9 +1,8 @@
 import { Database } from "$config";
 import { Applicant, JobApplication, Offer } from "$models";
-import { IUpdateApprovalStatus } from "./Interfaces";
+import { IUpdateApprovalStatus, IFindLatestByCompanyUuid } from "./Interfaces";
 import { JobApplicationApprovalEventRepository } from "./JobApplicationsApprovalEvent";
 import { JobApplicationNotFoundError } from "./Errors";
-import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { PaginationQuery } from "../PaginationQuery";
 
 export const JobApplicationRepository = {
@@ -25,13 +24,14 @@ export const JobApplicationRepository = {
   },
   findLatestByCompanyUuid: async ({
     companyUuid,
-    updatedBeforeThan
-  }: {
-    companyUuid: string;
-    updatedBeforeThan?: IPaginatedInput;
-  }) => {
+    updatedBeforeThan,
+    approvalStatus
+  }: IFindLatestByCompanyUuid) => {
     return PaginationQuery.findLatest({
       updatedBeforeThan,
+      where: {
+        ...(approvalStatus && { approvalStatus })
+      },
       query: options => JobApplication.findAll(options),
       order: [
         ["updatedAt", "DESC"],

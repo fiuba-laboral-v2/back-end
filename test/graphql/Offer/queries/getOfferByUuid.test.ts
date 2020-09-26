@@ -79,8 +79,8 @@ describe("getOfferByUuid", () => {
     companyUuid = (await CompanyGenerator.instance.withCompleteData()).uuid;
 
     admins = {
-      [Secretary.extension]: await AdminGenerator.instance({ secretary: Secretary.extension }),
-      [Secretary.graduados]: await AdminGenerator.instance({ secretary: Secretary.graduados })
+      [Secretary.extension]: await AdminGenerator.extension(),
+      [Secretary.graduados]: await AdminGenerator.graduados()
     };
 
     const firstCareer = await CareerGenerator.instance();
@@ -135,7 +135,7 @@ describe("getOfferByUuid", () => {
     return TestClientGenerator.company({
       status: {
         approvalStatus,
-        admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+        admin: await AdminGenerator.extension()
       }
     });
   };

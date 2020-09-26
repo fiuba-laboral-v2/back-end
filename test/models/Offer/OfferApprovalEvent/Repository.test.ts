@@ -5,7 +5,6 @@ import { OfferApprovalEventRepository } from "$models/Offer/OfferApprovalEvent";
 import { ForeignKeyConstraintError } from "sequelize";
 import { CompanyGenerator } from "$generators/Company";
 import { AdminGenerator } from "$generators/Admin";
-import { Secretary } from "$models/Admin";
 import { OfferRepository } from "$models/Offer";
 import { OfferGenerator } from "$test/generators/Offer";
 
@@ -19,7 +18,7 @@ describe("OfferApprovalEventRepository", () => {
   describe("create", () => {
     const expectValidCreationWithStatus = async (status: ApprovalStatus) => {
       const company = await CompanyGenerator.instance.withCompleteData();
-      const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+      const admin = await AdminGenerator.extension();
       const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
       const adminUserUuid = admin.userUuid;
       const event = await OfferApprovalEventRepository.create({
@@ -65,7 +64,7 @@ describe("OfferApprovalEventRepository", () => {
 
     it("gets offer and admin by association", async () => {
       const company = await CompanyGenerator.instance.withCompleteData();
-      const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+      const admin = await AdminGenerator.extension();
       const status = ApprovalStatus.approved;
       const adminUserUuid = admin.userUuid;
       const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
@@ -83,9 +82,7 @@ describe("OfferApprovalEventRepository", () => {
   describe("Delete cascade", () => {
     const createOfferApprovalEvent = async () => {
       const company = await CompanyGenerator.instance.withCompleteData();
-      const { userUuid: adminUserUuid } = await AdminGenerator.instance({
-        secretary: Secretary.extension
-      });
+      const { userUuid: adminUserUuid } = await AdminGenerator.extension();
       const status = ApprovalStatus.approved;
       const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
       return OfferApprovalEventRepository.create({
