@@ -4,7 +4,6 @@ import { OfferRepository } from "$models/Offer";
 import { ApplicantType } from "$models/Applicant";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
-import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { OfferApprovalEventRepository } from "$models/Offer/OfferApprovalEvent";
 import { OfferNotFoundError, OfferNotUpdatedError } from "$models/Offer/Errors";
@@ -28,8 +27,8 @@ describe("OfferRepository", () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     await OfferRepository.truncate();
-    graduadosAdmin = await AdminGenerator.instance({ secretary: Secretary.graduados });
-    extensionAdmin = await AdminGenerator.instance({ secretary: Secretary.extension });
+    graduadosAdmin = await AdminGenerator.graduados();
+    extensionAdmin = await AdminGenerator.extension();
   });
 
   const sectionData = {
@@ -378,19 +377,19 @@ describe("OfferRepository", () => {
       await OfferGenerator.instance.updatedWithStatus({
         companyUuid,
         status: ApprovalStatus.approved,
-        admin: await AdminGenerator.instance({ secretary: Secretary.graduados }),
+        admin: await AdminGenerator.graduados(),
         targetApplicantType: ApplicantType.graduate
       });
       await OfferGenerator.instance.updatedWithStatus({
         companyUuid,
         status: ApprovalStatus.approved,
-        admin: await AdminGenerator.instance({ secretary: Secretary.extension }),
+        admin: await AdminGenerator.extension(),
         targetApplicantType: ApplicantType.student
       });
       await OfferGenerator.instance.updatedWithStatus({
         companyUuid,
         status: ApprovalStatus.rejected,
-        admin: await AdminGenerator.instance({ secretary: Secretary.extension }),
+        admin: await AdminGenerator.extension(),
         targetApplicantType: ApplicantType.student
       });
       const { results } = await OfferRepository.findAll({

@@ -12,7 +12,6 @@ import { CareerGenerator } from "$generators/Career";
 import { TestClientGenerator } from "$generators/TestClient";
 import { AdminGenerator } from "$generators/Admin";
 import { ApplicantGenerator } from "$generators/Applicant";
-import { Secretary } from "$models/Admin";
 import { Admin } from "$models";
 import { mockItemsPerPage } from "$test/mocks/config/PaginationConfig";
 
@@ -64,7 +63,7 @@ describe("getApplicants", () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
     await CompanyRepository.truncate();
-    admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+    admin = await AdminGenerator.extension();
   });
 
   describe("when no applicant exists", () => {

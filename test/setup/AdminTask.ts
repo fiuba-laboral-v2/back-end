@@ -45,7 +45,7 @@ export class AdminTaskTestSetup {
       ...(await this.applicants.tasksVisibleBy(secretary)),
       ...this.companies.tasks,
       ...this.offers.tasksVisibleBy(secretary),
-      ...this.jobApplications.tasks
+      ...(await this.jobApplications.tasksVisibleBy(secretary))
     ];
     return this.sortTasks(allTasks);
   }

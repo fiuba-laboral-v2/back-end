@@ -6,6 +6,7 @@ import {
   IPaginatedInput
 } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { GraphQLPaginatedResults } from "$graphql/Pagination/Types/GraphQLPaginatedResults";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export const getMyLatestJobApplications = {
   type: GraphQLPaginatedResults(GraphQLJobApplication),
@@ -21,6 +22,7 @@ export const getMyLatestJobApplications = {
   ) =>
     JobApplicationRepository.findLatestByCompanyUuid({
       companyUuid: currentUser.getCompany().companyUuid,
-      updatedBeforeThan
+      updatedBeforeThan,
+      approvalStatus: ApprovalStatus.approved
     })
 };

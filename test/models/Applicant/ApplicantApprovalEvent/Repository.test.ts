@@ -1,7 +1,7 @@
 import { ForeignKeyConstraintError } from "sequelize";
 import { ApplicantRepository } from "$models/Applicant";
 import { UserRepository } from "$models/User";
-import { AdminRepository, Secretary } from "$models/Admin";
+import { AdminRepository } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import {
   ApplicantApprovalEventRepository,
@@ -19,7 +19,7 @@ describe("ApplicantApprovalEventRepository", () => {
 
   const expectToCreateAValidInstanceWithAStatus = async (status: ApprovalStatus) => {
     const applicant = await ApplicantGenerator.instance.withMinimumData();
-    const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+    const admin = await AdminGenerator.extension();
     const applicantApprovalEventAttributes: ICreateApplicantApprovalEvent = {
       adminUserUuid: admin.userUuid,
       applicantUuid: applicant.uuid,
@@ -52,7 +52,7 @@ describe("ApplicantApprovalEventRepository", () => {
 
   it("gets applicant by association", async () => {
     const applicant = await ApplicantGenerator.instance.withMinimumData();
-    const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+    const admin = await AdminGenerator.extension();
     const applicantApprovalEvent = await ApplicantApprovalEventRepository.create({
       adminUserUuid: admin.userUuid,
       applicantUuid: applicant.uuid,
@@ -63,7 +63,7 @@ describe("ApplicantApprovalEventRepository", () => {
 
   it("gets admin by association", async () => {
     const applicant = await ApplicantGenerator.instance.withMinimumData();
-    const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+    const admin = await AdminGenerator.extension();
     const applicantApprovalEvent = await ApplicantApprovalEventRepository.create({
       adminUserUuid: admin.userUuid,
       applicantUuid: applicant.uuid,
@@ -90,7 +90,7 @@ describe("ApplicantApprovalEventRepository", () => {
 
   it("throws an error if the applicantUuid does not belongs to an applicant", async () => {
     const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
-    const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+    const admin = await AdminGenerator.extension();
     await expect(
       ApplicantApprovalEventRepository.create({
         adminUserUuid: admin.userUuid,
@@ -105,7 +105,7 @@ describe("ApplicantApprovalEventRepository", () => {
   });
   describe("Delete cascade", () => {
     const createApplicantApprovalEvent = async () => {
-      const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+      const admin = await AdminGenerator.extension();
       const applicant = await ApplicantGenerator.instance.withMinimumData();
       return ApplicantApprovalEventRepository.create({
         adminUserUuid: admin.userUuid,

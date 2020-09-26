@@ -43,7 +43,7 @@ describe("getApprovedOffers", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.approved,
-        admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+        admin: await AdminGenerator.extension()
       },
       careers
     });
@@ -104,7 +104,7 @@ describe("getApprovedOffers", () => {
     approvedByGraduadosAndExtensionBothOffer = await OfferRepository.updateApprovalStatus({
       uuid: approvedByGraduadosAndExtensionBothOffer.uuid,
       status: ApprovalStatus.approved,
-      admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+      admin: await AdminGenerator.extension()
     });
     await createOfferWith(ApprovalStatus.rejected, Secretary.graduados, ApplicantType.both);
   });
@@ -237,7 +237,7 @@ describe("getApprovedOffers", () => {
           await OfferGenerator.instance.updatedWithStatus({
             companyUuid,
             status: ApprovalStatus.approved,
-            admin: await AdminGenerator.instance({ secretary: Secretary.extension }),
+            admin: await AdminGenerator.extension(),
             targetApplicantType: ApplicantType.both
           })
         );
@@ -383,7 +383,7 @@ describe("getApprovedOffers", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.rejected,
-        admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+        admin: await AdminGenerator.extension()
       }
     });
     const { errors } = await apolloClient.query({ query: GET_APPROVED_OFFERS });

@@ -12,7 +12,6 @@ import { UserRepository } from "$models/User";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Admin } from "$models";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
-import { Secretary } from "$models/Admin";
 import { UUID_REGEX } from "$test/models";
 
 const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
@@ -104,7 +103,7 @@ describe("createOffer", () => {
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await UserRepository.truncate();
-    admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+    admin = await AdminGenerator.extension();
   });
 
   describe("when the input values are valid", () => {

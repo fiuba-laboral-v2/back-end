@@ -12,7 +12,7 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { CompanyGenerator } from "$generators/Company";
 import { AdminGenerator } from "$generators/Admin";
 import { CompanyNotUpdatedError } from "$models/Company/Errors";
-import { Secretary } from "$models/Admin";
+import { mockItemsPerPage } from "$test/mocks/config/PaginationConfig";
 
 describe("CompanyRepository", () => {
   beforeAll(async () => {
@@ -119,17 +119,88 @@ describe("CompanyRepository", () => {
     );
   });
 
-  it("retrieve all Companies", async () => {
-    await CompanyRepository.truncate();
-    await UserRepository.truncate();
-    const companyCompleteData = CompanyGenerator.data.completeData();
-    const company = await CompanyRepository.create(companyCompleteData);
-    const expectedCompanies = await CompanyRepository.findAll();
-    expect(expectedCompanies).not.toBeNull();
-    expect(expectedCompanies).not.toBeUndefined();
-    expect(expectedCompanies!.length).toEqual(1);
-    const uuids = expectedCompanies.map(({ uuid }) => uuid);
-    expect(uuids).toContain(company.uuid);
+  describe("findLatest", () => {
+    let company1;
+    let company2;
+    let company3;
+
+    const generateCompanies = async () => {
+      return [
+        await CompanyGenerator.instance.withMinimumData(),
+        await CompanyGenerator.instance.withMinimumData(),
+        await CompanyGenerator.instance.withMinimumData()
+      ];
+    };
+
+    beforeAll(async () => {
+      [company1, company2, company3] = await generateCompanies();
+    });
+
+    it("returns the latest company first", async () => {
+      const companies = await CompanyRepository.findLatest();
+      const firstCompanyInList = [companies.results[0], companies.results[1], companies.results[2]];
+
+      expect(companies.shouldFetchMore).toEqual(false);
+      expect(firstCompanyInList).toEqual([
+        expect.objectContaining({
+          uuid: company3.uuid,
+          businessName: company3.businessName,
+          approvalStatus: ApprovalStatus.pending
+        }),
+        expect.objectContaining({
+          uuid: company2.uuid,
+          businessName: company2.businessName,
+          approvalStatus: ApprovalStatus.pending
+        }),
+        expect.objectContaining({
+          uuid: company1.uuid,
+          businessName: company1.businessName,
+          approvalStatus: ApprovalStatus.pending
+        })
+      ]);
+    });
+
+    describe("fetchMore", () => {
+      let company4;
+      let company5;
+      let company6;
+      let company7;
+
+      beforeAll(async () => {
+        [company4, company5, company6] = await generateCompanies();
+        [company7, ,] = await generateCompanies();
+      });
+
+      it("gets the next 3 companies", async () => {
+        const itemsPerPage = 3;
+        mockItemsPerPage(itemsPerPage);
+
+        const updatedBeforeThan = {
+          dateTime: company7.updatedAt,
+          uuid: company7.uuid
+        };
+
+        const companies = await CompanyRepository.findLatest(updatedBeforeThan);
+        expect(companies.results).toEqual([
+          expect.objectContaining({
+            uuid: company6.uuid,
+            businessName: company6.businessName,
+            approvalStatus: ApprovalStatus.pending
+          }),
+          expect.objectContaining({
+            uuid: company5.uuid,
+            businessName: company5.businessName,
+            approvalStatus: ApprovalStatus.pending
+          }),
+          expect.objectContaining({
+            uuid: company4.uuid,
+            businessName: company4.businessName,
+            approvalStatus: ApprovalStatus.pending
+          })
+        ]);
+        expect(companies.shouldFetchMore).toBe(true);
+      });
+    });
   });
 
   it("throws an error if phoneNumbers are invalid", async () => {
@@ -200,7 +271,7 @@ describe("CompanyRepository", () => {
     let admin: Admin;
 
     beforeAll(async () => {
-      admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+      admin = await AdminGenerator.extension();
     });
 
     it("approves company only by an admin and create new event", async () => {

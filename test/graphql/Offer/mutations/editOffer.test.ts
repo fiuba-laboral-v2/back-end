@@ -10,7 +10,6 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import generateUuid from "uuid/v4";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { OfferNotUpdatedError } from "$models/Offer/Errors";
-import { Secretary } from "$models/Admin";
 import { ApplicantType } from "$models/Applicant";
 
 const EDIT_OFFER = gql`
@@ -55,7 +54,7 @@ describe("editOffer", () => {
       company: { uuid: companyUuid }
     } = await TestClientGenerator.company({
       status: {
-        admin: await AdminGenerator.instance({ secretary: Secretary.extension }),
+        admin: await AdminGenerator.extension(),
         approvalStatus: ApprovalStatus.approved
       }
     });
@@ -107,7 +106,7 @@ describe("editOffer", () => {
   it("throws an error when the offer uuid is not found", async () => {
     const { apolloClient, company } = await TestClientGenerator.company({
       status: {
-        admin: await AdminGenerator.instance({ secretary: Secretary.extension }),
+        admin: await AdminGenerator.extension(),
         approvalStatus: ApprovalStatus.approved
       }
     });

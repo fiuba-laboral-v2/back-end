@@ -7,7 +7,6 @@ import { Admin, Offer } from "$models";
 import { IOfferCareer } from "$models/Offer/OfferCareer";
 import { IOfferSection } from "$models/Offer/OfferSection";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { Secretary } from "$models/Admin";
 
 export interface IOfferInput {
   companyUuid: string;
@@ -25,6 +24,18 @@ export interface IForAllTargets {
   [ApplicantType.student]: Offer;
   [ApplicantType.graduate]: Offer;
   [ApplicantType.both]: Offer;
+}
+
+interface IOfferByStatus {
+  [ApprovalStatus.pending]: Offer;
+  [ApprovalStatus.approved]: Offer;
+  [ApprovalStatus.rejected]: Offer;
+}
+
+export interface IForAllTargetsAndStatuses {
+  [ApplicantType.student]: IOfferByStatus;
+  [ApplicantType.graduate]: IOfferByStatus;
+  [ApplicantType.both]: IOfferByStatus;
 }
 
 export const OfferGenerator = {
@@ -48,29 +59,32 @@ export const OfferGenerator = {
       );
       return OfferRepository.updateApprovalStatus({ uuid, admin, status });
     },
-    forStudents: async (variables: IOfferInput) => {
-      const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+    forStudents: async ({ status, ...variables }: IOfferInput & { status?: ApprovalStatus }) => {
+      const admin = await AdminGenerator.extension();
       return OfferGenerator.instance.updatedWithStatus({
-        status: ApprovalStatus.approved,
+        status: status || ApprovalStatus.approved,
         admin,
         targetApplicantType: ApplicantType.student,
         ...variables
       });
     },
-    forGraduates: async (variables: IOfferInput) => {
-      const admin = await AdminGenerator.instance({ secretary: Secretary.graduados });
+    forGraduates: async ({ status, ...variables }: IOfferInput & { status?: ApprovalStatus }) => {
+      const admin = await AdminGenerator.graduados();
       return OfferGenerator.instance.updatedWithStatus({
-        status: ApprovalStatus.approved,
+        status: status || ApprovalStatus.approved,
         admin,
         targetApplicantType: ApplicantType.graduate,
         ...variables
       });
     },
-    forStudentsAndGraduates: async (variables: IOfferInput) => {
-      const extensionAdmin = await AdminGenerator.instance({ secretary: Secretary.extension });
-      const graduadosAdmin = await AdminGenerator.instance({ secretary: Secretary.graduados });
+    forStudentsAndGraduates: async ({
+      status,
+      ...variables
+    }: IOfferInput & { status?: ApprovalStatus }) => {
+      const extensionAdmin = await AdminGenerator.extension();
+      const graduadosAdmin = await AdminGenerator.graduados();
       const { uuid } = await OfferGenerator.instance.updatedWithStatus({
-        status: ApprovalStatus.approved,
+        status: status || ApprovalStatus.approved,
         admin: extensionAdmin,
         targetApplicantType: ApplicantType.both,
         ...variables
@@ -78,14 +92,50 @@ export const OfferGenerator = {
       return OfferRepository.updateApprovalStatus({
         uuid,
         admin: graduadosAdmin,
-        status: ApprovalStatus.approved
+        status: status || ApprovalStatus.approved
       });
     },
     forAllTargets: async (variables: IOfferInput): Promise<IForAllTargets> => ({
       [ApplicantType.student]: await OfferGenerator.instance.forStudents(variables),
       [ApplicantType.graduate]: await OfferGenerator.instance.forGraduates(variables),
       [ApplicantType.both]: await OfferGenerator.instance.forStudentsAndGraduates(variables)
-    })
+    }),
+    forAllTargetsAndStatuses: async (
+      variables: IOfferInput
+    ): Promise<IForAllTargetsAndStatuses> => {
+      const pending = ApprovalStatus.pending;
+      const approved = ApprovalStatus.approved;
+      const rejected = ApprovalStatus.rejected;
+      const forStudents = OfferGenerator.instance.forStudents;
+      const forGraduates = OfferGenerator.instance.forGraduates;
+      const forStudentsAndGraduates = OfferGenerator.instance.forStudentsAndGraduates;
+      return {
+        [ApplicantType.student]: {
+          [ApprovalStatus.pending]: await forStudents({ ...variables, status: pending }),
+          [ApprovalStatus.approved]: await forStudents({ ...variables, status: approved }),
+          [ApprovalStatus.rejected]: await forStudents({ ...variables, status: rejected })
+        },
+        [ApplicantType.graduate]: {
+          [ApprovalStatus.pending]: await forGraduates({ ...variables, status: pending }),
+          [ApprovalStatus.approved]: await forGraduates({ ...variables, status: approved }),
+          [ApprovalStatus.rejected]: await forGraduates({ ...variables, status: rejected })
+        },
+        [ApplicantType.both]: {
+          [ApprovalStatus.pending]: await forStudentsAndGraduates({
+            ...variables,
+            status: pending
+          }),
+          [ApprovalStatus.approved]: await forStudentsAndGraduates({
+            ...variables,
+            status: approved
+          }),
+          [ApprovalStatus.rejected]: await forStudentsAndGraduates({
+            ...variables,
+            status: rejected
+          })
+        }
+      };
+    }
   },
   data: {
     withObligatoryData: (variables: IOfferInput) =>

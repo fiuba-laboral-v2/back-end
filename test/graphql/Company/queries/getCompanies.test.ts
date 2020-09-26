@@ -9,12 +9,18 @@ import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AdminGenerator } from "$generators/Admin";
 import { Secretary } from "$models/Admin";
+import { mockItemsPerPage } from "$test/mocks/config/PaginationConfig";
 
 const GET_COMPANIES = gql`
-  query {
-    getCompanies {
-      cuit
-      companyName
+  query GetCompanies($updatedBeforeThan: PaginatedInput) {
+    getCompanies(updatedBeforeThan: $updatedBeforeThan) {
+      shouldFetchMore
+      results {
+        uuid
+        cuit
+        companyName
+        businessName
+      }
     }
   }
 `;
@@ -33,16 +39,24 @@ describe("getCompanies", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: {
         approvalStatus: ApprovalStatus.approved,
-        admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+        admin: await AdminGenerator.extension()
       }
     });
     const response = await apolloClient.query({ query: GET_COMPANIES });
 
     expect(response.errors).toBeUndefined();
     expect(response.data).not.toBeUndefined();
-    expect(response.data!.getCompanies).toEqual(
-      expect.arrayContaining(companies.map(({ companyName, cuit }) => ({ companyName, cuit })))
+    expect(response.data!.getCompanies.results).toEqual(
+      expect.arrayContaining(
+        companies.map(({ uuid, companyName, cuit, businessName }) => ({
+          uuid,
+          companyName,
+          cuit,
+          businessName
+        }))
+      )
     );
+    expect(response.data!.getCompanies.shouldFetchMore).toEqual(false);
   });
 
   it("returns all companies if an Admin from graduados makes the request", async () => {
@@ -51,9 +65,17 @@ describe("getCompanies", () => {
 
     expect(response.errors).toBeUndefined();
     expect(response.data).not.toBeUndefined();
-    expect(response.data!.getCompanies).toEqual(
-      companies.map(({ companyName, cuit }) => ({ companyName, cuit }))
+    expect(response.data!.getCompanies.results).toEqual(
+      expect.arrayContaining(
+        companies.map(({ uuid, companyName, cuit, businessName }) => ({
+          uuid,
+          companyName,
+          cuit,
+          businessName
+        }))
+      )
     );
+    expect(response.data!.getCompanies.shouldFetchMore).toEqual(false);
   });
 
   it("returns all companies if an Admin from extension makes the request", async () => {
@@ -62,9 +84,27 @@ describe("getCompanies", () => {
 
     expect(response.errors).toBeUndefined();
     expect(response.data).not.toBeUndefined();
-    expect(response.data!.getCompanies).toEqual(
-      companies.map(({ companyName, cuit }) => ({ companyName, cuit }))
+    expect(response.data!.getCompanies.results).toEqual(
+      expect.arrayContaining(
+        companies.map(({ uuid, companyName, cuit, businessName }) => ({
+          uuid,
+          companyName,
+          cuit,
+          businessName
+        }))
+      )
     );
+    expect(response.data!.getCompanies.shouldFetchMore).toEqual(false);
+  });
+
+  it("supports pagination", async () => {
+    const itemsPerPage = 1;
+    mockItemsPerPage(itemsPerPage);
+    const { apolloClient } = await TestClientGenerator.admin();
+    const { data, errors } = await apolloClient.query({ query: GET_COMPANIES });
+    expect(errors).toBeUndefined();
+    expect(data!.getCompanies.shouldFetchMore).toBe(true);
+    expect(data!.getCompanies.results.length).toEqual(1);
   });
 
   describe("Errors", () => {
@@ -97,7 +137,7 @@ describe("getCompanies", () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: {
           approvalStatus: ApprovalStatus.rejected,
-          admin: await AdminGenerator.instance({ secretary: Secretary.extension })
+          admin: await AdminGenerator.extension()
         }
       });
       const { errors } = await apolloClient.query({ query: GET_COMPANIES });
