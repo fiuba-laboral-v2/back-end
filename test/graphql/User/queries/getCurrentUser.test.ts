@@ -11,7 +11,9 @@ const GET_CURRENT_USER = gql`
       name
       surname
       admin {
-        userUuid
+        user {
+          uuid
+        }
         secretary
       }
       applicant {
@@ -59,7 +61,7 @@ describe("getCurrentUser", () => {
       name: user.name,
       surname: user.surname,
       admin: {
-        userUuid: admin.userUuid,
+        user: { uuid: user.uuid },
         secretary: admin.secretary
       },
       applicant: null,

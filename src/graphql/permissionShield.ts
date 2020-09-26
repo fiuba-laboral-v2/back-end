@@ -10,6 +10,7 @@ import { careersPermissions } from "./Career";
 import { companyPermissions } from "./Company";
 import { userPermissions } from "./User";
 import { adminTaskPermissions } from "./AdminTask";
+import { adminPermissions } from "./Admin";
 
 const permissions = merge(
   offerPermissions,
@@ -19,7 +20,8 @@ const permissions = merge(
   careersPermissions,
   companyPermissions,
   userPermissions,
-  adminTaskPermissions
+  adminTaskPermissions,
+  adminPermissions
 );
 
 export const permissionShield = shield(permissions, {

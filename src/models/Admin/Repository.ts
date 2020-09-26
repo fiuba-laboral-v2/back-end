@@ -3,6 +3,8 @@ import { ISaveAdmin } from "./Interface";
 import { UserRepository } from "$models/User";
 import { AdminNotFoundError } from "./Errors";
 import { Admin } from "..";
+import { PaginationQuery } from "../PaginationQuery";
+import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedInput";
 
 export const AdminRepository = {
   create: ({ user: userAttributes, secretary }: ISaveAdmin) =>
@@ -17,5 +19,15 @@ export const AdminRepository = {
     return admin;
   },
   findAll: () => Admin.findAll(),
+  findLatest: (updatedBeforeThan?: IPaginatedInput) =>
+    PaginationQuery.findLatest({
+      updatedBeforeThan,
+      query: options => Admin.findAll(options),
+      uuidKey: "userUuid",
+      order: [
+        ["updatedAt", "DESC"],
+        ["userUuid", "DESC"]
+      ]
+    }),
   truncate: () => Admin.truncate({ cascade: true })
 };
