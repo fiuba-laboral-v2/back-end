@@ -5,7 +5,6 @@ import { AdminNotFoundError } from "./Errors";
 import { Admin } from "..";
 import { PaginationQuery } from "../PaginationQuery";
 import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedInput";
-import { User } from "$models";
 
 export const AdminRepository = {
   create: ({ user: userAttributes, secretary }: ISaveAdmin) =>
@@ -28,12 +27,6 @@ export const AdminRepository = {
       order: [
         ["updatedAt", "DESC"],
         ["userUuid", "DESC"]
-      ],
-      include: [
-        {
-          model: User,
-          attributes: []
-        }
       ]
     }),
   truncate: () => Admin.truncate({ cascade: true })
