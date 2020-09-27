@@ -6,7 +6,7 @@ import {
   FiubaUsersServiceFetchError
 } from "$services/FiubaUsers";
 import { FiubaUsersServiceConfig } from "$config/services";
-import { RequestBodyMock } from "./RequestBodyMock";
+import { ResponseBodyMock } from "./ResponseBodyMock";
 import { parse } from "fast-xml-parser";
 import { DniGenerator } from "$generators/DNI";
 import { FetchError } from "node-fetch";
@@ -35,7 +35,7 @@ describe("FiubaUsersApi", () => {
   afterEach(() => fetchMock.restore());
 
   it("returns false if the credentials are incorrect", async () => {
-    const { authenticateSuccessResponse } = RequestBodyMock;
+    const { authenticateSuccessResponse } = ResponseBodyMock;
     const isValid = false;
     stubRequest({
       status: 200,
@@ -45,7 +45,7 @@ describe("FiubaUsersApi", () => {
   });
 
   it("returns true if the credentials are correct", async () => {
-    const { authenticateSuccessResponse } = RequestBodyMock;
+    const { authenticateSuccessResponse } = ResponseBodyMock;
     const isValid = true;
     stubRequest({
       status: 200,
@@ -58,7 +58,7 @@ describe("FiubaUsersApi", () => {
     const errorMessage = "error in msg parsing: XML error parsing SOAP payload on line 1: required";
     stubRequest({
       status: 500,
-      body: RequestBodyMock.authenticateErrorResponse(errorMessage)
+      body: ResponseBodyMock.authenticateErrorResponse(errorMessage)
     });
     await expect(FiubaUsersApi.authenticate(validCredentials)).rejects.toThrowErrorWithMessage(
       Error,
@@ -67,7 +67,7 @@ describe("FiubaUsersApi", () => {
   });
 
   it("throws error if the requested operation is not defined", async () => {
-    const responseError = RequestBodyMock.authenticateErrorResponse(
+    const responseError = ResponseBodyMock.authenticateErrorResponse(
       "Operation UNDEFINED_OPERATION is not defined in the WSDL for this service"
     );
     stubRequest({

@@ -1,1 +1,2 @@
-export { FiubaUsersServiceConfig } from "./FiubaUsersServiceConfig";
+export * from "./EmailServiceConfig";
+export * from "./FiubaUsersServiceConfig";
