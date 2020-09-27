@@ -28,7 +28,8 @@ const GET_COMPANIES = gql`
 describe("getCompanies", () => {
   let companies;
   beforeAll(async () => {
-    Promise.all([CompanyRepository.truncate(), UserRepository.truncate()]);
+    await UserRepository.truncate();
+    await CompanyRepository.truncate();
     companies = [
       await CompanyGenerator.instance.withCompleteData(),
       await CompanyGenerator.instance.withCompleteData()
