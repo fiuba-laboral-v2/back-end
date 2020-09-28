@@ -22,10 +22,13 @@ export const Environment = {
   },
   validate() {
     if (this.isLocal()) return;
-    ["DATABASE_URL", "JWT_SECRET", "EMAIL_API_APPLICATION_ID", "EMAIL_API_PASSWORD"].forEach(
-      requiredKey => {
-        if (!this[requiredKey]()) throw new Error(`Missing configuration: ${requiredKey}`);
-      }
-    );
+
+    const allVariablesArePresent =
+      this.databaseURL() &&
+      this.JWTSecret() &&
+      this.emailApiApplicationID() &&
+      this.emailApiPassword();
+
+    if (!allVariablesArePresent) throw new Error(`Missing configuration`);
   }
 };
