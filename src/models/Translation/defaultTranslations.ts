@@ -127,6 +127,7 @@ export const defaultTranslations = {
     { key: "badCredentialsMessage", value: "Email o contraseña inválidos" }
   ],
   navBar: [
+    { key: "admins", value: "Administradores" },
     { key: "applicants", value: "Postulantes" },
     { key: "companies", value: "Empresas" },
     { key: "jobOffers", value: "Ofertas de trabajo" },
