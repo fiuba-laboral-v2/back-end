@@ -115,7 +115,7 @@ describe("EmailApi", () => {
     await expect(EmailApi.send(emailApiParams)).rejects.toThrow("Error sending email");
   });
 
-  it("throws an error if the service has a connection error", async () => {
+  it("throws an error if the API has a connection error", async () => {
     mockFetch({ response: { throws: new FetchError("message", "type") } });
     await expect(EmailApi.send(emailApiParams)).rejects.toThrowErrorWithMessage(
       FetchError,
