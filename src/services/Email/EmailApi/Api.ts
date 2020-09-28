@@ -1,6 +1,7 @@
 import { EmailServiceConfig, Environment } from "$config";
 import { parse } from "fast-xml-parser";
 import { ISendEmail } from "../interface";
+import "isomorphic-fetch";
 
 const requestBody = ({ sender, receiverEmails, subject, body }: ISendEmail) => {
   const base64Body = Buffer.from(body).toString("base64");

@@ -2,7 +2,6 @@ import { FiubaUsersApi } from "./FiubaUsersApi";
 import { Environment } from "$config";
 import { ICredentials } from "./Interfaces";
 import { InvalidEmptyPasswordError, InvalidEmptyUsernameError } from "./Errors";
-import "isomorphic-fetch";
 
 export const FiubaUsersService = {
   authenticate: async ({ dni, password }: ICredentials) => {
