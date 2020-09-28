@@ -105,7 +105,7 @@ describe("EmailApi", () => {
     await expect(EmailApi.send(emailApiParams)).rejects.toThrow("Error sending email");
   });
 
-  it("throws error when the service is unavailable", async () => {
+  it("throws error when the API is unavailable", async () => {
     mockFetch({ response: { status: 500, body: "unavailable" } });
     await expect(EmailApi.send(emailApiParams)).rejects.toThrow("Error sending email");
   });
