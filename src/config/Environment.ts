@@ -5,18 +5,10 @@ export const Environment = {
   TEST_TRAVIS: "test_travis",
   TEST: "test",
   NODE_ENV: process.env.NODE_ENV || "development",
-  databaseURL() {
-    return process.env.DATABASE_URL;
-  },
-  JWTSecret() {
-    return process.env.JWT_SECRET;
-  },
-  emailApiApplicationID() {
-    return process.env.EMAIL_API_APPLICATION_ID;
-  },
-  emailApiPassword() {
-    return process.env.EMAIL_API_PASSWORD;
-  },
+  databaseURL: () => process.env.DATABASE_URL,
+  JWTSecret: () => process.env.JWT_SECRET,
+  emailApiApplicationID: () => process.env.EMAIL_API_APPLICATION_ID,
+  emailApiPassword: () => process.env.EMAIL_API_PASSWORD,
   isLocal() {
     return [this.DEVELOPMENT, this.TEST, this.TEST_TRAVIS].includes(this.NODE_ENV);
   },
