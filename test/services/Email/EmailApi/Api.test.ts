@@ -97,8 +97,8 @@ describe("EmailApi", () => {
     await expect(EmailApi.send(params)).resolves.not.toThrow();
   });
 
-  it(`throws error when the service returns false,
-      indicating that the api could connect to the SMTP server`, async () => {
+  it(`throws error when the API returns false,
+      indicating that it could not connect to the SMTP server`, async () => {
     mockFetch({
       response: { status: 200, body: responseBody({ success: false }) }
     });
