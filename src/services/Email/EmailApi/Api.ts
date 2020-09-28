@@ -32,7 +32,7 @@ const requestBody = ({ sender, receiverEmails, subject, body }: ISendEmail) => {
         </misc:SendMail_safe>
       </soapenv:Body>
     </soapenv:Envelope>
-  `;
+  `.trim();
 };
 
 const sendEmail = (params: ISendEmail) =>
