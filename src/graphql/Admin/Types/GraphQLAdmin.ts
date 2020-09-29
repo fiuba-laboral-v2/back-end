@@ -19,6 +19,9 @@ export const GraphQLAdmin = new GraphQLObjectType<Admin>({
     updatedAt: {
       type: nonNull(GraphQLDateTime)
     },
+    createdAt: {
+      type: nonNull(GraphQLDateTime)
+    },
     user: {
       type: GraphQLUser,
       resolve: admin => admin.getUser()

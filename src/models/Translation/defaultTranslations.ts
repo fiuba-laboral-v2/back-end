@@ -227,9 +227,9 @@ export const defaultTranslations = {
   adminAdminListHeader: [
     { key: "name", value: "Nombre" },
     { key: "surname", value: "Apellido" },
-    { key: "email", value: "mail" },
-    { key: "secretary", value: "secretaria" },
-    { key: "updatedAt", value: "Última actualización" }
+    { key: "email", value: "Email" },
+    { key: "secretary", value: "Secretaría" },
+    { key: "updatedAt", value: "Fecha de registro" }
   ],
   statusLabel: [
     { key: "approved", value: "Aprobado" },

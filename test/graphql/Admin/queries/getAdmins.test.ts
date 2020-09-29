@@ -21,6 +21,7 @@ const GET_ADMINS = gql`
       results {
         uuid
         updatedAt
+        createdAt
         secretary
         user {
           email
@@ -77,6 +78,7 @@ describe("getAdmins", () => {
               },
               uuid: admin.userUuid,
               updatedAt: admin.updatedAt.toISOString(),
+              createdAt: admin.createdAt.toISOString(),
               secretary: admin.secretary
             };
           }
