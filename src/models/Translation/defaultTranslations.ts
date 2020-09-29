@@ -229,7 +229,7 @@ export const defaultTranslations = {
     { key: "surname", value: "Apellido" },
     { key: "email", value: "Email" },
     { key: "secretary", value: "Secretaría" },
-    { key: "updatedAt", value: "Fecha de registro" }
+    { key: "createdAt", value: "Fecha de registro" }
   ],
   statusLabel: [
     { key: "approved", value: "Aprobado" },
