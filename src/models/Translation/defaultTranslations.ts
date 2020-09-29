@@ -196,6 +196,10 @@ export const defaultTranslations = {
     { key: "rejected", value: "Rechazado" },
     { key: "pending", value: "Pendiente" }
   ],
+  secretaryNames: [
+    { key: "graduados", value: "Graduados" },
+    { key: "extension", value: "Extensión" }
+  ],
   adminCompanyMainTitle: [{ key: "title", value: "Empresa" }],
   adminCompanyListMainTitle: [{ key: "title", value: "Empresas" }],
   adminAdminListMainTitle: [{ key: "title", value: "Administradores" }],
