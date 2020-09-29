@@ -196,8 +196,13 @@ export const defaultTranslations = {
     { key: "rejected", value: "Rechazado" },
     { key: "pending", value: "Pendiente" }
   ],
+  secretaryNames: [
+    { key: "graduados", value: "Graduados" },
+    { key: "extension", value: "Extensión" }
+  ],
   adminCompanyMainTitle: [{ key: "title", value: "Empresa" }],
   adminCompanyListMainTitle: [{ key: "title", value: "Empresas" }],
+  adminAdminListMainTitle: [{ key: "title", value: "Administradores" }],
   adminApplicantMainTitle: [{ key: "title", value: "Postulante" }],
   adminApplicantListMainTitle: [{ key: "title", value: "Postulantes" }],
   adminJobApplicationMainTitle: [{ key: "title", value: "Postulación" }],
@@ -222,6 +227,13 @@ export const defaultTranslations = {
     { key: "cuit", value: "CUIT" },
     { key: "state", value: "Estado" },
     { key: "updatedAt", value: "Última actualización" }
+  ],
+  adminAdminListHeader: [
+    { key: "name", value: "Nombre" },
+    { key: "surname", value: "Apellido" },
+    { key: "email", value: "Email" },
+    { key: "secretary", value: "Secretaría" },
+    { key: "createdAt", value: "Fecha de registro" }
   ],
   statusLabel: [
     { key: "approved", value: "Aprobado" },

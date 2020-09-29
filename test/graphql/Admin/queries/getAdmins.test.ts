@@ -19,14 +19,15 @@ const GET_ADMINS = gql`
     getAdmins(updatedBeforeThan: $updatedBeforeThan) {
       shouldFetchMore
       results {
+        uuid
+        updatedAt
+        createdAt
+        secretary
         user {
-          uuid
           email
           name
           surname
         }
-        updatedAt
-        secretary
       }
     }
   }
@@ -71,12 +72,13 @@ describe("getAdmins", () => {
             const user = await admin.getUser();
             return {
               user: {
-                uuid: user.uuid,
                 email: user.email,
                 name: user.name,
                 surname: user.surname
               },
+              uuid: admin.userUuid,
               updatedAt: admin.updatedAt.toISOString(),
+              createdAt: admin.createdAt.toISOString(),
               secretary: admin.secretary
             };
           }
