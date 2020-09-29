@@ -198,6 +198,7 @@ export const defaultTranslations = {
   ],
   adminCompanyMainTitle: [{ key: "title", value: "Empresa" }],
   adminCompanyListMainTitle: [{ key: "title", value: "Empresas" }],
+  adminAdminListMainTitle: [{ key: "title", value: "Administradores" }],
   adminApplicantMainTitle: [{ key: "title", value: "Postulante" }],
   adminApplicantListMainTitle: [{ key: "title", value: "Postulantes" }],
   adminJobApplicationMainTitle: [{ key: "title", value: "Postulación" }],
@@ -221,6 +222,13 @@ export const defaultTranslations = {
     { key: "businessName", value: "Razón social" },
     { key: "cuit", value: "CUIT" },
     { key: "state", value: "Estado" },
+    { key: "updatedAt", value: "Última actualización" }
+  ],
+  adminAdminListHeader: [
+    { key: "name", value: "Nombre" },
+    { key: "surname", value: "Apellido" },
+    { key: "email", value: "mail" },
+    { key: "secretary", value: "secretaria" },
     { key: "updatedAt", value: "Última actualización" }
   ],
   statusLabel: [
