@@ -91,7 +91,7 @@ describe("EmailApi", () => {
             </misc:SendMail_safe>
           </soapenv:Body>
         </soapenv:Envelope>
-      `,
+      `.trim(),
       response: { status: 200, body: responseBody({ success: true }) }
     });
     await expect(EmailApi.send(params)).resolves.not.toThrow();
