@@ -33,7 +33,7 @@ const emailApiParams = {
 const mockFetch = ({ request, response }: { request?: string; response: MockResponseObject }) =>
   fetchMock.mock(
     {
-      url: EmailServiceConfig.url,
+      url: EmailServiceConfig.url(),
       method: "POST",
       headers: {
         "Content-Type": "text/xml,",
