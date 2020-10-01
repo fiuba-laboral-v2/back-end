@@ -79,8 +79,9 @@ export class Database {
     const config = databaseJSON[Environment.NODE_ENV];
 
     if (config.use_env_variable) {
-      if (!Environment.DATABASE_URL) throw new Error("DATABASE_URL not set");
-      this.sequelize = new Sequelize(Environment.DATABASE_URL, config);
+      const url = Environment.databaseURL();
+      if (!url) throw new Error("DATABASE_URL not set");
+      this.sequelize = new Sequelize(url, config);
     } else {
       this.sequelize = new Sequelize(config.database, config.username, config.password, config);
     }

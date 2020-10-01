@@ -1,4 +1,4 @@
-export const RequestBodyMock = {
+export const ResponseBodyMock = {
   authenticateSuccessResponse: ({ isValid }: { isValid: boolean }) => `
     <?xml version="1.0" encoding="utf-8"?>
     <SOAP-ENV:Envelope
