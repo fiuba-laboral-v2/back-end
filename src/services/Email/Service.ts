@@ -11,6 +11,7 @@ export const EmailService = {
         remainingAttemptCount = EmailServiceConfig.retryCount() - 1;
       }
       if (remainingAttemptCount === 0) throw error;
+      await new Promise(resolve => setTimeout(resolve, EmailServiceConfig.timeoutForRetry()));
       return EmailService.send(params, remainingAttemptCount - 1);
     }
   }
