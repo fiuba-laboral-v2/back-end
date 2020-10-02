@@ -1,7 +1,7 @@
 import { EmailApi, EmailService } from "$services/Email";
 import { EmailServiceConfig } from "$config";
 import { ISendEmail } from "$services/Email/interface";
-import { isEqual } from "lodash";
+import { isEqual, times } from "lodash";
 
 describe("EmailService", () => {
   const sendEmailParams: ISendEmail = {
@@ -15,8 +15,7 @@ describe("EmailService", () => {
   };
 
   describe("send", () => {
-    const maxRetryCount = 20;
-    const retryIntervalMilliseconds = 0;
+    const retryCount = 20;
 
     const expectToCallEmailApi = async ({
       expected,
@@ -30,10 +29,9 @@ describe("EmailService", () => {
     }) => {
       let paramsWereEqual = true;
       let attemptCount = 0;
-      jest.spyOn(EmailServiceConfig, "retryCount").mockImplementation(() => maxRetryCount);
       jest
-        .spyOn(EmailServiceConfig, "retryIntervalMilliseconds")
-        .mockImplementation(() => retryIntervalMilliseconds);
+        .spyOn(EmailServiceConfig, "retryIntervalsInSeconds")
+        .mockImplementation(() => times(retryCount, () => 0));
       jest.spyOn(EmailApi, "send").mockImplementation(async params => {
         paramsWereEqual = isEqual(params, sendEmailParams) && paramsWereEqual;
         attemptCount += 1;
@@ -62,7 +60,7 @@ describe("EmailService", () => {
     it("calls EmailApi and it always fails", async () => {
       await expectToCallEmailApi({
         expected: {
-          attemptCount: maxRetryCount,
+          attemptCount: 1 + retryCount,
           errorWasThrown: true
         },
         shouldThrowError: () => true
