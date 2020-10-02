@@ -1,11 +1,11 @@
-import { EmailServiceConfig } from "$config";
+import { Environment } from "$config";
 import { parse } from "fast-xml-parser";
 import { ISendEmail } from "../interface";
 import { RequestBodyBuilder } from "./RequestBodyBuilder";
 import "isomorphic-fetch";
 
 const sendEmail = (params: ISendEmail) =>
-  fetch(EmailServiceConfig.url(), {
+  fetch(Environment.emailApi.url(), {
     method: "POST",
     headers: {
       "Content-Type": "text/xml,",

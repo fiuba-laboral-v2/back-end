@@ -7,8 +7,14 @@ export const Environment = {
   NODE_ENV: process.env.NODE_ENV || "development",
   databaseURL: () => process.env.DATABASE_URL,
   JWTSecret: () => process.env.JWT_SECRET,
-  emailApiApplicationID: () => process.env.EMAIL_API_APPLICATION_ID,
-  emailApiPassword: () => process.env.EMAIL_API_PASSWORD,
+  FiubaUsersApi: {
+    url: () => process.env.FIUBA_USERS_API_URL as string
+  },
+  emailApi: {
+    applicationID: () => process.env.EMAIL_API_APPLICATION_ID,
+    password: () => process.env.EMAIL_API_PASSWORD,
+    url: () => process.env.EMAIL_API_URL as string
+  },
   isLocal() {
     return [this.DEVELOPMENT, this.TEST, this.TEST_TRAVIS].includes(this.NODE_ENV);
   },
@@ -18,8 +24,10 @@ export const Environment = {
     const allVariablesArePresent =
       this.databaseURL() &&
       this.JWTSecret() &&
-      this.emailApiApplicationID() &&
-      this.emailApiPassword();
+      this.emailApi.applicationID() &&
+      this.emailApi.password() &&
+      this.emailApi.url() &&
+      this.FiubaUsersApi.url();
 
     if (!allVariablesArePresent) throw new Error(`Missing configuration`);
   }

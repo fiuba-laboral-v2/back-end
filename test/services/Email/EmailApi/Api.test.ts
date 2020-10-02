@@ -1,6 +1,6 @@
 import fetchMock, { MockResponseObject } from "fetch-mock";
 import { FetchError } from "node-fetch";
-import { EmailServiceConfig, Environment } from "$config";
+import { Environment } from "$config";
 import { EmailApi } from "$services/Email";
 
 const responseBody = ({ success }: { success: boolean }) => `
@@ -33,7 +33,7 @@ const emailApiParams = {
 const mockFetch = ({ request, response }: { request?: string; response: MockResponseObject }) =>
   fetchMock.mock(
     {
-      url: EmailServiceConfig.url(),
+      url: Environment.emailApi.url(),
       method: "POST",
       headers: {
         "Content-Type": "text/xml,",
@@ -48,11 +48,14 @@ const mockFetch = ({ request, response }: { request?: string; response: MockResp
   );
 
 describe("EmailApi", () => {
+  beforeEach(() =>
+    jest.spyOn(Environment.emailApi, "url").mockImplementation(() => "https://email-api.com")
+  );
   afterEach(() => fetchMock.restore());
 
   it("sends an email successfully", async () => {
-    jest.spyOn(Environment, "emailApiApplicationID").mockImplementation(() => "application_id");
-    jest.spyOn(Environment, "emailApiPassword").mockImplementation(() => "password");
+    jest.spyOn(Environment.emailApi, "applicationID").mockImplementation(() => "application_id");
+    jest.spyOn(Environment.emailApi, "password").mockImplementation(() => "myVerySecretPassword");
     const params = {
       sender: {
         name: "The Other Sender",
@@ -77,7 +80,7 @@ describe("EmailApi", () => {
               soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
             >
               <aplic_id xsi:type="xsd:string">application_id</aplic_id>
-              <password xsi:type="xsd:string">password</password>
+              <password xsi:type="xsd:string">myVerySecretPassword</password>
               <from xsi:type="misc:InfoRemitente">
                 <nombre xsi:type="xsd:string">${params.sender.name}</nombre>
                 <email xsi:type="xsd:string">${params.sender.email}</email>

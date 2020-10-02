@@ -5,7 +5,7 @@ import {
   FiubaUsersApi,
   FiubaUsersServiceFetchError
 } from "$services/FiubaUsers";
-import { FiubaUsersServiceConfig } from "$config/services";
+import { Environment } from "$config";
 import { ResponseBodyMock } from "./ResponseBodyMock";
 import { parse } from "fast-xml-parser";
 import { DniGenerator } from "$generators/DNI";
@@ -24,7 +24,7 @@ const validCredentials = {
 const stubRequest = (mockResponse: MockResponseObject) =>
   fetchMock.mock(
     {
-      url: FiubaUsersServiceConfig.url,
+      url: Environment.FiubaUsersApi.url(),
       method: "POST",
       headers: FiubaUsersApi.headers()
     },
@@ -32,6 +32,11 @@ const stubRequest = (mockResponse: MockResponseObject) =>
   );
 
 describe("FiubaUsersApi", () => {
+  beforeEach(() =>
+    jest
+      .spyOn(Environment.FiubaUsersApi, "url")
+      .mockImplementation(() => "https://fiuba-users-api.com")
+  );
   afterEach(() => fetchMock.restore());
 
   it("returns false if the credentials are incorrect", async () => {
