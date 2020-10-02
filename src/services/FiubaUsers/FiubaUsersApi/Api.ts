@@ -1,5 +1,5 @@
 import { ICredentials, IFiubaUsersApiSuccessResponse } from "../Interfaces";
-import { FiubaUsersServiceConfig } from "../../../config/services";
+import { Environment } from "$config";
 import { RequestBodyBuilder } from "./RequestBodyBuilder";
 import {
   AuthenticateFaultError,
@@ -17,7 +17,7 @@ export const FiubaUsersApi = {
   }),
   authenticate: async ({ dni, password }: ICredentials) => {
     try {
-      const httpResponse = await fetch(FiubaUsersServiceConfig.url, {
+      const httpResponse = await fetch(Environment.FiubaUsersApi.url(), {
         method: "POST",
         headers: FiubaUsersApi.headers(),
         body: RequestBodyBuilder.buildAuthenticate({ dni, password })

@@ -7,6 +7,9 @@ export const Environment = {
   NODE_ENV: process.env.NODE_ENV || "development",
   databaseURL: () => process.env.DATABASE_URL,
   JWTSecret: () => process.env.JWT_SECRET,
+  FiubaUsersApi: {
+    url: () => process.env.FIUBA_USERS_API_URL as string
+  },
   emailApi: {
     applicationID: () => process.env.EMAIL_API_APPLICATION_ID,
     password: () => process.env.EMAIL_API_PASSWORD,
@@ -23,7 +26,8 @@ export const Environment = {
       this.JWTSecret() &&
       this.emailApi.applicationID() &&
       this.emailApi.password() &&
-      this.emailApi.url();
+      this.emailApi.url() &&
+      this.FiubaUsersApi.url();
 
     if (!allVariablesArePresent) throw new Error(`Missing configuration`);
   }
