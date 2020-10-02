@@ -1,19 +1,29 @@
+const variablesKeys = {
+  NODE_ENV: "NODE_ENV",
+  DATABASE_URL: "DATABASE_URL",
+  JWT_SECRET: "JWT_SECRET",
+  FIUBA_USERS_API_URL: "FIUBA_USERS_API_URL",
+  EMAIL_API_APPLICATION_ID: "EMAIL_API_APPLICATION_ID",
+  EMAIL_API_PASSWORD: "EMAIL_API_PASSWORD",
+  EMAIL_API_URL: "EMAIL_API_URL"
+};
+
 export const Environment = {
   PRODUCTION: "production",
   STAGING: "staging",
   DEVELOPMENT: "development",
   TEST_TRAVIS: "test_travis",
   TEST: "test",
-  NODE_ENV: process.env.NODE_ENV || "development",
-  databaseURL: () => process.env.DATABASE_URL,
-  JWTSecret: () => process.env.JWT_SECRET,
+  NODE_ENV: process.env[variablesKeys.NODE_ENV] || "development",
+  databaseURL: () => process.env[variablesKeys.DATABASE_URL],
+  JWTSecret: () => process.env[variablesKeys.JWT_SECRET],
   FiubaUsersApi: {
-    url: () => process.env.FIUBA_USERS_API_URL as string
+    url: () => process.env[variablesKeys.FIUBA_USERS_API_URL] as string
   },
   emailApi: {
-    applicationID: () => process.env.EMAIL_API_APPLICATION_ID,
-    password: () => process.env.EMAIL_API_PASSWORD,
-    url: () => process.env.EMAIL_API_URL as string
+    applicationID: () => process.env[variablesKeys.EMAIL_API_APPLICATION_ID],
+    password: () => process.env[variablesKeys.EMAIL_API_PASSWORD],
+    url: () => process.env[variablesKeys.EMAIL_API_URL] as string
   },
   isLocal() {
     return [this.DEVELOPMENT, this.TEST, this.TEST_TRAVIS].includes(this.NODE_ENV);
@@ -21,14 +31,17 @@ export const Environment = {
   validate() {
     if (this.isLocal()) return;
 
-    const allVariablesArePresent =
-      this.databaseURL() &&
-      this.JWTSecret() &&
-      this.emailApi.applicationID() &&
-      this.emailApi.password() &&
-      this.emailApi.url() &&
-      this.FiubaUsersApi.url();
+    const mandatoryVariables = [
+      { name: variablesKeys.DATABASE_URL, value: this.databaseURL() },
+      { name: variablesKeys.JWT_SECRET, value: this.JWTSecret() },
+      { name: variablesKeys.EMAIL_API_APPLICATION_ID, value: this.emailApi.applicationID() },
+      { name: variablesKeys.EMAIL_API_PASSWORD, value: this.emailApi.password() },
+      { name: variablesKeys.EMAIL_API_URL, value: this.emailApi.url() },
+      { name: variablesKeys.FIUBA_USERS_API_URL, value: this.FiubaUsersApi.url() }
+    ];
 
-    if (!allVariablesArePresent) throw new Error(`Missing configuration`);
+    mandatoryVariables.map(({ name, value }) => {
+      if (!value) throw new Error(`Missing environment variable: ${name}`);
+    });
   }
 };
