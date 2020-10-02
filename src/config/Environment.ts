@@ -21,14 +21,17 @@ export const Environment = {
   validate() {
     if (this.isLocal()) return;
 
-    const allVariablesArePresent =
-      this.databaseURL() &&
-      this.JWTSecret() &&
-      this.emailApi.applicationID() &&
-      this.emailApi.password() &&
-      this.emailApi.url() &&
-      this.FiubaUsersApi.url();
+    const mandatoryVariables = [
+      { name: "Database URL", value: this.databaseURL() },
+      { name: "JWT secret", value: this.JWTSecret() },
+      { name: "Email API application ID", value: this.emailApi.applicationID() },
+      { name: "Email API password", value: this.emailApi.password() },
+      { name: "Email API url", value: this.emailApi.url() },
+      { name: "Fiuba Users API url", value: this.FiubaUsersApi.url() }
+    ];
 
-    if (!allVariablesArePresent) throw new Error(`Missing configuration`);
+    mandatoryVariables.map(({ name, value }) => {
+      if (!value) throw new Error(`Missing environment variable: ${name}`);
+    });
   }
 };
