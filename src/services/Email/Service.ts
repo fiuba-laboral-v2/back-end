@@ -11,7 +11,8 @@ export const EmailService = {
       await EmailApi.send(params);
     } catch (error) {
       const seconds = retryIntervalsInSeconds[0];
-      if (seconds === undefined) throw error;
+      const thereAreNoMoreRetries = seconds === undefined;
+      if (thereAreNoMoreRetries) throw error;
       await new Promise(resolve => setTimeout(resolve, seconds * 1000));
       return EmailService.send(params, retryIntervalsInSeconds.splice(1));
     }
