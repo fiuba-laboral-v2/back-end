@@ -16,7 +16,7 @@ describe("EmailService", () => {
 
   describe("send", () => {
     const maxRetryCount = 20;
-    const timeoutForRetry = 0;
+    const retryIntervalMilliseconds = 0;
 
     const expectToCallEmailApi = async ({
       expected,
@@ -31,7 +31,9 @@ describe("EmailService", () => {
       let paramsWereEqual = true;
       let attemptCount = 0;
       jest.spyOn(EmailServiceConfig, "retryCount").mockImplementation(() => maxRetryCount);
-      jest.spyOn(EmailServiceConfig, "timeoutForRetry").mockImplementation(() => timeoutForRetry);
+      jest
+        .spyOn(EmailServiceConfig, "retryIntervalMilliseconds")
+        .mockImplementation(() => retryIntervalMilliseconds);
       jest.spyOn(EmailApi, "send").mockImplementation(async params => {
         paramsWereEqual = isEqual(params, sendEmailParams) && paramsWereEqual;
         attemptCount += 1;
