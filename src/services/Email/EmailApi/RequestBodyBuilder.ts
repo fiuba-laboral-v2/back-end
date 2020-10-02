@@ -17,8 +17,8 @@ export const RequestBodyBuilder = {
           <misc:SendMail_safe
             soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
           >
-            <aplic_id xsi:type="xsd:string">${Environment.emailService.applicationID()}</aplic_id>
-            <password xsi:type="xsd:string">${Environment.emailService.password()}</password>
+            <aplic_id xsi:type="xsd:string">${Environment.emailApi.applicationID()}</aplic_id>
+            <password xsi:type="xsd:string">${Environment.emailApi.password()}</password>
             <from xsi:type="misc:InfoRemitente">
               <nombre xsi:type="xsd:string">${sender.name}</nombre>
               <email xsi:type="xsd:string">${sender.email}</email>

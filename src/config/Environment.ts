@@ -7,7 +7,7 @@ export const Environment = {
   NODE_ENV: process.env.NODE_ENV || "development",
   databaseURL: () => process.env.DATABASE_URL,
   JWTSecret: () => process.env.JWT_SECRET,
-  emailService: {
+  emailApi: {
     applicationID: () => process.env.EMAIL_API_APPLICATION_ID,
     password: () => process.env.EMAIL_API_PASSWORD,
     url: () => process.env.EMAIL_API_URL as string
@@ -21,9 +21,9 @@ export const Environment = {
     const allVariablesArePresent =
       this.databaseURL() &&
       this.JWTSecret() &&
-      this.emailService.applicationID() &&
-      this.emailService.password() &&
-      this.emailService.url();
+      this.emailApi.applicationID() &&
+      this.emailApi.password() &&
+      this.emailApi.url();
 
     if (!allVariablesArePresent) throw new Error(`Missing configuration`);
   }

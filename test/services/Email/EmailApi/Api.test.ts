@@ -33,7 +33,7 @@ const emailApiParams = {
 const mockFetch = ({ request, response }: { request?: string; response: MockResponseObject }) =>
   fetchMock.mock(
     {
-      url: Environment.emailService.url(),
+      url: Environment.emailApi.url(),
       method: "POST",
       headers: {
         "Content-Type": "text/xml,",
@@ -49,17 +49,13 @@ const mockFetch = ({ request, response }: { request?: string; response: MockResp
 
 describe("EmailApi", () => {
   beforeEach(() =>
-    jest.spyOn(Environment.emailService, "url").mockImplementation(() => "https://email-api.com")
+    jest.spyOn(Environment.emailApi, "url").mockImplementation(() => "https://email-api.com")
   );
   afterEach(() => fetchMock.restore());
 
   it("sends an email successfully", async () => {
-    jest
-      .spyOn(Environment.emailService, "applicationID")
-      .mockImplementation(() => "application_id");
-    jest
-      .spyOn(Environment.emailService, "password")
-      .mockImplementation(() => "myVerySecretPassword");
+    jest.spyOn(Environment.emailApi, "applicationID").mockImplementation(() => "application_id");
+    jest.spyOn(Environment.emailApi, "password").mockImplementation(() => "myVerySecretPassword");
     const params = {
       sender: {
         name: "The Other Sender",
