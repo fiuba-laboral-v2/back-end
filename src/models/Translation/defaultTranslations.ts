@@ -201,7 +201,8 @@ export const defaultTranslations = {
     { key: "extension", value: "Extensión" }
   ],
   adminCompanyMainTitle: [{ key: "title", value: "Empresa" }],
-  adminCompanyListMainTitle: [{ key: "title", value: "Empresas" }],
+  adminCompanyListMainTitle: [{ key: "title", value: "Empresa" }],
+  adminOfferListMainTitle: [{ key: "title", value: "Ofertas laborales" }],
   adminAdminListMainTitle: [{ key: "title", value: "Administradores" }],
   adminApplicantMainTitle: [{ key: "title", value: "Postulante" }],
   adminApplicantListMainTitle: [{ key: "title", value: "Postulantes" }],
@@ -234,6 +235,17 @@ export const defaultTranslations = {
     { key: "email", value: "Email" },
     { key: "secretary", value: "Secretaría" },
     { key: "createdAt", value: "Fecha de registro" }
+  ],
+  adminOfferListHeader: [
+    { key: "companyName", value: "Empresa" },
+    { key: "title", value: "Puesto" },
+    { key: "targetApplicantType", value: "Destinatarios" },
+    { key: "hoursPerDay", value: "Horas" },
+    { key: "salary", value: "Salario" },
+    { key: "careers", value: "Carreras" },
+    { key: "graduadosApprovalStatus", value: "Estado por graduados" },
+    { key: "extensionApprovalStatus", value: "Estado por extension" },
+    { key: "updatedAt", value: "Última actualización" }
   ],
   statusLabel: [
     { key: "approved", value: "Aprobado" },
