@@ -5,7 +5,7 @@ import { RequestBodyBuilder } from "./RequestBodyBuilder";
 import "isomorphic-fetch";
 
 const sendEmail = (params: ISendEmail) =>
-  fetch(EmailServiceConfig.url, {
+  fetch(EmailServiceConfig.url(), {
     method: "POST",
     headers: {
       "Content-Type": "text/xml,",
