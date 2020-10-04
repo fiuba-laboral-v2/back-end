@@ -24,8 +24,6 @@ export const defaultTranslations = {
   ],
   applicantSignUp: [
     { key: "title", value: "Crear tu cuenta" },
-    { key: "padron", value: "Padron" },
-    { key: "careersTitle", value: "Elegí tu carrera" },
     { key: "submit", value: "Guardar" }
   ],
   personalInformationForm: [
