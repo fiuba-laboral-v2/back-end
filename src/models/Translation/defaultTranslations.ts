@@ -24,11 +24,19 @@ export const defaultTranslations = {
   ],
   applicantSignUp: [
     { key: "title", value: "Crear tu cuenta" },
-    { key: "padron", value: "Padron" },
-    { key: "careersTitle", value: "Elegí tu carrera" },
     { key: "submit", value: "Guardar" }
   ],
-  applicantCredentialsFields: [
+  personalInformationForm: [
+    { key: "title", value: "Datos personales" },
+    { key: "email", value: "Email" },
+    { key: "name", value: "Nombre" },
+    { key: "surname", value: "Apellido" },
+    { key: "padron", value: "Padrón" }
+  ],
+  careersSelectorForm: [{ key: "title", value: "Carreras" }],
+  fiubaCredentialsForm: [
+    { key: "title", value: "Credenciales de FIUBA" },
+    { key: "subtitle", value: "Las mismas que usa el SIU Guaraní" },
     { key: "dni", value: "DNI" },
     { key: "password", value: "Contraseña" }
   ],
