@@ -35,6 +35,7 @@ export const defaultTranslations = {
     { key: "surname", value: "Apellido" },
     { key: "padron", value: "Padrón" }
   ],
+  careersSelectorForm: [{ key: "title", value: "Carreras" }],
   fiubaCredentialsForm: [
     { key: "title", value: "Credenciales de FIUBA" },
     { key: "subtitle", value: "Las mismas que usa el SIU Guaraní" },
