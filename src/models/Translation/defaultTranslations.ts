@@ -28,7 +28,9 @@ export const defaultTranslations = {
     { key: "careersTitle", value: "Elegí tu carrera" },
     { key: "submit", value: "Guardar" }
   ],
-  applicantCredentialsFields: [
+  fiubaCredentialsForm: [
+    { key: "title", value: "Credenciales de FIUBA" },
+    { key: "subtitle", value: "Las mismas que usa el SIU Guaraní" },
     { key: "dni", value: "DNI" },
     { key: "password", value: "Contraseña" }
   ],
