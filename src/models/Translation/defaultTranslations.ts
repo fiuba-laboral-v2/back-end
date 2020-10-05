@@ -126,7 +126,7 @@ export const defaultTranslations = {
     { key: "link", value: "Link" },
     { key: "linkTitle", value: "Título" }
   ],
-  workExperienceForm: [
+  workExperienceFormSection: [
     { key: "title", value: "Experiencia Laboral" },
     { key: "sectionTitle", value: "Empresa" },
     { key: "sectionContent", value: "Contenido" }
