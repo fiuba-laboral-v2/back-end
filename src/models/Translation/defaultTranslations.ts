@@ -117,7 +117,7 @@ export const defaultTranslations = {
     { key: "surname", value: "Apellido" },
     { key: "email", value: "Email" }
   ],
-  skillsAndLanguagesForm: [
+  skillsAndLanguagesFormSection: [
     { key: "capabilities", value: "Aptitudes e Idiomas" },
     { key: "capability", value: "Aptitud (presione Enter para agregar)" }
   ],
