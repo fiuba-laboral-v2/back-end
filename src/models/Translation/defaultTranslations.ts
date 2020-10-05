@@ -111,6 +111,12 @@ export const defaultTranslations = {
     { key: "title", value: "Perfil de mi empresa" },
     { key: "subtitle", value: "Así lo van a ver los alumnos y graduados" }
   ],
+  personalInformationEditableForm: [
+    { key: "description", value: "Descripción" },
+    { key: "name", value: "Nombre" },
+    { key: "surname", value: "Apellido" },
+    { key: "email", value: "Email" }
+  ],
   editableDetail: [
     { key: "title", value: "Editar tu perfil" },
     { key: "description", value: "Descripción" },
