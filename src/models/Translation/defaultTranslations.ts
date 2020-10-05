@@ -131,6 +131,11 @@ export const defaultTranslations = {
     { key: "sectionTitle", value: "Empresa" },
     { key: "sectionContent", value: "Contenido" }
   ],
+  otherKnowledgeForm: [
+    { key: "title", value: "Otros conocimientos" },
+    { key: "sectionTitle", value: "Título" },
+    { key: "sectionContent", value: "Contenido" }
+  ],
   editableDetail: [
     { key: "title", value: "Editar tu perfil" },
     { key: "description", value: "Descripción" },
