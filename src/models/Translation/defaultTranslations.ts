@@ -119,7 +119,7 @@ export const defaultTranslations = {
   ],
   skillsAndLanguagesForm: [
     { key: "capabilities", value: "Aptitudes e Idiomas" },
-    { key: "capability", value: "Aptitud (presione Enter para agregar)" },
+    { key: "capability", value: "Aptitud (presione Enter para agregar)" }
   ],
   editableDetail: [
     { key: "title", value: "Editar tu perfil" },
