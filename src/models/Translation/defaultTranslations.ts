@@ -121,7 +121,7 @@ export const defaultTranslations = {
     { key: "capabilities", value: "Aptitudes e Idiomas" },
     { key: "capability", value: "Aptitud (presione Enter para agregar)" }
   ],
-  linksForm: [
+  linksFormSection: [
     { key: "links", value: "Links" },
     { key: "link", value: "Link" },
     { key: "linkTitle", value: "Título" }
