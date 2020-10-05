@@ -121,6 +121,16 @@ export const defaultTranslations = {
     { key: "capabilities", value: "Aptitudes e Idiomas" },
     { key: "capability", value: "Aptitud (presione Enter para agregar)" }
   ],
+  linksForm: [
+    { key: "links", value: "Links" },
+    { key: "link", value: "Link" },
+    { key: "linkTitle", value: "Título" }
+  ],
+  sectionsForm: [
+    { key: "sections", value: "Secciones" },
+    { key: "sectionTitle", value: "Título" },
+    { key: "sectionContent", value: "Contenido" }
+  ],
   editableDetail: [
     { key: "title", value: "Editar tu perfil" },
     { key: "description", value: "Descripción" },
