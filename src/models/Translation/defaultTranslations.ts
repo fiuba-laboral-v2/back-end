@@ -131,7 +131,7 @@ export const defaultTranslations = {
     { key: "sectionTitle", value: "Empresa" },
     { key: "sectionContent", value: "Contenido" }
   ],
-  otherKnowledgeForm: [
+  additionalKnowledgeForm: [
     { key: "title", value: "Otros conocimientos" },
     { key: "sectionTitle", value: "Título" },
     { key: "sectionContent", value: "Contenido" }
