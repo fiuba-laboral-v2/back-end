@@ -34,7 +34,7 @@ export const defaultTranslations = {
     { key: "padron", value: "Padrón" }
   ],
   careersSelectorFormSection: [{ key: "title", value: "Carreras" }],
-  fiubaCredentialsForm: [
+  fiubaCredentialsFormSection: [
     { key: "title", value: "Credenciales de FIUBA" },
     { key: "subtitle", value: "Las mismas que usa el SIU Guaraní" },
     { key: "dni", value: "DNI" },
