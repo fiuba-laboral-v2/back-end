@@ -26,15 +26,15 @@ export const defaultTranslations = {
     { key: "title", value: "Crear tu cuenta" },
     { key: "submit", value: "Guardar" }
   ],
-  personalInformationForm: [
+  personalInformationSignUpFormSection: [
     { key: "title", value: "Datos personales" },
     { key: "email", value: "Email" },
     { key: "name", value: "Nombre" },
     { key: "surname", value: "Apellido" },
     { key: "padron", value: "Padrón" }
   ],
-  careersSelectorForm: [{ key: "title", value: "Carreras" }],
-  fiubaCredentialsForm: [
+  careersSelectorFormSection: [{ key: "title", value: "Carreras" }],
+  fiubaCredentialsFormSection: [
     { key: "title", value: "Credenciales de FIUBA" },
     { key: "subtitle", value: "Las mismas que usa el SIU Guaraní" },
     { key: "dni", value: "DNI" },
