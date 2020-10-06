@@ -74,6 +74,7 @@ describe("updateCurrentApplicant", () => {
     const newCareer = await CareerGenerator.instance();
     const dataToUpdate = {
       user: {
+        email: "newEmail@gmail.com",
         name: "newName",
         surname: "newSurname"
       },
@@ -115,7 +116,7 @@ describe("updateCurrentApplicant", () => {
         padron: dataToUpdate.padron,
         user: {
           uuid: user.uuid,
-          email: user.email,
+          email: dataToUpdate.user.email,
           name: dataToUpdate.user.name,
           surname: dataToUpdate.user.surname
         },
@@ -162,6 +163,7 @@ describe("updateCurrentApplicant", () => {
 
       const dataToUpdate = {
         user: {
+          email: "newEmail@gmail.com",
           name: "newName",
           surname: "newSurname"
         },
@@ -183,6 +185,7 @@ describe("updateCurrentApplicant", () => {
 
       const dataToUpdate = {
         user: {
+          email: "newEmail@gmail.com",
           name: "newName",
           surname: "newSurname"
         },
