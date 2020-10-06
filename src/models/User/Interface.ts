@@ -14,6 +14,7 @@ export interface ICreateFiubaUser extends IUser {
 
 export interface IUserEditable {
   uuid?: string;
+  email?: string;
   name?: string;
   surname?: string;
 }

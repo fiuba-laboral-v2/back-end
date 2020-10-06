@@ -111,6 +111,31 @@ export const defaultTranslations = {
     { key: "title", value: "Perfil de mi empresa" },
     { key: "subtitle", value: "Así lo van a ver los alumnos y graduados" }
   ],
+  personalInformationEditableFormSection: [
+    { key: "description", value: "Descripción" },
+    { key: "name", value: "Nombre" },
+    { key: "surname", value: "Apellido" },
+    { key: "email", value: "Email" }
+  ],
+  skillsAndLanguagesFormSection: [
+    { key: "capabilities", value: "Aptitudes e Idiomas" },
+    { key: "capability", value: "Aptitud (presione Enter para agregar)" }
+  ],
+  linksFormSection: [
+    { key: "links", value: "Links" },
+    { key: "link", value: "Link" },
+    { key: "linkTitle", value: "Título" }
+  ],
+  workExperienceFormSection: [
+    { key: "title", value: "Experiencia Laboral" },
+    { key: "sectionTitle", value: "Empresa" },
+    { key: "sectionContent", value: "Contenido" }
+  ],
+  additionalKnowledgeFormSection: [
+    { key: "title", value: "Otros conocimientos" },
+    { key: "sectionTitle", value: "Título" },
+    { key: "sectionContent", value: "Contenido" }
+  ],
   editableDetail: [
     { key: "title", value: "Editar tu perfil" },
     { key: "description", value: "Descripción" },

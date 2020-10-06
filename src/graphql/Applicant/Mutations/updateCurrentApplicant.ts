@@ -7,7 +7,7 @@ import { ApplicantRepository, IApplicantEditable } from "$models/Applicant";
 import { GraphQLLinkInput } from "../Types/Link";
 import { CurrentUser } from "$models/CurrentUser";
 
-const updateCurrentApplicant = {
+export const updateCurrentApplicant = {
   type: GraphQLApplicant,
   args: {
     user: {
@@ -38,5 +38,3 @@ const updateCurrentApplicant = {
     { currentUser }: { currentUser: CurrentUser }
   ) => ApplicantRepository.update({ ...props, uuid: currentUser.getApplicant().applicantUuid })
 };
-
-export { updateCurrentApplicant };

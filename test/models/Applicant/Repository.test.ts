@@ -429,6 +429,19 @@ describe("ApplicantRepository", () => {
       expect(user).toMatchObject({ surname: newProps.user!.surname });
     });
 
+    it("updates email", async () => {
+      const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
+      const newProps: IApplicantEditable = {
+        uuid,
+        user: {
+          email: "newEmail@gmail.com"
+        }
+      };
+      const applicant = await ApplicantRepository.update(newProps);
+      const user = await applicant.getUser();
+      expect(user).toMatchObject({ email: newProps.user!.email });
+    });
+
     it("updates description", async () => {
       const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       const newProps: IApplicantEditable = {
