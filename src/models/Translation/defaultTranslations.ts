@@ -26,7 +26,7 @@ export const defaultTranslations = {
     { key: "title", value: "Crear tu cuenta" },
     { key: "submit", value: "Guardar" }
   ],
-  personalInformationForm: [
+  personalInformationSignUpFormSection: [
     { key: "title", value: "Datos personales" },
     { key: "email", value: "Email" },
     { key: "name", value: "Nombre" },
