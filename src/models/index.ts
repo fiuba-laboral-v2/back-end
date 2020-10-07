@@ -2,6 +2,7 @@ export { Admin } from "./Admin/Model";
 export { Applicant } from "./Applicant/Model";
 export { ApplicantApprovalEvent } from "./Applicant/ApplicantApprovalEvent/Model";
 export { Section } from "./Applicant/Section/Model";
+export { ApplicantExperienceSection } from "./Applicant/ApplicantExperienceSection/Model";
 export { ApplicantLink } from "./Applicant/Link/Model";
 export { JobApplication } from "./JobApplication/Model";
 export { JobApplicationApprovalEvent } from "./JobApplication/JobApplicationsApprovalEvent/Model";
