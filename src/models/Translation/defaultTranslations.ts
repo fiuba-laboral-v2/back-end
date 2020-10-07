@@ -276,9 +276,13 @@ export const defaultTranslations = {
     { key: "hoursPerDay", value: "Horas" },
     { key: "salary", value: "Salario" },
     { key: "careers", value: "Carreras" },
-    { key: "graduadosApprovalStatus", value: "Estado por graduados" },
-    { key: "extensionApprovalStatus", value: "Estado por extension" },
+    { key: "approvalStatus", value: "Estado" },
     { key: "updatedAt", value: "Última actualización" }
+  ],
+  targetApplicantType: [
+    { key: "graduate", value: "Graduados" },
+    { key: "student", value: "Alumnos" },
+    { key: "both", value: "Alumnos y graduados" }
   ],
   statusLabel: [
     { key: "approved", value: "Aprobado" },
