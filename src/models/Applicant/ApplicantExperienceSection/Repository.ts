@@ -13,8 +13,7 @@ export const ApplicantExperienceSectionRepository = {
       {
         transaction,
         returning: true,
-        validate: true,
-        updateOnDuplicate: ["title", "text", "displayOrder"]
+        validate: true
       }
     );
   },
