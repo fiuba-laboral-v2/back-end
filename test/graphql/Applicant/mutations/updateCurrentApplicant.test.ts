@@ -17,6 +17,7 @@ const UPDATE_CURRENT_APPLICANT = gql`
     $careers: [ApplicantCareerInput]
     $capabilities: [String]
     $sections: [SectionInput]
+    $experienceSections: [ApplicantExperienceSectionInput]
     $links: [LinkInput]
   ) {
     updateCurrentApplicant(
@@ -26,6 +27,7 @@ const UPDATE_CURRENT_APPLICANT = gql`
       careers: $careers
       capabilities: $capabilities
       sections: $sections
+      experienceSections: $experienceSections
       links: $links
     ) {
       user {
@@ -50,6 +52,11 @@ const UPDATE_CURRENT_APPLICANT = gql`
         isGraduate
       }
       sections {
+        title
+        text
+        displayOrder
+      }
+      experienceSections {
         title
         text
         displayOrder
@@ -96,6 +103,18 @@ describe("updateCurrentApplicant", () => {
           displayOrder: 1
         }
       ],
+      experienceSections: [
+        {
+          title: "Devartis",
+          text: "I was the project manager",
+          displayOrder: 1
+        },
+        {
+          title: "Google",
+          text: "I am the CEO of google in ireland",
+          displayOrder: 2
+        }
+      ],
       links: [
         {
           name: "my link",
@@ -131,6 +150,7 @@ describe("updateCurrentApplicant", () => {
           }
         ],
         sections: dataToUpdate.sections,
+        experienceSections: dataToUpdate.experienceSections,
         links: dataToUpdate.links
       })
     );
