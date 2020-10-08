@@ -59,7 +59,7 @@ describe("ApplicantExperienceSectionRepository", () => {
     ]);
   });
 
-  it("updates a section with the same displayOrder for the same applicant", async () => {
+  it("updates a section with the same displayOrder for different applicants", async () => {
     const sectionData = {
       title: "newTitle",
       text: "newText",
@@ -94,21 +94,37 @@ describe("ApplicantExperienceSectionRepository", () => {
     });
   });
 
-  it("allows two sections with the same display order for different applicants", async () => {
-    await expectToUpdateNewSections([
-      {
-        title: "title",
-        text: "text",
-        displayOrder: 1
-      }
-    ]);
-    await expectToUpdateNewSections([
-      {
-        title: "newTitle",
-        text: "newText",
-        displayOrder: 1
-      }
-    ]);
+  it("updates a section with by uuid for the same applicant", async () => {
+    const sectionData = {
+      title: "title",
+      text: "text",
+      displayOrder: 1
+    };
+
+    const [{ uuid }] = await ApplicantExperienceSectionRepository.update({
+      sections: [sectionData],
+      applicant: student
+    });
+
+    const initialSections = await student.getExperienceSections();
+    expect(initialSections).toEqual([expect.objectContaining(sectionData)]);
+
+    const newSectionData = {
+      title: "newTitle",
+      text: "newText",
+      displayOrder: 1
+    };
+
+    const finalSections = await ApplicantExperienceSectionRepository.update({
+      sections: [
+        {
+          uuid,
+          ...newSectionData
+        }
+      ],
+      applicant: student
+    });
+    expect(finalSections).toEqual([expect.objectContaining({ uuid, ...newSectionData })]);
   });
 
   it("removes all previous sections and creates two new ones", async () => {
