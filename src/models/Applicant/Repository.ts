@@ -6,6 +6,7 @@ import { ApplicantCareersRepository } from "./ApplicantCareer";
 import { ApplicantCapabilityRepository } from "../ApplicantCapability";
 import { ApplicantApprovalEventRepository } from "./ApplicantApprovalEvent";
 import { SectionRepository } from "./Section";
+import { ApplicantExperienceSectionRepository } from "./ApplicantExperienceSection";
 import { ApplicantLinkRepository } from "./Link";
 import { UserRepository } from "../User";
 import { ApprovalStatus } from "../ApprovalStatus";
@@ -52,6 +53,7 @@ export const ApplicantRepository = {
     description,
     uuid,
     sections = [],
+    experienceSections = [],
     links = [],
     capabilities: newCapabilities = [],
     careers = []
@@ -62,6 +64,11 @@ export const ApplicantRepository = {
       await applicant.set({ description });
       await UserRepository.update(user, userAttributes, transaction);
       await SectionRepository.update(sections, applicant, transaction);
+      await ApplicantExperienceSectionRepository.update({
+        sections: experienceSections,
+        applicant,
+        transaction
+      });
       await ApplicantLinkRepository.update(links, applicant, transaction);
       await ApplicantCareersRepository.update(careers, applicant, transaction);
       await ApplicantCapabilityRepository.update(newCapabilities, applicant, transaction);

@@ -24,6 +24,7 @@ export interface IApplicantEditable {
   careers?: IApplicantCareer[];
   capabilities?: string[];
   sections?: TSection[];
+  experienceSections?: TSection[];
   links?: TLink[];
 }
 

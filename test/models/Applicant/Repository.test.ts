@@ -1,4 +1,9 @@
-import { DatabaseError, ForeignKeyConstraintError, ValidationError } from "sequelize";
+import {
+  DatabaseError,
+  ForeignKeyConstraintError,
+  ValidationError,
+  UniqueConstraintError
+} from "sequelize";
 import {
   ApplicantNotFound,
   ApplicantNotUpdatedError,
@@ -11,12 +16,13 @@ import {
 } from "$models/Applicant/ApplicantCareer/Errors";
 
 import { CareerRepository } from "$models/Career";
-import { ApplicantRepository, IApplicantEditable } from "$models/Applicant";
-import { Admin, Applicant } from "$models";
+import { ApplicantRepository, IApplicantEditable, TSection } from "$models/Applicant";
+import { Admin, Applicant, Section } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Applicant";
 import { ApplicantCareersRepository } from "$models/Applicant/ApplicantCareer";
 import { SectionRepository } from "$models/Applicant/Section";
+import { ApplicantExperienceSectionRepository } from "$models/Applicant/ApplicantExperienceSection";
 import { UserRepository } from "$models/User";
 import { CapabilityRepository } from "$models/Capability";
 import { FiubaUsersService } from "$services/FiubaUsers";
@@ -27,6 +33,7 @@ import { AdminGenerator } from "$generators/Admin";
 
 import { isApprovalStatus } from "$models/SequelizeModelValidators";
 import { UUID_REGEX } from "$test/models";
+import { get, set } from "lodash";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 
 describe("ApplicantRepository", () => {
@@ -155,12 +162,18 @@ describe("ApplicantRepository", () => {
 
     it("creates applicant with a valid section with a title and a text", async () => {
       const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
-      await SectionRepository.update(
-        [{ title: "title", text: "text", displayOrder: 1 }],
-        applicant
-      );
+      const sectionData = { title: "title", text: "text", displayOrder: 1 };
+      await SectionRepository.update([sectionData], applicant);
       const [section] = await applicant.getSections();
-      expect(section).toBeObjectContaining({ title: "title", text: "text" });
+      expect(section).toBeObjectContaining(sectionData);
+    });
+
+    it("creates applicant with a valid experience section", async () => {
+      const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
+      const sectionData = { title: "title", text: "text", displayOrder: 1 };
+      await ApplicantExperienceSectionRepository.update({ sections: [sectionData], applicant });
+      const [section] = await applicant.getExperienceSections();
+      expect(section).toBeObjectContaining(sectionData);
     });
 
     it("throws an error if no padron is given", async () => {
@@ -356,6 +369,47 @@ describe("ApplicantRepository", () => {
   });
 
   describe("Update", () => {
+    const sectionsData = [
+      {
+        title: "myTitle",
+        text: "some description",
+        displayOrder: 1
+      },
+      {
+        title: "second section",
+        text: "other description",
+        displayOrder: 2
+      }
+    ];
+
+    const newSectionsData = (uuid: string) => [
+      {
+        uuid: uuid,
+        title: "second section",
+        text: "new some description",
+        displayOrder: 2
+      },
+      {
+        title: "Third section",
+        text: "some other description",
+        displayOrder: 3
+      }
+    ];
+
+    const expectSectionsToContainData = (sections: Section[], data: TSection[]) =>
+      expect(sections).toEqual(
+        expect.arrayContaining(data.map(sectionData => expect.objectContaining(sectionData)))
+      );
+
+    const expectToUpdateProperty = async (attributeKey: string, newValue: string) => {
+      const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
+      let newProps: IApplicantEditable = { uuid };
+      newProps = set(newProps, attributeKey, newValue);
+      const applicant = await ApplicantRepository.update(newProps);
+      applicant.user = await applicant.getUser();
+      expect(get(applicant, attributeKey)).toEqual(get(newProps, attributeKey));
+    };
+
     it("updates all props", async () => {
       const { code: careerCode } = await CareerGenerator.instance();
       const { uuid } = await ApplicantRepository.create({
@@ -379,6 +433,18 @@ describe("ApplicantRepository", () => {
             isGraduate: false
           }
         ],
+        experienceSections: [
+          {
+            title: "Devartis",
+            text: "I was the project manager",
+            displayOrder: 1
+          },
+          {
+            title: "Google",
+            text: "I am the CEO of google in ireland",
+            displayOrder: 2
+          }
+        ],
         sections: [
           {
             title: "title",
@@ -396,97 +462,67 @@ describe("ApplicantRepository", () => {
       const applicant = await ApplicantRepository.update(newProps);
       const applicantCareers = await applicant.getApplicantCareers();
       const capabilities = await applicant.getCapabilities();
+      const sections = await applicant.getSections();
+      const experienceSections = await applicant.getExperienceSections();
+      const links = await applicant.getLinks();
       const user = await applicant.getUser();
-      expect(applicant).toMatchObject({
-        description: newProps.description
-      });
 
-      expect(user).toMatchObject(newProps.user!);
-
+      expect(applicant).toBeObjectContaining({ description: newProps.description });
+      expect(user).toBeObjectContaining(newProps.user!);
       expect(capabilities.map(c => c.description)).toEqual(
         expect.arrayContaining(newProps.capabilities!)
       );
-      expect(applicantCareers).toEqual([expect.objectContaining(newProps.careers![0])]);
+      expect(applicantCareers).toEqual(
+        newProps.careers?.map(career => expect.objectContaining(career))
+      );
+      expect(links).toEqual(newProps.links?.map(link => expect.objectContaining(link)));
+      expect(sections).toEqual(newProps.sections?.map(section => expect.objectContaining(section)));
+      expect(experienceSections).toEqual(
+        newProps.experienceSections?.map(section => expect.objectContaining(section))
+      );
     });
 
     it("updates name", async () => {
-      const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
-      const newProps: IApplicantEditable = {
-        uuid,
-        user: {
-          name: "newName"
-        }
-      };
-      const applicant = await ApplicantRepository.update(newProps);
-      const user = await applicant.getUser();
-
-      expect(user).toMatchObject({ name: newProps.user!.name });
+      await expectToUpdateProperty("user.name", "newName");
     });
 
     it("updates surname", async () => {
-      const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
-      const newProps: IApplicantEditable = {
-        uuid,
-        user: {
-          surname: "newSurname"
-        }
-      };
-      const applicant = await ApplicantRepository.update(newProps);
-      const user = await applicant.getUser();
-      expect(user).toMatchObject({ surname: newProps.user!.surname });
+      await expectToUpdateProperty("user.surname", "newSurname");
     });
 
     it("updates email", async () => {
-      const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
-      const newProps: IApplicantEditable = {
-        uuid,
-        user: {
-          email: "newEmail@gmail.com"
-        }
-      };
-      const applicant = await ApplicantRepository.update(newProps);
-      const user = await applicant.getUser();
-      expect(user).toMatchObject({ email: newProps.user!.email });
+      await expectToUpdateProperty("user.email", "newEmail@gmail.com");
     });
 
     it("updates description", async () => {
-      const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
-      const newProps: IApplicantEditable = {
-        uuid,
-        description: "newDescription"
-      };
-      const applicant = await ApplicantRepository.update(newProps);
-      expect(applicant.description).toEqual(newProps.description);
+      await expectToUpdateProperty("description", "newDescription");
     });
 
     it("updates by adding new capabilities", async () => {
-      const applicant = await ApplicantRepository.create({
-        ...ApplicantGenerator.data.minimum(),
-        capabilities: ["CSS", "clojure"]
-      });
+      const capabilities = ["CSS", "clojure"];
+      const applicant = await ApplicantGenerator.instance.withMinimumData({ capabilities });
       expect((await applicant.getCapabilities()).map(c => c.description)).toEqual(
-        expect.arrayContaining(["CSS", "clojure"])
+        expect.arrayContaining(capabilities)
       );
 
+      const newCapabilities = ["Python", "clojure"];
       const changeOneProps: IApplicantEditable = {
         uuid: applicant.uuid,
-        capabilities: ["Python", "clojure"]
+        capabilities: newCapabilities
       };
 
       await ApplicantRepository.update(changeOneProps);
       expect((await applicant.getCapabilities()).map(c => c.description)).toEqual(
-        expect.arrayContaining(["Python", "clojure"])
+        expect.arrayContaining(newCapabilities)
       );
     });
 
     it("updates by deleting all capabilities if none is provided", async () => {
-      const applicant = await ApplicantRepository.create({
-        ...ApplicantGenerator.data.minimum(),
-        capabilities: ["CSS", "clojure"]
-      });
+      const capabilities = ["CSS", "clojure"];
+      const applicant = await ApplicantGenerator.instance.withMinimumData({ capabilities });
 
       expect((await applicant.getCapabilities()).map(capability => capability.description)).toEqual(
-        expect.arrayContaining(["CSS", "clojure"])
+        expect.arrayContaining(capabilities)
       );
 
       await ApplicantRepository.update({ uuid: applicant.uuid });
@@ -542,90 +578,66 @@ describe("ApplicantRepository", () => {
     });
 
     it("updates by keeping only the new sections", async () => {
-      const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
-      const sectionsData = [
-        {
-          title: "myTitle",
-          text: "some description",
-          displayOrder: 1
-        },
-        {
-          title: "second section",
-          text: "other description",
-          displayOrder: 2
-        }
-      ];
-      const applicant = await ApplicantRepository.update({
-        uuid,
-        sections: sectionsData
-      });
-
+      const { uuid } = await ApplicantGenerator.instance.withMinimumData();
+      const applicant = await ApplicantRepository.update({ uuid, sections: sectionsData });
       const initialSections = await applicant.getSections();
+      expectSectionsToContainData(initialSections, sectionsData);
 
-      expect(
-        initialSections.map(({ title, text, displayOrder }) => ({
-          title,
-          text,
-          displayOrder
-        }))
-      ).toEqual(expect.arrayContaining(sectionsData));
-
-      const updatedSectionsData = [
-        {
-          uuid: initialSections.find(({ title }) => title === "second section")!.uuid,
-          title: "second section",
-          text: "new some description",
-          displayOrder: 2
-        },
-        {
-          title: "Third section",
-          text: "some other description",
-          displayOrder: 3
-        }
-      ];
+      const secondSection = initialSections.find(({ title }) => title === sectionsData[1].title);
 
       const updatedApplicant = await ApplicantRepository.update({
-        uuid: applicant.uuid,
-        sections: updatedSectionsData
+        uuid,
+        sections: newSectionsData(secondSection!.uuid)
       });
       const updatedSections = await updatedApplicant.getSections();
-      expect(
-        updatedSections.map(({ title, text, displayOrder }) => ({
-          title,
-          text,
-          displayOrder
-        }))
-      ).toEqual(
-        expect.arrayContaining(
-          updatedSectionsData.map(({ title, text, displayOrder }) => ({
-            title,
-            text,
-            displayOrder
-          }))
-        )
+
+      expectSectionsToContainData(updatedSections, newSectionsData(secondSection!.uuid));
+    });
+
+    it("updates by keeping only the new experienceSections", async () => {
+      const { uuid } = await ApplicantGenerator.instance.withMinimumData();
+      const applicant = await ApplicantRepository.update({
+        uuid,
+        experienceSections: sectionsData
+      });
+
+      const initialExperienceSections = await applicant.getExperienceSections();
+      expectSectionsToContainData(initialExperienceSections, sectionsData);
+      const secondSection = initialExperienceSections.find(
+        ({ title }) => title === sectionsData[1].title
       );
+
+      const updatedApplicant = await ApplicantRepository.update({
+        uuid,
+        experienceSections: newSectionsData(secondSection!.uuid)
+      });
+      const updatedExperienceSections = await updatedApplicant.getExperienceSections();
+      expectSectionsToContainData(updatedExperienceSections, newSectionsData(secondSection!.uuid));
+    });
+
+    it("updates deleting all experienceSections if none is provided", async () => {
+      const { uuid } = await ApplicantGenerator.instance.withMinimumData();
+      let updatedApplicant = await ApplicantRepository.update({
+        uuid,
+        experienceSections: sectionsData
+      });
+
+      const initialExperienceSections = await updatedApplicant.getExperienceSections();
+      expect(initialExperienceSections).toHaveLength(sectionsData.length);
+
+      updatedApplicant = await ApplicantRepository.update({ uuid, experienceSections: [] });
+      expect(await updatedApplicant.getExperienceSections()).toHaveLength(0);
     });
 
     it("updates deleting all sections if none is provided", async () => {
-      const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
-      const sectionsData = [
-        {
-          title: "myTitle",
-          text: "some description",
-          displayOrder: 1
-        },
-        {
-          title: "new myTitle",
-          text: "new some description",
-          displayOrder: 2
-        }
-      ];
-      await ApplicantRepository.update({ uuid, sections: sectionsData });
-      const updatedApplicant = await ApplicantRepository.update({
-        uuid,
-        sections: []
-      });
-      expect((await updatedApplicant.getSections()).length).toEqual(0);
+      const { uuid } = await ApplicantGenerator.instance.withMinimumData();
+      let updatedApplicant = await ApplicantRepository.update({ uuid, sections: sectionsData });
+
+      const initialSections = await updatedApplicant.getSections();
+      expect(initialSections).toHaveLength(sectionsData.length);
+
+      updatedApplicant = await ApplicantRepository.update({ uuid, sections: [] });
+      expect(await updatedApplicant.getSections()).toHaveLength(0);
     });
 
     it("updates by keeping only the new links", async () => {
@@ -793,51 +805,53 @@ describe("ApplicantRepository", () => {
       });
 
       it("does not update if two sections have the same displayOrder", async () => {
-        const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
-        const sectionsData = [
+        const { uuid } = await ApplicantGenerator.instance.withMinimumData();
+        const applicant = await ApplicantRepository.update({ uuid, sections: sectionsData });
+        const sectionsDataWithSameDisplayOrder = [
           {
-            title: "myTitle",
-            text: "some description",
-            displayOrder: 1
-          },
-          {
-            title: "new myTitle",
-            text: "new some description",
-            displayOrder: 2
-          }
-        ];
-        const applicant = await ApplicantRepository.update({
-          uuid,
-          sections: sectionsData
-        });
-
-        const newSectionsData = [
-          {
-            title: "myTitle",
-            text: "some description",
+            ...sectionsData[0],
             displayOrder: 2
           },
           {
-            title: "new myTitle",
-            text: "new some description",
+            ...sectionsData[0],
             displayOrder: 2
           }
         ];
         await expect(
-          ApplicantRepository.update({
-            uuid: applicant.uuid,
-            sections: newSectionsData
-          })
-        ).rejects.toThrow();
+          ApplicantRepository.update({ uuid, sections: sectionsDataWithSameDisplayOrder })
+        ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
 
         const sections = await applicant.getSections();
-        expect(
-          sections.map(({ title, text, displayOrder }) => ({
-            title,
-            text,
-            displayOrder
-          }))
-        ).toEqual(expect.arrayContaining(sectionsData));
+        expect(sections).toEqual(
+          expect.arrayContaining(sectionsData.map(data => expect.objectContaining(data)))
+        );
+      });
+
+      it("does not update if two experienceSections have the same displayOrder", async () => {
+        const { uuid } = await ApplicantGenerator.instance.withMinimumData();
+        const applicant = await ApplicantRepository.update({
+          uuid,
+          experienceSections: sectionsData
+        });
+
+        const sectionsDataWithSameDisplayOrder = [
+          {
+            ...sectionsData[0],
+            displayOrder: 2
+          },
+          {
+            ...sectionsData[0],
+            displayOrder: 2
+          }
+        ];
+        await expect(
+          ApplicantRepository.update({ uuid, experienceSections: sectionsDataWithSameDisplayOrder })
+        ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
+
+        const sections = await applicant.getExperienceSections();
+        expect(sections).toEqual(
+          expect.arrayContaining(sectionsData.map(data => expect.objectContaining(data)))
+        );
       });
     });
   });

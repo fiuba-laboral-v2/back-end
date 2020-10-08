@@ -27,6 +27,7 @@ import {
   Career,
   JobApplication,
   Section,
+  ApplicantExperienceSection,
   User
 } from "$models";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
@@ -78,6 +79,9 @@ export class Applicant extends Model<Applicant> {
   @HasMany(() => Section)
   public sections: Section[];
 
+  @HasMany(() => ApplicantExperienceSection)
+  public experienceSections: ApplicantExperienceSection[];
+
   @HasMany(() => ApplicantLink)
   public links: ApplicantLink[];
 
@@ -98,16 +102,12 @@ export class Applicant extends Model<Applicant> {
 
   public getCareers: HasManyGetAssociationsMixin<Career>;
   public getUser: HasOneGetAssociationMixin<User>;
-
   public getCapabilities: HasManyGetAssociationsMixin<Capability>;
   public getApplicantCareers: HasManyGetAssociationsMixin<ApplicantCareer>;
-
   public getSections: HasManyGetAssociationsMixin<Section>;
-
+  public getExperienceSections: HasManyGetAssociationsMixin<ApplicantExperienceSection>;
   public getLinks: HasManyGetAssociationsMixin<ApplicantLink>;
-
   public getJobApplications: HasManyGetAssociationsMixin<JobApplication>;
-
   public getApprovalEvents: HasManyGetAssociationsMixin<ApplicantApprovalEvent>;
 
   public async getType() {
