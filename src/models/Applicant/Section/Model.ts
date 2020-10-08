@@ -1,21 +1,24 @@
 import { BelongsTo, Column, ForeignKey, Model, Table } from "sequelize-typescript";
 import { INTEGER, TEXT, UUID, UUIDV4 } from "sequelize";
 import { Applicant } from "$models";
+import { isUuid } from "$models/SequelizeModelValidators";
 
-@Table({ tableName: "Sections" })
+@Table({ tableName: "ApplicantKnowledgeSections" })
 export class Section extends Model<Section> {
   @Column({
     allowNull: false,
     primaryKey: true,
     type: UUID,
-    defaultValue: UUIDV4
+    defaultValue: UUIDV4,
+    ...isUuid
   })
   public uuid: string;
 
   @ForeignKey(() => Applicant)
   @Column({
     allowNull: false,
-    type: UUID
+    type: UUID,
+    ...isUuid
   })
   public applicantUuid: string;
 
