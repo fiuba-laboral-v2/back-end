@@ -4,6 +4,7 @@ import { IUpdateApprovalStatus, IFindLatestByCompanyUuid } from "./Interfaces";
 import { JobApplicationApprovalEventRepository } from "./JobApplicationsApprovalEvent";
 import { JobApplicationNotFoundError } from "./Errors";
 import { PaginationQuery } from "../PaginationQuery";
+import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedInput";
 
 export const JobApplicationRepository = {
   apply: async ({ uuid: applicantUuid }: Applicant, { uuid: offerUuid }: Offer) =>
@@ -47,6 +48,11 @@ export const JobApplicationRepository = {
       ]
     });
   },
+  findLatest: (updatedBeforeThan?: IPaginatedInput) =>
+    PaginationQuery.findLatest({
+      updatedBeforeThan,
+      query: options => JobApplication.findAll(options)
+    }),
   updateApprovalStatus: async ({
     admin: { userUuid: adminUserUuid },
     uuid,
