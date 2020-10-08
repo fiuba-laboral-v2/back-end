@@ -10,7 +10,6 @@ import {
 } from "sequelize-typescript";
 import {
   ENUM,
-  HasManyCreateAssociationMixin,
   HasManyGetAssociationsMixin,
   HasOneGetAssociationMixin,
   INTEGER,
@@ -104,7 +103,6 @@ export class Applicant extends Model<Applicant> {
   public getApplicantCareers: HasManyGetAssociationsMixin<ApplicantCareer>;
 
   public getSections: HasManyGetAssociationsMixin<Section>;
-  public createSection: HasManyCreateAssociationMixin<Section>;
 
   public getLinks: HasManyGetAssociationsMixin<ApplicantLink>;
 

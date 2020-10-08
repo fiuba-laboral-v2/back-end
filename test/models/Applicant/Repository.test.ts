@@ -4,25 +4,29 @@ import {
   ApplicantNotUpdatedError,
   ApplicantWithNoCareersError
 } from "$models/Applicant/Errors";
-import { CareerRepository } from "$models/Career";
-import { ApplicantRepository, IApplicantEditable } from "$models/Applicant";
-import { Admin, Applicant } from "$models";
-import { ApplicantCareersRepository } from "$models/Applicant/ApplicantCareer";
-import { UserRepository } from "$models/User";
-import { CapabilityRepository } from "$models/Capability";
 import { FiubaUserNotFoundError } from "$models/User/Errors";
-import { ApplicantGenerator } from "$generators/Applicant";
-import { CareerGenerator } from "$generators/Career";
-import { AdminGenerator } from "$generators/Admin";
-import { ApprovalStatus } from "$models/ApprovalStatus";
-import { ApplicantType } from "$models/Applicant";
-import { FiubaUsersService } from "$services/FiubaUsers";
-import { UUID_REGEX } from "$test/models";
 import {
   ForbiddenCurrentCareerYearError,
   MissingApprovedSubjectCountError
 } from "$models/Applicant/ApplicantCareer/Errors";
+
+import { CareerRepository } from "$models/Career";
+import { ApplicantRepository, IApplicantEditable } from "$models/Applicant";
+import { Admin, Applicant } from "$models";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { ApplicantType } from "$models/Applicant";
+import { ApplicantCareersRepository } from "$models/Applicant/ApplicantCareer";
+import { SectionRepository } from "$models/Applicant/Section";
+import { UserRepository } from "$models/User";
+import { CapabilityRepository } from "$models/Capability";
+import { FiubaUsersService } from "$services/FiubaUsers";
+
+import { ApplicantGenerator } from "$generators/Applicant";
+import { CareerGenerator } from "$generators/Career";
+import { AdminGenerator } from "$generators/Admin";
+
 import { isApprovalStatus } from "$models/SequelizeModelValidators";
+import { UUID_REGEX } from "$test/models";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 
 describe("ApplicantRepository", () => {
@@ -151,7 +155,10 @@ describe("ApplicantRepository", () => {
 
     it("creates applicant with a valid section with a title and a text", async () => {
       const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
-      await applicant.createSection({ title: "title", text: "text" });
+      await SectionRepository.update(
+        [{ title: "title", text: "text", displayOrder: 1 }],
+        applicant
+      );
       const [section] = await applicant.getSections();
       expect(section).toBeObjectContaining({ title: "title", text: "text" });
     });
