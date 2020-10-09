@@ -1,5 +1,5 @@
 import { ApplicantRepository } from "$models/Applicant";
-import { SectionRepository } from "$models/Applicant/Section";
+import { SectionRepository } from "$models/Applicant/ApplicantKnowledgeSection";
 import { UserRepository } from "$models/User";
 import { Applicant, ApplicantKnowledgeSection } from "$models";
 import { DniGenerator } from "$generators/DNI";

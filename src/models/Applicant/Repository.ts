@@ -5,7 +5,7 @@ import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedI
 import { ApplicantCareersRepository } from "./ApplicantCareer";
 import { ApplicantCapabilityRepository } from "../ApplicantCapability";
 import { ApplicantApprovalEventRepository } from "./ApplicantApprovalEvent";
-import { SectionRepository } from "./Section";
+import { SectionRepository } from "./ApplicantKnowledgeSection";
 import { ApplicantExperienceSectionRepository } from "./ApplicantExperienceSection";
 import { ApplicantLinkRepository } from "./Link";
 import { UserRepository } from "../User";

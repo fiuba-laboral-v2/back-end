@@ -21,7 +21,7 @@ import { Admin, Applicant, ApplicantKnowledgeSection } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Applicant";
 import { ApplicantCareersRepository } from "$models/Applicant/ApplicantCareer";
-import { SectionRepository } from "$models/Applicant/Section";
+import { SectionRepository } from "$models/Applicant/ApplicantKnowledgeSection";
 import { ApplicantExperienceSectionRepository } from "$models/Applicant/ApplicantExperienceSection";
 import { UserRepository } from "$models/User";
 import { CapabilityRepository } from "$models/Capability";
