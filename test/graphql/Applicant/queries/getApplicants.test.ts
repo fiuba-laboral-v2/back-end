@@ -43,7 +43,11 @@ const GET_APPLICANTS = gql`
           currentCareerYear
           isGraduate
         }
-        sections {
+        knowledgeSections {
+          title
+          text
+        }
+        experienceSections {
           title
           text
         }
@@ -115,7 +119,8 @@ describe("getApplicants", () => {
                 currentCareerYear: null
               }
             ],
-            sections: [],
+            knowledgeSections: [],
+            experienceSections: [],
             links: []
           }
         ])
@@ -169,7 +174,8 @@ describe("getApplicants", () => {
             ],
             capabilities: capabilities.map(({ uuid, description }) => ({ uuid, description })),
             links: [],
-            sections: []
+            knowledgeSections: [],
+            experienceSections: []
           };
         })
       );

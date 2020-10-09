@@ -16,7 +16,7 @@ const UPDATE_CURRENT_APPLICANT = gql`
     $description: String
     $careers: [ApplicantCareerInput]
     $capabilities: [String]
-    $knowledgeSections: [SectionInput]
+    $knowledgeSections: [ApplicantKnowledgeSectionInput]
     $experienceSections: [ApplicantExperienceSectionInput]
     $links: [LinkInput]
   ) {
