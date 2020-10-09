@@ -23,5 +23,6 @@ export const ApplicantKnowledgeSectionRepository = {
         updateOnDuplicate: ["title", "text", "displayOrder"]
       }
     );
-  }
+  },
+  truncate: () => ApplicantKnowledgeSection.destroy({ truncate: true })
 };

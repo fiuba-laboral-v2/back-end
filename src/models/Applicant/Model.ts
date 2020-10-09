@@ -77,7 +77,7 @@ export class Applicant extends Model<Applicant> {
   public user: User;
 
   @HasMany(() => ApplicantKnowledgeSection)
-  public sections: ApplicantKnowledgeSection[];
+  public knowledgeSections: ApplicantKnowledgeSection[];
 
   @HasMany(() => ApplicantExperienceSection)
   public experienceSections: ApplicantExperienceSection[];
@@ -104,7 +104,7 @@ export class Applicant extends Model<Applicant> {
   public getUser: HasOneGetAssociationMixin<User>;
   public getCapabilities: HasManyGetAssociationsMixin<Capability>;
   public getApplicantCareers: HasManyGetAssociationsMixin<ApplicantCareer>;
-  public getSections: HasManyGetAssociationsMixin<ApplicantKnowledgeSection>;
+  public getKnowledgeSections: HasManyGetAssociationsMixin<ApplicantKnowledgeSection>;
   public getExperienceSections: HasManyGetAssociationsMixin<ApplicantExperienceSection>;
   public getLinks: HasManyGetAssociationsMixin<ApplicantLink>;
   public getJobApplications: HasManyGetAssociationsMixin<JobApplication>;

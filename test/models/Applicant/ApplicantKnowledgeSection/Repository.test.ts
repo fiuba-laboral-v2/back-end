@@ -1,50 +1,37 @@
-import { ApplicantRepository } from "$models/Applicant";
+import { UniqueConstraintError } from "sequelize";
 import { ApplicantKnowledgeSectionRepository } from "$models/Applicant/ApplicantKnowledgeSection";
 import { UserRepository } from "$models/User";
 import { Applicant, ApplicantKnowledgeSection } from "$models";
-import { DniGenerator } from "$generators/DNI";
+import { ApplicantGenerator } from "$generators/Applicant";
+import { UUID_REGEX } from "$test/models";
 
 describe("ApplicantKnowledgeSectionRepository", () => {
   let applicant: Applicant;
 
   beforeAll(async () => {
     await UserRepository.truncate();
-    applicant = await ApplicantRepository.create({
-      user: {
-        dni: DniGenerator.generate(),
-        email: "sblanco@yahoo.com",
-        password: "fdmgkfHGH4353",
-        name: "Bruno",
-        surname: "Diaz"
-      },
-      careers: [],
-      padron: 1,
-      description: "Batman"
-    });
+    applicant = await ApplicantGenerator.instance.withMinimumData();
   });
 
-  beforeEach(() => ApplicantKnowledgeSection.destroy({ truncate: true }));
+  beforeEach(() => ApplicantKnowledgeSectionRepository.truncate());
 
-  it("should create a valid section with a title and a text", async () => {
+  it("creates a valid section", async () => {
     const sectionData = {
-      title: "And all shootin some b-ball outside of the school",
+      title: "And all shooting some b-ball outside of the school",
       text: "When a couple of guys who were up to no good\nStarted making trouble in my",
       displayOrder: 1
     };
 
     await ApplicantKnowledgeSectionRepository.update([sectionData], applicant);
-    const [section] = await applicant.getSections();
-
-    expect(section).toHaveProperty("uuid");
-    expect(section).toMatchObject({
+    const [section] = await applicant.getKnowledgeSections();
+    expect(section).toBeObjectContaining({
+      uuid: expect.stringMatching(UUID_REGEX),
       applicantUuid: applicant.uuid,
-      title: sectionData.title,
-      text: sectionData.text,
-      displayOrder: 1
+      ...sectionData
     });
   });
 
-  it("should throw an error if section has the same display order for the same applicant", async () => {
+  it("throws an error if section has the same display order for the same applicant", async () => {
     await ApplicantKnowledgeSection.create({
       applicantUuid: applicant.uuid,
       title: "title",
@@ -57,10 +44,13 @@ describe("ApplicantKnowledgeSectionRepository", () => {
       text: "another text",
       displayOrder: 1
     });
-    await expect(sectionWithSameDisplayOrder.save()).rejects.toThrow();
+    await expect(sectionWithSameDisplayOrder.save()).rejects.toThrowErrorWithMessage(
+      UniqueConstraintError,
+      "Validation error"
+    );
   });
 
-  it("should update the sections if the display order is the same", async () => {
+  it("updates the section if the display order is the same", async () => {
     const params = {
       title: "title",
       text: "text",
@@ -73,45 +63,39 @@ describe("ApplicantKnowledgeSectionRepository", () => {
     };
     await ApplicantKnowledgeSectionRepository.update([params], applicant);
     const sections = await ApplicantKnowledgeSectionRepository.update([newParams], applicant);
-    expect(sections).toHaveLength(1);
-    expect(sections[0]).toMatchObject(newParams);
+    expect(sections).toEqual([expect.objectContaining(newParams)]);
   });
 
-  it("should update a valid section", async () => {
-    const params = [
-      {
-        title: "I got in one little fight and my mom got scared",
-        text:
-          "She said 'You're movin' with your auntie and uncle in Bel Air'\nI begged and pleaded",
-        displayOrder: 1
-      }
-    ];
+  it("updates a valid section", async () => {
+    await ApplicantKnowledgeSectionRepository.update(
+      [
+        {
+          title: "title",
+          text: "text",
+          displayOrder: 1
+        }
+      ],
+      applicant
+    );
+    const [firstSection] = await applicant.getKnowledgeSections();
 
-    await ApplicantKnowledgeSectionRepository.update(params, applicant);
-    const [firstSection] = await applicant.getSections();
-
-    const newParams = [
-      {
-        uuid: firstSection.uuid,
-        title: "New title",
-        text: "New Text",
-        displayOrder: 1
-      }
-    ];
-
-    await ApplicantKnowledgeSectionRepository.update(newParams, applicant);
-    const [section] = await applicant.getSections();
-
-    expect(section).toHaveProperty("uuid");
-    expect(section).toMatchObject({
-      applicantUuid: applicant.uuid,
+    const newParams = {
+      uuid: firstSection.uuid,
       title: "New title",
       text: "New Text",
       displayOrder: 1
+    };
+
+    await ApplicantKnowledgeSectionRepository.update([newParams], applicant);
+    const [section] = await applicant.getKnowledgeSections();
+
+    expect(section).toBeObjectContaining({
+      applicantUuid: applicant.uuid,
+      ...newParams
     });
   });
 
-  it("should update the sections given and deleting the rest of applicant sections", async () => {
+  it("updates the sections given and deleting the rest of applicant sections", async () => {
     const params = [
       {
         title: "with her day after day",
@@ -125,8 +109,12 @@ describe("ApplicantKnowledgeSectionRepository", () => {
       }
     ];
 
-    await ApplicantKnowledgeSectionRepository.update(params, applicant);
-    const [firstSection] = await applicant.getSections();
+    const initialSections = await ApplicantKnowledgeSectionRepository.update(params, applicant);
+    expect(initialSections).toEqual(
+      expect.arrayContaining(params.map(data => expect.objectContaining(data)))
+    );
+
+    const [firstSection] = await applicant.getKnowledgeSections();
 
     const newParams = [
       {
@@ -143,8 +131,10 @@ describe("ApplicantKnowledgeSectionRepository", () => {
     ];
 
     await ApplicantKnowledgeSectionRepository.update(newParams, applicant);
-    const sections = await applicant.getSections();
+    const sections = await applicant.getKnowledgeSections();
 
-    expect(sections.map(({ title }) => title)).toEqual(["New title", "third section"]);
+    expect(sections).toEqual(
+      expect.arrayContaining(newParams.map(data => expect.objectContaining(data)))
+    );
   });
 });

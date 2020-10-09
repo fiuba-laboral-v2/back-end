@@ -45,7 +45,7 @@ export const GraphQLApplicant = new GraphQLObjectType<Applicant>({
     },
     sections: {
       type: nonNull(List(GraphQLSection)),
-      resolve: applicant => applicant.getSections()
+      resolve: applicant => applicant.getKnowledgeSections()
     },
     experienceSections: {
       type: nonNull(List(GraphQLApplicantExperienceSectionType)),

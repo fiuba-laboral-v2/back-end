@@ -160,11 +160,11 @@ describe("ApplicantRepository", () => {
       expect(capability.description).toEqual("Python");
     });
 
-    it("creates applicant with a valid section with a title and a text", async () => {
+    it("creates applicant with a valid knowledge section", async () => {
       const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       const sectionData = { title: "title", text: "text", displayOrder: 1 };
       await ApplicantKnowledgeSectionRepository.update([sectionData], applicant);
-      const [section] = await applicant.getSections();
+      const [section] = await applicant.getKnowledgeSections();
       expect(section).toBeObjectContaining(sectionData);
     });
 
@@ -462,7 +462,7 @@ describe("ApplicantRepository", () => {
       const applicant = await ApplicantRepository.update(newProps);
       const applicantCareers = await applicant.getApplicantCareers();
       const capabilities = await applicant.getCapabilities();
-      const sections = await applicant.getSections();
+      const sections = await applicant.getKnowledgeSections();
       const experienceSections = await applicant.getExperienceSections();
       const links = await applicant.getLinks();
       const user = await applicant.getUser();
@@ -577,10 +577,10 @@ describe("ApplicantRepository", () => {
       );
     });
 
-    it("updates by keeping only the new sections", async () => {
+    it("updates by keeping only the new knowledgeSections", async () => {
       const { uuid } = await ApplicantGenerator.instance.withMinimumData();
       const applicant = await ApplicantRepository.update({ uuid, sections: sectionsData });
-      const initialSections = await applicant.getSections();
+      const initialSections = await applicant.getKnowledgeSections();
       expectSectionsToContainData(initialSections, sectionsData);
 
       const secondSection = initialSections.find(({ title }) => title === sectionsData[1].title);
@@ -589,7 +589,7 @@ describe("ApplicantRepository", () => {
         uuid,
         sections: newSectionsData(secondSection!.uuid)
       });
-      const updatedSections = await updatedApplicant.getSections();
+      const updatedSections = await updatedApplicant.getKnowledgeSections();
 
       expectSectionsToContainData(updatedSections, newSectionsData(secondSection!.uuid));
     });
@@ -633,11 +633,11 @@ describe("ApplicantRepository", () => {
       const { uuid } = await ApplicantGenerator.instance.withMinimumData();
       let updatedApplicant = await ApplicantRepository.update({ uuid, sections: sectionsData });
 
-      const initialSections = await updatedApplicant.getSections();
+      const initialSections = await updatedApplicant.getKnowledgeSections();
       expect(initialSections).toHaveLength(sectionsData.length);
 
       updatedApplicant = await ApplicantRepository.update({ uuid, sections: [] });
-      expect(await updatedApplicant.getSections()).toHaveLength(0);
+      expect(await updatedApplicant.getKnowledgeSections()).toHaveLength(0);
     });
 
     it("updates by keeping only the new links", async () => {
@@ -804,7 +804,7 @@ describe("ApplicantRepository", () => {
         ]);
       });
 
-      it("does not update if two sections have the same displayOrder", async () => {
+      it("does not update if two knowledgeSections have the same displayOrder", async () => {
         const { uuid } = await ApplicantGenerator.instance.withMinimumData();
         const applicant = await ApplicantRepository.update({ uuid, sections: sectionsData });
         const sectionsDataWithSameDisplayOrder = [
@@ -821,7 +821,7 @@ describe("ApplicantRepository", () => {
           ApplicantRepository.update({ uuid, sections: sectionsDataWithSameDisplayOrder })
         ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
 
-        const sections = await applicant.getSections();
+        const sections = await applicant.getKnowledgeSections();
         expect(sections).toEqual(
           expect.arrayContaining(sectionsData.map(data => expect.objectContaining(data)))
         );
