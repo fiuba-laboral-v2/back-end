@@ -7,9 +7,11 @@ export = {
       await queryInterface.bulkInsert("Applicants", [sebastian.applicant, aldana.applicant], {
         transaction
       });
-      await queryInterface.bulkInsert("Sections", [...sebastian.sections, ...aldana.sections], {
-        transaction
-      });
+      await queryInterface.bulkInsert(
+        "ApplicantKnowledgeSections",
+        [...sebastian.sections, ...aldana.sections],
+        { transaction }
+      );
       await queryInterface.bulkInsert(
         "ApplicantsCapabilities",
         [...sebastian.capabilities, ...aldana.capabilities],
@@ -28,7 +30,7 @@ export = {
   },
   down: (queryInterface: QueryInterface) => {
     return queryInterface.sequelize.transaction(async transaction => {
-      await queryInterface.bulkDelete("Sections", {}, { transaction });
+      await queryInterface.bulkDelete("ApplicantKnowledgeSections", {}, { transaction });
       await queryInterface.bulkDelete("ApplicantsCapabilities", {}, { transaction });
       await queryInterface.bulkDelete("ApplicantCareers", {}, { transaction });
       await queryInterface.bulkDelete("JobApplications", {}, { transaction });

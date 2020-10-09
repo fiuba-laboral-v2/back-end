@@ -7,7 +7,8 @@ export interface IApplicant {
   description?: string;
   careers: IApplicantCareer[];
   capabilities?: string[];
-  sections?: TSection[];
+  knowledgeSections?: ISection[];
+  experienceSections?: ISection[];
   links?: TLink[];
   user: IUser;
 }
@@ -23,17 +24,17 @@ export interface IApplicantEditable {
   description?: string;
   careers?: IApplicantCareer[];
   capabilities?: string[];
-  sections?: TSection[];
-  experienceSections?: TSection[];
+  knowledgeSections?: ISection[];
+  experienceSections?: ISection[];
   links?: TLink[];
 }
 
-export type TSection = {
+export interface ISection {
   uuid?: string;
   title: string;
   text: string;
   displayOrder: number;
-};
+}
 
 export enum ApplicantType {
   graduate = "graduate",

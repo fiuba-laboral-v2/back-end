@@ -1,1 +1,0 @@
-export { SectionRepository } from "./Repository";

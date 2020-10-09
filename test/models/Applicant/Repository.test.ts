@@ -16,12 +16,12 @@ import {
 } from "$models/Applicant/ApplicantCareer/Errors";
 
 import { CareerRepository } from "$models/Career";
-import { ApplicantRepository, IApplicantEditable, TSection } from "$models/Applicant";
-import { Admin, Applicant, Section } from "$models";
+import { ApplicantRepository, IApplicantEditable, ISection } from "$models/Applicant";
+import { Admin, Applicant, ApplicantKnowledgeSection } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Applicant";
 import { ApplicantCareersRepository } from "$models/Applicant/ApplicantCareer";
-import { SectionRepository } from "$models/Applicant/Section";
+import { ApplicantKnowledgeSectionRepository } from "$models/Applicant/ApplicantKnowledgeSection";
 import { ApplicantExperienceSectionRepository } from "$models/Applicant/ApplicantExperienceSection";
 import { UserRepository } from "$models/User";
 import { CapabilityRepository } from "$models/Capability";
@@ -160,11 +160,11 @@ describe("ApplicantRepository", () => {
       expect(capability.description).toEqual("Python");
     });
 
-    it("creates applicant with a valid section with a title and a text", async () => {
+    it("creates applicant with a valid knowledge section", async () => {
       const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       const sectionData = { title: "title", text: "text", displayOrder: 1 };
-      await SectionRepository.update([sectionData], applicant);
-      const [section] = await applicant.getSections();
+      await ApplicantKnowledgeSectionRepository.update([sectionData], applicant);
+      const [section] = await applicant.getKnowledgeSections();
       expect(section).toBeObjectContaining(sectionData);
     });
 
@@ -396,7 +396,7 @@ describe("ApplicantRepository", () => {
       }
     ];
 
-    const expectSectionsToContainData = (sections: Section[], data: TSection[]) =>
+    const expectSectionsToContainData = (sections: ApplicantKnowledgeSection[], data: ISection[]) =>
       expect(sections).toEqual(
         expect.arrayContaining(data.map(sectionData => expect.objectContaining(sectionData)))
       );
@@ -445,7 +445,7 @@ describe("ApplicantRepository", () => {
             displayOrder: 2
           }
         ],
-        sections: [
+        knowledgeSections: [
           {
             title: "title",
             text: "some description",
@@ -462,7 +462,7 @@ describe("ApplicantRepository", () => {
       const applicant = await ApplicantRepository.update(newProps);
       const applicantCareers = await applicant.getApplicantCareers();
       const capabilities = await applicant.getCapabilities();
-      const sections = await applicant.getSections();
+      const sections = await applicant.getKnowledgeSections();
       const experienceSections = await applicant.getExperienceSections();
       const links = await applicant.getLinks();
       const user = await applicant.getUser();
@@ -476,7 +476,9 @@ describe("ApplicantRepository", () => {
         newProps.careers?.map(career => expect.objectContaining(career))
       );
       expect(links).toEqual(newProps.links?.map(link => expect.objectContaining(link)));
-      expect(sections).toEqual(newProps.sections?.map(section => expect.objectContaining(section)));
+      expect(sections).toEqual(
+        newProps.knowledgeSections?.map(section => expect.objectContaining(section))
+      );
       expect(experienceSections).toEqual(
         newProps.experienceSections?.map(section => expect.objectContaining(section))
       );
@@ -577,19 +579,19 @@ describe("ApplicantRepository", () => {
       );
     });
 
-    it("updates by keeping only the new sections", async () => {
+    it("updates by keeping only the new knowledgeSections", async () => {
       const { uuid } = await ApplicantGenerator.instance.withMinimumData();
-      const applicant = await ApplicantRepository.update({ uuid, sections: sectionsData });
-      const initialSections = await applicant.getSections();
+      const applicant = await ApplicantRepository.update({ uuid, knowledgeSections: sectionsData });
+      const initialSections = await applicant.getKnowledgeSections();
       expectSectionsToContainData(initialSections, sectionsData);
 
       const secondSection = initialSections.find(({ title }) => title === sectionsData[1].title);
 
       const updatedApplicant = await ApplicantRepository.update({
         uuid,
-        sections: newSectionsData(secondSection!.uuid)
+        knowledgeSections: newSectionsData(secondSection!.uuid)
       });
-      const updatedSections = await updatedApplicant.getSections();
+      const updatedSections = await updatedApplicant.getKnowledgeSections();
 
       expectSectionsToContainData(updatedSections, newSectionsData(secondSection!.uuid));
     });
@@ -631,13 +633,16 @@ describe("ApplicantRepository", () => {
 
     it("updates deleting all sections if none is provided", async () => {
       const { uuid } = await ApplicantGenerator.instance.withMinimumData();
-      let updatedApplicant = await ApplicantRepository.update({ uuid, sections: sectionsData });
+      let updatedApplicant = await ApplicantRepository.update({
+        uuid,
+        knowledgeSections: sectionsData
+      });
 
-      const initialSections = await updatedApplicant.getSections();
+      const initialSections = await updatedApplicant.getKnowledgeSections();
       expect(initialSections).toHaveLength(sectionsData.length);
 
-      updatedApplicant = await ApplicantRepository.update({ uuid, sections: [] });
-      expect(await updatedApplicant.getSections()).toHaveLength(0);
+      updatedApplicant = await ApplicantRepository.update({ uuid, knowledgeSections: [] });
+      expect(await updatedApplicant.getKnowledgeSections()).toHaveLength(0);
     });
 
     it("updates by keeping only the new links", async () => {
@@ -804,9 +809,12 @@ describe("ApplicantRepository", () => {
         ]);
       });
 
-      it("does not update if two sections have the same displayOrder", async () => {
+      it("does not update if two knowledgeSections have the same displayOrder", async () => {
         const { uuid } = await ApplicantGenerator.instance.withMinimumData();
-        const applicant = await ApplicantRepository.update({ uuid, sections: sectionsData });
+        const applicant = await ApplicantRepository.update({
+          uuid,
+          knowledgeSections: sectionsData
+        });
         const sectionsDataWithSameDisplayOrder = [
           {
             ...sectionsData[0],
@@ -818,10 +826,10 @@ describe("ApplicantRepository", () => {
           }
         ];
         await expect(
-          ApplicantRepository.update({ uuid, sections: sectionsDataWithSameDisplayOrder })
+          ApplicantRepository.update({ uuid, knowledgeSections: sectionsDataWithSameDisplayOrder })
         ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
 
-        const sections = await applicant.getSections();
+        const sections = await applicant.getKnowledgeSections();
         expect(sections).toEqual(
           expect.arrayContaining(sectionsData.map(data => expect.objectContaining(data)))
         );

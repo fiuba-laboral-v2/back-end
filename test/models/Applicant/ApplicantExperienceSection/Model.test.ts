@@ -19,7 +19,6 @@ describe("ApplicantExperienceSection", () => {
       ValidationError,
       `ApplicantExperienceSection.${attribute} cannot be null`
     );
-    expect(applicantExperienceSection).toBeObjectContaining(attributes);
   };
 
   const expectToThrowErrorOnInvalidUuidFormat = async (attribute: string) => {
