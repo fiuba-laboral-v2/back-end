@@ -138,16 +138,6 @@ export const defaultTranslations = {
   ],
   editableDetail: [
     { key: "title", value: "Editar tu perfil" },
-    { key: "description", value: "Descripción" },
-    { key: "links", value: "Links" },
-    { key: "link", value: "Link" },
-    { key: "linkTitle", value: "Título" },
-    { key: "careers", value: "Carreras" },
-    { key: "capabilities", value: "Aptitudes e Idiomas" },
-    { key: "capability", value: "Aptitud (presione Enter para agregar)" },
-    { key: "sections", value: "Secciones" },
-    { key: "sectionTitle", value: "Título" },
-    { key: "sectionContent", value: "Contenido" },
     { key: "submit", value: "Guardar" }
   ],
   login: [
