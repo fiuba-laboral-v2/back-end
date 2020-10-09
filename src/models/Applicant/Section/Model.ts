@@ -4,7 +4,7 @@ import { Applicant } from "$models";
 import { isUuid } from "$models/SequelizeModelValidators";
 
 @Table({ tableName: "ApplicantKnowledgeSections" })
-export class Section extends Model<Section> {
+export class ApplicantKnowledgeSection extends Model<ApplicantKnowledgeSection> {
   @Column({
     allowNull: false,
     primaryKey: true,

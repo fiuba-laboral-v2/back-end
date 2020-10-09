@@ -1,17 +1,17 @@
-import { Applicant, Section } from "$models";
+import { Applicant, ApplicantKnowledgeSection } from "$models";
 import { TSection } from "../Interface";
 import { Transaction } from "sequelize";
 
 export const SectionRepository = {
   update: async (sections: TSection[], applicant: Applicant, transaction?: Transaction) => {
-    await Section.destroy({
+    await ApplicantKnowledgeSection.destroy({
       where: {
         applicantUuid: applicant.uuid
       },
       transaction
     });
 
-    return Section.bulkCreate(
+    return ApplicantKnowledgeSection.bulkCreate(
       sections.map(section => ({
         ...section,
         applicantUuid: applicant.uuid

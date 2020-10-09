@@ -1,5 +1,5 @@
 import { ValidationError } from "sequelize";
-import { Section } from "$models";
+import { ApplicantKnowledgeSection } from "$models";
 
 describe("Section model", () => {
   const applicantUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
@@ -11,7 +11,7 @@ describe("Section model", () => {
       text: "Now, this is a story all about how\nMy life got flipped-turned upside down",
       displayOrder: 1
     };
-    const section = new Section(params);
+    const section = new ApplicantKnowledgeSection(params);
 
     expect(section).toHaveProperty("uuid");
     expect(section).toMatchObject({
@@ -22,7 +22,7 @@ describe("Section model", () => {
   });
 
   it("should throw an error if no title is provided", async () => {
-    const section = new Section({
+    const section = new ApplicantKnowledgeSection({
       applicantUuid: applicantUuid,
       text: "And I'd like to take a minute\nJust sit right there"
     });
@@ -30,7 +30,7 @@ describe("Section model", () => {
   });
 
   it("should throw an error if no text is provided", async () => {
-    const section = new Section({
+    const section = new ApplicantKnowledgeSection({
       applicantUuid: applicantUuid,
       title: "I'll tell you how I became the prince of a town called Bel Air"
     });
@@ -38,7 +38,7 @@ describe("Section model", () => {
   });
 
   it("should throw an error if no applicantUuid is provided", async () => {
-    const section = new Section({
+    const section = new ApplicantKnowledgeSection({
       title: "In west Philadelphia born and raised",
       description: "On the playground was where I spent most of my days\nChillin out maxin relaxin"
     });

@@ -1,7 +1,7 @@
 import { ApplicantRepository } from "$models/Applicant";
 import { SectionRepository } from "$models/Applicant/Section";
 import { UserRepository } from "$models/User";
-import { Applicant, Section } from "$models";
+import { Applicant, ApplicantKnowledgeSection } from "$models";
 import { DniGenerator } from "$generators/DNI";
 
 describe("Section model", () => {
@@ -23,7 +23,7 @@ describe("Section model", () => {
     });
   });
 
-  beforeEach(() => Section.destroy({ truncate: true }));
+  beforeEach(() => ApplicantKnowledgeSection.destroy({ truncate: true }));
 
   it("should create a valid section with a title and a text", async () => {
     const sectionData = {
@@ -45,13 +45,13 @@ describe("Section model", () => {
   });
 
   it("should throw an error if section has the same display order for the same applicant", async () => {
-    await Section.create({
+    await ApplicantKnowledgeSection.create({
       applicantUuid: applicant.uuid,
       title: "title",
       text: "text",
       displayOrder: 1
     });
-    const sectionWithSameDisplayOrder = new Section({
+    const sectionWithSameDisplayOrder = new ApplicantKnowledgeSection({
       applicantUuid: applicant.uuid,
       title: "another title",
       text: "another text",

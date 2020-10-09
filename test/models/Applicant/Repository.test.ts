@@ -17,7 +17,7 @@ import {
 
 import { CareerRepository } from "$models/Career";
 import { ApplicantRepository, IApplicantEditable, TSection } from "$models/Applicant";
-import { Admin, Applicant, Section } from "$models";
+import { Admin, Applicant, ApplicantKnowledgeSection } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Applicant";
 import { ApplicantCareersRepository } from "$models/Applicant/ApplicantCareer";
@@ -396,7 +396,7 @@ describe("ApplicantRepository", () => {
       }
     ];
 
-    const expectSectionsToContainData = (sections: Section[], data: TSection[]) =>
+    const expectSectionsToContainData = (sections: ApplicantKnowledgeSection[], data: TSection[]) =>
       expect(sections).toEqual(
         expect.arrayContaining(data.map(sectionData => expect.objectContaining(sectionData)))
       );

@@ -26,7 +26,7 @@ import {
   Capability,
   Career,
   JobApplication,
-  Section,
+  ApplicantKnowledgeSection,
   ApplicantExperienceSection,
   User
 } from "$models";
@@ -76,8 +76,8 @@ export class Applicant extends Model<Applicant> {
   @BelongsTo(() => User, "userUuid")
   public user: User;
 
-  @HasMany(() => Section)
-  public sections: Section[];
+  @HasMany(() => ApplicantKnowledgeSection)
+  public sections: ApplicantKnowledgeSection[];
 
   @HasMany(() => ApplicantExperienceSection)
   public experienceSections: ApplicantExperienceSection[];
@@ -104,7 +104,7 @@ export class Applicant extends Model<Applicant> {
   public getUser: HasOneGetAssociationMixin<User>;
   public getCapabilities: HasManyGetAssociationsMixin<Capability>;
   public getApplicantCareers: HasManyGetAssociationsMixin<ApplicantCareer>;
-  public getSections: HasManyGetAssociationsMixin<Section>;
+  public getSections: HasManyGetAssociationsMixin<ApplicantKnowledgeSection>;
   public getExperienceSections: HasManyGetAssociationsMixin<ApplicantExperienceSection>;
   public getLinks: HasManyGetAssociationsMixin<ApplicantLink>;
   public getJobApplications: HasManyGetAssociationsMixin<JobApplication>;
