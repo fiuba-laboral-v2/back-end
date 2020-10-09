@@ -26,7 +26,7 @@ export const updateCurrentApplicant = {
     capabilities: {
       type: List(String)
     },
-    sections: {
+    knowledgeSections: {
       type: List(GraphQLSectionInput)
     },
     experienceSections: {

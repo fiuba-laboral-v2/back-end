@@ -7,7 +7,8 @@ export interface IApplicant {
   description?: string;
   careers: IApplicantCareer[];
   capabilities?: string[];
-  sections?: TSection[];
+  knowledgeSections?: TSection[];
+  experienceSections?: TSection[];
   links?: TLink[];
   user: IUser;
 }
@@ -23,7 +24,7 @@ export interface IApplicantEditable {
   description?: string;
   careers?: IApplicantCareer[];
   capabilities?: string[];
-  sections?: TSection[];
+  knowledgeSections?: TSection[];
   experienceSections?: TSection[];
   links?: TLink[];
 }

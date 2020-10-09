@@ -43,7 +43,7 @@ export const GraphQLApplicant = new GraphQLObjectType<Applicant>({
       type: nonNull(List(GraphQLCapability)),
       resolve: applicant => applicant.getCapabilities()
     },
-    sections: {
+    knowledgeSections: {
       type: nonNull(List(GraphQLSection)),
       resolve: applicant => applicant.getKnowledgeSections()
     },

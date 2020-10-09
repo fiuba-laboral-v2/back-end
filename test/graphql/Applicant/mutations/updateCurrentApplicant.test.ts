@@ -16,7 +16,7 @@ const UPDATE_CURRENT_APPLICANT = gql`
     $description: String
     $careers: [ApplicantCareerInput]
     $capabilities: [String]
-    $sections: [SectionInput]
+    $knowledgeSections: [SectionInput]
     $experienceSections: [ApplicantExperienceSectionInput]
     $links: [LinkInput]
   ) {
@@ -26,7 +26,7 @@ const UPDATE_CURRENT_APPLICANT = gql`
       description: $description
       careers: $careers
       capabilities: $capabilities
-      sections: $sections
+      knowledgeSections: $knowledgeSections
       experienceSections: $experienceSections
       links: $links
     ) {
@@ -51,7 +51,7 @@ const UPDATE_CURRENT_APPLICANT = gql`
         currentCareerYear
         isGraduate
       }
-      sections {
+      knowledgeSections {
         title
         text
         displayOrder
@@ -96,7 +96,7 @@ describe("updateCurrentApplicant", () => {
           isGraduate: false
         }
       ],
-      sections: [
+      knowledgeSections: [
         {
           title: "title",
           text: "description",
@@ -130,33 +130,29 @@ describe("updateCurrentApplicant", () => {
 
     expect(errors).toBeUndefined();
     const updatedApplicantData = data!.updateCurrentApplicant;
-    expect(updatedApplicantData).toEqual(
-      expect.objectContaining({
-        padron: dataToUpdate.padron,
-        user: {
-          uuid: user.uuid,
-          email: dataToUpdate.user.email,
-          name: dataToUpdate.user.name,
-          surname: dataToUpdate.user.surname
-        },
-        description: dataToUpdate.description,
-        careers: [
-          {
-            career: {
-              code: newCareer.code,
-              description: newCareer.description
-            },
-            ...dataToUpdate.careers[0]
-          }
-        ],
-        sections: dataToUpdate.sections,
-        experienceSections: dataToUpdate.experienceSections,
-        links: dataToUpdate.links
-      })
-    );
-    expect(updatedApplicantData.capabilities.map(c => c.description)).toEqual(
-      expect.arrayContaining(dataToUpdate.capabilities)
-    );
+    expect(updatedApplicantData).toBeObjectContaining({
+      padron: dataToUpdate.padron,
+      user: {
+        uuid: user.uuid,
+        email: dataToUpdate.user.email,
+        name: dataToUpdate.user.name,
+        surname: dataToUpdate.user.surname
+      },
+      description: dataToUpdate.description,
+      capabilities: dataToUpdate.capabilities.map(description => ({ description })),
+      careers: [
+        {
+          career: {
+            code: newCareer.code,
+            description: newCareer.description
+          },
+          ...dataToUpdate.careers[0]
+        }
+      ],
+      knowledgeSections: dataToUpdate.knowledgeSections,
+      experienceSections: dataToUpdate.experienceSections,
+      links: dataToUpdate.links
+    });
   });
 
   describe("Errors", () => {
