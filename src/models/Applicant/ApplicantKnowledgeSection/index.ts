@@ -1,1 +1,1 @@
-export { SectionRepository } from "./Repository";
+export { ApplicantKnowledgeSectionRepository } from "./Repository";

@@ -21,7 +21,7 @@ import { Admin, Applicant, ApplicantKnowledgeSection } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Applicant";
 import { ApplicantCareersRepository } from "$models/Applicant/ApplicantCareer";
-import { SectionRepository } from "$models/Applicant/ApplicantKnowledgeSection";
+import { ApplicantKnowledgeSectionRepository } from "$models/Applicant/ApplicantKnowledgeSection";
 import { ApplicantExperienceSectionRepository } from "$models/Applicant/ApplicantExperienceSection";
 import { UserRepository } from "$models/User";
 import { CapabilityRepository } from "$models/Capability";
@@ -163,7 +163,7 @@ describe("ApplicantRepository", () => {
     it("creates applicant with a valid section with a title and a text", async () => {
       const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       const sectionData = { title: "title", text: "text", displayOrder: 1 };
-      await SectionRepository.update([sectionData], applicant);
+      await ApplicantKnowledgeSectionRepository.update([sectionData], applicant);
       const [section] = await applicant.getSections();
       expect(section).toBeObjectContaining(sectionData);
     });

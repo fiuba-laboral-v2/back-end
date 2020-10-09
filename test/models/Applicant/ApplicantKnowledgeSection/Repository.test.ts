@@ -1,10 +1,10 @@
 import { ApplicantRepository } from "$models/Applicant";
-import { SectionRepository } from "$models/Applicant/ApplicantKnowledgeSection";
+import { ApplicantKnowledgeSectionRepository } from "$models/Applicant/ApplicantKnowledgeSection";
 import { UserRepository } from "$models/User";
 import { Applicant, ApplicantKnowledgeSection } from "$models";
 import { DniGenerator } from "$generators/DNI";
 
-describe("Section model", () => {
+describe("ApplicantKnowledgeSectionRepository", () => {
   let applicant: Applicant;
 
   beforeAll(async () => {
@@ -32,7 +32,7 @@ describe("Section model", () => {
       displayOrder: 1
     };
 
-    await SectionRepository.update([sectionData], applicant);
+    await ApplicantKnowledgeSectionRepository.update([sectionData], applicant);
     const [section] = await applicant.getSections();
 
     expect(section).toHaveProperty("uuid");
@@ -71,8 +71,8 @@ describe("Section model", () => {
       text: "new text",
       displayOrder: 1
     };
-    await SectionRepository.update([params], applicant);
-    const sections = await SectionRepository.update([newParams], applicant);
+    await ApplicantKnowledgeSectionRepository.update([params], applicant);
+    const sections = await ApplicantKnowledgeSectionRepository.update([newParams], applicant);
     expect(sections).toHaveLength(1);
     expect(sections[0]).toMatchObject(newParams);
   });
@@ -87,7 +87,7 @@ describe("Section model", () => {
       }
     ];
 
-    await SectionRepository.update(params, applicant);
+    await ApplicantKnowledgeSectionRepository.update(params, applicant);
     const [firstSection] = await applicant.getSections();
 
     const newParams = [
@@ -99,7 +99,7 @@ describe("Section model", () => {
       }
     ];
 
-    await SectionRepository.update(newParams, applicant);
+    await ApplicantKnowledgeSectionRepository.update(newParams, applicant);
     const [section] = await applicant.getSections();
 
     expect(section).toHaveProperty("uuid");
@@ -125,7 +125,7 @@ describe("Section model", () => {
       }
     ];
 
-    await SectionRepository.update(params, applicant);
+    await ApplicantKnowledgeSectionRepository.update(params, applicant);
     const [firstSection] = await applicant.getSections();
 
     const newParams = [
@@ -142,7 +142,7 @@ describe("Section model", () => {
       }
     ];
 
-    await SectionRepository.update(newParams, applicant);
+    await ApplicantKnowledgeSectionRepository.update(newParams, applicant);
     const sections = await applicant.getSections();
 
     expect(sections.map(({ title }) => title)).toEqual(["New title", "third section"]);

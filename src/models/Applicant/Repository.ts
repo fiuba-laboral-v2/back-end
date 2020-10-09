@@ -5,7 +5,7 @@ import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedI
 import { ApplicantCareersRepository } from "./ApplicantCareer";
 import { ApplicantCapabilityRepository } from "../ApplicantCapability";
 import { ApplicantApprovalEventRepository } from "./ApplicantApprovalEvent";
-import { SectionRepository } from "./ApplicantKnowledgeSection";
+import { ApplicantKnowledgeSectionRepository } from "./ApplicantKnowledgeSection";
 import { ApplicantExperienceSectionRepository } from "./ApplicantExperienceSection";
 import { ApplicantLinkRepository } from "./Link";
 import { UserRepository } from "../User";
@@ -63,7 +63,7 @@ export const ApplicantRepository = {
       const user = await applicant.getUser();
       await applicant.set({ description });
       await UserRepository.update(user, userAttributes, transaction);
-      await SectionRepository.update(sections, applicant, transaction);
+      await ApplicantKnowledgeSectionRepository.update(sections, applicant, transaction);
       await ApplicantExperienceSectionRepository.update({
         sections: experienceSections,
         applicant,

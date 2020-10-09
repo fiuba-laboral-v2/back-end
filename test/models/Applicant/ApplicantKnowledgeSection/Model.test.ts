@@ -1,7 +1,7 @@
 import { ValidationError } from "sequelize";
 import { ApplicantKnowledgeSection } from "$models";
 
-describe("Section model", () => {
+describe("ApplicantKnowledgeSection", () => {
   const applicantUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
 
   it("should create a valid section with a title and a text", async () => {
