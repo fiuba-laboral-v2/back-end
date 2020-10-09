@@ -1,6 +1,6 @@
 import { UniqueConstraintError, ValidationError } from "sequelize";
 import { Applicant, ApplicantExperienceSection } from "$models";
-import { TSection } from "$models/Applicant";
+import { ISection } from "$models/Applicant";
 import { UserRepository } from "$models/User";
 import { CareerRepository } from "$models/Career";
 import { ApplicantExperienceSectionRepository } from "$models/Applicant/ApplicantExperienceSection";
@@ -23,7 +23,7 @@ describe("ApplicantExperienceSectionRepository", () => {
     applicant
   }: {
     sections: ApplicantExperienceSection[];
-    sectionsData: TSection[];
+    sectionsData: ISection[];
     applicant: Applicant;
   }) => {
     expect(sections).toEqual(
@@ -37,7 +37,7 @@ describe("ApplicantExperienceSectionRepository", () => {
     );
   };
 
-  const expectToUpdateNewSections = async (sectionsData: TSection[]) => {
+  const expectToUpdateNewSections = async (sectionsData: ISection[]) => {
     const sections = await ApplicantExperienceSectionRepository.update({
       sections: sectionsData,
       applicant: student

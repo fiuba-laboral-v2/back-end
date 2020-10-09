@@ -1,9 +1,9 @@
 import { Applicant, ApplicantKnowledgeSection } from "$models";
-import { TSection } from "../Interface";
+import { ISection } from "../Interface";
 import { Transaction } from "sequelize";
 
 export const ApplicantKnowledgeSectionRepository = {
-  update: async (sections: TSection[], applicant: Applicant, transaction?: Transaction) => {
+  update: async (sections: ISection[], applicant: Applicant, transaction?: Transaction) => {
     await ApplicantKnowledgeSection.destroy({
       where: {
         applicantUuid: applicant.uuid
