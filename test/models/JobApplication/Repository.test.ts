@@ -296,6 +296,39 @@ describe("JobApplicationRepository", () => {
     });
   });
 
+  describe("findLatest", () => {
+    it("returns the latest job applications first", async () => {
+      const itemsPerPage = 2;
+      mockItemsPerPage(itemsPerPage);
+
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const anotherCompany = await CompanyGenerator.instance.withMinimumData();
+      const Offer1 = await OfferGenerator.instance.forStudents({ companyUuid });
+      const Offer2 = await OfferGenerator.instance.forGraduates({ companyUuid });
+      const Offer3 = await OfferGenerator.instance.forStudentsAndGraduates({
+        companyUuid: anotherCompany.uuid
+      });
+
+      await JobApplicationRepository.apply(studentAndGraduate, Offer1);
+      await JobApplicationRepository.apply(studentAndGraduate, Offer2);
+      await JobApplicationRepository.apply(studentAndGraduate, Offer3);
+      const jobApplications = await JobApplicationRepository.findLatest();
+      expect(jobApplications.shouldFetchMore).toEqual(true);
+      expect(jobApplications.results).toEqual([
+        expect.objectContaining({
+          offerUuid: Offer3.uuid,
+          applicantUuid: studentAndGraduate.uuid,
+          approvalStatus: ApprovalStatus.pending
+        }),
+        expect.objectContaining({
+          offerUuid: Offer2.uuid,
+          applicantUuid: studentAndGraduate.uuid,
+          approvalStatus: ApprovalStatus.pending
+        })
+      ]);
+    });
+  });
+
   describe("findByUuid", () => {
     it("return a jobApplication By Uuid", async () => {
       const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
