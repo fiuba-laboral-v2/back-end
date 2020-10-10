@@ -3,7 +3,7 @@ import { client } from "$test/graphql/ApolloTestClient";
 import { ApolloServerTestClient } from "apollo-server-testing";
 
 import { UserRepository } from "$models/User";
-import { Admin, Company, JobApplication } from "$models";
+import { Admin, JobApplication } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
@@ -11,15 +11,13 @@ import { JobApplicationRepository } from "$models/JobApplication";
 
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
-import { OfferGenerator } from "$generators/Offer";
 import { AdminGenerator } from "$generators/Admin";
-import { ApplicantGenerator } from "$generators/Applicant";
 import { TestClientGenerator } from "$generators/TestClient";
-import { CompanyGenerator } from "$generators/Company";
 
 import { range } from "lodash";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import { Secretary } from "$src/models/Admin";
+import { JobApplicationGenerator } from "$test/generators/JobApplication";
 
 const GET_JOB_APPLICATIONS = gql`
   query getJobApplications($updatedBeforeThan: PaginatedInput) {
@@ -63,16 +61,12 @@ describe("getJobApplications", () => {
     apolloClient.query({ query: GET_JOB_APPLICATIONS });
 
   const createJobApplication = async (status: ApprovalStatus) => {
-    const company = await CompanyGenerator.instance.withCompleteData();
-    const applicant = await ApplicantGenerator.instance.student();
-    const offer = await OfferGenerator.instance.forStudents({ companyUuid: company.uuid });
-    const { uuid } = await JobApplicationRepository.apply(applicant, offer);
-    const jobApplication = await JobApplicationRepository.updateApprovalStatus({
-      uuid,
+    const jobApplication = await JobApplicationGenerator.instance.updatedWithStatus({
       admin,
       status
     });
-    return { jobApplication, offer, applicant, company };
+
+    return { jobApplication };
   };
 
   describe("when the input is valid", () => {
@@ -80,12 +74,13 @@ describe("getJobApplications", () => {
       const { apolloClient } = await TestClientGenerator.admin({ secretary: Secretary.extension });
       await createJobApplication(ApprovalStatus.rejected);
       await createJobApplication(ApprovalStatus.pending);
-      const { jobApplication, offer, applicant, company } = await createJobApplication(
-        ApprovalStatus.approved
-      );
+      const { jobApplication } = await createJobApplication(ApprovalStatus.approved);
 
       const { data } = await apolloClient.query({ query: GET_JOB_APPLICATIONS });
 
+      const applicant = await jobApplication.getApplicant();
+      const offer = await jobApplication.getOffer();
+      const company = await offer.getCompany();
       const user = await applicant.getUser();
       expect(data!.getJobApplications.shouldFetchMore).toEqual(false);
       expect(data!.getJobApplications.results).toHaveLength(3);
@@ -114,22 +109,16 @@ describe("getJobApplications", () => {
     describe("pagination", () => {
       let applicationsByDescUpdatedAt: JobApplication[] = [];
       let apolloClient: ApolloServerTestClient;
-      let company: Company;
 
       beforeAll(async () => {
         await JobApplicationRepository.truncate();
 
         const result = await TestClientGenerator.admin({ secretary: Secretary.extension });
         apolloClient = result.apolloClient;
-        company = await CompanyGenerator.instance.withCompleteData();
 
-        const offer = await OfferGenerator.instance.forStudents({ companyUuid: company.uuid });
         for (const _ of range(15)) {
-          const studentAndGraduate = await ApplicantGenerator.instance.studentAndGraduate();
-          const { uuid } = await JobApplicationRepository.apply(studentAndGraduate, offer);
           applicationsByDescUpdatedAt.push(
-            await JobApplicationRepository.updateApprovalStatus({
-              uuid,
+            await JobApplicationGenerator.instance.updatedWithStatus({
               admin,
               status: ApprovalStatus.approved
             })
@@ -192,6 +181,24 @@ describe("getJobApplications", () => {
 
       it("returns an error if current user is not an admin", async () => {
         const { apolloClient } = await TestClientGenerator.user();
+        const { errors } = await performQuery(apolloClient);
+
+        expect(errors![0].extensions!.data).toEqual({
+          errorType: UnauthorizedError.name
+        });
+      });
+
+      it("returns an error if current user is a company user", async () => {
+        const { apolloClient } = await TestClientGenerator.company();
+        const { errors } = await performQuery(apolloClient);
+
+        expect(errors![0].extensions!.data).toEqual({
+          errorType: UnauthorizedError.name
+        });
+      });
+
+      it("returns an error if current user is an applicant", async () => {
+        const { apolloClient } = await TestClientGenerator.company();
         const { errors } = await performQuery(apolloClient);
 
         expect(errors![0].extensions!.data).toEqual({
