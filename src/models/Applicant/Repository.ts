@@ -5,7 +5,8 @@ import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedI
 import { ApplicantCareersRepository } from "./ApplicantCareer";
 import { ApplicantCapabilityRepository } from "../ApplicantCapability";
 import { ApplicantApprovalEventRepository } from "./ApplicantApprovalEvent";
-import { SectionRepository } from "./Section";
+import { ApplicantKnowledgeSectionRepository } from "./ApplicantKnowledgeSection";
+import { ApplicantExperienceSectionRepository } from "./ApplicantExperienceSection";
 import { ApplicantLinkRepository } from "./Link";
 import { UserRepository } from "../User";
 import { ApprovalStatus } from "../ApprovalStatus";
@@ -51,7 +52,8 @@ export const ApplicantRepository = {
     user: userAttributes = {},
     description,
     uuid,
-    sections = [],
+    knowledgeSections = [],
+    experienceSections = [],
     links = [],
     capabilities: newCapabilities = [],
     careers = []
@@ -61,7 +63,12 @@ export const ApplicantRepository = {
       const user = await applicant.getUser();
       await applicant.set({ description });
       await UserRepository.update(user, userAttributes, transaction);
-      await SectionRepository.update(sections, applicant, transaction);
+      await ApplicantKnowledgeSectionRepository.update(knowledgeSections, applicant, transaction);
+      await ApplicantExperienceSectionRepository.update({
+        sections: experienceSections,
+        applicant,
+        transaction
+      });
       await ApplicantLinkRepository.update(links, applicant, transaction);
       await ApplicantCareersRepository.update(careers, applicant, transaction);
       await ApplicantCapabilityRepository.update(newCapabilities, applicant, transaction);

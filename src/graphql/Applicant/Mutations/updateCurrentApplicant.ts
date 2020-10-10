@@ -1,7 +1,8 @@
 import { Int, List, String } from "$graphql/fieldTypes";
 import { GraphQLApplicant } from "../Types/GraphQLApplicant";
 import { GraphQLApplicantCareerInput } from "../Types/GraphQLApplicantCareerInput";
-import { GraphQLSectionInput } from "../Types/Section";
+import { GraphQLApplicantKnowledgeSectionInputType } from "../Types/ApplicantKnowledgeSection";
+import { GraphQLApplicantExperienceSectionInputType } from "../Types/ApplicantExperienceSection";
 import { GraphQLUserUpdateInput } from "$graphql/User/Types/GraphQLUserUpdateInput";
 import { ApplicantRepository, IApplicantEditable } from "$models/Applicant";
 import { GraphQLLinkInput } from "../Types/Link";
@@ -25,8 +26,11 @@ export const updateCurrentApplicant = {
     capabilities: {
       type: List(String)
     },
-    sections: {
-      type: List(GraphQLSectionInput)
+    knowledgeSections: {
+      type: List(GraphQLApplicantKnowledgeSectionInputType)
+    },
+    experienceSections: {
+      type: List(GraphQLApplicantExperienceSectionInputType)
     },
     links: {
       type: List(GraphQLLinkInput)

@@ -4,7 +4,8 @@ import { ID, Int, List, nonNull, String } from "$graphql/fieldTypes";
 import { GraphQLUser } from "$graphql/User/Types/GraphQLUser";
 import { GraphQLCapability } from "$graphql/Capability/Types/Capability";
 import { GraphQLApplicantCareer } from "./GraphQLApplicantCareer";
-import { GraphQLSection } from "./Section";
+import { GraphQLApplicantKnowledgeSectionType } from "./ApplicantKnowledgeSection";
+import { GraphQLApplicantExperienceSectionType } from "./ApplicantExperienceSection";
 import { GraphQLLink } from "./Link";
 import { Applicant } from "$models";
 import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
@@ -42,9 +43,13 @@ export const GraphQLApplicant = new GraphQLObjectType<Applicant>({
       type: nonNull(List(GraphQLCapability)),
       resolve: applicant => applicant.getCapabilities()
     },
-    sections: {
-      type: nonNull(List(GraphQLSection)),
-      resolve: applicant => applicant.getSections()
+    knowledgeSections: {
+      type: nonNull(List(GraphQLApplicantKnowledgeSectionType)),
+      resolve: applicant => applicant.getKnowledgeSections()
+    },
+    experienceSections: {
+      type: nonNull(List(GraphQLApplicantExperienceSectionType)),
+      resolve: applicant => applicant.getExperienceSections()
     },
     links: {
       type: nonNull(List(GraphQLLink)),

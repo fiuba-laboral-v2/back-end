@@ -1,0 +1,1 @@
+export { ApplicantKnowledgeSectionRepository } from "./Repository";

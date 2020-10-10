@@ -10,7 +10,6 @@ import {
 } from "sequelize-typescript";
 import {
   ENUM,
-  HasManyCreateAssociationMixin,
   HasManyGetAssociationsMixin,
   HasOneGetAssociationMixin,
   INTEGER,
@@ -27,7 +26,8 @@ import {
   Capability,
   Career,
   JobApplication,
-  Section,
+  ApplicantKnowledgeSection,
+  ApplicantExperienceSection,
   User
 } from "$models";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
@@ -76,8 +76,11 @@ export class Applicant extends Model<Applicant> {
   @BelongsTo(() => User, "userUuid")
   public user: User;
 
-  @HasMany(() => Section)
-  public sections: Section[];
+  @HasMany(() => ApplicantKnowledgeSection)
+  public knowledgeSections: ApplicantKnowledgeSection[];
+
+  @HasMany(() => ApplicantExperienceSection)
+  public experienceSections: ApplicantExperienceSection[];
 
   @HasMany(() => ApplicantLink)
   public links: ApplicantLink[];
@@ -99,17 +102,12 @@ export class Applicant extends Model<Applicant> {
 
   public getCareers: HasManyGetAssociationsMixin<Career>;
   public getUser: HasOneGetAssociationMixin<User>;
-
   public getCapabilities: HasManyGetAssociationsMixin<Capability>;
   public getApplicantCareers: HasManyGetAssociationsMixin<ApplicantCareer>;
-
-  public getSections: HasManyGetAssociationsMixin<Section>;
-  public createSection: HasManyCreateAssociationMixin<Section>;
-
+  public getKnowledgeSections: HasManyGetAssociationsMixin<ApplicantKnowledgeSection>;
+  public getExperienceSections: HasManyGetAssociationsMixin<ApplicantExperienceSection>;
   public getLinks: HasManyGetAssociationsMixin<ApplicantLink>;
-
   public getJobApplications: HasManyGetAssociationsMixin<JobApplication>;
-
   public getApprovalEvents: HasManyGetAssociationsMixin<ApplicantApprovalEvent>;
 
   public async getType() {

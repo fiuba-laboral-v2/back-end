@@ -9,6 +9,7 @@ import {
   ApplicantCapability,
   ApplicantCareer,
   ApplicantLink,
+  ApplicantExperienceSection,
   Capability,
   Career,
   Company,
@@ -22,7 +23,7 @@ import {
   OfferCareer,
   OfferSection,
   OfferApprovalEvent,
-  Section,
+  ApplicantKnowledgeSection,
   User
 } from "$models";
 
@@ -30,8 +31,9 @@ const models = [
   Admin,
   Applicant,
   ApplicantApprovalEvent,
-  Section,
+  ApplicantKnowledgeSection,
   ApplicantLink,
+  ApplicantExperienceSection,
   JobApplication,
   JobApplicationApprovalEvent,
   Career,
