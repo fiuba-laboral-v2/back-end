@@ -4,8 +4,11 @@ import { Transaction } from "sequelize";
 
 export type SectionType = typeof ApplicantExperienceSection | typeof ApplicantKnowledgeSection;
 
-export interface IUpdate {
+export interface IUpdateSectionModel extends IUpdateProps {
   modelClass: SectionType;
+}
+
+export interface IUpdateProps {
   sections: ISection[];
   applicant: Applicant;
   transaction?: Transaction;

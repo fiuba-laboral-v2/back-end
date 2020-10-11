@@ -1,15 +1,8 @@
-import { Applicant, ApplicantKnowledgeSection } from "$models";
-import { SectionRepository } from "$models/Applicant/Section";
-import { ISection } from "../Interface";
-import { Transaction } from "sequelize";
+import { ApplicantKnowledgeSection } from "$models";
+import { SectionRepository, IUpdateProps } from "$models/Applicant/Section";
 
 export const ApplicantKnowledgeSectionRepository = {
-  update: async (sections: ISection[], applicant: Applicant, transaction?: Transaction) =>
-    SectionRepository.update({
-      modelClass: ApplicantKnowledgeSection,
-      sections,
-      applicant,
-      transaction
-    }),
+  update: async (updateArguments: IUpdateProps) =>
+    SectionRepository.update({ modelClass: ApplicantKnowledgeSection, ...updateArguments }),
   truncate: () => SectionRepository.truncate(ApplicantKnowledgeSection)
 };

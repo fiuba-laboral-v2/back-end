@@ -1,8 +1,8 @@
 import { Applicant } from "$models";
-import { IUpdate, SectionType } from "./Interfaces";
+import { IUpdateSectionModel, SectionType } from "./Interfaces";
 
 export const SectionRepository = {
-  update: async ({ modelClass, sections, applicant, transaction }: IUpdate) => {
+  update: async ({ modelClass, sections, applicant, transaction }: IUpdateSectionModel) => {
     await modelClass.destroy({
       where: { applicantUuid: applicant.uuid },
       transaction
