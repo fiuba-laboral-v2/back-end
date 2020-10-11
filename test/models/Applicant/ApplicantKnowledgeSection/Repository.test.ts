@@ -22,7 +22,10 @@ describe("ApplicantKnowledgeSectionRepository", () => {
       displayOrder: 1
     };
 
-    await ApplicantKnowledgeSectionRepository.update([sectionData], applicant);
+    await ApplicantKnowledgeSectionRepository.update({
+      sections: [sectionData],
+      applicant
+    });
     const [section] = await applicant.getKnowledgeSections();
     expect(section).toBeObjectContaining({
       uuid: expect.stringMatching(UUID_REGEX),
@@ -61,14 +64,20 @@ describe("ApplicantKnowledgeSectionRepository", () => {
       text: "new text",
       displayOrder: 1
     };
-    await ApplicantKnowledgeSectionRepository.update([params], applicant);
-    const sections = await ApplicantKnowledgeSectionRepository.update([newParams], applicant);
+    await ApplicantKnowledgeSectionRepository.update({
+      sections: [params],
+      applicant
+    });
+    const sections = await ApplicantKnowledgeSectionRepository.update({
+      sections: [newParams],
+      applicant
+    });
     expect(sections).toEqual([expect.objectContaining(newParams)]);
   });
 
   it("updates a valid section", async () => {
-    await ApplicantKnowledgeSectionRepository.update(
-      [
+    await ApplicantKnowledgeSectionRepository.update({
+      sections: [
         {
           title: "title",
           text: "text",
@@ -76,7 +85,7 @@ describe("ApplicantKnowledgeSectionRepository", () => {
         }
       ],
       applicant
-    );
+    });
     const [firstSection] = await applicant.getKnowledgeSections();
 
     const newParams = {
@@ -86,7 +95,7 @@ describe("ApplicantKnowledgeSectionRepository", () => {
       displayOrder: 1
     };
 
-    await ApplicantKnowledgeSectionRepository.update([newParams], applicant);
+    await ApplicantKnowledgeSectionRepository.update({ sections: [newParams], applicant });
     const [section] = await applicant.getKnowledgeSections();
 
     expect(section).toBeObjectContaining({
@@ -109,7 +118,10 @@ describe("ApplicantKnowledgeSectionRepository", () => {
       }
     ];
 
-    const initialSections = await ApplicantKnowledgeSectionRepository.update(params, applicant);
+    const initialSections = await ApplicantKnowledgeSectionRepository.update({
+      sections: params,
+      applicant
+    });
     expect(initialSections).toEqual(
       expect.arrayContaining(params.map(data => expect.objectContaining(data)))
     );
@@ -130,7 +142,7 @@ describe("ApplicantKnowledgeSectionRepository", () => {
       }
     ];
 
-    await ApplicantKnowledgeSectionRepository.update(newParams, applicant);
+    await ApplicantKnowledgeSectionRepository.update({ sections: newParams, applicant });
     const sections = await applicant.getKnowledgeSections();
 
     expect(sections).toEqual(

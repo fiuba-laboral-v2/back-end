@@ -163,7 +163,7 @@ describe("ApplicantRepository", () => {
     it("creates applicant with a valid knowledge section", async () => {
       const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
       const sectionData = { title: "title", text: "text", displayOrder: 1 };
-      await ApplicantKnowledgeSectionRepository.update([sectionData], applicant);
+      await ApplicantKnowledgeSectionRepository.update({ sections: [sectionData], applicant });
       const [section] = await applicant.getKnowledgeSections();
       expect(section).toBeObjectContaining(sectionData);
     });
