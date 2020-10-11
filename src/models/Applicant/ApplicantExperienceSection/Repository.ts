@@ -1,27 +1,10 @@
 import { Applicant, ApplicantExperienceSection } from "$models";
-import { IUpdate } from "./Interfaces";
+import { SectionRepository, IUpdateProps } from "$models/Applicant/Section";
 
 export const ApplicantExperienceSectionRepository = {
-  update: async ({ sections, applicant, transaction }: IUpdate) => {
-    await ApplicantExperienceSection.destroy({
-      where: { applicantUuid: applicant.uuid },
-      transaction
-    });
-
-    return ApplicantExperienceSection.bulkCreate(
-      sections.map(section => ({ ...section, applicantUuid: applicant.uuid })),
-      {
-        transaction,
-        returning: true,
-        validate: true
-      }
-    );
-  },
+  update: async (updateArguments: IUpdateProps) =>
+    SectionRepository.update({ modelClass: ApplicantExperienceSection, ...updateArguments }),
   findByApplicant: (applicant: Applicant) =>
-    ApplicantExperienceSection.findAll({
-      where: {
-        applicantUuid: applicant.uuid
-      }
-    }),
-  truncate: () => ApplicantExperienceSection.destroy({ truncate: true })
+    SectionRepository.findByApplicant(applicant, ApplicantExperienceSection),
+  truncate: () => SectionRepository.truncate(ApplicantExperienceSection)
 };

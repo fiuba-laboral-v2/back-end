@@ -242,6 +242,7 @@ export const defaultTranslations = {
   adminAdminListMainTitle: [{ key: "title", value: "Administradores" }],
   adminApplicantMainTitle: [{ key: "title", value: "Postulante" }],
   adminApplicantListMainTitle: [{ key: "title", value: "Postulantes" }],
+  adminJobApplicationsListMainTitle: [{ key: "title", value: "Postulaciones" }],
   adminJobApplicationMainTitle: [{ key: "title", value: "Postulación" }],
   adminOfferMainTitle: [{ key: "title", value: "Oferta Laboral" }],
   adminOfferDetails: [{ key: "cuit", value: "CUIT de la empresa:" }],
@@ -279,6 +280,14 @@ export const defaultTranslations = {
     { key: "hoursPerDay", value: "Horas" },
     { key: "salary", value: "Salario" },
     { key: "careers", value: "Carreras" },
+    { key: "approvalStatus", value: "Estado" },
+    { key: "updatedAt", value: "Última actualización" }
+  ],
+  adminJobApplicationsListHeader: [
+    { key: "companyName", value: "Empresa" },
+    { key: "cuit", value: "CUIT de Empresa" },
+    { key: "applicantName", value: "Postulante" },
+    { key: "padron", value: "Padrón" },
     { key: "approvalStatus", value: "Estado" },
     { key: "updatedAt", value: "Última actualización" }
   ],
