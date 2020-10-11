@@ -103,8 +103,9 @@ export const defaultTranslations = {
     { key: "passwordConfirm", value: "Confirmar contraseña" }
   ],
   contactFormSection: [
-    { key: "title", value: "Contacto" },
-    { key: "email", value: "Email de la empresa" },
+    { key: "title", value: "Datos de contacto" },
+    { key: "subtitle", value: "Para alumnos y graduados" },
+    { key: "email", value: "Email" },
     { key: "website", value: "Sitio web" }
   ],
   companyDataFormSection: [
