@@ -124,10 +124,6 @@ export const defaultTranslations = {
     { key: "title", value: "Crear tu cuenta" },
     { key: "submit", value: "Guardar" }
   ],
-  companyCredentialsFields: [
-    { key: "password", value: "Contraseña" },
-    { key: "passwordConfirm", value: "Confirmar contraseña" }
-  ],
   companiesList: [{ key: "title", value: "Empresas" }],
   companyProfileTitle: [
     { key: "title", value: "Perfil de mi empresa" },
