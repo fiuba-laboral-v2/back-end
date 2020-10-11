@@ -102,7 +102,7 @@ export const defaultTranslations = {
     { key: "password", value: "Contraseña" },
     { key: "passwordConfirm", value: "Confirmar contraseña" }
   ],
-  contactFormSection: [
+  contactInformationFormSection: [
     { key: "title", value: "Datos de contacto" },
     { key: "subtitle", value: "Para alumnos y graduados" },
     { key: "email", value: "Email" },
