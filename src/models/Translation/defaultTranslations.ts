@@ -1,9 +1,4 @@
 export const defaultTranslations = {
-  userFields: [
-    { key: "email", value: "Email" },
-    { key: "name", value: "Nombre" },
-    { key: "surname", value: "Apellido" }
-  ],
   userEditFields: [
     { key: "name", value: "Nombre" },
     { key: "surname", value: "Apellido" }
