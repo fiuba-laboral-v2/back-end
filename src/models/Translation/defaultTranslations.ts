@@ -107,6 +107,19 @@ export const defaultTranslations = {
     { key: "password", value: "Contraseña" },
     { key: "passwordConfirm", value: "Confirmar contraseña" }
   ],
+  contactFormSection: [
+    { key: "title", value: "Contacto" },
+    { key: "email", value: "Email de la empresa" },
+    { key: "website", value: "Sitio web" }
+  ],
+  companyDataFormSection: [
+    { key: "title", value: "Datos de la empresa" },
+    { key: "companyName", value: "Nombre de la empresa" },
+    { key: "slogan", value: "Slogan" },
+    { key: "description", value: "Descripción" },
+    { key: "businessName", value: "Razón social" },
+    { key: "cuit", value: "CUIT" }
+  ],
   companySignUp: [
     { key: "title", value: "Crear tu cuenta" },
     { key: "submit", value: "Guardar" }
