@@ -1,9 +1,4 @@
 export const defaultTranslations = {
-  userFields: [
-    { key: "email", value: "Email" },
-    { key: "name", value: "Nombre" },
-    { key: "surname", value: "Apellido" }
-  ],
   userEditFields: [
     { key: "name", value: "Nombre" },
     { key: "surname", value: "Apellido" }
@@ -98,13 +93,32 @@ export const defaultTranslations = {
     { key: "title", value: "Editar el perfil de tu empresa" },
     { key: "submit", value: "Guardar" }
   ],
+  companyUserDataFormSection: [
+    { key: "title", value: "Datos del usuario" },
+    { key: "email", value: "Email" },
+    { key: "emailClarification", value: "Para notificaciones y login" },
+    { key: "name", value: "Nombre" },
+    { key: "surname", value: "Apellido" },
+    { key: "password", value: "Contraseña" },
+    { key: "passwordConfirm", value: "Confirmar contraseña" }
+  ],
+  contactInformationFormSection: [
+    { key: "title", value: "Datos de contacto" },
+    { key: "subtitle", value: "Para alumnos y graduados" },
+    { key: "email", value: "Email" },
+    { key: "website", value: "Sitio web" }
+  ],
+  companyDataFormSection: [
+    { key: "title", value: "Datos de la empresa" },
+    { key: "companyName", value: "Nombre de la empresa" },
+    { key: "slogan", value: "Slogan" },
+    { key: "description", value: "Descripción" },
+    { key: "businessName", value: "Razón social" },
+    { key: "cuit", value: "CUIT" }
+  ],
   companySignUp: [
     { key: "title", value: "Crear tu cuenta" },
     { key: "submit", value: "Guardar" }
-  ],
-  companyCredentialsFields: [
-    { key: "password", value: "Contraseña" },
-    { key: "passwordConfirm", value: "Confirmar contraseña" }
   ],
   companiesList: [{ key: "title", value: "Empresas" }],
   companyProfileTitle: [
