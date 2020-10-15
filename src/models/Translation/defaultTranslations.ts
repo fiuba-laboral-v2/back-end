@@ -78,7 +78,6 @@ export const defaultTranslations = {
     { key: "confirmDialogCancel", value: "Cancelar" },
     { key: "confirmDialogConfirm", value: "Confirmar" }
   ],
-  CompanyLogoInput: [{ key: "uploadLogo", value: "Subir logo" }],
   companyFields: [
     { key: "cuit", value: "CUIT" },
     { key: "email", value: "Email de la empresa" },
