@@ -238,7 +238,7 @@ export const defaultTranslations = {
     { key: "extension", value: "Extensión" }
   ],
   adminCompanyMainTitle: [{ key: "title", value: "Empresa" }],
-  adminCompanyListMainTitle: [{ key: "title", value: "Empresa" }],
+  adminCompanyListMainTitle: [{ key: "title", value: "Empresas" }],
   adminOfferListMainTitle: [{ key: "title", value: "Ofertas laborales" }],
   adminAdminListMainTitle: [{ key: "title", value: "Administradores" }],
   adminApplicantMainTitle: [{ key: "title", value: "Postulante" }],
