@@ -50,7 +50,7 @@ export const defaultTranslations = {
   ],
   careerSelector: [
     { key: "career", value: "Carrera" },
-    { key: "isGraduate", value: "Graduado?" },
+    { key: "isGraduate", value: "Graduado" },
     { key: "approvedSubjectCount", value: "Materias aprobadas" },
     { key: "currentCareerYear", value: "Año en curso" },
     { key: "withoutCBC", value: "Sin incluir CBC" }
