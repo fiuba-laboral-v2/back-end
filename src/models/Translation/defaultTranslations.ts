@@ -284,7 +284,7 @@ export const defaultTranslations = {
   ],
   adminJobApplicationsListHeader: [
     { key: "companyName", value: "Empresa" },
-    { key: "cuit", value: "CUIT" },
+    { key: "cuit", value: "CUIT de empresa" },
     { key: "applicantName", value: "Postulante" },
     { key: "padron", value: "Padrón" },
     { key: "approvalStatus", value: "Estado" },
