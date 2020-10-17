@@ -277,7 +277,6 @@ export const defaultTranslations = {
   adminOfferListHeader: [
     { key: "companyName", value: "Empresa" },
     { key: "title", value: "Puesto" },
-    { key: "targetApplicantType", value: "Destinatarios" },
     { key: "hoursPerDay", value: "Horas" },
     { key: "salary", value: "Salario" },
     { key: "careers", value: "Carreras" },
