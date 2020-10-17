@@ -50,7 +50,7 @@ export const defaultTranslations = {
   ],
   careerSelector: [
     { key: "career", value: "Carrera" },
-    { key: "isGraduate", value: "Graduado?" },
+    { key: "isGraduate", value: "Graduado" },
     { key: "approvedSubjectCount", value: "Materias aprobadas" },
     { key: "currentCareerYear", value: "Año en curso" },
     { key: "withoutCBC", value: "Sin incluir CBC" }
@@ -78,7 +78,6 @@ export const defaultTranslations = {
     { key: "confirmDialogCancel", value: "Cancelar" },
     { key: "confirmDialogConfirm", value: "Confirmar" }
   ],
-  CompanyLogoInput: [{ key: "uploadLogo", value: "Subir logo" }],
   companyFields: [
     { key: "cuit", value: "CUIT" },
     { key: "email", value: "Email de la empresa" },
@@ -90,7 +89,7 @@ export const defaultTranslations = {
   ],
   editableCompanyProfile: [{ key: "edit", value: "Editar" }],
   editMyCompanyProfile: [
-    { key: "title", value: "Editar el perfil de tu empresa" },
+    { key: "title", value: "Editar empresa" },
     { key: "submit", value: "Guardar" }
   ],
   companyUserDataFormSection: [
@@ -238,7 +237,7 @@ export const defaultTranslations = {
     { key: "extension", value: "Extensión" }
   ],
   adminCompanyMainTitle: [{ key: "title", value: "Empresa" }],
-  adminCompanyListMainTitle: [{ key: "title", value: "Empresa" }],
+  adminCompanyListMainTitle: [{ key: "title", value: "Empresas" }],
   adminOfferListMainTitle: [{ key: "title", value: "Ofertas laborales" }],
   adminAdminListMainTitle: [{ key: "title", value: "Administradores" }],
   adminApplicantMainTitle: [{ key: "title", value: "Postulante" }],
