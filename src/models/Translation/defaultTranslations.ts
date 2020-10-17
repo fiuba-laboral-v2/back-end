@@ -276,7 +276,6 @@ export const defaultTranslations = {
   adminOfferListHeader: [
     { key: "companyName", value: "Empresa" },
     { key: "title", value: "Puesto" },
-    { key: "targetApplicantType", value: "Destinatarios" },
     { key: "hoursPerDay", value: "Horas" },
     { key: "salary", value: "Salario" },
     { key: "careers", value: "Carreras" },
@@ -285,7 +284,7 @@ export const defaultTranslations = {
   ],
   adminJobApplicationsListHeader: [
     { key: "companyName", value: "Empresa" },
-    { key: "cuit", value: "CUIT de Empresa" },
+    { key: "cuit", value: "CUIT de empresa" },
     { key: "applicantName", value: "Postulante" },
     { key: "padron", value: "Padrón" },
     { key: "approvalStatus", value: "Estado" },
