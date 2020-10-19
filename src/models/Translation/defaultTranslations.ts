@@ -319,6 +319,6 @@ export const defaultTranslations = {
   publishedSince: [{ key: "prefix", value: "Publicado" }],
   list: [{ key: "fetchMore", value: "Ver más" }],
   companySignUpAcceptanceCriteria: [
-    { key: "text", value: "Esta empresa  estará pendiente de aprobación por autoridades de FIUBA" }
+    { key: "text", value: "Esta empresa estará pendiente de aprobación por autoridades de FIUBA" }
   ]
 };
