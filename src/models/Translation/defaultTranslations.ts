@@ -8,6 +8,7 @@ export const defaultTranslations = {
     { key: "registerAsApplicant", value: "Registrarme como alumno" }
   ],
   applicantList: [{ key: "title", value: "Postulantes" }],
+  companyJobApplicationsListTitle: [{ key: "title", value: "Postulantes" }],
   applicantEmptyOfferList: [
     { key: "text", value: "No hay ofertas para los filtros seleccionados" },
     { key: "button", value: "Ver todas" }
@@ -15,6 +16,14 @@ export const defaultTranslations = {
   companyEmptyOfferList: [
     { key: "text", value: "No hay ofertas" },
     { key: "button", value: "Publicar oferta" }
+  ],
+  jobApplicationEmptyOfferList: [
+    { key: "text", value: "No hay postulantes" },
+    { key: "button", value: "Publicar oferta" }
+  ],
+  applicantEmptyCompaniesList: [
+    { key: "text", value: "No hay empresas para los filtros seleccionados" },
+    { key: "button", value: "Ver todas" }
   ],
   applicantProfileDetail: [
     { key: "edit", value: "Editar" },
