@@ -319,16 +319,6 @@ export const defaultTranslations = {
   publishedSince: [{ key: "prefix", value: "Publicado" }],
   list: [{ key: "fetchMore", value: "Ver más" }],
   companySignUpAcceptanceCriteria: [
-    {
-      key: "text",
-      value:
-        "Criterio de aprobación de perfiles de empresas: \n\n" +
-        "* No hacer X cosa  \n" +
-        "* No hacer Y otra cosa" +
-        "* Si hacés Z, te rechazo de una \n" +
-        "* Si te haces sponsor, te apruebo al toque \n\n" +
-        "Ante consultas/reclamos comunicarse a: \n\n" +
-        "queseyo@fi.uba.ar"
-    }
+    { key: "text", value: "Esta empresa  estará pendiente de aprobación por autoridades de FIUBA" }
   ]
 };
