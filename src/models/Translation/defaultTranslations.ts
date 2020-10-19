@@ -325,5 +325,8 @@ export const defaultTranslations = {
   ],
   desktopOnlyOverlay: [{ key: "message", value: "Ampliar la pantalla del navegador" }],
   publishedSince: [{ key: "prefix", value: "Publicado" }],
-  list: [{ key: "fetchMore", value: "Ver más" }]
+  list: [{ key: "fetchMore", value: "Ver más" }],
+  companySignUpAcceptanceCriteria: [
+    { key: "text", value: "Esta empresa estará pendiente de aprobación por autoridades de FIUBA" }
+  ]
 };
