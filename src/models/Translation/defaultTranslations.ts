@@ -337,5 +337,8 @@ export const defaultTranslations = {
   list: [{ key: "fetchMore", value: "Ver más" }],
   companySignUpAcceptanceCriteria: [
     { key: "text", value: "Esta empresa estará pendiente de aprobación por autoridades de FIUBA" }
+  ],
+  companyEditableAcceptanceCriteria: [
+    { key: "text", value: "Esta empresa estará pendiente de aprobación por autoridades de FIUBA" }
   ]
 };
