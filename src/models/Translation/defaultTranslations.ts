@@ -78,6 +78,13 @@ export const defaultTranslations = {
     { key: "student", value: "Alumnos" },
     { key: "both", value: "Alumnos y graduados" }
   ],
+  mainInformationFormSection: [
+    { key: "offerTitle", value: "Título" },
+    { key: "description", value: "Descripción" },
+    { key: "hoursPerDay", value: "Horas por día" },
+    { key: "minimumSalary", value: "Salario mínimo" },
+    { key: "maximumSalary", value: "Salario máximo" }
+  ],
   editOffer: [
     { key: "create", value: "Publicar oferta" },
     { key: "edit", value: "Editar tu oferta" },
