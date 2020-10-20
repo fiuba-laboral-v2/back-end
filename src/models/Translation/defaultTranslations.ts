@@ -85,6 +85,11 @@ export const defaultTranslations = {
     { key: "minimumSalary", value: "Salario mínimo" },
     { key: "maximumSalary", value: "Salario máximo" }
   ],
+  recipientsFormSection: [
+    { key: "careers", value: "Carreras (presione Enter para agregar)" },
+    { key: "title", value: "Destinatarios" },
+    { key: "targetApplicantType", value: "Estado de la carrera" }
+  ],
   editOffer: [
     { key: "create", value: "Publicar oferta" },
     { key: "edit", value: "Editar tu oferta" },
