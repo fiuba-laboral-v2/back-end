@@ -1,15 +1,24 @@
 import { ISection } from "$models/Applicant";
-import { Applicant, ApplicantExperienceSection, ApplicantKnowledgeSection } from "$models";
 import { Transaction } from "sequelize";
+import { Model } from "sequelize-typescript";
 
-export type SectionType = typeof ApplicantExperienceSection | typeof ApplicantKnowledgeSection;
+export type SectionType<Section> = typeof Model & (new (...values) => Section);
 
-export interface IUpdateSectionModel extends IUpdateProps {
-  modelClass: SectionType;
+export type IEntity<T> = { uuid: string } & Model<T>;
+
+export interface IUpdateSectionModel<Section, Entity> extends IUpdateProps {
+  modelClass: SectionType<Section>;
+  entityUuidKey: string;
+  entity: IEntity<Entity>;
+}
+
+export interface IFindByEntity<Section, Entity> {
+  entity: IEntity<Entity>;
+  modelClass: SectionType<Section>;
+  entityUuidKey: string;
 }
 
 export interface IUpdateProps {
   sections: ISection[];
-  applicant: Applicant;
   transaction?: Transaction;
 }

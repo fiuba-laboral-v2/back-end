@@ -1,10 +1,21 @@
 import { Applicant, ApplicantExperienceSection } from "$models";
 import { SectionRepository, IUpdateProps } from "$models/Section";
 
+const entityUuidKey = "applicantUuid";
+
 export const ApplicantExperienceSectionRepository = {
-  update: async (updateArguments: IUpdateProps) =>
-    SectionRepository.update({ modelClass: ApplicantExperienceSection, ...updateArguments }),
+  update: async ({ applicant, ...updateArguments }: IUpdateProps & { applicant: Applicant }) =>
+    SectionRepository.update({
+      modelClass: ApplicantExperienceSection,
+      entity: applicant,
+      entityUuidKey,
+      ...updateArguments
+    }),
   findByApplicant: (applicant: Applicant) =>
-    SectionRepository.findByApplicant(applicant, ApplicantExperienceSection),
+    SectionRepository.findByEntity({
+      modelClass: ApplicantExperienceSection,
+      entity: applicant,
+      entityUuidKey
+    }),
   truncate: () => SectionRepository.truncate(ApplicantExperienceSection)
 };

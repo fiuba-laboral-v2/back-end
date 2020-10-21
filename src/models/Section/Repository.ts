@@ -1,15 +1,17 @@
-import { Applicant } from "$models";
-import { IUpdateSectionModel, SectionType } from "./Interfaces";
+import { IUpdateSectionModel, SectionType, IFindByEntity } from "./Interfaces";
 
 export const SectionRepository = {
-  update: async ({ modelClass, sections, applicant, transaction }: IUpdateSectionModel) => {
-    await modelClass.destroy({
-      where: { applicantUuid: applicant.uuid },
-      transaction
-    });
+  update: async <Section, Entity>({
+    entityUuidKey,
+    modelClass,
+    sections,
+    entity,
+    transaction
+  }: IUpdateSectionModel<Section, Entity>) => {
+    await modelClass.destroy({ where: { [entityUuidKey]: entity.uuid }, transaction });
 
     return modelClass.bulkCreate(
-      sections.map(section => ({ ...section, applicantUuid: applicant.uuid })),
+      sections.map(section => ({ ...section, [entityUuidKey]: entity.uuid })),
       {
         transaction,
         returning: true,
@@ -17,11 +19,11 @@ export const SectionRepository = {
       }
     );
   },
-  findByApplicant: (applicant: Applicant, modelClass: SectionType) =>
-    modelClass.findAll({
-      where: {
-        applicantUuid: applicant.uuid
-      }
-    }),
-  truncate: (modelClass: SectionType) => modelClass.destroy({ truncate: true })
+  findByEntity: <Section, Entity>({
+    entity,
+    modelClass,
+    entityUuidKey
+  }: IFindByEntity<Section, Entity>) =>
+    modelClass.findAll({ where: { [entityUuidKey]: entity.uuid } }),
+  truncate: <Section>(modelClass: SectionType<Section>) => modelClass.destroy({ truncate: true })
 };
