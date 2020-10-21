@@ -86,6 +86,11 @@ export const defaultTranslations = {
     { key: "minimumSalary", value: "Salario mínimo" },
     { key: "maximumSalary", value: "Salario máximo" }
   ],
+  descriptionFormSection: [
+    { key: "title", value: "Descripción" },
+    { key: "sectionTitle", value: "Título" },
+    { key: "sectionContent", value: "Contenido" }
+  ],
   recipientsFormSection: [
     { key: "careers", value: "Carreras (presione Enter para agregar)" },
     { key: "title", value: "Destinatarios" },
