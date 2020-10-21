@@ -65,6 +65,7 @@ export const defaultTranslations = {
     { key: "isGraduate", value: "Graduado/a" },
     { key: "connector", value: "de" }
   ],
+  careersSelector: [{ key: "career", value: "Carrera" }],
   applicantCareerSelector: [
     { key: "career", value: "Carrera" },
     { key: "isGraduate", value: "Graduado" },
