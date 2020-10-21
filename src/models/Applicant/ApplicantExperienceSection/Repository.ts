@@ -1,5 +1,5 @@
 import { Applicant, ApplicantExperienceSection } from "$models";
-import { SectionRepository, IUpdateProps } from "$models/Applicant/Section";
+import { SectionRepository, IUpdateProps } from "$models/Section";
 
 export const ApplicantExperienceSectionRepository = {
   update: async (updateArguments: IUpdateProps) =>
