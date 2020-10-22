@@ -37,6 +37,5 @@ export const editOffer = {
       type: List(GraphQLOfferCareerInput)
     }
   },
-  resolve: async (_: undefined, attributes: IUpdateOffer) =>
-    OfferRepository.update(attributes)
+  resolve: async (_: undefined, attributes: IUpdateOffer) => OfferRepository.update(attributes)
 };
