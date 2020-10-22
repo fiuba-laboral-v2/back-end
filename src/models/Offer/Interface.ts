@@ -9,8 +9,8 @@ export interface ICreateOffer {
   hoursPerDay: number;
   minimumSalary: number;
   maximumSalary: number;
-  sections?: IOfferSection[];
-  careers?: IOfferCareer[];
+  sections: IOfferSection[];
+  careers: IOfferCareer[];
   companyUuid: string;
   targetApplicantType: ApplicantType;
 }

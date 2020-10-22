@@ -41,7 +41,8 @@ describe("OfferRepository", () => {
     const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
     const offerProps = OfferGenerator.data.withObligatoryData({ companyUuid, targetApplicantType });
     const offer = await OfferRepository.create(offerProps);
-    expect(offer).toBeObjectContaining(offerProps);
+    const { careers, sections, ...offerAttributes } = offerProps;
+    expect(offer).toBeObjectContaining(offerAttributes);
   };
 
   describe("Create", () => {
@@ -49,7 +50,8 @@ describe("OfferRepository", () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const offerProps = OfferGenerator.data.withObligatoryData({ companyUuid });
       const offer = await OfferRepository.create(offerProps);
-      expect(offer).toBeObjectContaining(offerProps);
+      const { careers, sections, ...offerAttributes } = offerProps;
+      expect(offer).toBeObjectContaining(offerAttributes);
     });
 
     it("creates a new offer with a targetApplicantType for students", async () => {
@@ -67,13 +69,10 @@ describe("OfferRepository", () => {
     it("creates a new offer with one section", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const attributes = OfferGenerator.data.withObligatoryData({ companyUuid });
-      const offer = await OfferRepository.create({
-        ...attributes,
-        sections: [sectionData]
-      });
-      expect(offer).toBeObjectContaining(attributes);
-      const sections = await offer.getSections();
-      expect(sections).toEqual([expect.objectContaining(sectionData)]);
+      const offer = await OfferRepository.create({ ...attributes, sections: [sectionData] });
+      const { careers, sections, ...offerAttributes } = attributes;
+      expect(offer).toBeObjectContaining(offerAttributes);
+      expect(await offer.getSections()).toEqual([expect.objectContaining(sectionData)]);
     });
 
     it("creates a new offer with one career", async () => {
@@ -84,9 +83,9 @@ describe("OfferRepository", () => {
         careers: [{ careerCode }]
       });
       const offer = await OfferRepository.create(attributes);
-      expect(offer).toBeObjectContaining(omit(attributes, ["careers"]));
-      const careers = await offer.getCareers();
-      expect(careers).toEqual([
+      const { careers, sections, ...offerAttributes } = attributes;
+      expect(offer).toBeObjectContaining(offerAttributes);
+      expect(await offer.getCareers()).toEqual([
         expect.objectContaining({ code: attributes.careers![0].careerCode })
       ]);
     });
@@ -208,7 +207,8 @@ describe("OfferRepository", () => {
         [attributeName]: value
       };
       await OfferRepository.update({ ...newAttributes, uuid });
-      expect(await OfferRepository.findByUuid(uuid)).toBeObjectContaining(newAttributes);
+      const { careers, sections, ...offerAttributes } = newAttributes;
+      expect(await OfferRepository.findByUuid(uuid)).toBeObjectContaining(offerAttributes);
     };
 
     it("updates title", async () => {
@@ -420,7 +420,8 @@ describe("OfferRepository", () => {
       const offerProps = OfferGenerator.data.withObligatoryData({ companyUuid });
       const { uuid: offerUuid } = await OfferRepository.create(offerProps);
       const offer = await OfferRepository.findByUuid(offerUuid);
-      expect(offer).toBeObjectContaining(offerProps);
+      const { careers, sections, ...offerAttributes } = offerProps;
+      expect(offer).toBeObjectContaining(offerAttributes);
     });
 
     it("finds the only offer by companyUuid", async () => {
@@ -430,7 +431,8 @@ describe("OfferRepository", () => {
       const {
         results: [offer]
       } = await OfferRepository.findAll({ companyUuid });
-      expect(offer).toBeObjectContaining(offerProps);
+      const { careers, sections, ...offerAttributes } = offerProps;
+      expect(offer).toBeObjectContaining(offerAttributes);
     });
 
     it("finds only the approved offers targeted for graduates", async () => {
