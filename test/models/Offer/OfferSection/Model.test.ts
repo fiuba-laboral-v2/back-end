@@ -6,13 +6,14 @@ import generateUuid from "uuid/v4";
 import { UUID_REGEX } from "$test/models";
 
 describe("OfferSection", () => {
+  const attributes = {
+    offerUuid: generateUuid(),
+    title: "title",
+    text: "text",
+    displayOrder: 1
+  };
+
   const expectToThrowErrorOnMissingAttribute = async (attribute: string) => {
-    const attributes = {
-      offerUuid: generateUuid(),
-      title: "title",
-      text: "text",
-      displayOrder: 1
-    };
     delete attributes[attribute];
     const section = new OfferSection(attributes);
     await expect(section.validate()).rejects.toThrowErrorWithMessage(
@@ -22,18 +23,12 @@ describe("OfferSection", () => {
   };
 
   it("creates a valid section", async () => {
-    const sectionAttributes = {
-      offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
-      title: "title",
-      text: "text",
-      displayOrder: 1
-    };
-    const section = new OfferSection(sectionAttributes);
+    const section = new OfferSection(attributes);
     await expect(section.validate()).resolves.not.toThrow();
     expect(section).toHaveProperty("uuid");
     expect(section).toBeObjectContaining({
       uuid: expect.stringMatching(UUID_REGEX),
-      ...sectionAttributes
+      ...attributes
     });
   });
 
