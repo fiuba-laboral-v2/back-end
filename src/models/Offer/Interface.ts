@@ -23,10 +23,6 @@ export interface IOfferAttributes extends ICreateOffer {
   companyUuid: string;
 }
 
-export interface IOffer extends IUpdateOffer {
-  companyUuid: string;
-}
-
 export interface IFindAll {
   updatedBeforeThan?: IPaginatedInput;
   companyUuid?: string;

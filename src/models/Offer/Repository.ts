@@ -1,37 +1,41 @@
 import { Database } from "$config";
 import { Op } from "sequelize";
-import { IFindAll, IOffer } from "./Interface";
+
+import { IFindAll, IUpdateOffer } from "./Interface";
+
+import { IOfferSection, OfferSectionRepository } from "./OfferSection";
+import { IOfferCareer } from "./OfferCareer";
+import { OfferApprovalEventRepository } from "./OfferApprovalEvent/Repository";
+
 import { ApplicantType } from "$models/Applicant";
 import { ICreateOffer } from "$models/Offer/Interface";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { IOfferSection } from "./OfferSection";
-import { IOfferCareer } from "./OfferCareer";
-import { OfferApprovalEventRepository } from "./OfferApprovalEvent/Repository";
 import { Secretary } from "$models/Admin";
-import { OfferNotFoundError, OfferNotUpdatedError } from "./Errors";
+import { PaginationQuery } from "$models/PaginationQuery";
 import { Offer, OfferCareer, OfferSection } from "$models";
-import { PaginationQuery } from "../PaginationQuery";
+
+import { OfferNotFoundError, OfferNotUpdatedError } from "./Errors";
 
 export const OfferRepository = {
   create: ({ careers = [], sections = [], ...attributes }: ICreateOffer) => {
     const offer = new Offer(attributes);
     return OfferRepository.save(offer, sections, careers);
   },
-  update: async (offer: IOffer & { uuid: string }) => {
-    const [, [updatedOffer]] = await Offer.update(
-      {
-        extensionApprovalStatus: ApprovalStatus.pending,
-        graduadosApprovalStatus: ApprovalStatus.pending,
-        ...offer
-      },
-      {
-        where: { uuid: offer.uuid },
-        returning: true
-      }
-    );
-    if (!updatedOffer) throw new OfferNotUpdatedError(offer.uuid);
-    return updatedOffer;
-  },
+  update: ({ sections = [], careers = [], uuid, ...offer }: IUpdateOffer) =>
+    Database.transaction(async transaction => {
+      const [, [updatedOffer]] = await Offer.update(
+        {
+          extensionApprovalStatus: ApprovalStatus.pending,
+          graduadosApprovalStatus: ApprovalStatus.pending,
+          ...offer
+        },
+        { where: { uuid }, returning: true, transaction }
+      );
+      if (!updatedOffer) throw new OfferNotUpdatedError(uuid);
+
+      await OfferSectionRepository.update({ offer: updatedOffer, sections, transaction });
+      return updatedOffer;
+    }),
   updateApprovalStatus: async ({
     uuid,
     admin,
