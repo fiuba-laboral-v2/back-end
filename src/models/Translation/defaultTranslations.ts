@@ -99,11 +99,6 @@ export const defaultTranslations = {
   editOffer: [
     { key: "create", value: "Publicar oferta" },
     { key: "edit", value: "Editar tu oferta" },
-    { key: "offerTitle", value: "Título" },
-    { key: "description", value: "Descripción" },
-    { key: "hoursPerDay", value: "Horas por día" },
-    { key: "minimumSalary", value: "Salario mínimo" },
-    { key: "maximumSalary", value: "Salario máximo" },
     { key: "submit", value: "Publicar" },
     { key: "confirmDialogTitle", value: "¿Editar oferta?" },
     {
