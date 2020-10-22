@@ -17,7 +17,7 @@ export class ApplicantExperienceSectionRepository extends SectionRepository {
     return ApplicantExperienceSection;
   }
 
-  protected entityUuidKey() {
+  protected modelUuidKey() {
     return "applicantUuid";
   }
 }

@@ -16,7 +16,7 @@ export class OfferSectionRepository extends SectionRepository {
     return OfferSection;
   }
 
-  protected entityUuidKey() {
+  protected modelUuidKey() {
     return "offerUuid";
   }
 }

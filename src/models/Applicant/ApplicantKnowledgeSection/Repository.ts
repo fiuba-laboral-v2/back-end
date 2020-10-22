@@ -13,7 +13,7 @@ export class ApplicantKnowledgeSectionRepository extends SectionRepository {
     return ApplicantKnowledgeSection;
   }
 
-  protected entityUuidKey() {
+  protected modelUuidKey() {
     return "applicantUuid";
   }
 }
