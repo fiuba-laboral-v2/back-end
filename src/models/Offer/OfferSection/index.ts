@@ -1,1 +1,2 @@
-export { IOfferSection } from "./Interface";
+export * from "./Interface";
+export * from "./Repository";
