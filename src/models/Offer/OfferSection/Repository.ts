@@ -6,10 +6,10 @@ export class OfferSectionRepository extends SectionRepository {
     offer,
     ...updateArguments
   }: IUpdateProps & { offer: Offer }): Promise<OfferSection[]> {
-    return super.updateSection({ entity: offer, ...updateArguments });
+    return super.updateSection({ model: offer, ...updateArguments });
   }
   public findByOffer(offer: Offer): Promise<OfferSection[]> {
-    return super.findByEntity({ entity: offer });
+    return super.findByEntity({ model: offer });
   }
 
   protected modelClass() {

@@ -1,15 +1,15 @@
 import { ISection } from "$models/Applicant";
 import { Transaction } from "sequelize";
-import { Model } from "sequelize-typescript";
+import { Model as SequelizeModel } from "sequelize-typescript";
 
-export type IEntity<T> = { uuid: string } & Model<T>;
+export type IModel<T> = { uuid: string } & SequelizeModel<T>;
 
-export interface IUpdateSectionModel<Entity> extends IUpdateProps {
-  entity: IEntity<Entity>;
+export interface IUpdateSectionModel<Model> extends IUpdateProps {
+  model: IModel<Model>;
 }
 
-export interface IFindByEntity<Entity> {
-  entity: IEntity<Entity>;
+export interface IFindByEntity<Model> {
+  model: IModel<Model>;
 }
 
 export interface IUpdateProps {
