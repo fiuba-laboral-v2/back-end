@@ -65,7 +65,8 @@ export const defaultTranslations = {
     { key: "isGraduate", value: "Graduado/a" },
     { key: "connector", value: "de" }
   ],
-  careerSelector: [
+  careersSelector: [{ key: "career", value: "Carrera" }],
+  applicantCareerSelector: [
     { key: "career", value: "Carrera" },
     { key: "isGraduate", value: "Graduado" },
     { key: "approvedSubjectCount", value: "Materias aprobadas" },
@@ -78,14 +79,26 @@ export const defaultTranslations = {
     { key: "student", value: "Alumnos" },
     { key: "both", value: "Alumnos y graduados" }
   ],
-  editOffer: [
-    { key: "create", value: "Publicar oferta" },
-    { key: "edit", value: "Editar tu oferta" },
+  mainInformationFormSection: [
     { key: "offerTitle", value: "Título" },
     { key: "description", value: "Descripción" },
     { key: "hoursPerDay", value: "Horas por día" },
     { key: "minimumSalary", value: "Salario mínimo" },
-    { key: "maximumSalary", value: "Salario máximo" },
+    { key: "maximumSalary", value: "Salario máximo" }
+  ],
+  descriptionFormSection: [
+    { key: "title", value: "Descripción" },
+    { key: "sectionTitle", value: "Título" },
+    { key: "sectionContent", value: "Contenido" }
+  ],
+  recipientsFormSection: [
+    { key: "careers", value: "Carreras (presione Enter para agregar)" },
+    { key: "title", value: "Destinatarios" },
+    { key: "targetApplicantType", value: "Estado de la carrera" }
+  ],
+  editOffer: [
+    { key: "create", value: "Publicar oferta" },
+    { key: "edit", value: "Editar tu oferta" },
     { key: "submit", value: "Publicar" },
     { key: "confirmDialogTitle", value: "¿Editar oferta?" },
     {
@@ -340,5 +353,11 @@ export const defaultTranslations = {
   ],
   companyEditableAcceptanceCriteria: [
     { key: "text", value: "Esta empresa estará pendiente de aprobación por autoridades de FIUBA" }
+  ],
+  editOfferAcceptanceCriteria: [
+    { key: "text", value: "Esta oferta estará pendiente de aprobación por autoridades de FIUBA" }
+  ],
+  createOfferAcceptanceCriteria: [
+    { key: "text", value: "Esta oferta estará pendiente de aprobación por autoridades de FIUBA" }
   ]
 };

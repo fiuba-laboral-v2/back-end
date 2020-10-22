@@ -3,9 +3,11 @@ import { GraphQLOfferCareerInput } from "../Types/GraphQLOfferCareer";
 import { GraphQLOfferSectionInput } from "../Types/GraphQLOfferSection";
 import { GraphQLApplicantType } from "../../Applicant/Types/GraphQLApplicantType";
 import { OfferRepository } from "$models/Offer";
-import { CurrentUser } from "$models/CurrentUser";
 import { ID, Int, List, nonNull, String } from "$graphql/fieldTypes";
 import { IUpdateOffer } from "$models/Offer/Interface";
+import { IApolloServerContext } from "$graphql/Context";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { OfferNotVisibleByCurrentUserError } from "$graphql/Offer/Queries/Errors";
 
 export const editOffer = {
   type: GraphQLOffer,
@@ -32,7 +34,7 @@ export const editOffer = {
       type: nonNull(Int)
     },
     sections: {
-      type: List(GraphQLOfferSectionInput)
+      type: nonNull(List(GraphQLOfferSectionInput))
     },
     careers: {
       type: List(GraphQLOfferCareerInput)
@@ -40,11 +42,18 @@ export const editOffer = {
   },
   resolve: async (
     _: undefined,
-    attributes: IUpdateOffer,
-    { currentUser }: { currentUser: CurrentUser }
-  ) =>
-    OfferRepository.update({
-      ...attributes,
-      companyUuid: currentUser.getCompany().companyUuid
-    })
+    { careers, sections, uuid, ...offerAttributes }: IUpdateOffer,
+    { currentUser }: IApolloServerContext
+  ) => {
+    const offer = await OfferRepository.findByUuid(uuid);
+    const canEdit = await currentUser.getCompany().getPermissions().canSeeOffer(offer);
+    if (!canEdit) throw new OfferNotVisibleByCurrentUserError();
+
+    offer.set({
+      ...offerAttributes,
+      extensionApprovalStatus: ApprovalStatus.pending,
+      graduadosApprovalStatus: ApprovalStatus.pending
+    });
+    return OfferRepository.update({ sections, careers, offer });
+  }
 };

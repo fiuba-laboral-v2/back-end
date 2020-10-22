@@ -1,10 +1,23 @@
 import { Applicant, ApplicantExperienceSection } from "$models";
-import { SectionRepository, IUpdateProps } from "$models/Applicant/Section";
+import { SectionRepository, IUpdateProps } from "$models/Section";
 
-export const ApplicantExperienceSectionRepository = {
-  update: async (updateArguments: IUpdateProps) =>
-    SectionRepository.update({ modelClass: ApplicantExperienceSection, ...updateArguments }),
-  findByApplicant: (applicant: Applicant) =>
-    SectionRepository.findByApplicant(applicant, ApplicantExperienceSection),
-  truncate: () => SectionRepository.truncate(ApplicantExperienceSection)
-};
+export class ApplicantExperienceSectionRepository extends SectionRepository {
+  public async update({
+    applicant,
+    ...updateArguments
+  }: IUpdateProps & { applicant: Applicant }): Promise<ApplicantExperienceSection[]> {
+    return super.updateSection({ owner: applicant, ...updateArguments });
+  }
+
+  public findByApplicant(applicant: Applicant): Promise<ApplicantExperienceSection[]> {
+    return super.findByEntity({ owner: applicant });
+  }
+
+  protected modelClass() {
+    return ApplicantExperienceSection;
+  }
+
+  protected whereClause(owner: Applicant) {
+    return { applicantUuid: owner.uuid };
+  }
+}

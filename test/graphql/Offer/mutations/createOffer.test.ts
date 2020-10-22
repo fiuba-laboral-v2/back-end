@@ -141,29 +141,27 @@ describe("createOffer", () => {
           approvalStatus: ApprovalStatus.approved
         }
       });
-      const { code } = await CareerGenerator.instance();
+      const { code, description } = await CareerGenerator.instance();
+      const sectionData = { title: "title", text: "text", displayOrder: 1 };
 
       const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
-        companyUuid: company.uuid
+        companyUuid: company.uuid,
+        careers: [{ careerCode: code }],
+        sections: [sectionData]
       });
       const { data, errors } = await apolloClient.mutate({
         mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
-        variables: {
-          ...createOfferAttributes,
-          careers: [{ careerCode: code }],
-          sections: [
-            {
-              title: "title",
-              text: "text",
-              displayOrder: 1
-            }
-          ]
-        }
+        variables: createOfferAttributes
       });
 
       expect(errors).toBeUndefined();
-      expect(data!.createOffer.sections).toHaveLength(1);
-      expect(data!.createOffer.careers).toHaveLength(1);
+      expect(data!.createOffer.careers).toEqual([{ code, description }]);
+      expect(data!.createOffer.sections).toEqual([
+        {
+          uuid: expect.stringMatching(UUID_REGEX),
+          ...sectionData
+        }
+      ]);
     });
   });
 

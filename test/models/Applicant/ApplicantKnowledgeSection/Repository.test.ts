@@ -7,13 +7,14 @@ import { UUID_REGEX } from "$test/models";
 
 describe("ApplicantKnowledgeSectionRepository", () => {
   let applicant: Applicant;
+  const applicantKnowledgeSectionRepository = new ApplicantKnowledgeSectionRepository();
 
   beforeAll(async () => {
     await UserRepository.truncate();
     applicant = await ApplicantGenerator.instance.withMinimumData();
   });
 
-  beforeEach(() => ApplicantKnowledgeSectionRepository.truncate());
+  beforeEach(() => applicantKnowledgeSectionRepository.truncate());
 
   it("creates a valid section", async () => {
     const sectionData = {
@@ -22,7 +23,7 @@ describe("ApplicantKnowledgeSectionRepository", () => {
       displayOrder: 1
     };
 
-    await ApplicantKnowledgeSectionRepository.update({
+    await applicantKnowledgeSectionRepository.update({
       sections: [sectionData],
       applicant
     });
@@ -64,11 +65,11 @@ describe("ApplicantKnowledgeSectionRepository", () => {
       text: "new text",
       displayOrder: 1
     };
-    await ApplicantKnowledgeSectionRepository.update({
+    await applicantKnowledgeSectionRepository.update({
       sections: [params],
       applicant
     });
-    const sections = await ApplicantKnowledgeSectionRepository.update({
+    const sections = await applicantKnowledgeSectionRepository.update({
       sections: [newParams],
       applicant
     });
@@ -76,7 +77,7 @@ describe("ApplicantKnowledgeSectionRepository", () => {
   });
 
   it("updates a valid section", async () => {
-    await ApplicantKnowledgeSectionRepository.update({
+    await applicantKnowledgeSectionRepository.update({
       sections: [
         {
           title: "title",
@@ -95,7 +96,7 @@ describe("ApplicantKnowledgeSectionRepository", () => {
       displayOrder: 1
     };
 
-    await ApplicantKnowledgeSectionRepository.update({ sections: [newParams], applicant });
+    await applicantKnowledgeSectionRepository.update({ sections: [newParams], applicant });
     const [section] = await applicant.getKnowledgeSections();
 
     expect(section).toBeObjectContaining({
@@ -118,7 +119,7 @@ describe("ApplicantKnowledgeSectionRepository", () => {
       }
     ];
 
-    const initialSections = await ApplicantKnowledgeSectionRepository.update({
+    const initialSections = await applicantKnowledgeSectionRepository.update({
       sections: params,
       applicant
     });
@@ -142,7 +143,7 @@ describe("ApplicantKnowledgeSectionRepository", () => {
       }
     ];
 
-    await ApplicantKnowledgeSectionRepository.update({ sections: newParams, applicant });
+    await applicantKnowledgeSectionRepository.update({ sections: newParams, applicant });
     const sections = await applicant.getKnowledgeSections();
 
     expect(sections).toEqual(
