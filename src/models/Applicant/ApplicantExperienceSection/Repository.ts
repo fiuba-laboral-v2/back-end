@@ -6,11 +6,11 @@ export class ApplicantExperienceSectionRepository extends SectionRepository {
     applicant,
     ...updateArguments
   }: IUpdateProps & { applicant: Applicant }): Promise<ApplicantExperienceSection[]> {
-    return super.updateSection({ model: applicant, ...updateArguments });
+    return super.updateSection({ owner: applicant, ...updateArguments });
   }
 
   public findByApplicant(applicant: Applicant): Promise<ApplicantExperienceSection[]> {
-    return super.findByEntity({ model: applicant });
+    return super.findByEntity({ owner: applicant });
   }
 
   protected modelClass() {

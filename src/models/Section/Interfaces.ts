@@ -5,11 +5,11 @@ import { Model as SequelizeModel } from "sequelize-typescript";
 export type IModel<T> = { uuid: string } & SequelizeModel<T>;
 
 export interface IUpdateSectionModel<Model> extends IUpdateProps {
-  model: IModel<Model>;
+  owner: IModel<Model>;
 }
 
 export interface IFindByEntity<Model> {
-  model: IModel<Model>;
+  owner: IModel<Model>;
 }
 
 export interface IUpdateProps {

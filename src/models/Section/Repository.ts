@@ -1,20 +1,20 @@
 import { IUpdateSectionModel, IFindByEntity } from "./Interfaces";
 
 export abstract class SectionRepository {
-  public async updateSection<Model>({ sections, model, transaction }: IUpdateSectionModel<Model>) {
+  public async updateSection<Model>({ sections, owner, transaction }: IUpdateSectionModel<Model>) {
     await this.modelClass().destroy({
-      where: { [this.modelUuidKey()]: model.uuid },
+      where: { [this.modelUuidKey()]: owner.uuid },
       transaction
     });
 
     return this.modelClass().bulkCreate(
-      sections.map(section => ({ ...section, [this.modelUuidKey()]: model.uuid })),
+      sections.map(section => ({ ...section, [this.modelUuidKey()]: owner.uuid })),
       { transaction, returning: true, validate: true }
     );
   }
 
-  public findByEntity<Model>({ model }: IFindByEntity<Model>) {
-    return this.modelClass().findAll({ where: { [this.modelUuidKey()]: model.uuid } });
+  public findByEntity<Model>({ owner }: IFindByEntity<Model>) {
+    return this.modelClass().findAll({ where: { [this.modelUuidKey()]: owner.uuid } });
   }
 
   public truncate() {

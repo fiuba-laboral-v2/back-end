@@ -6,7 +6,7 @@ export class ApplicantKnowledgeSectionRepository extends SectionRepository {
     applicant,
     ...updateArguments
   }: IUpdateProps & { applicant: Applicant }): Promise<ApplicantKnowledgeSection[]> {
-    return super.updateSection({ model: applicant, ...updateArguments });
+    return super.updateSection({ owner: applicant, ...updateArguments });
   }
 
   protected modelClass() {
