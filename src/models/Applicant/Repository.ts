@@ -63,12 +63,12 @@ export const ApplicantRepository = {
       const user = await applicant.getUser();
       await applicant.set({ description });
       await UserRepository.update(user, userAttributes, transaction);
-      await ApplicantKnowledgeSectionRepository.update({
+      await new ApplicantKnowledgeSectionRepository().update({
         sections: knowledgeSections,
         applicant,
         transaction
       });
-      await ApplicantExperienceSectionRepository.update({
+      await new ApplicantExperienceSectionRepository().update({
         sections: experienceSections,
         applicant,
         transaction

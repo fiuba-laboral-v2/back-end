@@ -23,7 +23,7 @@ export const OfferRepository = {
   },
   update: ({ sections, offer }: IOfferAssociations & { offer: Offer }) =>
     Database.transaction(async transaction => {
-      await OfferSectionRepository.update({ offer, sections, transaction });
+      await new OfferSectionRepository().update({ offer, sections, transaction });
       return offer.save({ transaction });
     }),
   updateApprovalStatus: async ({

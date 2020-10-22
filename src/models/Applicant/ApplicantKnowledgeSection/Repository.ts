@@ -1,13 +1,19 @@
 import { Applicant, ApplicantKnowledgeSection } from "$models";
 import { SectionRepository, IUpdateProps } from "$models/Section";
 
-export const ApplicantKnowledgeSectionRepository = {
-  update: async ({ applicant, ...updateArguments }: IUpdateProps & { applicant: Applicant }) =>
-    SectionRepository.update<ApplicantKnowledgeSection, Applicant>({
-      modelClass: ApplicantKnowledgeSection,
-      entityUuidKey: "applicantUuid",
-      entity: applicant,
-      ...updateArguments
-    }),
-  truncate: () => SectionRepository.truncate(ApplicantKnowledgeSection)
-};
+export class ApplicantKnowledgeSectionRepository extends SectionRepository {
+  public async update({
+    applicant,
+    ...updateArguments
+  }: IUpdateProps & { applicant: Applicant }): Promise<ApplicantKnowledgeSection[]> {
+    return super.updateSection({ entity: applicant, ...updateArguments });
+  }
+
+  protected modelClass() {
+    return ApplicantKnowledgeSection;
+  }
+
+  protected entityUuidKey() {
+    return "applicantUuid";
+  }
+}

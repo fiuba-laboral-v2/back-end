@@ -9,6 +9,7 @@ import { UUID_REGEX } from "$test/models";
 
 describe("ApplicantExperienceSectionRepository", () => {
   let student: Applicant;
+  const applicantExperienceSectionRepository = new ApplicantExperienceSectionRepository();
 
   beforeAll(async () => {
     await UserRepository.truncate();
@@ -38,7 +39,7 @@ describe("ApplicantExperienceSectionRepository", () => {
   };
 
   const expectToUpdateNewSections = async (sectionsData: ISection[]) => {
-    const sections = await ApplicantExperienceSectionRepository.update({
+    const sections = await applicantExperienceSectionRepository.update({
       sections: sectionsData,
       applicant: student
     });
@@ -68,18 +69,18 @@ describe("ApplicantExperienceSectionRepository", () => {
 
     const graduate = await ApplicantGenerator.instance.graduate();
 
-    await ApplicantExperienceSectionRepository.update({
+    await applicantExperienceSectionRepository.update({
       sections: [sectionData],
       applicant: student
     });
 
-    await ApplicantExperienceSectionRepository.update({
+    await applicantExperienceSectionRepository.update({
       sections: [sectionData],
       applicant: graduate
     });
 
-    const studentSections = await ApplicantExperienceSectionRepository.findByApplicant(student);
-    const graduateSections = await ApplicantExperienceSectionRepository.findByApplicant(graduate);
+    const studentSections = await applicantExperienceSectionRepository.findByApplicant(student);
+    const graduateSections = await applicantExperienceSectionRepository.findByApplicant(graduate);
 
     await expectToEqualSectionsForApplicant({
       sections: studentSections,
@@ -101,7 +102,7 @@ describe("ApplicantExperienceSectionRepository", () => {
       displayOrder: 1
     };
 
-    const [{ uuid }] = await ApplicantExperienceSectionRepository.update({
+    const [{ uuid }] = await applicantExperienceSectionRepository.update({
       sections: [sectionData],
       applicant: student
     });
@@ -115,7 +116,7 @@ describe("ApplicantExperienceSectionRepository", () => {
       displayOrder: 1
     };
 
-    const finalSections = await ApplicantExperienceSectionRepository.update({
+    const finalSections = await applicantExperienceSectionRepository.update({
       sections: [
         {
           uuid,
@@ -157,7 +158,7 @@ describe("ApplicantExperienceSectionRepository", () => {
 
   it("throws an error if two sections have the same displayOrder for the same student", async () => {
     await expect(
-      ApplicantExperienceSectionRepository.update({
+      applicantExperienceSectionRepository.update({
         sections: [
           {
             title: "thirdTitle",
@@ -177,7 +178,7 @@ describe("ApplicantExperienceSectionRepository", () => {
 
   it("throws an error if a section has no title", async () => {
     await expect(
-      ApplicantExperienceSectionRepository.update({
+      applicantExperienceSectionRepository.update({
         sections: [
           {
             title: undefined as any,
@@ -202,7 +203,7 @@ describe("ApplicantExperienceSectionRepository", () => {
 
   it("throws an error if a section has no text", async () => {
     await expect(
-      ApplicantExperienceSectionRepository.update({
+      applicantExperienceSectionRepository.update({
         sections: [
           {
             title: "title",
@@ -227,7 +228,7 @@ describe("ApplicantExperienceSectionRepository", () => {
 
   it("throws an error if more than one section has no title", async () => {
     await expect(
-      ApplicantExperienceSectionRepository.update({
+      applicantExperienceSectionRepository.update({
         sections: [
           {
             title: undefined as any,

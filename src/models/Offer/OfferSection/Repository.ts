@@ -1,21 +1,22 @@
 import { Offer, OfferSection } from "$models";
 import { SectionRepository, IUpdateProps } from "$models/Section";
 
-const entityUuidKey = "offerUuid";
-const modelClass = OfferSection;
-
-export const OfferSectionRepository = {
-  update: async ({
+export class OfferSectionRepository extends SectionRepository {
+  public async update({
     offer,
     ...updateArguments
-  }: IUpdateProps & { offer: Offer }): Promise<OfferSection[]> =>
-    SectionRepository.update({
-      modelClass,
-      entity: offer,
-      entityUuidKey,
-      ...updateArguments
-    }),
-  findByOffer: (offer: Offer): Promise<OfferSection[]> =>
-    SectionRepository.findByEntity({ modelClass, entityUuidKey, entity: offer }),
-  truncate: () => SectionRepository.truncate(OfferSection)
-};
+  }: IUpdateProps & { offer: Offer }): Promise<OfferSection[]> {
+    return super.updateSection({ entity: offer, ...updateArguments });
+  }
+  public findByOffer(offer: Offer): Promise<OfferSection[]> {
+    return super.findByEntity({ entity: offer });
+  }
+
+  protected modelClass() {
+    return OfferSection;
+  }
+
+  protected entityUuidKey() {
+    return "offerUuid";
+  }
+}
