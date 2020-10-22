@@ -17,7 +17,7 @@ export class ApplicantExperienceSectionRepository extends SectionRepository {
     return ApplicantExperienceSection;
   }
 
-  protected modelUuidKey() {
-    return "applicantUuid";
+  protected whereClause(owner: Applicant) {
+    return { applicantUuid: owner.uuid };
   }
 }

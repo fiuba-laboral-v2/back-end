@@ -13,7 +13,7 @@ export class ApplicantKnowledgeSectionRepository extends SectionRepository {
     return ApplicantKnowledgeSection;
   }
 
-  protected modelUuidKey() {
-    return "applicantUuid";
+  protected whereClause(owner: Applicant) {
+    return { applicantUuid: owner.uuid };
   }
 }

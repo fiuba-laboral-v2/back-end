@@ -16,7 +16,7 @@ export class OfferSectionRepository extends SectionRepository {
     return OfferSection;
   }
 
-  protected modelUuidKey() {
-    return "offerUuid";
+  protected whereClause(owner: Offer) {
+    return { offerUuid: owner.uuid };
   }
 }

@@ -1,20 +1,21 @@
-import { IUpdateSectionModel, IFindByEntity } from "./Interfaces";
+import { IUpdateSectionModel, IFindByEntity, IModel } from "./Interfaces";
+import { WhereOptions } from "sequelize/types/lib/model";
 
 export abstract class SectionRepository {
   public async updateSection<Model>({ sections, owner, transaction }: IUpdateSectionModel<Model>) {
     await this.modelClass().destroy({
-      where: { [this.modelUuidKey()]: owner.uuid },
+      where: this.whereClause(owner),
       transaction
     });
 
     return this.modelClass().bulkCreate(
-      sections.map(section => ({ ...section, [this.modelUuidKey()]: owner.uuid })),
+      sections.map(section => ({ ...section, ...this.whereClause(owner) })),
       { transaction, returning: true, validate: true }
     );
   }
 
   public findByEntity<Model>({ owner }: IFindByEntity<Model>) {
-    return this.modelClass().findAll({ where: { [this.modelUuidKey()]: owner.uuid } });
+    return this.modelClass().findAll({ where: this.whereClause(owner) });
   }
 
   public truncate() {
@@ -23,5 +24,5 @@ export abstract class SectionRepository {
 
   protected abstract modelClass();
 
-  protected abstract modelUuidKey(): string;
+  protected abstract whereClause<Model>(owner: IModel<Model>): WhereOptions;
 }
