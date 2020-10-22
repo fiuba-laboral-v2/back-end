@@ -1,7 +1,7 @@
 import { Database } from "$config";
 import { Op } from "sequelize";
 
-import { IFindAll, IUpdateOffer } from "./Interface";
+import { IFindAll, IOfferAssociations } from "./Interface";
 
 import { IOfferSection, OfferSectionRepository } from "./OfferSection";
 import { IOfferCareer } from "./OfferCareer";
@@ -21,20 +21,10 @@ export const OfferRepository = {
     const offer = new Offer(attributes);
     return OfferRepository.save(offer, sections, careers);
   },
-  update: ({ sections = [], careers = [], uuid, ...offer }: IUpdateOffer) =>
+  update: ({ sections, offer }: IOfferAssociations & { offer: Offer }) =>
     Database.transaction(async transaction => {
-      const [, [updatedOffer]] = await Offer.update(
-        {
-          extensionApprovalStatus: ApprovalStatus.pending,
-          graduadosApprovalStatus: ApprovalStatus.pending,
-          ...offer
-        },
-        { where: { uuid }, returning: true, transaction }
-      );
-      if (!updatedOffer) throw new OfferNotUpdatedError(uuid);
-
-      await OfferSectionRepository.update({ offer: updatedOffer, sections, transaction });
-      return updatedOffer;
+      await OfferSectionRepository.update({ offer, sections, transaction });
+      return offer.save({ transaction });
     }),
   updateApprovalStatus: async ({
     uuid,

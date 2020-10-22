@@ -3,16 +3,19 @@ import { IOfferCareer } from "./OfferCareer/Interface";
 import { ApplicantType } from "$models/Applicant";
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 
-export interface ICreateOffer {
+export interface ICreateOffer extends IOfferAssociations {
   title: string;
   description: string;
   hoursPerDay: number;
   minimumSalary: number;
   maximumSalary: number;
-  sections: IOfferSection[];
-  careers: IOfferCareer[];
   companyUuid: string;
   targetApplicantType: ApplicantType;
+}
+
+export interface IOfferAssociations {
+  sections: IOfferSection[];
+  careers: IOfferCareer[];
 }
 
 export interface IUpdateOffer extends ICreateOffer {

@@ -3,18 +3,19 @@ import { client } from "$test/graphql/ApolloTestClient";
 
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
-import { OfferRepository } from "$models/Offer";
+import { OfferNotFoundError, OfferRepository } from "$models/Offer";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Applicant";
 import { Admin } from "$models";
 
 import { OfferGenerator } from "$generators/Offer";
+import { CompanyGenerator } from "$generators/Company";
 import { AdminGenerator } from "$generators/Admin";
 import { TestClientGenerator } from "$generators/TestClient";
 
 import generateUuid from "uuid/v4";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
-import { OfferNotUpdatedError } from "$models/Offer/Errors";
+import { OfferNotVisibleByCurrentUserError } from "$graphql/Offer/Queries/Errors";
 
 const EDIT_OFFER = gql`
   mutation editOffer(
@@ -88,6 +89,19 @@ describe("editOffer", () => {
     expect(updatedOffer[attribute]).toEqual(newValue);
   };
 
+  it("set both status to pending", async () => {
+    const { apolloClient, company } = await createCompanyTestClient();
+    const initialAttributes = OfferGenerator.data.withObligatoryData({ companyUuid: company.uuid });
+    const { uuid } = await OfferRepository.create(initialAttributes);
+    await apolloClient.mutate({
+      mutation: EDIT_OFFER,
+      variables: { uuid, ...initialAttributes }
+    });
+    const updatedOffer = await OfferRepository.findByUuid(uuid);
+    expect(updatedOffer.graduadosApprovalStatus).toEqual(ApprovalStatus.pending);
+    expect(updatedOffer.extensionApprovalStatus).toEqual(ApprovalStatus.pending);
+  });
+
   it("edits an offer title", async () => {
     await expectToUpdateAttribute("title", "Amazing Offer");
   });
@@ -153,6 +167,23 @@ describe("editOffer", () => {
     });
   });
 
+  it("throws an error if the offer does not belong to the company", async () => {
+    const { apolloClient } = await createCompanyTestClient();
+    const anotherCompany = await CompanyGenerator.instance.withMinimumData();
+    const initialAttributes = OfferGenerator.data.withObligatoryData({
+      companyUuid: anotherCompany.uuid
+    });
+    const { uuid } = await OfferRepository.create(initialAttributes);
+
+    const { errors } = await apolloClient.mutate({
+      mutation: EDIT_OFFER,
+      variables: { uuid, ...initialAttributes }
+    });
+    expect(errors![0].extensions!.data).toEqual({
+      errorType: OfferNotVisibleByCurrentUserError.name
+    });
+  });
+
   it("throws an error when the offer uuid is not found", async () => {
     const { apolloClient, company } = await createCompanyTestClient();
     const attributes = OfferGenerator.data.withObligatoryData({
@@ -167,7 +198,7 @@ describe("editOffer", () => {
       }
     });
     expect(errors![0].extensions!.data).toEqual({
-      errorType: OfferNotUpdatedError.name
+      errorType: OfferNotFoundError.name
     });
   });
 
