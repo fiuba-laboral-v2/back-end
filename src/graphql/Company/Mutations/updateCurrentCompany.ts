@@ -1,8 +1,8 @@
 import { List, String } from "$graphql/fieldTypes";
 import { CompanyRepository } from "$models/Company";
 import { GraphQLCompany } from "../Types/GraphQLCompany";
-import { CurrentUser } from "$models/CurrentUser";
 import { IUpdateCompany } from "$models/Company/Interface";
+import { IApolloServerContext } from "$graphql/Context";
 
 export const updateCurrentCompany = {
   type: GraphQLCompany,
@@ -35,6 +35,6 @@ export const updateCurrentCompany = {
   resolve: (
     _: undefined,
     attributes: Omit<IUpdateCompany, "uuid">,
-    { currentUser }: { currentUser: CurrentUser }
+    { currentUser }: IApolloServerContext
   ) => CompanyRepository.update({ uuid: currentUser.getCompany().companyUuid, ...attributes })
 };

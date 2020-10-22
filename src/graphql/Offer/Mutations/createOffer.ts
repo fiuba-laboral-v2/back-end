@@ -3,9 +3,9 @@ import { GraphQLOfferCareerInput } from "../Types/GraphQLOfferCareer";
 import { GraphQLOfferSectionInput } from "../Types/GraphQLOfferSection";
 import { GraphQLApplicantType } from "../../Applicant/Types/GraphQLApplicantType";
 import { OfferRepository } from "$models/Offer";
-import { CurrentUser } from "$models/CurrentUser";
 import { Int, List, nonNull, String } from "$graphql/fieldTypes";
 import { ICreateOffer } from "$models/Offer/Interface";
+import { IApolloServerContext } from "$graphql/Context";
 
 export const createOffer = {
   type: GraphQLOffer,
@@ -35,11 +35,7 @@ export const createOffer = {
       type: List(GraphQLOfferCareerInput)
     }
   },
-  resolve: (
-    _: undefined,
-    attributes: ICreateOffer,
-    { currentUser }: { currentUser: CurrentUser }
-  ) =>
+  resolve: (_: undefined, attributes: ICreateOffer, { currentUser }: IApolloServerContext) =>
     OfferRepository.create({
       ...attributes,
       companyUuid: currentUser.getCompany().companyUuid
