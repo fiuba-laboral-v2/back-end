@@ -38,5 +38,5 @@ export const editOffer = {
     }
   },
   resolve: async (_: undefined, attributes: IUpdateOffer) =>
-    OfferRepository.update({ ...attributes })
+    OfferRepository.update(attributes)
 };
