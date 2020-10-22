@@ -353,5 +353,11 @@ export const defaultTranslations = {
   ],
   companyEditableAcceptanceCriteria: [
     { key: "text", value: "Esta empresa estará pendiente de aprobación por autoridades de FIUBA" }
+  ],
+  editOfferAcceptanceCriteria: [
+    { key: "text", value: "Esta Oferta estará pendiente de aprobación por autoridades de FIUBA" }
+  ],
+  createOfferAcceptanceCriteria: [
+    { key: "text", value: "Esta Oferta estará pendiente de aprobación por autoridades de FIUBA" }
   ]
 };
