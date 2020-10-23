@@ -1,9 +1,9 @@
 import { ID, nonNull } from "$graphql/fieldTypes";
 import { ApplicantRepository } from "$models/Applicant";
 import { GraphQLApplicant } from "../Types/GraphQLApplicant";
-import { CurrentUser } from "$models/CurrentUser";
 import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { IApolloServerContext } from "$graphql/Context";
 
 export const updateApplicantApprovalStatus = {
   type: GraphQLApplicant,
@@ -18,7 +18,7 @@ export const updateApplicantApprovalStatus = {
   resolve: async (
     _: undefined,
     { uuid, approvalStatus }: IUpdateApplicantApprovalStatusArguments,
-    { currentUser }: { currentUser: CurrentUser }
+    { currentUser }: IApolloServerContext
   ) =>
     ApplicantRepository.updateApprovalStatus(
       currentUser.getAdmin().adminUserUuid,

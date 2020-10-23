@@ -6,7 +6,7 @@ import { GraphQLApplicantExperienceSectionInputType } from "../Types/ApplicantEx
 import { GraphQLUserUpdateInput } from "$graphql/User/Types/GraphQLUserUpdateInput";
 import { ApplicantRepository, IApplicantEditable } from "$models/Applicant";
 import { GraphQLLinkInput } from "../Types/Link";
-import { CurrentUser } from "$models/CurrentUser";
+import { IApolloServerContext } from "$graphql/Context";
 
 export const updateCurrentApplicant = {
   type: GraphQLApplicant,
@@ -36,9 +36,6 @@ export const updateCurrentApplicant = {
       type: List(GraphQLLinkInput)
     }
   },
-  resolve: async (
-    _: undefined,
-    props: IApplicantEditable,
-    { currentUser }: { currentUser: CurrentUser }
-  ) => ApplicantRepository.update({ ...props, uuid: currentUser.getApplicant().applicantUuid })
+  resolve: async (_: undefined, props: IApplicantEditable, { currentUser }: IApolloServerContext) =>
+    ApplicantRepository.update({ ...props, uuid: currentUser.getApplicant().applicantUuid })
 };

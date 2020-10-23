@@ -1,10 +1,10 @@
 import { ID, nonNull } from "$graphql/fieldTypes";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { GraphQLJobApplication } from "../Types/GraphQLJobApplication";
-import { CurrentUser } from "$models/CurrentUser";
 import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AdminRepository } from "$models/Admin";
+import { IApolloServerContext } from "$graphql/Context";
 
 export const updateJobApplicationApprovalStatus = {
   type: GraphQLJobApplication,
@@ -19,7 +19,7 @@ export const updateJobApplicationApprovalStatus = {
   resolve: async (
     _: undefined,
     { uuid, approvalStatus }: IUpdateJobApplicationApprovalStatusArguments,
-    { currentUser }: { currentUser: CurrentUser }
+    { currentUser }: IApolloServerContext
   ) => {
     const admin = await AdminRepository.findByUserUuid(currentUser.getAdmin().adminUserUuid);
     return JobApplicationRepository.updateApprovalStatus({

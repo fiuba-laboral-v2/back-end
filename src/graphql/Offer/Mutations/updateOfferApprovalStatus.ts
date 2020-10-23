@@ -1,10 +1,10 @@
 import { ID, nonNull } from "$graphql/fieldTypes";
 import { OfferRepository, AdminCannotModerateOfferError } from "$models/Offer";
 import { GraphQLOffer } from "../Types/GraphQLOffer";
-import { CurrentUser } from "$models/CurrentUser";
 import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AdminRepository } from "$models/Admin";
+import { IApolloServerContext } from "$graphql/Context";
 
 export const updateOfferApprovalStatus = {
   type: GraphQLOffer,
@@ -19,7 +19,7 @@ export const updateOfferApprovalStatus = {
   resolve: async (
     _: undefined,
     { uuid, approvalStatus }: IUpdateOfferApprovalStatusArguments,
-    { currentUser }: { currentUser: CurrentUser }
+    { currentUser }: IApolloServerContext
   ) => {
     const offer = await OfferRepository.findByUuid(uuid);
     const admin = await AdminRepository.findByUserUuid(currentUser.getAdmin().adminUserUuid);
