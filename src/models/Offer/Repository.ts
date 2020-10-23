@@ -3,8 +3,8 @@ import { Op } from "sequelize";
 
 import { IFindAll, IOfferAssociations } from "./Interface";
 
-import { IOfferSection, OfferSectionRepository } from "./OfferSection";
-import { IOfferCareer } from "./OfferCareer";
+import { OfferSectionRepository } from "./OfferSection";
+import { OfferCareerRepository } from "./OfferCareer";
 import { OfferApprovalEventRepository } from "./OfferApprovalEvent/Repository";
 
 import { ApplicantType } from "$models/Applicant";
@@ -12,18 +12,23 @@ import { ICreateOffer } from "$models/Offer/Interface";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
 import { PaginationQuery } from "$models/PaginationQuery";
-import { Offer, OfferCareer, OfferSection } from "$models";
+import { Offer, OfferCareer } from "$models";
 
 import { OfferNotFoundError, OfferNotUpdatedError } from "./Errors";
 
 export const OfferRepository = {
-  create: ({ careers = [], sections = [], ...attributes }: ICreateOffer) => {
-    const offer = new Offer(attributes);
-    return OfferRepository.save(offer, sections, careers);
-  },
-  update: ({ sections, offer }: IOfferAssociations & { offer: Offer }) =>
+  create: ({ careers, sections, ...attributes }: ICreateOffer) =>
+    Database.transaction(async transaction => {
+      const offer = new Offer(attributes);
+      await offer.save({ transaction });
+      await OfferCareerRepository.bulkCreate({ careers, offer, transaction });
+      await new OfferSectionRepository().update({ sections, offer, transaction });
+      return offer;
+    }),
+  update: ({ careers, sections, offer }: IOfferAssociations & { offer: Offer }) =>
     Database.transaction(async transaction => {
       await new OfferSectionRepository().update({ offer, sections, transaction });
+      await OfferCareerRepository.update({ careers, offer, transaction });
       return offer.save({ transaction });
     }),
   updateApprovalStatus: async ({
@@ -58,21 +63,6 @@ export const OfferRepository = {
         transaction
       });
       return updatedOffer;
-    }),
-  save: async (offer: Offer, sections: IOfferSection[], offersCareers: IOfferCareer[]) =>
-    Database.transaction(async transaction => {
-      await offer.save({ transaction });
-      await Promise.all(
-        sections.map(section =>
-          OfferSection.create({ ...section, offerUuid: offer.uuid }, { transaction })
-        )
-      );
-      await Promise.all(
-        offersCareers.map(({ careerCode }) =>
-          OfferCareer.create({ careerCode, offerUuid: offer.uuid }, { transaction })
-        )
-      );
-      return offer;
     }),
   findByUuid: async (uuid: string) => {
     const offer = await Offer.findByPk(uuid);

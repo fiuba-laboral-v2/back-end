@@ -1,4 +1,4 @@
-import { UniqueConstraintError, ValidationError } from "sequelize";
+import { UniqueConstraintError, ValidationError, ForeignKeyConstraintError } from "sequelize";
 import { CareerRepository } from "$models/Career";
 import { OfferRepository } from "$models/Offer";
 import { ApplicantType } from "$models/Applicant";
@@ -7,7 +7,7 @@ import { UserRepository } from "$models/User";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { OfferApprovalEventRepository } from "$models/Offer/OfferApprovalEvent";
 import { OfferNotFoundError, OfferNotUpdatedError } from "$models/Offer/Errors";
-import { Admin, Company, Offer, OfferCareer, OfferSection } from "$models";
+import { Admin, Career, Company, Offer, OfferCareer, OfferSection } from "$models";
 import { isApprovalStatus } from "$models/SequelizeModelValidators";
 
 import { CompanyGenerator } from "$generators/Company";
@@ -21,6 +21,9 @@ import MockDate from "mockdate";
 describe("OfferRepository", () => {
   let graduadosAdmin: Admin;
   let extensionAdmin: Admin;
+  let firstCareer: Career;
+  let secondCareer: Career;
+  let thirdCareer: Career;
 
   beforeAll(async () => {
     await CareerRepository.truncate();
@@ -29,6 +32,9 @@ describe("OfferRepository", () => {
     await OfferRepository.truncate();
     graduadosAdmin = await AdminGenerator.graduados();
     extensionAdmin = await AdminGenerator.extension();
+    firstCareer = await CareerGenerator.instance();
+    secondCareer = await CareerGenerator.instance();
+    thirdCareer = await CareerGenerator.instance();
   });
 
   const sectionData = {
@@ -77,7 +83,7 @@ describe("OfferRepository", () => {
 
     it("creates a new offer with one career", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { code: careerCode } = await CareerGenerator.instance();
+      const { code: careerCode } = firstCareer;
       const attributes = OfferGenerator.data.withObligatoryData({
         companyUuid,
         careers: [{ careerCode }]
@@ -92,7 +98,7 @@ describe("OfferRepository", () => {
 
     it("creates a new offer with one career and one section", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { code: careerCode } = await CareerGenerator.instance();
+      const { code: careerCode } = firstCareer;
       const careerData = { careerCode };
       const attributes = OfferGenerator.data.withObligatoryData({
         companyUuid,
@@ -153,7 +159,7 @@ describe("OfferRepository", () => {
 
       it("throws an error if adding and existing career to one offer", async () => {
         const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-        const { code } = await CareerGenerator.instance();
+        const { code } = firstCareer;
         const offerCareersData = [{ careerCode: code }, { careerCode: code }];
         const attributes = OfferGenerator.data.withObligatoryData({
           companyUuid,
@@ -264,6 +270,35 @@ describe("OfferRepository", () => {
         })
       ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
       expect(await offer.getSections()).toHaveLength(0);
+    });
+
+    it("updates offer careers", async () => {
+      const attributes = OfferGenerator.data.withObligatoryData({
+        companyUuid: company.uuid,
+        careers: [{ careerCode: firstCareer.code }]
+      });
+      const offer = await OfferRepository.create(attributes);
+      const [initialCareer] = await offer.getCareers();
+      expect(initialCareer.code).toEqual(firstCareer.code);
+      await OfferRepository.update({
+        sections: [],
+        careers: [{ careerCode: secondCareer.code }],
+        offer
+      });
+      const [finalCareer] = await offer.getCareers();
+      expect(finalCareer.code).toEqual(secondCareer.code);
+    });
+
+    it("it does not update if the career does not exist", async () => {
+      const attributes = OfferGenerator.data.withObligatoryData({ companyUuid: company.uuid });
+      const offer = await OfferRepository.create(attributes);
+      await expect(
+        OfferRepository.update({ sections: [], careers: [{ careerCode: "unknownCode" }], offer })
+      ).rejects.toThrowErrorWithMessage(
+        ForeignKeyConstraintError,
+        'insert or update on table "OffersCareers" violates foreign key ' +
+          'constraint "OffersCareers_careerCode_fkey"'
+      );
     });
 
     it("updates targetApplicantType to student", async () => {
@@ -460,8 +495,8 @@ describe("OfferRepository", () => {
 
     it("finds offers specific to a career", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { code: code1 } = await CareerGenerator.instance();
-      const { code: code2 } = await CareerGenerator.instance();
+      const { code: code1 } = firstCareer;
+      const { code: code2 } = secondCareer;
       const { uuid: offerUuid } = await OfferGenerator.instance.withObligatoryData({
         careers: [{ careerCode: code1 }],
         companyUuid
@@ -479,8 +514,8 @@ describe("OfferRepository", () => {
 
     it("returns nothing when careerCodes is empty", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { code: code1 } = await CareerGenerator.instance();
-      const { code: code2 } = await CareerGenerator.instance();
+      const { code: code1 } = firstCareer;
+      const { code: code2 } = secondCareer;
       await OfferGenerator.instance.withObligatoryData({
         careers: [{ careerCode: code1 }],
         companyUuid
@@ -498,9 +533,9 @@ describe("OfferRepository", () => {
 
     it("fetches offers that match at least one career", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { code: code1 } = await CareerGenerator.instance();
-      const { code: code2 } = await CareerGenerator.instance();
-      const { code: code3 } = await CareerGenerator.instance();
+      const { code: code1 } = firstCareer;
+      const { code: code2 } = secondCareer;
+      const { code: code3 } = thirdCareer;
       const { uuid: offerUuid1 } = await OfferGenerator.instance.withObligatoryData({
         careers: [{ careerCode: code1 }],
         companyUuid
@@ -539,7 +574,7 @@ describe("OfferRepository", () => {
     it("deletes all offersCareers if all offers are deleted", async () => {
       await OfferRepository.truncate();
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { code: careerCode } = await CareerGenerator.instance();
+      const { code: careerCode } = firstCareer;
       await OfferRepository.create(
         OfferGenerator.data.withObligatoryData({
           companyUuid,
@@ -552,10 +587,9 @@ describe("OfferRepository", () => {
     });
 
     it("deletes all offersCareers and offer if all companies are deleted", async () => {
-      await CareerRepository.truncate();
       await CompanyRepository.truncate();
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { code: careerCode } = await CareerGenerator.instance();
+      const { code: careerCode } = firstCareer;
       await OfferRepository.create(
         OfferGenerator.data.withObligatoryData({
           companyUuid,

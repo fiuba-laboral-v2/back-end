@@ -12,9 +12,6 @@ export class OfferCareer extends Model<OfferCareer> {
   })
   public careerCode: string;
 
-  @BelongsTo(() => Career)
-  public career: Career;
-
   @ForeignKey(() => Offer)
   @Column({
     allowNull: false,
@@ -22,6 +19,9 @@ export class OfferCareer extends Model<OfferCareer> {
     type: UUID
   })
   public offerUuid: string;
+
+  @BelongsTo(() => Career)
+  public career: Career;
 
   @BelongsTo(() => Offer, "offerUuid")
   public offer: Offer;
