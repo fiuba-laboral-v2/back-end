@@ -1,4 +1,5 @@
 export const defaultTranslations = {
+  titleBar: [{ key: "title", value: "Bolsa de trabajo FIUBA" }],
   userEditFields: [
     { key: "name", value: "Nombre" },
     { key: "surname", value: "Apellido" }
