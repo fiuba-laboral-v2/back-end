@@ -25,9 +25,10 @@ export const OfferRepository = {
       await new OfferSectionRepository().update({ sections, offer, transaction });
       return offer;
     }),
-  update: ({ sections, offer }: IOfferAssociations & { offer: Offer }) =>
+  update: ({ careers, sections, offer }: IOfferAssociations & { offer: Offer }) =>
     Database.transaction(async transaction => {
       await new OfferSectionRepository().update({ offer, sections, transaction });
+      await OfferCareerRepository.update({ careers, offer, transaction });
       return offer.save({ transaction });
     }),
   updateApprovalStatus: async ({

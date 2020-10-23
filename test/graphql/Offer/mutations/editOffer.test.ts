@@ -2,14 +2,16 @@ import { gql } from "apollo-server";
 import { client } from "$test/graphql/ApolloTestClient";
 
 import { CompanyRepository } from "$models/Company";
+import { CareerRepository } from "$models/Career";
 import { UserRepository } from "$models/User";
 import { OfferNotFoundError, OfferRepository } from "$models/Offer";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Applicant";
-import { Admin } from "$models";
+import { Admin, Career } from "$models";
 
 import { OfferGenerator } from "$generators/Offer";
 import { CompanyGenerator } from "$generators/Company";
+import { CareerGenerator } from "$generators/Career";
 import { AdminGenerator } from "$generators/Admin";
 import { TestClientGenerator } from "$generators/TestClient";
 
@@ -27,6 +29,7 @@ const EDIT_OFFER = gql`
     $minimumSalary: Int!
     $maximumSalary: Int!
     $sections: [OfferSectionInput]!
+    $careers: [OfferCareerInput]!
   ) {
     editOffer(
       uuid: $uuid
@@ -37,6 +40,7 @@ const EDIT_OFFER = gql`
       minimumSalary: $minimumSalary
       maximumSalary: $maximumSalary
       sections: $sections
+      careers: $careers
     ) {
       uuid
       title
@@ -51,17 +55,26 @@ const EDIT_OFFER = gql`
         text
         displayOrder
       }
+      careers {
+        code
+        description
+      }
     }
   }
 `;
 
 describe("editOffer", () => {
   let admin: Admin;
+  let firstCareer: Career;
+  let secondCareer: Career;
 
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
+    await CareerRepository.truncate();
     admin = await AdminGenerator.extension();
+    firstCareer = await CareerGenerator.instance();
+    secondCareer = await CareerGenerator.instance();
   });
 
   const createCompanyTestClient = async () =>
@@ -165,6 +178,23 @@ describe("editOffer", () => {
       offerUuid: offer.uuid,
       ...newSectionData
     });
+  });
+
+  it("removes all careers by not providing any careerCode", async () => {
+    const { apolloClient, company } = await createCompanyTestClient();
+    const initialAttributes = OfferGenerator.data.withObligatoryData({
+      companyUuid: company.uuid,
+      sections: [],
+      careers: [{ careerCode: firstCareer.code }, { careerCode: secondCareer.code }]
+    });
+    const offer = await OfferRepository.create(initialAttributes);
+    expect(await offer.getCareers()).toHaveLength(2);
+
+    await apolloClient.mutate({
+      mutation: EDIT_OFFER,
+      variables: { uuid: offer.uuid, ...initialAttributes, careers: [] }
+    });
+    expect(await offer.getCareers()).toHaveLength(0);
   });
 
   it("throws an error if the offer does not belong to the company", async () => {
