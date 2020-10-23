@@ -22,8 +22,8 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
     $hoursPerDay: Int!
     $minimumSalary: Int!
     $maximumSalary: Int!
-    $sections: [OfferSectionInput]
-    $careers: [OfferCareerInput]
+    $sections: [OfferSectionInput]!
+    $careers: [OfferCareerInput]!
   ) {
     createOffer(
       title: $title
@@ -68,34 +68,6 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
   }
 `;
 
-const SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA = gql`
-  mutation createOffer(
-    $title: String!
-    $description: String!
-    $targetApplicantType: ApplicantType!
-    $hoursPerDay: Int!
-    $minimumSalary: Int!
-    $maximumSalary: Int!
-  ) {
-    createOffer(
-      title: $title
-      description: $description
-      targetApplicantType: $targetApplicantType
-      hoursPerDay: $hoursPerDay
-      minimumSalary: $minimumSalary
-      maximumSalary: $maximumSalary
-    ) {
-      uuid
-      title
-      description
-      hoursPerDay
-      minimumSalary
-      maximumSalary
-      targetApplicantType
-    }
-  }
-`;
-
 describe("createOffer", () => {
   let admin: Admin;
 
@@ -118,7 +90,7 @@ describe("createOffer", () => {
         companyUuid: company.uuid
       });
       const { data, errors } = await apolloClient.mutate({
-        mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
+        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
         variables: createOfferAttributes
       });
 
@@ -180,7 +152,7 @@ describe("createOffer", () => {
       delete createOfferAttributesWithNoTitle[attribute];
 
       const { errors } = await apolloClient.mutate({
-        mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
+        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
         variables: createOfferAttributesWithNoTitle
       });
       expect(errors).toEqual([expect.objectContaining({ message: "Internal server error" })]);
@@ -222,7 +194,7 @@ describe("createOffer", () => {
         companyUuid: company.uuid
       });
       const { errors } = await apolloClient.mutate({
-        mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
+        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
         variables: createOfferAttributes
       });
       expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
@@ -235,7 +207,7 @@ describe("createOffer", () => {
         companyUuid: company.uuid
       });
       const { errors } = await apolloClient.mutate({
-        mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
+        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
         variables: createOfferAttributes
       });
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
@@ -252,7 +224,7 @@ describe("createOffer", () => {
         companyUuid: company.uuid
       });
       const { errors } = await apolloClient.mutate({
-        mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
+        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
         variables: createOfferAttributes
       });
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
@@ -269,7 +241,7 @@ describe("createOffer", () => {
         companyUuid: company.uuid
       });
       const { errors } = await apolloClient.mutate({
-        mutation: SAVE_OFFER_WITH_ONLY_OBLIGATORY_DATA,
+        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
         variables: createOfferAttributes
       });
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
