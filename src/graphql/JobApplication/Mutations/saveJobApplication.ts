@@ -6,7 +6,7 @@ import {
 } from "$models/JobApplication";
 import { OfferRepository } from "$models/Offer";
 import { ApplicantRepository } from "$models/Applicant";
-import { CurrentUser } from "$models/CurrentUser";
+import { IApolloServerContext } from "$graphql/Context";
 
 export const saveJobApplication = {
   type: GraphQLJobApplication,
@@ -18,7 +18,7 @@ export const saveJobApplication = {
   resolve: async (
     _: undefined,
     { offerUuid }: { offerUuid: string },
-    { currentUser }: { currentUser: CurrentUser }
+    { currentUser }: IApolloServerContext
   ) => {
     const offer = await OfferRepository.findByUuid(offerUuid);
     const canSeeOffer = await currentUser.getPermissions().canSeeOffer(offer);
