@@ -4,6 +4,7 @@ import { Offer } from "$models";
 import { ApplicantType } from "$models/Applicant";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { isApprovalStatus, isTargetApplicantType } from "$models/SequelizeModelValidators";
+import { omit } from "lodash";
 
 describe("Offer", () => {
   const offerAttributes = {
@@ -13,6 +14,8 @@ describe("Offer", () => {
     hoursPerDay: 8,
     minimumSalary: 52500,
     maximumSalary: 70000,
+    expirationDateForGraduados: "2020-10-24T15:18:06.000Z",
+    expirationDateForExtension: "2020-10-24T15:18:06.000Z",
     targetApplicantType: ApplicantType.both
   };
 
@@ -38,7 +41,16 @@ describe("Offer", () => {
   it("creates a valid offer with its given attributes", async () => {
     const offer = new Offer(offerAttributes);
     await expect(offer.validate()).resolves.not.toThrow();
-    expect(offer).toBeObjectContaining(offerAttributes);
+    expect(offer).toBeObjectContaining(
+      omit(offerAttributes, ["expirationDateForGraduados", "expirationDateForExtension"])
+    );
+    expect({
+      expirationDateForGraduados: offerAttributes.expirationDateForGraduados,
+      expirationDateForExtension: offerAttributes.expirationDateForExtension
+    }).toEqual({
+      expirationDateForGraduados: offer.expirationDateForGraduados.toISOString(),
+      expirationDateForExtension: offer.expirationDateForExtension.toISOString()
+    });
   });
 
   it("creates a valid offer with a targetApplicantType for graduate", async () => {
@@ -63,6 +75,16 @@ describe("Offer", () => {
     const offer = new Offer(offerAttributes);
     await expect(offer.validate()).resolves.not.toThrow();
     await expect(offer.graduadosApprovalStatus).toEqual(ApprovalStatus.pending);
+  });
+
+  it("creates a valid offer without expirationDateForGraduados", async () => {
+    const offer = new Offer(omit(offerAttributes, ["expirationDateForGraduados"]));
+    await expect(offer.validate()).resolves.not.toThrow();
+  });
+
+  it("creates a valid offer without expirationDateForExtension", async () => {
+    const offer = new Offer(omit(offerAttributes, ["expirationDateForExtension"]));
+    await expect(offer.validate()).resolves.not.toThrow();
   });
 
   it("throws an error if offer does not belong to any company", async () => {
