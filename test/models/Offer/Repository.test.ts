@@ -17,6 +17,9 @@ import { AdminGenerator } from "$generators/Admin";
 import { omit, range } from "lodash";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import MockDate from "mockdate";
+import moment from "moment";
+
+import { SECRETARY_EXPIRATION_DAYS_SETTING } from "$src/models/Offer/Repository";
 
 describe("OfferRepository", () => {
   let graduadosAdmin: Admin;
@@ -347,56 +350,119 @@ describe("OfferRepository", () => {
   });
 
   describe("UpdateApprovalStatus", () => {
+    const expectExpirationDateIsSet = (
+      offerBeforeUpdate,
+      offerAfterUpdate,
+      expirationAttribute
+    ) => {
+      const expirationDate = moment().startOf("day").add(SECRETARY_EXPIRATION_DAYS_SETTING, "days");
+
+      expect(offerBeforeUpdate[expirationAttribute]).toBeNull();
+      expect(offerAfterUpdate[expirationAttribute]).toBeTruthy();
+
+      expect(expirationDate.toISOString()).toEqual(
+        offerAfterUpdate[expirationAttribute].toISOString()
+      );
+    };
+
+    const expectExpirationDateIsNotSet = (
+      offerBeforeUpdate,
+      offerAfterUpdate,
+      expirationAttribute
+    ) => {
+      expect(offerBeforeUpdate[expirationAttribute]).toBeNull();
+      expect(offerAfterUpdate[expirationAttribute]).toBeNull();
+    };
+
     it("graduados admin approves offer for graduates", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { uuid } = await OfferGenerator.instance.forGraduates({ companyUuid });
+      const offerBeforeUpdate = await OfferGenerator.instance.forGraduates({
+        status: ApprovalStatus.pending,
+        companyUuid
+      });
       const newStatus = ApprovalStatus.approved;
       await OfferRepository.updateApprovalStatus({
-        uuid,
+        uuid: offerBeforeUpdate.uuid,
         admin: graduadosAdmin,
         status: newStatus
       });
+      const offerAfterUpdate = await OfferRepository.findByUuid(offerBeforeUpdate.uuid);
 
-      expect((await OfferRepository.findByUuid(uuid)).graduadosApprovalStatus).toEqual(newStatus);
+      expect(offerAfterUpdate.graduadosApprovalStatus).toEqual(newStatus);
+      expectExpirationDateIsSet(offerBeforeUpdate, offerAfterUpdate, "expirationDateForGraduados");
+      expectExpirationDateIsNotSet(
+        offerBeforeUpdate,
+        offerAfterUpdate,
+        "expirationDateForExtension"
+      );
     });
 
     it("graduados admin approves offer for graduates and students", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { uuid } = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
+      const offerBeforeUpdate = await OfferGenerator.instance.forStudentsAndGraduates({
+        status: ApprovalStatus.pending,
+        companyUuid
+      });
       const newStatus = ApprovalStatus.approved;
       await OfferRepository.updateApprovalStatus({
-        uuid,
+        uuid: offerBeforeUpdate.uuid,
         admin: graduadosAdmin,
         status: newStatus
       });
+      const offerAfterUpdate = await OfferRepository.findByUuid(offerBeforeUpdate.uuid);
 
-      expect((await OfferRepository.findByUuid(uuid)).graduadosApprovalStatus).toEqual(newStatus);
+      expect(offerAfterUpdate.graduadosApprovalStatus).toEqual(newStatus);
+      expectExpirationDateIsSet(offerBeforeUpdate, offerAfterUpdate, "expirationDateForGraduados");
+      expectExpirationDateIsNotSet(
+        offerBeforeUpdate,
+        offerAfterUpdate,
+        "expirationDateForExtension"
+      );
     });
 
     it("extension admin approves offer for students", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { uuid } = await OfferGenerator.instance.forStudents({ companyUuid });
+      const offerBeforeUpdate = await OfferGenerator.instance.forStudents({
+        status: ApprovalStatus.pending,
+        companyUuid
+      });
       const newStatus = ApprovalStatus.approved;
       await OfferRepository.updateApprovalStatus({
-        uuid,
+        uuid: offerBeforeUpdate.uuid,
         admin: extensionAdmin,
         status: newStatus
       });
+      const offerAfterUpdate = await OfferRepository.findByUuid(offerBeforeUpdate.uuid);
 
-      expect((await OfferRepository.findByUuid(uuid)).extensionApprovalStatus).toEqual(newStatus);
+      expect(offerAfterUpdate.extensionApprovalStatus).toEqual(newStatus);
+      expectExpirationDateIsSet(offerBeforeUpdate, offerAfterUpdate, "expirationDateForExtension");
+      expectExpirationDateIsNotSet(
+        offerBeforeUpdate,
+        offerAfterUpdate,
+        "expirationDateForGraduados"
+      );
     });
 
     it("extension admin approves offer for students and graduates", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { uuid } = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
+      const offerBeforeUpdate = await OfferGenerator.instance.forStudentsAndGraduates({
+        status: ApprovalStatus.pending,
+        companyUuid
+      });
       const newStatus = ApprovalStatus.approved;
       await OfferRepository.updateApprovalStatus({
-        uuid,
+        uuid: offerBeforeUpdate.uuid,
         admin: extensionAdmin,
         status: newStatus
       });
-
-      expect((await OfferRepository.findByUuid(uuid)).extensionApprovalStatus).toEqual(newStatus);
+      const offerAfterUpdate = await OfferRepository.findByUuid(offerBeforeUpdate.uuid);
+      expect(offerAfterUpdate.extensionApprovalStatus).toEqual(newStatus);
+      expectExpirationDateIsSet(offerBeforeUpdate, offerAfterUpdate, "expirationDateForExtension");
+      expectExpirationDateIsNotSet(
+        offerBeforeUpdate,
+        offerAfterUpdate,
+        "expirationDateForGraduados"
+      );
     });
 
     it("creates an entry on OfferApprovalEvents table", async () => {

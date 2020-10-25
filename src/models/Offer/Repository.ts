@@ -17,7 +17,7 @@ import { Offer, OfferCareer } from "$models";
 import { OfferNotFoundError, OfferNotUpdatedError } from "./Errors";
 import moment from "moment";
 
-const SECRETARY_EXPIRATION_DAYS_SETTING = 15;
+export const SECRETARY_EXPIRATION_DAYS_SETTING = 15;
 
 export const OfferRepository = {
   create: ({ careers, sections, ...attributes }: ICreateOffer) =>
