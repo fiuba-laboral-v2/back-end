@@ -1,4 +1,4 @@
-import { QueryInterface, DATE, UUID, TEXT, INTEGER } from "sequelize";
+import { QueryInterface, DATE, UUID, TEXT, INTEGER, BOOLEAN } from "sequelize";
 
 export = {
   up: (queryInterface: QueryInterface) => {
@@ -26,12 +26,16 @@ export = {
         allowNull: false,
         type: INTEGER
       },
+      isInternship: {
+        allowNull: false,
+        type: BOOLEAN
+      },
       minimumSalary: {
         allowNull: false,
         type: INTEGER
       },
       maximumSalary: {
-        allowNull: false,
+        allowNull: true,
         type: INTEGER
       },
       extensionApprovalStatus: {

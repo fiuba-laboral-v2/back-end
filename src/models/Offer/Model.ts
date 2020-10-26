@@ -15,7 +15,8 @@ import {
   TEXT,
   UUID,
   UUIDV4,
-  ENUM
+  ENUM,
+  BOOLEAN
 } from "sequelize";
 import { Career, Company, OfferCareer, OfferSection, OfferApprovalEvent } from "$models";
 import { validateIntegerInRange, validateSalaryRange } from "validations-fiuba-laboral-v2";
@@ -27,6 +28,7 @@ import { ApplicantType, targetApplicantTypeEnumValues } from "$models/Applicant"
   tableName: "Offers",
   validate: {
     validateSalaryRange(this: Offer) {
+      if (this.maximumSalary === null) return;
       validateSalaryRange(this.minimumSalary, this.maximumSalary);
     }
   }
@@ -92,6 +94,12 @@ export class Offer extends Model<Offer> {
   })
   public hoursPerDay: number;
 
+  @Column({
+    allowNull: false,
+    type: BOOLEAN
+  })
+  public isInternship: number;
+
   @Is("minimumSalary", validateIntegerInRange({ min: { value: 0, include: false } }))
   @Column({
     allowNull: false,
@@ -101,10 +109,10 @@ export class Offer extends Model<Offer> {
 
   @Is("maximumSalary", validateIntegerInRange({ min: { value: 0, include: false } }))
   @Column({
-    allowNull: false,
+    allowNull: true,
     type: INTEGER
   })
-  public maximumSalary: number;
+  public maximumSalary: number | null;
 
   @HasMany(() => OfferSection)
   public sections: OfferSection[];
