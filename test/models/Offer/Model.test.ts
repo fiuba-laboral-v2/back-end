@@ -10,6 +10,7 @@ describe("Offer", () => {
     companyUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
     title: "title",
     description: "description",
+    isInternship: false,
     hoursPerDay: 8,
     minimumSalary: 52500,
     maximumSalary: 70000,

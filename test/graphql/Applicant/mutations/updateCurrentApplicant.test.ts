@@ -8,6 +8,7 @@ import { TestClientGenerator } from "$generators/TestClient";
 
 import { UserRepository } from "$models/User/Repository";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
+import arrayContaining = jasmine.arrayContaining;
 
 const UPDATE_CURRENT_APPLICANT = gql`
   mutation updateCurrentApplicant(
@@ -139,7 +140,9 @@ describe("updateCurrentApplicant", () => {
         surname: dataToUpdate.user.surname
       },
       description: dataToUpdate.description,
-      capabilities: dataToUpdate.capabilities.map(description => ({ description })),
+      capabilities: arrayContaining(
+        dataToUpdate.capabilities.map(description => ({ description }))
+      ),
       careers: [
         {
           career: {

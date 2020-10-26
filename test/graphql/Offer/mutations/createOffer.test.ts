@@ -20,6 +20,7 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
     $description: String!
     $targetApplicantType: ApplicantType!
     $hoursPerDay: Int!
+    $isInternship: Boolean!
     $minimumSalary: Int!
     $maximumSalary: Int!
     $sections: [OfferSectionInput]!
@@ -30,6 +31,7 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
       description: $description
       targetApplicantType: $targetApplicantType
       hoursPerDay: $hoursPerDay
+      isInternship: $isInternship
       minimumSalary: $minimumSalary
       maximumSalary: $maximumSalary
       sections: $sections

@@ -98,7 +98,7 @@ export class Offer extends Model<Offer> {
     allowNull: false,
     type: BOOLEAN
   })
-  public isInternship: number;
+  public isInternship: boolean;
 
   @Is("minimumSalary", validateIntegerInRange({ min: { value: 0, include: false } }))
   @Column({

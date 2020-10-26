@@ -3,7 +3,7 @@ import { GraphQLOfferCareerInput } from "../Types/GraphQLOfferCareer";
 import { GraphQLOfferSectionInput } from "../Types/GraphQLOfferSection";
 import { GraphQLApplicantType } from "../../Applicant/Types/GraphQLApplicantType";
 import { OfferRepository } from "$models/Offer";
-import { Int, List, nonNull, String } from "$graphql/fieldTypes";
+import { Int, List, nonNull, String, Boolean } from "$graphql/fieldTypes";
 import { ICreateOffer } from "$models/Offer/Interface";
 import { IApolloServerContext } from "$graphql/Context";
 
@@ -21,6 +21,9 @@ export const createOffer = {
     },
     hoursPerDay: {
       type: nonNull(Int)
+    },
+    isInternship: {
+      type: nonNull(Boolean)
     },
     minimumSalary: {
       type: nonNull(Int)
