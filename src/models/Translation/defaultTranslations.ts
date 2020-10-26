@@ -4,9 +4,10 @@ export const defaultTranslations = {
     { key: "name", value: "Nombre" },
     { key: "surname", value: "Apellido" }
   ],
-  register: [
-    { key: "registerAsCompany", value: "Registrarme como empresa" },
-    { key: "registerAsApplicant", value: "Registrarme como alumno" }
+  initialLogin: [
+    { key: "title", value: "Ingresar" },
+    { key: "fiubaLogin", value: "Ingresar con Fiuba" },
+    { key: "companyLogin", value: "Ingresar como empresa" }
   ],
   applicantList: [{ key: "title", value: "Postulantes" }],
   companyJobApplicationsListTitle: [{ key: "title", value: "Postulantes" }],
