@@ -11,7 +11,7 @@ export const userTokenAssertions = {
     ]);
   },
   createExpressContext: () => ({ res: { cookie: jest.fn() } }),
-  expectUserToMatchToken: async ({ variables, result, documentNode }: ITestToken) => {
+  expectMutationToSetCookie: async ({ variables, result, documentNode }: ITestToken) => {
     const expressContext = userTokenAssertions.createExpressContext();
     const apolloClient = client.loggedOut({ expressContext });
     const { errors } = await apolloClient.mutate({

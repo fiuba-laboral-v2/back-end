@@ -29,7 +29,7 @@ describe("companyLogin", () => {
   it("sets the cookie for a user", async () => {
     const password = "AValidPassword0";
     const user = await UserGenerator.instance({ password });
-    await userTokenAssertions.expectUserToMatchToken({
+    await userTokenAssertions.expectMutationToSetCookie({
       documentNode: COMPANY_LOGIN,
       variables: { email: user.email, password },
       result: CurrentUserBuilder.build({
@@ -45,7 +45,7 @@ describe("companyLogin", () => {
       user: { password }
     });
     const [user] = await company.getUsers();
-    await userTokenAssertions.expectUserToMatchToken({
+    await userTokenAssertions.expectMutationToSetCookie({
       documentNode: COMPANY_LOGIN,
       variables: { email: user.email, password },
       result: CurrentUserBuilder.build({
