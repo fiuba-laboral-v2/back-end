@@ -6,7 +6,7 @@ export const defaultTranslations = {
   ],
   initialLogin: [
     { key: "title", value: "Ingresar" },
-    { key: "fiubaLogin", value: "Ingresar con Fiuba" },
+    { key: "fiubaLogin", value: "Ingresar con credenciales de Fiuba" },
     { key: "companyLogin", value: "Ingresar como empresa" }
   ],
   applicantList: [{ key: "title", value: "Postulantes" }],
