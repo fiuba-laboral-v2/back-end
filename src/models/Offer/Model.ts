@@ -22,6 +22,7 @@ import { validateIntegerInRange, validateSalaryRange } from "validations-fiuba-l
 import { approvalStatuses, ApprovalStatus } from "$models/ApprovalStatus";
 import { isApprovalStatus, isTargetApplicantType } from "$models/SequelizeModelValidators";
 import { ApplicantType, targetApplicantTypeEnumValues } from "$models/Applicant";
+import { DATE } from "sequelize";
 
 @Table({
   tableName: "Offers",
@@ -105,6 +106,18 @@ export class Offer extends Model<Offer> {
     type: INTEGER
   })
   public maximumSalary: number;
+
+  @Column({
+    allowNull: true,
+    type: DATE
+  })
+  public graduatesExpirationDateTime: Date;
+
+  @Column({
+    allowNull: true,
+    type: DATE
+  })
+  public studentsExpirationDateTime: Date;
 
   @HasMany(() => OfferSection)
   public sections: OfferSection[];

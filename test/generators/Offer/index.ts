@@ -95,7 +95,9 @@ export const OfferGenerator = {
         status: status || ApprovalStatus.approved
       });
     },
-    forAllTargets: async (variables: IOfferInput): Promise<IForAllTargets> => ({
+    forAllTargets: async (
+      variables: IOfferInput & { status?: ApprovalStatus }
+    ): Promise<IForAllTargets> => ({
       [ApplicantType.student]: await OfferGenerator.instance.forStudents(variables),
       [ApplicantType.graduate]: await OfferGenerator.instance.forGraduates(variables),
       [ApplicantType.both]: await OfferGenerator.instance.forStudentsAndGraduates(variables)
