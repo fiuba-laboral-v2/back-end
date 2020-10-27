@@ -350,22 +350,20 @@ describe("OfferRepository", () => {
   });
 
   describe("UpdateApprovalStatus", () => {
-    const expectExpirationDateIsSet = (
+    const expectExpirationDateToBeSet = (
       offerBeforeUpdate,
       offerAfterUpdate,
       expirationAttribute
     ) => {
-      const expirationDate = moment().startOf("day").add(SECRETARY_EXPIRATION_DAYS_SETTING, "days");
+      const expirationDate = moment().endOf("day").add(SECRETARY_EXPIRATION_DAYS_SETTING, "days");
 
       expect(offerBeforeUpdate[expirationAttribute]).toBeNull();
-      expect(offerAfterUpdate[expirationAttribute]).toBeTruthy();
-
       expect(expirationDate.toISOString()).toEqual(
         offerAfterUpdate[expirationAttribute].toISOString()
       );
     };
 
-    const expectExpirationDateIsNotSet = (
+    const expectExpirationDateToBeNull = (
       offerBeforeUpdate,
       offerAfterUpdate,
       expirationAttribute
@@ -389,11 +387,15 @@ describe("OfferRepository", () => {
       const offerAfterUpdate = await OfferRepository.findByUuid(offerBeforeUpdate.uuid);
 
       expect(offerAfterUpdate.graduadosApprovalStatus).toEqual(newStatus);
-      expectExpirationDateIsSet(offerBeforeUpdate, offerAfterUpdate, "expirationDateForGraduados");
-      expectExpirationDateIsNotSet(
+      expectExpirationDateToBeSet(
         offerBeforeUpdate,
         offerAfterUpdate,
-        "expirationDateForExtension"
+        "graduatesExpirationDateTime"
+      );
+      expectExpirationDateToBeNull(
+        offerBeforeUpdate,
+        offerAfterUpdate,
+        "studentsExpirationDateTime"
       );
     });
 
@@ -412,11 +414,15 @@ describe("OfferRepository", () => {
       const offerAfterUpdate = await OfferRepository.findByUuid(offerBeforeUpdate.uuid);
 
       expect(offerAfterUpdate.graduadosApprovalStatus).toEqual(newStatus);
-      expectExpirationDateIsSet(offerBeforeUpdate, offerAfterUpdate, "expirationDateForGraduados");
-      expectExpirationDateIsNotSet(
+      expectExpirationDateToBeSet(
         offerBeforeUpdate,
         offerAfterUpdate,
-        "expirationDateForExtension"
+        "graduatesExpirationDateTime"
+      );
+      expectExpirationDateToBeNull(
+        offerBeforeUpdate,
+        offerAfterUpdate,
+        "studentsExpirationDateTime"
       );
     });
 
@@ -435,11 +441,15 @@ describe("OfferRepository", () => {
       const offerAfterUpdate = await OfferRepository.findByUuid(offerBeforeUpdate.uuid);
 
       expect(offerAfterUpdate.extensionApprovalStatus).toEqual(newStatus);
-      expectExpirationDateIsSet(offerBeforeUpdate, offerAfterUpdate, "expirationDateForExtension");
-      expectExpirationDateIsNotSet(
+      expectExpirationDateToBeSet(
         offerBeforeUpdate,
         offerAfterUpdate,
-        "expirationDateForGraduados"
+        "studentsExpirationDateTime"
+      );
+      expectExpirationDateToBeNull(
+        offerBeforeUpdate,
+        offerAfterUpdate,
+        "graduatesExpirationDateTime"
       );
     });
 
@@ -457,11 +467,15 @@ describe("OfferRepository", () => {
       });
       const offerAfterUpdate = await OfferRepository.findByUuid(offerBeforeUpdate.uuid);
       expect(offerAfterUpdate.extensionApprovalStatus).toEqual(newStatus);
-      expectExpirationDateIsSet(offerBeforeUpdate, offerAfterUpdate, "expirationDateForExtension");
-      expectExpirationDateIsNotSet(
+      expectExpirationDateToBeSet(
         offerBeforeUpdate,
         offerAfterUpdate,
-        "expirationDateForGraduados"
+        "studentsExpirationDateTime"
+      );
+      expectExpirationDateToBeNull(
+        offerBeforeUpdate,
+        offerAfterUpdate,
+        "graduatesExpirationDateTime"
       );
     });
 

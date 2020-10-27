@@ -27,8 +27,8 @@ const UPDATE_OFFER_APPROVAL_STATUS = gql`
       uuid
       extensionApprovalStatus
       graduadosApprovalStatus
-      expirationDateForExtension
-      expirationDateForGraduados
+      studentsExpirationDateTime
+      graduatesExpirationDateTime
     }
   }
 `;
@@ -70,14 +70,18 @@ describe("updateOfferApprovalStatus", () => {
     }[secretary];
 
     const changedExpirationColumn = {
-      [Secretary.graduados]: "expirationDateForGraduados",
-      [Secretary.extension]: "expirationDateForExtension"
+      [Secretary.graduados]: "graduatesExpirationDateTime",
+      [Secretary.extension]: "studentsExpirationDateTime"
     }[secretary];
 
-    const expirationDate = moment()
-      .startOf("day")
-      .add(SECRETARY_EXPIRATION_DAYS_SETTING, "days")
-      .toISOString();
+    const expirationDate = {
+      [ApprovalStatus.approved]: moment()
+        .endOf("day")
+        .add(SECRETARY_EXPIRATION_DAYS_SETTING, "days")
+        .toISOString(),
+      [ApprovalStatus.rejected]: moment().startOf("day").toISOString(),
+      [ApprovalStatus.pending]: null
+    }[newStatus];
 
     expect(errors).toBeUndefined();
 
@@ -96,6 +100,14 @@ describe("updateOfferApprovalStatus", () => {
     ]);
   };
 
+  it("sets an offer for students to pending and logs event for an admin of extension", async () => {
+    await expectToUpdateStatusAndExpirationDateAndLogEvent(
+      ApprovalStatus.pending,
+      Secretary.extension,
+      offers[ApplicantType.student]
+    );
+  });
+
   it("approves an offer for students and logs event for an admin of extension", async () => {
     await expectToUpdateStatusAndExpirationDateAndLogEvent(
       ApprovalStatus.approved,
@@ -112,11 +124,11 @@ describe("updateOfferApprovalStatus", () => {
     );
   });
 
-  it("sets an offer for students to pending and logs event for an admin of extension", async () => {
+  it("sets an offer for both to pending and logs event for an admin of extension", async () => {
     await expectToUpdateStatusAndExpirationDateAndLogEvent(
       ApprovalStatus.pending,
       Secretary.extension,
-      offers[ApplicantType.student]
+      offers[ApplicantType.both]
     );
   });
 
@@ -136,11 +148,11 @@ describe("updateOfferApprovalStatus", () => {
     );
   });
 
-  it("sets an offer for both to pending and logs event for an admin of extension", async () => {
+  it("sets an offer for graduados to pending and logs event for an admin of graduados", async () => {
     await expectToUpdateStatusAndExpirationDateAndLogEvent(
       ApprovalStatus.pending,
-      Secretary.extension,
-      offers[ApplicantType.both]
+      Secretary.graduados,
+      offers[ApplicantType.graduate]
     );
   });
 
@@ -160,11 +172,11 @@ describe("updateOfferApprovalStatus", () => {
     );
   });
 
-  it("sets an offer for graduados to pending and logs event for an admin of graduados", async () => {
+  it("sets an offer for both to pending and logs event for an admin of graduados", async () => {
     await expectToUpdateStatusAndExpirationDateAndLogEvent(
       ApprovalStatus.pending,
       Secretary.graduados,
-      offers[ApplicantType.graduate]
+      offers[ApplicantType.both]
     );
   });
 
@@ -179,14 +191,6 @@ describe("updateOfferApprovalStatus", () => {
   it("rejects offer for both and logs event for an admin of graduados", async () => {
     await expectToUpdateStatusAndExpirationDateAndLogEvent(
       ApprovalStatus.rejected,
-      Secretary.graduados,
-      offers[ApplicantType.both]
-    );
-  });
-
-  it("sets an offer for both to pending and logs event for an admin of graduados", async () => {
-    await expectToUpdateStatusAndExpirationDateAndLogEvent(
-      ApprovalStatus.pending,
       Secretary.graduados,
       offers[ApplicantType.both]
     );

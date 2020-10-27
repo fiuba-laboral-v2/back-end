@@ -107,8 +107,8 @@ describe("findAdminTasksQuery", () => {
         COALESCE (Offers."hoursPerDay") AS "hoursPerDay",
         COALESCE (Offers."minimumSalary") AS "minimumSalary",
         COALESCE (Offers."maximumSalary") AS "maximumSalary",
-        COALESCE (Offers."expirationDateForExtension") AS "expirationDateForExtension",
-        COALESCE (Offers."expirationDateForGraduados") AS "expirationDateForGraduados",
+        COALESCE (Offers."studentsExpirationDateTime") AS "studentsExpirationDateTime",
+        COALESCE (Offers."graduatesExpirationDateTime") AS "graduatesExpirationDateTime",
         COALESCE (Offers."targetApplicantType") AS "targetApplicantType",
         COALESCE (JobApplications."applicantUuid") AS "applicantUuid",
         COALESCE (JobApplications."offerUuid") AS "offerUuid"
@@ -331,8 +331,8 @@ describe("findAdminTasksQuery", () => {
           COALESCE ( Offers."hoursPerDay" ) AS "hoursPerDay",
           COALESCE ( Offers."minimumSalary" ) AS "minimumSalary",
           COALESCE ( Offers."maximumSalary" ) AS "maximumSalary",
-          COALESCE (Offers."expirationDateForExtension") AS "expirationDateForExtension",
-          COALESCE (Offers."expirationDateForGraduados") AS "expirationDateForGraduados",
+          COALESCE (Offers."studentsExpirationDateTime") AS "studentsExpirationDateTime",
+          COALESCE (Offers."graduatesExpirationDateTime") AS "graduatesExpirationDateTime",
           COALESCE ( Offers."targetApplicantType" ) AS "targetApplicantType",
           COALESCE ( Offers."createdAt" ) AS "createdAt",
           COALESCE ( Offers."updatedAt" ) AS "updatedAt"

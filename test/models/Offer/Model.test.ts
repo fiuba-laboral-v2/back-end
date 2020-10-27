@@ -14,8 +14,8 @@ describe("Offer", () => {
     hoursPerDay: 8,
     minimumSalary: 52500,
     maximumSalary: 70000,
-    expirationDateForGraduados: "2020-10-24T15:18:06.000Z",
-    expirationDateForExtension: "2020-10-24T15:18:06.000Z",
+    graduatesExpirationDateTime: "2020-10-24T15:18:06.000Z",
+    studentsExpirationDateTime: "2020-10-24T15:18:06.000Z",
     targetApplicantType: ApplicantType.both
   };
 
@@ -41,15 +41,10 @@ describe("Offer", () => {
   it("creates a valid offer with its given attributes", async () => {
     const offer = new Offer(offerAttributes);
     await expect(offer.validate()).resolves.not.toThrow();
-    expect(offer).toBeObjectContaining(
-      omit(offerAttributes, ["expirationDateForGraduados", "expirationDateForExtension"])
-    );
-    expect({
-      expirationDateForGraduados: offerAttributes.expirationDateForGraduados,
-      expirationDateForExtension: offerAttributes.expirationDateForExtension
-    }).toEqual({
-      expirationDateForGraduados: offer.expirationDateForGraduados.toISOString(),
-      expirationDateForExtension: offer.expirationDateForExtension.toISOString()
+    expect(offer).toBeObjectContaining({
+      ...offerAttributes,
+      graduatesExpirationDateTime: new Date(offerAttributes.graduatesExpirationDateTime),
+      studentsExpirationDateTime: new Date(offerAttributes.studentsExpirationDateTime)
     });
   });
 
@@ -77,13 +72,13 @@ describe("Offer", () => {
     await expect(offer.graduadosApprovalStatus).toEqual(ApprovalStatus.pending);
   });
 
-  it("creates a valid offer without expirationDateForGraduados", async () => {
-    const offer = new Offer(omit(offerAttributes, ["expirationDateForGraduados"]));
+  it("creates a valid offer without graduatesExpirationDateTime", async () => {
+    const offer = new Offer(omit(offerAttributes, ["graduatesExpirationDateTime"]));
     await expect(offer.validate()).resolves.not.toThrow();
   });
 
-  it("creates a valid offer without expirationDateForExtension", async () => {
-    const offer = new Offer(omit(offerAttributes, ["expirationDateForExtension"]));
+  it("creates a valid offer without studentsExpirationDateTime", async () => {
+    const offer = new Offer(omit(offerAttributes, ["studentsExpirationDateTime"]));
     await expect(offer.validate()).resolves.not.toThrow();
   });
 

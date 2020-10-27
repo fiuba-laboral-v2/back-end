@@ -38,10 +38,10 @@ export const GraphQLOffer = new GraphQLObjectType<Offer, IApolloServerContext>({
     graduadosApprovalStatus: {
       type: nonNull(GraphQLApprovalStatus)
     },
-    expirationDateForExtension: {
+    studentsExpirationDateTime: {
       type: GraphQLDateTime
     },
-    expirationDateForGraduados: {
+    graduatesExpirationDateTime: {
       type: GraphQLDateTime
     },
     targetApplicantType: {

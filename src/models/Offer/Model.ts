@@ -111,13 +111,13 @@ export class Offer extends Model<Offer> {
     allowNull: true,
     type: DATE
   })
-  public expirationDateForGraduados: Date;
+  public graduatesExpirationDateTime: Date;
 
   @Column({
     allowNull: true,
     type: DATE
   })
-  public expirationDateForExtension: Date;
+  public studentsExpirationDateTime: Date;
 
   @HasMany(() => OfferSection)
   public sections: OfferSection[];

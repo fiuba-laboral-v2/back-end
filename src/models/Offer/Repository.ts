@@ -49,19 +49,21 @@ export const OfferRepository = {
     Database.transaction(async transaction => {
       const isExtension = secretary => secretary === Secretary.extension;
       const isApproved = chooseStatus => chooseStatus === ApprovalStatus.approved;
+      const isRejected = chooseStatus => chooseStatus === ApprovalStatus.rejected;
 
-      const expirationDate = moment().startOf("day").add(SECRETARY_EXPIRATION_DAYS_SETTING, "days");
+      const expirationDate = moment().endOf("day").add(SECRETARY_EXPIRATION_DAYS_SETTING, "days");
 
       const offerAttributes = {
         ...(!isExtension(admin.secretary) && {
           graduadosApprovalStatus: status,
-          ...(isApproved(status) && { expirationDateForGraduados: expirationDate })
+          ...(isApproved(status) && { graduatesExpirationDateTime: expirationDate }),
+          ...(isRejected(status) && { graduatesExpirationDateTime: moment().startOf("day") })
         }),
         ...(isExtension(admin.secretary) && {
           extensionApprovalStatus: status,
-          ...(isApproved(status) && { expirationDateForExtension: expirationDate })
-        }),
-        ...(status === ApprovalStatus.approved && {})
+          ...(isApproved(status) && { studentsExpirationDateTime: expirationDate }),
+          ...(isRejected(status) && { studentsExpirationDateTime: moment().startOf("day") })
+        })
       };
 
       const [, [updatedOffer]] = await Offer.update(offerAttributes, {

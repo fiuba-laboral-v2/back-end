@@ -48,11 +48,11 @@ export = {
         allowNull: false,
         type: "applicant_type"
       },
-      expirationDateForGraduados: {
+      graduatesExpirationDateTime: {
         allowNull: true,
         type: DATE
       },
-      expirationDateForExtension: {
+      studentsExpirationDateTime: {
         allowNull: true,
         type: DATE
       },
