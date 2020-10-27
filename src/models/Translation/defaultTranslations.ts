@@ -191,6 +191,12 @@ export const defaultTranslations = {
     { key: "logIn", value: "Iniciar sesión" },
     { key: "badCredentialsMessage", value: "Email o contraseña inválidos" }
   ],
+  applicantLogin: [
+    { key: "dni", value: "DNI" },
+    { key: "register", value: "Registrate en la bolsa de trabajo" },
+    { key: "forgotYourPassword", value: "Olvidaste tu contraseña?" },
+    { key: "manageYourFiubaAccount", value: "Administrá tu cuenta de FIUBA" }
+  ],
   companyLogin: [
     { key: "email", value: "Email" },
     { key: "dontHaveAnAccount", value: "No tenés cuenta?" },
