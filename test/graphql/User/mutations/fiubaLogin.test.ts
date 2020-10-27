@@ -90,7 +90,7 @@ describe("fiubaLogin", () => {
     expect(errors).not.toBeUndefined();
   });
 
-  it("returns error if user is not registered", async () => {
+  it("returns error if user does not exist", async () => {
     const { errors } = await client.loggedOut().mutate({
       mutation: FIUBA_LOGIN,
       variables: { dni: DniGenerator.generate(), password: "AValidPassword000" }

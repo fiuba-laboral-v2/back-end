@@ -84,7 +84,7 @@ describe("companyLogin", () => {
     expect(errors![0].extensions!.data).toEqual({ errorType: Error.name });
   });
 
-  it("returns error if user is not registered", async () => {
+  it("returns error if user does not exist", async () => {
     const { errors } = await client.loggedOut().mutate({
       mutation: COMPANY_LOGIN,
       variables: { email: "asd@asd.com", password: "AValidPassword000" }
