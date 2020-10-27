@@ -28,7 +28,7 @@ describe("fiubaLogin", () => {
     await CompanyRepository.truncate();
   });
 
-  it("sets the cookie for an applicant user", async () => {
+  it("creates the cookie for an applicant user", async () => {
     const password = "AValidPassword1";
     const applicant = await ApplicantGenerator.instance.withMinimumData({ password });
     const user = await applicant.getUser();
@@ -45,7 +45,7 @@ describe("fiubaLogin", () => {
     });
   });
 
-  it("returns a token for an admin", async () => {
+  it("creates a token for an admin", async () => {
     const password = "AValidPassword1";
     const admin = await AdminGenerator.instance({ secretary: Secretary.extension, password });
     const user = await admin.getUser();

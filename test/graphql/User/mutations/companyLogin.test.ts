@@ -26,7 +26,7 @@ describe("companyLogin", () => {
     await CompanyRepository.truncate();
   });
 
-  it("sets the cookie for a user", async () => {
+  it("creates the cookie for a user", async () => {
     const password = "AValidPassword0";
     const user = await UserGenerator.instance({ password });
     await userTokenAssertions.expectMutationToSetCookie({
@@ -41,7 +41,7 @@ describe("companyLogin", () => {
     });
   });
 
-  it("returns a token for a company user", async () => {
+  it("creates a token for a company user", async () => {
     const password = "AValidPassword2";
     const company = await CompanyGenerator.instance.withMinimumData({
       user: { password }
