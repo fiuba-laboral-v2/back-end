@@ -15,9 +15,9 @@ import { ApplicantGenerator } from "$generators/Applicant";
 import { AdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
 
-const LOGIN = gql`
+const COMPANY_LOGIN = gql`
   mutation($email: String!, $password: String!) {
-    login(email: $email, password: $password)
+    companyLogin(email: $email, password: $password)
   }
 `;
 
@@ -47,7 +47,7 @@ describe("login", () => {
     const expressContext = createExpressContext();
     const apolloClient = client.loggedOut({ expressContext });
     const { errors } = await apolloClient.mutate({
-      mutation: LOGIN,
+      mutation: COMPANY_LOGIN,
       variables: {
         email: user.email,
         password
@@ -72,25 +72,6 @@ describe("login", () => {
     });
   });
 
-  it("sets the cookie for an applicant user", async () => {
-    const password = "AValidPassword1";
-    const applicant = await ApplicantGenerator.instance.withMinimumData({
-      password
-    });
-    const user = await applicant.getUser();
-    await testToken({
-      user,
-      password,
-      result: CurrentUserBuilder.build({
-        uuid: user.uuid,
-        email: user.email,
-        applicant: {
-          uuid: applicant.uuid
-        }
-      })
-    });
-  });
-
   it("returns a token for a company user", async () => {
     const password = "AValidPassword2";
     const company = await CompanyGenerator.instance.withMinimumData({
@@ -110,50 +91,41 @@ describe("login", () => {
     });
   });
 
-  it("returns a token for an admin", async () => {
-    const password = "AValidPassword3";
-    const admin = await AdminGenerator.instance({ secretary: Secretary.extension, password });
-    const user = await admin.getUser();
-    await testToken({
-      user,
-      password,
-      result: CurrentUserBuilder.build({
-        uuid: user.uuid,
-        email: user.email,
-        admin: {
-          userUuid: admin.userUuid
-        }
-      })
+  it("returns an error if the user is an applicant", async () => {
+    const password = "AValidPassword1";
+    const applicant = await ApplicantGenerator.instance.withMinimumData();
+    const user = await applicant.getUser();
+    const { errors } = await client.loggedOut().mutate({
+      mutation: COMPANY_LOGIN,
+      variables: { email: user.email, password }
     });
+    expect(errors![0].extensions!.data).toEqual({ errorType: Error.name });
+  });
+
+  it("returns an error if the user is an admin", async () => {
+    const password = "AValidPassword3";
+    const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+    const user = await admin.getUser();
+    const { errors } = await client.loggedOut().mutate({
+      mutation: COMPANY_LOGIN,
+      variables: { email: user.email, password }
+    });
+    expect(errors![0].extensions!.data).toEqual({ errorType: Error.name });
   });
 
   it("returns error if user is not registered", async () => {
     const { errors } = await client.loggedOut().mutate({
-      mutation: LOGIN,
-      variables: {
-        email: "asd@asd.com",
-        password: "AValidPassword000"
-      }
+      mutation: COMPANY_LOGIN,
+      variables: { email: "asd@asd.com", password: "AValidPassword000" }
     });
-    expect(errors![0].extensions!.data).toEqual({
-      errorType: UserNotFoundError.name
-    });
+    expect(errors![0].extensions!.data).toEqual({ errorType: UserNotFoundError.name });
   });
 
   it("returns and error if the password does not match", async () => {
-    const email = "asd@asd.com";
-    await UserRepository.create({
-      email: email,
-      password: "AValidPassword11",
-      name: "name",
-      surname: "surname"
-    });
+    const user = await UserGenerator.instance();
     const { errors } = await client.loggedOut().mutate({
-      mutation: LOGIN,
-      variables: {
-        email: email,
-        password: "AValidPassword22"
-      }
+      mutation: COMPANY_LOGIN,
+      variables: { email: user.email, password: "WrongPassword" }
     });
     expect(errors![0].extensions!.data).toEqual({
       errorType: BadCredentialsError.name

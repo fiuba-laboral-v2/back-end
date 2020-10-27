@@ -1,7 +1,9 @@
 import { logout } from "./logout";
-import { login } from "./login";
+import { companyLogin } from "./companyLogin";
+import { fiubaLogin } from "./fiubaLogin";
 
 export const userMutations = {
-  login,
+  companyLogin,
+  fiubaLogin,
   logout
 };

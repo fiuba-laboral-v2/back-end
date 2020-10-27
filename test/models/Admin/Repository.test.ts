@@ -6,41 +6,21 @@ import { AdminNotFoundError } from "$models/Admin/Errors";
 import { mockItemsPerPage } from "$test/mocks/config/PaginationConfig";
 
 describe("AdminRepository", () => {
-  beforeAll(async () => {
-    await UserRepository.truncate();
-  });
+  beforeAll(() => UserRepository.truncate());
 
   describe("create", () => {
     it("creates a valid Admin of extension", async () => {
       const adminAttributes = AdminGenerator.data(Secretary.extension);
       const admin = await AdminRepository.create(adminAttributes);
-      expect(await admin.getUser()).toEqual(
-        expect.objectContaining({
-          ...adminAttributes.user,
-          password: expect.any(String)
-        })
-      );
-      expect(admin).toEqual(
-        expect.objectContaining({
-          secretary: adminAttributes.secretary
-        })
-      );
+      expect(await admin.getUser()).toBeObjectContaining(adminAttributes.user);
+      expect(admin).toBeObjectContaining({ secretary: adminAttributes.secretary });
     });
 
     it("creates a valid Admin of graduados", async () => {
       const adminAttributes = AdminGenerator.data(Secretary.graduados);
       const admin = await AdminRepository.create(adminAttributes);
-      expect(await admin.getUser()).toEqual(
-        expect.objectContaining({
-          ...adminAttributes.user,
-          password: expect.any(String)
-        })
-      );
-      expect(admin).toEqual(
-        expect.objectContaining({
-          secretary: adminAttributes.secretary
-        })
-      );
+      expect(await admin.getUser()).toBeObjectContaining(adminAttributes.user);
+      expect(admin).toBeObjectContaining({ secretary: adminAttributes.secretary });
     });
 
     it("creates a valid Admin with timestamps", async () => {
