@@ -31,6 +31,12 @@ export const UserRepository = {
 
     return user;
   },
+  findByDni: async (dni: string) => {
+    const user = await User.findOne({ where: { dni } });
+    if (!user) throw new UserNotFoundError({ dni });
+
+    return user;
+  },
   findByUuid: async (uuid: string) => {
     const user = await User.findByPk(uuid);
     if (!user) throw new UserNotFoundError({ uuid });

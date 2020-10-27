@@ -200,6 +200,29 @@ describe("UserRepository", () => {
     });
   });
 
+  describe("findByDni", () => {
+    it("finds a user by dni", async () => {
+      const dni = "1234567";
+      await UserGenerator.instance();
+      const user = await UserGenerator.instance({ dni });
+      const foundUser = await UserRepository.findByDni(user.dni);
+
+      expect(foundUser.dni).toEqual(dni);
+      expect(foundUser.email).toEqual(user.email);
+      expect(foundUser.password).toEqual(user.password);
+    });
+
+    it("returns error when it does not find a user with the given dni", async () => {
+      await UserGenerator.instance();
+      await UserGenerator.instance();
+      const nonExistentDni = "1234567";
+      await expect(UserRepository.findByDni(nonExistentDni)).rejects.toThrowErrorWithMessage(
+        UserNotFoundError,
+        UserNotFoundError.buildMessage({ dni: nonExistentDni })
+      );
+    });
+  });
+
   describe("findByUuid", () => {
     it("returns user by uuid", async () => {
       await UserGenerator.instance();
