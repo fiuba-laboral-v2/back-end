@@ -64,7 +64,7 @@ describe("fiubaLogin", () => {
     });
   });
 
-  it("returns an error if the fiuba authentication fails for an applicant", async () => {
+  it("returns an error if the fiuba service rejects authentication attempt", async () => {
     const password = "AValidPassword1";
     const applicant = await ApplicantGenerator.instance.withMinimumData({ password });
     jest.spyOn(FiubaUsersService, "authenticate").mockImplementationOnce(async () => false);

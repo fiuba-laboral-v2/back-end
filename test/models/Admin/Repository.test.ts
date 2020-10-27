@@ -37,7 +37,7 @@ describe("AdminRepository", () => {
       expect(admin.updatedAt).toEqual(expect.any(Date));
     });
 
-    it("throws an error if the fiuba authentication fails", async () => {
+    it("throws an error if the fiuba service rejects authentication attempt", async () => {
       jest.spyOn(FiubaUsersService, "authenticate").mockImplementation(async () => false);
       const adminAttributes = AdminGenerator.data(Secretary.graduados);
       await expect(AdminRepository.create(adminAttributes)).rejects.toThrowErrorWithMessage(
