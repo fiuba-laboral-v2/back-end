@@ -82,6 +82,16 @@ describe("Offer", () => {
     await expect(offer.validate()).resolves.not.toThrow();
   });
 
+  it("creates a valid offer with studentsExpirationDateTime and graduatesExpirationDateTime on null when omitted", async () => {
+    let offer = new Offer(
+      omit(offerAttributes, ["studentsExpirationDateTime", "graduatesExpirationDateTime"])
+    );
+    offer = await offer.save();
+
+    expect(offer.studentsExpirationDateTime).toBeNull();
+    expect(offer.graduatesExpirationDateTime).toBeNull();
+  });
+
   it("throws an error if offer does not belong to any company", async () => {
     const offer = new Offer({ ...offerAttributes, companyUuid: null });
     await expect(offer.validate()).rejects.toThrow();
