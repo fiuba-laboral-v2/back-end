@@ -194,6 +194,11 @@ export const defaultTranslations = {
     { key: "register", value: "Registrate" },
     { key: "badCredentialsMessage", value: "Email o contraseña inválidos" }
   ],
+  companyLogin: [
+    { key: "email", value: "Email" },
+    { key: "dontHaveAnAccount", value: "No tenés cuenta?" },
+    { key: "register", value: "Registrate" }
+  ],
   navBar: [
     { key: "admins", value: "Administradores" },
     { key: "applicants", value: "Postulantes" },
