@@ -14,7 +14,7 @@ import { CompanyGenerator } from "$generators/Company";
 import { DniGenerator } from "$generators/DNI";
 import { FiubaUsersService } from "$services";
 
-import { tokenGeneratedTest } from "./tokenGeneratedTest";
+import { userTokenAssertions } from "./userTokenAssertions";
 
 const FIUBA_LOGIN = gql`
   mutation($dni: String!, $password: String!) {
@@ -32,7 +32,7 @@ describe("fiubaLogin", () => {
     const password = "AValidPassword1";
     const applicant = await ApplicantGenerator.instance.withMinimumData({ password });
     const user = await applicant.getUser();
-    await tokenGeneratedTest.testToken({
+    await userTokenAssertions.testToken({
       documentNode: FIUBA_LOGIN,
       variables: { dni: user.dni, password },
       result: CurrentUserBuilder.build({
@@ -47,7 +47,7 @@ describe("fiubaLogin", () => {
     const password = "AValidPassword1";
     const admin = await AdminGenerator.instance({ secretary: Secretary.extension, password });
     const user = await admin.getUser();
-    await tokenGeneratedTest.testToken({
+    await userTokenAssertions.testToken({
       documentNode: FIUBA_LOGIN,
       variables: { dni: user.dni, password },
       result: CurrentUserBuilder.build({

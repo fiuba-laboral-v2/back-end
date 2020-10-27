@@ -12,7 +12,7 @@ import { ApplicantGenerator } from "$generators/Applicant";
 import { AdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
 
-import { tokenGeneratedTest } from "./tokenGeneratedTest";
+import { userTokenAssertions } from "./userTokenAssertions";
 
 const COMPANY_LOGIN = gql`
   mutation($email: String!, $password: String!) {
@@ -29,7 +29,7 @@ describe("login", () => {
   it("sets the cookie for a user", async () => {
     const password = "AValidPassword0";
     const user = await UserGenerator.instance({ password });
-    await tokenGeneratedTest.testToken({
+    await userTokenAssertions.testToken({
       documentNode: COMPANY_LOGIN,
       variables: { email: user.email, password },
       result: CurrentUserBuilder.build({
@@ -45,7 +45,7 @@ describe("login", () => {
       user: { password }
     });
     const [user] = await company.getUsers();
-    await tokenGeneratedTest.testToken({
+    await userTokenAssertions.testToken({
       documentNode: COMPANY_LOGIN,
       variables: { email: user.email, password },
       result: CurrentUserBuilder.build({
