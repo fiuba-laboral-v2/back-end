@@ -32,7 +32,7 @@ describe("fiubaLogin", () => {
     const password = "AValidPassword1";
     const applicant = await ApplicantGenerator.instance.withMinimumData({ password });
     const user = await applicant.getUser();
-    await userTokenAssertions.testToken({
+    await userTokenAssertions.expectUserToMatchToken({
       documentNode: FIUBA_LOGIN,
       variables: { dni: user.dni, password },
       result: CurrentUserBuilder.build({
@@ -47,7 +47,7 @@ describe("fiubaLogin", () => {
     const password = "AValidPassword1";
     const admin = await AdminGenerator.instance({ secretary: Secretary.extension, password });
     const user = await admin.getUser();
-    await userTokenAssertions.testToken({
+    await userTokenAssertions.expectUserToMatchToken({
       documentNode: FIUBA_LOGIN,
       variables: { dni: user.dni, password },
       result: CurrentUserBuilder.build({

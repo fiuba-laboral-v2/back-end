@@ -20,7 +20,7 @@ const COMPANY_LOGIN = gql`
   }
 `;
 
-describe("login", () => {
+describe("companyLogin", () => {
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
@@ -29,7 +29,7 @@ describe("login", () => {
   it("sets the cookie for a user", async () => {
     const password = "AValidPassword0";
     const user = await UserGenerator.instance({ password });
-    await userTokenAssertions.testToken({
+    await userTokenAssertions.expectUserToMatchToken({
       documentNode: COMPANY_LOGIN,
       variables: { email: user.email, password },
       result: CurrentUserBuilder.build({
@@ -45,7 +45,7 @@ describe("login", () => {
       user: { password }
     });
     const [user] = await company.getUsers();
-    await userTokenAssertions.testToken({
+    await userTokenAssertions.expectUserToMatchToken({
       documentNode: COMPANY_LOGIN,
       variables: { email: user.email, password },
       result: CurrentUserBuilder.build({
