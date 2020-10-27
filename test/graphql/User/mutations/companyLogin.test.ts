@@ -30,9 +30,11 @@ describe("companyLogin", () => {
     const password = "AValidPassword0";
     const user = await UserGenerator.instance({ password });
     await userTokenAssertions.expectMutationToSetCookie({
-      documentNode: COMPANY_LOGIN,
-      variables: { email: user.email, password },
-      result: CurrentUserBuilder.build({
+      mutation: {
+        documentNode: COMPANY_LOGIN,
+        variables: { email: user.email, password }
+      },
+      jwtTokenContents: CurrentUserBuilder.build({
         uuid: user.uuid,
         email: user.email
       })
@@ -46,9 +48,11 @@ describe("companyLogin", () => {
     });
     const [user] = await company.getUsers();
     await userTokenAssertions.expectMutationToSetCookie({
-      documentNode: COMPANY_LOGIN,
-      variables: { email: user.email, password },
-      result: CurrentUserBuilder.build({
+      mutation: {
+        documentNode: COMPANY_LOGIN,
+        variables: { email: user.email, password }
+      },
+      jwtTokenContents: CurrentUserBuilder.build({
         uuid: user.uuid,
         email: user.email,
         company: {

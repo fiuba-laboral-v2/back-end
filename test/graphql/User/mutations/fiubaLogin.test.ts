@@ -33,9 +33,11 @@ describe("fiubaLogin", () => {
     const applicant = await ApplicantGenerator.instance.withMinimumData({ password });
     const user = await applicant.getUser();
     await userTokenAssertions.expectMutationToSetCookie({
-      documentNode: FIUBA_LOGIN,
-      variables: { dni: user.dni, password },
-      result: CurrentUserBuilder.build({
+      mutation: {
+        documentNode: FIUBA_LOGIN,
+        variables: { dni: user.dni, password }
+      },
+      jwtTokenContents: CurrentUserBuilder.build({
         uuid: user.uuid,
         email: user.email,
         applicant: { uuid: applicant.uuid }
@@ -48,9 +50,11 @@ describe("fiubaLogin", () => {
     const admin = await AdminGenerator.instance({ secretary: Secretary.extension, password });
     const user = await admin.getUser();
     await userTokenAssertions.expectMutationToSetCookie({
-      documentNode: FIUBA_LOGIN,
-      variables: { dni: user.dni, password },
-      result: CurrentUserBuilder.build({
+      mutation: {
+        documentNode: FIUBA_LOGIN,
+        variables: { dni: user.dni, password }
+      },
+      jwtTokenContents: CurrentUserBuilder.build({
         uuid: user.uuid,
         email: user.email,
         admin: {

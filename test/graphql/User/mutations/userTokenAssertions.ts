@@ -11,22 +11,24 @@ export const userTokenAssertions = {
     ]);
   },
   createExpressContext: () => ({ res: { cookie: jest.fn() } }),
-  expectMutationToSetCookie: async ({ variables, result, documentNode }: ITestToken) => {
+  expectMutationToSetCookie: async ({ jwtTokenContents, mutation }: ITestToken) => {
     const expressContext = userTokenAssertions.createExpressContext();
     const apolloClient = client.loggedOut({ expressContext });
     const { errors } = await apolloClient.mutate({
-      mutation: documentNode,
-      variables
+      mutation: mutation.documentNode,
+      variables: mutation.variables
     });
     expect(errors).toBeUndefined();
     await userTokenAssertions.expectCookieToBeSet(expressContext);
     const token: string = expressContext.res.cookie.mock.calls[0][1];
-    expect(JWT.decodeToken(token)).toBeObjectContaining(result);
+    expect(JWT.decodeToken(token)).toBeObjectContaining(jwtTokenContents);
   }
 };
 
 interface ITestToken {
-  variables: object;
-  result: CurrentUser;
-  documentNode: DocumentNode;
+  jwtTokenContents: CurrentUser;
+  mutation: {
+    documentNode: DocumentNode;
+    variables: object;
+  };
 }
