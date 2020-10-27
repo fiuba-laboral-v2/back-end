@@ -1,9 +1,10 @@
 import { AdminRepository, Secretary } from "$models/Admin";
-import { UserRepository } from "$models/User";
+import { FiubaUserNotFoundError, UserRepository } from "$models/User";
 import { UniqueConstraintError } from "sequelize";
 import { AdminGenerator } from "$generators/Admin";
 import { AdminNotFoundError } from "$models/Admin/Errors";
 import { mockItemsPerPage } from "$test/mocks/config/PaginationConfig";
+import { FiubaUsersService } from "$services";
 
 describe("AdminRepository", () => {
   beforeAll(() => UserRepository.truncate());
@@ -12,14 +13,20 @@ describe("AdminRepository", () => {
     it("creates a valid Admin of extension", async () => {
       const adminAttributes = AdminGenerator.data(Secretary.extension);
       const admin = await AdminRepository.create(adminAttributes);
-      expect(await admin.getUser()).toBeObjectContaining(adminAttributes.user);
+      expect(await admin.getUser()).toBeObjectContaining({
+        ...adminAttributes.user,
+        password: null
+      });
       expect(admin).toBeObjectContaining({ secretary: adminAttributes.secretary });
     });
 
     it("creates a valid Admin of graduados", async () => {
       const adminAttributes = AdminGenerator.data(Secretary.graduados);
       const admin = await AdminRepository.create(adminAttributes);
-      expect(await admin.getUser()).toBeObjectContaining(adminAttributes.user);
+      expect(await admin.getUser()).toBeObjectContaining({
+        ...adminAttributes.user,
+        password: null
+      });
       expect(admin).toBeObjectContaining({ secretary: adminAttributes.secretary });
     });
 
@@ -28,6 +35,15 @@ describe("AdminRepository", () => {
       const admin = await AdminRepository.create(adminAttributes);
       expect(admin.createdAt).toEqual(expect.any(Date));
       expect(admin.updatedAt).toEqual(expect.any(Date));
+    });
+
+    it("throws an error if the fiuba authentication fails", async () => {
+      jest.spyOn(FiubaUsersService, "authenticate").mockImplementation(async () => false);
+      const adminAttributes = AdminGenerator.data(Secretary.graduados);
+      await expect(AdminRepository.create(adminAttributes)).rejects.toThrowErrorWithMessage(
+        FiubaUserNotFoundError,
+        FiubaUserNotFoundError.buildMessage(adminAttributes.user.dni)
+      );
     });
 
     it("throws error if admin already exists and rollback transaction", async () => {

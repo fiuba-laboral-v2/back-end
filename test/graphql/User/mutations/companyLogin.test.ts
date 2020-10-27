@@ -93,7 +93,7 @@ describe("login", () => {
 
   it("returns an error if the user is an applicant", async () => {
     const password = "AValidPassword1";
-    const applicant = await ApplicantGenerator.instance.withMinimumData();
+    const applicant = await ApplicantGenerator.instance.withMinimumData({ password });
     const user = await applicant.getUser();
     const { errors } = await client.loggedOut().mutate({
       mutation: COMPANY_LOGIN,
@@ -104,7 +104,7 @@ describe("login", () => {
 
   it("returns an error if the user is an admin", async () => {
     const password = "AValidPassword3";
-    const admin = await AdminGenerator.instance({ secretary: Secretary.extension });
+    const admin = await AdminGenerator.instance({ secretary: Secretary.extension, password });
     const user = await admin.getUser();
     const { errors } = await client.loggedOut().mutate({
       mutation: COMPANY_LOGIN,
