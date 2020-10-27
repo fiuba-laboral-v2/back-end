@@ -187,11 +187,8 @@ export const defaultTranslations = {
   ],
   login: [
     { key: "title", value: "Ingresar" },
-    { key: "email", value: "Email" },
     { key: "password", value: "Contraseña" },
     { key: "logIn", value: "Iniciar sesión" },
-    { key: "dontHaveAnAccount", value: "No tenés cuenta?" },
-    { key: "register", value: "Registrate" },
     { key: "badCredentialsMessage", value: "Email o contraseña inválidos" }
   ],
   companyLogin: [
