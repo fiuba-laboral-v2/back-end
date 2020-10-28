@@ -4,7 +4,7 @@ export const defaultTranslations = {
     { key: "name", value: "Nombre" },
     { key: "surname", value: "Apellido" }
   ],
-  initialLogin: [
+  login: [
     { key: "title", value: "Ingresar" },
     { key: "fiubaLogin", value: "Ingresar con credenciales de Fiuba" },
     { key: "companyLogin", value: "Ingresar como empresa" }
