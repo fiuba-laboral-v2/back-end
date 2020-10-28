@@ -54,4 +54,8 @@ describe("FiubaUsersService", () => {
   it("always returns true in the test_travis environment", async () => {
     await expectToReturnTrueForEnvironment(Environment.TEST_TRAVIS);
   });
+
+  it("always returns true in the staging environment", async () => {
+    await expectToReturnTrueForEnvironment(Environment.STAGING);
+  });
 });

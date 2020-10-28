@@ -25,6 +25,9 @@ export const Environment = {
     password: () => process.env[variablesKeys.EMAIL_API_PASSWORD],
     url: () => process.env[variablesKeys.EMAIL_API_URL] as string
   },
+  isStaging() {
+    return this.NODE_ENV === this.STAGING;
+  },
   isLocal() {
     return [this.DEVELOPMENT, this.TEST, this.TEST_TRAVIS].includes(this.NODE_ENV);
   },
