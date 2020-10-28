@@ -22,7 +22,11 @@ export const userTokenAssertions = {
     await userTokenAssertions.expectCookieToBeSet(expressContext);
     const token: string = expressContext.res.cookie.mock.calls[0][1];
     expect(JWT.decodeToken(token)).toBeObjectContaining(jwtTokenContents);
-  }
+  },
+  expectCookieToBeRemoved: (expressContext: { res: { cookie: jest.Mock } }) =>
+    expect(expressContext.res.cookie.mock.calls).toEqual([
+      [AuthConfig.cookieName, "", AuthConfig.cookieOptions]
+    ])
 };
 
 interface ITestToken {

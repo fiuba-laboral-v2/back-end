@@ -4,7 +4,7 @@ import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { AuthenticationError } from "$graphql/Errors";
 import { TestClientGenerator } from "$generators/TestClient";
-import { AuthConfig } from "$config/AuthConfig";
+import { userTokenAssertions } from "./userTokenAssertions";
 
 const LOGOUT = gql`
   mutation {
@@ -18,41 +18,32 @@ describe("logout", () => {
     await CompanyRepository.truncate();
   });
 
-  const createExpressContext = () => ({
-    res: { cookie: jest.fn() }
-  });
-
-  const expectCookieToBeRemoved = (expressContext: { res: { cookie: jest.Mock } }) =>
-    expect(expressContext.res.cookie.mock.calls).toEqual([
-      [AuthConfig.cookieName, "", AuthConfig.cookieOptions]
-    ]);
-
   it("logouts an user setting empty cookie", async () => {
-    const expressContext = createExpressContext();
+    const expressContext = userTokenAssertions.createExpressContext();
     const { apolloClient } = await TestClientGenerator.user({ expressContext });
     const { errors } = await apolloClient.mutate({ mutation: LOGOUT });
     expect(errors).toBeUndefined();
-    expectCookieToBeRemoved(expressContext);
+    userTokenAssertions.expectCookieToBeRemoved(expressContext);
   });
 
   it("logouts an applicant setting empty cookie", async () => {
-    const expressContext = createExpressContext();
+    const expressContext = userTokenAssertions.createExpressContext();
     const { apolloClient } = await TestClientGenerator.applicant({
       expressContext
     });
     const { errors } = await apolloClient.mutate({ mutation: LOGOUT });
     expect(errors).toBeUndefined();
-    expectCookieToBeRemoved(expressContext);
+    userTokenAssertions.expectCookieToBeRemoved(expressContext);
   });
 
   it("logouts a company user setting empty cookie", async () => {
-    const expressContext = createExpressContext();
+    const expressContext = userTokenAssertions.createExpressContext();
     const { apolloClient } = await TestClientGenerator.company({
       expressContext
     });
     const { errors } = await apolloClient.mutate({ mutation: LOGOUT });
     expect(errors).toBeUndefined();
-    expectCookieToBeRemoved(expressContext);
+    userTokenAssertions.expectCookieToBeRemoved(expressContext);
   });
 
   it("returns an error if no logged user tries to log out", async () => {
