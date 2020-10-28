@@ -5,6 +5,7 @@ import { sign, verify } from "jsonwebtoken";
 import { Application } from "express";
 import jwt from "express-jwt";
 import { AuthConfig } from "./config/AuthConfig";
+import { Logger } from "./libs/Logger";
 
 let JWT_SECRET: string;
 if (["test", "development", "test_travis"].includes(Environment.NODE_ENV)) {
@@ -35,7 +36,8 @@ export const JWT = {
   decodeToken: (token: string): CurrentUser | undefined => {
     try {
       return CurrentUserBuilder.build(verify(token, JWT_SECRET) as ICurrentUserTokenData);
-    } catch (e) {
+    } catch (error) {
+      Logger.error(error.message, error);
       return;
     }
   },

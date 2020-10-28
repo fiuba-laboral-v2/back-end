@@ -5,4 +5,4 @@ export type IApolloServerContext = {
   currentUser: CurrentUser;
 };
 
-export type Context = (IApolloServerContext | object) & ExpressContext;
+export type Context = Partial<IApolloServerContext> & ExpressContext;
