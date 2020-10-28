@@ -1,7 +1,7 @@
 import { uuids } from "../../../uuids";
 import { ApplicantType } from "../../../../../models/Applicant/Interface";
-import { description } from "../../devartis/description";
 import { sections } from "../../devartis/sections";
+import { description } from "../description";
 
 export const kotlinInternship = {
   offer: {
