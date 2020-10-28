@@ -4,6 +4,7 @@ import { Offer } from "$models";
 import { ApplicantType } from "$models/Applicant";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { isApprovalStatus, isTargetApplicantType } from "$models/SequelizeModelValidators";
+import { omit } from "lodash";
 
 describe("Offer", () => {
   const offerAttributes = {
@@ -14,6 +15,8 @@ describe("Offer", () => {
     hoursPerDay: 8,
     minimumSalary: 52500,
     maximumSalary: 70000,
+    graduatesExpirationDateTime: "2020-10-24T15:18:06.000Z",
+    studentsExpirationDateTime: "2020-10-24T15:18:06.000Z",
     targetApplicantType: ApplicantType.both
   };
 
@@ -39,7 +42,11 @@ describe("Offer", () => {
   it("creates a valid offer with its given attributes", async () => {
     const offer = new Offer(offerAttributes);
     await expect(offer.validate()).resolves.not.toThrow();
-    expect(offer).toBeObjectContaining(offerAttributes);
+    expect(offer).toBeObjectContaining({
+      ...offerAttributes,
+      graduatesExpirationDateTime: new Date(offerAttributes.graduatesExpirationDateTime),
+      studentsExpirationDateTime: new Date(offerAttributes.studentsExpirationDateTime)
+    });
   });
 
   it("creates a valid offer with a targetApplicantType for graduate", async () => {
@@ -64,6 +71,25 @@ describe("Offer", () => {
     const offer = new Offer(offerAttributes);
     await expect(offer.validate()).resolves.not.toThrow();
     await expect(offer.graduadosApprovalStatus).toEqual(ApprovalStatus.pending);
+  });
+
+  it("creates a valid offer without graduatesExpirationDateTime", async () => {
+    const offer = new Offer(omit(offerAttributes, ["graduatesExpirationDateTime"]));
+    await expect(offer.validate()).resolves.not.toThrow();
+  });
+
+  it("creates a valid offer without studentsExpirationDateTime", async () => {
+    const offer = new Offer(omit(offerAttributes, ["studentsExpirationDateTime"]));
+    await expect(offer.validate()).resolves.not.toThrow();
+  });
+
+  it("creates a valid offer with studentsExpirationDateTime and graduatesExpirationDateTime undefined when omitted", async () => {
+    const offer = new Offer(
+      omit(offerAttributes, ["studentsExpirationDateTime", "graduatesExpirationDateTime"])
+    );
+
+    expect(offer.studentsExpirationDateTime).toBeUndefined();
+    expect(offer.graduatesExpirationDateTime).toBeUndefined();
   });
 
   it("throws an error if offer does not belong to any company", async () => {

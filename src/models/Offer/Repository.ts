@@ -15,6 +15,9 @@ import { PaginationQuery } from "$models/PaginationQuery";
 import { Offer, OfferCareer } from "$models";
 
 import { OfferNotFoundError, OfferNotUpdatedError } from "./Errors";
+import moment from "moment";
+
+export const SECRETARY_EXPIRATION_DAYS_SETTING = 15;
 
 export const OfferRepository = {
   create: ({ careers, sections, ...attributes }: ICreateOffer) =>
@@ -44,9 +47,23 @@ export const OfferRepository = {
     status: ApprovalStatus;
   }) =>
     Database.transaction(async transaction => {
+      const isExtension = secretary => secretary === Secretary.extension;
+      const isApproved = chooseStatus => chooseStatus === ApprovalStatus.approved;
+      const isRejected = chooseStatus => chooseStatus === ApprovalStatus.rejected;
+
+      const expirationDate = moment().endOf("day").add(SECRETARY_EXPIRATION_DAYS_SETTING, "days");
+
       const offerAttributes = {
-        ...(admin.secretary === Secretary.graduados && { graduadosApprovalStatus: status }),
-        ...(admin.secretary === Secretary.extension && { extensionApprovalStatus: status })
+        ...(!isExtension(admin.secretary) && {
+          graduadosApprovalStatus: status,
+          ...(isApproved(status) && { graduatesExpirationDateTime: expirationDate }),
+          ...(isRejected(status) && { graduatesExpirationDateTime: moment().startOf("day") })
+        }),
+        ...(isExtension(admin.secretary) && {
+          extensionApprovalStatus: status,
+          ...(isApproved(status) && { studentsExpirationDateTime: expirationDate }),
+          ...(isRejected(status) && { studentsExpirationDateTime: moment().startOf("day") })
+        })
       };
 
       const [, [updatedOffer]] = await Offer.update(offerAttributes, {

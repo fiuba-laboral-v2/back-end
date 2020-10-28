@@ -25,6 +25,8 @@ export interface IUpdateOffer extends ICreateOffer {
 
 export interface IOfferAttributes extends ICreateOffer {
   companyUuid: string;
+  graduatesExpirationDateTime?: Date | null;
+  studentsExpirationDateTime?: Date | null;
 }
 
 export interface IFindAll {
