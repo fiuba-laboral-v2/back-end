@@ -4,7 +4,7 @@ import { UserNotFoundError, UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { TestClientGenerator } from "$generators/TestClient";
 import { Secretary } from "$models/Admin";
-import { userTokenAssertions } from "../mutations/userTokenAssertions";
+import { userTokenAssertions } from "../userTokenAssertions";
 
 const GET_CURRENT_USER = gql`
   query {

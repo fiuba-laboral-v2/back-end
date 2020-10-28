@@ -13,8 +13,7 @@ import { AdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
 import { DniGenerator } from "$generators/DNI";
 import { FiubaUsersService } from "$services";
-
-import { userTokenAssertions } from "./userTokenAssertions";
+import { userTokenAssertions } from "../userTokenAssertions";
 
 const FIUBA_LOGIN = gql`
   mutation($dni: String!, $password: String!) {

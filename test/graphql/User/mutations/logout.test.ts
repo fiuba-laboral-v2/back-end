@@ -4,7 +4,7 @@ import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { AuthenticationError } from "$graphql/Errors";
 import { TestClientGenerator } from "$generators/TestClient";
-import { userTokenAssertions } from "./userTokenAssertions";
+import { userTokenAssertions } from "../userTokenAssertions";
 
 const LOGOUT = gql`
   mutation {

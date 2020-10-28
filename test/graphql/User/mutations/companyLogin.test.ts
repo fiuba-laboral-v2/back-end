@@ -11,8 +11,7 @@ import { UserGenerator } from "$generators/User";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { AdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
-
-import { userTokenAssertions } from "./userTokenAssertions";
+import { userTokenAssertions } from "../userTokenAssertions";
 
 const COMPANY_LOGIN = gql`
   mutation($email: String!, $password: String!) {
