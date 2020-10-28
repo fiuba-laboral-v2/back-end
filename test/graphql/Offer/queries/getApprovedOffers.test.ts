@@ -18,6 +18,7 @@ import { AdminGenerator } from "$generators/Admin";
 import { range } from "lodash";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import { IOfferCareer } from "$models/Offer/OfferCareer";
+import moment from "moment";
 
 const GET_APPROVED_OFFERS = gql`
   query($updatedBeforeThan: PaginatedInput, $careerCodes: [ID!]) {
@@ -38,6 +39,7 @@ describe("getApprovedOffers", () => {
   let approvedByExtensionBothOffer: Offer;
   let approvedByGraduadosBothOffer: Offer;
   let approvedByGraduadosAndExtensionBothOffer: Offer;
+  let expiredApprovedByGraduadosAndExtensionBothOffer: Offer;
 
   const approvedApplicantTestClient = async (careers: IApplicantCareer[]) => {
     const { apolloClient } = await TestClientGenerator.applicant({
@@ -107,6 +109,18 @@ describe("getApprovedOffers", () => {
       admin: await AdminGenerator.extension()
     });
     await createOfferWith(ApprovalStatus.rejected, Secretary.graduados, ApplicantType.both);
+    const { uuid } = await createOfferWith(
+      ApprovalStatus.rejected,
+      Secretary.graduados,
+      ApplicantType.both
+    );
+    [, [expiredApprovedByGraduadosAndExtensionBothOffer]] = await Offer.update(
+      { graduatesExpirationDateTime: moment().subtract(1, "days").endOf("day") },
+      {
+        where: { uuid },
+        returning: true
+      }
+    );
   });
 
   describe("when the applicant is only a student", () => {
@@ -206,6 +220,18 @@ describe("getApprovedOffers", () => {
         { uuid: approvedStudentsOffer.uuid }
       ]);
       expect(data!.getApprovedOffers.shouldFetchMore).toEqual(false);
+    });
+
+    it("won't return an expired offer", async () => {
+      mockItemsPerPage(10);
+      const { data, errors } = await graduateAndStudentApolloClient.query({
+        query: GET_APPROVED_OFFERS
+      });
+
+      const { uuid } = expiredApprovedByGraduadosAndExtensionBothOffer;
+
+      expect(errors).toBeUndefined();
+      expect(data!.getApprovedOffers.results.find(offer => offer.uuid === uuid)).toBeFalsy();
     });
   });
 

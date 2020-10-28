@@ -101,7 +101,8 @@ export const OfferRepository = {
               targetApplicantType: {
                 [Op.in]: [ApplicantType.both, ApplicantType.student]
               }
-            }
+            },
+            { studentsExpirationDateTime: { [Op.gte]: moment() } }
           ]
         },
         targetsGraduates && {
@@ -111,7 +112,8 @@ export const OfferRepository = {
               targetApplicantType: {
                 [Op.in]: [ApplicantType.both, ApplicantType.graduate]
               }
-            }
+            },
+            { graduatesExpirationDateTime: { [Op.gte]: moment() } }
           ]
         }
       ]

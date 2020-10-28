@@ -759,6 +759,50 @@ describe("OfferRepository", () => {
       );
     });
 
+    it("returns offers that expire today", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const { uuid } = await OfferGenerator.instance.forGraduates({
+        status: ApprovalStatus.approved,
+        companyUuid
+      });
+
+      const offerAttributes = {
+        graduatesExpirationDateTime: moment().endOf("day")
+      };
+
+      const [, [updatedOffer]] = await Offer.update(offerAttributes, {
+        where: { uuid },
+        returning: true
+      });
+
+      const itemsPerPage = 5;
+      mockItemsPerPage(itemsPerPage);
+      const result = await OfferRepository.findAll({ applicantType: ApplicantType.graduate });
+      expect(result.results.find(offer => offer.uuid === updatedOffer.uuid)).toBeTruthy();
+    });
+
+    it("won't return expired offers", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const { uuid } = await OfferGenerator.instance.forGraduates({
+        status: ApprovalStatus.approved,
+        companyUuid
+      });
+
+      const offerAttributes = {
+        graduatesExpirationDateTime: moment().subtract(1, "days").endOf("day")
+      };
+
+      const [, [updatedOffer]] = await Offer.update(offerAttributes, {
+        where: { uuid },
+        returning: true
+      });
+
+      const itemsPerPage = 5;
+      mockItemsPerPage(itemsPerPage);
+      const result = await OfferRepository.findAll({ applicantType: ApplicantType.graduate });
+      expect(result.results.find(offer => offer.uuid === updatedOffer.uuid)).toBeFalsy();
+    });
+
     describe("when there are offers with equal updatedAt", () => {
       const offers: Offer[] = [];
 
