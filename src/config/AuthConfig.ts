@@ -3,7 +3,7 @@ import { CorsOptions } from "cors";
 import { Algorithm } from "jsonwebtoken";
 import { Environment } from "./Environment";
 
-const TOKEN_EXPIRATION_DAYS = 0.000694444;
+const TOKEN_EXPIRATION_DAYS = 2;
 const TOKEN_EXPIRATION_DAYS_AS_STRING = `${TOKEN_EXPIRATION_DAYS}d`;
 const TOKEN_EXPIRATION_MILLISECONDS = TOKEN_EXPIRATION_DAYS * 24 * 60 * 60 * 1000;
 
