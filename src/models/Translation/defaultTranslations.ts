@@ -185,7 +185,7 @@ export const defaultTranslations = {
     { key: "title", value: "Editar tu perfil" },
     { key: "submit", value: "Guardar" }
   ],
-  login: [
+  loginForm: [
     { key: "title", value: "Ingresar" },
     { key: "password", value: "Contraseña" },
     { key: "logIn", value: "Iniciar sesión" },
