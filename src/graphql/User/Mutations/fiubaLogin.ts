@@ -3,20 +3,23 @@ import { UserRepository } from "$models/User";
 import { JWT } from "$src/JWT";
 import { Context } from "$graphql/Context";
 import { AuthConfig } from "$config/AuthConfig";
+import { BadCredentialsError } from "$graphql/User/Errors";
+import { FiubaUsersService } from "$services";
 
-export const login = {
+export const fiubaLogin = {
   type: Boolean,
   args: {
-    email: {
+    dni: {
       type: nonNull(String)
     },
     password: {
       type: nonNull(String)
     }
   },
-  resolve: async (_: undefined, { email, password }: ILogin, { res: expressResponse }: Context) => {
-    const user = await UserRepository.findByEmail(email);
-    await UserRepository.validateCredentials(user, password);
+  resolve: async (_: undefined, { dni, password }: ILogin, { res: expressResponse }: Context) => {
+    const user = await UserRepository.findByDni(dni);
+    const isValid = await FiubaUsersService.authenticate({ dni: user.dni, password });
+    if (!isValid) throw new BadCredentialsError();
 
     const token = await JWT.createToken(user);
     expressResponse.cookie(AuthConfig.cookieName, token, AuthConfig.cookieOptions);
@@ -24,6 +27,6 @@ export const login = {
 };
 
 interface ILogin {
-  email: string;
+  dni: string;
   password: string;
 }

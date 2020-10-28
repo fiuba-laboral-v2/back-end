@@ -4,8 +4,8 @@ import { DniGenerator } from "$generators/DNI";
 
 export const withMinimumData = ({
   index,
-  password,
   capabilities,
+  password,
   careers
 }: IApplicantData): ISaveApplicant => ({
   padron: index + 1,

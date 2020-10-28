@@ -1,4 +1,4 @@
-import { IUser } from "../User";
+import { ICreateFiubaUser } from "../User";
 
 export enum Secretary {
   extension = "extension",
@@ -6,7 +6,7 @@ export enum Secretary {
 }
 
 export interface ISaveAdmin {
-  user: IUser;
+  user: ICreateFiubaUser;
   secretary: Secretary;
 }
 

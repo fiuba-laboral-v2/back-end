@@ -21,6 +21,7 @@ export interface IApplicantGeneratorAttributes {
 
 export interface IUserGeneratorAttributes {
   password?: string;
+  dni?: string;
 }
 
 export interface ITestClientAttributes {
