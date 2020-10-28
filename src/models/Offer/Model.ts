@@ -108,7 +108,10 @@ export class Offer extends Model<Offer> {
   })
   public minimumSalary: number;
 
-  @Is("maximumSalary", validateIntegerInRange({ min: { value: 0, include: false } }))
+  @Is("maximumSalary", salary => {
+    if (!salary) return;
+    validateIntegerInRange({ min: { value: 0, include: false } })(salary);
+  })
   @Column({
     allowNull: true,
     type: INTEGER
