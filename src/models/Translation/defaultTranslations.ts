@@ -195,12 +195,14 @@ export const defaultTranslations = {
     { key: "title", value: "Ingresá tus credenciales de FIUBA" },
     { key: "dni", value: "DNI" },
     { key: "signup", value: "Crear tu cuenta" },
-    { key: "recoverPassword", value: "Recuperar contraseña" }
+    { key: "recoverPassword", value: "Recuperar contraseña" },
+    { key: "goToCompany", value: "Ingresar como empresa" }
   ],
   companyLogin: [
     { key: "email", value: "Email" },
     { key: "signup", value: "Registrar tu empresa" },
-    { key: "recoverPassword", value: "Recuperar contraseña" }
+    { key: "recoverPassword", value: "Recuperar contraseña" },
+    { key: "goToApplicant", value: "Ingresar con credenciales de FIUBA" }
   ],
   navBar: [
     { key: "admins", value: "Administradores" },
