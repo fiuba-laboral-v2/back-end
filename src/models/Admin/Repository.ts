@@ -7,9 +7,9 @@ import { PaginationQuery } from "../PaginationQuery";
 import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedInput";
 
 export const AdminRepository = {
-  create: ({ user: userAttributes, secretary }: ISaveAdmin) =>
+  create: ({ user, secretary }: ISaveAdmin) =>
     Database.transaction(async transaction => {
-      const { uuid: userUuid } = await UserRepository.create(userAttributes, transaction);
+      const { uuid: userUuid } = await UserRepository.createFiubaUser(user, transaction);
       return Admin.create({ userUuid, secretary }, { transaction });
     }),
   findByUserUuid: async (userUuid: string) => {

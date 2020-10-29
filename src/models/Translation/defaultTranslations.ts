@@ -4,9 +4,10 @@ export const defaultTranslations = {
     { key: "name", value: "Nombre" },
     { key: "surname", value: "Apellido" }
   ],
-  register: [
-    { key: "registerAsCompany", value: "Registrarme como empresa" },
-    { key: "registerAsApplicant", value: "Registrarme como alumno" }
+  login: [
+    { key: "title", value: "Ingresar" },
+    { key: "fiubaLogin", value: "Ingresar con credenciales de FIUBA" },
+    { key: "companyLogin", value: "Ingresar como empresa" }
   ],
   applicantList: [{ key: "title", value: "Postulantes" }],
   companyJobApplicationsListTitle: [{ key: "title", value: "Postulantes" }],
@@ -82,7 +83,7 @@ export const defaultTranslations = {
   ],
   mainInformationFormSection: [
     { key: "offerTitle", value: "Título" },
-    { key: "description", value: "Descripción" },
+    { key: "description", value: "Resumen" },
     { key: "hoursPerDay", value: "Horas por día" },
     { key: "minimumSalary", value: "Salario mínimo" },
     { key: "maximumSalary", value: "Salario máximo" }
@@ -184,14 +185,24 @@ export const defaultTranslations = {
     { key: "title", value: "Editar tu perfil" },
     { key: "submit", value: "Guardar" }
   ],
-  login: [
+  loginForm: [
     { key: "title", value: "Ingresar" },
-    { key: "email", value: "Email" },
     { key: "password", value: "Contraseña" },
     { key: "logIn", value: "Iniciar sesión" },
-    { key: "dontHaveAnAccount", value: "No tenés cuenta?" },
-    { key: "register", value: "Registrate" },
     { key: "badCredentialsMessage", value: "Email o contraseña inválidos" }
+  ],
+  applicantLogin: [
+    { key: "title", value: "Ingresá tus credenciales de FIUBA" },
+    { key: "dni", value: "DNI" },
+    { key: "signup", value: "Crear tu cuenta" },
+    { key: "recoverPassword", value: "Recuperar contraseña" },
+    { key: "goToCompany", value: "Ingresar como empresa" }
+  ],
+  companyLogin: [
+    { key: "email", value: "Email" },
+    { key: "signup", value: "Registrar tu empresa" },
+    { key: "recoverPassword", value: "Recuperar contraseña" },
+    { key: "goToApplicant", value: "No soy empresa" }
   ],
   navBar: [
     { key: "admins", value: "Administradores" },
@@ -200,9 +211,7 @@ export const defaultTranslations = {
     { key: "jobOffers", value: "Ofertas de trabajo" },
     { key: "jobApplications", value: "Postulaciones" },
     { key: "createOffer", value: "Publicar Oferta" },
-    { key: "signUp", value: "Crear tu cuenta" },
     { key: "tasks", value: "Tareas Pendientes" },
-    { key: "logIn", value: "Iniciar sesión" },
     { key: "logOut", value: "Cerrar sesión" },
     { key: "myProfile", value: "Mi perfil" },
     { key: "myCompanyProfile", value: "Mi empresa" },

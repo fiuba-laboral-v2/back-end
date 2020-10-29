@@ -20,8 +20,9 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
     $description: String!
     $targetApplicantType: ApplicantType!
     $hoursPerDay: Int!
+    $isInternship: Boolean!
     $minimumSalary: Int!
-    $maximumSalary: Int!
+    $maximumSalary: Int
     $sections: [OfferSectionInput]!
     $careers: [OfferCareerInput]!
   ) {
@@ -30,6 +31,7 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
       description: $description
       targetApplicantType: $targetApplicantType
       hoursPerDay: $hoursPerDay
+      isInternship: $isInternship
       minimumSalary: $minimumSalary
       maximumSalary: $maximumSalary
       sections: $sections
@@ -95,13 +97,40 @@ describe("createOffer", () => {
       });
 
       expect(errors).toBeUndefined();
-      expect(data!.createOffer).toMatchObject({
+      expect(data!.createOffer).toBeObjectContaining({
         uuid: expect.stringMatching(UUID_REGEX),
         title: createOfferAttributes.title,
         description: createOfferAttributes.description,
         hoursPerDay: createOfferAttributes.hoursPerDay,
         minimumSalary: createOfferAttributes.minimumSalary,
         maximumSalary: createOfferAttributes.maximumSalary,
+        targetApplicantType: createOfferAttributes.targetApplicantType
+      });
+    });
+
+    it("creates a new offer without maximum salary", async () => {
+      const { apolloClient, company } = await TestClientGenerator.company({
+        status: {
+          admin,
+          approvalStatus: ApprovalStatus.approved
+        }
+      });
+      const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
+        companyUuid: company.uuid
+      });
+      const { data, errors } = await apolloClient.mutate({
+        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
+        variables: { ...createOfferAttributes, maximumSalary: null }
+      });
+
+      expect(errors).toBeUndefined();
+      expect(data!.createOffer).toBeObjectContaining({
+        uuid: expect.stringMatching(UUID_REGEX),
+        title: createOfferAttributes.title,
+        description: createOfferAttributes.description,
+        hoursPerDay: createOfferAttributes.hoursPerDay,
+        minimumSalary: createOfferAttributes.minimumSalary,
+        maximumSalary: null,
         targetApplicantType: createOfferAttributes.targetApplicantType
       });
     });
@@ -174,12 +203,12 @@ describe("createOffer", () => {
       await expectToThrowErrorOnMissingAttribute("hoursPerDay");
     });
 
-    it("throws an error if no minimumSalary is provided", async () => {
-      await expectToThrowErrorOnMissingAttribute("minimumSalary");
+    it("throws an error if no isInternship value is provided", async () => {
+      await expectToThrowErrorOnMissingAttribute("isInternship");
     });
 
-    it("throws an error if no maximumSalary is provided", async () => {
-      await expectToThrowErrorOnMissingAttribute("maximumSalary");
+    it("throws an error if no minimumSalary is provided", async () => {
+      await expectToThrowErrorOnMissingAttribute("minimumSalary");
     });
 
     it("throws an error if no user is logged in", async () => {

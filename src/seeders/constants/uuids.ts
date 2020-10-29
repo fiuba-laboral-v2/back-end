@@ -6,12 +6,14 @@ export const uuids = {
     mercadoLibre: generateUuid()
   },
   offers: {
-    java_semi_senior: generateUuid(),
-    java_senior: generateUuid(),
-    java_junior: generateUuid(),
-    ruby_senior: generateUuid(),
-    ruby_junior: generateUuid(),
-    ruby_semi_senior: generateUuid()
+    javaSemiSenior: generateUuid(),
+    javaSenior: generateUuid(),
+    javaJunior: generateUuid(),
+    rubySenior: generateUuid(),
+    rubyJunior: generateUuid(),
+    rubySemiSenior: generateUuid(),
+    swiftInternship: generateUuid(),
+    kotlinInternship: generateUuid()
   },
   extensionAdmin: {
     user: generateUuid()

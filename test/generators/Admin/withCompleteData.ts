@@ -1,13 +1,15 @@
 import { ISaveAdmin } from "$models/Admin";
 import { Secretary } from "$models/Admin/Interface";
 import { IUserGeneratorAttributes } from "$generators/interfaces";
+import { DniGenerator } from "$generators/DNI";
 
 export const withCompleteData = ({
   index,
-  secretary,
-  password
+  password,
+  secretary
 }: IAdminGeneratorAttributes): ISaveAdmin => ({
   user: {
+    dni: DniGenerator.generate(),
     email: `${secretary}admin${index}@mail.com`,
     password: password || "ASDqfdsfsdfwe234",
     name: "adminName",

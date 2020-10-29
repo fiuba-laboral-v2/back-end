@@ -5,16 +5,17 @@ import { ApplicantType } from "../../../../../models/Applicant/Interface";
 
 export const rubySemiSenior = {
   offer: {
-    uuid: uuids.offers.ruby_semi_senior,
+    uuid: uuids.offers.rubySemiSenior,
     companyUuid: uuids.companies.devartis,
     title: "Desarrollador Ruby semi senior",
     targetApplicantType: ApplicantType.student,
     description,
+    isInternship: false,
     hoursPerDay: 6,
     minimumSalary: 52500,
     maximumSalary: 70000,
     createdAt: new Date(),
     updatedAt: new Date()
   },
-  offerSections: sections(uuids.offers.ruby_semi_senior)
+  offerSections: sections(uuids.offers.rubySemiSenior)
 };

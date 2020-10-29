@@ -7,11 +7,12 @@ export const UserGenerator = {
     UserGenerator.index += 1;
     return UserGenerator.index;
   },
-  instance: ({ password }: IUserGeneratorAttributes = {}) => {
+  instance: ({ password, dni }: IUserGeneratorAttributes = {}) => {
     const index = UserGenerator.getIndex();
     return UserRepository.create({
       email: `userTestClient${index}@mail.com`,
       password: password || "ASDqfdsfsdfwe234",
+      dni,
       name: "userName",
       surname: "userSurname"
     });

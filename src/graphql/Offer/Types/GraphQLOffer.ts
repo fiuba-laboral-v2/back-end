@@ -30,7 +30,7 @@ export const GraphQLOffer = new GraphQLObjectType<Offer, IApolloServerContext>({
       type: nonNull(Int)
     },
     maximumSalary: {
-      type: nonNull(Int)
+      type: Int
     },
     extensionApprovalStatus: {
       type: nonNull(GraphQLApprovalStatus)

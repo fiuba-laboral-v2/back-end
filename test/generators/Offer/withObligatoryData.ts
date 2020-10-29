@@ -13,6 +13,7 @@ export const withObligatoryData = ({
   title: `title${index}`,
   description: `description${index}`,
   hoursPerDay: index + 1,
+  isInternship: false,
   minimumSalary: index + 1,
   maximumSalary: 2 * index + 1,
   targetApplicantType: targetApplicantType || ApplicantType.both,

@@ -11,6 +11,7 @@ describe("Offer", () => {
     companyUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
     title: "title",
     description: "description",
+    isInternship: false,
     hoursPerDay: 8,
     minimumSalary: 52500,
     maximumSalary: 70000,
@@ -19,11 +20,7 @@ describe("Offer", () => {
     targetApplicantType: ApplicantType.both
   };
 
-  const offerWithoutProperty = async (property: string) => {
-    const offerAttributesWithoutProperty = offerAttributes;
-    delete offerAttributesWithoutProperty[property];
-    return offerAttributesWithoutProperty;
-  };
+  const offerWithoutProperty = (property: string) => omit(offerAttributes, property);
 
   const createsAValidOfferWithTarget = async (targetApplicantType: ApplicantType) => {
     const offer = new Offer({
@@ -33,8 +30,33 @@ describe("Offer", () => {
     await expect(offer.validate()).resolves.not.toThrow();
   };
 
-  it("creates a valid offer", async () => {
+  it("creates a valid non-internship with maximum salary", async () => {
     const offer = new Offer(offerAttributes);
+    await expect(offer.validate()).resolves.not.toThrow();
+  });
+
+  it("creates a valid internship with maximum salary", async () => {
+    const offer = new Offer({
+      ...offerAttributes,
+      isInternship: true
+    });
+    await expect(offer.validate()).resolves.not.toThrow();
+  });
+
+  it("creates a valid non-internship without maximum salary", async () => {
+    const offer = new Offer({
+      ...offerAttributes,
+      maximumSalary: null
+    });
+    await expect(offer.validate()).resolves.not.toThrow();
+  });
+
+  it("creates a valid internship without maximum salary", async () => {
+    const offer = new Offer({
+      ...offerAttributes,
+      isInternship: true,
+      maximumSalary: null
+    });
     await expect(offer.validate()).resolves.not.toThrow();
   });
 
@@ -124,11 +146,6 @@ describe("Offer", () => {
   it("throws an error if offer has negative minimumSalary", async () => {
     const offer = new Offer({ ...offerAttributes, minimumSalary: -23 });
     await expect(offer.validate()).rejects.toThrow(NumberIsTooSmallError.buildMessage(0, false));
-  });
-
-  it("throws an error if offer does not has a maximumSalary", async () => {
-    const offer = new Offer(offerWithoutProperty("maximumSalary"));
-    await expect(offer.validate()).rejects.toThrow();
   });
 
   it("throws an error if offer has negative maximumSalary", async () => {

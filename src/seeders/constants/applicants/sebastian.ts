@@ -77,28 +77,28 @@ export const sebastian = {
   jobApplications: [
     {
       uuid: generateUuid(),
-      offerUuid: uuids.offers.java_semi_senior,
+      offerUuid: uuids.offers.javaSemiSenior,
       applicantUuid: uuids.sebastian.applicant,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
       uuid: generateUuid(),
-      offerUuid: uuids.offers.java_junior,
+      offerUuid: uuids.offers.javaJunior,
       applicantUuid: uuids.sebastian.applicant,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
       uuid: generateUuid(),
-      offerUuid: uuids.offers.java_senior,
+      offerUuid: uuids.offers.javaSenior,
       applicantUuid: uuids.sebastian.applicant,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
       uuid: generateUuid(),
-      offerUuid: uuids.offers.ruby_junior,
+      offerUuid: uuids.offers.rubyJunior,
       applicantUuid: uuids.sebastian.applicant,
       createdAt: new Date(),
       updatedAt: new Date()

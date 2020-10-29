@@ -27,7 +27,7 @@ const EDIT_OFFER = gql`
     $targetApplicantType: ApplicantType!
     $hoursPerDay: Int!
     $minimumSalary: Int!
-    $maximumSalary: Int!
+    $maximumSalary: Int
     $sections: [OfferSectionInput]!
     $careers: [OfferCareerInput]!
   ) {
@@ -145,6 +145,10 @@ describe("editOffer", () => {
 
   it("edits an offer maximumSalary", async () => {
     await expectToUpdateAttribute("maximumSalary", 10000);
+  });
+
+  it("removes an offer maximumSalary", async () => {
+    await expectToUpdateAttribute("maximumSalary", null);
   });
 
   it("edits the section title", async () => {

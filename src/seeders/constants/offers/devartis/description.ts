@@ -1,10 +1,8 @@
 export const description =
-  "En Mercado Libre estamos democratizando el comercio, el dinero " +
-  "y los pagos en América Latina.\n\n" +
-  "Tecnología es la esencia de nuestro producto. Nuestros equipos de desarrollo, " +
-  "arquitectura, base de datos, user experience y business intelligence co-crean y " +
-  "son responsables de la plataforma líder de e-commerce de América Latina y de uno " +
-  "de los sitios de mayor tráfico en todo el mundo. En una industria que se reinventa " +
-  "día a día, nuestros equipos son reconocidos por su visión y liderazgo. Desde " +
-  "aplicaciones móviles a machine learning, nuestra innovación tiene un claro " +
-  "foco: simplificarle la vida a quien utiliza nuestros productos.";
+  "We are looking for hard working, talented developers for devartis!\n\n" +
+  "Our projects are dynamic and challenging with an entertaining working " +
+  "environment and with opportunities to provide your knowledge in varying " +
+  "technologies and tasks.\n\n" +
+  "If you are a fast learner you have everything you need to work with us. " +
+  "You should be comfortable and eager to work on what is needed and learn " +
+  "what is necessary, in a fast-moving, dynamic environment.";

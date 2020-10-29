@@ -84,7 +84,7 @@ export const aldana = {
   jobApplications: [
     {
       uuid: generateUuid(),
-      offerUuid: uuids.offers.java_semi_senior,
+      offerUuid: uuids.offers.javaSemiSenior,
       applicantUuid: uuids.aldana.applicant,
       createdAt: new Date(),
       updatedAt: new Date()
