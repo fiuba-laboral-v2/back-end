@@ -97,7 +97,7 @@ describe("createOffer", () => {
       });
 
       expect(errors).toBeUndefined();
-      expect(data!.createOffer).toMatchObject({
+      expect(data!.createOffer).toBeObjectContaining({
         uuid: expect.stringMatching(UUID_REGEX),
         title: createOfferAttributes.title,
         description: createOfferAttributes.description,
@@ -124,7 +124,7 @@ describe("createOffer", () => {
       });
 
       expect(errors).toBeUndefined();
-      expect(data!.createOffer).toMatchObject({
+      expect(data!.createOffer).toBeObjectContaining({
         uuid: expect.stringMatching(UUID_REGEX),
         title: createOfferAttributes.title,
         description: createOfferAttributes.description,
@@ -201,6 +201,10 @@ describe("createOffer", () => {
 
     it("throws an error if no hoursPerDay is provided", async () => {
       await expectToThrowErrorOnMissingAttribute("hoursPerDay");
+    });
+
+    it("throws an error if no isInternship value is provided", async () => {
+      await expectToThrowErrorOnMissingAttribute("isInternship");
     });
 
     it("throws an error if no minimumSalary is provided", async () => {
