@@ -34,12 +34,12 @@ const GET_APPROVED_OFFERS = gql`
 describe("getApprovedOffers", () => {
   let firstCareer: Career;
   let secondCareer: Career;
-  let approvedStudentsOffer: Offer;
-  let approvedGraduadosOffer: Offer;
-  let approvedByExtensionBothOffer: Offer;
-  let approvedByGraduadosBothOffer: Offer;
-  let approvedByGraduadosAndExtensionBothOffer: Offer;
-  let expiredApprovedByGraduadosAndExtensionBothOffer: Offer;
+  let offerApprovedForStudents: Offer;
+  let offerApprovedForGraduados: Offer;
+  let offerForBothAndApprovedByExtension: Offer;
+  let offerForBothAndApprovedByGraduados: Offer;
+  let offerForBothAndApprovedByGraduadosAndExtension: Offer;
+  let expiredOfferForBothAndApprovedByGraduadosAndExtension: Offer;
 
   const approvedApplicantTestClient = async (careers: IApplicantCareer[]) => {
     const { apolloClient } = await TestClientGenerator.applicant({
@@ -76,35 +76,35 @@ describe("getApprovedOffers", () => {
     firstCareer = await CareerGenerator.instance();
     secondCareer = await CareerGenerator.instance();
 
-    approvedStudentsOffer = await createOfferWith(
+    offerApprovedForStudents = await createOfferWith(
       ApprovalStatus.approved,
       Secretary.extension,
       ApplicantType.student
     );
     await createOfferWith(ApprovalStatus.rejected, Secretary.extension, ApplicantType.student);
-    approvedGraduadosOffer = await createOfferWith(
+    offerApprovedForGraduados = await createOfferWith(
       ApprovalStatus.approved,
       Secretary.graduados,
       ApplicantType.graduate
     );
     await createOfferWith(ApprovalStatus.rejected, Secretary.graduados, ApplicantType.graduate);
-    approvedByExtensionBothOffer = await createOfferWith(
+    offerForBothAndApprovedByExtension = await createOfferWith(
       ApprovalStatus.approved,
       Secretary.extension,
       ApplicantType.both
     );
-    approvedByGraduadosBothOffer = await createOfferWith(
+    offerForBothAndApprovedByGraduados = await createOfferWith(
       ApprovalStatus.approved,
       Secretary.graduados,
       ApplicantType.both
     );
-    approvedByGraduadosAndExtensionBothOffer = await createOfferWith(
+    offerForBothAndApprovedByGraduadosAndExtension = await createOfferWith(
       ApprovalStatus.approved,
       Secretary.graduados,
       ApplicantType.both
     );
-    approvedByGraduadosAndExtensionBothOffer = await OfferRepository.updateApprovalStatus({
-      uuid: approvedByGraduadosAndExtensionBothOffer.uuid,
+    offerForBothAndApprovedByGraduadosAndExtension = await OfferRepository.updateApprovalStatus({
+      uuid: offerForBothAndApprovedByGraduadosAndExtension.uuid,
       status: ApprovalStatus.approved,
       admin: await AdminGenerator.extension()
     });
@@ -114,7 +114,7 @@ describe("getApprovedOffers", () => {
       Secretary.graduados,
       ApplicantType.both
     );
-    [, [expiredApprovedByGraduadosAndExtensionBothOffer]] = await Offer.update(
+    [, [expiredOfferForBothAndApprovedByGraduadosAndExtension]] = await Offer.update(
       { graduatesExpirationDateTime: moment().subtract(1, "days").endOf("day") },
       {
         where: { uuid },
@@ -149,9 +149,9 @@ describe("getApprovedOffers", () => {
 
       expect(errors).toBeUndefined();
       expect(data!.getApprovedOffers.results).toEqual([
-        { uuid: approvedByGraduadosAndExtensionBothOffer.uuid },
-        { uuid: approvedByExtensionBothOffer.uuid },
-        { uuid: approvedStudentsOffer.uuid }
+        { uuid: offerForBothAndApprovedByGraduadosAndExtension.uuid },
+        { uuid: offerForBothAndApprovedByExtension.uuid },
+        { uuid: offerApprovedForStudents.uuid }
       ]);
       expect(data!.getApprovedOffers.shouldFetchMore).toEqual(false);
     });
@@ -179,9 +179,9 @@ describe("getApprovedOffers", () => {
 
       expect(errors).toBeUndefined();
       expect(data!.getApprovedOffers.results).toEqual([
-        { uuid: approvedByGraduadosAndExtensionBothOffer.uuid },
-        { uuid: approvedByGraduadosBothOffer.uuid },
-        { uuid: approvedGraduadosOffer.uuid }
+        { uuid: offerForBothAndApprovedByGraduadosAndExtension.uuid },
+        { uuid: offerForBothAndApprovedByGraduados.uuid },
+        { uuid: offerApprovedForGraduados.uuid }
       ]);
       expect(data!.getApprovedOffers.shouldFetchMore).toEqual(false);
     });
@@ -213,11 +213,11 @@ describe("getApprovedOffers", () => {
 
       expect(errors).toBeUndefined();
       expect(data!.getApprovedOffers.results).toEqual([
-        { uuid: approvedByGraduadosAndExtensionBothOffer.uuid },
-        { uuid: approvedByGraduadosBothOffer.uuid },
-        { uuid: approvedByExtensionBothOffer.uuid },
-        { uuid: approvedGraduadosOffer.uuid },
-        { uuid: approvedStudentsOffer.uuid }
+        { uuid: offerForBothAndApprovedByGraduadosAndExtension.uuid },
+        { uuid: offerForBothAndApprovedByGraduados.uuid },
+        { uuid: offerForBothAndApprovedByExtension.uuid },
+        { uuid: offerApprovedForGraduados.uuid },
+        { uuid: offerApprovedForStudents.uuid }
       ]);
       expect(data!.getApprovedOffers.shouldFetchMore).toEqual(false);
     });
@@ -228,10 +228,10 @@ describe("getApprovedOffers", () => {
         query: GET_APPROVED_OFFERS
       });
 
-      const { uuid } = expiredApprovedByGraduadosAndExtensionBothOffer;
+      const { uuid } = expiredOfferForBothAndApprovedByGraduadosAndExtension;
 
       expect(errors).toBeUndefined();
-      expect(data!.getApprovedOffers.results.find(offer => offer.uuid === uuid)).toBeFalsy();
+      expect(data!.getApprovedOffers.results.map(offer => offer.uuid).includes(uuid)).toBe(false);
     });
   });
 

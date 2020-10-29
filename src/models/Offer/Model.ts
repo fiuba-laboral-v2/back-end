@@ -147,4 +147,12 @@ export class Offer extends Model<Offer> {
   public getSections: HasManyGetAssociationsMixin<OfferSection>;
   public getCareers: HasManyGetAssociationsMixin<Career>;
   public getApprovalEvents: HasManyGetAssociationsMixin<OfferApprovalEvent>;
+
+  public isExpiredForStudents = () => {
+    return this.studentsExpirationDateTime < new Date();
+  };
+
+  public isExpiredForGraduates = () => {
+    return this.graduatesExpirationDateTime < new Date();
+  };
 }
