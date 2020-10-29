@@ -12,19 +12,19 @@ const createRecord = (careerCode: string, offerUuid: string) => ({
 export = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.bulkInsert("OffersCareers", [
-      createRecord(careerCodes.IngenieriaCivil, uuids.offers.java_semi_senior),
-      createRecord(careerCodes.IngenieriaAgrimensura, uuids.offers.java_semi_senior),
-      createRecord(careerCodes.IngenieriaEnPetroleo, uuids.offers.java_semi_senior),
-      createRecord(careerCodes.IngenieriaIndustrial, uuids.offers.java_senior),
-      createRecord(careerCodes.IngenieriaElectronica, uuids.offers.java_senior),
-      createRecord(careerCodes.IngenieriaQuimica, uuids.offers.java_senior),
-      createRecord(careerCodes.IngenieriaNavalYMecanica, uuids.offers.java_junior),
-      createRecord(careerCodes.LicenciaturaEnAnalisisDeSistemas, uuids.offers.java_junior),
-      createRecord(careerCodes.Agrimensura, uuids.offers.ruby_senior),
-      createRecord(careerCodes.IngenieriaMecanica, uuids.offers.ruby_junior),
-      createRecord(careerCodes.IngenieriaInformatica, uuids.offers.ruby_junior),
-      createRecord(careerCodes.IngenieriaAlimentos, uuids.offers.ruby_junior),
-      createRecord(careerCodes.IngenieriaElectricista, uuids.offers.ruby_semi_senior)
+      createRecord(careerCodes.IngenieriaCivil, uuids.offers.javaSemiSenior),
+      createRecord(careerCodes.IngenieriaAgrimensura, uuids.offers.javaSemiSenior),
+      createRecord(careerCodes.IngenieriaEnPetroleo, uuids.offers.javaSemiSenior),
+      createRecord(careerCodes.IngenieriaIndustrial, uuids.offers.javaSenior),
+      createRecord(careerCodes.IngenieriaElectronica, uuids.offers.javaSenior),
+      createRecord(careerCodes.IngenieriaQuimica, uuids.offers.javaSenior),
+      createRecord(careerCodes.IngenieriaNavalYMecanica, uuids.offers.javaJunior),
+      createRecord(careerCodes.LicenciaturaEnAnalisisDeSistemas, uuids.offers.javaJunior),
+      createRecord(careerCodes.Agrimensura, uuids.offers.rubySenior),
+      createRecord(careerCodes.IngenieriaMecanica, uuids.offers.rubyJunior),
+      createRecord(careerCodes.IngenieriaInformatica, uuids.offers.rubyJunior),
+      createRecord(careerCodes.IngenieriaAlimentos, uuids.offers.rubyJunior),
+      createRecord(careerCodes.IngenieriaElectricista, uuids.offers.rubySemiSenior)
     ]);
   },
   down: (queryInterface: QueryInterface) => {

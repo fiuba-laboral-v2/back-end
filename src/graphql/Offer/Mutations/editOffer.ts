@@ -31,7 +31,7 @@ export const editOffer = {
       type: nonNull(Int)
     },
     maximumSalary: {
-      type: nonNull(Int)
+      type: Int
     },
     sections: {
       type: nonNull(List(GraphQLOfferSectionInput))
@@ -50,6 +50,7 @@ export const editOffer = {
     if (!canEdit) throw new OfferNotVisibleByCurrentUserError();
 
     offer.set({
+      maximumSalary: undefined,
       ...offerAttributes,
       extensionApprovalStatus: ApprovalStatus.pending,
       graduadosApprovalStatus: ApprovalStatus.pending

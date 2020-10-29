@@ -83,7 +83,7 @@ export const defaultTranslations = {
   ],
   mainInformationFormSection: [
     { key: "offerTitle", value: "Título" },
-    { key: "description", value: "Descripción" },
+    { key: "description", value: "Resumen" },
     { key: "hoursPerDay", value: "Horas por día" },
     { key: "minimumSalary", value: "Salario mínimo" },
     { key: "maximumSalary", value: "Salario máximo" }

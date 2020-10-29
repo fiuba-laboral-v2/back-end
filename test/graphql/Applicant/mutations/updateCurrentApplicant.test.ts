@@ -139,7 +139,9 @@ describe("updateCurrentApplicant", () => {
         surname: dataToUpdate.user.surname
       },
       description: dataToUpdate.description,
-      capabilities: dataToUpdate.capabilities.map(description => ({ description })),
+      capabilities: expect.arrayContaining(
+        dataToUpdate.capabilities.map(description => ({ description }))
+      ),
       careers: [
         {
           career: {

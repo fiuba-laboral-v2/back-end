@@ -3,19 +3,18 @@ import { sections } from "../sections";
 import { description } from "../description";
 import { ApplicantType } from "../../../../../models/Applicant/Interface";
 
-export const javaSemiSenior = {
+export const swiftInternship = {
   offer: {
-    uuid: uuids.offers.javaSemiSenior,
+    uuid: uuids.offers.swiftInternship,
     companyUuid: uuids.companies.devartis,
-    title: "Desarrollador Java semi senior",
-    targetApplicantType: ApplicantType.both,
+    title: "Pasantía: desarrollador Swift",
+    targetApplicantType: ApplicantType.student,
     description,
-    isInternship: false,
+    isInternship: true,
     hoursPerDay: 6,
-    minimumSalary: 52500,
-    maximumSalary: 70000,
+    minimumSalary: 33000,
     createdAt: new Date(),
     updatedAt: new Date()
   },
-  offerSections: sections(uuids.offers.javaSemiSenior)
+  offerSections: sections(uuids.offers.swiftInternship)
 };
