@@ -202,7 +202,7 @@ export const defaultTranslations = {
     { key: "email", value: "Email" },
     { key: "signup", value: "Registrar tu empresa" },
     { key: "recoverPassword", value: "Recuperar contraseña" },
-    { key: "goToApplicant", value: "Ingresar con credenciales de FIUBA" }
+    { key: "goToApplicant", value: "No soy empresa" }
   ],
   navBar: [
     { key: "admins", value: "Administradores" },
