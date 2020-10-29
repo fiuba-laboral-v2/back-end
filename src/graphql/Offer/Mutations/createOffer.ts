@@ -29,7 +29,7 @@ export const createOffer = {
       type: nonNull(Int)
     },
     maximumSalary: {
-      type: nonNull(Int)
+      type: Int
     },
     sections: {
       type: List(GraphQLOfferSectionInput)

@@ -9,7 +9,7 @@ export interface ICreateOffer extends IOfferAssociations {
   hoursPerDay: number;
   isInternship: boolean;
   minimumSalary: number;
-  maximumSalary: number;
+  maximumSalary?: number;
   companyUuid: string;
   targetApplicantType: ApplicantType;
 }

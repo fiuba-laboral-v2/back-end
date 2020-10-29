@@ -22,7 +22,7 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
     $hoursPerDay: Int!
     $isInternship: Boolean!
     $minimumSalary: Int!
-    $maximumSalary: Int!
+    $maximumSalary: Int
     $sections: [OfferSectionInput]!
     $careers: [OfferCareerInput]!
   ) {
@@ -108,6 +108,33 @@ describe("createOffer", () => {
       });
     });
 
+    it("creates a new offer without maximum salary", async () => {
+      const { apolloClient, company } = await TestClientGenerator.company({
+        status: {
+          admin,
+          approvalStatus: ApprovalStatus.approved
+        }
+      });
+      const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
+        companyUuid: company.uuid
+      });
+      const { data, errors } = await apolloClient.mutate({
+        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
+        variables: { ...createOfferAttributes, maximumSalary: null }
+      });
+
+      expect(errors).toBeUndefined();
+      expect(data!.createOffer).toMatchObject({
+        uuid: expect.stringMatching(UUID_REGEX),
+        title: createOfferAttributes.title,
+        description: createOfferAttributes.description,
+        hoursPerDay: createOfferAttributes.hoursPerDay,
+        minimumSalary: createOfferAttributes.minimumSalary,
+        maximumSalary: null,
+        targetApplicantType: createOfferAttributes.targetApplicantType
+      });
+    });
+
     it("creates a new offer with one section and one career", async () => {
       const { apolloClient, company } = await TestClientGenerator.company({
         status: {
@@ -178,10 +205,6 @@ describe("createOffer", () => {
 
     it("throws an error if no minimumSalary is provided", async () => {
       await expectToThrowErrorOnMissingAttribute("minimumSalary");
-    });
-
-    it("throws an error if no maximumSalary is provided", async () => {
-      await expectToThrowErrorOnMissingAttribute("maximumSalary");
     });
 
     it("throws an error if no user is logged in", async () => {

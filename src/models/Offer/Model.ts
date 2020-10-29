@@ -24,12 +24,13 @@ import { approvalStatuses, ApprovalStatus } from "$models/ApprovalStatus";
 import { isApprovalStatus, isTargetApplicantType } from "$models/SequelizeModelValidators";
 import { ApplicantType, targetApplicantTypeEnumValues } from "$models/Applicant";
 import { DATE } from "sequelize";
+import { isNil } from "lodash";
 
 @Table({
   tableName: "Offers",
   validate: {
     validateSalaryRange(this: Offer) {
-      if (this.maximumSalary === null) return;
+      if (isNil(this.maximumSalary)) return;
       validateSalaryRange(this.minimumSalary, this.maximumSalary);
     }
   }
@@ -116,7 +117,7 @@ export class Offer extends Model<Offer> {
     allowNull: true,
     type: INTEGER
   })
-  public maximumSalary: number | null;
+  public maximumSalary?: number;
 
   @Column({
     allowNull: true,
