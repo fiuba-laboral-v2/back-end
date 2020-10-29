@@ -6,7 +6,7 @@ export const defaultTranslations = {
   ],
   login: [
     { key: "title", value: "Ingresar" },
-    { key: "fiubaLogin", value: "Ingresar con credenciales de Fiuba" },
+    { key: "fiubaLogin", value: "Ingresar con credenciales de FIUBA" },
     { key: "companyLogin", value: "Ingresar como empresa" }
   ],
   applicantList: [{ key: "title", value: "Postulantes" }],
@@ -194,14 +194,15 @@ export const defaultTranslations = {
   applicantLogin: [
     { key: "title", value: "Ingresá tus credenciales de FIUBA" },
     { key: "dni", value: "DNI" },
-    { key: "register", value: "Registrate en la bolsa de trabajo" },
-    { key: "forgotYourPassword", value: "¿Olvidaste tu contraseña?" },
-    { key: "manageYourFiubaAccount", value: "Administrá tu cuenta de FIUBA" }
+    { key: "signup", value: "Crear tu cuenta" },
+    { key: "recoverPassword", value: "Recuperar contraseña" },
+    { key: "goToCompany", value: "Ingresar como empresa" }
   ],
   companyLogin: [
     { key: "email", value: "Email" },
-    { key: "dontHaveAnAccount", value: "No tenés cuenta?" },
-    { key: "register", value: "Registrate" }
+    { key: "signup", value: "Registrar tu empresa" },
+    { key: "recoverPassword", value: "Recuperar contraseña" },
+    { key: "goToApplicant", value: "No soy empresa" }
   ],
   navBar: [
     { key: "admins", value: "Administradores" },
@@ -211,7 +212,6 @@ export const defaultTranslations = {
     { key: "jobApplications", value: "Postulaciones" },
     { key: "createOffer", value: "Publicar Oferta" },
     { key: "tasks", value: "Tareas Pendientes" },
-    { key: "logIn", value: "Iniciar sesión" },
     { key: "logOut", value: "Cerrar sesión" },
     { key: "myProfile", value: "Mi perfil" },
     { key: "myCompanyProfile", value: "Mi empresa" },
