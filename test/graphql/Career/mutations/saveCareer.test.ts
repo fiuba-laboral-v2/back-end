@@ -53,9 +53,7 @@ describe("saveCareer", () => {
         mutation: SAVE_CAREER,
         variables: params
       });
-      expect(errors![0].extensions!.data).toEqual({
-        errorType: "CareerAlreadyExistsError"
-      });
+      expect(errors).toEqualGraphQLErrorType("CareerAlreadyExistsError");
     });
 
     it("returns an error if user is from a company", async () => {
@@ -65,9 +63,7 @@ describe("saveCareer", () => {
         mutation: SAVE_CAREER,
         variables: params
       });
-      expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name
-      });
+      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });
 
     it("returns an error if user is an applicant", async () => {
@@ -77,9 +73,7 @@ describe("saveCareer", () => {
         mutation: SAVE_CAREER,
         variables: params
       });
-      expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name
-      });
+      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });
   });
 });

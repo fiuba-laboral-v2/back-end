@@ -48,8 +48,6 @@ describe("logout", () => {
 
   it("returns an error if no logged user tries to log out", async () => {
     const { errors } = await client.loggedOut().mutate({ mutation: LOGOUT });
-    expect(errors![0].extensions!.data).toEqual({
-      errorType: AuthenticationError.name
-    });
+    expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
   });
 });

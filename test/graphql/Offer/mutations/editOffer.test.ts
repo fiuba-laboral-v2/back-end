@@ -201,7 +201,7 @@ describe("editOffer", () => {
       ...initialAttributes,
       careers: []
     });
-    expect(errors![0].extensions!.data).toEqual({ errorType: OfferWithNoCareersError.name });
+    expect(errors).toEqualGraphQLErrorType(OfferWithNoCareersError.name);
   });
 
   it("throws an error if the offer does not belong to the company", async () => {
@@ -214,9 +214,7 @@ describe("editOffer", () => {
     const { uuid } = await OfferRepository.create(initialAttributes);
 
     const { errors } = await performMutation(apolloClient, { uuid, ...initialAttributes });
-    expect(errors![0].extensions!.data).toEqual({
-      errorType: OfferNotVisibleByCurrentUserError.name
-    });
+    expect(errors).toEqualGraphQLErrorType(OfferNotVisibleByCurrentUserError.name);
   });
 
   it("throws an error when the offer uuid is not found", async () => {
@@ -231,8 +229,7 @@ describe("editOffer", () => {
       ...attributes,
       uuid: generateUuid()
     });
-
-    expect(errors![0].extensions!.data).toEqual({ errorType: OfferNotFoundError.name });
+    expect(errors).toEqualGraphQLErrorType(OfferNotFoundError.name);
   });
 
   it("throws an error if the user is not from a company", async () => {
@@ -245,7 +242,7 @@ describe("editOffer", () => {
       ...attributes,
       uuid: generateUuid()
     });
-    expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("throws an error when the user is from a rejected company", async () => {
@@ -258,14 +255,14 @@ describe("editOffer", () => {
       ...offerData,
       uuid: generateUuid()
     });
-    expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("throws an error when the user is from a pending company", async () => {
     const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.pending);
     const offerData = OfferGenerator.data.withObligatoryData({ companyUuid: company.uuid });
     const { errors } = await performMutation(apolloClient, { ...offerData, uuid: generateUuid() });
-    expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("throws an error when a user is not logged in", async () => {
@@ -275,8 +272,6 @@ describe("editOffer", () => {
       sections: []
     });
     const { errors } = await performMutation(apolloClient, { ...offerData, uuid: generateUuid() });
-    expect(errors![0].extensions!.data).toEqual({
-      errorType: AuthenticationError.name
-    });
+    expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
   });
 });

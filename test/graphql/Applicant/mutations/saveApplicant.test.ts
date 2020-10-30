@@ -157,8 +157,6 @@ describe("saveApplicant", () => {
       mutation: SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA,
       variables: applicantData
     });
-    expect(errors![0].extensions!.data).toEqual({
-      errorType: "UserEmailAlreadyExistsError"
-    });
+    expect(errors).toEqualGraphQLErrorType("UserEmailAlreadyExistsError");
   });
 });

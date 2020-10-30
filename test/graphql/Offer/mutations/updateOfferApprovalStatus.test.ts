@@ -202,9 +202,7 @@ describe("updateOfferApprovalStatus", () => {
       uuid: offers[ApplicantType.graduate].uuid,
       approvalStatus: ApprovalStatus.approved
     });
-    expect(errors![0].extensions!.data).toEqual({
-      errorType: AdminCannotModerateOfferError.name
-    });
+    expect(errors).toEqualGraphQLErrorType(AdminCannotModerateOfferError.name);
   });
 
   it("throws an error if the offer is for students and the admin is from graduados", async () => {
@@ -213,9 +211,7 @@ describe("updateOfferApprovalStatus", () => {
       uuid: offers[ApplicantType.student].uuid,
       approvalStatus: ApprovalStatus.approved
     });
-    expect(errors![0].extensions!.data).toEqual({
-      errorType: AdminCannotModerateOfferError.name
-    });
+    expect(errors).toEqualGraphQLErrorType(AdminCannotModerateOfferError.name);
   });
 
   it("returns an error if no user is logged in", async () => {
@@ -223,9 +219,7 @@ describe("updateOfferApprovalStatus", () => {
       uuid: offers[ApplicantType.student].uuid,
       approvalStatus: ApprovalStatus.approved
     });
-    expect(errors![0].extensions!.data).toEqual({
-      errorType: AuthenticationError.name
-    });
+    expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
   });
 
   it("returns an error if the current user is an applicant", async () => {
@@ -234,9 +228,7 @@ describe("updateOfferApprovalStatus", () => {
       uuid: offers[ApplicantType.both].uuid,
       approvalStatus: ApprovalStatus.approved
     });
-    expect(errors![0].extensions!.data).toEqual({
-      errorType: UnauthorizedError.name
-    });
+    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("returns an error if the current user is from a company", async () => {
@@ -245,9 +237,7 @@ describe("updateOfferApprovalStatus", () => {
       uuid: offers[ApplicantType.both].uuid,
       approvalStatus: ApprovalStatus.approved
     });
-    expect(errors![0].extensions!.data).toEqual({
-      errorType: UnauthorizedError.name
-    });
+    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("returns an error if the offer does not exists", async () => {
@@ -256,9 +246,7 @@ describe("updateOfferApprovalStatus", () => {
       uuid: generateUuid(),
       approvalStatus: ApprovalStatus.approved
     });
-    expect(errors![0].extensions!.data).toEqual({
-      errorType: OfferNotFoundError.name
-    });
+    expect(errors).toEqualGraphQLErrorType(OfferNotFoundError.name);
   });
 
   it("returns an error if the approvalStatus is invalid", async () => {
