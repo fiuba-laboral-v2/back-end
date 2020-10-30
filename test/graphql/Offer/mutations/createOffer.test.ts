@@ -1,6 +1,5 @@
 import { gql } from "apollo-server";
-import { ApolloServerTestClient as TestClient } from "apollo-server-testing";
-import { client } from "../../ApolloTestClient";
+import { client } from "$test/graphql/ApolloTestClient";
 
 import { UUID_REGEX } from "$test/models";
 import { CareerGenerator } from "$generators/Career";
@@ -91,12 +90,6 @@ describe("createOffer", () => {
   const createCompanyTestClient = (approvalStatus: ApprovalStatus) =>
     TestClientGenerator.company({ status: { admin, approvalStatus } });
 
-  const performMutation = (apolloClient: TestClient, variables: object) =>
-    apolloClient.mutate({
-      mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
-      variables
-    });
-
   describe("when the input values are valid", () => {
     it("creates a new offer with only obligatory data", async () => {
       const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
@@ -104,7 +97,10 @@ describe("createOffer", () => {
         companyUuid: company.uuid,
         careers: [{ careerCode: firstCareer.code }, { careerCode: secondCareer.code }]
       });
-      const { data, errors } = await performMutation(apolloClient, createOfferAttributes);
+      const { data, errors } = await apolloClient.mutate({
+        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
+        variables: createOfferAttributes
+      });
 
       expect(errors).toBeUndefined();
       expect(data!.createOffer).toBeObjectContaining({
@@ -128,10 +124,9 @@ describe("createOffer", () => {
         companyUuid: company.uuid,
         careers: [{ careerCode: firstCareer.code }]
       });
-      await performMutation(apolloClient, { ...createOfferAttributes, maximumSalary: null });
-      const { data, errors } = await performMutation(apolloClient, {
-        ...createOfferAttributes,
-        maximumSalary: null
+      const { data, errors } = await apolloClient.mutate({
+        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
+        variables: { ...createOfferAttributes, maximumSalary: null }
       });
 
       expect(errors).toBeUndefined();
@@ -157,8 +152,10 @@ describe("createOffer", () => {
         careers: [{ careerCode: code }],
         sections: [sectionData]
       });
-
-      const { data, errors } = await performMutation(apolloClient, createOfferAttributes);
+      const { data, errors } = await apolloClient.mutate({
+        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
+        variables: createOfferAttributes
+      });
 
       expect(errors).toBeUndefined();
       expect(data!.createOffer.careers).toEqual([{ code, description }]);
@@ -180,8 +177,10 @@ describe("createOffer", () => {
       } = OfferGenerator.data.withObligatoryData({ companyUuid: company.uuid });
       delete createOfferAttributesWithNoTitle[attribute];
 
-      await performMutation(apolloClient, createOfferAttributesWithNoTitle);
-      const { errors } = await performMutation(apolloClient, createOfferAttributesWithNoTitle);
+      const { errors } = await apolloClient.mutate({
+        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
+        variables: createOfferAttributesWithNoTitle
+      });
       expect(errors).toEqual([expect.objectContaining({ message: "Internal server error" })]);
     };
 
@@ -191,7 +190,10 @@ describe("createOffer", () => {
         companyUuid: company.uuid
       });
 
-      const { errors } = await performMutation(apolloClient, createOfferAttributes);
+      const { errors } = await apolloClient.mutate({
+        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
+        variables: createOfferAttributes
+      });
       expect(errors).toEqualGraphQLErrorType(OfferWithNoCareersError.name);
     });
 
@@ -242,7 +244,10 @@ describe("createOffer", () => {
       const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
         companyUuid: company.uuid
       });
-      const { errors } = await performMutation(apolloClient, createOfferAttributes);
+      const { errors } = await apolloClient.mutate({
+        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
+        variables: createOfferAttributes
+      });
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });
 
@@ -251,7 +256,10 @@ describe("createOffer", () => {
       const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
         companyUuid: company.uuid
       });
-      const { errors } = await performMutation(apolloClient, createOfferAttributes);
+      const { errors } = await apolloClient.mutate({
+        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
+        variables: createOfferAttributes
+      });
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });
 
@@ -260,7 +268,10 @@ describe("createOffer", () => {
       const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
         companyUuid: company.uuid
       });
-      const { errors } = await performMutation(apolloClient, createOfferAttributes);
+      const { errors } = await apolloClient.mutate({
+        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
+        variables: createOfferAttributes
+      });
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });
   });
