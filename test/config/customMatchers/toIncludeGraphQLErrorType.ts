@@ -4,7 +4,6 @@ export const toIncludeGraphQLErrorType = (
   received: ReadonlyArray<GraphQLFormattedError>,
   errorType: string
 ) => {
-  const errorTypes = received.map(error => error.extensions!.data);
-  expect(errorTypes).toEqual([{ errorType }]);
+  expect(received.map(error => error.extensions!.data)).toEqual([{ errorType }]);
   return { pass: true, message: () => "" };
 };
