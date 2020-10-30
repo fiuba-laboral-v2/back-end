@@ -16,7 +16,7 @@ import { Admin, Career } from "$models";
 import { OfferWithNoCareersError } from "$graphql/Offer/Errors";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
-const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
+const CREATE_OFFER = gql`
   mutation createOffer(
     $title: String!
     $description: String!
@@ -98,7 +98,7 @@ describe("createOffer", () => {
         careers: [{ careerCode: firstCareer.code }, { careerCode: secondCareer.code }]
       });
       const { data, errors } = await apolloClient.mutate({
-        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
+        mutation: CREATE_OFFER,
         variables: createOfferAttributes
       });
 
@@ -125,7 +125,7 @@ describe("createOffer", () => {
         careers: [{ careerCode: firstCareer.code }]
       });
       const { data, errors } = await apolloClient.mutate({
-        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
+        mutation: CREATE_OFFER,
         variables: { ...createOfferAttributes, maximumSalary: null }
       });
 
@@ -153,7 +153,7 @@ describe("createOffer", () => {
         sections: [sectionData]
       });
       const { data, errors } = await apolloClient.mutate({
-        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
+        mutation: CREATE_OFFER,
         variables: createOfferAttributes
       });
 
@@ -178,7 +178,7 @@ describe("createOffer", () => {
       delete createOfferAttributesWithNoTitle[attribute];
 
       const { errors } = await apolloClient.mutate({
-        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
+        mutation: CREATE_OFFER,
         variables: createOfferAttributesWithNoTitle
       });
       expect(errors).toEqual([expect.objectContaining({ message: "Internal server error" })]);
@@ -191,7 +191,7 @@ describe("createOffer", () => {
       });
 
       const { errors } = await apolloClient.mutate({
-        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
+        mutation: CREATE_OFFER,
         variables: createOfferAttributes
       });
       expect(errors).toEqualGraphQLErrorType(OfferWithNoCareersError.name);
@@ -232,7 +232,7 @@ describe("createOffer", () => {
         companyUuid: company.uuid
       });
       const { errors } = await apolloClient.mutate({
-        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
+        mutation: CREATE_OFFER,
         variables: createOfferAttributes
       });
       expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
@@ -245,7 +245,7 @@ describe("createOffer", () => {
         companyUuid: company.uuid
       });
       const { errors } = await apolloClient.mutate({
-        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
+        mutation: CREATE_OFFER,
         variables: createOfferAttributes
       });
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
@@ -257,7 +257,7 @@ describe("createOffer", () => {
         companyUuid: company.uuid
       });
       const { errors } = await apolloClient.mutate({
-        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
+        mutation: CREATE_OFFER,
         variables: createOfferAttributes
       });
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
@@ -269,7 +269,7 @@ describe("createOffer", () => {
         companyUuid: company.uuid
       });
       const { errors } = await apolloClient.mutate({
-        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
+        mutation: CREATE_OFFER,
         variables: createOfferAttributes
       });
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
