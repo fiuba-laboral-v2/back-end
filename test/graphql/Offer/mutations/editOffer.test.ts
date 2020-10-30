@@ -1,5 +1,4 @@
 import { gql } from "apollo-server";
-import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist/createTestClient";
 import { client } from "$test/graphql/ApolloTestClient";
 
 import { CompanyRepository } from "$models/Company";
@@ -79,12 +78,6 @@ describe("editOffer", () => {
     secondCareer = await CareerGenerator.instance();
   });
 
-  const performMutation = (apolloClient: TestClient, variables: object) =>
-    apolloClient.mutate({
-      mutation: EDIT_OFFER,
-      variables
-    });
-
   const createCompanyTestClient = async (approvalStatus: ApprovalStatus) =>
     TestClientGenerator.company({
       status: { admin, approvalStatus }
@@ -97,12 +90,16 @@ describe("editOffer", () => {
       careers: [{ careerCode: firstCareer.code }, { careerCode: secondCareer.code }]
     });
     const { uuid } = await OfferRepository.create(initialAttributes);
-    await performMutation(apolloClient, {
-      uuid,
-      sections: [],
-      ...initialAttributes,
-      [attribute]: newValue
+    const { errors } = await apolloClient.mutate({
+      mutation: EDIT_OFFER,
+      variables: {
+        uuid,
+        sections: [],
+        ...initialAttributes,
+        [attribute]: newValue
+      }
     });
+    expect(errors).toBeUndefined();
     const updatedOffer = await OfferRepository.findByUuid(uuid);
     if (newValue !== initialAttributes[attribute]) {
       expect(updatedOffer[attribute]).not.toEqual(initialAttributes[attribute]);
@@ -114,7 +111,7 @@ describe("editOffer", () => {
     const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
     const initialAttributes = OfferGenerator.data.withObligatoryData({ companyUuid: company.uuid });
     const { uuid } = await OfferRepository.create(initialAttributes);
-    await performMutation(apolloClient, { uuid, ...initialAttributes });
+    await apolloClient.mutate({ mutation: EDIT_OFFER, variables: { uuid, ...initialAttributes } });
     const updatedOffer = await OfferRepository.findByUuid(uuid);
     expect(updatedOffer.graduadosApprovalStatus).toEqual(ApprovalStatus.pending);
     expect(updatedOffer.extensionApprovalStatus).toEqual(ApprovalStatus.pending);
@@ -176,10 +173,13 @@ describe("editOffer", () => {
       displayOrder: 1
     };
 
-    const { errors } = await performMutation(apolloClient, {
-      uuid: offer.uuid,
-      ...initialAttributes,
-      sections: [newSectionData]
+    const { errors } = await apolloClient.mutate({
+      mutation: EDIT_OFFER,
+      variables: {
+        uuid: offer.uuid,
+        ...initialAttributes,
+        sections: [newSectionData]
+      }
     });
     expect(errors).toBeUndefined();
     const [updatedSection] = await offer.getSections();
@@ -196,10 +196,13 @@ describe("editOffer", () => {
     const offer = await OfferRepository.create(initialAttributes);
     expect(await offer.getCareers()).toHaveLength(2);
 
-    const { errors } = await performMutation(apolloClient, {
-      uuid: offer.uuid,
-      ...initialAttributes,
-      careers: []
+    const { errors } = await apolloClient.mutate({
+      mutation: EDIT_OFFER,
+      variables: {
+        uuid: offer.uuid,
+        ...initialAttributes,
+        careers: []
+      }
     });
     expect(errors).toEqualGraphQLErrorType(OfferWithNoCareersError.name);
   });
@@ -213,7 +216,10 @@ describe("editOffer", () => {
     });
     const { uuid } = await OfferRepository.create(initialAttributes);
 
-    const { errors } = await performMutation(apolloClient, { uuid, ...initialAttributes });
+    const { errors } = await apolloClient.mutate({
+      mutation: EDIT_OFFER,
+      variables: { uuid, ...initialAttributes }
+    });
     expect(errors).toEqualGraphQLErrorType(OfferNotVisibleByCurrentUserError.name);
   });
 
@@ -224,10 +230,9 @@ describe("editOffer", () => {
       sections: [],
       careers: [{ careerCode: firstCareer.code }]
     });
-
-    const { errors } = await performMutation(apolloClient, {
-      ...attributes,
-      uuid: generateUuid()
+    const { errors } = await apolloClient.mutate({
+      mutation: EDIT_OFFER,
+      variables: { ...attributes, uuid: generateUuid() }
     });
     expect(errors).toEqualGraphQLErrorType(OfferNotFoundError.name);
   });
@@ -238,9 +243,9 @@ describe("editOffer", () => {
       companyUuid: generateUuid(),
       sections: []
     });
-    const { errors } = await performMutation(apolloClient, {
-      ...attributes,
-      uuid: generateUuid()
+    const { errors } = await apolloClient.mutate({
+      mutation: EDIT_OFFER,
+      variables: { ...attributes, uuid: generateUuid() }
     });
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
@@ -251,9 +256,9 @@ describe("editOffer", () => {
       companyUuid: company.uuid,
       sections: []
     });
-    const { errors } = await performMutation(apolloClient, {
-      ...offerData,
-      uuid: generateUuid()
+    const { errors } = await apolloClient.mutate({
+      mutation: EDIT_OFFER,
+      variables: { ...offerData, uuid: generateUuid() }
     });
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
@@ -261,7 +266,10 @@ describe("editOffer", () => {
   it("throws an error when the user is from a pending company", async () => {
     const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.pending);
     const offerData = OfferGenerator.data.withObligatoryData({ companyUuid: company.uuid });
-    const { errors } = await performMutation(apolloClient, { ...offerData, uuid: generateUuid() });
+    const { errors } = await apolloClient.mutate({
+      mutation: EDIT_OFFER,
+      variables: { ...offerData, uuid: generateUuid() }
+    });
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
@@ -271,7 +279,10 @@ describe("editOffer", () => {
       companyUuid: generateUuid(),
       sections: []
     });
-    const { errors } = await performMutation(apolloClient, { ...offerData, uuid: generateUuid() });
+    const { errors } = await apolloClient.mutate({
+      mutation: EDIT_OFFER,
+      variables: { ...offerData, uuid: generateUuid() }
+    });
     expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
   });
 });
