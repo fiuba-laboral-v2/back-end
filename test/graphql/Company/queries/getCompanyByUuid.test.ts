@@ -89,9 +89,7 @@ describe("getCompanyByUuid", () => {
       query: query,
       variables: { uuid: notExistentUuid }
     });
-    expect(errors![0].extensions!.data).toEqual({
-      errorType: "CompanyNotFoundError"
-    });
+    expect(errors).toEqualGraphQLErrorType("CompanyNotFoundError");
   });
 
   it("find a company with photos with an empty array", async () => {
@@ -112,9 +110,7 @@ describe("getCompanyByUuid", () => {
       query: query,
       variables: { uuid: generateUuid() }
     });
-    expect(errors![0].extensions!.data).toEqual({
-      errorType: AuthenticationError.name
-    });
+    expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
   });
 
   it("returns an error if user is from a company", async () => {
@@ -123,9 +119,7 @@ describe("getCompanyByUuid", () => {
       query: query,
       variables: { uuid: generateUuid() }
     });
-    expect(errors![0].extensions!.data).toEqual({
-      errorType: UnauthorizedError.name
-    });
+    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("returns an error if user is a pending applicant", async () => {
@@ -134,9 +128,7 @@ describe("getCompanyByUuid", () => {
       query: query,
       variables: { uuid: generateUuid() }
     });
-    expect(errors![0].extensions!.data).toEqual({
-      errorType: UnauthorizedError.name
-    });
+    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("returns an error if user is a rejected applicant", async () => {
@@ -150,8 +142,6 @@ describe("getCompanyByUuid", () => {
       query: query,
       variables: { uuid: generateUuid() }
     });
-    expect(errors![0].extensions!.data).toEqual({
-      errorType: UnauthorizedError.name
-    });
+    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 });

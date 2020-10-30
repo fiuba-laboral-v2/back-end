@@ -79,10 +79,7 @@ describe("getJobApplicationByUuid", () => {
       query: GET_JOB_APPLICATION_BY_UUID,
       variables: { uuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da" }
     });
-
-    expect(errors![0].extensions!.data).toEqual({
-      errorType: JobApplicationNotFoundError.name
-    });
+    expect(errors).toEqualGraphQLErrorType(JobApplicationNotFoundError.name);
   });
 
   describe("only an admin can access this query", () => {
@@ -98,9 +95,7 @@ describe("getJobApplicationByUuid", () => {
         query: GET_JOB_APPLICATION_BY_UUID,
         variables: { uuid }
       });
-      expect(errors![0].extensions!.data).toEqual({
-        errorType: error.name
-      });
+      expect(errors).toEqualGraphQLErrorType(error.name);
     };
 
     it("returns an error if there is no current user", async () => {

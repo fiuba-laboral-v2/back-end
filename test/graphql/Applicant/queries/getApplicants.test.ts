@@ -199,13 +199,13 @@ describe("getApplicants", () => {
       const apolloClient = client.loggedOut();
 
       const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
-      expect(errors![0].extensions!.data).toEqual({ errorType: AuthenticationError.name });
+      expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
     });
 
     it("returns an error if current user is pending applicant", async () => {
       const { apolloClient } = await TestClientGenerator.applicant();
       const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
-      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });
 
     it("returns an error if current user is rejected applicant", async () => {
@@ -213,13 +213,13 @@ describe("getApplicants", () => {
         status: { approvalStatus: ApprovalStatus.rejected, admin }
       });
       const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
-      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });
 
     it("returns an error if current user is from company", async () => {
       const { apolloClient } = await TestClientGenerator.company();
       const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
-      expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
+      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });
   });
 });

@@ -39,8 +39,6 @@ describe("getTranslations", () => {
     });
 
     expect(errors).toHaveLength(1);
-    expect(errors![0].extensions!.data).toEqual({
-      errorType: MissingTranslationError.name
-    });
+    expect(errors).toEqualGraphQLErrorType(MissingTranslationError.name);
   });
 });

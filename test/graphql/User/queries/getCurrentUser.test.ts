@@ -124,7 +124,7 @@ describe("getCurrentUser", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     const { errors } = await apolloClient.query({ query: GET_CURRENT_USER });
-    expect(errors![0].extensions!.data).toEqual({ errorType: UserNotFoundError.name });
+    expect(errors).toEqualGraphQLErrorType(UserNotFoundError.name);
     userTokenAssertions.expectCookieToBeRemoved(expressContext);
   });
 
@@ -134,7 +134,7 @@ describe("getCurrentUser", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     const { errors } = await apolloClient.query({ query: GET_CURRENT_USER });
-    expect(errors![0].extensions!.data).toEqual({ errorType: UserNotFoundError.name });
+    expect(errors).toEqualGraphQLErrorType(UserNotFoundError.name);
   });
 
   it("returns null if the current user is not set in context", async () => {

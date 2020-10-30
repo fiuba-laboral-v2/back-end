@@ -323,9 +323,7 @@ describe("getAdminTasks", () => {
           statuses: [ApprovalStatus.pending]
         }
       });
-      expect(errors![0].extensions!.data).toEqual({
-        errorType: UnauthorizedError.name
-      });
+      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     };
 
     it("throws an error to plain users", async () => {
