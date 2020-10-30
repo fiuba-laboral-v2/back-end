@@ -38,7 +38,7 @@ export const editOffer = {
       type: nonNull(List(GraphQLOfferSectionInput))
     },
     careers: {
-      type: nonNull(List(GraphQLOfferCareerInput))
+      type: nonNull(List(nonNull(GraphQLOfferCareerInput)))
     }
   },
   resolve: async (

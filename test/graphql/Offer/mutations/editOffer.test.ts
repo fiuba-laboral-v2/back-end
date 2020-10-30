@@ -1,4 +1,5 @@
 import { gql } from "apollo-server";
+import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist/createTestClient";
 import { client } from "$test/graphql/ApolloTestClient";
 
 import { CompanyRepository } from "$models/Company";
@@ -7,7 +8,7 @@ import { UserRepository } from "$models/User";
 import { OfferNotFoundError, OfferRepository } from "$models/Offer";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Applicant";
-import { Admin, Career } from "$models";
+import { Admin, Career, Company } from "$models";
 
 import { OfferGenerator } from "$generators/Offer";
 import { CompanyGenerator } from "$generators/Company";
@@ -19,6 +20,8 @@ import generateUuid from "uuid/v4";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { OfferNotVisibleByCurrentUserError } from "$graphql/Offer/Queries/Errors";
 import { OfferWithNoCareersError } from "$graphql/Offer/Errors";
+import { GraphQLFormattedError } from "graphql";
+import { omit } from "lodash";
 
 const EDIT_OFFER = gql`
   mutation editOffer(
@@ -30,7 +33,7 @@ const EDIT_OFFER = gql`
     $minimumSalary: Int!
     $maximumSalary: Int
     $sections: [OfferSectionInput]!
-    $careers: [OfferCareerInput]!
+    $careers: [OfferCareerInput!]!
   ) {
     editOffer(
       uuid: $uuid
@@ -184,6 +187,70 @@ describe("editOffer", () => {
     expect(errors).toBeUndefined();
     const [updatedSection] = await offer.getSections();
     expect(updatedSection).toBeObjectContaining({ offerUuid: offer.uuid, ...newSectionData });
+  });
+
+  describe("when the input values are invalid", () => {
+    let apolloClient: TestClient;
+    let company: Company;
+
+    beforeAll(async () => {
+      const testClient = await createCompanyTestClient(ApprovalStatus.approved);
+      apolloClient = testClient.apolloClient;
+      company = testClient.company;
+    });
+
+    const createOfferAttributes = (companyUuid: string) =>
+      OfferGenerator.data.withObligatoryData({ companyUuid });
+
+    const expectApolloErrorToHaveInternalServerErrorMessage = (
+      errors?: ReadonlyArray<GraphQLFormattedError>
+    ) => expect(errors).toEqual([expect.objectContaining({ message: "Internal server error" })]);
+
+    const expectToThrowErrorOnMissingAttribute = async (attribute: string) => {
+      const { companyUuid, ...attributes } = createOfferAttributes(company.uuid);
+      const { errors } = await apolloClient.mutate({
+        mutation: EDIT_OFFER,
+        variables: { uuid: generateUuid(), ...omit(attributes, attribute) }
+      });
+      expectApolloErrorToHaveInternalServerErrorMessage(errors);
+    };
+
+    it("throws an error if no title is provided", async () => {
+      await expectToThrowErrorOnMissingAttribute("title");
+    });
+
+    it("throws an error if no description is provided", async () => {
+      await expectToThrowErrorOnMissingAttribute("description");
+    });
+
+    it("throws an error if no targetApplicantType is provided", async () => {
+      await expectToThrowErrorOnMissingAttribute("targetApplicantType");
+    });
+
+    it("throws an error if no hoursPerDay is provided", async () => {
+      await expectToThrowErrorOnMissingAttribute("hoursPerDay");
+    });
+
+    it("throws an error if no minimumSalary is provided", async () => {
+      await expectToThrowErrorOnMissingAttribute("minimumSalary");
+    });
+
+    it("throws an error if no sections is provided", async () => {
+      await expectToThrowErrorOnMissingAttribute("sections");
+    });
+
+    it("throws an error if no careers is provided", async () => {
+      await expectToThrowErrorOnMissingAttribute("careers");
+    });
+
+    it("throws an error if given an array containing a  null in the careers", async () => {
+      const { companyUuid, ...attributes } = createOfferAttributes(company.uuid);
+      const { errors } = await apolloClient.mutate({
+        mutation: EDIT_OFFER,
+        variables: { uuid: generateUuid(), ...attributes, careers: [null] }
+      });
+      expectApolloErrorToHaveInternalServerErrorMessage(errors);
+    });
   });
 
   it("returns an error if no career is provided", async () => {

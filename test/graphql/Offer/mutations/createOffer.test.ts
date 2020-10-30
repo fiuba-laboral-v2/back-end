@@ -1,4 +1,5 @@
 import { gql } from "apollo-server";
+import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist/createTestClient";
 import { client } from "$test/graphql/ApolloTestClient";
 
 import { omit } from "lodash";
@@ -13,7 +14,8 @@ import { CareerRepository } from "$models/Career";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { Admin, Career } from "$models";
+import { IOfferAttributes } from "$models/Offer";
+import { Admin, Career, Company } from "$models";
 
 import { OfferWithNoCareersError } from "$graphql/Offer/Errors";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
@@ -172,34 +174,29 @@ describe("createOffer", () => {
   });
 
   describe("when the input values are invalid", () => {
+    let apolloClient: TestClient;
+    let company: Company;
+    let offerAttributes: IOfferAttributes;
+
+    beforeAll(async () => {
+      const testClient = await createCompanyTestClient(ApprovalStatus.approved);
+      apolloClient = testClient.apolloClient;
+      company = testClient.company;
+      offerAttributes = OfferGenerator.data.withObligatoryData({ companyUuid: company.uuid });
+    });
+
     const expectApolloErrorToHaveInternalServerErrorMessage = (
       errors?: ReadonlyArray<GraphQLFormattedError>
     ) => expect(errors).toEqual([expect.objectContaining({ message: "Internal server error" })]);
 
     const expectToThrowErrorOnMissingAttribute = async (attribute: string) => {
-      const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
-      const { companyUuid, ...attributes } = OfferGenerator.data.withObligatoryData({
-        companyUuid: company.uuid
-      });
+      const { companyUuid, ...attributes } = offerAttributes;
       const { errors } = await apolloClient.mutate({
         mutation: CREATE_OFFER,
         variables: omit(attributes, attribute)
       });
       expectApolloErrorToHaveInternalServerErrorMessage(errors);
     };
-
-    it("returns an error if no careers are given", async () => {
-      const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
-      const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
-        companyUuid: company.uuid
-      });
-
-      const { errors } = await apolloClient.mutate({
-        mutation: CREATE_OFFER,
-        variables: createOfferAttributes
-      });
-      expect(errors).toEqualGraphQLErrorType(OfferWithNoCareersError.name);
-    });
 
     it("throws an error if no title is provided", async () => {
       await expectToThrowErrorOnMissingAttribute("title");
@@ -230,21 +227,26 @@ describe("createOffer", () => {
     });
 
     it("throws an error if given an array containing a  null in the careers", async () => {
-      const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
-      const {
-        companyUuid,
-        ...createOfferAttributesWithNoTitle
-      } = OfferGenerator.data.withObligatoryData({
-        companyUuid: company.uuid,
-        careers: [null] as any
-      });
+      const { companyUuid, ...attributes } = offerAttributes;
       const { errors } = await apolloClient.mutate({
         mutation: CREATE_OFFER,
-        variables: createOfferAttributesWithNoTitle
+        variables: { ...attributes, careers: [null] }
       });
       expectApolloErrorToHaveInternalServerErrorMessage(errors);
     });
 
+    it("returns an error if no careers are given", async () => {
+      const { companyUuid, ...createOfferAttributes } = offerAttributes;
+
+      const { errors } = await apolloClient.mutate({
+        mutation: CREATE_OFFER,
+        variables: { ...createOfferAttributes, careers: [] }
+      });
+      expect(errors).toEqualGraphQLErrorType(OfferWithNoCareersError.name);
+    });
+  });
+
+  describe("when the currentUser does not comply the required permissions", () => {
     it("throws an error if no user is logged in", async () => {
       const { company } = await createCompanyTestClient(ApprovalStatus.approved);
       const apolloClient = client.loggedOut();
