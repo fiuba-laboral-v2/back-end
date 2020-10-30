@@ -6,7 +6,7 @@ import { toThrowErrorWithMessage } from "./toThrowErrorWithMessage";
 import { toBeSortedBy } from "./toBeSortedBy";
 import { toEqualIgnoringSpacing } from "./toEqualIgnoringSpacing";
 import { toBeObjectContaining } from "./toBeObjectContaining";
-import { toIncludeGraphQLErrorType } from "./toIncludeGraphQLErrorType";
+import { toEqualGraphQLErrorType } from "./toEqualGraphQLErrorType";
 
 export const setupCustomMatchers = () =>
   expect.extend({
@@ -18,5 +18,5 @@ export const setupCustomMatchers = () =>
     toBeSortedBy,
     toEqualIgnoringSpacing,
     toBeObjectContaining,
-    toIncludeGraphQLErrorType
+    toEqualGraphQLErrorType
   });

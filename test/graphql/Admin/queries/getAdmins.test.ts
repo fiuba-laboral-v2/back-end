@@ -117,7 +117,7 @@ describe("getAdmins", () => {
       const apolloClient = client.loggedOut();
 
       const { errors } = await apolloClient.query({ query: GET_ADMINS });
-      expect(errors).toIncludeGraphQLErrorType(AuthenticationError.name);
+      expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
     });
 
     it("returns an error if current user is an applicant", async () => {
@@ -125,7 +125,7 @@ describe("getAdmins", () => {
         status: { admin: adminExtension, approvalStatus: ApprovalStatus.approved }
       });
       const { errors } = await apolloClient.query({ query: GET_ADMINS });
-      expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
+      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });
 
     it("returns an error if current user is from company", async () => {
@@ -133,7 +133,7 @@ describe("getAdmins", () => {
         status: { admin: adminExtension, approvalStatus: ApprovalStatus.approved }
       });
       const { errors } = await apolloClient.query({ query: GET_ADMINS });
-      expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
+      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });
   });
 });

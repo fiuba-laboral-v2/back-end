@@ -74,7 +74,7 @@ describe("updateCurrentCompany", () => {
         variables: dataToUpdate
       });
 
-      expect(errors).toIncludeGraphQLErrorType(AuthenticationError.name);
+      expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
     });
 
     it("throws an error if current user is not a company user", async () => {
@@ -85,7 +85,7 @@ describe("updateCurrentCompany", () => {
         variables: dataToUpdate
       });
 
-      expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
+      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });
   });
 });

@@ -47,7 +47,7 @@ describe("getCareerByCode", () => {
         query: GET_CAREER_BY_CODE,
         variables: { code: "3" }
       });
-      expect(errors).toIncludeGraphQLErrorType(CareersNotFoundError.name);
+      expect(errors).toEqualGraphQLErrorType(CareersNotFoundError.name);
     });
 
     it("returns an error if there is no current user", async () => {
@@ -57,7 +57,7 @@ describe("getCareerByCode", () => {
         query: GET_CAREER_BY_CODE,
         variables: { code: "3" }
       });
-      expect(errors).toIncludeGraphQLErrorType(AuthenticationError.name);
+      expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
     });
   });
 });

@@ -36,7 +36,7 @@ export const createOffer = {
       type: List(GraphQLOfferSectionInput)
     },
     careers: {
-      type: nonNull(List(GraphQLOfferCareerInput))
+      type: nonNull(List(nonNull(GraphQLOfferCareerInput)))
     }
   },
   resolve: (_: undefined, attributes: ICreateOffer, { currentUser }: IApolloServerContext) => {

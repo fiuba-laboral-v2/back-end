@@ -204,7 +204,7 @@ describe("editOffer", () => {
         careers: []
       }
     });
-    expect(errors).toIncludeGraphQLErrorType(OfferWithNoCareersError.name);
+    expect(errors).toEqualGraphQLErrorType(OfferWithNoCareersError.name);
   });
 
   it("throws an error if the offer does not belong to the company", async () => {
@@ -220,7 +220,7 @@ describe("editOffer", () => {
       mutation: EDIT_OFFER,
       variables: { uuid, ...initialAttributes }
     });
-    expect(errors).toIncludeGraphQLErrorType(OfferNotVisibleByCurrentUserError.name);
+    expect(errors).toEqualGraphQLErrorType(OfferNotVisibleByCurrentUserError.name);
   });
 
   it("throws an error when the offer uuid is not found", async () => {
@@ -234,7 +234,7 @@ describe("editOffer", () => {
       mutation: EDIT_OFFER,
       variables: { ...attributes, uuid: generateUuid() }
     });
-    expect(errors).toIncludeGraphQLErrorType(OfferNotFoundError.name);
+    expect(errors).toEqualGraphQLErrorType(OfferNotFoundError.name);
   });
 
   it("throws an error if the user is not from a company", async () => {
@@ -247,7 +247,7 @@ describe("editOffer", () => {
       mutation: EDIT_OFFER,
       variables: { ...attributes, uuid: generateUuid() }
     });
-    expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
+    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("throws an error when the user is from a rejected company", async () => {
@@ -260,7 +260,7 @@ describe("editOffer", () => {
       mutation: EDIT_OFFER,
       variables: { ...offerData, uuid: generateUuid() }
     });
-    expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
+    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("throws an error when the user is from a pending company", async () => {
@@ -270,7 +270,7 @@ describe("editOffer", () => {
       mutation: EDIT_OFFER,
       variables: { ...offerData, uuid: generateUuid() }
     });
-    expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
+    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("throws an error when a user is not logged in", async () => {
@@ -283,6 +283,6 @@ describe("editOffer", () => {
       mutation: EDIT_OFFER,
       variables: { ...offerData, uuid: generateUuid() }
     });
-    expect(errors).toIncludeGraphQLErrorType(AuthenticationError.name);
+    expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
   });
 });

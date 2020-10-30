@@ -181,13 +181,13 @@ describe("getOffers", () => {
   it("returns an error when the user is from a company", async () => {
     const { apolloClient } = await TestClientGenerator.company();
     const { errors } = await apolloClient.query({ query: GET_OFFERS });
-    expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
+    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("returns an error when the user is an applicant", async () => {
     const { apolloClient } = await TestClientGenerator.applicant();
     const { errors } = await apolloClient.query({ query: GET_OFFERS });
-    expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
+    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("returns an error when the user is a rejected applicant", async () => {
@@ -198,12 +198,12 @@ describe("getOffers", () => {
       }
     });
     const { errors } = await apolloClient.query({ query: GET_OFFERS });
-    expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
+    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("returns an error when the user is a pending applicant", async () => {
     const { apolloClient } = await TestClientGenerator.applicant();
     const { errors } = await apolloClient.query({ query: GET_OFFERS });
-    expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
+    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 });

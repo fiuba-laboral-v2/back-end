@@ -71,7 +71,7 @@ describe("updateJobApplicationApprovalStatus", () => {
       variables: { uuid, approvalStatus: ApprovalStatus.approved }
     });
 
-    expect(errors).toIncludeGraphQLErrorType(AuthenticationError.name);
+    expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
   });
 
   it("return an error if no uuid is provided", async () => {
@@ -101,7 +101,7 @@ describe("updateJobApplicationApprovalStatus", () => {
       variables: { uuid, approvalStatus: ApprovalStatus.approved }
     });
 
-    expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
+    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("returns an error if the current user from a company", async () => {
@@ -112,6 +112,6 @@ describe("updateJobApplicationApprovalStatus", () => {
       variables: { uuid, approvalStatus: ApprovalStatus.approved }
     });
 
-    expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
+    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 });

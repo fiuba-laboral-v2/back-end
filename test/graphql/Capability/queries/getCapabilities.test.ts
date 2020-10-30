@@ -44,7 +44,7 @@ describe("getCapabilities", () => {
       const apolloClient = client.loggedOut();
 
       const { errors } = await apolloClient.query({ query: GET_CAPABILITIES });
-      expect(errors).toIncludeGraphQLErrorType(AuthenticationError.name);
+      expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
     });
   });
 });

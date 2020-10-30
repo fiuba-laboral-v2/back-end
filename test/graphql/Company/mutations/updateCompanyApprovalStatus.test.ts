@@ -72,7 +72,7 @@ describe("updateCompanyApprovalStatus", () => {
       approvalStatus: ApprovalStatus.approved
     };
     const { errors } = await performMutation(apolloClient, dataToUpdate);
-    expect(errors).toIncludeGraphQLErrorType(AuthenticationError.name);
+    expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
   });
 
   it("throws an error if the current user is an applicant", async () => {
@@ -82,7 +82,7 @@ describe("updateCompanyApprovalStatus", () => {
       approvalStatus: ApprovalStatus.approved
     };
     const { errors } = await performMutation(apolloClient, dataToUpdate);
-    expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
+    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("throws an error if the current user is from a company", async () => {
@@ -92,7 +92,7 @@ describe("updateCompanyApprovalStatus", () => {
       approvalStatus: ApprovalStatus.approved
     };
     const { errors } = await performMutation(apolloClient, dataToUpdate);
-    expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
+    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("throws an error if the company does not exists", async () => {
@@ -103,7 +103,7 @@ describe("updateCompanyApprovalStatus", () => {
       approvalStatus: ApprovalStatus.approved
     };
     const { errors } = await performMutation(apolloClient, dataToUpdate);
-    expect(errors).toIncludeGraphQLErrorType(CompanyNotUpdatedError.name);
+    expect(errors).toEqualGraphQLErrorType(CompanyNotUpdatedError.name);
   });
 
   it("throws an error if the approvalStatus is invalid", async () => {
