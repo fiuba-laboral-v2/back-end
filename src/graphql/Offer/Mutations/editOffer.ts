@@ -8,6 +8,7 @@ import { IUpdateOffer } from "$models/Offer/Interface";
 import { IApolloServerContext } from "$graphql/Context";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { OfferNotVisibleByCurrentUserError } from "$graphql/Offer/Queries/Errors";
+import { OfferWithNoCareersError } from "$graphql/Offer/Errors";
 
 export const editOffer = {
   type: GraphQLOffer,
@@ -37,7 +38,7 @@ export const editOffer = {
       type: nonNull(List(GraphQLOfferSectionInput))
     },
     careers: {
-      type: List(GraphQLOfferCareerInput)
+      type: nonNull(List(GraphQLOfferCareerInput))
     }
   },
   resolve: async (
@@ -45,6 +46,8 @@ export const editOffer = {
     { careers, sections, uuid, ...offerAttributes }: IUpdateOffer,
     { currentUser }: IApolloServerContext
   ) => {
+    if (careers.length === 0) throw new OfferWithNoCareersError();
+
     const offer = await OfferRepository.findByUuid(uuid);
     const canEdit = await currentUser.getCompany().getPermissions().canSeeOffer(offer);
     if (!canEdit) throw new OfferNotVisibleByCurrentUserError();
