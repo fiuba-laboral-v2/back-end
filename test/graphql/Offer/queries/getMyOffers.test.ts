@@ -162,14 +162,14 @@ describe("getMyOffers", () => {
         query: GET_MY_OFFERS
       });
 
-      expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
+      expect(errors).toIncludeGraphQLErrorType(AuthenticationError.name);
     });
 
     it("returns an error if current user is not a companyUser", async () => {
       const { apolloClient } = await TestClientGenerator.user();
       const { errors } = await apolloClient.query({ query: GET_MY_OFFERS });
 
-      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+      expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
     });
 
     it("returns an error if company has pending status", async () => {
@@ -180,7 +180,7 @@ describe("getMyOffers", () => {
         }
       });
       const { errors } = await apolloClient.query({ query: GET_MY_OFFERS });
-      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+      expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
     });
 
     it("returns an error if company has rejected status", async () => {
@@ -191,7 +191,7 @@ describe("getMyOffers", () => {
         }
       });
       const { errors } = await apolloClient.query({ query: GET_MY_OFFERS });
-      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+      expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
     });
   });
 });

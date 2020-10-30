@@ -195,7 +195,7 @@ describe("updateCurrentApplicant", () => {
         variables: dataToUpdate
       });
 
-      expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
+      expect(errors).toIncludeGraphQLErrorType(AuthenticationError.name);
     });
 
     it("returns an error if current user is not an applicant", async () => {
@@ -217,7 +217,7 @@ describe("updateCurrentApplicant", () => {
         variables: dataToUpdate
       });
 
-      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+      expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
     });
 
     it("returns an error if current user is from a company", async () => {
@@ -227,7 +227,7 @@ describe("updateCurrentApplicant", () => {
         variables: { padron: 1500 }
       });
 
-      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+      expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
     });
   });
 });

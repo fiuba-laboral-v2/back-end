@@ -194,7 +194,7 @@ describe("createOffer", () => {
         mutation: CREATE_OFFER,
         variables: createOfferAttributes
       });
-      expect(errors).toEqualGraphQLErrorType(OfferWithNoCareersError.name);
+      expect(errors).toIncludeGraphQLErrorType(OfferWithNoCareersError.name);
     });
 
     it("throws an error if no title is provided", async () => {
@@ -235,7 +235,7 @@ describe("createOffer", () => {
         mutation: CREATE_OFFER,
         variables: createOfferAttributes
       });
-      expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
+      expect(errors).toIncludeGraphQLErrorType(AuthenticationError.name);
     });
 
     it("throws an error if the current user is not a company", async () => {
@@ -248,7 +248,7 @@ describe("createOffer", () => {
         mutation: CREATE_OFFER,
         variables: createOfferAttributes
       });
-      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+      expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
     });
 
     it("returns an error if the company has pending approval status", async () => {
@@ -260,7 +260,7 @@ describe("createOffer", () => {
         mutation: CREATE_OFFER,
         variables: createOfferAttributes
       });
-      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+      expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
     });
 
     it("returns an error if the company has rejected approval status", async () => {
@@ -272,7 +272,7 @@ describe("createOffer", () => {
         mutation: CREATE_OFFER,
         variables: createOfferAttributes
       });
-      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+      expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
     });
   });
 });

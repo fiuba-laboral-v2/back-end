@@ -72,7 +72,7 @@ describe("fiubaLogin", () => {
       mutation: FIUBA_LOGIN,
       variables: { dni: user.dni, password }
     });
-    expect(errors).toEqualGraphQLErrorType(BadCredentialsError.name);
+    expect(errors).toIncludeGraphQLErrorType(BadCredentialsError.name);
   });
 
   it("returns an error if the user is from a company", async () => {
@@ -92,6 +92,6 @@ describe("fiubaLogin", () => {
       mutation: FIUBA_LOGIN,
       variables: { dni: DniGenerator.generate(), password: "AValidPassword000" }
     });
-    expect(errors).toEqualGraphQLErrorType(UserNotFoundError.name);
+    expect(errors).toIncludeGraphQLErrorType(UserNotFoundError.name);
   });
 });

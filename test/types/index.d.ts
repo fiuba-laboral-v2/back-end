@@ -15,7 +15,7 @@ declare global {
       toBeSortedBy(options: IOptions): R;
       toEqualIgnoringSpacing(expected: string): R;
       toBeObjectContaining(expected: object): R;
-      toEqualGraphQLErrorType(errorType: string): R;
+      toIncludeGraphQLErrorType(errorType: string): R;
     }
   }
 }

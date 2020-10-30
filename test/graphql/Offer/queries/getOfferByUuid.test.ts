@@ -193,7 +193,7 @@ describe("getOfferByUuid", () => {
     error: Constructable
   ) => {
     const { errors } = await getOffer(apolloClient, offer);
-    expect(errors).toEqualGraphQLErrorType(error.name);
+    expect(errors).toIncludeGraphQLErrorType(error.name);
   };
 
   it("returns any offer for an admin", async () => {
@@ -313,7 +313,7 @@ describe("getOfferByUuid", () => {
         variables: { uuid: offer.uuid }
       });
 
-      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+      expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
     });
 
     it("return an error if an admin request the hasApplied field", async () => {
@@ -324,7 +324,7 @@ describe("getOfferByUuid", () => {
         variables: { uuid: offer.uuid }
       });
 
-      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+      expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
     });
   });
 
@@ -336,7 +336,7 @@ describe("getOfferByUuid", () => {
         variables: { uuid: generateUuid() }
       });
 
-      expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
+      expect(errors).toIncludeGraphQLErrorType(AuthenticationError.name);
     });
 
     it("returns error if current user is from a pending company", async () => {
@@ -346,7 +346,7 @@ describe("getOfferByUuid", () => {
         variables: { uuid: generateUuid() }
       });
 
-      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+      expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
     });
 
     it("returns error if current user is from a rejected company", async () => {
@@ -356,7 +356,7 @@ describe("getOfferByUuid", () => {
         variables: { uuid: generateUuid() }
       });
 
-      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+      expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
     });
 
     it("returns error if current user a rejected applicant", async () => {
@@ -371,7 +371,7 @@ describe("getOfferByUuid", () => {
         variables: { uuid: generateUuid() }
       });
 
-      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+      expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
     });
 
     it("returns error if current user a pending applicant", async () => {
@@ -386,7 +386,7 @@ describe("getOfferByUuid", () => {
         variables: { uuid: generateUuid() }
       });
 
-      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+      expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
     });
   });
 });

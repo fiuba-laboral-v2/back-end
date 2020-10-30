@@ -323,7 +323,7 @@ describe("getAdminTasks", () => {
           statuses: [ApprovalStatus.pending]
         }
       });
-      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+      expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
     };
 
     it("throws an error to plain users", async () => {

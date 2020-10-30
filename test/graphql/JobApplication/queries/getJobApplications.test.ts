@@ -174,28 +174,28 @@ describe("getJobApplications", () => {
         const apolloClient = client.loggedOut();
         const { errors } = await performQuery(apolloClient);
 
-        expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
+        expect(errors).toIncludeGraphQLErrorType(AuthenticationError.name);
       });
 
       it("returns an error if current user is not an admin", async () => {
         const { apolloClient } = await TestClientGenerator.user();
         const { errors } = await performQuery(apolloClient);
 
-        expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+        expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
       });
 
       it("returns an error if current user is a company user", async () => {
         const { apolloClient } = await TestClientGenerator.company();
         const { errors } = await performQuery(apolloClient);
 
-        expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+        expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
       });
 
       it("returns an error if current user is an applicant", async () => {
         const { apolloClient } = await TestClientGenerator.company();
         const { errors } = await performQuery(apolloClient);
 
-        expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+        expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
       });
     });
   });

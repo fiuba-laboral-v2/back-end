@@ -112,7 +112,7 @@ describe("createCompany", () => {
           cuit
         }
       });
-      expect(errors).toEqualGraphQLErrorType("CompanyCuitAlreadyExistsError");
+      expect(errors).toIncludeGraphQLErrorType("CompanyCuitAlreadyExistsError");
     });
   });
 });

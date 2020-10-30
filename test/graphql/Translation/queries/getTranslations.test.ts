@@ -39,6 +39,6 @@ describe("getTranslations", () => {
     });
 
     expect(errors).toHaveLength(1);
-    expect(errors).toEqualGraphQLErrorType(MissingTranslationError.name);
+    expect(errors).toIncludeGraphQLErrorType(MissingTranslationError.name);
   });
 });

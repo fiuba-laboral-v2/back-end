@@ -1,6 +1,6 @@
 import { GraphQLFormattedError } from "graphql";
 
-export const toEqualGraphQLErrorType = (
+export const toIncludeGraphQLErrorType = (
   received: ReadonlyArray<GraphQLFormattedError>,
   errorType: string
 ) => {

@@ -125,7 +125,7 @@ describe("getApplicant", () => {
         variables: { uuid }
       });
 
-      expect(errors).toEqualGraphQLErrorType(ApplicantNotFound.name);
+      expect(errors).toIncludeGraphQLErrorType(ApplicantNotFound.name);
     });
   });
 
@@ -137,7 +137,7 @@ describe("getApplicant", () => {
         query: GET_APPLICANT,
         variables: { uuid: uuid }
       });
-      expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
+      expect(errors).toIncludeGraphQLErrorType(AuthenticationError.name);
     });
   });
 });

@@ -69,7 +69,7 @@ describe("companyLogin", () => {
       mutation: COMPANY_LOGIN,
       variables: { email: user.email, password }
     });
-    expect(errors).toEqualGraphQLErrorType(Error.name);
+    expect(errors).toIncludeGraphQLErrorType(Error.name);
   });
 
   it("returns an error if the user is an admin", async () => {
@@ -80,7 +80,7 @@ describe("companyLogin", () => {
       mutation: COMPANY_LOGIN,
       variables: { email: user.email, password }
     });
-    expect(errors).toEqualGraphQLErrorType(Error.name);
+    expect(errors).toIncludeGraphQLErrorType(Error.name);
   });
 
   it("returns error if user does not exist", async () => {
@@ -88,7 +88,7 @@ describe("companyLogin", () => {
       mutation: COMPANY_LOGIN,
       variables: { email: "asd@asd.com", password: "AValidPassword000" }
     });
-    expect(errors).toEqualGraphQLErrorType(UserNotFoundError.name);
+    expect(errors).toIncludeGraphQLErrorType(UserNotFoundError.name);
   });
 
   it("returns and error if the password does not match", async () => {
@@ -97,6 +97,6 @@ describe("companyLogin", () => {
       mutation: COMPANY_LOGIN,
       variables: { email: user.email, password: "WrongPassword" }
     });
-    expect(errors).toEqualGraphQLErrorType(BadCredentialsError.name);
+    expect(errors).toIncludeGraphQLErrorType(BadCredentialsError.name);
   });
 });

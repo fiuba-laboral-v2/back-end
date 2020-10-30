@@ -232,28 +232,28 @@ describe("getMyLatestJobApplications", () => {
       const apolloClient = client.loggedOut();
       const { errors } = await performQuery(apolloClient);
 
-      expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
+      expect(errors).toIncludeGraphQLErrorType(AuthenticationError.name);
     });
 
     it("returns an error if current user is not a companyUser", async () => {
       const { apolloClient } = await TestClientGenerator.user();
       const { errors } = await performQuery(apolloClient);
 
-      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+      expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
     });
 
     it("returns an error if the company has pending status", async () => {
       const { apolloClient } = await createCompanyTestClient(ApprovalStatus.pending);
       const { errors } = await performQuery(apolloClient);
 
-      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+      expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
     });
 
     it("returns an error if the company has rejected status", async () => {
       const { apolloClient } = await createCompanyTestClient(ApprovalStatus.rejected);
       const { errors } = await performQuery(apolloClient);
 
-      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+      expect(errors).toIncludeGraphQLErrorType(UnauthorizedError.name);
     });
   });
 });
