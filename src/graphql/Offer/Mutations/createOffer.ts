@@ -6,6 +6,7 @@ import { OfferRepository } from "$models/Offer";
 import { Int, List, nonNull, String, Boolean } from "$graphql/fieldTypes";
 import { ICreateOffer } from "$models/Offer/Interface";
 import { IApolloServerContext } from "$graphql/Context";
+import { OfferWithNoCareersError } from "../Errors";
 
 export const createOffer = {
   type: GraphQLOffer,
@@ -35,12 +36,15 @@ export const createOffer = {
       type: List(GraphQLOfferSectionInput)
     },
     careers: {
-      type: List(GraphQLOfferCareerInput)
+      type: nonNull(List(GraphQLOfferCareerInput))
     }
   },
-  resolve: (_: undefined, attributes: ICreateOffer, { currentUser }: IApolloServerContext) =>
-    OfferRepository.create({
+  resolve: (_: undefined, attributes: ICreateOffer, { currentUser }: IApolloServerContext) => {
+    if (attributes.careers.length === 0) throw new OfferWithNoCareersError();
+
+    return OfferRepository.create({
       ...attributes,
       companyUuid: currentUser.getCompany().companyUuid
-    })
+    });
+  }
 };

@@ -1,6 +1,8 @@
 import { gql } from "apollo-server";
+import { ApolloServerTestClient as TestClient } from "apollo-server-testing";
 import { client } from "../../ApolloTestClient";
 
+import { UUID_REGEX } from "$test/models";
 import { CareerGenerator } from "$generators/Career";
 import { OfferGenerator } from "$generators/Offer";
 import { AdminGenerator } from "$generators/Admin";
@@ -10,9 +12,10 @@ import { CareerRepository } from "$models/Career";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { Admin } from "$models";
+import { Admin, Career } from "$models";
+
+import { OfferWithNoCareersError } from "$graphql/Offer/Errors";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
-import { UUID_REGEX } from "$test/models";
 
 const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
   mutation createOffer(
@@ -23,7 +26,7 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
     $isInternship: Boolean!
     $minimumSalary: Int!
     $maximumSalary: Int
-    $sections: [OfferSectionInput]!
+    $sections: [OfferSectionInput]
     $careers: [OfferCareerInput]!
   ) {
     createOffer(
@@ -72,29 +75,36 @@ const SAVE_OFFER_WITH_COMPLETE_DATA = gql`
 
 describe("createOffer", () => {
   let admin: Admin;
+  let firstCareer: Career;
+  let secondCareer: Career;
 
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await UserRepository.truncate();
     admin = await AdminGenerator.extension();
+
+    firstCareer = await CareerGenerator.instance();
+    secondCareer = await CareerGenerator.instance();
   });
+
+  const createCompanyTestClient = (approvalStatus: ApprovalStatus) =>
+    TestClientGenerator.company({ status: { admin, approvalStatus } });
+
+  const performMutation = (apolloClient: TestClient, variables: object) =>
+    apolloClient.mutate({
+      mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
+      variables
+    });
 
   describe("when the input values are valid", () => {
     it("creates a new offer with only obligatory data", async () => {
-      const { apolloClient, company } = await TestClientGenerator.company({
-        status: {
-          admin,
-          approvalStatus: ApprovalStatus.approved
-        }
-      });
+      const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
       const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
-        companyUuid: company.uuid
+        companyUuid: company.uuid,
+        careers: [{ careerCode: firstCareer.code }, { careerCode: secondCareer.code }]
       });
-      const { data, errors } = await apolloClient.mutate({
-        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
-        variables: createOfferAttributes
-      });
+      const { data, errors } = await performMutation(apolloClient, createOfferAttributes);
 
       expect(errors).toBeUndefined();
       expect(data!.createOffer).toBeObjectContaining({
@@ -104,23 +114,24 @@ describe("createOffer", () => {
         hoursPerDay: createOfferAttributes.hoursPerDay,
         minimumSalary: createOfferAttributes.minimumSalary,
         maximumSalary: createOfferAttributes.maximumSalary,
-        targetApplicantType: createOfferAttributes.targetApplicantType
+        targetApplicantType: createOfferAttributes.targetApplicantType,
+        careers: expect.arrayContaining([
+          { code: firstCareer.code, description: firstCareer.description },
+          { code: secondCareer.code, description: secondCareer.description }
+        ])
       });
     });
 
     it("creates a new offer without maximum salary", async () => {
-      const { apolloClient, company } = await TestClientGenerator.company({
-        status: {
-          admin,
-          approvalStatus: ApprovalStatus.approved
-        }
-      });
+      const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
       const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
-        companyUuid: company.uuid
+        companyUuid: company.uuid,
+        careers: [{ careerCode: firstCareer.code }]
       });
-      const { data, errors } = await apolloClient.mutate({
-        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
-        variables: { ...createOfferAttributes, maximumSalary: null }
+      await performMutation(apolloClient, { ...createOfferAttributes, maximumSalary: null });
+      const { data, errors } = await performMutation(apolloClient, {
+        ...createOfferAttributes,
+        maximumSalary: null
       });
 
       expect(errors).toBeUndefined();
@@ -131,18 +142,14 @@ describe("createOffer", () => {
         hoursPerDay: createOfferAttributes.hoursPerDay,
         minimumSalary: createOfferAttributes.minimumSalary,
         maximumSalary: null,
-        targetApplicantType: createOfferAttributes.targetApplicantType
+        targetApplicantType: createOfferAttributes.targetApplicantType,
+        careers: [{ code: firstCareer.code, description: firstCareer.description }]
       });
     });
 
     it("creates a new offer with one section and one career", async () => {
-      const { apolloClient, company } = await TestClientGenerator.company({
-        status: {
-          admin,
-          approvalStatus: ApprovalStatus.approved
-        }
-      });
-      const { code, description } = await CareerGenerator.instance();
+      const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
+      const { code, description } = firstCareer;
       const sectionData = { title: "title", text: "text", displayOrder: 1 };
 
       const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
@@ -150,10 +157,8 @@ describe("createOffer", () => {
         careers: [{ careerCode: code }],
         sections: [sectionData]
       });
-      const { data, errors } = await apolloClient.mutate({
-        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
-        variables: createOfferAttributes
-      });
+
+      const { data, errors } = await performMutation(apolloClient, createOfferAttributes);
 
       expect(errors).toBeUndefined();
       expect(data!.createOffer.careers).toEqual([{ code, description }]);
@@ -168,24 +173,27 @@ describe("createOffer", () => {
 
   describe("when the input values are invalid", () => {
     const expectToThrowErrorOnMissingAttribute = async (attribute: string) => {
-      const { apolloClient, company } = await TestClientGenerator.company({
-        status: {
-          admin,
-          approvalStatus: ApprovalStatus.approved
-        }
-      });
+      const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
       const {
         companyUuid,
         ...createOfferAttributesWithNoTitle
       } = OfferGenerator.data.withObligatoryData({ companyUuid: company.uuid });
       delete createOfferAttributesWithNoTitle[attribute];
 
-      const { errors } = await apolloClient.mutate({
-        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
-        variables: createOfferAttributesWithNoTitle
-      });
+      await performMutation(apolloClient, createOfferAttributesWithNoTitle);
+      const { errors } = await performMutation(apolloClient, createOfferAttributesWithNoTitle);
       expect(errors).toEqual([expect.objectContaining({ message: "Internal server error" })]);
     };
+
+    it("returns an error if no careers are given", async () => {
+      const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
+      const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
+        companyUuid: company.uuid
+      });
+
+      const { errors } = await performMutation(apolloClient, createOfferAttributes);
+      expect(errors![0].extensions!.data).toEqual({ errorType: OfferWithNoCareersError.name });
+    });
 
     it("throws an error if no title is provided", async () => {
       await expectToThrowErrorOnMissingAttribute("title");
@@ -211,13 +219,12 @@ describe("createOffer", () => {
       await expectToThrowErrorOnMissingAttribute("minimumSalary");
     });
 
+    it("throws an error if no careers is provided", async () => {
+      await expectToThrowErrorOnMissingAttribute("careers");
+    });
+
     it("throws an error if no user is logged in", async () => {
-      const { company } = await TestClientGenerator.company({
-        status: {
-          admin,
-          approvalStatus: ApprovalStatus.approved
-        }
-      });
+      const { company } = await createCompanyTestClient(ApprovalStatus.approved);
       const apolloClient = client.loggedOut();
       const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
         companyUuid: company.uuid
@@ -230,49 +237,30 @@ describe("createOffer", () => {
     });
 
     it("throws an error if the current user is not a company", async () => {
-      const { company } = await TestClientGenerator.company();
+      const { company } = await createCompanyTestClient(ApprovalStatus.approved);
       const { apolloClient } = await TestClientGenerator.applicant();
       const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
         companyUuid: company.uuid
       });
-      const { errors } = await apolloClient.mutate({
-        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
-        variables: createOfferAttributes
-      });
+      const { errors } = await performMutation(apolloClient, createOfferAttributes);
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("returns an error if the company has pending approval status", async () => {
-      const { apolloClient, company } = await TestClientGenerator.company({
-        status: {
-          admin,
-          approvalStatus: ApprovalStatus.pending
-        }
-      });
+      const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.pending);
       const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
         companyUuid: company.uuid
       });
-      const { errors } = await apolloClient.mutate({
-        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
-        variables: createOfferAttributes
-      });
+      const { errors } = await performMutation(apolloClient, createOfferAttributes);
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
 
     it("returns an error if the company has rejected approval status", async () => {
-      const { apolloClient, company } = await TestClientGenerator.company({
-        status: {
-          admin,
-          approvalStatus: ApprovalStatus.rejected
-        }
-      });
+      const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.rejected);
       const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
         companyUuid: company.uuid
       });
-      const { errors } = await apolloClient.mutate({
-        mutation: SAVE_OFFER_WITH_COMPLETE_DATA,
-        variables: createOfferAttributes
-      });
+      const { errors } = await performMutation(apolloClient, createOfferAttributes);
       expect(errors![0].extensions!.data).toEqual({ errorType: UnauthorizedError.name });
     });
   });
