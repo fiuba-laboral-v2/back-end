@@ -343,7 +343,7 @@ export const defaultTranslations = {
   separatedStatusLabel: [
     {
       key: "tooltipPrefix",
-      value: "Revisa la "
+      value: "Revisa la"
     },
     { key: "graduate", value: "Graduados" },
     { key: "student", value: "Alumnos" },
