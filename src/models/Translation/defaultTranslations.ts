@@ -342,12 +342,8 @@ export const defaultTranslations = {
   ],
   separatedStatusLabel: [
     {
-      key: "extensionTooltip",
-      value: "Revisa la Secretaría de Extensión Universitaria y Bienestar Estudiantil"
-    },
-    {
-      key: "graduadosTooltip",
-      value: "Revisa la Subsecretaría de Relación con Graduados"
+      key: "tooltipPrefix",
+      value: "Revisa la"
     },
     { key: "graduate", value: "Graduados" },
     { key: "student", value: "Alumnos" },
@@ -355,19 +351,29 @@ export const defaultTranslations = {
     { key: "rejected", value: "No visible" },
     { key: "pending", value: "Pendiente" }
   ],
+  institutions: [
+    {
+      key: "extension",
+      value: "Secretaría de Inclusión, Género, Bienestar y Articulación Social"
+    },
+    {
+      key: "graduados",
+      value: "Subsecretaría de Relación con los Graduados"
+    }
+  ],
   desktopOnlyOverlay: [{ key: "message", value: "Ampliar la pantalla del navegador" }],
   publishedSince: [{ key: "prefix", value: "Publicado" }],
   list: [{ key: "fetchMore", value: "Ver más" }],
   companySignUpAcceptanceCriteria: [
-    { key: "text", value: "Esta empresa estará pendiente de aprobación por autoridades de FIUBA" }
+    { key: "text", value: "Esta empresa estará pendiente de aprobación por personal de FIUBA" }
   ],
   companyEditableAcceptanceCriteria: [
-    { key: "text", value: "Esta empresa estará pendiente de aprobación por autoridades de FIUBA" }
+    { key: "text", value: "Esta empresa estará pendiente de aprobación por personal de FIUBA" }
   ],
   editOfferAcceptanceCriteria: [
-    { key: "text", value: "Esta oferta estará pendiente de aprobación por autoridades de FIUBA" }
+    { key: "text", value: "Esta oferta estará pendiente de aprobación por personal de FIUBA" }
   ],
   createOfferAcceptanceCriteria: [
-    { key: "text", value: "Esta oferta estará pendiente de aprobación por autoridades de FIUBA" }
+    { key: "text", value: "Esta oferta estará pendiente de aprobación por personal de FIUBA" }
   ]
 };
