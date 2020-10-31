@@ -66,8 +66,8 @@ describe("Offer", () => {
     await expect(offer.validate()).resolves.not.toThrow();
     expect(offer).toBeObjectContaining({
       ...offerAttributes,
-      graduatesExpirationDateTime: new Date(offerAttributes.graduatesExpirationDateTime.toDate()),
-      studentsExpirationDateTime: new Date(offerAttributes.studentsExpirationDateTime.toDate())
+      graduatesExpirationDateTime: offerAttributes.graduatesExpirationDateTime.toDate(),
+      studentsExpirationDateTime: offerAttributes.studentsExpirationDateTime.toDate()
     });
   });
 

@@ -34,8 +34,8 @@ const GET_APPROVED_OFFERS = gql`
 describe("getApprovedOffers", () => {
   let firstCareer: Career;
   let secondCareer: Career;
-  let offerApprovedForStudents: Offer;
-  let offerApprovedForGraduados: Offer;
+  let offerApprovedForStudentsByExtension: Offer;
+  let offerApprovedForGraduadosByGraduados: Offer;
   let offerForBothAndApprovedByExtension: Offer;
   let offerForBothAndApprovedByGraduados: Offer;
   let offerForBothAndApprovedByGraduadosAndExtension: Offer;
@@ -76,13 +76,13 @@ describe("getApprovedOffers", () => {
     firstCareer = await CareerGenerator.instance();
     secondCareer = await CareerGenerator.instance();
 
-    offerApprovedForStudents = await createOfferWith(
+    offerApprovedForStudentsByExtension = await createOfferWith(
       ApprovalStatus.approved,
       Secretary.extension,
       ApplicantType.student
     );
     await createOfferWith(ApprovalStatus.rejected, Secretary.extension, ApplicantType.student);
-    offerApprovedForGraduados = await createOfferWith(
+    offerApprovedForGraduadosByGraduados = await createOfferWith(
       ApprovalStatus.approved,
       Secretary.graduados,
       ApplicantType.graduate
@@ -151,7 +151,7 @@ describe("getApprovedOffers", () => {
       expect(data!.getApprovedOffers.results).toEqual([
         { uuid: offerForBothAndApprovedByGraduadosAndExtension.uuid },
         { uuid: offerForBothAndApprovedByExtension.uuid },
-        { uuid: offerApprovedForStudents.uuid }
+        { uuid: offerApprovedForStudentsByExtension.uuid }
       ]);
       expect(data!.getApprovedOffers.shouldFetchMore).toEqual(false);
     });
@@ -181,7 +181,7 @@ describe("getApprovedOffers", () => {
       expect(data!.getApprovedOffers.results).toEqual([
         { uuid: offerForBothAndApprovedByGraduadosAndExtension.uuid },
         { uuid: offerForBothAndApprovedByGraduados.uuid },
-        { uuid: offerApprovedForGraduados.uuid }
+        { uuid: offerApprovedForGraduadosByGraduados.uuid }
       ]);
       expect(data!.getApprovedOffers.shouldFetchMore).toEqual(false);
     });
@@ -216,8 +216,8 @@ describe("getApprovedOffers", () => {
         { uuid: offerForBothAndApprovedByGraduadosAndExtension.uuid },
         { uuid: offerForBothAndApprovedByGraduados.uuid },
         { uuid: offerForBothAndApprovedByExtension.uuid },
-        { uuid: offerApprovedForGraduados.uuid },
-        { uuid: offerApprovedForStudents.uuid }
+        { uuid: offerApprovedForGraduadosByGraduados.uuid },
+        { uuid: offerApprovedForStudentsByExtension.uuid }
       ]);
       expect(data!.getApprovedOffers.shouldFetchMore).toEqual(false);
     });
