@@ -121,8 +121,8 @@ describe("Offer", () => {
       graduatesExpirationDateTime: moment().startOf("day")
     });
 
-    expect(offer.isExpiredForGraduates()).toBeFalsy();
-    expect(expiredOffer.isExpiredForGraduates()).toBeTruthy();
+    expect(offer.isExpiredForGraduates()).toBe(false);
+    expect(expiredOffer.isExpiredForGraduates()).toBe(true);
   });
 
   it("has a function to know if the studentsExpirationDateTime has expired", async () => {
@@ -132,8 +132,8 @@ describe("Offer", () => {
       studentsExpirationDateTime: moment().startOf("day")
     });
 
-    expect(offer.isExpiredForStudents()).toBeFalsy();
-    expect(expiredOffer.isExpiredForStudents()).toBeTruthy();
+    expect(offer.isExpiredForStudents()).toBe(false);
+    expect(expiredOffer.isExpiredForStudents()).toBe(true);
   });
 
   it("has a function to expire studentsExpirationDateTime", async () => {
