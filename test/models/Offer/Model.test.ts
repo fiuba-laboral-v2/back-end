@@ -5,6 +5,7 @@ import { ApplicantType } from "$models/Applicant";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { isApprovalStatus, isTargetApplicantType } from "$models/SequelizeModelValidators";
 import { omit } from "lodash";
+import moment from "moment";
 
 describe("Offer", () => {
   const offerAttributes = {
@@ -15,8 +16,8 @@ describe("Offer", () => {
     hoursPerDay: 8,
     minimumSalary: 52500,
     maximumSalary: 70000,
-    graduatesExpirationDateTime: "2020-10-24T15:18:06.000Z",
-    studentsExpirationDateTime: "2020-10-24T15:18:06.000Z",
+    graduatesExpirationDateTime: moment().endOf("day").add(7, "days"),
+    studentsExpirationDateTime: moment().endOf("day").add(7, "days"),
     targetApplicantType: ApplicantType.both
   };
 
@@ -65,8 +66,8 @@ describe("Offer", () => {
     await expect(offer.validate()).resolves.not.toThrow();
     expect(offer).toBeObjectContaining({
       ...offerAttributes,
-      graduatesExpirationDateTime: new Date(offerAttributes.graduatesExpirationDateTime),
-      studentsExpirationDateTime: new Date(offerAttributes.studentsExpirationDateTime)
+      graduatesExpirationDateTime: offerAttributes.graduatesExpirationDateTime.toDate(),
+      studentsExpirationDateTime: offerAttributes.studentsExpirationDateTime.toDate()
     });
   });
 
@@ -111,6 +112,44 @@ describe("Offer", () => {
 
     expect(offer.studentsExpirationDateTime).toBeUndefined();
     expect(offer.graduatesExpirationDateTime).toBeUndefined();
+  });
+
+  it("has a function to know if the graduatesExpirationDateTime has expired", async () => {
+    const offer = new Offer(offerAttributes);
+    const expiredOffer = new Offer({
+      ...offerAttributes,
+      graduatesExpirationDateTime: moment().startOf("day")
+    });
+
+    expect(offer.isExpiredForGraduates()).toBe(false);
+    expect(expiredOffer.isExpiredForGraduates()).toBe(true);
+  });
+
+  it("has a function to know if the studentsExpirationDateTime has expired", async () => {
+    const offer = new Offer(offerAttributes);
+    const expiredOffer = new Offer({
+      ...offerAttributes,
+      studentsExpirationDateTime: moment().startOf("day")
+    });
+
+    expect(offer.isExpiredForStudents()).toBe(false);
+    expect(expiredOffer.isExpiredForStudents()).toBe(true);
+  });
+
+  it("has a function to expire studentsExpirationDateTime", async () => {
+    const offer = new Offer(offerAttributes);
+
+    expect(offer.isExpiredForStudents()).toBe(false);
+    offer.expireForStudents();
+    expect(offer.isExpiredForStudents()).toBe(true);
+  });
+
+  it("has a function to expire graduatesExpirationDateTime", async () => {
+    const offer = new Offer(offerAttributes);
+
+    expect(offer.isExpiredForGraduates()).toBe(false);
+    offer.expireForGraduates();
+    expect(offer.isExpiredForGraduates()).toBe(true);
   });
 
   it("throws an error if offer does not belong to any company", async () => {

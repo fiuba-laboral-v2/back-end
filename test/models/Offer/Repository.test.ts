@@ -20,6 +20,7 @@ import MockDate from "mockdate";
 import moment from "moment";
 
 import { SECRETARY_EXPIRATION_DAYS_SETTING } from "$src/models/Offer/Repository";
+import { Secretary } from "$src/models/Admin";
 
 describe("OfferRepository", () => {
   let graduadosAdmin: Admin;
@@ -525,6 +526,113 @@ describe("OfferRepository", () => {
     });
   });
 
+  describe("Expire", () => {
+    it("graduados admin expires an offer for graduates", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const { uuid } = await OfferGenerator.instance.forGraduates({
+        status: ApprovalStatus.approved,
+        companyUuid
+      });
+      const offerAfterUpdate = await OfferRepository.expire({
+        uuid,
+        secretary: Secretary.graduados
+      });
+
+      expect(offerAfterUpdate.isExpiredForGraduates()).toBeTruthy();
+    });
+
+    it("graduados admin expires an offer for graduates and students", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const { uuid } = await OfferGenerator.instance.forStudentsAndGraduates({
+        status: ApprovalStatus.approved,
+        companyUuid
+      });
+
+      const offerAfterUpdate = await OfferRepository.expire({
+        uuid,
+        secretary: Secretary.graduados
+      });
+
+      expect(offerAfterUpdate.isExpiredForGraduates()).toBeTruthy();
+      expect(offerAfterUpdate.isExpiredForStudents()).toBeFalsy();
+    });
+
+    it("extension admin expires an offer for students", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const { uuid } = await OfferGenerator.instance.forStudents({
+        status: ApprovalStatus.approved,
+        companyUuid
+      });
+      const offerAfterUpdate = await OfferRepository.expire({
+        uuid,
+        secretary: Secretary.extension
+      });
+
+      expect(offerAfterUpdate.isExpiredForStudents()).toBeTruthy();
+    });
+
+    it("extension admin expires an offer for students and graduates", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const { uuid } = await OfferGenerator.instance.forStudentsAndGraduates({
+        status: ApprovalStatus.approved,
+        companyUuid
+      });
+
+      const offerAfterUpdate = await OfferRepository.expire({
+        uuid,
+        secretary: Secretary.extension
+      });
+
+      expect(offerAfterUpdate.isExpiredForGraduates()).toBeFalsy();
+      expect(offerAfterUpdate.isExpiredForStudents()).toBeTruthy();
+    });
+
+    it("creates an entry on OfferApprovalEvents table", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const { uuid } = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
+      const newStatus = ApprovalStatus.approved;
+      const params = {
+        uuid,
+        admin: extensionAdmin,
+        status: newStatus
+      };
+      await OfferRepository.updateApprovalStatus(params);
+      const offerApprovalEvents = await OfferApprovalEventRepository.findAll();
+
+      expect(offerApprovalEvents[offerApprovalEvents.length - 1].offerUuid).toEqual(uuid);
+    });
+
+    it("throws an error if the offer does not exist", async () => {
+      const unknownOfferUuid = "1dd69a27-0f6c-4859-be9e-4de5adf22826";
+      const newStatus = ApprovalStatus.approved;
+      const params = {
+        uuid: unknownOfferUuid,
+        admin: graduadosAdmin,
+        status: newStatus
+      };
+
+      await expect(OfferRepository.updateApprovalStatus(params)).rejects.toThrow(
+        OfferNotUpdatedError
+      );
+    });
+
+    it("throws an error if the status is not a valid ApprovalStatus value", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const { uuid } = await OfferGenerator.instance.forStudents({ companyUuid });
+      const newStatus = "pepito" as ApprovalStatus;
+      const params = {
+        uuid,
+        admin: extensionAdmin,
+        status: newStatus
+      };
+
+      await expect(OfferRepository.updateApprovalStatus(params)).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        isApprovalStatus.validate.isIn.msg
+      );
+    });
+  });
+
   describe("Get", () => {
     it("finds the only offer by uuid", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
@@ -757,6 +865,43 @@ describe("OfferRepository", () => {
           .map(offer => offer.uuid)
           .slice(lastOfferIndex + 1, allOffersByDescUpdatedAt.length)
       );
+    });
+
+    it("returns all graduate offers including those that are going to expire today", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const { uuid } = await OfferGenerator.instance.forGraduates({
+        status: ApprovalStatus.approved,
+        companyUuid
+      });
+
+      const offerAttributes = {
+        graduatesExpirationDateTime: moment().endOf("day")
+      };
+
+      const [, [updatedOffer]] = await Offer.update(offerAttributes, {
+        where: { uuid },
+        returning: true
+      });
+
+      const itemsPerPage = 5;
+      mockItemsPerPage(itemsPerPage);
+      const result = await OfferRepository.findAll({ applicantType: ApplicantType.graduate });
+      expect(result.results.map(offer => offer.uuid).includes(updatedOffer.uuid)).toBe(true);
+    });
+
+    it("won't return expired offers", async () => {
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+      const { uuid } = await OfferGenerator.instance.forGraduates({
+        status: ApprovalStatus.approved,
+        companyUuid
+      });
+
+      const updatedOffer = await OfferRepository.expire({ uuid, secretary: Secretary.graduados });
+
+      const itemsPerPage = 5;
+      mockItemsPerPage(itemsPerPage);
+      const result = await OfferRepository.findAll({ applicantType: ApplicantType.graduate });
+      expect(result.results.map(offer => offer.uuid).includes(updatedOffer.uuid)).toBe(false);
     });
 
     describe("when there are offers with equal updatedAt", () => {
