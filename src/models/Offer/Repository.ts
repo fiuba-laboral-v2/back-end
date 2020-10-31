@@ -15,8 +15,7 @@ import { PaginationQuery } from "$models/PaginationQuery";
 import { Offer, OfferCareer } from "$models";
 
 import { OfferNotFoundError, OfferNotUpdatedError } from "./Errors";
-import moment, { Moment } from "moment";
-import { omit } from "lodash";
+import moment from "moment";
 
 export const SECRETARY_EXPIRATION_DAYS_SETTING = 15;
 
@@ -139,29 +138,13 @@ export const OfferRepository = {
     });
   },
   expire: async ({ uuid, secretary }: { uuid: string; secretary?: Secretary }) => {
-    let offerAttributes: {
-      studentsExpirationDateTime?: Moment;
-      graduatesExpirationDateTime?: Moment;
-    } = {
-      studentsExpirationDateTime: moment().startOf("day"),
-      graduatesExpirationDateTime: moment().startOf("day")
-    };
+    const offer = await Offer.findByPk(uuid);
+    if (!offer) throw new OfferNotFoundError(uuid);
 
-    if (secretary === Secretary.extension) {
-      offerAttributes = omit(offerAttributes, "graduatesExpirationDateTime");
-    }
+    if (secretary === Secretary.extension || !secretary) offer.expireForStudents();
+    if (secretary === Secretary.graduados || !secretary) offer.expireForGraduates();
 
-    if (secretary === Secretary.graduados) {
-      offerAttributes = omit(offerAttributes, "studentsExpirationDateTime");
-    }
-
-    const [, [updatedOffer]] = await Offer.update(offerAttributes, {
-      where: { uuid },
-      returning: true
-    });
-    if (!updatedOffer) throw new OfferNotUpdatedError(uuid);
-
-    return updatedOffer;
+    return offer.save();
   },
   truncate: () => Offer.truncate({ cascade: true })
 };

@@ -135,6 +135,23 @@ describe("Offer", () => {
     expect(offer.isExpiredForStudents()).toBeFalsy();
     expect(expiredOffer.isExpiredForStudents()).toBeTruthy();
   });
+
+  it("has a function to expire studentsExpirationDateTime", async () => {
+    const offer = new Offer(offerAttributes);
+
+    expect(offer.isExpiredForStudents()).toBe(false);
+    offer.expireForStudents();
+    expect(offer.isExpiredForStudents()).toBe(true);
+  });
+
+  it("has a function to expire graduatesExpirationDateTime", async () => {
+    const offer = new Offer(offerAttributes);
+
+    expect(offer.isExpiredForGraduates()).toBe(false);
+    offer.expireForGraduates();
+    expect(offer.isExpiredForGraduates()).toBe(true);
+  });
+
   it("throws an error if offer does not belong to any company", async () => {
     const offer = new Offer({ ...offerAttributes, companyUuid: null });
     await expect(offer.validate()).rejects.toThrow();
