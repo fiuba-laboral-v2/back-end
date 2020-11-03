@@ -19,6 +19,13 @@ export const defaultTranslations = {
     { key: "text", value: "No hay ofertas" },
     { key: "button", value: "Publicar oferta" }
   ],
+  offerCreationInfoMessage: [
+    {
+      key: "message",
+      value:
+        "La oferta será revisada por personal de FIUBA. Una vez aprobada, permanecerá publicada por 15 días."
+    }
+  ],
   jobApplicationEmptyOfferList: [
     { key: "text", value: "No hay postulaciones" },
     { key: "button", value: "Publicar oferta" }
