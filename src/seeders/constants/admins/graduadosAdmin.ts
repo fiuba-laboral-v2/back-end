@@ -1,14 +1,12 @@
 import { uuids } from "../uuids";
-import { hashSync } from "bcrypt";
 
 export const graduadosAdmin = {
   user: {
     uuid: uuids.graduadosAdmin.user,
-    email: "graduados@admin.com",
-    password: hashSync("SecurePassword1010", 10),
-    name: "graduados",
-    surname: "secretary",
-    dni: "3333334",
+    email: "arastrelli@fi.uba.ar",
+    name: "Aldana",
+    surname: "Rastrelli",
+    dni: "999",
     createdAt: new Date(),
     updatedAt: new Date()
   },
