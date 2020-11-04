@@ -43,7 +43,7 @@ describe("NotificationRepository", () => {
       );
     });
 
-    it("throws an error if the notification already exists", async () => {
+    it("throws an error if the notification has an existing uuid", async () => {
       const attributes = {
         uuid: generateUuid(),
         userUuid: companyUserUuid,
