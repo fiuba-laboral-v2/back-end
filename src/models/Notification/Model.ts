@@ -8,6 +8,7 @@ import { compact } from "lodash";
 @Table({
   tableName: "Notifications",
   timestamps: true,
+  updatedAt: false,
   validate: {
     validateTaskForeignKey(this: Notification) {
       const foreignKeys = [this.applicantUuid];
