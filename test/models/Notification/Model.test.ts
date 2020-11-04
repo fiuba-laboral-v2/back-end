@@ -26,7 +26,7 @@ describe("Notification", () => {
     });
   });
 
-  it("creates a valid notification with no message", async () => {
+  it("is valid without a message", async () => {
     const notification = new Notification(mandatoryAttributes);
     await expect(notification.validate()).resolves.not.toThrow();
     expect(notification.message).toBeUndefined();
