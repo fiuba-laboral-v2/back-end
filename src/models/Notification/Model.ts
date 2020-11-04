@@ -1,6 +1,6 @@
 import { Model, Table, Column, ForeignKey, CreatedAt } from "sequelize-typescript";
 import { BOOLEAN, TEXT, UUID, UUIDV4 } from "sequelize";
-import { Admin, Applicant, User } from "$models";
+import { Admin, JobApplication, User } from "$models";
 import { NotificationHasNoTaskForeignKeyError } from "./Errors";
 import { isUuid } from "$models/SequelizeModelValidators";
 import { compact } from "lodash";
@@ -11,7 +11,7 @@ import { compact } from "lodash";
   updatedAt: false,
   validate: {
     validateTaskForeignKey(this: Notification) {
-      const foreignKeys = [this.applicantUuid];
+      const foreignKeys = [this.jobApplicationUuid];
       if (compact(foreignKeys).length !== 1) throw new NotificationHasNoTaskForeignKeyError();
     }
   }
@@ -20,9 +20,9 @@ export class Notification extends Model<Notification> {
   @Column({ allowNull: false, primaryKey: true, type: UUID, defaultValue: UUIDV4, ...isUuid })
   public uuid: string;
 
-  @ForeignKey(() => Applicant)
+  @ForeignKey(() => JobApplication)
   @Column({ allowNull: true, type: UUID, ...isUuid })
-  public applicantUuid: string;
+  public jobApplicationUuid: string;
 
   @ForeignKey(() => User)
   @Column({ allowNull: false, type: UUID, ...isUuid })

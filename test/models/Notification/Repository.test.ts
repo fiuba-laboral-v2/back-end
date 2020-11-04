@@ -1,31 +1,40 @@
 import { ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
-import { Admin, Applicant, Notification } from "$models";
+import { Admin, JobApplication, Notification } from "$models";
 import { UserRepository } from "$models/User";
-import { ApplicantRepository } from "$models/Applicant";
+import { CompanyRepository } from "$models/Company";
+import { JobApplicationRepository } from "$models/JobApplication";
+import { CareerRepository } from "$models/Career";
 import { NotificationRepository } from "$models/Notification";
 
-import { ApplicantGenerator } from "$generators/Applicant";
+import { JobApplicationGenerator } from "$generators/JobApplication";
 import { AdminGenerator } from "$generators/Admin";
 
 import generateUuid from "uuid/v4";
 
 describe("NotificationRepository", () => {
-  beforeAll(() => UserRepository.truncate());
+  beforeAll(async () => {
+    await UserRepository.truncate();
+    await CompanyRepository.truncate();
+    await CareerRepository.truncate();
+  });
 
-  describe("Notification for an applicant", () => {
-    let applicant: Applicant;
+  describe("Notification for a JobApplication", () => {
+    let jobApplication: JobApplication;
+    let companyUserUuid: string;
     let extensionAdmin: Admin;
 
     beforeAll(async () => {
-      applicant = await ApplicantGenerator.instance.withMinimumData();
+      jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      const [user] = await (await (await jobApplication.getOffer()).getCompany()).getUsers();
+      companyUserUuid = user.uuid;
       extensionAdmin = await AdminGenerator.extension();
     });
 
     it("saves a notification in the database", async () => {
       const notification = new Notification({
-        userUuid: applicant.userUuid,
+        userUuid: companyUserUuid,
         adminUserUuid: extensionAdmin.userUuid,
-        applicantUuid: applicant.uuid
+        jobApplicationUuid: jobApplication.uuid
       });
       await NotificationRepository.save(notification);
       const notifications = await NotificationRepository.findAll();
@@ -37,9 +46,9 @@ describe("NotificationRepository", () => {
     it("throws an error if the notification already exists", async () => {
       const attributes = {
         uuid: generateUuid(),
-        userUuid: applicant.userUuid,
+        userUuid: companyUserUuid,
         adminUserUuid: extensionAdmin.userUuid,
-        applicantUuid: applicant.uuid
+        jobApplicationUuid: jobApplication.uuid
       };
       const notification = new Notification(attributes);
       const existentNotification = new Notification(attributes);
@@ -50,16 +59,16 @@ describe("NotificationRepository", () => {
       ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
     });
 
-    it("throws an error if the applicantUuid does not belong to an existing applicant", async () => {
+    it("throws an error if the jobApplicationUuid does not belong to an existing jobApplication", async () => {
       const notification = new Notification({
-        userUuid: applicant.userUuid,
+        userUuid: companyUserUuid,
         adminUserUuid: extensionAdmin.userUuid,
-        applicantUuid: generateUuid()
+        jobApplicationUuid: generateUuid()
       });
       await expect(NotificationRepository.save(notification)).rejects.toThrowErrorWithMessage(
         ForeignKeyConstraintError,
         'insert or update on table "Notifications" violates foreign key ' +
-          'constraint "Notifications_applicantUuid_fkey"'
+          'constraint "Notifications_jobApplicationUuid_fkey"'
       );
     });
 
@@ -67,7 +76,7 @@ describe("NotificationRepository", () => {
       const notification = new Notification({
         userUuid: generateUuid(),
         adminUserUuid: extensionAdmin.userUuid,
-        applicantUuid: applicant.uuid
+        jobApplicationUuid: jobApplication.uuid
       });
       await expect(NotificationRepository.save(notification)).rejects.toThrowErrorWithMessage(
         ForeignKeyConstraintError,
@@ -78,9 +87,9 @@ describe("NotificationRepository", () => {
 
     it("throws an error if the adminUserUuid does not belong to an existing admin", async () => {
       const notification = new Notification({
-        userUuid: applicant.userUuid,
+        userUuid: companyUserUuid,
         adminUserUuid: generateUuid(),
-        applicantUuid: applicant.uuid
+        jobApplicationUuid: jobApplication.uuid
       });
       await expect(NotificationRepository.save(notification)).rejects.toThrowErrorWithMessage(
         ForeignKeyConstraintError,
@@ -89,17 +98,17 @@ describe("NotificationRepository", () => {
       );
     });
 
-    it("deletes all notifications if applicants tables is truncated", async () => {
+    it("deletes all notifications if JobApplications table is truncated", async () => {
       await NotificationRepository.truncate();
       await NotificationRepository.save(
         new Notification({
-          userUuid: applicant.userUuid,
+          userUuid: companyUserUuid,
           adminUserUuid: extensionAdmin.userUuid,
-          applicantUuid: applicant.uuid
+          jobApplicationUuid: jobApplication.uuid
         })
       );
       expect(await NotificationRepository.findAll()).toHaveLength(1);
-      await ApplicantRepository.truncate();
+      await JobApplicationRepository.truncate();
       expect(await NotificationRepository.findAll()).toHaveLength(0);
     });
   });

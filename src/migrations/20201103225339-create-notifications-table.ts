@@ -10,9 +10,9 @@ export = {
         primaryKey: true,
         type: UUID
       },
-      applicantUuid: {
+      jobApplicationUuid: {
         allowNull: true,
-        references: { model: "Applicants", key: "uuid" },
+        references: { model: "JobApplications", key: "uuid" },
         onDelete: "CASCADE",
         type: UUID
       },

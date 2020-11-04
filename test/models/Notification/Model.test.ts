@@ -9,13 +9,12 @@ describe("Notification", () => {
   const mandatoryAttributes = {
     userUuid: generateUuid(),
     adminUserUuid: generateUuid(),
-    applicantUuid: generateUuid()
+    jobApplicationUuid: generateUuid()
   };
 
   it("creates a valid notification", async () => {
     const attributes = {
       ...mandatoryAttributes,
-      applicantUuid: generateUuid(),
       message: "some message",
       isNew: false
     };
@@ -39,7 +38,7 @@ describe("Notification", () => {
     expect(notification.isNew).toBe(true);
   });
 
-  it("it throws an error if it has no task foreign key", async () => {
+  it("it throws an error if it has type", async () => {
     const notification = new Notification({
       userUuid: generateUuid(),
       adminUserUuid: generateUuid()
