@@ -1,6 +1,6 @@
 import { uuids } from "../uuids";
 
-export const graduadosAdmin = {
+export const aldana = {
   user: {
     uuid: uuids.graduadosAdmin.user,
     email: "arastrelli@fi.uba.ar",

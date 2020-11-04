@@ -1,6 +1,6 @@
 import { uuids } from "../uuids";
 
-export const extensionAdmin = {
+export const federico = {
   user: {
     uuid: uuids.extensionAdmin.user,
     email: "fresnik@fi.uba.ar",

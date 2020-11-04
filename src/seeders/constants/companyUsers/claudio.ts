@@ -1,19 +1,19 @@
 import { uuids } from "../uuids";
 import { hashSync } from "bcrypt";
 
-export const mariano = {
+export const claudio = {
   user: {
-    uuid: uuids.mariano.user,
-    email: "mbeiro@mercadolibre.com",
+    uuid: uuids.claudio.user,
+    email: "claudio@devartis.com",
     password: hashSync("SecurePassword1010", 10),
-    name: "Mariano",
-    surname: "Beiró",
+    name: "Claudio",
+    surname: "Acciaresi",
     createdAt: new Date(),
     updatedAt: new Date()
   },
   companyUser: {
-    companyUuid: uuids.companies.mercadoLibre,
-    userUuid: uuids.mariano.user,
+    companyUuid: uuids.companies.devartis,
+    userUuid: uuids.claudio.user,
     createdAt: new Date(),
     updatedAt: new Date()
   }

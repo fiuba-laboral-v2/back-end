@@ -1,32 +1,31 @@
-import generateUuid from "uuid/v4";
 import { uuids } from "../uuids";
 import { careerCodes } from "../careerCodes";
 import { ApprovalStatus } from "../../../models/ApprovalStatus/index";
+import generateUuid from "uuid/v4";
 
-export const aldana = {
+export const manuel = {
   user: {
-    uuid: uuids.aldana.user,
-    email: "arastrelli@fi.uba.ar",
-    password: "$2b$10$Mql5/mLtH.lJy0CxfjfozOuVWkztx4X3LAWh.WL5vXMv9pktoXDyW",
-    name: "Aldana",
-    surname: "Rastrelli",
-    dni: "33333331",
+    uuid: uuids.manuel.user,
+    email: "mllauro@fi.uba.ar",
+    name: "Manuel Luis",
+    surname: "Llauró",
+    dni: "222",
     createdAt: new Date(),
     updatedAt: new Date()
   },
   applicant: {
-    uuid: uuids.aldana.applicant,
-    userUuid: uuids.aldana.user,
+    uuid: uuids.manuel.applicant,
+    userUuid: uuids.manuel.user,
     approvalStatus: ApprovalStatus.approved,
-    padron: 98408,
+    padron: 95736,
     description: "Dev",
     createdAt: new Date(),
     updatedAt: new Date()
   },
   sections: [
     {
-      uuid: "6b228e77-9e8e-4438-872e-f3714a5842da",
-      applicantUuid: uuids.aldana.applicant,
+      uuid: generateUuid(),
+      applicantUuid: uuids.manuel.applicant,
       title: "Campo 1",
       text: "Contenido 1",
       displayOrder: 1,
@@ -34,8 +33,8 @@ export const aldana = {
       updatedAt: new Date()
     },
     {
-      uuid: "cf6f22c2-b1c9-4bf9-8717-7705e4c651e6",
-      applicantUuid: uuids.aldana.applicant,
+      uuid: generateUuid(),
+      applicantUuid: uuids.manuel.applicant,
       title: "Campo 2",
       text: "Contenido 2",
       displayOrder: 2,
@@ -43,8 +42,8 @@ export const aldana = {
       updatedAt: new Date()
     },
     {
-      uuid: "50eeb4ff-6428-43c4-aa55-714f5f290f74",
-      applicantUuid: uuids.aldana.applicant,
+      uuid: generateUuid(),
+      applicantUuid: uuids.manuel.applicant,
       title: "Campo 3",
       text: "Contenido 3",
       displayOrder: 3,
@@ -55,19 +54,19 @@ export const aldana = {
   capabilities: [
     {
       capabilityUuid: uuids.capabilities.python,
-      applicantUuid: uuids.aldana.applicant,
+      applicantUuid: uuids.manuel.applicant,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
       capabilityUuid: uuids.capabilities.sql,
-      applicantUuid: uuids.aldana.applicant,
+      applicantUuid: uuids.manuel.applicant,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
       capabilityUuid: uuids.capabilities.c,
-      applicantUuid: uuids.aldana.applicant,
+      applicantUuid: uuids.manuel.applicant,
       createdAt: new Date(),
       updatedAt: new Date()
     }
@@ -75,7 +74,7 @@ export const aldana = {
   careers: [
     {
       careerCode: careerCodes.IngenieriaInformatica,
-      applicantUuid: uuids.aldana.applicant,
+      applicantUuid: uuids.manuel.applicant,
       isGraduate: true,
       createdAt: new Date(),
       updatedAt: new Date()
@@ -85,7 +84,7 @@ export const aldana = {
     {
       uuid: generateUuid(),
       offerUuid: uuids.offers.javaSemiSenior,
-      applicantUuid: uuids.aldana.applicant,
+      applicantUuid: uuids.manuel.applicant,
       createdAt: new Date(),
       updatedAt: new Date()
     }

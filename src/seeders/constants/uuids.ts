@@ -25,14 +25,18 @@ export const uuids = {
     applicant: generateUuid(),
     user: generateUuid()
   },
-  aldana: {
+  dylan: {
     applicant: generateUuid(),
     user: generateUuid()
   },
   manuel: {
+    applicant: generateUuid(),
     user: generateUuid()
   },
-  mariano: {
+  claudio: {
+    user: generateUuid()
+  },
+  marcos: {
     user: generateUuid()
   },
   capabilities: {

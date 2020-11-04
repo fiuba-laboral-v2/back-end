@@ -1,17 +1,18 @@
 import { QueryInterface } from "sequelize";
-import { aldana, sebastian } from "./constants/applicants";
-import { manuel, mariano } from "./constants/companyUsers";
-import { extensionAdmin, graduadosAdmin } from "./constants/admins";
+import { dylan, manuel, sebastian } from "./constants/applicants";
+import { claudio, marcos } from "./constants/companyUsers";
+import { federico, aldana } from "./constants/admins";
 
 export = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.bulkInsert("Users", [
-      aldana.user,
-      sebastian.user,
+      dylan.user,
       manuel.user,
-      mariano.user,
-      extensionAdmin.user,
-      graduadosAdmin.user
+      sebastian.user,
+      claudio.user,
+      marcos.user,
+      federico.user,
+      aldana.user
     ]);
   },
   down: (queryInterface: QueryInterface) => {
