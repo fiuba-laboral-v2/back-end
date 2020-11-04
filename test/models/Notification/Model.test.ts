@@ -32,7 +32,7 @@ describe("Notification", () => {
     expect(notification.message).toBeUndefined();
   });
 
-  it("creates a notification with isNew in true as default", async () => {
+  it("is created with isNew set to true", async () => {
     const notification = new Notification(mandatoryAttributes);
     await expect(notification.validate()).resolves.not.toThrow();
     expect(notification.isNew).toBe(true);
