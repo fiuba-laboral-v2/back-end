@@ -10,7 +10,7 @@ import { compact } from "lodash";
   timestamps: true,
   updatedAt: false,
   validate: {
-    validateTaskForeignKey(this: Notification) {
+    validateNotificationType(this: Notification) {
       const foreignKeys = [this.jobApplicationUuid];
       if (compact(foreignKeys).length !== 1) throw new NotificationHasNoTaskForeignKeyError();
     }
