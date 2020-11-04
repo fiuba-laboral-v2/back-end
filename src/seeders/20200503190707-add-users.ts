@@ -6,12 +6,12 @@ import { extensionAdmin, graduadosAdmin } from "./constants/admins";
 export = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.bulkInsert("Users", [
-      graduadosAdmin.user,
-      extensionAdmin.user,
+      aldana.user,
       sebastian.user,
       manuel.user,
-      aldana.user,
-      mariano.user
+      mariano.user,
+      extensionAdmin.user,
+      graduadosAdmin.user
     ]);
   },
   down: (queryInterface: QueryInterface) => {
