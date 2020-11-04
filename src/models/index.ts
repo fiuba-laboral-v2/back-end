@@ -20,3 +20,4 @@ export { OfferCareer } from "./Offer/OfferCareer/Model";
 export { OfferApprovalEvent } from "./Offer/OfferApprovalEvent/Model";
 export { User } from "./User/Model";
 export { CompanyUser } from "./CompanyUser/Model";
+export { Notification } from "./Notification/Model";

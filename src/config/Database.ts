@@ -24,7 +24,8 @@ import {
   OfferSection,
   OfferApprovalEvent,
   ApplicantKnowledgeSection,
-  User
+  User,
+  Notification
 } from "$models";
 
 const models = [
@@ -49,7 +50,8 @@ const models = [
   OfferSection,
   OfferCareer,
   OfferApprovalEvent,
-  User
+  User,
+  Notification
 ];
 
 export class Database {
