@@ -1,7 +1,7 @@
 import { Model, Table, Column, ForeignKey, CreatedAt } from "sequelize-typescript";
 import { BOOLEAN, TEXT, UUID, UUIDV4 } from "sequelize";
 import { Admin, JobApplication, User } from "$models";
-import { NotificationHasNoTaskForeignKeyError } from "./Errors";
+import { MultipleTypeNotificationError } from "./Errors";
 import { isUuid } from "$models/SequelizeModelValidators";
 import { compact } from "lodash";
 
@@ -12,7 +12,7 @@ import { compact } from "lodash";
   validate: {
     validateNotificationType(this: Notification) {
       const foreignKeys = [this.jobApplicationUuid];
-      if (compact(foreignKeys).length !== 1) throw new NotificationHasNoTaskForeignKeyError();
+      if (compact(foreignKeys).length !== 1) throw new MultipleTypeNotificationError();
     }
   }
 })

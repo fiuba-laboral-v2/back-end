@@ -1,1 +1,1 @@
-export * from "./NotificationHasNoTaskForeignKeyError";
+export * from "./MultipleTypeNotificationError";

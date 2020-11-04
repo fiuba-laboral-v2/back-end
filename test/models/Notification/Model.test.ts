@@ -3,7 +3,7 @@ import { Notification } from "$models";
 import generateUuid from "uuid/v4";
 import { UUID_REGEX } from "$test/models";
 import { isUuid } from "$models/SequelizeModelValidators";
-import { NotificationHasNoTaskForeignKeyError } from "$models/Notification/Errors";
+import { MultipleTypeNotificationError } from "$models/Notification/Errors";
 
 describe("Notification", () => {
   const mandatoryAttributes = {
@@ -45,7 +45,7 @@ describe("Notification", () => {
     });
     await expect(notification.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
-      NotificationHasNoTaskForeignKeyError.buildMessage()
+      MultipleTypeNotificationError.buildMessage()
     );
   });
 
