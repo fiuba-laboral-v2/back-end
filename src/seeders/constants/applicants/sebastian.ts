@@ -1,7 +1,6 @@
 import { ApprovalStatus } from "../../../models/ApprovalStatus/index";
 import { uuids } from "../uuids";
 import { careerCodes } from "../careerCodes";
-import generateUuid from "uuid/v4";
 
 export const sebastian = {
   user: {
@@ -29,7 +28,7 @@ export const sebastian = {
   },
   sections: [
     {
-      uuid: generateUuid(),
+      uuid: uuids.sebastian.sections.experience,
       applicantUuid: uuids.sebastian.applicant,
       title: "Experiencia Laboral",
       text:
@@ -72,28 +71,28 @@ export const sebastian = {
   ],
   jobApplications: [
     {
-      uuid: generateUuid(),
+      uuid: uuids.sebastian.jobApplications.javaSemiSenior,
       offerUuid: uuids.offers.javaSemiSenior,
       applicantUuid: uuids.sebastian.applicant,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
-      uuid: generateUuid(),
+      uuid: uuids.sebastian.jobApplications.javaJunior,
       offerUuid: uuids.offers.javaJunior,
       applicantUuid: uuids.sebastian.applicant,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
-      uuid: generateUuid(),
+      uuid: uuids.sebastian.jobApplications.javaSenior,
       offerUuid: uuids.offers.javaSenior,
       applicantUuid: uuids.sebastian.applicant,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
-      uuid: generateUuid(),
+      uuid: uuids.sebastian.jobApplications.rubyJunior,
       offerUuid: uuids.offers.rubyJunior,
       applicantUuid: uuids.sebastian.applicant,
       createdAt: new Date(),

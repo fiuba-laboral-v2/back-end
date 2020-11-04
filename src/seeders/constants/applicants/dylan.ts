@@ -1,7 +1,6 @@
 import { ApprovalStatus } from "../../../models/ApprovalStatus/index";
 import { uuids } from "../uuids";
 import { careerCodes } from "../careerCodes";
-import generateUuid from "uuid/v4";
 
 export const dylan = {
   user: {
@@ -27,7 +26,7 @@ export const dylan = {
   },
   sections: [
     {
-      uuid: generateUuid(),
+      uuid: uuids.dylan.sections.experience,
       applicantUuid: uuids.dylan.applicant,
       title: "Experiencia Laboral",
       text:
@@ -69,21 +68,21 @@ export const dylan = {
   ],
   jobApplications: [
     {
-      uuid: generateUuid(),
+      uuid: uuids.dylan.jobApplications.javaSemiSenior,
       offerUuid: uuids.offers.javaSemiSenior,
       applicantUuid: uuids.dylan.applicant,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
-      uuid: generateUuid(),
+      uuid: uuids.dylan.jobApplications.javaJunior,
       offerUuid: uuids.offers.javaJunior,
       applicantUuid: uuids.dylan.applicant,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
-      uuid: generateUuid(),
+      uuid: uuids.dylan.jobApplications.rubyJunior,
       offerUuid: uuids.offers.rubyJunior,
       applicantUuid: uuids.dylan.applicant,
       createdAt: new Date(),

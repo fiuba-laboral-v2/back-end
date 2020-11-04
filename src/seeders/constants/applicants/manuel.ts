@@ -1,7 +1,6 @@
 import { uuids } from "../uuids";
 import { careerCodes } from "../careerCodes";
 import { ApprovalStatus } from "../../../models/ApprovalStatus/index";
-import generateUuid from "uuid/v4";
 
 export const manuel = {
   user: {
@@ -24,7 +23,7 @@ export const manuel = {
   },
   sections: [
     {
-      uuid: generateUuid(),
+      uuid: uuids.manuel.sections.field1,
       applicantUuid: uuids.manuel.applicant,
       title: "Campo 1",
       text: "Contenido 1",
@@ -33,7 +32,7 @@ export const manuel = {
       updatedAt: new Date()
     },
     {
-      uuid: generateUuid(),
+      uuid: uuids.manuel.sections.field2,
       applicantUuid: uuids.manuel.applicant,
       title: "Campo 2",
       text: "Contenido 2",
@@ -42,7 +41,7 @@ export const manuel = {
       updatedAt: new Date()
     },
     {
-      uuid: generateUuid(),
+      uuid: uuids.manuel.sections.field3,
       applicantUuid: uuids.manuel.applicant,
       title: "Campo 3",
       text: "Contenido 3",
@@ -82,7 +81,7 @@ export const manuel = {
   ],
   jobApplications: [
     {
-      uuid: generateUuid(),
+      uuid: uuids.manuel.jobApplications.javaSemiSenior,
       offerUuid: uuids.offers.javaSemiSenior,
       applicantUuid: uuids.manuel.applicant,
       createdAt: new Date(),

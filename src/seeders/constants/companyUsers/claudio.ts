@@ -12,7 +12,7 @@ export const claudio = {
     updatedAt: new Date()
   },
   companyUser: {
-    companyUuid: uuids.companies.devartis,
+    companyUuid: uuids.companies.devartis.uuid,
     userUuid: uuids.claudio.user,
     createdAt: new Date(),
     updatedAt: new Date()

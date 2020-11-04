@@ -12,7 +12,7 @@ export const marcos = {
     updatedAt: new Date()
   },
   companyUser: {
-    companyUuid: uuids.companies.mercadoLibre,
+    companyUuid: uuids.companies.mercadoLibre.uuid,
     userUuid: uuids.marcos.user,
     createdAt: new Date(),
     updatedAt: new Date()

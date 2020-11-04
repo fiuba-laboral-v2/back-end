@@ -1,31 +1,34 @@
 import { QueryInterface } from "sequelize";
-import { sebastian, manuel } from "./constants/applicants";
+import { dylan, manuel, sebastian } from "./constants/applicants";
 
 export = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.sequelize.transaction(async transaction => {
-      await queryInterface.bulkInsert("Applicants", [sebastian.applicant, manuel.applicant], {
-        transaction
-      });
+      await queryInterface.bulkInsert(
+        "Applicants",
+        [dylan.applicant, manuel.applicant, sebastian.applicant],
+        { transaction }
+      );
       await queryInterface.bulkInsert(
         "ApplicantKnowledgeSections",
-        [...sebastian.sections, ...manuel.sections],
+        [...dylan.sections, ...manuel.sections, ...sebastian.sections],
         { transaction }
       );
       await queryInterface.bulkInsert(
         "ApplicantsCapabilities",
-        [...sebastian.capabilities, ...manuel.capabilities],
+        [...dylan.capabilities, ...manuel.capabilities, ...sebastian.capabilities],
         { transaction }
       );
       await queryInterface.bulkInsert(
         "ApplicantCareers",
-        [...sebastian.careers, ...manuel.careers],
+        [...dylan.careers, ...manuel.careers, ...sebastian.careers],
         { transaction }
       );
-
-      await queryInterface.bulkInsert("JobApplications", [...manuel.jobApplications], {
-        transaction
-      });
+      await queryInterface.bulkInsert(
+        "JobApplications",
+        [...dylan.jobApplications, ...manuel.jobApplications, ...sebastian.jobApplications],
+        { transaction }
+      );
     });
   },
   down: (queryInterface: QueryInterface) => {
