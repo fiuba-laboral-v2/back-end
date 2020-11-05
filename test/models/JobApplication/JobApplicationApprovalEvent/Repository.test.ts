@@ -1,11 +1,12 @@
 import { JobApplicationApprovalEventRepository } from "$models/JobApplication/JobApplicationsApprovalEvent";
+import { JobApplicationsApprovalEventNotFoundError } from "$models/JobApplication/JobApplicationsApprovalEvent";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { UserRepository } from "$models/User";
 import { OfferRepository } from "$models/Offer";
 import { ApplicantRepository } from "$models/Applicant";
 import { AdminRepository } from "$models/Admin";
-import { Admin } from "$models";
+import { Admin, JobApplicationApprovalEvent } from "$models";
 import { isApprovalStatus } from "$models/SequelizeModelValidators";
 import { JobApplicationGenerator } from "$generators/JobApplication";
 import { AdminGenerator } from "$generators/Admin";
@@ -33,15 +34,15 @@ describe("JobApplicationApprovalEventRepository", () => {
       adminUserUuid: admin.userUuid,
       status
     };
-    const event = await JobApplicationApprovalEventRepository.create(attributes);
-    expect(event).toEqual(
-      expect.objectContaining({
-        uuid: expect.stringMatching(UUID_REGEX),
-        ...attributes,
-        createdAt: expect.any(Date),
-        updatedAt: expect.any(Date)
-      })
-    );
+    const event = new JobApplicationApprovalEvent(attributes);
+    await JobApplicationApprovalEventRepository.save(event);
+    const savedEvent = await JobApplicationApprovalEventRepository.findByUuid(event.uuid);
+    expect(savedEvent).toBeObjectContaining({
+      uuid: expect.stringMatching(UUID_REGEX),
+      ...attributes,
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date)
+    });
   };
 
   const expectToThrowErrorOnForeignKeyFor = async (attribute: string) => {
@@ -52,11 +53,10 @@ describe("JobApplicationApprovalEventRepository", () => {
       status: ApprovalStatus.pending
     };
     attributes[attribute] = generateUuid();
+    const event = new JobApplicationApprovalEvent(attributes);
     const constrain = `JobApplicationApprovalEvent_${attribute}_fkey`;
     const model = "JobApplicationApprovalEvent";
-    await expect(
-      JobApplicationApprovalEventRepository.create(attributes)
-    ).rejects.toThrowErrorWithMessage(
+    await expect(JobApplicationApprovalEventRepository.save(event)).rejects.toThrowErrorWithMessage(
       ForeignKeyConstraintError,
       `insert or update on table "${model}" violates foreign key constraint "${constrain}"`
     );
@@ -64,25 +64,26 @@ describe("JobApplicationApprovalEventRepository", () => {
 
   const createJobApplicationApprovalEvent = async () => {
     const { uuid: jobApplicationUuid } = await JobApplicationGenerator.instance.withMinimumData();
-    return JobApplicationApprovalEventRepository.create({
+    const event = new JobApplicationApprovalEvent({
       jobApplicationUuid,
       adminUserUuid: admin.userUuid,
       status: ApprovalStatus.pending
     });
+    return JobApplicationApprovalEventRepository.save(event);
   };
 
-  describe("create", () => {
-    it("creates an event with a pending status", async () => {
+  describe("save", () => {
+    it("saves an event with a pending status", async () => {
       const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
       await expectToCreateEventWithStatus(ApprovalStatus.pending, uuid);
     });
 
-    it("creates an event with an approved status", async () => {
+    it("saves an event with an approved status", async () => {
       const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
       await expectToCreateEventWithStatus(ApprovalStatus.approved, uuid);
     });
 
-    it("creates an event with a rejected status", async () => {
+    it("saves an event with a rejected status", async () => {
       const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
       await expectToCreateEventWithStatus(ApprovalStatus.rejected, uuid);
     });
@@ -94,36 +95,39 @@ describe("JobApplicationApprovalEventRepository", () => {
       await expectToCreateEventWithStatus(ApprovalStatus.rejected, uuid);
     });
 
-    it("creates an event with a jobApplication association", async () => {
+    it("saves an event with a jobApplication association", async () => {
       const { uuid: jobApplicationUuid } = await JobApplicationGenerator.instance.withMinimumData();
-      const jobApplicationApprovalEvent = await JobApplicationApprovalEventRepository.create({
+      const event = new JobApplicationApprovalEvent({
         jobApplicationUuid,
         adminUserUuid: admin.userUuid,
         status: ApprovalStatus.pending
       });
-      const jobApplication = await jobApplicationApprovalEvent.getJobApplication();
+      await JobApplicationApprovalEventRepository.save(event);
+      const jobApplication = await event.getJobApplication();
       expect(jobApplication.uuid).toEqual(jobApplicationUuid);
     });
 
-    it("creates an event with an admin association", async () => {
+    it("saves an event with an admin association", async () => {
       const { uuid: jobApplicationUuid } = await JobApplicationGenerator.instance.withMinimumData();
-      const jobApplicationApprovalEvent = await JobApplicationApprovalEventRepository.create({
+      const event = new JobApplicationApprovalEvent({
         jobApplicationUuid,
         adminUserUuid: admin.userUuid,
         status: ApprovalStatus.pending
       });
-      const { userUuid } = await jobApplicationApprovalEvent.getAdmin();
+      await JobApplicationApprovalEventRepository.save(event);
+      const { userUuid } = await event.getAdmin();
       expect(userUuid).toEqual(admin.userUuid);
     });
 
     it("throws an error if the status is not an ApprovalStatus enum value", async () => {
       const { uuid: jobApplicationUuid } = await JobApplicationGenerator.instance.withMinimumData();
+      const event = new JobApplicationApprovalEvent({
+        jobApplicationUuid,
+        adminUserUuid: admin.userUuid,
+        status: "undefinedStatus" as ApprovalStatus
+      });
       await expect(
-        JobApplicationApprovalEventRepository.create({
-          jobApplicationUuid,
-          adminUserUuid: admin.userUuid,
-          status: "undefinedStatus" as ApprovalStatus
-        })
+        JobApplicationApprovalEventRepository.save(event)
       ).rejects.toThrowErrorWithMessage(ValidationError, isApprovalStatus.validate.isIn.msg);
     });
 
@@ -133,6 +137,26 @@ describe("JobApplicationApprovalEventRepository", () => {
 
     it("throws an error if the jobApplicationUuid does not belong to an jobApplication", async () => {
       await expectToThrowErrorOnForeignKeyFor("jobApplicationUuid");
+    });
+  });
+
+  describe("findByUuid", () => {
+    it("finds an event by uuid", async () => {
+      const event = await createJobApplicationApprovalEvent();
+      const foundEvent = await JobApplicationApprovalEventRepository.findByUuid(event.uuid);
+      expect(foundEvent.uuid).toEqual(event.uuid);
+      expect(foundEvent.jobApplicationUuid).toEqual(event.jobApplicationUuid);
+      expect(foundEvent.status).toEqual(event.status);
+    });
+
+    it("throws an error if the uuid does not belong to a persisted event", async () => {
+      const nonPersistedEventUuid = generateUuid();
+      await expect(
+        JobApplicationApprovalEventRepository.findByUuid(nonPersistedEventUuid)
+      ).rejects.toThrowErrorWithMessage(
+        JobApplicationsApprovalEventNotFoundError,
+        JobApplicationsApprovalEventNotFoundError.buildMessage(nonPersistedEventUuid)
+      );
     });
   });
 

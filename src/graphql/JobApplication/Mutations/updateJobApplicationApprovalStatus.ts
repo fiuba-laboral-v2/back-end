@@ -2,7 +2,7 @@ import { Database } from "$config/Database";
 import { ID, nonNull } from "$graphql/fieldTypes";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { JobApplicationApprovalEventRepository } from "$models/JobApplication/JobApplicationsApprovalEvent";
-import { Notification } from "$models";
+import { JobApplicationApprovalEvent, Notification } from "$models";
 import { NotificationRepository } from "$models/Notification";
 import { GraphQLJobApplication } from "../Types/GraphQLJobApplication";
 import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
@@ -33,15 +33,15 @@ export const updateJobApplicationApprovalStatus = {
       const userUuid = user.uuid;
       notification = new Notification({ userUuid, adminUserUuid, jobApplicationUuid });
     }
+    const event = new JobApplicationApprovalEvent({
+      adminUserUuid,
+      jobApplicationUuid,
+      status: approvalStatus
+    });
 
     return Database.transaction(async transaction => {
       await JobApplicationRepository.save(jobApplication, transaction);
-      await JobApplicationApprovalEventRepository.create({
-        adminUserUuid,
-        jobApplicationUuid,
-        status: approvalStatus,
-        transaction
-      });
+      await JobApplicationApprovalEventRepository.save(event, transaction);
       if (notification) await NotificationRepository.save(notification, transaction);
       return jobApplication;
     });
