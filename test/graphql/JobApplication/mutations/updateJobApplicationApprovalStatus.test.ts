@@ -120,7 +120,7 @@ describe("updateJobApplicationApprovalStatus", () => {
       return { response, admin };
     };
 
-    const expectToFindNotification = async ({
+    const expectToFindOrNotANotification = async ({
       not,
       admin,
       jobApplication
@@ -141,13 +141,19 @@ describe("updateJobApplicationApprovalStatus", () => {
       }
     };
 
+    const expectNotToFindNotification = (admin: Admin, jobApplication: JobApplication) =>
+      expectToFindOrNotANotification({ not: true, admin, jobApplication });
+
+    const expectToFindNotification = (admin: Admin, jobApplication: JobApplication) =>
+      expectToFindOrNotANotification({ admin, jobApplication });
+
     it("creates a notification for a companyUser if the jobApplication is approved", async () => {
       const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
       const { admin } = await updateJobApplicationWithStatus(
         jobApplication.uuid,
         ApprovalStatus.approved
       );
-      await expectToFindNotification({ admin, jobApplication });
+      await expectToFindNotification(admin, jobApplication);
     });
 
     it("does not create a notification for a companyUser if the jobApplication is rejected", async () => {
@@ -156,7 +162,7 @@ describe("updateJobApplicationApprovalStatus", () => {
         jobApplication.uuid,
         ApprovalStatus.rejected
       );
-      await expectToFindNotification({ not: true, admin, jobApplication });
+      await expectNotToFindNotification(admin, jobApplication);
     });
 
     it("does not create a notification for a companyUser if the jobApplication is pending", async () => {
@@ -165,7 +171,7 @@ describe("updateJobApplicationApprovalStatus", () => {
         jobApplication.uuid,
         ApprovalStatus.pending
       );
-      await expectToFindNotification({ not: true, admin, jobApplication });
+      await expectNotToFindNotification(admin, jobApplication);
     });
   });
 
