@@ -2,6 +2,8 @@ import { Database } from "$config/Database";
 import { ID, nonNull } from "$graphql/fieldTypes";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { JobApplicationApprovalEventRepository } from "$models/JobApplication/JobApplicationsApprovalEvent";
+import { Notification } from "$models";
+import { NotificationRepository } from "$models/Notification";
 import { GraphQLJobApplication } from "../Types/GraphQLJobApplication";
 import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
 import { ApprovalStatus } from "$models/ApprovalStatus";
@@ -25,6 +27,19 @@ export const updateJobApplicationApprovalStatus = {
     const adminUserUuid = currentUser.getAdmin().adminUserUuid;
     const jobApplication = await JobApplicationRepository.findByUuid(uuid);
     jobApplication.set({ approvalStatus });
+    let notification: Notification | undefined;
+    if (approvalStatus === ApprovalStatus.approved) {
+      const offer = await jobApplication.getOffer();
+      const company = await offer.getCompany();
+      const [user] = await company.getUsers();
+      const userUuid = user.uuid;
+      notification = new Notification({
+        userUuid,
+        adminUserUuid,
+        jobApplicationUuid: jobApplication.uuid
+      });
+    }
+
     return Database.transaction(async transaction => {
       await JobApplicationRepository.save(jobApplication, transaction);
       await JobApplicationApprovalEventRepository.create({
@@ -33,6 +48,7 @@ export const updateJobApplicationApprovalStatus = {
         status: approvalStatus,
         transaction
       });
+      if (notification) await NotificationRepository.save(notification, transaction);
       return jobApplication;
     });
   }

@@ -3,6 +3,7 @@ import { client } from "$test/graphql/ApolloTestClient";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
+import { NotificationRepository } from "$models/Notification";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
@@ -10,6 +11,7 @@ import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { TestClientGenerator } from "$generators/TestClient";
 import { JobApplicationGenerator } from "$generators/JobApplication";
 import { JobApplicationRepository } from "$models/JobApplication";
+import { Admin, JobApplication } from "$models";
 
 const UPDATE_JOB_APPLICATION_APPROVAL_STATUS = gql`
   mutation updateJobApplicationApprovalStatus($uuid: ID!, $approvalStatus: ApprovalStatus!) {
@@ -104,6 +106,67 @@ describe("updateJobApplicationApprovalStatus", () => {
 
   it("logs an event after an graduados admin sets status to rejected", async () => {
     await expectToLogAnEventForStatus(Secretary.graduados, ApprovalStatus.rejected);
+  });
+
+  describe("Notifications", () => {
+    const updateJobApplicationWithStatus = async (uuid: string, approvalStatus: ApprovalStatus) => {
+      const secretary = Secretary.extension;
+      const { apolloClient, admin } = await TestClientGenerator.admin({ secretary });
+      const response = await apolloClient.mutate({
+        mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
+        variables: { uuid, approvalStatus }
+      });
+      expect(response.errors).toBeUndefined();
+      return { response, admin };
+    };
+
+    const expectToFindNotification = async ({
+      not,
+      admin,
+      jobApplication
+    }: {
+      not?: boolean;
+      admin: Admin;
+      jobApplication: JobApplication;
+    }) => {
+      const notifications = await NotificationRepository.findAll();
+      const jobApplicationUuids = notifications.map(({ jobApplicationUuid }) => jobApplicationUuid);
+      const adminUserUuids = notifications.map(({ adminUserUuid }) => adminUserUuid);
+      if (not) {
+        expect(jobApplicationUuids).not.toContain(jobApplication.uuid);
+        expect(adminUserUuids).not.toContain(admin.userUuid);
+      } else {
+        expect(jobApplicationUuids).toContain(jobApplication.uuid);
+        expect(adminUserUuids).toContain(admin.userUuid);
+      }
+    };
+
+    it("creates a notification for a companyUser if the jobApplication is approved", async () => {
+      const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      const { admin } = await updateJobApplicationWithStatus(
+        jobApplication.uuid,
+        ApprovalStatus.approved
+      );
+      await expectToFindNotification({ admin, jobApplication });
+    });
+
+    it("does not create a notification for a companyUser if the jobApplication is rejected", async () => {
+      const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      const { admin } = await updateJobApplicationWithStatus(
+        jobApplication.uuid,
+        ApprovalStatus.rejected
+      );
+      await expectToFindNotification({ not: true, admin, jobApplication });
+    });
+
+    it("does not create a notification for a companyUser if the jobApplication is pending", async () => {
+      const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      const { admin } = await updateJobApplicationWithStatus(
+        jobApplication.uuid,
+        ApprovalStatus.pending
+      );
+      await expectToFindNotification({ not: true, admin, jobApplication });
+    });
   });
 
   it("returns an error if no user is logged in", async () => {
