@@ -29,9 +29,7 @@ export const updateJobApplicationApprovalStatus = {
     jobApplication.set({ approvalStatus });
     let notification: Notification | undefined;
     if (approvalStatus === ApprovalStatus.approved) {
-      const offer = await jobApplication.getOffer();
-      const company = await offer.getCompany();
-      const [user] = await company.getUsers();
+      const [user] = await JobApplicationRepository.findCompanyUsers(jobApplication);
       const userUuid = user.uuid;
       notification = new Notification({
         userUuid,
