@@ -368,7 +368,7 @@ export const defaultTranslations = {
       value: "Subsecretaría de Relación con los Graduados"
     }
   ],
-  desktopOnlyOverlay: [{ key: "message", value: "Ampliar la pantalla del navegador" }],
+  desktopOnlyOverlay: [{ key: "message", value: "Ampliar la pantalla del navegador\n\nO reducir el zoom" }],
   publishedSince: [{ key: "prefix", value: "Publicado" }],
   list: [{ key: "fetchMore", value: "Ver más" }],
   companySignUpAcceptanceCriteria: [
