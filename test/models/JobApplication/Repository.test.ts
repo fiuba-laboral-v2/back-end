@@ -63,27 +63,15 @@ describe("JobApplicationRepository", () => {
       expect(savedJobApplication.uuid).toEqual(jobApplication.uuid);
     });
 
-    it("allows graduados admin to change status to pending", async () => {
+    it("updates status to pending", async () => {
       await expectStatusToBe(ApprovalStatus.pending);
     });
 
-    it("allows graduados admin to change status to approved", async () => {
+    it("updates status to approved", async () => {
       await expectStatusToBe(ApprovalStatus.approved);
     });
 
-    it("allows graduados admin to change status to rejected", async () => {
-      await expectStatusToBe(ApprovalStatus.rejected);
-    });
-
-    it("allows extension admin to change status to pending", async () => {
-      await expectStatusToBe(ApprovalStatus.pending);
-    });
-
-    it("allows extension admin to change status to approved", async () => {
-      await expectStatusToBe(ApprovalStatus.approved);
-    });
-
-    it("allows extension admin to change status to rejected", async () => {
+    it("updates status to rejected", async () => {
       await expectStatusToBe(ApprovalStatus.rejected);
     });
 
