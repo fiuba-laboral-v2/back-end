@@ -152,7 +152,7 @@ describe("JobApplicationRepository", () => {
     it("throws an error if given offerUuid that does not exist", async () => {
       const { uuid: applicantUuid } = await ApplicantGenerator.instance.withMinimumData();
       const jobApplication = new JobApplication({
-        offerUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+        offerUuid: generateUuid(),
         applicantUuid
       });
       await expect(jobApplication.save()).rejects.toThrowErrorWithMessage(
