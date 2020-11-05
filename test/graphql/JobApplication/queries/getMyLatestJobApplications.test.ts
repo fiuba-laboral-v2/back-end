@@ -69,12 +69,9 @@ describe("getMyLatestJobApplications", () => {
   const createJobApplication = async (companyUuid: string, status: ApprovalStatus) => {
     const applicant = await ApplicantGenerator.instance.student();
     const offer = await OfferGenerator.instance.forStudents({ companyUuid });
-    const { uuid } = await JobApplicationRepository.apply(applicant, offer);
-    const jobApplication = await JobApplicationRepository.updateApprovalStatus({
-      uuid,
-      admin,
-      status
-    });
+    const jobApplication = await JobApplicationRepository.apply(applicant, offer);
+    jobApplication.set({ approvalStatus: status });
+    await JobApplicationRepository.save(jobApplication);
     return { jobApplication, offer, applicant };
   };
 
@@ -173,19 +170,13 @@ describe("getMyLatestJobApplications", () => {
       const offer = await OfferGenerator.instance.forStudents({ companyUuid: company.uuid });
       for (const _ of range(15)) {
         const studentAndGraduate = await ApplicantGenerator.instance.studentAndGraduate();
-        const { uuid } = await JobApplicationRepository.apply(studentAndGraduate, offer);
-        applicationsByDescUpdatedAt.push(
-          await JobApplicationRepository.updateApprovalStatus({
-            uuid,
-            admin,
-            status: ApprovalStatus.approved
-          })
-        );
+        const jobApplication = await JobApplicationRepository.apply(studentAndGraduate, offer);
+        jobApplication.set({ approvalStatus: ApprovalStatus.approved });
+        await JobApplicationRepository.save(jobApplication);
+        applicationsByDescUpdatedAt.push(jobApplication);
       }
 
-      applicationsByDescUpdatedAt = applicationsByDescUpdatedAt.sort(
-        application => -application.updatedAt
-      );
+      applicationsByDescUpdatedAt = applicationsByDescUpdatedAt.sort(({ updatedAt }) => -updatedAt);
     });
 
     it("gets the latest 10 applications", async () => {

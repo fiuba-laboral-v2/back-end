@@ -25,7 +25,7 @@ export class AdminTaskTestSetup {
     this.applicants = new ApplicantTestSetup();
     this.companies = new CompanyTestSetup(this.admins);
     this.offers = new OfferTestSetup(this.companies, this.admins);
-    this.jobApplications = new JobApplicationTestSetup(this.applicants, this.offers, this.admins);
+    this.jobApplications = new JobApplicationTestSetup(this.applicants, this.offers);
 
     await this.companies.execute();
     await this.applicants.execute();

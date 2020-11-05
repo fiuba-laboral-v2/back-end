@@ -1,9 +1,10 @@
+import { Database } from "$config/Database";
 import { ID, nonNull } from "$graphql/fieldTypes";
 import { JobApplicationRepository } from "$models/JobApplication";
+import { JobApplicationApprovalEventRepository } from "$models/JobApplication/JobApplicationsApprovalEvent";
 import { GraphQLJobApplication } from "../Types/GraphQLJobApplication";
 import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { AdminRepository } from "$models/Admin";
 import { IApolloServerContext } from "$graphql/Context";
 
 export const updateJobApplicationApprovalStatus = {
@@ -18,19 +19,26 @@ export const updateJobApplicationApprovalStatus = {
   },
   resolve: async (
     _: undefined,
-    { uuid, approvalStatus }: IUpdateJobApplicationApprovalStatusArguments,
+    { uuid, approvalStatus }: IMutationVariables,
     { currentUser }: IApolloServerContext
   ) => {
-    const admin = await AdminRepository.findByUserUuid(currentUser.getAdmin().adminUserUuid);
-    return JobApplicationRepository.updateApprovalStatus({
-      admin,
-      uuid,
-      status: approvalStatus
+    const adminUserUuid = currentUser.getAdmin().adminUserUuid;
+    const jobApplication = await JobApplicationRepository.findByUuid(uuid);
+    jobApplication.set({ approvalStatus });
+    return Database.transaction(async transaction => {
+      await JobApplicationRepository.save(jobApplication, transaction);
+      await JobApplicationApprovalEventRepository.create({
+        adminUserUuid,
+        jobApplicationUuid: uuid,
+        status: approvalStatus,
+        transaction
+      });
+      return jobApplication;
     });
   }
 };
 
-interface IUpdateJobApplicationApprovalStatusArguments {
+interface IMutationVariables {
   uuid: string;
   approvalStatus: ApprovalStatus;
 }
