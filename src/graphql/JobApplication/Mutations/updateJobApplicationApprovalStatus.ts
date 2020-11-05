@@ -1,5 +1,6 @@
 import { Database } from "$config/Database";
 import { ID, nonNull } from "$graphql/fieldTypes";
+import { CompanyUserRepository } from "$models/CompanyUser";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { JobApplicationApprovalEventRepository } from "$models/JobApplication/JobApplicationsApprovalEvent";
 import { JobApplicationApprovalEvent, Notification } from "$models";
@@ -29,8 +30,9 @@ export const updateJobApplicationApprovalStatus = {
     jobApplication.set({ approvalStatus });
     let notification: Notification | undefined;
     if (approvalStatus === ApprovalStatus.approved) {
-      const [user] = await JobApplicationRepository.findCompanyUsers(jobApplication);
-      const userUuid = user.uuid;
+      const { companyUuid } = await jobApplication.getOffer();
+      const [companyUser] = await CompanyUserRepository.findByCompanyUuid(companyUuid);
+      const userUuid = companyUser.userUuid;
       notification = new Notification({ userUuid, adminUserUuid, jobApplicationUuid });
     }
     const event = new JobApplicationApprovalEvent({
