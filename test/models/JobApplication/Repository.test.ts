@@ -45,7 +45,7 @@ describe("JobApplicationRepository", () => {
       company = await CompanyGenerator.instance.withMinimumData();
     });
 
-    const expectStatusToBe = async (status: ApprovalStatus) => {
+    const expectSaveToUpdateStatus = async (status: ApprovalStatus) => {
       const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
       jobApplication.set({ approvalStatus: status });
       const { approvalStatus } = await JobApplicationRepository.save(jobApplication);
@@ -64,15 +64,15 @@ describe("JobApplicationRepository", () => {
     });
 
     it("updates status to pending", async () => {
-      await expectStatusToBe(ApprovalStatus.pending);
+      await expectSaveToUpdateStatus(ApprovalStatus.pending);
     });
 
     it("updates status to approved", async () => {
-      await expectStatusToBe(ApprovalStatus.approved);
+      await expectSaveToUpdateStatus(ApprovalStatus.approved);
     });
 
     it("updates status to rejected", async () => {
-      await expectStatusToBe(ApprovalStatus.rejected);
+      await expectSaveToUpdateStatus(ApprovalStatus.rejected);
     });
 
     it("throws an error if status is invalid and does not update the jobApplication", async () => {
