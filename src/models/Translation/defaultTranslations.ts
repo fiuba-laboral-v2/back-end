@@ -206,6 +206,7 @@ export const defaultTranslations = {
     { key: "goToCompany", value: "Ingresar como empresa" }
   ],
   companyLogin: [
+    { key: "title", value: "Ingresá como empresa" },
     { key: "email", value: "Email" },
     { key: "signup", value: "Registrar tu empresa" },
     { key: "recoverPassword", value: "Recuperar contraseña" },
