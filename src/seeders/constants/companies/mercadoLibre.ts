@@ -3,7 +3,7 @@ import { ApprovalStatus } from "../../../models/ApprovalStatus/index";
 
 export const mercadoLibre = {
   company: {
-    uuid: uuids.companies.mercadoLibre,
+    uuid: uuids.companies.mercadoLibre.uuid,
     cuit: "30703088534",
     companyName: "Mercado Libre",
     businessName: "Lo llevamos a tu ca S.A",
@@ -28,7 +28,7 @@ export const mercadoLibre = {
       // tslint:disable-next-line:max-line-length
       photo:
         "https://s3.amazonaws.com/arc-wordpress-client-uploads/infobae-wp/wp-content/uploads/2019/06/11164003/Edificio-Mercado-Libre-y-retratos-a-las-arquitectas-8.jpg",
-      companyUuid: uuids.companies.mercadoLibre,
+      companyUuid: uuids.companies.mercadoLibre.uuid,
       createdAt: new Date(),
       updatedAt: new Date()
     },
@@ -37,7 +37,7 @@ export const mercadoLibre = {
       // tslint:disable-next-line:max-line-length
       photo:
         "https://s3.amazonaws.com/mercado-ideas/wp-content/uploads/sites/2/2018/12/11133752/Webp.net-resizeimage-131-640x427.jpg",
-      companyUuid: uuids.companies.mercadoLibre,
+      companyUuid: uuids.companies.mercadoLibre.uuid,
       createdAt: new Date(),
       updatedAt: new Date()
     },
@@ -46,14 +46,14 @@ export const mercadoLibre = {
       // tslint:disable-next-line:max-line-length
       photo:
         "https://s3.amazonaws.com/arc-wordpress-client-uploads/infobae-wp/wp-content/uploads/2019/06/11164027/Edificio-Mercado-Libre-y-retratos-a-las-arquitectas-11.jpg",
-      companyUuid: uuids.companies.mercadoLibre,
+      companyUuid: uuids.companies.mercadoLibre.uuid,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
       uuid: "83baffe6-1d83-475e-82ee-f4da63f7afc6",
       photo: "https://www.arquimaster.com.ar/diseno/Images/contract_mercadolibre1b.jpg",
-      companyUuid: uuids.companies.mercadoLibre,
+      companyUuid: uuids.companies.mercadoLibre.uuid,
       createdAt: new Date(),
       updatedAt: new Date()
     }
@@ -61,13 +61,13 @@ export const mercadoLibre = {
   phoneNumbers: [
     {
       phoneNumber: "4640-8000",
-      companyUuid: uuids.companies.mercadoLibre,
+      companyUuid: uuids.companies.mercadoLibre.uuid,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
       phoneNumber: "+54 9 11 2722-7255",
-      companyUuid: uuids.companies.mercadoLibre,
+      companyUuid: uuids.companies.mercadoLibre.uuid,
       createdAt: new Date(),
       updatedAt: new Date()
     }

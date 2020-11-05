@@ -1,9 +1,9 @@
 import { QueryInterface } from "sequelize";
-import { extensionAdmin, graduadosAdmin } from "./constants/admins";
+import { federico, aldana } from "./constants/admins";
 
 export = {
   up: (queryInterface: QueryInterface) => {
-    return queryInterface.bulkInsert("Admins", [extensionAdmin.admin, graduadosAdmin.admin]);
+    return queryInterface.bulkInsert("Admins", [federico.admin, aldana.admin]);
   },
   down: (queryInterface: QueryInterface) => {
     return queryInterface.bulkDelete("Admins", {});

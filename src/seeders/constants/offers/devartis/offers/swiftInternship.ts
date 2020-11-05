@@ -1,12 +1,12 @@
 import { uuids } from "../../../uuids";
-import { sections } from "../sections";
+import { sections } from "../../sections";
 import { description } from "../description";
 import { ApplicantType } from "../../../../../models/Applicant/Interface";
 
 export const swiftInternship = {
   offer: {
     uuid: uuids.offers.swiftInternship,
-    companyUuid: uuids.companies.devartis,
+    companyUuid: uuids.companies.devartis.uuid,
     title: "Pasantía: desarrollador Swift",
     targetApplicantType: ApplicantType.student,
     description,

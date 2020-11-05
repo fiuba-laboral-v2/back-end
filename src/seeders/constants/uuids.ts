@@ -2,8 +2,12 @@ import generateUuid from "uuid/v4";
 
 export const uuids = {
   companies: {
-    devartis: generateUuid(),
-    mercadoLibre: generateUuid()
+    devartis: {
+      uuid: generateUuid()
+    },
+    mercadoLibre: {
+      uuid: generateUuid()
+    }
   },
   offers: {
     javaSemiSenior: generateUuid(),
@@ -23,16 +27,45 @@ export const uuids = {
   },
   sebastian: {
     applicant: generateUuid(),
-    user: generateUuid()
+    user: generateUuid(),
+    sections: {
+      experience: generateUuid()
+    },
+    jobApplications: {
+      javaSemiSenior: generateUuid(),
+      javaJunior: generateUuid(),
+      javaSenior: generateUuid(),
+      rubyJunior: generateUuid()
+    }
   },
-  aldana: {
+  dylan: {
     applicant: generateUuid(),
-    user: generateUuid()
+    user: generateUuid(),
+    sections: {
+      experience: generateUuid()
+    },
+    jobApplications: {
+      javaSemiSenior: generateUuid(),
+      javaJunior: generateUuid(),
+      rubyJunior: generateUuid()
+    }
   },
   manuel: {
+    applicant: generateUuid(),
+    user: generateUuid(),
+    sections: {
+      field1: generateUuid(),
+      field2: generateUuid(),
+      field3: generateUuid()
+    },
+    jobApplications: {
+      javaSemiSenior: generateUuid()
+    }
+  },
+  claudio: {
     user: generateUuid()
   },
-  mariano: {
+  marcos: {
     user: generateUuid()
   },
   capabilities: {

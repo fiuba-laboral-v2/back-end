@@ -1,12 +1,12 @@
 import { uuids } from "../../../uuids";
-import { sections } from "../sections";
+import { sections } from "../../sections";
 import { description } from "../description";
 import { ApplicantType } from "../../../../../models/Applicant/Interface";
 
 export const rubySemiSenior = {
   offer: {
     uuid: uuids.offers.rubySemiSenior,
-    companyUuid: uuids.companies.devartis,
+    companyUuid: uuids.companies.devartis.uuid,
     title: "Desarrollador Ruby semi senior",
     targetApplicantType: ApplicantType.student,
     description,

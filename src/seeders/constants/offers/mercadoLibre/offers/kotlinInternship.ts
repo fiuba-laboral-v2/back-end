@@ -1,12 +1,12 @@
 import { uuids } from "../../../uuids";
 import { ApplicantType } from "../../../../../models/Applicant/Interface";
-import { sections } from "../../devartis/sections";
+import { sections } from "../../sections";
 import { description } from "../description";
 
 export const kotlinInternship = {
   offer: {
     uuid: uuids.offers.kotlinInternship,
-    companyUuid: uuids.companies.mercadoLibre,
+    companyUuid: uuids.companies.mercadoLibre.uuid,
     title: "Pasantía: desarrollador Kotlin",
     targetApplicantType: ApplicantType.student,
     description,

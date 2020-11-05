@@ -1,14 +1,12 @@
 import { uuids } from "../uuids";
-import { hashSync } from "bcrypt";
 
-export const extensionAdmin = {
+export const federico = {
   user: {
     uuid: uuids.extensionAdmin.user,
-    email: "extension@admin.com",
-    password: hashSync("SecurePassword1010", 10),
-    name: "extension",
-    surname: "secretary",
-    dni: "33333333",
+    email: "fresnik@fi.uba.ar",
+    name: "Federico",
+    surname: "Resnik",
+    dni: "888",
     createdAt: new Date(),
     updatedAt: new Date()
   },
