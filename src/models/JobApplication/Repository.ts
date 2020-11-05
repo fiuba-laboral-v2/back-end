@@ -54,5 +54,10 @@ export const JobApplicationRepository = {
       updatedBeforeThan,
       query: options => JobApplication.findAll(options)
     }),
+  findCompanyUsers: async (jobApplication: JobApplication) => {
+    const offer = await jobApplication.getOffer();
+    const company = await offer.getCompany();
+    return company.getUsers();
+  },
   truncate: () => JobApplication.truncate({ cascade: true })
 };

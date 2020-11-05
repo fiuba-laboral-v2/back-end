@@ -420,6 +420,21 @@ describe("JobApplicationRepository", () => {
     });
   });
 
+  describe("findCompanyUsers", () => {
+    it("return all companyUsers of the given jobApplication", async () => {
+      const applicant = await ApplicantGenerator.instance.studentAndGraduate();
+      const company = await CompanyGenerator.instance.withMinimumData();
+      const offer = await OfferGenerator.instance.forStudents({ companyUuid: company.uuid });
+      const jobApplication = new JobApplication({
+        offerUuid: offer.uuid,
+        applicantUuid: applicant.uuid
+      });
+      const users = await JobApplicationRepository.findCompanyUsers(jobApplication);
+      const companyUserUuids = (await company.getUsers()).map(({ uuid }) => uuid);
+      expect(users.map(({ uuid }) => uuid)).toEqual(companyUserUuids);
+    });
+  });
+
   describe("Delete", () => {
     it("deletes all jobApplications", async () => {
       await JobApplicationRepository.truncate();
