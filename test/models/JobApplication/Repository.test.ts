@@ -5,16 +5,19 @@ import { OfferRepository } from "$models/Offer";
 import { ApplicantType } from "$models/Applicant";
 import { JobApplicationNotFoundError, JobApplicationRepository } from "$models/JobApplication";
 import { Admin, Applicant, Company, JobApplication, Offer } from "$models";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { Secretary } from "$models/Admin";
 import { UserRepository } from "$models/User";
+
 import { JobApplicationGenerator } from "$generators/JobApplication";
 import { CompanyGenerator } from "$generators/Company";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { IForAllTargets, OfferGenerator } from "$generators/Offer";
 import { AdminGenerator } from "$generators/Admin";
+
 import { range } from "lodash";
-import { ApprovalStatus } from "$models/ApprovalStatus";
-import { Secretary } from "$models/Admin";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
+import generateUuid from "uuid/v4";
 
 describe("JobApplicationRepository", () => {
   let student: Applicant;
@@ -33,6 +36,38 @@ describe("JobApplicationRepository", () => {
     student = await ApplicantGenerator.instance.student();
     graduate = await ApplicantGenerator.instance.graduate();
     studentAndGraduate = await ApplicantGenerator.instance.studentAndGraduate();
+  });
+
+  describe("save", () => {
+    let company: Company;
+
+    beforeAll(async () => {
+      company = await CompanyGenerator.instance.withMinimumData();
+    });
+
+    it("saves a new jobApplication in the database", async () => {
+      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
+      const jobApplication = new JobApplication({
+        offerUuid: offer.uuid,
+        applicantUuid: student.uuid
+      });
+      await JobApplicationRepository.save(jobApplication);
+      const savedJobApplication = await JobApplicationRepository.findByUuid(jobApplication.uuid);
+      expect(savedJobApplication.uuid).toEqual(jobApplication.uuid);
+    });
+
+    it("throws an error if the jobApplication already exists", async () => {
+      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
+      const attributes = {
+        uuid: generateUuid(),
+        offerUuid: offer.uuid,
+        applicantUuid: student.uuid
+      };
+      await JobApplicationRepository.save(new JobApplication(attributes));
+      await expect(
+        JobApplicationRepository.save(new JobApplication(attributes))
+      ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
+    });
   });
 
   describe("Apply", () => {

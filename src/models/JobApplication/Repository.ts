@@ -7,6 +7,7 @@ import { PaginationQuery } from "../PaginationQuery";
 import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedInput";
 
 export const JobApplicationRepository = {
+  save: (jobApplication: JobApplication) => jobApplication.save(),
   apply: async ({ uuid: applicantUuid }: Applicant, { uuid: offerUuid }: Offer) =>
     JobApplication.create({ offerUuid, applicantUuid }),
   hasApplied: async (applicant: Applicant, offer: Offer) => {
