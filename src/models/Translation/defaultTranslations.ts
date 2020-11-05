@@ -369,7 +369,7 @@ export const defaultTranslations = {
     }
   ],
   desktopOnlyOverlay: [
-    { key: "message", value: "Ampliar la pantalla del navegador\n\nO reducir el zoom" }
+    { key: "message", value: "Ampliar la pantalla del navegador, o reducir el zoom" }
   ],
   publishedSince: [{ key: "prefix", value: "Publicado" }],
   list: [{ key: "fetchMore", value: "Ver más" }],
