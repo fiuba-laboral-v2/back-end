@@ -1,2 +1,2 @@
-export { extensionAdmin } from "./extensionAdmin";
-export { graduadosAdmin } from "./graduadosAdmin";
+export { federico } from "./federico";
+export { aldana } from "./aldana";

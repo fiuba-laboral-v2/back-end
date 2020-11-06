@@ -3,7 +3,7 @@ import { ApprovalStatus } from "../../../models/ApprovalStatus/index";
 
 export const devartis = {
   company: {
-    uuid: uuids.companies.devartis,
+    uuid: uuids.companies.devartis.uuid,
     cuit: "30711819017",
     companyName: "Devartis",
     businessName: "Arcos violetas S.A",
@@ -24,14 +24,14 @@ export const devartis = {
     {
       uuid: "f0647ecc-be43-451c-a8e8-007b9f2e8af2",
       photo: "https://miro.medium.com/max/11520/1*Om-snCmpOoI5vehnF6FBlw.jpeg",
-      companyUuid: uuids.companies.devartis,
+      companyUuid: uuids.companies.devartis.uuid,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
       uuid: "b928f0e6-92de-4bbf-93fe-1468f37a836d",
       photo: "https://pbs.twimg.com/media/EK_OWQEWwAIwDXr.jpg",
-      companyUuid: uuids.companies.devartis,
+      companyUuid: uuids.companies.devartis.uuid,
       createdAt: new Date(),
       updatedAt: new Date()
     },
@@ -40,14 +40,14 @@ export const devartis = {
       photo:
         "https://www.filepicker.io/api/file/9PbWZ8ZVTTiFogUOEebI/" +
         "convert?w=1049&h=381&fit=scale",
-      companyUuid: uuids.companies.devartis,
+      companyUuid: uuids.companies.devartis.uuid,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
       uuid: "00054373-eb83-49ca-9957-e472979294bb",
       photo: "https://pbs.twimg.com/media/EK_OVsXXYAE-Y-p.jpg",
-      companyUuid: uuids.companies.devartis,
+      companyUuid: uuids.companies.devartis.uuid,
       createdAt: new Date(),
       updatedAt: new Date()
     }
@@ -55,7 +55,7 @@ export const devartis = {
   phoneNumbers: [
     {
       phoneNumber: "1148567112",
-      companyUuid: uuids.companies.devartis,
+      companyUuid: uuids.companies.devartis.uuid,
       createdAt: new Date(),
       updatedAt: new Date()
     }

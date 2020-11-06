@@ -5,7 +5,7 @@ import { description } from "../description";
 export const javaSenior = {
   offer: {
     uuid: uuids.offers.javaSenior,
-    companyUuid: uuids.companies.mercadoLibre,
+    companyUuid: uuids.companies.mercadoLibre.uuid,
     title: "Desarrollador Java senior",
     targetApplicantType: ApplicantType.graduate,
     description,

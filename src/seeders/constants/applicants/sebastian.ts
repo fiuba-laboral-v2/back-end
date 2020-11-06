@@ -1,17 +1,14 @@
-import generateUuid from "uuid/v4";
 import { ApprovalStatus } from "../../../models/ApprovalStatus/index";
 import { uuids } from "../uuids";
-import { hashSync } from "bcrypt";
 import { careerCodes } from "../careerCodes";
 
 export const sebastian = {
   user: {
     uuid: uuids.sebastian.user,
     email: "seblanco@fi.uba.ar",
-    password: hashSync("SecurePassword1010", 10),
-    name: "Sebastián",
+    name: "Sebastián Ezequiel",
     surname: "Blanco",
-    dni: "33333332",
+    dni: "333",
     createdAt: new Date(),
     updatedAt: new Date()
   },
@@ -31,7 +28,7 @@ export const sebastian = {
   },
   sections: [
     {
-      uuid: "ca2c5210-cb79-4026-9a26-1eb7a4159e71",
+      uuid: uuids.sebastian.sections.experience,
       applicantUuid: uuids.sebastian.applicant,
       title: "Experiencia Laboral",
       text:
@@ -58,9 +55,7 @@ export const sebastian = {
     {
       careerCode: careerCodes.IngenieriaInformatica,
       applicantUuid: uuids.sebastian.applicant,
-      currentCareerYear: 5,
-      approvedSubjectCount: 44,
-      isGraduate: false,
+      isGraduate: true,
       createdAt: new Date(),
       updatedAt: new Date()
     },
@@ -76,28 +71,28 @@ export const sebastian = {
   ],
   jobApplications: [
     {
-      uuid: generateUuid(),
+      uuid: uuids.sebastian.jobApplications.javaSemiSenior,
       offerUuid: uuids.offers.javaSemiSenior,
       applicantUuid: uuids.sebastian.applicant,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
-      uuid: generateUuid(),
+      uuid: uuids.sebastian.jobApplications.javaJunior,
       offerUuid: uuids.offers.javaJunior,
       applicantUuid: uuids.sebastian.applicant,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
-      uuid: generateUuid(),
+      uuid: uuids.sebastian.jobApplications.javaSenior,
       offerUuid: uuids.offers.javaSenior,
       applicantUuid: uuids.sebastian.applicant,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
-      uuid: generateUuid(),
+      uuid: uuids.sebastian.jobApplications.rubyJunior,
       offerUuid: uuids.offers.rubyJunior,
       applicantUuid: uuids.sebastian.applicant,
       createdAt: new Date(),

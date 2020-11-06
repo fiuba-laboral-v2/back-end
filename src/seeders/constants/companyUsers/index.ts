@@ -1,2 +1,2 @@
-export { manuel } from "./manuel";
-export { mariano } from "./mariano";
+export { claudio } from "./claudio";
+export { marcos } from "./marcos";
