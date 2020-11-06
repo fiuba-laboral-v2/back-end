@@ -28,12 +28,13 @@ export const updateJobApplicationApprovalStatus = {
     const adminUserUuid = currentUser.getAdmin().adminUserUuid;
     const jobApplication = await JobApplicationRepository.findByUuid(jobApplicationUuid);
     jobApplication.set({ approvalStatus });
-    let notification: Notification | undefined;
+    const notifications: Notification[] = [];
     if (approvalStatus === ApprovalStatus.approved) {
       const { companyUuid } = await jobApplication.getOffer();
-      const [companyUser] = await CompanyUserRepository.findByCompanyUuid(companyUuid);
-      const userUuid = companyUser.userUuid;
-      notification = new Notification({ userUuid, adminUserUuid, jobApplicationUuid });
+      const companyUsers = await CompanyUserRepository.findByCompanyUuid(companyUuid);
+      companyUsers.map(({ userUuid }) => {
+        notifications.push(new Notification({ userUuid, adminUserUuid, jobApplicationUuid }));
+      });
     }
     const event = new JobApplicationApprovalEvent({
       adminUserUuid,
@@ -44,7 +45,9 @@ export const updateJobApplicationApprovalStatus = {
     return Database.transaction(async transaction => {
       await JobApplicationRepository.save(jobApplication, transaction);
       await JobApplicationApprovalEventRepository.save(event, transaction);
-      if (notification) await NotificationRepository.save(notification, transaction);
+      await Promise.all(
+        notifications.map(notification => NotificationRepository.save(notification, transaction))
+      );
       return jobApplication;
     });
   }

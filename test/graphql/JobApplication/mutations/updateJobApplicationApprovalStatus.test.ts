@@ -12,6 +12,7 @@ import { TestClientGenerator } from "$generators/TestClient";
 import { JobApplicationGenerator } from "$generators/JobApplication";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { Admin, JobApplication } from "$models";
+import { CompanyUserRepository } from "$models/CompanyUser";
 
 const UPDATE_JOB_APPLICATION_APPROVAL_STATUS = gql`
   mutation updateJobApplicationApprovalStatus($uuid: ID!, $approvalStatus: ApprovalStatus!) {
@@ -120,47 +121,77 @@ describe("updateJobApplicationApprovalStatus", () => {
       return { response, admin };
     };
 
-    const expectNotToFindNotification = async (admin: Admin, jobApplication: JobApplication) => {
+    const expectNotToFindNotification = async (
+      admin: Admin,
+      jobApplication: JobApplication,
+      userUuid: string
+    ) => {
       const notifications = await NotificationRepository.findAll();
       const jobApplicationUuids = notifications.map(({ jobApplicationUuid }) => jobApplicationUuid);
       const adminUserUuids = notifications.map(({ adminUserUuid }) => adminUserUuid);
+      const userUuids = notifications.map(notification => notification.userUuid);
       expect(jobApplicationUuids).not.toContain(jobApplication.uuid);
       expect(adminUserUuids).not.toContain(admin.userUuid);
+      expect(userUuids).not.toContain(userUuid);
     };
 
-    const expectToFindNotification = async (admin: Admin, jobApplication: JobApplication) => {
+    const expectToFindNotification = async (
+      admin: Admin,
+      jobApplication: JobApplication,
+      userUuid: string
+    ) => {
       const notifications = await NotificationRepository.findAll();
       const jobApplicationUuids = notifications.map(({ jobApplicationUuid }) => jobApplicationUuid);
       const adminUserUuids = notifications.map(({ adminUserUuid }) => adminUserUuid);
+      const userUuids = notifications.map(notification => notification.userUuid);
       expect(jobApplicationUuids).toContain(jobApplication.uuid);
       expect(adminUserUuids).toContain(admin.userUuid);
+      expect(userUuids).toContain(userUuid);
     };
 
     it("creates a notification for a companyUser if the jobApplication is approved", async () => {
       const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      const offer = await jobApplication.getOffer();
+      const companyUsers = await CompanyUserRepository.findByCompanyUuid(offer.companyUuid);
       const { admin } = await updateJobApplicationWithStatus(
         jobApplication.uuid,
         ApprovalStatus.approved
       );
-      await expectToFindNotification(admin, jobApplication);
+      await Promise.all(
+        companyUsers.map(({ userUuid }) =>
+          expectToFindNotification(admin, jobApplication, userUuid)
+        )
+      );
     });
 
     it("does not create a notification for a companyUser if the jobApplication is rejected", async () => {
       const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      const offer = await jobApplication.getOffer();
+      const companyUsers = await CompanyUserRepository.findByCompanyUuid(offer.companyUuid);
       const { admin } = await updateJobApplicationWithStatus(
         jobApplication.uuid,
         ApprovalStatus.rejected
       );
-      await expectNotToFindNotification(admin, jobApplication);
+      await Promise.all(
+        companyUsers.map(({ userUuid }) =>
+          expectNotToFindNotification(admin, jobApplication, userUuid)
+        )
+      );
     });
 
     it("does not create a notification for a companyUser if the jobApplication is pending", async () => {
       const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      const offer = await jobApplication.getOffer();
+      const companyUsers = await CompanyUserRepository.findByCompanyUuid(offer.companyUuid);
       const { admin } = await updateJobApplicationWithStatus(
         jobApplication.uuid,
         ApprovalStatus.pending
       );
-      await expectNotToFindNotification(admin, jobApplication);
+      await Promise.all(
+        companyUsers.map(({ userUuid }) =>
+          expectNotToFindNotification(admin, jobApplication, userUuid)
+        )
+      );
     });
   });
 
