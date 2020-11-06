@@ -13,13 +13,10 @@ export const JobApplicationGenerator = {
       const offer = await OfferGenerator.instance.forStudents({ companyUuid });
       return JobApplicationRepository.apply(applicant, offer);
     },
-    updatedWithStatus: async ({ admin, status }: IUpdatedWithStatus) => {
-      const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
-      return JobApplicationRepository.updateApprovalStatus({
-        uuid,
-        admin,
-        status
-      });
+    updatedWithStatus: async ({ status }: IUpdatedWithStatus) => {
+      const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      jobApplication.set({ approvalStatus: status });
+      return JobApplicationRepository.save(jobApplication);
     },
     toTheCompany: async (companyUuid: string) => {
       const applicant = await ApplicantGenerator.instance.studentAndGraduate();

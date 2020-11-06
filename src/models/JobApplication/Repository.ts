@@ -1,12 +1,13 @@
-import { Database } from "$config";
+import { Transaction } from "sequelize";
 import { Applicant, JobApplication, Offer } from "$models";
-import { IUpdateApprovalStatus, IFindLatestByCompanyUuid } from "./Interfaces";
-import { JobApplicationApprovalEventRepository } from "./JobApplicationsApprovalEvent";
+import { IFindLatestByCompanyUuid } from "./Interfaces";
 import { JobApplicationNotFoundError } from "./Errors";
 import { PaginationQuery } from "../PaginationQuery";
 import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedInput";
 
 export const JobApplicationRepository = {
+  save: (jobApplication: JobApplication, transaction?: Transaction) =>
+    jobApplication.save({ transaction }),
   apply: async ({ uuid: applicantUuid }: Applicant, { uuid: offerUuid }: Offer) =>
     JobApplication.create({ offerUuid, applicantUuid }),
   hasApplied: async (applicant: Applicant, offer: Offer) => {
@@ -52,26 +53,6 @@ export const JobApplicationRepository = {
     PaginationQuery.findLatest({
       updatedBeforeThan,
       query: options => JobApplication.findAll(options)
-    }),
-  updateApprovalStatus: async ({
-    admin: { userUuid: adminUserUuid },
-    uuid,
-    status
-  }: IUpdateApprovalStatus) =>
-    Database.transaction(async transaction => {
-      const [, [updatedJobApplication]] = await JobApplication.update(
-        { approvalStatus: status },
-        { where: { uuid }, returning: true, transaction }
-      );
-      if (!updatedJobApplication) throw new JobApplicationNotFoundError(uuid);
-
-      await JobApplicationApprovalEventRepository.create({
-        adminUserUuid,
-        jobApplicationUuid: uuid,
-        status,
-        transaction
-      });
-      return updatedJobApplication;
     }),
   truncate: () => JobApplication.truncate({ cascade: true })
 };

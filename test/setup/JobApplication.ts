@@ -1,9 +1,8 @@
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { Admin, Applicant, JobApplication, Offer } from "$models";
+import { Applicant, JobApplication, Offer } from "$models";
 import { AdminTask } from "$models/AdminTask";
 import { ApplicantTestSetup } from "./Applicant";
 import { OfferTestSetup } from "./Offer";
-import { AdminTestSetup } from "./Admin";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { Secretary } from "$models/Admin";
 import { applicantVisibleBy } from "./applicantVisibleBy";
@@ -18,55 +17,47 @@ export class JobApplicationTestSetup {
   public tasks: AdminTask[];
   public applicants: ApplicantTestSetup;
   public offers: OfferTestSetup;
-  public admins: AdminTestSetup;
 
-  constructor(applicants: ApplicantTestSetup, offers: OfferTestSetup, admins: AdminTestSetup) {
+  constructor(applicants: ApplicantTestSetup, offers: OfferTestSetup) {
     this.applicants = applicants;
     this.offers = offers;
-    this.admins = admins;
   }
 
   public async execute() {
     this.approvedByExtension = await this.createJobApplication(
       this.applicants.approvedStudent,
       this.offers.approvedForBoth,
-      ApprovalStatus.approved,
-      this.admins.extension
+      ApprovalStatus.approved
     );
 
     this.rejectedByExtension = await this.createJobApplication(
       this.applicants.approvedStudent,
       this.offers.approvedForStudents,
-      ApprovalStatus.rejected,
-      this.admins.extension
+      ApprovalStatus.rejected
     );
 
     this.pendingByExtension = await this.createJobApplication(
       this.applicants.approvedStudent,
       this.offers.pendingForStudents,
-      ApprovalStatus.pending,
-      this.admins.extension
+      ApprovalStatus.pending
     );
 
     this.approvedByGraduados = await this.createJobApplication(
       this.applicants.approvedGraduate,
       this.offers.rejectedForBoth,
-      ApprovalStatus.approved,
-      this.admins.graduados
+      ApprovalStatus.approved
     );
 
     this.rejectedByGraduados = await this.createJobApplication(
       this.applicants.approvedGraduate,
       this.offers.rejectedForGraduates,
-      ApprovalStatus.rejected,
-      this.admins.graduados
+      ApprovalStatus.rejected
     );
 
     this.pendingByGraduados = await this.createJobApplication(
       this.applicants.approvedGraduate,
       this.offers.pendingForGraduates,
-      ApprovalStatus.pending,
-      this.admins.graduados
+      ApprovalStatus.pending
     );
 
     this.tasks = [
@@ -89,17 +80,9 @@ export class JobApplicationTestSetup {
     return all;
   }
 
-  private async createJobApplication(
-    applicant: Applicant,
-    offer: Offer,
-    status: ApprovalStatus,
-    admin: Admin
-  ) {
+  private async createJobApplication(applicant: Applicant, offer: Offer, status: ApprovalStatus) {
     const jobApplication = await JobApplicationRepository.apply(applicant, offer);
-    return await JobApplicationRepository.updateApprovalStatus({
-      uuid: jobApplication.uuid,
-      admin,
-      status
-    });
+    jobApplication.set({ approvalStatus: status });
+    return JobApplicationRepository.save(jobApplication);
   }
 }
