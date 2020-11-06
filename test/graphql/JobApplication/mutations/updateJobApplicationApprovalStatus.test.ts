@@ -120,32 +120,21 @@ describe("updateJobApplicationApprovalStatus", () => {
       return { response, admin };
     };
 
-    const expectToFindOrNotANotification = async ({
-      not,
-      admin,
-      jobApplication
-    }: {
-      not?: boolean;
-      admin: Admin;
-      jobApplication: JobApplication;
-    }) => {
+    const expectNotToFindNotification = async (admin: Admin, jobApplication: JobApplication) => {
       const notifications = await NotificationRepository.findAll();
       const jobApplicationUuids = notifications.map(({ jobApplicationUuid }) => jobApplicationUuid);
       const adminUserUuids = notifications.map(({ adminUserUuid }) => adminUserUuid);
-      if (not) {
-        expect(jobApplicationUuids).not.toContain(jobApplication.uuid);
-        expect(adminUserUuids).not.toContain(admin.userUuid);
-      } else {
-        expect(jobApplicationUuids).toContain(jobApplication.uuid);
-        expect(adminUserUuids).toContain(admin.userUuid);
-      }
+      expect(jobApplicationUuids).not.toContain(jobApplication.uuid);
+      expect(adminUserUuids).not.toContain(admin.userUuid);
     };
 
-    const expectNotToFindNotification = (admin: Admin, jobApplication: JobApplication) =>
-      expectToFindOrNotANotification({ not: true, admin, jobApplication });
-
-    const expectToFindNotification = (admin: Admin, jobApplication: JobApplication) =>
-      expectToFindOrNotANotification({ admin, jobApplication });
+    const expectToFindNotification = async (admin: Admin, jobApplication: JobApplication) => {
+      const notifications = await NotificationRepository.findAll();
+      const jobApplicationUuids = notifications.map(({ jobApplicationUuid }) => jobApplicationUuid);
+      const adminUserUuids = notifications.map(({ adminUserUuid }) => adminUserUuid);
+      expect(jobApplicationUuids).toContain(jobApplication.uuid);
+      expect(adminUserUuids).toContain(admin.userUuid);
+    };
 
     it("creates a notification for a companyUser if the jobApplication is approved", async () => {
       const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
