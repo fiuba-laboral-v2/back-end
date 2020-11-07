@@ -36,7 +36,7 @@ export class Notification extends Model<Notification> {
   public message: string;
 
   @Column({ allowNull: true, type: BOOLEAN, defaultValue: true })
-  public isNew: string;
+  public isNew: boolean;
 
   @CreatedAt
   @Column
