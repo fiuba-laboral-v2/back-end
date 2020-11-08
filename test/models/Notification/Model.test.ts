@@ -39,7 +39,7 @@ describe("Notification", () => {
     expect(notification.isNew).toBe(true);
   });
 
-  it("it throws an error if it has no type", async () => {
+  it("throws an error if it has no type", async () => {
     const notification = new Notification({
       userUuid: generateUuid(),
       adminUserUuid: generateUuid()
