@@ -1,6 +1,7 @@
 import { gql } from "apollo-server";
 import { client } from "$test/graphql/ApolloTestClient";
 
+import { MissingNotificationTypeError, NotificationRepository } from "$models/Notification";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
@@ -146,5 +147,16 @@ describe("getNotifications", () => {
     const { apolloClient } = await createApplicantTestClient(ApprovalStatus.pending);
     const { errors } = await apolloClient.query({ query: GET_NOTIFICATIONS });
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+  });
+
+  it("return an error if the notification hs no type", async () => {
+    const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
+    const notification = await NotificationGenerator.instance.JobApplication.approved(company);
+    notification.jobApplicationUuid = null as any;
+    jest
+      .spyOn(NotificationRepository, "findMyLatest")
+      .mockImplementation(async () => ({ results: [notification], shouldFetchMore: false }));
+    const { errors } = await apolloClient.query({ query: GET_NOTIFICATIONS });
+    expect(errors).toEqualGraphQLErrorType(MissingNotificationTypeError.name);
   });
 });
