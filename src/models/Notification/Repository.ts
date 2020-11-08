@@ -9,7 +9,7 @@ export const NotificationRepository = {
   findMyLatest: ({ updatedBeforeThan, userUuid }: IFindAll) =>
     PaginationQuery.findLatest({
       updatedBeforeThan,
-      where: userUuid ? { userUuid } : undefined,
+      where: { userUuid },
       timestampKey: "createdAt",
       query: options => Notification.findAll(options),
       order: [
