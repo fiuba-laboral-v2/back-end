@@ -11,6 +11,7 @@ import { companyPermissions } from "./Company";
 import { userPermissions } from "./User";
 import { adminTaskPermissions } from "./AdminTask";
 import { adminPermissions } from "./Admin";
+import { notificationPermissions } from "./Notification";
 
 const permissions = merge(
   offerPermissions,
@@ -21,9 +22,10 @@ const permissions = merge(
   companyPermissions,
   userPermissions,
   adminTaskPermissions,
-  adminPermissions
+  adminPermissions,
+  notificationPermissions
 );
 
 export const permissionShield = shield(permissions, {
-  debug: Environment.NODE_ENV !== "production"
+  debug: Environment.NODE_ENV !== Environment.PRODUCTION
 });
