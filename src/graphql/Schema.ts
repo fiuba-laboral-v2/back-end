@@ -1,8 +1,8 @@
 import { GraphQLObjectType, GraphQLSchema } from "graphql";
 import { applyMiddleware } from "graphql-middleware";
-import queries from "./queries";
-import mutations from "./mutations";
-import types from "./types";
+import { queries } from "./queries";
+import { mutations } from "./mutations";
+import { types } from "./types";
 import { permissionShield } from "./permissionShield";
 
 const Schema: GraphQLSchema = new GraphQLSchema({

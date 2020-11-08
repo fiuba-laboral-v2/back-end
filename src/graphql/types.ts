@@ -11,7 +11,7 @@ import { approvalStatusTypes } from "./ApprovalStatus";
 import { adminTaskTypes } from "./AdminTask/Types";
 import { notificationTypes } from "./Notification";
 
-const types = [
+export const types = [
   ...adminTypes,
   ...companyTypes,
   ...offerTypes,
@@ -25,5 +25,3 @@ const types = [
   ...adminTaskTypes,
   ...notificationTypes
 ];
-
-export default types;
