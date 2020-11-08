@@ -19,6 +19,7 @@ import { AdminGenerator } from "$generators/Admin";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import { range } from "lodash";
 import MockDate from "mockdate";
+import { JobApplicationGenerator } from "$generators/JobApplication";
 
 const GET_NOTIFICATIONS = gql`
   query GetNotifications($updatedBeforeThan: PaginatedInput) {
@@ -125,12 +126,34 @@ describe("getNotifications", () => {
     expect(shouldFetchMore).toBe(false);
   });
 
-  it("returns no notifications for the currently logged in applicant", async () => {
-    const { apolloClient } = await createApplicantTestClient(ApprovalStatus.approved);
+  it("returns all notifications for the currently logged in applicant", async () => {
+    const { apolloClient, user } = await createApplicantTestClient(ApprovalStatus.approved);
+
+    const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+    const notification = await NotificationGenerator.instance.JobApplication.from(
+      jobApplication,
+      user
+    );
+
     const { data, errors } = await apolloClient.query({ query: GET_NOTIFICATIONS });
     expect(errors).toBeUndefined();
     const { results, shouldFetchMore } = data!.getNotifications;
-    expect(results).toHaveLength(0);
+    const { userUuid } = await AdminRepository.findByUserUuid(notification.adminUserUuid);
+    const adminUser = await UserRepository.findByUuid(userUuid);
+
+    expect(results).toEqual([
+      {
+        __typename: "JobApplicationNotification",
+        uuid: notification.uuid,
+        adminEmail: adminUser.email,
+        jobApplication: {
+          __typename: GraphQLJobApplication.name,
+          uuid: notification.jobApplicationUuid
+        },
+        message: null,
+        createdAt: notification.createdAt.toISOString()
+      }
+    ]);
     expect(shouldFetchMore).toBe(false);
   });
 
