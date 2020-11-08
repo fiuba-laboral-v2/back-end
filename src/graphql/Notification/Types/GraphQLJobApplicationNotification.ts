@@ -4,7 +4,6 @@ import { ID, nonNull, String } from "$graphql/fieldTypes";
 import { GraphQLJobApplication } from "$graphql/JobApplication/Types/GraphQLJobApplication";
 import { Notification } from "$models";
 import { UserRepository } from "$models/User";
-import { AdminRepository } from "$models/Admin";
 import { JobApplicationRepository } from "$models/JobApplication";
 
 export const GraphQLJobApplicationNotification = new GraphQLObjectType<Notification>({
@@ -22,8 +21,7 @@ export const GraphQLJobApplicationNotification = new GraphQLObjectType<Notificat
     adminEmail: {
       type: nonNull(String),
       resolve: async notification => {
-        const admin = await AdminRepository.findByUserUuid(notification.adminUserUuid);
-        const user = await UserRepository.findByUuid(admin.userUuid);
+        const user = await UserRepository.findByUuid(notification.adminUserUuid);
         return user.email;
       }
     },

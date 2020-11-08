@@ -5,7 +5,7 @@ import { MissingNotificationTypeError, NotificationRepository } from "$models/No
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
-import { AdminRepository, Secretary } from "$models/Admin";
+import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Admin, Notification } from "$models";
 
@@ -65,8 +65,7 @@ describe("getNotifications", () => {
     const { data, errors } = await apolloClient.query({ query: GET_NOTIFICATIONS });
     expect(errors).toBeUndefined();
     const { results, shouldFetchMore } = data!.getNotifications;
-    const { userUuid } = await AdminRepository.findByUserUuid(notification.adminUserUuid);
-    const adminUser = await UserRepository.findByUuid(userUuid);
+    const adminUser = await UserRepository.findByUuid(notification.adminUserUuid);
     expect(results).toEqual([
       {
         __typename: "JobApplicationNotification",
@@ -138,8 +137,7 @@ describe("getNotifications", () => {
     const { data, errors } = await apolloClient.query({ query: GET_NOTIFICATIONS });
     expect(errors).toBeUndefined();
     const { results, shouldFetchMore } = data!.getNotifications;
-    const { userUuid } = await AdminRepository.findByUserUuid(notification.adminUserUuid);
-    const adminUser = await UserRepository.findByUuid(userUuid);
+    const adminUser = await UserRepository.findByUuid(notification.adminUserUuid);
 
     expect(results).toEqual([
       {
