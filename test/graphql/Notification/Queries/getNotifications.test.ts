@@ -105,9 +105,18 @@ describe("getNotifications", () => {
     expect(shouldFetchMore).toBe(true);
   });
 
-  it("returns all notifications for the currently logged in admin", async () => {
+  it("returns no notifications for the currently logged in admin", async () => {
     const secretary = Secretary.extension;
     const { apolloClient } = await TestClientGenerator.admin({ secretary });
+    const { data, errors } = await apolloClient.query({ query: GET_NOTIFICATIONS });
+    expect(errors).toBeUndefined();
+    const { results, shouldFetchMore } = data!.getNotifications;
+    expect(results).toHaveLength(0);
+    expect(shouldFetchMore).toBe(false);
+  });
+
+  it("returns no notifications for the currently logged in applicant", async () => {
+    const { apolloClient } = await createApplicantTestClient(ApprovalStatus.approved);
     const { data, errors } = await apolloClient.query({ query: GET_NOTIFICATIONS });
     expect(errors).toBeUndefined();
     const { results, shouldFetchMore } = data!.getNotifications;
