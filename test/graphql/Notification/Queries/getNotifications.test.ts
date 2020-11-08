@@ -60,7 +60,7 @@ describe("getNotifications", () => {
   const createApplicantTestClient = (approvalStatus: ApprovalStatus) =>
     TestClientGenerator.applicant({ status: { approvalStatus, admin } });
 
-  it("returns all notification for a companyUser", async () => {
+  it("returns all notifications for a companyUser", async () => {
     const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
     const notification = await NotificationGenerator.instance.JobApplication.approved(company);
     const { data, errors } = await apolloClient.query({ query: GET_NOTIFICATIONS });
