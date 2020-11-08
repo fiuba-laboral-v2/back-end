@@ -5,7 +5,6 @@ import { CompanyRepository } from "$models/Company";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { CareerRepository } from "$models/Career";
 import { NotificationRepository } from "$models/Notification";
-import { MissingNotificationTypeError } from "$models/Notification/Errors";
 
 import { CompanyGenerator } from "$generators/Company";
 import { JobApplicationGenerator } from "$generators/JobApplication";
@@ -118,25 +117,6 @@ describe("NotificationRepository", () => {
     expect((await NotificationRepository.findAll()).results).toHaveLength(1);
     await JobApplicationRepository.truncate();
     expect((await NotificationRepository.findAll()).results).toHaveLength(0);
-  });
-
-  describe("getType", () => {
-    it("returns a jobApplication", async () => {
-      const notification = await NotificationGenerator.instance.JobApplication.approved(company);
-      await NotificationRepository.save(notification);
-      const { uuid } = await NotificationRepository.getType(notification);
-      expect(uuid).toEqual(notification.jobApplicationUuid);
-    });
-
-    it("returns an error if the notification has no type", async () => {
-      const notification = await NotificationGenerator.instance.JobApplication.approved(company);
-      await NotificationRepository.save(notification);
-      notification.jobApplicationUuid = null as any;
-      await expect(NotificationRepository.getType(notification)).rejects.toThrowErrorWithMessage(
-        MissingNotificationTypeError,
-        MissingNotificationTypeError.buildMessage()
-      );
-    });
   });
 
   describe("findAll", () => {
