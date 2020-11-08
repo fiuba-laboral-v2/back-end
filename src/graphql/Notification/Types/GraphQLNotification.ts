@@ -15,6 +15,12 @@ export const GraphQLNotification = new GraphQLObjectType<Notification>({
     uuid: {
       type: nonNull(ID)
     },
+    message: {
+      type: String
+    },
+    createdAt: {
+      type: nonNull(GraphQLDateTime)
+    },
     user: {
       type: nonNull(GraphQLUser),
       resolve: notification => UserRepository.findByUuid(notification.userUuid)
@@ -26,12 +32,6 @@ export const GraphQLNotification = new GraphQLObjectType<Notification>({
     type: {
       type: nonNull(GraphQLNotificationType),
       resolve: notification => NotificationRepository.getType(notification)
-    },
-    message: {
-      type: String
-    },
-    createdAt: {
-      type: nonNull(GraphQLDateTime)
     }
   })
 });
