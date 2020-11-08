@@ -45,8 +45,10 @@ describe("NotificationRepository", () => {
       jobApplicationUuid: jobApplication.uuid
     });
     await NotificationRepository.save(notification);
-    const { results } = await NotificationRepository.findAll();
-    expect(results.map(({ uuid }) => uuid)).toEqual(expect.arrayContaining([notification.uuid]));
+    const notifications = await NotificationRepository.findAll();
+    expect(notifications.map(({ uuid }) => uuid)).toEqual(
+      expect.arrayContaining([notification.uuid])
+    );
   });
 
   it("throws an error if the notification has an existing uuid", async () => {
@@ -114,9 +116,9 @@ describe("NotificationRepository", () => {
         jobApplicationUuid: jobApplication.uuid
       })
     );
-    expect((await NotificationRepository.findAll()).results).toHaveLength(1);
+    expect(await NotificationRepository.findAll()).toHaveLength(1);
     await JobApplicationRepository.truncate();
-    expect((await NotificationRepository.findAll()).results).toHaveLength(0);
+    expect(await NotificationRepository.findAll()).toHaveLength(0);
   });
 
   describe("findAll", () => {
@@ -150,13 +152,14 @@ describe("NotificationRepository", () => {
     });
 
     it("finds all notification for all users", async () => {
-      const { shouldFetchMore, results } = await NotificationRepository.findAll();
-      expect(results).toHaveLength(notificationsLength + anotherCompanyNotificationsLength);
-      expect(shouldFetchMore).toBe(false);
+      const allNotifications = await NotificationRepository.findAll();
+      expect(allNotifications).toHaveLength(
+        notificationsLength + anotherCompanyNotificationsLength
+      );
     });
 
     it("finds all notifications by userUuid", async () => {
-      const { shouldFetchMore, results } = await NotificationRepository.findAll({ userUuid });
+      const { shouldFetchMore, results } = await NotificationRepository.findMyLatest({ userUuid });
       expect(results).toHaveLength(notificationsLength);
       expect(shouldFetchMore).toBe(false);
     });
@@ -169,7 +172,7 @@ describe("NotificationRepository", () => {
         uuid: notifications[0].uuid
       };
 
-      const { shouldFetchMore, results } = await NotificationRepository.findAll({
+      const { shouldFetchMore, results } = await NotificationRepository.findMyLatest({
         userUuid,
         updatedBeforeThan
       });
@@ -185,7 +188,7 @@ describe("NotificationRepository", () => {
         uuid: notifications[itemsPerPage - 1].uuid
       };
 
-      const { shouldFetchMore, results } = await NotificationRepository.findAll({
+      const { shouldFetchMore, results } = await NotificationRepository.findMyLatest({
         userUuid,
         updatedBeforeThan
       });
@@ -202,7 +205,7 @@ describe("NotificationRepository", () => {
       await Promise.all(
         notifications.map(notification => NotificationRepository.save(notification))
       );
-      const { shouldFetchMore, results } = await NotificationRepository.findAll({ userUuid });
+      const { shouldFetchMore, results } = await NotificationRepository.findMyLatest({ userUuid });
       expect(results.map(result => result.isNew)).toEqual([
         ...Array(notificationsLength / 2).fill(true),
         ...Array(notificationsLength / 2).fill(false)

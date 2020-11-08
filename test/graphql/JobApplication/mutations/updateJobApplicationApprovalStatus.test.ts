@@ -126,10 +126,10 @@ describe("updateJobApplicationApprovalStatus", () => {
       jobApplication: JobApplication,
       userUuid: string
     ) => {
-      const { results } = await NotificationRepository.findAll();
-      const jobApplicationUuids = results.map(({ jobApplicationUuid }) => jobApplicationUuid);
-      const adminUserUuids = results.map(({ adminUserUuid }) => adminUserUuid);
-      const userUuids = results.map(notification => notification.userUuid);
+      const notifications = await NotificationRepository.findAll();
+      const jobApplicationUuids = notifications.map(({ jobApplicationUuid }) => jobApplicationUuid);
+      const adminUserUuids = notifications.map(({ adminUserUuid }) => adminUserUuid);
+      const userUuids = notifications.map(notification => notification.userUuid);
       expect(jobApplicationUuids).not.toContain(jobApplication.uuid);
       expect(adminUserUuids).not.toContain(admin.userUuid);
       expect(userUuids).not.toContain(userUuid);
@@ -140,10 +140,10 @@ describe("updateJobApplicationApprovalStatus", () => {
       jobApplication: JobApplication,
       userUuid: string
     ) => {
-      const { results } = await NotificationRepository.findAll();
-      const jobApplicationUuids = results.map(({ jobApplicationUuid }) => jobApplicationUuid);
-      const adminUserUuids = results.map(({ adminUserUuid }) => adminUserUuid);
-      const userUuids = results.map(notification => notification.userUuid);
+      const notifications = await NotificationRepository.findAll();
+      const jobApplicationUuids = notifications.map(({ jobApplicationUuid }) => jobApplicationUuid);
+      const adminUserUuids = notifications.map(({ adminUserUuid }) => adminUserUuid);
+      const userUuids = notifications.map(notification => notification.userUuid);
       expect(jobApplicationUuids).toContain(jobApplication.uuid);
       expect(adminUserUuids).toContain(admin.userUuid);
       expect(userUuids).toContain(userUuid);
