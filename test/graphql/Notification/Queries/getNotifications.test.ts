@@ -192,7 +192,7 @@ describe("getNotifications", () => {
     const notification = await NotificationGenerator.instance.JobApplication.approved(company);
     notification.jobApplicationUuid = null as any;
     jest
-      .spyOn(NotificationRepository, "findMyLatest")
+      .spyOn(NotificationRepository, "findLatestByUser")
       .mockImplementation(async () => ({ results: [notification], shouldFetchMore: false }));
     const { errors } = await apolloClient.query({ query: GET_NOTIFICATIONS });
     expect(errors).toEqualGraphQLErrorType(MissingNotificationTypeError.name);

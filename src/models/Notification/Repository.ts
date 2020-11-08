@@ -6,7 +6,7 @@ import { PaginationQuery } from "$models/PaginationQuery";
 export const NotificationRepository = {
   save: (notification: Notification, transaction?: Transaction) =>
     notification.save({ transaction }),
-  findMyLatest: ({ updatedBeforeThan, userUuid }: IFindAll) =>
+  findLatestByUser: ({ updatedBeforeThan, userUuid }: IFindAll) =>
     PaginationQuery.findLatest({
       updatedBeforeThan,
       where: { userUuid },

@@ -159,7 +159,9 @@ describe("NotificationRepository", () => {
     });
 
     it("finds all notifications by userUuid", async () => {
-      const { shouldFetchMore, results } = await NotificationRepository.findMyLatest({ userUuid });
+      const { shouldFetchMore, results } = await NotificationRepository.findLatestByUser({
+        userUuid
+      });
       expect(results).toHaveLength(notificationsLength);
       expect(shouldFetchMore).toBe(false);
     });
@@ -172,7 +174,7 @@ describe("NotificationRepository", () => {
         uuid: notifications[0].uuid
       };
 
-      const { shouldFetchMore, results } = await NotificationRepository.findMyLatest({
+      const { shouldFetchMore, results } = await NotificationRepository.findLatestByUser({
         userUuid,
         updatedBeforeThan
       });
@@ -188,7 +190,7 @@ describe("NotificationRepository", () => {
         uuid: notifications[itemsPerPage - 1].uuid
       };
 
-      const { shouldFetchMore, results } = await NotificationRepository.findMyLatest({
+      const { shouldFetchMore, results } = await NotificationRepository.findLatestByUser({
         userUuid,
         updatedBeforeThan
       });
@@ -205,7 +207,9 @@ describe("NotificationRepository", () => {
       await Promise.all(
         notifications.map(notification => NotificationRepository.save(notification))
       );
-      const { shouldFetchMore, results } = await NotificationRepository.findMyLatest({ userUuid });
+      const { shouldFetchMore, results } = await NotificationRepository.findLatestByUser({
+        userUuid
+      });
       expect(results.map(result => result.isNew)).toEqual([
         ...Array(notificationsLength / 2).fill(true),
         ...Array(notificationsLength / 2).fill(false)
