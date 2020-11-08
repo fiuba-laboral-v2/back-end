@@ -1,4 +1,4 @@
 import { GraphQLNotification } from "./GraphQLNotification";
-import { GraphQLNotificationType } from "./GraphQLNotificationType";
+import { GraphQLJobApplicationNotification } from "./GraphQLJobApplicationNotification";
 
-export const notificationTypes = [GraphQLNotification, GraphQLNotificationType];
+export const notificationTypes = [GraphQLNotification, GraphQLJobApplicationNotification];

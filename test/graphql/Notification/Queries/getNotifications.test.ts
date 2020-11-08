@@ -23,15 +23,16 @@ const GET_NOTIFICATIONS = gql`
   query GetNotifications($updatedBeforeThan: PaginatedInput) {
     getNotifications(updatedBeforeThan: $updatedBeforeThan) {
       results {
-        uuid
-        adminEmail
-        message
-        createdAt
-        user {
+        ... on JobApplicationNotification {
+          __typename
           uuid
-        }
-        type {
-          ... on JobApplication {
+          adminEmail
+          message
+          createdAt
+          user {
+            uuid
+          }
+          jobApplication {
             __typename
             uuid
           }
@@ -69,10 +70,11 @@ describe("getNotifications", () => {
     const adminUser = await UserRepository.findByUuid(userUuid);
     expect(results).toEqual([
       {
+        __typename: "JobApplicationNotification",
         uuid: notification.uuid,
         user: { uuid: notification.userUuid },
         adminEmail: adminUser.email,
-        type: {
+        jobApplication: {
           __typename: GraphQLJobApplication.name,
           uuid: notification.jobApplicationUuid
         },
