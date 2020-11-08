@@ -4,7 +4,7 @@ import { client } from "$test/graphql/ApolloTestClient";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
-import { Secretary } from "$models/Admin";
+import { AdminRepository, Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Admin, Notification } from "$models";
 
@@ -24,10 +24,10 @@ const GET_NOTIFICATIONS = gql`
     getNotifications(updatedBeforeThan: $updatedBeforeThan) {
       results {
         uuid
+        adminEmail
+        message
+        createdAt
         user {
-          uuid
-        }
-        admin {
           uuid
         }
         type {
@@ -36,8 +36,6 @@ const GET_NOTIFICATIONS = gql`
             uuid
           }
         }
-        message
-        createdAt
       }
       shouldFetchMore
     }
@@ -67,11 +65,13 @@ describe("getNotifications", () => {
     const { data, errors } = await apolloClient.query({ query: GET_NOTIFICATIONS });
     expect(errors).toBeUndefined();
     const { results, shouldFetchMore } = data!.getNotifications;
+    const { userUuid } = await AdminRepository.findByUserUuid(notification.adminUserUuid);
+    const adminUser = await UserRepository.findByUuid(userUuid);
     expect(results).toEqual([
       {
         uuid: notification.uuid,
         user: { uuid: notification.userUuid },
-        admin: { uuid: notification.adminUserUuid },
+        adminEmail: adminUser.email,
         type: {
           __typename: GraphQLJobApplication.name,
           uuid: notification.jobApplicationUuid

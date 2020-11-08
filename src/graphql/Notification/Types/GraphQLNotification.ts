@@ -2,7 +2,6 @@ import { GraphQLObjectType } from "graphql";
 import { GraphQLDateTime } from "graphql-iso-date";
 import { ID, nonNull, String } from "$graphql/fieldTypes";
 import { GraphQLUser } from "$graphql/User/Types/GraphQLUser";
-import { GraphQLAdmin } from "$graphql/Admin/Types/GraphQLAdmin";
 import { GraphQLNotificationType } from "./GraphQLNotificationType";
 import { Notification } from "$models";
 import { UserRepository } from "$models/User";
@@ -25,9 +24,13 @@ export const GraphQLNotification = new GraphQLObjectType<Notification>({
       type: nonNull(GraphQLUser),
       resolve: notification => UserRepository.findByUuid(notification.userUuid)
     },
-    admin: {
-      type: nonNull(GraphQLAdmin),
-      resolve: notification => AdminRepository.findByUserUuid(notification.adminUserUuid)
+    adminEmail: {
+      type: nonNull(String),
+      resolve: async notification => {
+        const admin = await AdminRepository.findByUserUuid(notification.adminUserUuid);
+        const user = await UserRepository.findByUuid(admin.userUuid);
+        return user.email;
+      }
     },
     type: {
       type: nonNull(GraphQLNotificationType),
