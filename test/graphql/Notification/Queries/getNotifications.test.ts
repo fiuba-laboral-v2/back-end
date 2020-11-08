@@ -30,9 +30,6 @@ const GET_NOTIFICATIONS = gql`
           adminEmail
           message
           createdAt
-          user {
-            uuid
-          }
           jobApplication {
             __typename
             uuid
@@ -73,7 +70,6 @@ describe("getNotifications", () => {
       {
         __typename: "JobApplicationNotification",
         uuid: notification.uuid,
-        user: { uuid: notification.userUuid },
         adminEmail: adminUser.email,
         jobApplication: {
           __typename: GraphQLJobApplication.name,

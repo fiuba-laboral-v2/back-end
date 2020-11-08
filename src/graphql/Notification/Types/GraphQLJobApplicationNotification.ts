@@ -1,7 +1,6 @@
 import { GraphQLObjectType } from "graphql";
 import { GraphQLDateTime } from "graphql-iso-date";
 import { ID, nonNull, String } from "$graphql/fieldTypes";
-import { GraphQLUser } from "$graphql/User/Types/GraphQLUser";
 import { GraphQLJobApplication } from "$graphql/JobApplication/Types/GraphQLJobApplication";
 import { Notification } from "$models";
 import { UserRepository } from "$models/User";
@@ -19,10 +18,6 @@ export const GraphQLJobApplicationNotification = new GraphQLObjectType<Notificat
     },
     createdAt: {
       type: nonNull(GraphQLDateTime)
-    },
-    user: {
-      type: nonNull(GraphQLUser),
-      resolve: notification => UserRepository.findByUuid(notification.userUuid)
     },
     adminEmail: {
       type: nonNull(String),
