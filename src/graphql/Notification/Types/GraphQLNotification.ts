@@ -7,7 +7,7 @@ import { GraphQLNotificationType } from "./GraphQLNotificationType";
 import { Notification } from "$models";
 import { UserRepository } from "$models/User";
 import { AdminRepository } from "$models/Admin";
-import { JobApplicationRepository } from "$models/JobApplication";
+import { NotificationRepository } from "$models/Notification";
 
 export const GraphQLNotification = new GraphQLObjectType<Notification>({
   name: "Notification",
@@ -25,12 +25,7 @@ export const GraphQLNotification = new GraphQLObjectType<Notification>({
     },
     type: {
       type: nonNull(GraphQLNotificationType),
-      resolve: notification => {
-        if (notification.jobApplicationUuid) {
-          return JobApplicationRepository.findByUuid(notification.jobApplicationUuid);
-        }
-        throw new Error("Value is not of Notification type");
-      }
+      resolve: notification => NotificationRepository.getType(notification)
     },
     message: {
       type: String

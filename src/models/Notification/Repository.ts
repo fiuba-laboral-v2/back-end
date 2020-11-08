@@ -2,6 +2,8 @@ import { Transaction } from "sequelize";
 import { Notification } from "$models";
 import { IFindAll } from "./Interfaces";
 import { PaginationQuery } from "$models/PaginationQuery";
+import { JobApplicationRepository } from "$models/JobApplication";
+import { MissingNotificationTypeError } from "./Errors";
 
 export const NotificationRepository = {
   save: (notification: Notification, transaction?: Transaction) =>
@@ -18,5 +20,11 @@ export const NotificationRepository = {
         ["uuid", "DESC"]
       ]
     }),
+  getType: async (notification: Notification) => {
+    if (notification.jobApplicationUuid) {
+      return JobApplicationRepository.findByUuid(notification.jobApplicationUuid);
+    }
+    throw new MissingNotificationTypeError();
+  },
   truncate: () => Notification.destroy({ truncate: true })
 };

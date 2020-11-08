@@ -5,6 +5,7 @@ import { CompanyRepository } from "$models/Company";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { CareerRepository } from "$models/Career";
 import { NotificationRepository } from "$models/Notification";
+import { MissingNotificationTypeError } from "$models/Notification/Errors";
 
 import { CompanyGenerator } from "$generators/Company";
 import { JobApplicationGenerator } from "$generators/JobApplication";
@@ -19,6 +20,9 @@ import MockDate from "mockdate";
 describe("NotificationRepository", () => {
   let company: Company;
   let companyUsers: User[];
+  let jobApplication: JobApplication;
+  let companyUserUuid: string;
+  let extensionAdmin: Admin;
 
   beforeAll(async () => {
     await UserRepository.truncate();
@@ -28,98 +32,110 @@ describe("NotificationRepository", () => {
 
     company = await CompanyGenerator.instance.withMinimumData();
     companyUsers = await company.getUsers();
+
+    jobApplication = await JobApplicationGenerator.instance.toTheCompany(company.uuid);
+    const [user] = companyUsers;
+    companyUserUuid = user.uuid;
+    extensionAdmin = await AdminGenerator.extension();
   });
 
-  describe("Notification for a JobApplication", () => {
-    let jobApplication: JobApplication;
-    let companyUserUuid: string;
-    let extensionAdmin: Admin;
-
-    beforeAll(async () => {
-      jobApplication = await JobApplicationGenerator.instance.toTheCompany(company.uuid);
-      const [user] = companyUsers;
-      companyUserUuid = user.uuid;
-      extensionAdmin = await AdminGenerator.extension();
+  it("saves a notification in the database", async () => {
+    const notification = new Notification({
+      userUuid: companyUserUuid,
+      adminUserUuid: extensionAdmin.userUuid,
+      jobApplicationUuid: jobApplication.uuid
     });
+    await NotificationRepository.save(notification);
+    const { results } = await NotificationRepository.findAll();
+    expect(results.map(({ uuid }) => uuid)).toEqual(expect.arrayContaining([notification.uuid]));
+  });
 
-    it("saves a notification in the database", async () => {
-      const notification = new Notification({
+  it("throws an error if the notification has an existing uuid", async () => {
+    const attributes = {
+      uuid: generateUuid(),
+      userUuid: companyUserUuid,
+      adminUserUuid: extensionAdmin.userUuid,
+      jobApplicationUuid: jobApplication.uuid
+    };
+    const notification = new Notification(attributes);
+    const existentNotification = new Notification(attributes);
+
+    await NotificationRepository.save(notification);
+    await expect(NotificationRepository.save(existentNotification)).rejects.toThrowErrorWithMessage(
+      UniqueConstraintError,
+      "Validation error"
+    );
+  });
+
+  it("throws an error if the jobApplicationUuid does not belong to an existing jobApplication", async () => {
+    const notification = new Notification({
+      userUuid: companyUserUuid,
+      adminUserUuid: extensionAdmin.userUuid,
+      jobApplicationUuid: generateUuid()
+    });
+    await expect(NotificationRepository.save(notification)).rejects.toThrowErrorWithMessage(
+      ForeignKeyConstraintError,
+      'insert or update on table "Notifications" violates foreign key ' +
+        'constraint "Notifications_jobApplicationUuid_fkey"'
+    );
+  });
+
+  it("throws an error if the userUuid does not belong to an existing user", async () => {
+    const notification = new Notification({
+      userUuid: generateUuid(),
+      adminUserUuid: extensionAdmin.userUuid,
+      jobApplicationUuid: jobApplication.uuid
+    });
+    await expect(NotificationRepository.save(notification)).rejects.toThrowErrorWithMessage(
+      ForeignKeyConstraintError,
+      'insert or update on table "Notifications" violates foreign key ' +
+        'constraint "Notifications_userUuid_fkey"'
+    );
+  });
+
+  it("throws an error if the adminUserUuid does not belong to an existing admin", async () => {
+    const notification = new Notification({
+      userUuid: companyUserUuid,
+      adminUserUuid: generateUuid(),
+      jobApplicationUuid: jobApplication.uuid
+    });
+    await expect(NotificationRepository.save(notification)).rejects.toThrowErrorWithMessage(
+      ForeignKeyConstraintError,
+      'insert or update on table "Notifications" violates foreign key ' +
+        'constraint "Notifications_adminUserUuid_fkey"'
+    );
+  });
+
+  it("deletes all notifications if JobApplications table is truncated", async () => {
+    await NotificationRepository.truncate();
+    await NotificationRepository.save(
+      new Notification({
         userUuid: companyUserUuid,
         adminUserUuid: extensionAdmin.userUuid,
         jobApplicationUuid: jobApplication.uuid
-      });
+      })
+    );
+    expect((await NotificationRepository.findAll()).results).toHaveLength(1);
+    await JobApplicationRepository.truncate();
+    expect((await NotificationRepository.findAll()).results).toHaveLength(0);
+  });
+
+  describe("getType", () => {
+    it("returns a jobApplication", async () => {
+      const notification = await NotificationGenerator.instance.JobApplication.approved(company);
       await NotificationRepository.save(notification);
-      const { results } = await NotificationRepository.findAll();
-      expect(results.map(({ uuid }) => uuid)).toEqual(expect.arrayContaining([notification.uuid]));
+      const { uuid } = await NotificationRepository.getType(notification);
+      expect(uuid).toEqual(notification.jobApplicationUuid);
     });
 
-    it("throws an error if the notification has an existing uuid", async () => {
-      const attributes = {
-        uuid: generateUuid(),
-        userUuid: companyUserUuid,
-        adminUserUuid: extensionAdmin.userUuid,
-        jobApplicationUuid: jobApplication.uuid
-      };
-      const notification = new Notification(attributes);
-      const existentNotification = new Notification(attributes);
-
+    it("returns an error if the notification has no type", async () => {
+      const notification = await NotificationGenerator.instance.JobApplication.approved(company);
       await NotificationRepository.save(notification);
-      await expect(
-        NotificationRepository.save(existentNotification)
-      ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
-    });
-
-    it("throws an error if the jobApplicationUuid does not belong to an existing jobApplication", async () => {
-      const notification = new Notification({
-        userUuid: companyUserUuid,
-        adminUserUuid: extensionAdmin.userUuid,
-        jobApplicationUuid: generateUuid()
-      });
-      await expect(NotificationRepository.save(notification)).rejects.toThrowErrorWithMessage(
-        ForeignKeyConstraintError,
-        'insert or update on table "Notifications" violates foreign key ' +
-          'constraint "Notifications_jobApplicationUuid_fkey"'
+      notification.jobApplicationUuid = null as any;
+      await expect(NotificationRepository.getType(notification)).rejects.toThrowErrorWithMessage(
+        MissingNotificationTypeError,
+        MissingNotificationTypeError.buildMessage()
       );
-    });
-
-    it("throws an error if the userUuid does not belong to an existing user", async () => {
-      const notification = new Notification({
-        userUuid: generateUuid(),
-        adminUserUuid: extensionAdmin.userUuid,
-        jobApplicationUuid: jobApplication.uuid
-      });
-      await expect(NotificationRepository.save(notification)).rejects.toThrowErrorWithMessage(
-        ForeignKeyConstraintError,
-        'insert or update on table "Notifications" violates foreign key ' +
-          'constraint "Notifications_userUuid_fkey"'
-      );
-    });
-
-    it("throws an error if the adminUserUuid does not belong to an existing admin", async () => {
-      const notification = new Notification({
-        userUuid: companyUserUuid,
-        adminUserUuid: generateUuid(),
-        jobApplicationUuid: jobApplication.uuid
-      });
-      await expect(NotificationRepository.save(notification)).rejects.toThrowErrorWithMessage(
-        ForeignKeyConstraintError,
-        'insert or update on table "Notifications" violates foreign key ' +
-          'constraint "Notifications_adminUserUuid_fkey"'
-      );
-    });
-
-    it("deletes all notifications if JobApplications table is truncated", async () => {
-      await NotificationRepository.truncate();
-      await NotificationRepository.save(
-        new Notification({
-          userUuid: companyUserUuid,
-          adminUserUuid: extensionAdmin.userUuid,
-          jobApplicationUuid: jobApplication.uuid
-        })
-      );
-      expect((await NotificationRepository.findAll()).results).toHaveLength(1);
-      await JobApplicationRepository.truncate();
-      expect((await NotificationRepository.findAll()).results).toHaveLength(0);
     });
   });
 
