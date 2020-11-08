@@ -82,30 +82,40 @@ describe("getNotifications", () => {
     expect(shouldFetchMore).toBe(false);
   });
 
-  it("returns the first three notifications for a companyUser", async () => {
+  it("returns the next three notifications for a companyUser", async () => {
     const itemsPerPage = 3;
     mockItemsPerPage(itemsPerPage);
     const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
-    const notifications: Notification[] = [];
+    let notifications: Notification[] = [];
     for (const milliseconds of range(20)) {
       MockDate.set(milliseconds);
       notifications.push(await NotificationGenerator.instance.JobApplication.approved(company));
       MockDate.reset();
     }
-    const { data, errors } = await apolloClient.query({ query: GET_NOTIFICATIONS });
+    notifications = notifications.sort(({ createdAt }) => -createdAt);
+
+    const halfNotificationIndex = 10;
+    const { data, errors } = await apolloClient.query({
+      query: GET_NOTIFICATIONS,
+      variables: {
+        updatedBeforeThan: {
+          uuid: notifications[halfNotificationIndex].uuid,
+          dateTime: notifications[halfNotificationIndex].createdAt.toISOString()
+        }
+      }
+    });
     expect(errors).toBeUndefined();
     const { results, shouldFetchMore } = data!.getNotifications;
     expect(results).toHaveLength(itemsPerPage);
     expect(results.map(({ uuid }) => uuid)).toEqual(
       notifications
-        .sort(({ createdAt }) => -createdAt)
         .map(task => task.uuid)
-        .slice(0, itemsPerPage)
+        .slice(halfNotificationIndex + 1, halfNotificationIndex + 1 + itemsPerPage)
     );
     expect(shouldFetchMore).toBe(true);
   });
 
-  it("returns no notifications for the currently logged in admin", async () => {
+  it("returns all notifications for the currently logged in admin", async () => {
     const secretary = Secretary.extension;
     const { apolloClient } = await TestClientGenerator.admin({ secretary });
     const { data, errors } = await apolloClient.query({ query: GET_NOTIFICATIONS });
