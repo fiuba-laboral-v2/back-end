@@ -187,7 +187,7 @@ describe("getNotifications", () => {
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
-  it("return an error if the notification hs no type", async () => {
+  it("returns an error if the notification has no type", async () => {
     const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
     const notification = await NotificationGenerator.instance.JobApplication.approved(company);
     notification.jobApplicationUuid = null as any;
