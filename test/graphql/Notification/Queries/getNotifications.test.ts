@@ -106,7 +106,7 @@ describe("getNotifications", () => {
     expect(shouldFetchMore).toBe(true);
   });
 
-  it("returns all notifications for the current logged admin", async () => {
+  it("returns all notifications for the currently logged in admin", async () => {
     const secretary = Secretary.extension;
     const { apolloClient } = await TestClientGenerator.admin({ secretary });
     const { data, errors } = await apolloClient.query({ query: GET_NOTIFICATIONS });
