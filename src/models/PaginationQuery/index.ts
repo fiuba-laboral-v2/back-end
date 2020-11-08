@@ -51,7 +51,7 @@ export const PaginationQuery = {
       }),
       order: order || [
         [timestampKey, "DESC"],
-        ["uuid", "DESC"]
+        [uuidKey, "DESC"]
       ],
       limit
     });
