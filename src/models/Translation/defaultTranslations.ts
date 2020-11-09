@@ -385,5 +385,6 @@ export const defaultTranslations = {
   ],
   createOfferAcceptanceCriteria: [
     { key: "text", value: "Esta oferta estará pendiente de aprobación por personal de FIUBA" }
-  ]
+  ],
+  multipleSearchSelector: [{ key: "helperText", value: "Presionar Enter para agregar" }]
 };
