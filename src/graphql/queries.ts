@@ -10,8 +10,9 @@ import { capabilityQueries } from "./Capability";
 import { adminTaskQueries } from "./AdminTask/Queries";
 import { adminQueries } from "./Admin";
 import { secretarySettingsQueries } from "./SecretarySettings";
+import { notificationQueries } from "./Notification";
 
-const queries = () =>
+export const queries = () =>
   merge(
     translationQueries,
     companyQueries,
@@ -23,7 +24,6 @@ const queries = () =>
     capabilityQueries,
     adminTaskQueries,
     adminQueries,
-    secretarySettingsQueries
+    secretarySettingsQueries,
+    notificationQueries
   );
-
-export default queries;

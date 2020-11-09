@@ -3,7 +3,8 @@ import { Notification } from "$models";
 import generateUuid from "uuid/v4";
 import { UUID_REGEX } from "$test/models";
 import { isUuid } from "$models/SequelizeModelValidators";
-import { MultipleTypeNotificationError } from "$models/Notification/Errors";
+import { MultipleTypeNotificationError, MissingNotificationTypeError } from "$models/Notification";
+import lodash from "lodash";
 
 describe("Notification", () => {
   const mandatoryAttributes = {
@@ -38,7 +39,19 @@ describe("Notification", () => {
     expect(notification.isNew).toBe(true);
   });
 
-  it("it throws an error if it has no type", async () => {
+  it("throws an error if it has no type", async () => {
+    const notification = new Notification({
+      userUuid: generateUuid(),
+      adminUserUuid: generateUuid()
+    });
+    await expect(notification.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      MissingNotificationTypeError.buildMessage()
+    );
+  });
+
+  it("it throws an error if it has more than one type", async () => {
+    jest.spyOn(lodash, "compact").mockImplementation(() => Array(2).fill(generateUuid()));
     const notification = new Notification({
       userUuid: generateUuid(),
       adminUserUuid: generateUuid()

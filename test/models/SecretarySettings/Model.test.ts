@@ -47,7 +47,7 @@ describe("SecretarySettings", () => {
     });
     await expect(secretarySettings.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
-      "Validation error: Validation min on offerDurationInDays failed"
+      "Validation error: El número debe ser mayor a 0"
     );
   });
 
@@ -58,7 +58,7 @@ describe("SecretarySettings", () => {
     });
     await expect(secretarySettings.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
-      "Validation error: Validation isInt on offerDurationInDays failed"
+      "Validation error: El número debe ser entero"
     );
   });
 

@@ -12,6 +12,7 @@ import { userPermissions } from "./User";
 import { adminTaskPermissions } from "./AdminTask";
 import { adminPermissions } from "./Admin";
 import { secretarySettingsPermissions } from "./SecretarySettings";
+import { notificationPermissions } from "./Notification";
 
 const permissions = merge(
   offerPermissions,
@@ -23,9 +24,10 @@ const permissions = merge(
   userPermissions,
   adminTaskPermissions,
   adminPermissions,
-  secretarySettingsPermissions
+  secretarySettingsPermissions,
+  notificationPermissions
 );
 
 export const permissionShield = shield(permissions, {
-  debug: Environment.NODE_ENV !== "production"
+  debug: Environment.NODE_ENV !== Environment.PRODUCTION
 });
