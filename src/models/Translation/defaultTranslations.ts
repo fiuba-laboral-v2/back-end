@@ -101,7 +101,7 @@ export const defaultTranslations = {
     { key: "sectionContent", value: "Contenido" }
   ],
   recipientsFormSection: [
-    { key: "careers", value: "Carreras (presione Enter para agregar)" },
+    { key: "careers", value: "Carreras" },
     { key: "title", value: "Destinatarios" },
     { key: "targetApplicantType", value: "Estado de la carrera" }
   ],
@@ -171,7 +171,7 @@ export const defaultTranslations = {
   ],
   skillsAndLanguagesFormSection: [
     { key: "capabilities", value: "Aptitudes e Idiomas" },
-    { key: "capability", value: "Aptitud (presione Enter para agregar)" }
+    { key: "capability", value: "Aptitud" }
   ],
   linksFormSection: [
     { key: "links", value: "Links" },
@@ -387,6 +387,7 @@ export const defaultTranslations = {
   createOfferAcceptanceCriteria: [
     { key: "text", value: "Esta oferta estará pendiente de aprobación por personal de FIUBA" }
   ],
+  multipleSearchSelector: [{ key: "helperText", value: "Presionar Enter para agregar" }],
   companyJobApplicationNotification: [{ key: "companyTitle", value: "Nueva postulación" }],
   applicantJobApplicationNotification: [
     { key: "pendingApplicantTitle", value: "Postulación pendiente de aprobación" },
