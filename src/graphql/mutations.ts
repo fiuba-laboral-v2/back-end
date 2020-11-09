@@ -6,6 +6,7 @@ import { emailMutations } from "./Email";
 import { jobApplicationMutations } from "./JobApplication";
 import { careerMutations } from "./Career";
 import { userMutations } from "./User";
+import { secretarySettingsMutations } from "./SecretarySettings";
 
 const mutations = () =>
   merge(
@@ -15,7 +16,8 @@ const mutations = () =>
     userMutations,
     offerMutations,
     emailMutations,
-    jobApplicationMutations
+    jobApplicationMutations,
+    secretarySettingsMutations
   );
 
 export default mutations;

@@ -9,6 +9,7 @@ import { capabilityTypes } from "./Capability";
 import { translationTypes } from "./Translation";
 import { approvalStatusTypes } from "./ApprovalStatus";
 import { adminTaskTypes } from "./AdminTask/Types";
+import { secretarySettingsTypes } from "./SecretarySettings/Types";
 
 const types = [
   ...adminTypes,
@@ -21,7 +22,8 @@ const types = [
   ...jobApplicationTypes,
   ...translationTypes,
   ...approvalStatusTypes,
-  ...adminTaskTypes
+  ...adminTaskTypes,
+  ...secretarySettingsTypes
 ];
 
 export default types;
