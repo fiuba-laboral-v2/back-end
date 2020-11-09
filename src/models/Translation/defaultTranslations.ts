@@ -389,7 +389,7 @@ export const defaultTranslations = {
   ],
   companyJobApplicationNotification: [{ key: "companyTitle", value: "Nueva postulación" }],
   applicantJobApplicationNotification: [
-    { key: "pendingApplicantTitle", value: "Postulación pendiente de atención" },
+    { key: "pendingApplicantTitle", value: "Postulación pendiente de aprobación" },
     { key: "approvedApplicantTitle", value: "Postulación aprobada" },
     { key: "rejectedApplicantTitle", value: "Postulación rechazada" }
   ]
