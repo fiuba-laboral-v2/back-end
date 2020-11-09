@@ -386,5 +386,11 @@ export const defaultTranslations = {
   ],
   createOfferAcceptanceCriteria: [
     { key: "text", value: "Esta oferta estará pendiente de aprobación por personal de FIUBA" }
+  ],
+  jobApplicationNotification: [
+    { key: "companyTitle", value: "Nueva postulación" },
+    { key: "pendingApplicantTitle", value: "Postulación pendiente de atención" },
+    { key: "approvedApplicantTitle", value: "Postulación aprobada" },
+    { key: "rejectedApplicantTitle", value: "Postulación rechazada" }
   ]
 };
