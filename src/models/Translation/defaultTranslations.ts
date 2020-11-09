@@ -223,6 +223,7 @@ export const defaultTranslations = {
     { key: "logOut", value: "Cerrar sesión" },
     { key: "myProfile", value: "Mi perfil" },
     { key: "myCompanyProfile", value: "Mi empresa" },
+    { key: "notifications", value: "Notificaciones" },
     { key: "myOffers", value: "Mis Ofertas" },
     { key: "pendingProfile", value: "Su perfil esta pendiente de aprobación" },
     { key: "rejectedProfile", value: "Su perfil ha sido rechazado" }
@@ -385,5 +386,11 @@ export const defaultTranslations = {
   ],
   createOfferAcceptanceCriteria: [
     { key: "text", value: "Esta oferta estará pendiente de aprobación por personal de FIUBA" }
+  ],
+  companyJobApplicationNotification: [{ key: "companyTitle", value: "Nueva postulación" }],
+  applicantJobApplicationNotification: [
+    { key: "pendingApplicantTitle", value: "Postulación pendiente de aprobación" },
+    { key: "approvedApplicantTitle", value: "Postulación aprobada" },
+    { key: "rejectedApplicantTitle", value: "Postulación rechazada" }
   ]
 };
