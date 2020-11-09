@@ -11,7 +11,7 @@ describe("SecretarySettings", () => {
     };
     const secretarySettings = new SecretarySettings(secretarySettingsAttributes);
     await expect(secretarySettings.validate()).resolves.not.toThrow();
-    expect(secretarySettings).toEqual(expect.objectContaining(secretarySettingsAttributes));
+    expect(secretarySettings).toBeObjectContaining(secretarySettingsAttributes);
   });
 
   it("creates a valid secretarySettings for the secretary of graduados", async () => {
@@ -21,7 +21,7 @@ describe("SecretarySettings", () => {
     };
     const secretarySettings = new SecretarySettings(secretarySettingsAttributes);
     await expect(secretarySettings.validate()).resolves.not.toThrow();
-    expect(secretarySettings).toEqual(expect.objectContaining(secretarySettingsAttributes));
+    expect(secretarySettings).toBeObjectContaining(secretarySettingsAttributes);
   });
 
   it("throws an error if no secretary is provided", async () => {
