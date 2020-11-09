@@ -2,8 +2,6 @@ import { QueryInterface, INTEGER } from "sequelize";
 
 const TABLE_NAME = "SecretarySettings";
 
-const OFFER_DURATION_IN_DAYS_DEFAULT_VALUE = 15;
-
 export = {
   up: (queryInterface: QueryInterface) =>
     queryInterface.createTable(TABLE_NAME, {
@@ -14,7 +12,6 @@ export = {
       },
       offerDurationInDays: {
         allowNull: false,
-        defaultValue: OFFER_DURATION_IN_DAYS_DEFAULT_VALUE,
         type: INTEGER
       }
     }),
