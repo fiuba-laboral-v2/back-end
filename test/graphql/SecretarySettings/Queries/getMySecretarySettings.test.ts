@@ -41,7 +41,7 @@ describe("getMySecretarySettings", () => {
     }));
   });
 
-  it("returns the settings for graduados when the admin is from that secretary", async () => {
+  it("returns the settings for graduados when the current user is an admin from that secretary", async () => {
     const { data, errors } = await graduadosApolloClient.query({
       query: GET_MY_SECRETARY_SETTINGS
     });
@@ -56,7 +56,7 @@ describe("getMySecretarySettings", () => {
     });
   });
 
-  it("returns the settings for extension when the admin is from that secretary", async () => {
+  it("returns the settings for extension when the current user is an admin from that secretary", async () => {
     const { data, errors } = await extensionApolloClient.query({
       query: GET_MY_SECRETARY_SETTINGS
     });

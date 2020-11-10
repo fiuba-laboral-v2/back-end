@@ -41,8 +41,8 @@ describe("updateMySecretarySettings", () => {
     }));
   });
 
-  describe("when the user using the endpoint is an admin from graduados", () => {
-    it("updates all the values of the secretary settings of graduados", async () => {
+  describe("when the current user is an admin from graduados", () => {
+    it("updates the secretary settings of graduados", async () => {
       const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
         Secretary.graduados
       );
@@ -62,10 +62,28 @@ describe("updateMySecretarySettings", () => {
       });
       expect(offerDurationInDays).toEqual(15);
     });
+
+    it("doesn't update the secretary settings of extension", async () => {
+      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
+        Secretary.extension
+      );
+
+      const { errors } = await graduadosApolloClient.mutate({
+        mutation: UPDATE_MY_SECRETARY_SETTINGS,
+        variables: { offerDurationInDays: 2 }
+      });
+
+      const {
+        offerDurationInDays: updatedOfferDuration
+      } = await SecretarySettingsRepository.findBySecretary(Secretary.extension);
+
+      expect(errors).toBeUndefined();
+      expect(offerDurationInDays).toEqual(updatedOfferDuration);
+    });
   });
 
-  describe("when the user using the endpoint is an admin from extension", () => {
-    it("updates all the values of the secretary settings of extension", async () => {
+  describe("when the current user is an admin from extension", () => {
+    it("updates the secretary settings of extension", async () => {
       const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
         Secretary.extension
       );
@@ -84,6 +102,24 @@ describe("updateMySecretarySettings", () => {
         offerDurationInDays: updatedOfferDuration
       });
       expect(offerDurationInDays).toEqual(15);
+    });
+
+    it("doesn't update the secretary settings of graduados", async () => {
+      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
+        Secretary.graduados
+      );
+
+      const { errors } = await extensionApolloClient.mutate({
+        mutation: UPDATE_MY_SECRETARY_SETTINGS,
+        variables: { offerDurationInDays: 4 }
+      });
+
+      const {
+        offerDurationInDays: updatedOfferDuration
+      } = await SecretarySettingsRepository.findBySecretary(Secretary.graduados);
+
+      expect(errors).toBeUndefined();
+      expect(offerDurationInDays).toEqual(updatedOfferDuration);
     });
   });
 
