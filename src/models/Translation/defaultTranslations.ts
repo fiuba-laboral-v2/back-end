@@ -392,6 +392,7 @@ export const defaultTranslations = {
     { key: "text", value: "Esta oferta estará pendiente de aprobación por personal de FIUBA" }
   ],
   multipleSearchSelector: [{ key: "helperText", value: "Presionar Enter para agregar" }],
+  notifications: [{ key: "title", value: "Notificaciones" }],
   companyJobApplicationNotification: [{ key: "companyTitle", value: "Nueva postulación" }],
   applicantJobApplicationNotification: [
     { key: "pendingApplicantTitle", value: "Postulación pendiente de aprobación" },
