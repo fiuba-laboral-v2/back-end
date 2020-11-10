@@ -12,6 +12,8 @@ import { Secretary } from "$models/Admin";
 import MockDate from "mockdate";
 import { range, uniq } from "lodash";
 import { OfferRepository } from "$models/Offer";
+import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
+import { SecretarySettingsGenerator } from "$test/generators/SecretarySettings";
 
 describe("AdminTaskRepository", () => {
   let setup: AdminTaskTestSetup;
@@ -21,6 +23,8 @@ describe("AdminTaskRepository", () => {
     await CompanyRepository.truncate();
     await OfferRepository.truncate();
     await CareerRepository.truncate();
+    await SecretarySettingsRepository.truncate();
+    await SecretarySettingsGenerator.createDefaultSettings();
     setup = new AdminTaskTestSetup({ graphqlSetup: false });
     await setup.execute();
   });

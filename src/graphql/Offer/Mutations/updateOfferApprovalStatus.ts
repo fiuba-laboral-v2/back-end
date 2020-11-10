@@ -5,6 +5,7 @@ import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLAppr
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AdminRepository } from "$models/Admin";
 import { IApolloServerContext } from "$graphql/Context";
+import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
 
 export const updateOfferApprovalStatus = {
   type: GraphQLOffer,
@@ -25,10 +26,14 @@ export const updateOfferApprovalStatus = {
     const admin = await AdminRepository.findByUserUuid(currentUser.getAdmin().adminUserUuid);
     const canModerateOffer = await currentUser.getPermissions().canModerateOffer(offer);
     if (!canModerateOffer) throw new AdminCannotModerateOfferError(admin, offer);
+    const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
+      admin.secretary
+    );
 
     return OfferRepository.updateApprovalStatus({
       uuid,
       admin,
+      offerDurationInDays,
       status: approvalStatus
     });
   }

@@ -17,8 +17,6 @@ import { Offer, OfferCareer } from "$models";
 import { OfferNotFoundError, OfferNotUpdatedError } from "./Errors";
 import moment from "moment";
 
-export const SECRETARY_EXPIRATION_DAYS_SETTING = 15;
-
 export const OfferRepository = {
   create: ({ careers, sections, ...attributes }: ICreateOffer) =>
     Database.transaction(async transaction => {
@@ -37,9 +35,11 @@ export const OfferRepository = {
   updateApprovalStatus: async ({
     uuid,
     admin,
+    offerDurationInDays,
     status
   }: {
     uuid: string;
+    offerDurationInDays: number;
     admin: {
       secretary: Secretary;
       userUuid: string;
@@ -51,7 +51,7 @@ export const OfferRepository = {
       const isApproved = chooseStatus => chooseStatus === ApprovalStatus.approved;
       const isRejected = chooseStatus => chooseStatus === ApprovalStatus.rejected;
 
-      const expirationDate = moment().endOf("day").add(SECRETARY_EXPIRATION_DAYS_SETTING, "days");
+      const expirationDate = moment().endOf("day").add(offerDurationInDays, "days");
 
       const offerAttributes = {
         ...(!isExtension(admin.secretary) && {

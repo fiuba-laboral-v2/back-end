@@ -9,6 +9,7 @@ import { userQueries } from "./User";
 import { capabilityQueries } from "./Capability";
 import { adminTaskQueries } from "./AdminTask/Queries";
 import { adminQueries } from "./Admin";
+import { secretarySettingsQueries } from "./SecretarySettings";
 import { notificationQueries } from "./Notification";
 
 export const queries = () =>
@@ -23,5 +24,6 @@ export const queries = () =>
     capabilityQueries,
     adminTaskQueries,
     adminQueries,
+    secretarySettingsQueries,
     notificationQueries
   );

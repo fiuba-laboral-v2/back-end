@@ -7,6 +7,7 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Applicant";
 import { OfferRepository } from "$models/Offer";
 import { Secretary } from "$models/Admin";
+import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
 
 export class OfferTestSetup {
   public approvedForStudents: Offer;
@@ -48,9 +49,13 @@ export class OfferTestSetup {
       status: ApprovalStatus.rejected,
       targetApplicantType: ApplicantType.both
     });
+    const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
+      this.admins.extension.secretary
+    );
     this.rejectedForBoth = await OfferRepository.updateApprovalStatus({
       uuid: this.rejectedForBoth.uuid,
       admin: this.admins.extension,
+      offerDurationInDays,
       status: ApprovalStatus.rejected
     });
 
@@ -78,6 +83,7 @@ export class OfferTestSetup {
     this.approvedForBoth = await OfferRepository.updateApprovalStatus({
       uuid: this.approvedForBoth.uuid,
       admin: this.admins.extension,
+      offerDurationInDays,
       status: ApprovalStatus.approved
     });
 
@@ -105,6 +111,7 @@ export class OfferTestSetup {
     this.pendingForBoth = await OfferRepository.updateApprovalStatus({
       uuid: this.pendingForBoth.uuid,
       admin: this.admins.extension,
+      offerDurationInDays,
       status: ApprovalStatus.pending
     });
 
