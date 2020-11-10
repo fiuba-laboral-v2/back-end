@@ -18,8 +18,8 @@ import { IForAllTargets, OfferGenerator } from "$test/generators/Offer";
 
 import generateUuid from "uuid/v4";
 import { ApplicantType } from "$models/Applicant";
-import { SECRETARY_EXPIRATION_DAYS_SETTING } from "$src/models/Offer/Repository";
 import moment from "moment";
+import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
 
 const UPDATE_OFFER_APPROVAL_STATUS = gql`
   mutation($uuid: ID!, $approvalStatus: ApprovalStatus!) {
@@ -74,10 +74,12 @@ describe("updateOfferApprovalStatus", () => {
       [Secretary.extension]: "studentsExpirationDateTime"
     }[secretary];
 
+    const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(secretary);
+
     const expirationDate = {
       [ApprovalStatus.approved]: moment()
         .endOf("day")
-        .add(SECRETARY_EXPIRATION_DAYS_SETTING, "days")
+        .add(offerDurationInDays, "days")
         .toISOString(),
       [ApprovalStatus.rejected]: moment().startOf("day").toISOString(),
       [ApprovalStatus.pending]: null

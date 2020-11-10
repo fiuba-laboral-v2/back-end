@@ -7,6 +7,7 @@ import { Admin, Offer } from "$models";
 import { IOfferCareer } from "$models/Offer/OfferCareer";
 import { IOfferSection } from "$models/Offer/OfferSection";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
 
 export interface IOfferInput {
   companyUuid: string;
@@ -57,7 +58,10 @@ export const OfferGenerator = {
       const { uuid } = await OfferRepository.create(
         withOneSection({ index: OfferGenerator.getIndex(), ...variables })
       );
-      return OfferRepository.updateApprovalStatus({ uuid, admin, status });
+      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
+        admin.secretary
+      );
+      return OfferRepository.updateApprovalStatus({ uuid, admin, status, offerDurationInDays });
     },
     forStudents: async ({ status, ...variables }: IOfferInput & { status?: ApprovalStatus }) => {
       const admin = await AdminGenerator.extension();
@@ -89,9 +93,14 @@ export const OfferGenerator = {
         targetApplicantType: ApplicantType.both,
         ...variables
       });
+
+      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
+        graduadosAdmin.secretary
+      );
       return OfferRepository.updateApprovalStatus({
         uuid,
         admin: graduadosAdmin,
+        offerDurationInDays,
         status: status || ApprovalStatus.approved
       });
     },

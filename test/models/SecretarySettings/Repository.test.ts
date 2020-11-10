@@ -55,7 +55,7 @@ describe("SecretarySettingsRepository", () => {
       SecretarySettingsRepository.findBySecretary(secretary)
     ).rejects.toThrowErrorWithMessage(
       SecretarySettingsNotFoundError,
-      "The SecretarySettings for the secretary of graduados don't exists. Please check if the table was populated using the seeders"
+      "The SecretarySettings for the secretary of graduados don't exist. Please check if the table was populated using the seeders"
     );
   });
 

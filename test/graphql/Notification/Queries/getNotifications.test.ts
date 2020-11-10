@@ -20,6 +20,8 @@ import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import { range } from "lodash";
 import MockDate from "mockdate";
 import { JobApplicationGenerator } from "$generators/JobApplication";
+import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
+import { SecretarySettingsGenerator } from "$test/generators/SecretarySettings";
 
 const GET_NOTIFICATIONS = gql`
   query GetNotifications($updatedBeforeThan: PaginatedInput) {
@@ -49,8 +51,10 @@ describe("getNotifications", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
+    await SecretarySettingsRepository.truncate();
 
     admin = await AdminGenerator.graduados();
+    await SecretarySettingsGenerator.createDefaultSettings();
   });
 
   const createCompanyTestClient = (approvalStatus: ApprovalStatus) =>

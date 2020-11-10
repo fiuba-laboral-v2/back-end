@@ -19,8 +19,9 @@ import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import MockDate from "mockdate";
 import moment from "moment";
 
-import { SECRETARY_EXPIRATION_DAYS_SETTING } from "$src/models/Offer/Repository";
 import { Secretary } from "$src/models/Admin";
+import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
+import { SecretarySettingsGenerator } from "$test/generators/SecretarySettings";
 
 describe("OfferRepository", () => {
   let graduadosAdmin: Admin;
@@ -34,11 +35,13 @@ describe("OfferRepository", () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     await OfferRepository.truncate();
+    await SecretarySettingsRepository.truncate();
     graduadosAdmin = await AdminGenerator.graduados();
     extensionAdmin = await AdminGenerator.extension();
     firstCareer = await CareerGenerator.instance();
     secondCareer = await CareerGenerator.instance();
     thirdCareer = await CareerGenerator.instance();
+    await SecretarySettingsGenerator.createDefaultSettings();
   });
 
   const sectionData = {
@@ -321,14 +324,22 @@ describe("OfferRepository", () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const attributes = OfferGenerator.data.withObligatoryData({ companyUuid });
       const offer = await OfferRepository.create(attributes);
+      const {
+        offerDurationInDays: extensionOfferDurationInDays
+      } = await SecretarySettingsRepository.findBySecretary(graduadosAdmin.secretary);
+      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
+        graduadosAdmin.secretary
+      );
       await OfferRepository.updateApprovalStatus({
         uuid: offer.uuid,
         admin: extensionAdmin,
+        offerDurationInDays: extensionOfferDurationInDays,
         status: ApprovalStatus.approved
       });
       await OfferRepository.updateApprovalStatus({
         uuid: offer.uuid,
         admin: graduadosAdmin,
+        offerDurationInDays,
         status: ApprovalStatus.approved
       });
       offer.set({
@@ -354,9 +365,10 @@ describe("OfferRepository", () => {
     const expectExpirationDateToBeSet = (
       offerBeforeUpdate,
       offerAfterUpdate,
+      offerDurationInDays,
       expirationAttribute
     ) => {
-      const expirationDate = moment().endOf("day").add(SECRETARY_EXPIRATION_DAYS_SETTING, "days");
+      const expirationDate = moment().endOf("day").add(offerDurationInDays, "days");
 
       expect(offerBeforeUpdate[expirationAttribute]).toBeNull();
       expect(expirationDate.toISOString()).toEqual(
@@ -380,9 +392,13 @@ describe("OfferRepository", () => {
         companyUuid
       });
       const newStatus = ApprovalStatus.approved;
+      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
+        graduadosAdmin.secretary
+      );
       await OfferRepository.updateApprovalStatus({
         uuid: offerBeforeUpdate.uuid,
         admin: graduadosAdmin,
+        offerDurationInDays,
         status: newStatus
       });
       const offerAfterUpdate = await OfferRepository.findByUuid(offerBeforeUpdate.uuid);
@@ -391,6 +407,7 @@ describe("OfferRepository", () => {
       expectExpirationDateToBeSet(
         offerBeforeUpdate,
         offerAfterUpdate,
+        offerDurationInDays,
         "graduatesExpirationDateTime"
       );
       expectExpirationDateToBeNull(
@@ -407,9 +424,13 @@ describe("OfferRepository", () => {
         companyUuid
       });
       const newStatus = ApprovalStatus.approved;
+      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
+        graduadosAdmin.secretary
+      );
       await OfferRepository.updateApprovalStatus({
         uuid: offerBeforeUpdate.uuid,
         admin: graduadosAdmin,
+        offerDurationInDays,
         status: newStatus
       });
       const offerAfterUpdate = await OfferRepository.findByUuid(offerBeforeUpdate.uuid);
@@ -418,6 +439,7 @@ describe("OfferRepository", () => {
       expectExpirationDateToBeSet(
         offerBeforeUpdate,
         offerAfterUpdate,
+        offerDurationInDays,
         "graduatesExpirationDateTime"
       );
       expectExpirationDateToBeNull(
@@ -434,9 +456,13 @@ describe("OfferRepository", () => {
         companyUuid
       });
       const newStatus = ApprovalStatus.approved;
+      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
+        extensionAdmin.secretary
+      );
       await OfferRepository.updateApprovalStatus({
         uuid: offerBeforeUpdate.uuid,
         admin: extensionAdmin,
+        offerDurationInDays,
         status: newStatus
       });
       const offerAfterUpdate = await OfferRepository.findByUuid(offerBeforeUpdate.uuid);
@@ -445,6 +471,7 @@ describe("OfferRepository", () => {
       expectExpirationDateToBeSet(
         offerBeforeUpdate,
         offerAfterUpdate,
+        offerDurationInDays,
         "studentsExpirationDateTime"
       );
       expectExpirationDateToBeNull(
@@ -461,9 +488,13 @@ describe("OfferRepository", () => {
         companyUuid
       });
       const newStatus = ApprovalStatus.approved;
+      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
+        extensionAdmin.secretary
+      );
       await OfferRepository.updateApprovalStatus({
         uuid: offerBeforeUpdate.uuid,
         admin: extensionAdmin,
+        offerDurationInDays,
         status: newStatus
       });
       const offerAfterUpdate = await OfferRepository.findByUuid(offerBeforeUpdate.uuid);
@@ -471,6 +502,7 @@ describe("OfferRepository", () => {
       expectExpirationDateToBeSet(
         offerBeforeUpdate,
         offerAfterUpdate,
+        offerDurationInDays,
         "studentsExpirationDateTime"
       );
       expectExpirationDateToBeNull(
@@ -484,9 +516,13 @@ describe("OfferRepository", () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const { uuid } = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
       const newStatus = ApprovalStatus.approved;
+      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
+        extensionAdmin.secretary
+      );
       const params = {
         uuid,
         admin: extensionAdmin,
+        offerDurationInDays,
         status: newStatus
       };
       await OfferRepository.updateApprovalStatus(params);
@@ -498,9 +534,13 @@ describe("OfferRepository", () => {
     it("throws an error if the offer does not exist", async () => {
       const unknownOfferUuid = "1dd69a27-0f6c-4859-be9e-4de5adf22826";
       const newStatus = ApprovalStatus.approved;
+      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
+        graduadosAdmin.secretary
+      );
       const params = {
         uuid: unknownOfferUuid,
         admin: graduadosAdmin,
+        offerDurationInDays,
         status: newStatus
       };
 
@@ -513,9 +553,13 @@ describe("OfferRepository", () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const { uuid } = await OfferGenerator.instance.forStudents({ companyUuid });
       const newStatus = "pepito" as ApprovalStatus;
+      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
+        extensionAdmin.secretary
+      );
       const params = {
         uuid,
         admin: extensionAdmin,
+        offerDurationInDays,
         status: newStatus
       };
 
@@ -591,9 +635,13 @@ describe("OfferRepository", () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const { uuid } = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
       const newStatus = ApprovalStatus.approved;
+      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
+        extensionAdmin.secretary
+      );
       const params = {
         uuid,
         admin: extensionAdmin,
+        offerDurationInDays,
         status: newStatus
       };
       await OfferRepository.updateApprovalStatus(params);
@@ -605,9 +653,13 @@ describe("OfferRepository", () => {
     it("throws an error if the offer does not exist", async () => {
       const unknownOfferUuid = "1dd69a27-0f6c-4859-be9e-4de5adf22826";
       const newStatus = ApprovalStatus.approved;
+      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
+        graduadosAdmin.secretary
+      );
       const params = {
         uuid: unknownOfferUuid,
         admin: graduadosAdmin,
+        offerDurationInDays,
         status: newStatus
       };
 
@@ -620,9 +672,13 @@ describe("OfferRepository", () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const { uuid } = await OfferGenerator.instance.forStudents({ companyUuid });
       const newStatus = "pepito" as ApprovalStatus;
+      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
+        extensionAdmin.secretary
+      );
       const params = {
         uuid,
         admin: extensionAdmin,
+        offerDurationInDays,
         status: newStatus
       };
 

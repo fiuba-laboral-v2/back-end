@@ -19,6 +19,7 @@ import { range } from "lodash";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import { IOfferCareer } from "$models/Offer/OfferCareer";
 import moment from "moment";
+import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
 
 const GET_APPROVED_OFFERS = gql`
   query($updatedBeforeThan: PaginatedInput, $careerCodes: [ID!]) {
@@ -103,10 +104,15 @@ describe("getApprovedOffers", () => {
       Secretary.graduados,
       ApplicantType.both
     );
+    const adminExtension = await AdminGenerator.extension();
+    const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
+      adminExtension.secretary
+    );
     offerForBothAndApprovedByGraduadosAndExtension = await OfferRepository.updateApprovalStatus({
       uuid: offerForBothAndApprovedByGraduadosAndExtension.uuid,
       status: ApprovalStatus.approved,
-      admin: await AdminGenerator.extension()
+      offerDurationInDays,
+      admin: adminExtension
     });
     await createOfferWith(ApprovalStatus.rejected, Secretary.graduados, ApplicantType.both);
     const { uuid } = await createOfferWith(

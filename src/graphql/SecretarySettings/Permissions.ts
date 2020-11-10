@@ -5,6 +5,7 @@ export const secretarySettingsPermissions = {
     updateMySecretarySettings: isAdmin
   },
   Query: {
-    getMySecretarySettings: isAdmin
+    getMySecretarySettings: isAdmin,
+    getSecretaryOfferDuration: isFromApprovedCompany
   }
 };
