@@ -9,10 +9,7 @@ const getMySecretarySettings = {
   resolve: async (_: undefined, __: undefined, { currentUser }: IApolloServerContext) => {
     const adminUserUuid = currentUser.getAdmin().adminUserUuid;
     const admin = await AdminRepository.findByUserUuid(adminUserUuid);
-    const { secretary, offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
-      admin.secretary
-    );
-    return { secretary, offerDurationInDays };
+    return SecretarySettingsRepository.findBySecretary(admin.secretary);
   }
 };
 
