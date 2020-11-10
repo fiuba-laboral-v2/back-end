@@ -2,7 +2,6 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "$src/*": ["src/*"],
       "$models/*": ["src/models/*"],
       "$models": ["src/models"],
       "$graphql/*": ["src/graphql/*"],
@@ -16,7 +15,8 @@
       "$test/*": ["test/*"],
       "$generators/*": ["test/generators/*"],
       "$setup/*": ["test/setup/*"],
-      "$mocks/*": ["test/mocks/*"]
+      "$mocks/*": ["test/mocks/*"],
+      "$src/*": ["src/*"]
     },
     "outDir": "./dist",
     "resolveJsonModule": true,
