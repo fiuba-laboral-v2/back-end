@@ -19,6 +19,10 @@ export const defaultTranslations = {
     { key: "text", value: "No hay ofertas" },
     { key: "button", value: "Publicar oferta" }
   ],
+  companyEmptyNotificationList: [
+    { key: "text", value: "No hay notificaciones" },
+    { key: "button", value: "Ver postulaciones" }
+  ],
   offerCreationInfoMessage: [
     {
       key: "message",
