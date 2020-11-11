@@ -398,5 +398,6 @@ export const defaultTranslations = {
     { key: "pendingApplicantTitle", value: "Postulación pendiente de aprobación" },
     { key: "approvedApplicantTitle", value: "Postulación aprobada" },
     { key: "rejectedApplicantTitle", value: "Postulación rechazada" }
-  ]
+  ],
+  isNewLabel: [{ key: "isNew", value: "Nueva" }]
 };
