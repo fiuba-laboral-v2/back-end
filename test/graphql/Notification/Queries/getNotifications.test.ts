@@ -20,8 +20,6 @@ import { NotificationGenerator } from "$generators/Notification";
 import { AdminGenerator } from "$generators/Admin";
 
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
-import { range } from "lodash";
-import MockDate from "mockdate";
 import { JobApplicationGenerator } from "$generators/JobApplication";
 import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
 import { SecretarySettingsGenerator } from "$test/generators/SecretarySettings";
@@ -35,6 +33,7 @@ const GET_NOTIFICATIONS = gql`
           uuid
           adminEmail
           message
+          isNew
           createdAt
           jobApplication {
             __typename
@@ -95,6 +94,7 @@ describe("getNotifications", () => {
           __typename: GraphQLJobApplication.name,
           uuid: notification.jobApplicationUuid
         },
+        isNew: true,
         message: null,
         createdAt: notification.createdAt.toISOString()
       }
@@ -102,17 +102,36 @@ describe("getNotifications", () => {
     expect(shouldFetchMore).toBe(false);
   });
 
+  it("returns all notifications with a persisted isNew set to false", async () => {
+    const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
+    const size = 10;
+    const notifications = await NotificationGenerator.instance.JobApplication.list({
+      company,
+      size
+    });
+
+    const { data, errors } = await getNotifications(apolloClient);
+    expect(errors).toBeUndefined();
+
+    const uuids = notifications.map(({ uuid }) => uuid);
+    const persistedNotifications = await NotificationRepository.findByUuids(uuids);
+
+    const { results, shouldFetchMore } = data!.getNotifications;
+    expect(results.map(result => result.isNew)).toEqual(notifications.map(({ isNew }) => isNew));
+
+    expect(persistedNotifications.map(result => result.isNew)).toEqual(Array(size).fill(false));
+    expect(results).toHaveLength(size);
+    expect(shouldFetchMore).toBe(false);
+  });
+
   it("returns the next three notifications for a companyUser", async () => {
     const itemsPerPage = 3;
     mockItemsPerPage(itemsPerPage);
     const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
-    let notifications: Notification[] = [];
-    for (const milliseconds of range(20)) {
-      MockDate.set(milliseconds);
-      notifications.push(await NotificationGenerator.instance.JobApplication.approved(company));
-      MockDate.reset();
-    }
-    notifications = notifications.sort(({ createdAt }) => -createdAt);
+    const notifications = await NotificationGenerator.instance.JobApplication.list({
+      company,
+      size: 20
+    });
 
     const halfNotificationIndex = 10;
     const { data, errors } = await getNotifications(apolloClient, {
@@ -163,6 +182,7 @@ describe("getNotifications", () => {
           __typename: GraphQLJobApplication.name,
           uuid: notification.jobApplicationUuid
         },
+        isNew: true,
         message: null,
         createdAt: notification.createdAt.toISOString()
       }

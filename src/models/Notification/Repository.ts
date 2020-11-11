@@ -18,6 +18,7 @@ export const NotificationRepository = {
         ["uuid", "DESC"]
       ]
     }),
+  findByUuids: (uuids: string[]) => Notification.findAll({ where: { uuid: uuids } }),
   findAll: () => Notification.findAll(),
   truncate: () => Notification.destroy({ truncate: true })
 };

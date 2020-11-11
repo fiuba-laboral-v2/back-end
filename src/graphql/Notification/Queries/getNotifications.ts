@@ -6,6 +6,7 @@ import {
   IPaginatedInput
 } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { IApolloServerContext } from "$graphql/Context";
+import { Notification } from "$models";
 
 export const getNotifications = {
   type: GraphQLPaginatedResults(GraphQLNotification),
@@ -24,8 +25,10 @@ export const getNotifications = {
       userUuid: currentUser.uuid
     });
     for (const notification of notifications.results) {
-      notification.isNew = false;
-      await NotificationRepository.save(notification);
+      const updatedNotification = new Notification(notification.toJSON());
+      updatedNotification.isNew = false;
+      updatedNotification.isNewRecord = false;
+      await NotificationRepository.save(updatedNotification);
     }
     return notifications;
   }
