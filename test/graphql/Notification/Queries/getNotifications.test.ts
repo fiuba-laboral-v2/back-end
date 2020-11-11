@@ -102,7 +102,7 @@ describe("getNotifications", () => {
     expect(shouldFetchMore).toBe(false);
   });
 
-  it("returns all notifications with a persisted isNew set to false", async () => {
+  it("updates all returned notifications isNew value to false", async () => {
     const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
     const size = 10;
     const notifications = await NotificationGenerator.instance.JobApplication.list({
