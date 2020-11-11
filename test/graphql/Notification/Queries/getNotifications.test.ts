@@ -1,4 +1,6 @@
+import { Promise as SequelizePromise } from "sequelize";
 import { gql } from "apollo-server";
+import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist/createTestClient";
 import { client } from "$test/graphql/ApolloTestClient";
 
 import { MissingNotificationTypeError, NotificationRepository } from "$models/Notification";
@@ -9,6 +11,7 @@ import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Admin, Notification } from "$models";
 
+import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { GraphQLJobApplication } from "$graphql/JobApplication/Types/GraphQLJobApplication";
 
@@ -63,10 +66,23 @@ describe("getNotifications", () => {
   const createApplicantTestClient = (approvalStatus: ApprovalStatus) =>
     TestClientGenerator.applicant({ status: { approvalStatus, admin } });
 
+  const getNotifications = (apolloClient: TestClient, updatedBeforeThan?: IPaginatedInput) => {
+    const variables = {
+      updatedBeforeThan: {
+        ...updatedBeforeThan,
+        dateTime: updatedBeforeThan?.dateTime.toISOString()
+      }
+    };
+    return apolloClient.query({
+      query: GET_NOTIFICATIONS,
+      ...(updatedBeforeThan && { variables })
+    });
+  };
+
   it("returns all notifications for a companyUser", async () => {
     const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
     const notification = await NotificationGenerator.instance.JobApplication.approved(company);
-    const { data, errors } = await apolloClient.query({ query: GET_NOTIFICATIONS });
+    const { data, errors } = await getNotifications(apolloClient);
     expect(errors).toBeUndefined();
     const { results, shouldFetchMore } = data!.getNotifications;
     const adminUser = await UserRepository.findByUuid(notification.adminUserUuid);
@@ -99,14 +115,9 @@ describe("getNotifications", () => {
     notifications = notifications.sort(({ createdAt }) => -createdAt);
 
     const halfNotificationIndex = 10;
-    const { data, errors } = await apolloClient.query({
-      query: GET_NOTIFICATIONS,
-      variables: {
-        updatedBeforeThan: {
-          uuid: notifications[halfNotificationIndex].uuid,
-          dateTime: notifications[halfNotificationIndex].createdAt.toISOString()
-        }
-      }
+    const { data, errors } = await getNotifications(apolloClient, {
+      uuid: notifications[halfNotificationIndex].uuid,
+      dateTime: notifications[halfNotificationIndex].createdAt
     });
     expect(errors).toBeUndefined();
     const { results, shouldFetchMore } = data!.getNotifications;
@@ -122,7 +133,7 @@ describe("getNotifications", () => {
   it("returns all notifications for the currently logged in admin", async () => {
     const secretary = Secretary.extension;
     const { apolloClient } = await TestClientGenerator.admin({ secretary });
-    const { data, errors } = await apolloClient.query({ query: GET_NOTIFICATIONS });
+    const { data, errors } = await getNotifications(apolloClient);
     expect(errors).toBeUndefined();
     const { results, shouldFetchMore } = data!.getNotifications;
     expect(results).toHaveLength(0);
@@ -138,7 +149,7 @@ describe("getNotifications", () => {
       user
     );
 
-    const { data, errors } = await apolloClient.query({ query: GET_NOTIFICATIONS });
+    const { data, errors } = await getNotifications(apolloClient);
     expect(errors).toBeUndefined();
     const { results, shouldFetchMore } = data!.getNotifications;
     const adminUser = await UserRepository.findByUuid(notification.adminUserUuid);
@@ -161,7 +172,7 @@ describe("getNotifications", () => {
 
   it("returns an error if there is no current user", async () => {
     const apolloClient = client.loggedOut();
-    const { errors } = await apolloClient.query({ query: GET_NOTIFICATIONS });
+    const { errors } = await getNotifications(apolloClient);
     expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
   });
 
@@ -173,19 +184,19 @@ describe("getNotifications", () => {
 
   it("returns an error if the current user is from a pending company", async () => {
     const { apolloClient } = await createCompanyTestClient(ApprovalStatus.pending);
-    const { errors } = await apolloClient.query({ query: GET_NOTIFICATIONS });
+    const { errors } = await getNotifications(apolloClient);
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("returns an error if the current user is from a rejected applicant", async () => {
     const { apolloClient } = await createApplicantTestClient(ApprovalStatus.rejected);
-    const { errors } = await apolloClient.query({ query: GET_NOTIFICATIONS });
+    const { errors } = await getNotifications(apolloClient);
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("returns an error if the current user is from a pending applicant", async () => {
     const { apolloClient } = await createApplicantTestClient(ApprovalStatus.pending);
-    const { errors } = await apolloClient.query({ query: GET_NOTIFICATIONS });
+    const { errors } = await getNotifications(apolloClient);
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
@@ -196,7 +207,10 @@ describe("getNotifications", () => {
     jest
       .spyOn(NotificationRepository, "findLatestByUser")
       .mockImplementation(async () => ({ results: [notification], shouldFetchMore: false }));
-    const { errors } = await apolloClient.query({ query: GET_NOTIFICATIONS });
+    jest
+      .spyOn(NotificationRepository, "save")
+      .mockReturnValue((notification as unknown) as SequelizePromise<Notification>);
+    const { errors } = await getNotifications(apolloClient);
     expect(errors).toEqualGraphQLErrorType(MissingNotificationTypeError.name);
   });
 });
