@@ -1,6 +1,6 @@
 import { GraphQLObjectType } from "graphql";
 import { GraphQLDateTime } from "graphql-iso-date";
-import { ID, nonNull, String } from "$graphql/fieldTypes";
+import { ID, nonNull, String, Boolean } from "$graphql/fieldTypes";
 import { GraphQLJobApplication } from "$graphql/JobApplication/Types/GraphQLJobApplication";
 import { Notification } from "$models";
 import { UserRepository } from "$models/User";
@@ -11,6 +11,9 @@ export const GraphQLJobApplicationNotification = new GraphQLObjectType<Notificat
   fields: () => ({
     uuid: {
       type: nonNull(ID)
+    },
+    isNew: {
+      type: nonNull(Boolean)
     },
     message: {
       type: String

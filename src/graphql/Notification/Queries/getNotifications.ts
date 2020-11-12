@@ -18,5 +18,13 @@ export const getNotifications = {
     _: undefined,
     { updatedBeforeThan }: { updatedBeforeThan?: IPaginatedInput },
     { currentUser }: IApolloServerContext
-  ) => NotificationRepository.findLatestByUser({ updatedBeforeThan, userUuid: currentUser.uuid })
+  ) => {
+    const notifications = await NotificationRepository.findLatestByUser({
+      updatedBeforeThan,
+      userUuid: currentUser.uuid
+    });
+    const notificationUuids = notifications.results.map(({ uuid }) => uuid);
+    await NotificationRepository.markAsReadByUuids(notificationUuids);
+    return notifications;
+  }
 };

@@ -4,7 +4,7 @@ import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { CareerRepository } from "$models/Career";
-import { NotificationRepository } from "$models/Notification";
+import { NotificationRepository, NotificationsNotUpdatedError } from "$models/Notification";
 
 import { CompanyGenerator } from "$generators/Company";
 import { JobApplicationGenerator } from "$generators/JobApplication";
@@ -15,6 +15,8 @@ import generateUuid from "uuid/v4";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import { range } from "lodash";
 import MockDate from "mockdate";
+import { SecretarySettingsRepository } from "$models/SecretarySettings";
+import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 
 describe("NotificationRepository", () => {
   let company: Company;
@@ -28,6 +30,8 @@ describe("NotificationRepository", () => {
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await NotificationRepository.truncate();
+    await SecretarySettingsRepository.truncate();
+    await SecretarySettingsGenerator.createDefaultSettings();
 
     company = await CompanyGenerator.instance.withMinimumData();
     companyUsers = await company.getUsers();
@@ -119,6 +123,52 @@ describe("NotificationRepository", () => {
     expect(await NotificationRepository.findAll()).toHaveLength(1);
     await JobApplicationRepository.truncate();
     expect(await NotificationRepository.findAll()).toHaveLength(0);
+  });
+
+  describe("markAsReadByUuids", () => {
+    it("updates isNew to false for all given notification uuids", async () => {
+      const size = 4;
+      const notifications = await NotificationGenerator.instance.JobApplication.list({
+        company,
+        size
+      });
+      const notificationUuids = notifications.map(({ uuid }) => uuid);
+
+      expect(notifications.map(({ isNew }) => isNew)).toEqual(Array(size).fill(true));
+      await NotificationRepository.markAsReadByUuids(notificationUuids);
+      const updatedNotifications = await NotificationRepository.findByUuids(notificationUuids);
+      expect(updatedNotifications.map(({ isNew }) => isNew)).toEqual(Array(size).fill(false));
+    });
+
+    it("throws an error if one of the given uuids does not belong to a persisted notification", async () => {
+      const { uuid } = await NotificationGenerator.instance.JobApplication.approved(company);
+      const nonExistentUuid = generateUuid();
+      await expect(
+        NotificationRepository.markAsReadByUuids([uuid, nonExistentUuid])
+      ).rejects.toThrowErrorWithMessage(
+        NotificationsNotUpdatedError,
+        NotificationsNotUpdatedError.buildMessage()
+      );
+    });
+
+    it("does not update the notifications if it throws an error", async () => {
+      const notification = await NotificationGenerator.instance.JobApplication.approved(company);
+      const nonExistentUuid = generateUuid();
+      const uuids = [notification.uuid, nonExistentUuid];
+      await expect(NotificationRepository.markAsReadByUuids(uuids)).rejects.toThrow(
+        NotificationsNotUpdatedError
+      );
+      const persistedNotification = await NotificationRepository.findByUuid(notification.uuid);
+      expect(persistedNotification).toBeObjectContaining({
+        uuid: notification.uuid,
+        isNew: notification.isNew,
+        message: notification.message,
+        adminUserUuid: notification.adminUserUuid,
+        userUuid: notification.userUuid,
+        jobApplicationUuid: notification.jobApplicationUuid,
+        createdAt: notification.createdAt
+      });
+    });
   });
 
   describe("findAll", () => {
