@@ -22,11 +22,11 @@ export const NotificationRepository = {
     }),
   markAsReadByUuids: async (uuids: string[]) =>
     Database.transaction(async transaction => {
-      const [numberOfUpdatedNotifications] = await Notification.update(
+      const [updatedNotificationCount] = await Notification.update(
         { isNew: false },
         { where: { uuid: uuids }, returning: false, validate: false, transaction }
       );
-      if (numberOfUpdatedNotifications !== uuids.length) throw new NotificationsNotUpdatedError();
+      if (updatedNotificationCount !== uuids.length) throw new NotificationsNotUpdatedError();
     }),
   findByUuids: (uuids: string[]) => Notification.findAll({ where: { uuid: uuids } }),
   findByUuid: (uuid: string) => Notification.findByPk(uuid),
