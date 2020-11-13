@@ -42,5 +42,5 @@ jobs:
         with:
           token: ${{ secrets.REPOSITORY_DISPATCH_TOKEN }}
           repository: fiuba-laboral-v2/deploy
-          event-type: backend-deploy
-          client-payload: '{"stage": "${{ github.ref }}"}'
+          event-type: deploy
+          client-payload: '{"stage": "${{ github.ref }}", "project": "backend"}'
