@@ -8,7 +8,7 @@ jobs:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_travis
     services:
       postgres:
-        image: postgres
+        image: postgres:12.1
         env:
           POSTGRES_PASSWORD: postgres
         options: >-
