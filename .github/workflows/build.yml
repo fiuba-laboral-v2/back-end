@@ -3,8 +3,9 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    env: NODE_ENV:"test_travis"
-      DATABASE_URL:"postgres://postgres:postgres@localhost:5432/test_travis"
+    env:
+      NODE_ENV: test_travis
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_travis
     services:
       postgres:
         image: postgres
