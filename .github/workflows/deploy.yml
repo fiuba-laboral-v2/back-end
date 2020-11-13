@@ -5,7 +5,6 @@ on:
     branches: [staging, feature/github-actions]
     types:
       - completed
-      - requested
 jobs:
   deploy:
     runs-on: ubuntu-latest
