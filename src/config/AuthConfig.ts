@@ -71,8 +71,7 @@ const AuthConfigForAllEnvironments: IAuthenticationVariables = {
     }
   },
   development: localAuthConfig,
-  test: localAuthConfig,
-  test_travis: localAuthConfig
+  test: localAuthConfig
 };
 
 export const AuthConfig: IEnvironment = AuthConfigForAllEnvironments[Environment.NODE_ENV];
@@ -99,5 +98,4 @@ interface IAuthenticationVariables {
   staging: IEnvironment;
   development: IEnvironment;
   test: IEnvironment;
-  test_travis: IEnvironment;
 }

@@ -16,9 +16,6 @@ export const PaginationConfig: IPaginationConfig = {
   },
   test: {
     itemsPerPage: () => TEST_ITEMS_PER_PAGE
-  },
-  test_travis: {
-    itemsPerPage: () => TEST_ITEMS_PER_PAGE
   }
 }[Environment.NODE_ENV];
 

@@ -12,7 +12,6 @@ export const Environment = {
   PRODUCTION: "production",
   STAGING: "staging",
   DEVELOPMENT: "development",
-  TEST_TRAVIS: "test_travis",
   TEST: "test",
   NODE_ENV: process.env[variablesKeys.NODE_ENV] || "development",
   databaseURL: () => process.env[variablesKeys.DATABASE_URL],
@@ -29,7 +28,7 @@ export const Environment = {
     return this.NODE_ENV === this.STAGING;
   },
   isLocal() {
-    return [this.DEVELOPMENT, this.TEST, this.TEST_TRAVIS].includes(this.NODE_ENV);
+    return [this.DEVELOPMENT, this.TEST].includes(this.NODE_ENV);
   },
   validate() {
     if (this.isLocal()) return;

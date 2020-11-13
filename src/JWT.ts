@@ -8,7 +8,7 @@ import { AuthConfig } from "./config/AuthConfig";
 import { Logger } from "./libs/Logger";
 
 let JWT_SECRET: string;
-if (["test", "development", "test_travis"].includes(Environment.NODE_ENV)) {
+if (["test", "development"].includes(Environment.NODE_ENV)) {
   JWT_SECRET = "Environment.JWT_SECRET";
 } else {
   const secret = Environment.JWTSecret();
