@@ -1,0 +1,29 @@
+name: back-end-deploy
+on:
+  workflow_run:
+    workflows: ["back-end-build"]
+    branches: [staging]
+    types:
+      - completed
+      - requested
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      CURRENT_BRANCH: ${GITHUB_REF##*/}
+    strategy:
+      matrix:
+        node-version: [14.15.0]
+    steps:
+      - name: Add ssh key
+        uses: webfactory/ssh-agent@v0.4.1
+        with:
+          ssh-private-key: ${{ secrets.CI_DEPLOY_KEY }}
+      - name: Check out deploy repository code
+        uses: actions/checkout@master
+        with:
+          repository: fiuba-laboral-v2/deploy
+      - name: Install dependencies
+        run: yarn install
+      - name: Run deploy script for $CURRENT_BRANCH environment
+        run: NODE_ENV=$CURRENT_BRANCH yarn deploy:backend
