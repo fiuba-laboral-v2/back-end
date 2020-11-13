@@ -29,13 +29,13 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install dependencies
-        run: echo "yarn install"
+        run: yarn install
       - name: Database setup
-        run: echo "yarn db:drop || true && yarn db:create && yarn db:migrate"
+        run: yarn db:drop || true && yarn db:create && yarn db:migrate
       - name: Run linter and tests
-        run: echo "yarn lint && yarn test"
+        run: yarn lint && yarn test
       - name: Coveralls
-        run: echo "yarn coverage"
+        run: yarn coverage
       - name: Trigger deploy workflow
         if: success() && contains('refs/heads/staging refs/heads/production', github.ref)
         uses: peter-evans/repository-dispatch@v1
