@@ -8,14 +8,15 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      CI_DEPLOY_KEY: ${{ secrets.CI_DEPLOY_KEY }}
       CURRENT_BRANCH: ${GITHUB_REF##*/}
     strategy:
       matrix:
         node-version: [14.15.0]
     steps:
       - name: add ssh key
-        run: eval "$(ssh-agent -s)" && ssh-add <(echo "$CI_DEPLOY_KEY")
+      - uses: webfactory/ssh-agent@v0.4.1
+        with:
+          ssh-private-key: ${{ secrets.CI_DEPLOY_KEY }}
       - name: Check out deploy repository code
         uses: actions/checkout@master
         with:
