@@ -1,10 +1,9 @@
 name: back-end-deploy
 on:
-  workflow_run:
-    workflows: ["back-end-build"]
-    branches: [staging, feature/github-actions]
-    types:
-      - completed
+  push:
+    branches:
+      - staging
+      - feature/github-actions
 jobs:
   deploy:
     runs-on: ubuntu-latest
