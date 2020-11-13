@@ -15,12 +15,12 @@ jobs:
         node-version: [14.15.0]
     steps:
       - name: add ssh key
-        run: eval "$(ssh-agent -s)" && ssh-add $CI_DEPLOY_KEY
+        run: eval "$(ssh-agent -s)" && ssh-add <(echo "$CI_DEPLOY_KEY")
       - name: Check out deploy repository code
         run: git clone https://github.com/fiuba-laboral-v2/deploy.git
       - name: Go to deploy directory
         run: cd deploy
       - name: Install dependencies
         run: yarn install
-      - name: Run deploy script for $CURRENT_BRANCH environment
+      - name: Run deploy script for "$CURRENT_BRANCH" environment
         run: NODE_ENV=staging yarn deploy:backend
