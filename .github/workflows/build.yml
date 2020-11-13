@@ -36,3 +36,11 @@ jobs:
         run: yarn lint && yarn test
       - name: Coveralls
         run: yarn coverage
+      - name: Trigger deploy workflow
+        if: success() && contains('refs/heads/staging refs/heads/production', github.ref)
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.REPOSITORY_DISPATCH_TOKEN }}
+          repository: fiuba-laboral-v2/deploy
+          event-type: backend-deploy
+          client-payload: '{"stage": "${{ github.ref }}"}'
