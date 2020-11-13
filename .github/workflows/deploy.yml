@@ -1,0 +1,23 @@
+name: back-end-deploy
+on:
+  workflow_run:
+    workflows: ["back-end-build"]
+    branches: [staging]
+    types:
+      - completed
+      - requested
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.15.0]
+    steps:
+      - name: Check out deploy repository code
+        run: git clone https://github.com/fiuba-laboral-v2/deploy.git
+      - name: Go to deploy directory
+        run: cd deploy
+      - name: Install dependencies
+        run: yarn install
+      - name: Run deploy script for ${GITHUB_REF##*/} environment
+        run: NODE_ENV=${GITHUB_REF##*/} yarn deploy:backend
