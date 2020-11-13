@@ -1,8 +1,11 @@
 name: back-end-deploy
 on:
-  push:
-    branches:
-      - staging
+  workflow_run:
+    workflows: ["back-end-build"]
+    branches: [staging]
+    types:
+      - completed
+      - requested
 jobs:
   deploy:
     runs-on: ubuntu-latest
