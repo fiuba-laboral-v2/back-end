@@ -17,16 +17,15 @@ jobs:
           --health-retries 5
         ports:
           - 5434:5432
-    strategy:
-      matrix:
-        node-version: [14.15.0]
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
+      - id: nvmrc
+        uses: browniebroke/read-nvmrc-action@v1
+      - name: Use Node.js ${{ steps.nvmrc.outputs.node_version }}
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ steps.nvmrc.outputs.node_version }}
       - name: Install dependencies
         run: yarn install
       - name: Database setup
