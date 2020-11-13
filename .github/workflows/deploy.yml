@@ -2,7 +2,7 @@ name: back-end-deploy
 on:
   workflow_run:
     workflows: ["back-end-build"]
-    branches: [staging]
+    branches: [staging, feature/github-actions]
     types:
       - completed
       - requested
@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CI_DEPLOY_KEY: ${{ secrets.CI_DEPLOY_KEY }}
+      CURRENT_BRANCH: ${GITHUB_REF##*/}
     strategy:
       matrix:
         node-version: [14.15.0]
@@ -23,5 +24,5 @@ jobs:
         run: cd deploy
       - name: Install dependencies
         run: yarn install
-      - name: Run deploy script for ${GITHUB_REF##*/} environment
-        run: NODE_ENV=${GITHUB_REF##*/} yarn deploy:backend
+      - name: Run deploy script for $CURRENT_BRANCH environment
+        run: NODE_ENV=staging yarn deploy:backend
