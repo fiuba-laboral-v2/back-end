@@ -9,8 +9,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      CURRENT_BRANCH: ${GITHUB_REF##*/}
     strategy:
       matrix:
         node-version: [14.15.0]
@@ -25,5 +23,5 @@ jobs:
           repository: fiuba-laboral-v2/deploy
       - name: Install dependencies
         run: yarn install
-      - name: Run deploy script for ${CURRENT_BRANCH} environment
-        run: NODE_ENV=${CURRENT_BRANCH} yarn deploy:backend
+      - name: Run deploy script
+        run: NODE_ENV=staging yarn deploy:backend
