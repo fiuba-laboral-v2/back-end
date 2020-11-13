@@ -1,0 +1,37 @@
+name: back-end-build
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env: NODE_ENV="test_travis"
+      DATABASE_URL="postgres://postgres:postgres@localhost:5432/test_travis"
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    strategy:
+      matrix:
+        node-version: [14.15.0]
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: yarn install
+      - name: Database setup
+        run: yarn db:drop || true && yarn db:create && yarn db:migrate
+      - name: Run linter and tests
+        run: yarn lint && yarn test
+      - name: Coveralls
+        run: yarn coverage
