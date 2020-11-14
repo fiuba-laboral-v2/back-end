@@ -1,8 +1,8 @@
 on: [pull_request]
 name: Test Coveralls
 jobs:
-  build:
-    name: Build
+  coverall:
+    name: Coverall
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
