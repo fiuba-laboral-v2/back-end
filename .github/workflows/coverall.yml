@@ -9,6 +9,6 @@ jobs:
         uses: actions/checkout@v1
       - name: Push files to coveralls
         run: yarn coverage
-        uses: coverallsapp/github-action@master
+      - uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
