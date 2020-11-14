@@ -1,0 +1,14 @@
+on: [pull_request]
+name: Test Coveralls
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v1
+      - name: Push files to coveralls
+        run: yarn coverage
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
