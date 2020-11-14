@@ -70,7 +70,6 @@
     "babel-jest": "26.2.2",
     "babel-preset-env": "1.7.0",
     "concurrently": "3.5.0",
-    "coveralls": "3.0.9",
     "eslint": "6.8.0",
     "eslint-config-prettier": "6.11.0",
     "eslint-plugin-prettier": "3.1.4",
@@ -91,8 +90,6 @@
   "scripts": {
     "dev": "nodemon -r tsconfig-paths/register src/index.ts",
     "test": "jest --coverage --runInBand --colors --verbose=false",
-    "coverage": "cat coverage/lcov.info | coveralls",
-    "coveralls": "jest --coverage && cat ./tests/coverage/lcov.info | coveralls",
     "lint:src": "tslint -c tslint.json 'src/**/*.ts'",
     "lint:test": "tslint -c tslint.json 'test/**/*.ts'",
     "lint": "yarn prettier --check . && yarn lint:src && yarn lint:test && yarn compiler:lint:src && yarn compiler:lint:test",
