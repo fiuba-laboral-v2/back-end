@@ -33,8 +33,6 @@ jobs:
       - name: Run linter and tests
         run: yarn lint && yarn test
       - name: Coveralls
-        run: yarn coverage
-      - name: Push file to coveralls
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
