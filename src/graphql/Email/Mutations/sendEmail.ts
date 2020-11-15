@@ -1,5 +1,5 @@
 import { Boolean, List, nonNull, String } from "$graphql/fieldTypes";
-import { EmailService } from "$services/Email";
+import { EmailService } from "$services";
 
 export const sendEmail = {
   type: Boolean,
