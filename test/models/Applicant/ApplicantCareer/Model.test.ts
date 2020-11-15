@@ -1,5 +1,5 @@
 import { ApplicantCareer } from "$models";
-import { NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
+import { NumberIsTooLargeError, NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
 import { ValidationError } from "sequelize";
 import {
   ForbiddenApprovedSubjectCountError,
@@ -97,7 +97,7 @@ describe("ApplicantCareer", () => {
       });
       await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
         ValidationError,
-        NumberIsTooSmallError.buildMessage(0, false)
+        NumberIsTooSmallError.buildMessage(1, true)
       );
     });
 
@@ -111,7 +111,21 @@ describe("ApplicantCareer", () => {
       });
       await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
         ValidationError,
-        NumberIsTooSmallError.buildMessage(0, false)
+        NumberIsTooSmallError.buildMessage(1, true)
+      );
+    });
+
+    it("throws an error if currentCareerYear is bigger than 5", async () => {
+      const applicantCareer = new ApplicantCareer({
+        careerCode: "9",
+        applicantUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
+        currentCareerYear: 6,
+        approvedSubjectCount: 25,
+        isGraduate: false
+      });
+      await expect(applicantCareer.validate()).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        NumberIsTooLargeError.buildMessage(5, true)
       );
     });
 

@@ -17,7 +17,7 @@ import {
 } from "./Errors";
 import { BOOLEAN, HasOneGetAssociationMixin, INTEGER, STRING, UUID } from "sequelize";
 import { isUuid, optional } from "$models/SequelizeModelValidators";
-import { validateIntegerInRange } from "validations-fiuba-laboral-v2";
+import { validateCareerYear, validateIntegerInRange } from "validations-fiuba-laboral-v2";
 
 @Table({
   tableName: "ApplicantCareers",
@@ -53,7 +53,7 @@ export class ApplicantCareer extends Model<ApplicantCareer> {
   @Column({
     allowNull: true,
     type: INTEGER,
-    ...optional(validateIntegerInRange({ min: { value: 0, include: false } }))
+    ...optional(validateCareerYear)
   })
   public currentCareerYear: number;
 
