@@ -84,7 +84,12 @@ export const defaultTranslations = {
     { key: "isGraduate", value: "Graduado" },
     { key: "approvedSubjectCount", value: "Materias aprobadas" },
     { key: "currentCareerYear", value: "Año en curso" },
-    { key: "withoutCBC", value: "Sin incluir CBC" }
+    { key: "withoutCBC", value: "Sin incluir CBC" },
+    { key: "firstYear", value: "Primer año" },
+    { key: "secondYear", value: "Segundo año" },
+    { key: "thirdYear", value: "Tercer año" },
+    { key: "fourthYear", value: "Cuarto año" },
+    { key: "fifthYear", value: "Quinto año" }
   ],
   targetApplicantTypeSelector: [
     { key: "title", value: "Destinatarios" },
