@@ -27,14 +27,14 @@ export const defaultTranslations = {
     {
       key: "message",
       value:
-        "La oferta será revisada por personal de FIUBA. Una vez aprobada, permanecerá publicada por %{alumnosDuration} días para alumnos y/o %{graduadosDuration} días para graduados."
+        "La oferta será revisada por personal de FIUBA. Una vez aprobada, permanecerá publicada por <%= studentsOfferDuration %> días para alumnos y/o <%= graduatesOfferDuration %> días para graduados, a menos que la publicación sea removida."
     }
   ],
   offerEditionInfoMessage: [
     {
       key: "message",
       value:
-        "Al editar una oferta, la misma volverá a ser revisada por personal de FIUBA. Una vez aprobada, permanecerá publicada por %{alumnosDuration} días para alumnos y/o %{graduadosDuration} días para graduados."
+        "Al editar una oferta, la misma volverá a ser revisada por personal de FIUBA. Una vez aprobada, permanecerá publicada por <%= studentsOfferDuration %> días para alumnos y/o <%= graduatesOfferDuration %> días para graduados, a menos que la publicación sea removida."
     }
   ],
   jobApplicationEmptyOfferList: [
