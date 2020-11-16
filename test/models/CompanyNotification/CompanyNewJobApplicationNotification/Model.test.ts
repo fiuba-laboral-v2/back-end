@@ -7,6 +7,7 @@ describe("CompanyNewJobApplicationNotification", () => {
   const attributes = {
     moderatorUuid: UuidGenerator.generate(),
     companyUuid: UuidGenerator.generate(),
+    jobApplicationUuid: UuidGenerator.generate(),
     isNew: true,
     createdAt: new Date()
   };
@@ -57,6 +58,10 @@ describe("CompanyNewJobApplicationNotification", () => {
     expectToThrowErrorOnMissingAttribute("companyUuid");
   });
 
+  it("throws an error if no jobApplicationUuid is provided", async () => {
+    expectToThrowErrorOnMissingAttribute("jobApplicationUuid");
+  });
+
   it("throws an error if no isNew is provided", async () => {
     expectToThrowErrorOnMissingAttribute("isNew");
   });
@@ -79,5 +84,9 @@ describe("CompanyNewJobApplicationNotification", () => {
 
   it("throws an error if companyUuid has invalid format", async () => {
     expectToThrowErrorOnInvalidFormat("companyUuid");
+  });
+
+  it("throws an error if jobApplicationUuid has invalid format", async () => {
+    expectToThrowErrorOnInvalidFormat("jobApplicationUuid");
   });
 });
