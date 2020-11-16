@@ -16,6 +16,7 @@ import { AdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
 import { JobApplicationGenerator } from "$generators/JobApplication";
 import { JobApplicationRepository } from "$models/JobApplication";
+import { CompanyNotificationNotFoundError } from "$models/CompanyNotification/Errors";
 
 describe("NotificationRepository", () => {
   let extensionAdmin: Admin;
@@ -92,6 +93,14 @@ describe("NotificationRepository", () => {
 
   it("throw an error if the companyUuid does not belong to an existing company", async () => {
     await expectToThrowErrorOnForeignKeyConstraint("companyUuid");
+  });
+
+  it("throws an error if tri uuid does not belong to a persisted notification", async () => {
+    const uuid = UuidGenerator.generate();
+    await expect(CompanyNotificationRepository.findByUuid(uuid)).rejects.toThrowErrorWithMessage(
+      CompanyNotificationNotFoundError,
+      CompanyNotificationNotFoundError.buildMessage(uuid)
+    );
   });
 
   describe("Delete Cascade", () => {
