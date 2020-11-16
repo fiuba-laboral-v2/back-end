@@ -44,8 +44,8 @@ describe("NotificationRepository", () => {
 
   it("saves a notification in the database", async () => {
     const notification = new Notification({
-      userUuid: companyUserUuid,
-      adminUserUuid: extensionAdmin.userUuid,
+      receiverUuid: companyUserUuid,
+      senderUuid: extensionAdmin.userUuid,
       jobApplicationUuid: jobApplication.uuid
     });
     await NotificationRepository.save(notification);
@@ -58,8 +58,8 @@ describe("NotificationRepository", () => {
   it("throws an error if the notification has an existing uuid", async () => {
     const attributes = {
       uuid: generateUuid(),
-      userUuid: companyUserUuid,
-      adminUserUuid: extensionAdmin.userUuid,
+      receiverUuid: companyUserUuid,
+      senderUuid: extensionAdmin.userUuid,
       jobApplicationUuid: jobApplication.uuid
     };
     const notification = new Notification(attributes);
@@ -74,8 +74,8 @@ describe("NotificationRepository", () => {
 
   it("throws an error if the jobApplicationUuid does not belong to an existing jobApplication", async () => {
     const notification = new Notification({
-      userUuid: companyUserUuid,
-      adminUserUuid: extensionAdmin.userUuid,
+      receiverUuid: companyUserUuid,
+      senderUuid: extensionAdmin.userUuid,
       jobApplicationUuid: generateUuid()
     });
     await expect(NotificationRepository.save(notification)).rejects.toThrowErrorWithMessage(
@@ -87,27 +87,27 @@ describe("NotificationRepository", () => {
 
   it("throws an error if the userUuid does not belong to an existing user", async () => {
     const notification = new Notification({
-      userUuid: generateUuid(),
-      adminUserUuid: extensionAdmin.userUuid,
+      receiverUuid: generateUuid(),
+      senderUuid: extensionAdmin.userUuid,
       jobApplicationUuid: jobApplication.uuid
     });
     await expect(NotificationRepository.save(notification)).rejects.toThrowErrorWithMessage(
       ForeignKeyConstraintError,
       'insert or update on table "Notifications" violates foreign key ' +
-        'constraint "Notifications_userUuid_fkey"'
+        'constraint "Notifications_receiverUuid_fkey"'
     );
   });
 
-  it("throws an error if the adminUserUuid does not belong to an existing admin", async () => {
+  it("throws an error if the senderUuid does not belong to an existing admin", async () => {
     const notification = new Notification({
-      userUuid: companyUserUuid,
-      adminUserUuid: generateUuid(),
+      receiverUuid: companyUserUuid,
+      senderUuid: generateUuid(),
       jobApplicationUuid: jobApplication.uuid
     });
     await expect(NotificationRepository.save(notification)).rejects.toThrowErrorWithMessage(
       ForeignKeyConstraintError,
       'insert or update on table "Notifications" violates foreign key ' +
-        'constraint "Notifications_adminUserUuid_fkey"'
+        'constraint "Notifications_senderUuid_fkey"'
     );
   });
 
@@ -115,8 +115,8 @@ describe("NotificationRepository", () => {
     await NotificationRepository.truncate();
     await NotificationRepository.save(
       new Notification({
-        userUuid: companyUserUuid,
-        adminUserUuid: extensionAdmin.userUuid,
+        receiverUuid: companyUserUuid,
+        senderUuid: extensionAdmin.userUuid,
         jobApplicationUuid: jobApplication.uuid
       })
     );
@@ -163,8 +163,8 @@ describe("NotificationRepository", () => {
         uuid: notification.uuid,
         isNew: notification.isNew,
         message: notification.message,
-        adminUserUuid: notification.adminUserUuid,
-        userUuid: notification.userUuid,
+        senderUuid: notification.senderUuid,
+        receiverUuid: notification.receiverUuid,
         jobApplicationUuid: notification.jobApplicationUuid,
         createdAt: notification.createdAt
       });
@@ -176,7 +176,7 @@ describe("NotificationRepository", () => {
     let anotherCompany: Company;
     const notificationsLength = 20;
     const anotherCompanyNotificationsLength = 2;
-    let userUuid: string;
+    let receiverUuid: string;
 
     const createNotifications = async ({ aCompany, size }: { size: number; aCompany: Company }) => {
       const values: Notification[] = [];
@@ -191,7 +191,7 @@ describe("NotificationRepository", () => {
     beforeAll(async () => {
       await NotificationRepository.truncate();
 
-      userUuid = companyUsers[0].uuid;
+      receiverUuid = companyUsers[0].uuid;
       anotherCompany = await CompanyGenerator.instance.withMinimumData();
 
       await createNotifications({
@@ -210,7 +210,7 @@ describe("NotificationRepository", () => {
 
     it("finds all notifications by userUuid", async () => {
       const { shouldFetchMore, results } = await NotificationRepository.findLatestByUser({
-        userUuid
+        receiverUuid
       });
       expect(results).toHaveLength(notificationsLength);
       expect(shouldFetchMore).toBe(false);
@@ -225,7 +225,7 @@ describe("NotificationRepository", () => {
       };
 
       const { shouldFetchMore, results } = await NotificationRepository.findLatestByUser({
-        userUuid,
+        receiverUuid,
         updatedBeforeThan
       });
       expect(results).toHaveLength(itemsPerPage);
@@ -241,7 +241,7 @@ describe("NotificationRepository", () => {
       };
 
       const { shouldFetchMore, results } = await NotificationRepository.findLatestByUser({
-        userUuid,
+        receiverUuid,
         updatedBeforeThan
       });
       expect(results).toHaveLength(itemsPerPage);
@@ -258,7 +258,7 @@ describe("NotificationRepository", () => {
         notifications.map(notification => NotificationRepository.save(notification))
       );
       const { shouldFetchMore, results } = await NotificationRepository.findLatestByUser({
-        userUuid
+        receiverUuid
       });
       expect(results.map(result => result.isNew)).toEqual([
         ...Array(notificationsLength / 2).fill(true),

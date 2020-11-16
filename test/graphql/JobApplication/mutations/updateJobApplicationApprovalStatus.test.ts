@@ -128,11 +128,11 @@ describe("updateJobApplicationApprovalStatus", () => {
     ) => {
       const notifications = await NotificationRepository.findAll();
       const jobApplicationUuids = notifications.map(({ jobApplicationUuid }) => jobApplicationUuid);
-      const adminUserUuids = notifications.map(({ adminUserUuid }) => adminUserUuid);
-      const userUuids = notifications.map(notification => notification.userUuid);
+      const senderUuids = notifications.map(({ senderUuid }) => senderUuid);
+      const receiverUuids = notifications.map(notification => notification.receiverUuid);
       expect(jobApplicationUuids).not.toContain(jobApplication.uuid);
-      expect(adminUserUuids).not.toContain(admin.userUuid);
-      expect(userUuids).not.toContain(userUuid);
+      expect(senderUuids).not.toContain(admin.userUuid);
+      expect(receiverUuids).not.toContain(userUuid);
     };
 
     const expectToFindNotification = async (
@@ -142,11 +142,11 @@ describe("updateJobApplicationApprovalStatus", () => {
     ) => {
       const notifications = await NotificationRepository.findAll();
       const jobApplicationUuids = notifications.map(({ jobApplicationUuid }) => jobApplicationUuid);
-      const adminUserUuids = notifications.map(({ adminUserUuid }) => adminUserUuid);
-      const userUuids = notifications.map(notification => notification.userUuid);
+      const senderUuids = notifications.map(({ senderUuid }) => senderUuid);
+      const receiverUuids = notifications.map(notification => notification.receiverUuid);
       expect(jobApplicationUuids).toContain(jobApplication.uuid);
-      expect(adminUserUuids).toContain(admin.userUuid);
-      expect(userUuids).toContain(userUuid);
+      expect(senderUuids).toContain(admin.userUuid);
+      expect(receiverUuids).toContain(userUuid);
     };
 
     it("creates a notification for a companyUser if the jobApplication is approved", async () => {

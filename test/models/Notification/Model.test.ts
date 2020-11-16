@@ -8,8 +8,8 @@ import lodash from "lodash";
 
 describe("Notification", () => {
   const mandatoryAttributes = {
-    userUuid: generateUuid(),
-    adminUserUuid: generateUuid(),
+    receiverUuid: generateUuid(),
+    senderUuid: generateUuid(),
     jobApplicationUuid: generateUuid()
   };
 
@@ -41,8 +41,8 @@ describe("Notification", () => {
 
   it("throws an error if it has no type", async () => {
     const notification = new Notification({
-      userUuid: generateUuid(),
-      adminUserUuid: generateUuid()
+      receiverUuid: generateUuid(),
+      senderUuid: generateUuid()
     });
     await expect(notification.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -53,8 +53,8 @@ describe("Notification", () => {
   it("it throws an error if it has more than one type", async () => {
     jest.spyOn(lodash, "compact").mockImplementation(() => Array(2).fill(generateUuid()));
     const notification = new Notification({
-      userUuid: generateUuid(),
-      adminUserUuid: generateUuid()
+      receiverUuid: generateUuid(),
+      senderUuid: generateUuid()
     });
     await expect(notification.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -62,35 +62,35 @@ describe("Notification", () => {
     );
   });
 
-  it("it throws an error if no userUuid is provided", async () => {
-    const notification = new Notification({ adminUserUuid: generateUuid() });
+  it("it throws an error if no receiverUuid is provided", async () => {
+    const notification = new Notification({ senderUuid: generateUuid() });
     await expect(notification.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
-      "notNull Violation: Notification.userUuid cannot be null"
+      "notNull Violation: Notification.receiverUuid cannot be null"
     );
   });
 
-  it("it throws an error if no adminUserUuid is provided", async () => {
-    const notification = new Notification({ userUuid: generateUuid() });
+  it("it throws an error if no senderUuid is provided", async () => {
+    const notification = new Notification({ receiverUuid: generateUuid() });
     await expect(notification.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
-      "notNull Violation: Notification.adminUserUuid cannot be null"
+      "notNull Violation: Notification.senderUuid cannot be null"
     );
   });
 
-  it("it throws an error if both adminUserUuid and userUuid are not provided", async () => {
+  it("it throws an error if both senderUuid and receiverUuid are not provided", async () => {
     const notification = new Notification();
     await expect(notification.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
-      "notNull Violation: Notification.userUuid cannot be null,\n" +
-        "notNull Violation: Notification.adminUserUuid cannot be null"
+      "notNull Violation: Notification.receiverUuid cannot be null,\n" +
+        "notNull Violation: Notification.senderUuid cannot be null"
     );
   });
 
-  it("it throws an error if adminUserUuid has invalid format", async () => {
+  it("it throws an error if senderUuid has invalid format", async () => {
     const notification = new Notification({
-      userUuid: generateUuid(),
-      adminUserUuid: "invalidUuid"
+      receiverUuid: generateUuid(),
+      senderUuid: "invalidUuid"
     });
     await expect(notification.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -98,10 +98,10 @@ describe("Notification", () => {
     );
   });
 
-  it("it throws an error if userUuid has invalid format", async () => {
+  it("it throws an error if receiverUuid has invalid format", async () => {
     const notification = new Notification({
-      userUuid: "invalidUuid",
-      adminUserUuid: generateUuid()
+      receiverUuid: "invalidUuid",
+      senderUuid: generateUuid()
     });
     await expect(notification.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,

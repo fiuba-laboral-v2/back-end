@@ -8,9 +8,9 @@ import MockDate from "mockdate";
 export const NotificationGenerator = {
   instance: {
     JobApplication: {
-      from: async ({ uuid: jobApplicationUuid }: JobApplication, { uuid: userUuid }: User) => {
-        const { userUuid: adminUserUuid } = await AdminGenerator.extension();
-        const notification = new Notification({ userUuid, adminUserUuid, jobApplicationUuid });
+      from: async ({ uuid: jobApplicationUuid }: JobApplication, { uuid: receiverUuid }: User) => {
+        const { userUuid: senderUuid } = await AdminGenerator.extension();
+        const notification = new Notification({ receiverUuid, senderUuid, jobApplicationUuid });
         return NotificationRepository.save(notification);
       },
       approved: async (company: Company) => {

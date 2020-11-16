@@ -21,7 +21,7 @@ export const getNotifications = {
   ) => {
     const notifications = await NotificationRepository.findLatestByUser({
       updatedBeforeThan,
-      userUuid: currentUser.uuid
+      receiverUuid: currentUser.uuid
     });
     const notificationUuids = notifications.results.map(({ uuid }) => uuid);
     await NotificationRepository.markAsReadByUuids(notificationUuids);

@@ -1,6 +1,6 @@
 import { Model, Table, Column, ForeignKey, CreatedAt } from "sequelize-typescript";
 import { BOOLEAN, TEXT, UUID, UUIDV4 } from "sequelize";
-import { Admin, JobApplication, User } from "$models";
+import { JobApplication, User } from "$models";
 import { MultipleTypeNotificationError, MissingNotificationTypeError } from "./Errors";
 import { isUuid } from "$models/SequelizeModelValidators";
 import { compact } from "lodash";
@@ -27,11 +27,11 @@ export class Notification extends Model<Notification> {
 
   @ForeignKey(() => User)
   @Column({ allowNull: false, type: UUID, ...isUuid })
-  public userUuid: string;
+  public receiverUuid: string;
 
-  @ForeignKey(() => Admin)
+  @ForeignKey(() => User)
   @Column({ allowNull: false, type: UUID, ...isUuid })
-  public adminUserUuid: string;
+  public senderUuid: string;
 
   @Column({ allowNull: true, type: TEXT })
   public message: string;

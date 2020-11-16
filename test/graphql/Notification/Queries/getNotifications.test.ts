@@ -84,12 +84,12 @@ describe("getNotifications", () => {
     const { data, errors } = await getNotifications(apolloClient);
     expect(errors).toBeUndefined();
     const { results, shouldFetchMore } = data!.getNotifications;
-    const adminUser = await UserRepository.findByUuid(notification.adminUserUuid);
+    const senderUuid = await UserRepository.findByUuid(notification.senderUuid);
     expect(results).toEqual([
       {
         __typename: "JobApplicationNotification",
         uuid: notification.uuid,
-        adminEmail: adminUser.email,
+        adminEmail: senderUuid.email,
         jobApplication: {
           __typename: GraphQLJobApplication.name,
           uuid: notification.jobApplicationUuid
@@ -171,13 +171,13 @@ describe("getNotifications", () => {
     const { data, errors } = await getNotifications(apolloClient);
     expect(errors).toBeUndefined();
     const { results, shouldFetchMore } = data!.getNotifications;
-    const adminUser = await UserRepository.findByUuid(notification.adminUserUuid);
+    const senderUuid = await UserRepository.findByUuid(notification.senderUuid);
 
     expect(results).toEqual([
       {
         __typename: "JobApplicationNotification",
         uuid: notification.uuid,
-        adminEmail: adminUser.email,
+        adminEmail: senderUuid.email,
         jobApplication: {
           __typename: GraphQLJobApplication.name,
           uuid: notification.jobApplicationUuid

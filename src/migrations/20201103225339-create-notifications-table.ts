@@ -16,15 +16,15 @@ export = {
         onDelete: "CASCADE",
         type: UUID
       },
-      userUuid: {
+      receiverUuid: {
         allowNull: false,
         references: { model: "Users", key: "uuid" },
         onDelete: "CASCADE",
         type: UUID
       },
-      adminUserUuid: {
+      senderUuid: {
         allowNull: false,
-        references: { model: "Admins", key: "userUuid" },
+        references: { model: "Users", key: "uuid" },
         onDelete: "CASCADE",
         type: UUID
       },

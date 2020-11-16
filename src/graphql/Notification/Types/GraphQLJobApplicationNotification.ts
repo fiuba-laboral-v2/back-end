@@ -24,7 +24,7 @@ export const GraphQLJobApplicationNotification = new GraphQLObjectType<Notificat
     adminEmail: {
       type: nonNull(String),
       resolve: async notification => {
-        const user = await UserRepository.findByUuid(notification.adminUserUuid);
+        const user = await UserRepository.findByUuid(notification.senderUuid);
         return user.email;
       }
     },

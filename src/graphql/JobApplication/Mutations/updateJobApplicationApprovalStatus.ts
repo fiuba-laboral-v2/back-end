@@ -25,19 +25,19 @@ export const updateJobApplicationApprovalStatus = {
     { uuid: jobApplicationUuid, approvalStatus }: IMutationVariables,
     { currentUser }: IApolloServerContext
   ) => {
-    const adminUserUuid = currentUser.getAdmin().adminUserUuid;
+    const senderUuid = currentUser.getAdmin().adminUserUuid;
     const jobApplication = await JobApplicationRepository.findByUuid(jobApplicationUuid);
     jobApplication.set({ approvalStatus });
     const notifications: Notification[] = [];
     if (approvalStatus === ApprovalStatus.approved) {
       const { companyUuid } = await jobApplication.getOffer();
       const companyUsers = await CompanyUserRepository.findByCompanyUuid(companyUuid);
-      companyUsers.map(({ userUuid }) => {
-        notifications.push(new Notification({ userUuid, adminUserUuid, jobApplicationUuid }));
+      companyUsers.map(({ userUuid: receiverUuid }) => {
+        notifications.push(new Notification({ receiverUuid, senderUuid, jobApplicationUuid }));
       });
     }
     const event = new JobApplicationApprovalEvent({
-      adminUserUuid,
+      adminUserUuid: senderUuid,
       jobApplicationUuid,
       status: approvalStatus
     });
