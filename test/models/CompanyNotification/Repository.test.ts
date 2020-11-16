@@ -95,7 +95,7 @@ describe("NotificationRepository", () => {
     await expectToThrowErrorOnForeignKeyConstraint("companyUuid");
   });
 
-  it("throws an error if tri uuid does not belong to a persisted notification", async () => {
+  it("throws an error if the uuid does not belong to a persisted notification", async () => {
     const uuid = UuidGenerator.generate();
     await expect(CompanyNotificationRepository.findByUuid(uuid)).rejects.toThrowErrorWithMessage(
       CompanyNotificationNotFoundError,
