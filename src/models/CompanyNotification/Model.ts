@@ -2,7 +2,7 @@ import { Model, Table, Column, ForeignKey, CreatedAt } from "sequelize-typescrip
 import { BOOLEAN, TEXT, UUID, UUIDV4, ENUM } from "sequelize";
 import { Admin, JobApplication, Company } from "$models";
 import { CompanyNotificationType, companyNotificationTypeEnumValues } from "./Interfaces";
-import { isUuid } from "$models/SequelizeModelValidators";
+import { isUuid, isCompanyNotificationType } from "$models/SequelizeModelValidators";
 
 @Table({ tableName: "CompanyNotifications", timestamps: true, updatedAt: false })
 export class CompanyNotification extends Model<CompanyNotification> {
@@ -16,7 +16,11 @@ export class CompanyNotification extends Model<CompanyNotification> {
   @Column({ allowNull: true, type: TEXT })
   public moderatorMessage?: string;
 
-  @Column({ allowNull: false, type: ENUM({ values: companyNotificationTypeEnumValues }) })
+  @Column({
+    allowNull: false,
+    type: ENUM({ values: companyNotificationTypeEnumValues }),
+    ...isCompanyNotificationType
+  })
   public type: CompanyNotificationType;
 
   @ForeignKey(() => Company)

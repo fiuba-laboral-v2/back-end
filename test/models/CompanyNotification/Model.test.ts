@@ -1,6 +1,7 @@
 import { ValidationError } from "sequelize";
 import { CompanyNotification } from "$models";
 import { CompanyNotificationType } from "$models/CompanyNotification";
+import { isCompanyNotificationType, isUuid } from "$models/SequelizeModelValidators";
 import generateUuid from "uuid/v4";
 import { omit } from "lodash";
 
@@ -24,6 +25,17 @@ describe("CompanyNotification", () => {
     await expect(companyNotification.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       `notNull Violation: CompanyNotification.${attributeName} cannot be null`
+    );
+  };
+
+  const expectToThrowErrorInInvalidFormat = async (attributeName: string, message: string) => {
+    const companyNotification = new CompanyNotification({
+      ...mandatoryAttributes,
+      [attributeName]: "invalidValue"
+    });
+    await expect(companyNotification.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      message
     );
   };
 
@@ -69,5 +81,21 @@ describe("CompanyNotification", () => {
 
   it("throws an error if no companyUuid is provided", async () => {
     await expectToThrowErrorOnMissingAttribute("companyUuid");
+  });
+
+  it("throws an error if type has an invalid value", async () => {
+    await expectToThrowErrorInInvalidFormat("type", isCompanyNotificationType.validate.isIn.msg);
+  });
+
+  it("throws an error if moderatorUuid has an invalid value", async () => {
+    await expectToThrowErrorInInvalidFormat("moderatorUuid", isUuid.validate.isUUID.msg);
+  });
+
+  it("throws an error if companyUuid has an invalid value", async () => {
+    await expectToThrowErrorInInvalidFormat("companyUuid", isUuid.validate.isUUID.msg);
+  });
+
+  it("throws an error if jobApplicationUuid has an invalid value", async () => {
+    await expectToThrowErrorInInvalidFormat("jobApplicationUuid", isUuid.validate.isUUID.msg);
   });
 });

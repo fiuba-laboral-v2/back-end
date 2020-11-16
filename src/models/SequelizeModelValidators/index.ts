@@ -4,3 +4,4 @@ export { isNotEmptyString } from "./isNotEmptyString";
 export { isSecretary } from "./isSecretary";
 export { isTargetApplicantType } from "./isTargetApplicantType";
 export { optional } from "./optional";
+export { isCompanyNotificationType } from "./isCompanyNotificationType";
