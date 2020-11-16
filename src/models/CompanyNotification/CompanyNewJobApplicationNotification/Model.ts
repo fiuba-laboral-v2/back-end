@@ -11,7 +11,7 @@ export class CompanyNewJobApplicationNotification {
   public createdAt: Date;
 
   constructor(attributes: ICompanyNewJobApplicationNotificationAttributes) {
-    this.uuid = UuidGenerator.generate();
+    this.uuid = attributes.uuid || UuidGenerator.generate();
     this.moderatorUuid = attributes.moderatorUuid;
     this.companyUuid = attributes.companyUuid;
     this.jobApplicationUuid = attributes.jobApplicationUuid;
@@ -47,6 +47,7 @@ export class CompanyNewJobApplicationNotification {
 }
 
 export interface ICompanyNewJobApplicationNotificationAttributes {
+  uuid?: string;
   moderatorUuid: string;
   companyUuid: string;
   jobApplicationUuid: string;
