@@ -22,7 +22,7 @@ export class CompanyNewJobApplicationNotification {
 
   private validate() {
     this.validatePresence();
-    this.validateFormat();
+    this.validateUuids();
   }
 
   private validatePresence() {
@@ -38,7 +38,7 @@ export class CompanyNewJobApplicationNotification {
     if (!isDefined(this.createdAt)) throw new AttributeNotDefinedError("createdAt");
   }
 
-  private validateFormat() {
+  private validateUuids() {
     if (!isUUID(this.uuid)) throw new InvalidAttributeFormatError("uuid");
     if (!isUUID(this.moderatorUuid)) throw new InvalidAttributeFormatError("moderatorUuid");
     if (!isUUID(this.notifiedCompanyUuid)) {
