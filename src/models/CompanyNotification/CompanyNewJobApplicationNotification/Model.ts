@@ -1,7 +1,7 @@
-import { isDefined } from "class-validator";
 import { AttributeNotDefinedError, InvalidAttributeFormatError } from "$models/Errors";
 import { UuidGenerator } from "$models/UuidGenerator";
 import { validate } from "uuid";
+import { isNil } from "lodash";
 
 export class CompanyNewJobApplicationNotification {
   public uuid: string;
@@ -27,16 +27,12 @@ export class CompanyNewJobApplicationNotification {
   }
 
   private validatePresence() {
-    if (!isDefined(this.uuid)) throw new AttributeNotDefinedError("uuid");
-    if (!isDefined(this.moderatorUuid)) throw new AttributeNotDefinedError("moderatorUuid");
-    if (!isDefined(this.notifiedCompanyUuid)) {
-      throw new AttributeNotDefinedError("notifiedCompanyUuid");
-    }
-    if (!isDefined(this.jobApplicationUuid)) {
-      throw new AttributeNotDefinedError("jobApplicationUuid");
-    }
-    if (!isDefined(this.isNew)) throw new AttributeNotDefinedError("isNew");
-    if (!isDefined(this.createdAt)) throw new AttributeNotDefinedError("createdAt");
+    if (isNil(this.uuid)) throw new AttributeNotDefinedError("uuid");
+    if (isNil(this.moderatorUuid)) throw new AttributeNotDefinedError("moderatorUuid");
+    if (isNil(this.notifiedCompanyUuid)) throw new AttributeNotDefinedError("notifiedCompanyUuid");
+    if (isNil(this.jobApplicationUuid)) throw new AttributeNotDefinedError("jobApplicationUuid");
+    if (isNil(this.isNew)) throw new AttributeNotDefinedError("isNew");
+    if (isNil(this.createdAt)) throw new AttributeNotDefinedError("createdAt");
   }
 
   private validateUuids() {
