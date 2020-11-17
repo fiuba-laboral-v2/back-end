@@ -17,15 +17,11 @@ export const CompanyNotificationMapper = {
   },
   toDomainModel: (companyNotification: CompanyNotification) => {
     const attributes = companyNotification.toJSON();
-    let notification: TCompanyNotification;
     switch (companyNotification.type) {
       case CompanyNotificationType.newJobApplication:
-        notification = new CompanyNewJobApplicationNotification(
+        return new CompanyNewJobApplicationNotification(
           attributes as ICompanyNewJobApplicationNotificationAttributes
         );
     }
-    notification.setUuid(companyNotification.uuid);
-    notification.setCreatedAt(companyNotification.createdAt);
-    return notification;
   }
 };

@@ -31,27 +31,27 @@ describe("CompanyNotificationMapper", () => {
     });
 
     it("maps a CompanyNewJobApplicationNotification that has already an uuid", async () => {
+      const uuid = generateUuid();
       const notification = new CompanyNewJobApplicationNotification({
+        uuid,
         moderatorUuid: generateUuid(),
         notifiedCompanyUuid: generateUuid(),
         jobApplicationUuid: generateUuid(),
         isNew: true
       });
-      const uuid = generateUuid();
-      notification.setUuid(uuid);
       const persistenceModel = CompanyNotificationMapper.toPersistenceModel(notification);
       expect(persistenceModel.uuid).toEqual(uuid);
     });
 
     it("maps a CompanyNewJobApplicationNotification that has already a createdAt", async () => {
+      const createdAt = new Date();
       const notification = new CompanyNewJobApplicationNotification({
         moderatorUuid: generateUuid(),
         notifiedCompanyUuid: generateUuid(),
         jobApplicationUuid: generateUuid(),
-        isNew: true
+        isNew: true,
+        createdAt
       });
-      const createdAt = new Date();
-      notification.setCreatedAt(createdAt);
       const persistenceModel = CompanyNotificationMapper.toPersistenceModel(notification);
       expect(persistenceModel.createdAt).toEqual(createdAt);
     });

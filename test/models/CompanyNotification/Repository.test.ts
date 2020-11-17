@@ -62,7 +62,7 @@ describe("CompanyNotificationRepository", () => {
     };
     const notification = new CompanyNewJobApplicationNotification(attributes);
     await CompanyNotificationRepository.save(notification);
-    const savedNotification = await CompanyNotificationRepository.findByUuid(notification.uuid);
+    const savedNotification = await CompanyNotificationRepository.findByUuid(notification.uuid!);
     expect(savedNotification).toEqual(notification);
     expect(notification.uuid).toEqual(expect.stringMatching(UUID_REGEX));
     expect(notification.createdAt).toEqual(expect.any(Date));

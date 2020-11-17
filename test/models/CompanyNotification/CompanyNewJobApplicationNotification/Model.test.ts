@@ -41,20 +41,26 @@ describe("CompanyNewJobApplicationNotification", () => {
     });
   });
 
-  it("is created with isNew set to true", async () => {
+  it("creates a valid notification with an uuid", async () => {
+    const uuid = generateUuid();
     const notification = new CompanyNewJobApplicationNotification({
+      uuid,
       moderatorUuid: generateUuid(),
       notifiedCompanyUuid: generateUuid(),
       jobApplicationUuid: generateUuid()
     });
-    expect(notification.isNew).toBe(true);
+    expect(notification.uuid).toBe(uuid);
   });
 
-  it("sets its uuid", async () => {
-    const uuid = generateUuid();
-    const notification = new CompanyNewJobApplicationNotification(attributes);
-    notification.setUuid(uuid);
-    expect(notification.uuid).toEqual(uuid);
+  it("creates a valid notification with a createdt", async () => {
+    const createdAt = new Date();
+    const notification = new CompanyNewJobApplicationNotification({
+      moderatorUuid: generateUuid(),
+      notifiedCompanyUuid: generateUuid(),
+      jobApplicationUuid: generateUuid(),
+      createdAt
+    });
+    expect(notification.createdAt).toBe(createdAt);
   });
 
   it("throws an error if no moderatorUuid is provided", async () => {
@@ -69,28 +75,8 @@ describe("CompanyNewJobApplicationNotification", () => {
     expectToThrowErrorOnMissingAttribute("jobApplicationUuid");
   });
 
-  it("throws an error if it is set an undefined createdAt", async () => {
-    const notification = new CompanyNewJobApplicationNotification(attributes);
-    expect(() => notification.setCreatedAt(undefined as any)).toThrowErrorWithMessage(
-      AttributeNotDefinedError,
-      AttributeNotDefinedError.buildMessage("createdAt")
-    );
-  });
-
-  it("throws an error if it is set an undefined uuid", async () => {
-    const notification = new CompanyNewJobApplicationNotification(attributes);
-    expect(() => notification.setUuid(undefined as any)).toThrowErrorWithMessage(
-      AttributeNotDefinedError,
-      AttributeNotDefinedError.buildMessage("uuid")
-    );
-  });
-
-  it("throws an error if it is set an uuid has invalid format", async () => {
-    const notification = new CompanyNewJobApplicationNotification(attributes);
-    expect(() => notification.setUuid("invalidFormat")).toThrowErrorWithMessage(
-      InvalidAttributeFormatError,
-      InvalidAttributeFormatError.buildMessage("uuid")
-    );
+  it("throws an error if uuid has invalid format", async () => {
+    expectToThrowErrorOnInvalidFormat("uuid");
   });
 
   it("throws an error if moderatorUuid has invalid format", async () => {

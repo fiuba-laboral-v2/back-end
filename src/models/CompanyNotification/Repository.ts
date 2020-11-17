@@ -7,9 +7,8 @@ export const CompanyNotificationRepository = {
   save: async (notification: TCompanyNotification, transaction?: Transaction) => {
     const companyNotification = CompanyNotificationMapper.toPersistenceModel(notification);
     await companyNotification.save({ transaction });
-    notification.setUuid(companyNotification.uuid);
-    notification.setCreatedAt(companyNotification.createdAt);
-    return notification;
+    notification.uuid = companyNotification.uuid;
+    notification.createdAt = companyNotification.createdAt;
   },
   findByUuid: async (uuid: string) => {
     const companyNotification = await CompanyNotification.findByPk(uuid);
