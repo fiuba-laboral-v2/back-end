@@ -41,6 +41,15 @@ describe("CompanyNewJobApplicationNotification", () => {
     });
   });
 
+  it("is created with isNew set to true", async () => {
+    const notification = new CompanyNewJobApplicationNotification({
+      moderatorUuid: UuidGenerator.generate(),
+      notifiedCompanyUuid: UuidGenerator.generate(),
+      jobApplicationUuid: UuidGenerator.generate()
+    });
+    expect(notification.isNew).toBe(true);
+  });
+
   it("sets its uuid", async () => {
     const uuid = UuidGenerator.generate();
     const notification = new CompanyNewJobApplicationNotification(attributes);
@@ -58,10 +67,6 @@ describe("CompanyNewJobApplicationNotification", () => {
 
   it("throws an error if no jobApplicationUuid is provided", async () => {
     expectToThrowErrorOnMissingAttribute("jobApplicationUuid");
-  });
-
-  it("throws an error if no isNew is provided", async () => {
-    expectToThrowErrorOnMissingAttribute("isNew");
   });
 
   it("throws an error if it is set an undefined createdAt", async () => {

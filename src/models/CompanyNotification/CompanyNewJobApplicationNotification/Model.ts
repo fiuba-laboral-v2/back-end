@@ -14,7 +14,7 @@ export class CompanyNewJobApplicationNotification {
     this.moderatorUuid = attributes.moderatorUuid;
     this.notifiedCompanyUuid = attributes.notifiedCompanyUuid;
     this.jobApplicationUuid = attributes.jobApplicationUuid;
-    this.isNew = attributes.isNew;
+    this.setIsNew(attributes.isNew);
     this.validate();
   }
 
@@ -29,6 +29,14 @@ export class CompanyNewJobApplicationNotification {
     this.createdAt = createdAt;
   }
 
+  private setIsNew(isNew?: boolean) {
+    if (isNil(isNew)) {
+      this.isNew = true;
+    } else {
+      this.isNew = isNew;
+    }
+  }
+
   private validate() {
     this.validatePresence();
     this.validateUuids();
@@ -38,7 +46,6 @@ export class CompanyNewJobApplicationNotification {
     if (isNil(this.moderatorUuid)) throw new AttributeNotDefinedError("moderatorUuid");
     if (isNil(this.notifiedCompanyUuid)) throw new AttributeNotDefinedError("notifiedCompanyUuid");
     if (isNil(this.jobApplicationUuid)) throw new AttributeNotDefinedError("jobApplicationUuid");
-    if (isNil(this.isNew)) throw new AttributeNotDefinedError("isNew");
   }
 
   private validateUuids() {
@@ -56,5 +63,5 @@ export interface ICompanyNewJobApplicationNotificationAttributes {
   moderatorUuid: string;
   notifiedCompanyUuid: string;
   jobApplicationUuid: string;
-  isNew: boolean;
+  isNew?: boolean;
 }
