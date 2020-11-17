@@ -11,21 +11,20 @@ export class CompanyNewJobApplicationNotification {
   public createdAt?: Date;
 
   constructor(attributes: ICompanyNewJobApplicationNotificationAttributes) {
-    this.uuid = attributes.uuid;
-    this.moderatorUuid = attributes.moderatorUuid;
-    this.notifiedCompanyUuid = attributes.notifiedCompanyUuid;
-    this.jobApplicationUuid = attributes.jobApplicationUuid;
-    this.createdAt = attributes.createdAt;
+    this.setModeratorUuid(attributes.moderatorUuid);
+    this.setNotifiedCompanyUuid(attributes.notifiedCompanyUuid);
+    this.setJobApplicationUuid(attributes.jobApplicationUuid);
     this.setIsNew(attributes.isNew);
-    this.validate();
+    this.setUuid(attributes.uuid);
+    this.setCreatedAt(attributes.createdAt);
   }
 
-  public setUuid(uuid: string) {
+  public setUuid(uuid?: string) {
     if (uuid && !validate(uuid)) throw new InvalidAttributeFormatError("uuid");
     this.uuid = uuid;
   }
 
-  public setCreatedAt(createdAt: Date) {
+  public setCreatedAt(createdAt?: Date) {
     this.createdAt = createdAt;
   }
 
@@ -33,26 +32,23 @@ export class CompanyNewJobApplicationNotification {
     this.isNew = isNew;
   }
 
-  private validate() {
-    this.validatePresence();
-    this.validateUuids();
+  private setModeratorUuid(moderatorUuid: string) {
+    if (isNil(moderatorUuid)) throw new AttributeNotDefinedError("moderatorUuid");
+    if (!validate(moderatorUuid)) throw new InvalidAttributeFormatError("moderatorUuid");
+    this.moderatorUuid = moderatorUuid;
   }
 
-  private validatePresence() {
-    if (isNil(this.moderatorUuid)) throw new AttributeNotDefinedError("moderatorUuid");
-    if (isNil(this.notifiedCompanyUuid)) throw new AttributeNotDefinedError("notifiedCompanyUuid");
-    if (isNil(this.jobApplicationUuid)) throw new AttributeNotDefinedError("jobApplicationUuid");
+  private setNotifiedCompanyUuid(notifiedCompanyUuid: string) {
+    const attributeName = "notifiedCompanyUuid";
+    if (isNil(notifiedCompanyUuid)) throw new AttributeNotDefinedError(attributeName);
+    if (!validate(notifiedCompanyUuid)) throw new InvalidAttributeFormatError(attributeName);
+    this.notifiedCompanyUuid = notifiedCompanyUuid;
   }
 
-  private validateUuids() {
-    if (this.uuid && !validate(this.uuid)) throw new InvalidAttributeFormatError("uuid");
-    if (!validate(this.moderatorUuid)) throw new InvalidAttributeFormatError("moderatorUuid");
-    if (!validate(this.notifiedCompanyUuid)) {
-      throw new InvalidAttributeFormatError("notifiedCompanyUuid");
-    }
-    if (!validate(this.jobApplicationUuid)) {
-      throw new InvalidAttributeFormatError("jobApplicationUuid");
-    }
+  private setJobApplicationUuid(jobApplicationUuid: string) {
+    if (isNil(jobApplicationUuid)) throw new AttributeNotDefinedError("jobApplicationUuid");
+    if (!validate(jobApplicationUuid)) throw new InvalidAttributeFormatError("jobApplicationUuid");
+    this.jobApplicationUuid = jobApplicationUuid;
   }
 }
 
