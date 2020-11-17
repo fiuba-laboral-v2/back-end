@@ -1,6 +1,7 @@
-import { isDefined, isUUID } from "class-validator";
+import { isDefined } from "class-validator";
 import { AttributeNotDefinedError, InvalidAttributeFormatError } from "$models/Errors";
 import { UuidGenerator } from "$models/UuidGenerator";
+import { validate } from "uuid";
 
 export class CompanyNewJobApplicationNotification {
   public uuid: string;
@@ -39,12 +40,12 @@ export class CompanyNewJobApplicationNotification {
   }
 
   private validateUuids() {
-    if (!isUUID(this.uuid)) throw new InvalidAttributeFormatError("uuid");
-    if (!isUUID(this.moderatorUuid)) throw new InvalidAttributeFormatError("moderatorUuid");
-    if (!isUUID(this.notifiedCompanyUuid)) {
+    if (!validate(this.uuid)) throw new InvalidAttributeFormatError("uuid");
+    if (!validate(this.moderatorUuid)) throw new InvalidAttributeFormatError("moderatorUuid");
+    if (!validate(this.notifiedCompanyUuid)) {
       throw new InvalidAttributeFormatError("notifiedCompanyUuid");
     }
-    if (!isUUID(this.jobApplicationUuid)) {
+    if (!validate(this.jobApplicationUuid)) {
       throw new InvalidAttributeFormatError("jobApplicationUuid");
     }
   }
