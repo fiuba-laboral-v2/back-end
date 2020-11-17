@@ -1,6 +1,6 @@
 import { CompanyRole } from "$models/CurrentUser";
 import { CompanyPermissions } from "$models/Permissions";
-import generateUuid from "uuid/v4";
+import { v4 as generateUuid } from "uuid";
 
 describe("CompanyRole", () => {
   it("returns an CompanyPermissions instance", async () => {

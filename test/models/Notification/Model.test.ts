@@ -1,6 +1,6 @@
 import { ValidationError } from "sequelize";
 import { Notification } from "$models";
-import generateUuid from "uuid/v4";
+import { v4 as generateUuid } from "uuid";
 import { UUID_REGEX } from "$test/models";
 import { isUuid } from "$models/SequelizeModelValidators";
 import { MultipleTypeNotificationError, MissingNotificationTypeError } from "$models/Notification";

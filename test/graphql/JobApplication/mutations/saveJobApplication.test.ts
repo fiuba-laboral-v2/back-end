@@ -17,7 +17,7 @@ import { AdminGenerator } from "$generators/Admin";
 import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyGenerator } from "$generators/Company";
 import { CareerGenerator } from "$generators/Career";
-import generateUuid from "uuid/v4";
+import { v4 as generateUuid } from "uuid";
 import { UUID_REGEX } from "$test/models";
 import { ApplicantType } from "$models/Applicant";
 

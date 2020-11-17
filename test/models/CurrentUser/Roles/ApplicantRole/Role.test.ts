@@ -1,6 +1,6 @@
 import { ApplicantRole } from "$models/CurrentUser";
 import { ApplicantPermissions } from "$models/Permissions";
-import generateUuid from "uuid/v4";
+import { v4 as generateUuid } from "uuid";
 
 describe("ApplicantRole", () => {
   it("returns an ApplicantPermissions instance", async () => {

@@ -17,7 +17,7 @@ import { IForAllTargets, OfferGenerator } from "$generators/Offer";
 
 import { range } from "lodash";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
-import generateUuid from "uuid/v4";
+import { v4 as generateUuid } from "uuid";
 import { SecretarySettingsGenerator } from "$test/generators/SecretarySettings";
 import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
 

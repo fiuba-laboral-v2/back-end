@@ -4,15 +4,17 @@ import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { NotificationRepository } from "$models/Notification";
+import { SecretarySettingsRepository } from "$models/SecretarySettings";
+import { JobApplicationRepository } from "$models/JobApplication";
+import { CompanyUserRepository } from "$models/CompanyUser";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { Admin, JobApplication } from "$models";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 import { TestClientGenerator } from "$generators/TestClient";
 import { JobApplicationGenerator } from "$generators/JobApplication";
-import { JobApplicationRepository } from "$models/JobApplication";
-import { Admin, JobApplication } from "$models";
-import { CompanyUserRepository } from "$models/CompanyUser";
+import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 
 const UPDATE_JOB_APPLICATION_APPROVAL_STATUS = gql`
   mutation updateJobApplicationApprovalStatus($uuid: ID!, $approvalStatus: ApprovalStatus!) {
@@ -29,6 +31,9 @@ describe("updateJobApplicationApprovalStatus", () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     await CareerRepository.truncate();
+    await SecretarySettingsRepository.truncate();
+
+    await SecretarySettingsGenerator.createDefaultSettings();
   });
 
   const expectToLogAnEventForStatus = async (secretary: Secretary, status: ApprovalStatus) => {

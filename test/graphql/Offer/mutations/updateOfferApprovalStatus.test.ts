@@ -16,7 +16,7 @@ import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyGenerator } from "$generators/Company";
 import { IForAllTargets, OfferGenerator } from "$test/generators/Offer";
 
-import generateUuid from "uuid/v4";
+import { v4 as generateUuid } from "uuid";
 import { ApplicantType } from "$models/Applicant";
 import moment from "moment";
 import { SecretarySettingsRepository } from "$src/models/SecretarySettings";

@@ -1,5 +1,5 @@
 import { CurrentUserBuilder, AdminRole, ApplicantRole, CompanyRole } from "$models/CurrentUser";
-import generateUuid from "uuid/v4";
+import { v4 as generateUuid } from "uuid";
 
 describe("CurrentUserBuilder", () => {
   it("returns a new current user with an applicant role", () => {
