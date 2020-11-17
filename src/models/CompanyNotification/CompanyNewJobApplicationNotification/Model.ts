@@ -20,12 +20,8 @@ export class CompanyNewJobApplicationNotification {
     this.validate();
   }
 
-  private setIsNew(isNew?: boolean) {
-    if (isNil(isNew)) {
-      this.isNew = true;
-    } else {
-      this.isNew = isNew;
-    }
+  private setIsNew(isNew: boolean = true) {
+    this.isNew = isNew;
   }
 
   private validate() {
