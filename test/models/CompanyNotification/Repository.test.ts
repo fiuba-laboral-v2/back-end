@@ -17,6 +17,7 @@ import { CompanyGenerator } from "$generators/Company";
 import { JobApplicationGenerator } from "$generators/JobApplication";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { CompanyNotificationNotFoundError } from "$models/CompanyNotification/Errors";
+import { UUID_REGEX } from "$test/models";
 
 describe("CompanyNotificationRepository", () => {
   let extensionAdmin: Admin;
@@ -41,8 +42,7 @@ describe("CompanyNotificationRepository", () => {
       moderatorUuid: extensionAdmin.userUuid,
       notifiedCompanyUuid: company.uuid,
       jobApplicationUuid: jobApplication.uuid,
-      isNew: true,
-      createdAt: new Date()
+      isNew: true
     };
     attributes[attributeName] = UuidGenerator.generate();
     const notification = new CompanyNewJobApplicationNotification(attributes);
@@ -58,13 +58,28 @@ describe("CompanyNotificationRepository", () => {
       moderatorUuid: extensionAdmin.userUuid,
       notifiedCompanyUuid: company.uuid,
       jobApplicationUuid: jobApplication.uuid,
-      isNew: true,
-      createdAt: new Date()
+      isNew: true
     };
     const notification = new CompanyNewJobApplicationNotification(attributes);
     await CompanyNotificationRepository.save(notification);
     const savedNotification = await CompanyNotificationRepository.findByUuid(notification.uuid);
     expect(savedNotification).toEqual(notification);
+    expect(notification.uuid).toEqual(expect.stringMatching(UUID_REGEX));
+    expect(notification.createdAt).toEqual(expect.any(Date));
+  });
+
+  it("sets an uuid and a createdAt after it is persisted", async () => {
+    const notification = new CompanyNewJobApplicationNotification({
+      moderatorUuid: extensionAdmin.userUuid,
+      notifiedCompanyUuid: company.uuid,
+      jobApplicationUuid: jobApplication.uuid,
+      isNew: true
+    });
+    expect(notification.uuid).toBeUndefined();
+    expect(notification.createdAt).toBeUndefined();
+    await CompanyNotificationRepository.save(notification);
+    expect(notification.uuid).toEqual(expect.stringMatching(UUID_REGEX));
+    expect(notification.createdAt).toEqual(expect.any(Date));
   });
 
   it("throw an error if the notification already exist", async () => {
@@ -72,8 +87,7 @@ describe("CompanyNotificationRepository", () => {
       moderatorUuid: extensionAdmin.userUuid,
       notifiedCompanyUuid: company.uuid,
       jobApplicationUuid: jobApplication.uuid,
-      isNew: true,
-      createdAt: new Date()
+      isNew: true
     };
     const notification = new CompanyNewJobApplicationNotification(attributes);
     await CompanyNotificationRepository.save(notification);
@@ -108,8 +122,7 @@ describe("CompanyNotificationRepository", () => {
       moderatorUuid: extensionAdmin.userUuid,
       notifiedCompanyUuid: company.uuid,
       jobApplicationUuid: jobApplication.uuid,
-      isNew: true,
-      createdAt: new Date()
+      isNew: true
     });
 
     it("deletes all notifications if JobApplications table is truncated", async () => {

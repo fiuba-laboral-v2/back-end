@@ -1,6 +1,5 @@
 import { UuidGenerator } from "$models/UuidGenerator";
 import { CompanyNewJobApplicationNotification } from "$models/CompanyNotification";
-import { UUID_REGEX } from "$test/models";
 import { AttributeNotDefinedError, InvalidAttributeFormatError } from "$models/Errors";
 
 describe("CompanyNewJobApplicationNotification", () => {
@@ -8,8 +7,7 @@ describe("CompanyNewJobApplicationNotification", () => {
     moderatorUuid: UuidGenerator.generate(),
     notifiedCompanyUuid: UuidGenerator.generate(),
     jobApplicationUuid: UuidGenerator.generate(),
-    isNew: true,
-    createdAt: new Date()
+    isNew: true
   };
 
   const expectToThrowErrorOnMissingAttribute = (attributeName: string) => {
@@ -37,17 +35,17 @@ describe("CompanyNewJobApplicationNotification", () => {
   it("creates a valid notification", async () => {
     const notification = new CompanyNewJobApplicationNotification(attributes);
     expect(notification).toEqual({
-      uuid: expect.stringMatching(UUID_REGEX),
-      ...attributes
+      uuid: undefined,
+      ...attributes,
+      createdAt: undefined
     });
   });
 
-  it("throws an error if uuid is not generated", async () => {
-    jest.spyOn(UuidGenerator, "generate").mockImplementation(() => undefined as any);
-    expect(() => new CompanyNewJobApplicationNotification(attributes)).toThrowErrorWithMessage(
-      AttributeNotDefinedError,
-      AttributeNotDefinedError.buildMessage("uuid")
-    );
+  it("sets its uuid", async () => {
+    const uuid = UuidGenerator.generate();
+    const notification = new CompanyNewJobApplicationNotification(attributes);
+    notification.setUuid(uuid);
+    expect(notification.uuid).toEqual(uuid);
   });
 
   it("throws an error if no moderatorUuid is provided", async () => {
@@ -66,13 +64,25 @@ describe("CompanyNewJobApplicationNotification", () => {
     expectToThrowErrorOnMissingAttribute("isNew");
   });
 
-  it("throws an error if no createdAt is provided", async () => {
-    expectToThrowErrorOnMissingAttribute("createdAt");
+  it("throws an error if it is set an undefined createdAt", async () => {
+    const notification = new CompanyNewJobApplicationNotification(attributes);
+    expect(() => notification.setCreatedAt(undefined as any)).toThrowErrorWithMessage(
+      AttributeNotDefinedError,
+      AttributeNotDefinedError.buildMessage("createdAt")
+    );
   });
 
-  it("throws an error if the generated uuid has invalid format", async () => {
-    jest.spyOn(UuidGenerator, "generate").mockImplementation(() => "invalidFormat");
-    expect(() => new CompanyNewJobApplicationNotification(attributes)).toThrowErrorWithMessage(
+  it("throws an error if it is set an undefined uuid", async () => {
+    const notification = new CompanyNewJobApplicationNotification(attributes);
+    expect(() => notification.setUuid(undefined as any)).toThrowErrorWithMessage(
+      AttributeNotDefinedError,
+      AttributeNotDefinedError.buildMessage("uuid")
+    );
+  });
+
+  it("throws an error if it is set an uuid has invalid format", async () => {
+    const notification = new CompanyNewJobApplicationNotification(attributes);
+    expect(() => notification.setUuid("invalidFormat")).toThrowErrorWithMessage(
       InvalidAttributeFormatError,
       InvalidAttributeFormatError.buildMessage("uuid")
     );

@@ -6,7 +6,10 @@ import { Transaction } from "sequelize";
 export const CompanyNotificationRepository = {
   save: async (notification: TCompanyNotification, transaction?: Transaction) => {
     const companyNotification = CompanyNotificationMapper.toPersistenceModel(notification);
-    return CompanyNotificationMapper.toDomainModel(await companyNotification.save({ transaction }));
+    await companyNotification.save({ transaction });
+    notification.setUuid(companyNotification.uuid);
+    notification.setCreatedAt(companyNotification.createdAt);
+    return notification;
   },
   findByUuid: async (uuid: string) => {
     const companyNotification = await CompanyNotification.findByPk(uuid);
