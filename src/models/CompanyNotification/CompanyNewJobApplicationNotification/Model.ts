@@ -20,6 +20,15 @@ export class CompanyNewJobApplicationNotification {
     this.validate();
   }
 
+  public setUuid(uuid: string) {
+    if (uuid && !validate(uuid)) throw new InvalidAttributeFormatError("uuid");
+    this.uuid = uuid;
+  }
+
+  public setCreatedAt(createdAt: Date) {
+    this.createdAt = createdAt;
+  }
+
   private setIsNew(isNew: boolean = true) {
     this.isNew = isNew;
   }
