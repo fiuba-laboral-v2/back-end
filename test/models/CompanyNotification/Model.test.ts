@@ -9,7 +9,7 @@ describe("CompanyNotification", () => {
   const mandatoryAttributes = {
     moderatorUuid: generateUuid(),
     type: CompanyNotificationType.newJobApplication,
-    companyUuid: generateUuid()
+    notifiedCompanyUuid: generateUuid()
   };
 
   const expectToThrowErrorOnMissingAttribute = async (attributeName: string) => {
@@ -17,7 +17,7 @@ describe("CompanyNotification", () => {
       moderatorUuid: generateUuid(),
       moderatorMessage: "message",
       type: CompanyNotificationType.newJobApplication,
-      companyUuid: generateUuid(),
+      notifiedCompanyUuid: generateUuid(),
       isNew: false,
       jobApplicationUuid: generateUuid()
     };
@@ -44,7 +44,7 @@ describe("CompanyNotification", () => {
       moderatorUuid: generateUuid(),
       moderatorMessage: "message",
       type: CompanyNotificationType.newJobApplication,
-      companyUuid: generateUuid(),
+      notifiedCompanyUuid: generateUuid(),
       isNew: false,
       jobApplicationUuid: generateUuid()
     };
@@ -79,8 +79,8 @@ describe("CompanyNotification", () => {
     await expectToThrowErrorOnMissingAttribute("type");
   });
 
-  it("throws an error if no companyUuid is provided", async () => {
-    await expectToThrowErrorOnMissingAttribute("companyUuid");
+  it("throws an error if no notifiedCompanyUuid is provided", async () => {
+    await expectToThrowErrorOnMissingAttribute("notifiedCompanyUuid");
   });
 
   it("throws an error if type has an invalid value", async () => {
@@ -91,8 +91,8 @@ describe("CompanyNotification", () => {
     await expectToThrowErrorInInvalidFormat("moderatorUuid", isUuid.validate.isUUID.msg);
   });
 
-  it("throws an error if companyUuid has an invalid value", async () => {
-    await expectToThrowErrorInInvalidFormat("companyUuid", isUuid.validate.isUUID.msg);
+  it("throws an error if notifiedCompanyUuid has an invalid value", async () => {
+    await expectToThrowErrorInInvalidFormat("notifiedCompanyUuid", isUuid.validate.isUUID.msg);
   });
 
   it("throws an error if jobApplicationUuid has an invalid value", async () => {

@@ -12,7 +12,7 @@ describe("CompanyNotificationMapper", () => {
     it("maps a CompanyNewJobApplicationNotification", async () => {
       const attributes = {
         moderatorUuid: UuidGenerator.generate(),
-        companyUuid: UuidGenerator.generate(),
+        notifiedCompanyUuid: UuidGenerator.generate(),
         jobApplicationUuid: UuidGenerator.generate(),
         isNew: true,
         createdAt: new Date()
@@ -35,7 +35,7 @@ describe("CompanyNotificationMapper", () => {
       const attributes = {
         moderatorUuid: UuidGenerator.generate(),
         type: CompanyNotificationType.newJobApplication,
-        companyUuid: UuidGenerator.generate(),
+        notifiedCompanyUuid: UuidGenerator.generate(),
         isNew: false,
         jobApplicationUuid: UuidGenerator.generate(),
         createdAt: new Date()

@@ -39,7 +39,7 @@ describe("NotificationRepository", () => {
   const expectToThrowErrorOnForeignKeyConstraint = async (attributeName: string) => {
     const attributes = {
       moderatorUuid: extensionAdmin.userUuid,
-      companyUuid: company.uuid,
+      notifiedCompanyUuid: company.uuid,
       jobApplicationUuid: jobApplication.uuid,
       isNew: true,
       createdAt: new Date()
@@ -56,7 +56,7 @@ describe("NotificationRepository", () => {
   it("saves a CompanyNewJobApplicationNotification in the database", async () => {
     const attributes = {
       moderatorUuid: extensionAdmin.userUuid,
-      companyUuid: company.uuid,
+      notifiedCompanyUuid: company.uuid,
       jobApplicationUuid: jobApplication.uuid,
       isNew: true,
       createdAt: new Date()
@@ -70,7 +70,7 @@ describe("NotificationRepository", () => {
   it("throw an error if the notification already exist", async () => {
     const attributes = {
       moderatorUuid: extensionAdmin.userUuid,
-      companyUuid: company.uuid,
+      notifiedCompanyUuid: company.uuid,
       jobApplicationUuid: jobApplication.uuid,
       isNew: true,
       createdAt: new Date()
@@ -91,8 +91,8 @@ describe("NotificationRepository", () => {
     await expectToThrowErrorOnForeignKeyConstraint("moderatorUuid");
   });
 
-  it("throw an error if the companyUuid does not belong to an existing company", async () => {
-    await expectToThrowErrorOnForeignKeyConstraint("companyUuid");
+  it("throw an error if the notifiedCompanyUuid does not belong to an existing company", async () => {
+    await expectToThrowErrorOnForeignKeyConstraint("notifiedCompanyUuid");
   });
 
   it("throws an error if the uuid does not belong to a persisted notification", async () => {
@@ -106,7 +106,7 @@ describe("NotificationRepository", () => {
   describe("Delete Cascade", () => {
     const attributes = () => ({
       moderatorUuid: extensionAdmin.userUuid,
-      companyUuid: company.uuid,
+      notifiedCompanyUuid: company.uuid,
       jobApplicationUuid: jobApplication.uuid,
       isNew: true,
       createdAt: new Date()

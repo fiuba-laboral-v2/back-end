@@ -25,7 +25,7 @@ export class CompanyNotification extends Model<CompanyNotification> {
 
   @ForeignKey(() => Company)
   @Column({ allowNull: false, type: UUID, ...isUuid })
-  public companyUuid: string;
+  public notifiedCompanyUuid: string;
 
   @Column({ allowNull: true, type: BOOLEAN, defaultValue: true })
   public isNew: boolean;

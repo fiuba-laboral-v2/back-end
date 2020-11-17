@@ -6,7 +6,7 @@ import { AttributeNotDefinedError, InvalidAttributeFormatError } from "$models/E
 describe("CompanyNewJobApplicationNotification", () => {
   const attributes = {
     moderatorUuid: UuidGenerator.generate(),
-    companyUuid: UuidGenerator.generate(),
+    notifiedCompanyUuid: UuidGenerator.generate(),
     jobApplicationUuid: UuidGenerator.generate(),
     isNew: true,
     createdAt: new Date()
@@ -54,8 +54,8 @@ describe("CompanyNewJobApplicationNotification", () => {
     expectToThrowErrorOnMissingAttribute("moderatorUuid");
   });
 
-  it("throws an error if no companyUuid is provided", async () => {
-    expectToThrowErrorOnMissingAttribute("companyUuid");
+  it("throws an error if no notifiedCompanyUuid is provided", async () => {
+    expectToThrowErrorOnMissingAttribute("notifiedCompanyUuid");
   });
 
   it("throws an error if no jobApplicationUuid is provided", async () => {
@@ -82,8 +82,8 @@ describe("CompanyNewJobApplicationNotification", () => {
     expectToThrowErrorOnInvalidFormat("moderatorUuid");
   });
 
-  it("throws an error if companyUuid has invalid format", async () => {
-    expectToThrowErrorOnInvalidFormat("companyUuid");
+  it("throws an error if notifiedCompanyUuid has invalid format", async () => {
+    expectToThrowErrorOnInvalidFormat("notifiedCompanyUuid");
   });
 
   it("throws an error if jobApplicationUuid has invalid format", async () => {

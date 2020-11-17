@@ -24,7 +24,7 @@ export = {
         allowNull: false,
         type: "company_notification_type"
       },
-      companyUuid: {
+      notifiedCompanyUuid: {
         allowNull: false,
         references: { model: "Companies", key: "uuid" },
         onDelete: "CASCADE",
