@@ -4,9 +4,9 @@ import { CompanyNotificationNotFoundError } from "./Errors";
 import { Transaction } from "sequelize";
 
 export const CompanyNotificationRepository = {
-  save: (notification: TCompanyNotification, transaction?: Transaction) => {
+  save: async (notification: TCompanyNotification, transaction?: Transaction) => {
     const companyNotification = CompanyNotificationMapper.toPersistenceModel(notification);
-    return companyNotification.save({ transaction });
+    return CompanyNotificationMapper.toDomainModel(await companyNotification.save({ transaction }));
   },
   findByUuid: async (uuid: string) => {
     const companyNotification = await CompanyNotification.findByPk(uuid);

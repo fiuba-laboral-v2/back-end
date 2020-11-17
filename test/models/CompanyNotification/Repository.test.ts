@@ -18,7 +18,7 @@ import { JobApplicationGenerator } from "$generators/JobApplication";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { CompanyNotificationNotFoundError } from "$models/CompanyNotification/Errors";
 
-describe("NotificationRepository", () => {
+describe("CompanyNotificationRepository", () => {
   let extensionAdmin: Admin;
   let company: Company;
   let jobApplication: JobApplication;
