@@ -32,7 +32,8 @@ export = {
       },
       isNew: {
         allowNull: false,
-        type: BOOLEAN
+        type: BOOLEAN,
+        defaultValue: true
       },
       jobApplicationUuid: {
         allowNull: true,
