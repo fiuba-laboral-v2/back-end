@@ -1,7 +1,7 @@
 import { ValidationError } from "sequelize";
 import { ApplicantExperienceSection } from "$models";
 import { isUuid } from "$models/SequelizeModelValidators";
-import generateUuid from "uuid/v4";
+import { v4 as generateUuid } from "uuid";
 import { UUID_REGEX } from "$test/models";
 
 describe("ApplicantExperienceSection", () => {

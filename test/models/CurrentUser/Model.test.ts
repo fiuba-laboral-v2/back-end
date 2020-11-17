@@ -1,6 +1,6 @@
 import { ApplicantRole, CompanyRole, AdminRole, CurrentUser } from "$models/CurrentUser";
 import { UserPermissions } from "$models/Permissions";
-import generateUuid from "uuid/v4";
+import { v4 as generateUuid } from "uuid";
 
 describe("CurrentUser", () => {
   describe("when the current user is an applicant", () => {

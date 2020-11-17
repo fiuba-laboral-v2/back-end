@@ -12,7 +12,7 @@ import { JobApplicationGenerator } from "$generators/JobApplication";
 import { AdminGenerator } from "$generators/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ValidationError, ForeignKeyConstraintError } from "sequelize";
-import generateUuid from "uuid/v4";
+import { v4 as generateUuid } from "uuid";
 import { UUID_REGEX } from "$test/models";
 
 describe("JobApplicationApprovalEventRepository", () => {

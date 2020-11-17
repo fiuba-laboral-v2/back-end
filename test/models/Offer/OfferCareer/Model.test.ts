@@ -1,6 +1,6 @@
 import { ValidationError } from "sequelize";
 import { OfferCareer } from "$models";
-import generateUuid from "uuid/v4";
+import { v4 as generateUuid } from "uuid";
 
 describe("OfferCareer", () => {
   const attributes = {

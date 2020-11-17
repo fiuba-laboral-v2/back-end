@@ -16,7 +16,7 @@ import { CareerGenerator } from "$generators/Career";
 import { AdminGenerator } from "$generators/Admin";
 import { TestClientGenerator } from "$generators/TestClient";
 
-import generateUuid from "uuid/v4";
+import { v4 as generateUuid } from "uuid";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { OfferNotVisibleByCurrentUserError } from "$graphql/Offer/Queries/Errors";
 import { OfferWithNoCareersError } from "$graphql/Offer/Errors";

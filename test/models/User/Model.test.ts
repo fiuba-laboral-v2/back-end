@@ -1,5 +1,5 @@
 import { ValidationError } from "sequelize";
-import generateUuid from "uuid/v4";
+import { v4 as generateUuid } from "uuid";
 import { User } from "$models";
 import { MissingDniError } from "$models/User/Errors";
 import { UUID_REGEX } from "../index";

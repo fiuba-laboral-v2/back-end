@@ -1,5 +1,5 @@
 import { ValidationError } from "sequelize";
-import generateUuid from "uuid/v4";
+import { v4 as generateUuid } from "uuid";
 import { Applicant } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { NumberIsTooSmallError } from "validations-fiuba-laboral-v2";

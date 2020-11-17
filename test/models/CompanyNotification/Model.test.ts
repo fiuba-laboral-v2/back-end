@@ -2,7 +2,7 @@ import { ValidationError } from "sequelize";
 import { CompanyNotification } from "$models";
 import { CompanyNotificationType } from "$models/CompanyNotification";
 import { isCompanyNotificationType, isUuid } from "$models/SequelizeModelValidators";
-import generateUuid from "uuid/v4";
+import { v4 as generateUuid } from "uuid";
 import { omit } from "lodash";
 
 describe("CompanyNotification", () => {

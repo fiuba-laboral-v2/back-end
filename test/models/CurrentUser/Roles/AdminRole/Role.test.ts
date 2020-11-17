@@ -1,6 +1,6 @@
 import { AdminRole } from "$models/CurrentUser";
 import { AdminPermissions } from "$models/Permissions";
-import generateUuid from "uuid/v4";
+import { v4 as generateUuid } from "uuid";
 
 describe("AdminRole", () => {
   it("returns an AdminPermissions instance", async () => {

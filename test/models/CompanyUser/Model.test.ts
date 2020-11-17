@@ -1,6 +1,6 @@
 import { CompanyUser } from "$models";
 import { ValidationError } from "sequelize";
-import generateUuid from "uuid/v4";
+import { v4 as generateUuid } from "uuid";
 
 describe("CompanyUser", () => {
   it("needs to reference a company and a user", () =>

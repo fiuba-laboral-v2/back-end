@@ -19,7 +19,7 @@ import { CareerGenerator } from "$generators/Career";
 import { CompanyGenerator } from "$generators/Company";
 import { TestClientGenerator } from "$generators/TestClient";
 import { AdminGenerator } from "$generators/Admin";
-import generateUuid from "uuid/v4";
+import { v4 as generateUuid } from "uuid";
 
 const GET_OFFER_BY_UUID = gql`
   query($uuid: ID!) {

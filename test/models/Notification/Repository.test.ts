@@ -11,7 +11,7 @@ import { JobApplicationGenerator } from "$generators/JobApplication";
 import { NotificationGenerator } from "$generators/Notification";
 import { AdminGenerator } from "$generators/Admin";
 
-import generateUuid from "uuid/v4";
+import { v4 as generateUuid } from "uuid";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import { range } from "lodash";
 import MockDate from "mockdate";

@@ -7,7 +7,7 @@ import { AuthenticationError } from "$graphql/Errors";
 
 import { CareerGenerator } from "$generators/Career";
 import { TestClientGenerator } from "$generators/TestClient";
-import generateUuid from "uuid/v4";
+import { v4 as generateUuid } from "uuid";
 import { UserRepository } from "$models/User";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { ApprovalStatus } from "$models/ApprovalStatus";

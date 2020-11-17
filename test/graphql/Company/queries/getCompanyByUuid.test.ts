@@ -7,7 +7,7 @@ import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { AdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import generateUuid from "uuid/v4";
+import { v4 as generateUuid } from "uuid";
 
 const query = gql`
   query($uuid: ID!) {
