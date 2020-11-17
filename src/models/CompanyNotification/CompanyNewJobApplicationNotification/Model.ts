@@ -21,11 +21,11 @@ export class CompanyNewJobApplicationNotification {
   }
 
   private validate() {
-    this.validatePresenceOf();
+    this.validatePresence();
     this.validateFormat();
   }
 
-  private validatePresenceOf() {
+  private validatePresence() {
     if (!isDefined(this.uuid)) throw new AttributeNotDefinedError("uuid");
     if (!isDefined(this.moderatorUuid)) throw new AttributeNotDefinedError("moderatorUuid");
     if (!isDefined(this.notifiedCompanyUuid)) {
