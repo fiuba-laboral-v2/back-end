@@ -1,12 +1,12 @@
-import { UuidGenerator } from "$models/UuidGenerator";
+import { v4 as generateUuid } from "uuid";
 import { CompanyNewJobApplicationNotification } from "$models/CompanyNotification";
 import { AttributeNotDefinedError, InvalidAttributeFormatError } from "$models/Errors";
 
 describe("CompanyNewJobApplicationNotification", () => {
   const attributes = {
-    moderatorUuid: UuidGenerator.generate(),
-    notifiedCompanyUuid: UuidGenerator.generate(),
-    jobApplicationUuid: UuidGenerator.generate(),
+    moderatorUuid: generateUuid(),
+    notifiedCompanyUuid: generateUuid(),
+    jobApplicationUuid: generateUuid(),
     isNew: true
   };
 
@@ -43,15 +43,15 @@ describe("CompanyNewJobApplicationNotification", () => {
 
   it("is created with isNew set to true", async () => {
     const notification = new CompanyNewJobApplicationNotification({
-      moderatorUuid: UuidGenerator.generate(),
-      notifiedCompanyUuid: UuidGenerator.generate(),
-      jobApplicationUuid: UuidGenerator.generate()
+      moderatorUuid: generateUuid(),
+      notifiedCompanyUuid: generateUuid(),
+      jobApplicationUuid: generateUuid()
     });
     expect(notification.isNew).toBe(true);
   });
 
   it("sets its uuid", async () => {
-    const uuid = UuidGenerator.generate();
+    const uuid = generateUuid();
     const notification = new CompanyNewJobApplicationNotification(attributes);
     notification.setUuid(uuid);
     expect(notification.uuid).toEqual(uuid);

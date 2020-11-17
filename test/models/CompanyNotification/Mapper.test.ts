@@ -4,7 +4,7 @@ import {
   CompanyNotificationType,
   TCompanyNotification
 } from "$models/CompanyNotification";
-import { UuidGenerator } from "$models/UuidGenerator";
+import { v4 as generateUuid } from "uuid";
 import { CompanyNotification } from "$models";
 import { omit } from "lodash";
 
@@ -12,9 +12,9 @@ describe("CompanyNotificationMapper", () => {
   describe("toPersistenceModel", () => {
     it("maps a CompanyNewJobApplicationNotification", async () => {
       const attributes = {
-        moderatorUuid: UuidGenerator.generate(),
-        notifiedCompanyUuid: UuidGenerator.generate(),
-        jobApplicationUuid: UuidGenerator.generate(),
+        moderatorUuid: generateUuid(),
+        notifiedCompanyUuid: generateUuid(),
+        jobApplicationUuid: generateUuid(),
         isNew: true
       };
 
@@ -32,12 +32,12 @@ describe("CompanyNotificationMapper", () => {
 
     it("maps a CompanyNewJobApplicationNotification that has already an uuid", async () => {
       const notification = new CompanyNewJobApplicationNotification({
-        moderatorUuid: UuidGenerator.generate(),
-        notifiedCompanyUuid: UuidGenerator.generate(),
-        jobApplicationUuid: UuidGenerator.generate(),
+        moderatorUuid: generateUuid(),
+        notifiedCompanyUuid: generateUuid(),
+        jobApplicationUuid: generateUuid(),
         isNew: true
       });
-      const uuid = UuidGenerator.generate();
+      const uuid = generateUuid();
       notification.setUuid(uuid);
       const persistenceModel = CompanyNotificationMapper.toPersistenceModel(notification);
       expect(persistenceModel.uuid).toEqual(uuid);
@@ -45,9 +45,9 @@ describe("CompanyNotificationMapper", () => {
 
     it("maps a CompanyNewJobApplicationNotification that has already a createdAt", async () => {
       const notification = new CompanyNewJobApplicationNotification({
-        moderatorUuid: UuidGenerator.generate(),
-        notifiedCompanyUuid: UuidGenerator.generate(),
-        jobApplicationUuid: UuidGenerator.generate(),
+        moderatorUuid: generateUuid(),
+        notifiedCompanyUuid: generateUuid(),
+        jobApplicationUuid: generateUuid(),
         isNew: true
       });
       const createdAt = new Date();
@@ -68,12 +68,12 @@ describe("CompanyNotificationMapper", () => {
   describe("toDomainModel", () => {
     it("returns a CompanyNewJobApplicationNotification", () => {
       const attributes = {
-        uuid: UuidGenerator.generate(),
-        moderatorUuid: UuidGenerator.generate(),
+        uuid: generateUuid(),
+        moderatorUuid: generateUuid(),
         type: CompanyNotificationType.newJobApplication,
-        notifiedCompanyUuid: UuidGenerator.generate(),
+        notifiedCompanyUuid: generateUuid(),
         isNew: false,
-        jobApplicationUuid: UuidGenerator.generate(),
+        jobApplicationUuid: generateUuid(),
         createdAt: new Date()
       };
       const companyNotification = new CompanyNotification(attributes);

@@ -3,13 +3,13 @@ import { BOOLEAN, TEXT, UUID, ENUM } from "sequelize";
 import { Admin, JobApplication, Company } from "$models";
 import { CompanyNotificationType, companyNotificationTypeEnumValues } from "./Interfaces";
 import { isUuid, isCompanyNotificationType } from "$models/SequelizeModelValidators";
-import { UuidGenerator } from "$models/UuidGenerator";
+import { v4 as generateUuid } from "uuid";
 
 @Table({ tableName: "CompanyNotifications", timestamps: true, updatedAt: false })
 export class CompanyNotification extends Model<CompanyNotification> {
   @BeforeCreate
   public static beforeCreateHook(companyNotification: CompanyNotification): void {
-    companyNotification.uuid = UuidGenerator.generate();
+    companyNotification.uuid = generateUuid();
   }
 
   @Column({ allowNull: true, primaryKey: true, type: UUID, ...isUuid })
