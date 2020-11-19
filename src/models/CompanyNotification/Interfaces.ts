@@ -9,7 +9,7 @@ export type TCompanyNotification = CompanyNewJobApplicationNotification;
 
 export const companyNotificationTypeEnumValues = Object.keys(CompanyNotificationType);
 
-export interface IFindAll {
+export interface IFindLatestByCompany {
   companyUuid: string;
   updatedBeforeThan?: IPaginatedInput;
 }

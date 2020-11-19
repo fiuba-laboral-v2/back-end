@@ -2,7 +2,7 @@ import { TCompanyNotification, CompanyNotificationMapper } from "$models/Company
 import { CompanyNotification } from "$models";
 import { CompanyNotificationNotFoundError } from "./Errors";
 import { Transaction } from "sequelize";
-import { IFindAll } from "./Interfaces";
+import { IFindLatestByCompany } from "./Interfaces";
 import { PaginationQuery } from "$models/PaginationQuery";
 
 export const CompanyNotificationRepository = {
@@ -12,7 +12,7 @@ export const CompanyNotificationRepository = {
     notification.setUuid(companyNotification.uuid);
     notification.setCreatedAt(companyNotification.createdAt);
   },
-  findLatestByCompany: ({ updatedBeforeThan, companyUuid }: IFindAll) =>
+  findLatestByCompany: ({ updatedBeforeThan, companyUuid }: IFindLatestByCompany) =>
     PaginationQuery.findLatest({
       updatedBeforeThan,
       where: { notifiedCompanyUuid: companyUuid },
