@@ -1,8 +1,8 @@
-import { v4 as generateUuid } from "uuid";
+import { UUID } from "../../../models/UUID";
 
 export const sections = (offerUuid: string) => [
   {
-    uuid: generateUuid(),
+    uuid: UUID.generate(),
     offerUuid,
     title: "Requisitos",
     text:
@@ -15,7 +15,7 @@ export const sections = (offerUuid: string) => [
     updatedAt: new Date()
   },
   {
-    uuid: generateUuid(),
+    uuid: UUID.generate(),
     offerUuid,
     title: "Te proponemos",
     text:

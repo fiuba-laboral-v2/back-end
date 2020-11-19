@@ -16,7 +16,7 @@ import { CareerGenerator } from "$generators/Career";
 import { AdminGenerator } from "$generators/Admin";
 import { TestClientGenerator } from "$generators/TestClient";
 
-import { v4 as generateUuid } from "uuid";
+import { UUID } from "$models/UUID";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { OfferNotVisibleByCurrentUserError } from "$graphql/Offer/Queries/Errors";
 import { OfferWithNoCareersError } from "$graphql/Offer/Errors";
@@ -210,7 +210,7 @@ describe("editOffer", () => {
       const { companyUuid, ...attributes } = createOfferAttributes(company.uuid);
       const { errors } = await apolloClient.mutate({
         mutation: EDIT_OFFER,
-        variables: { uuid: generateUuid(), ...omit(attributes, attribute) }
+        variables: { uuid: UUID.generate(), ...omit(attributes, attribute) }
       });
       expectApolloErrorToHaveInternalServerErrorMessage(errors);
     };
@@ -247,7 +247,7 @@ describe("editOffer", () => {
       const { companyUuid, ...attributes } = createOfferAttributes(company.uuid);
       const { errors } = await apolloClient.mutate({
         mutation: EDIT_OFFER,
-        variables: { uuid: generateUuid(), ...attributes, careers: [null] }
+        variables: { uuid: UUID.generate(), ...attributes, careers: [null] }
       });
       expectApolloErrorToHaveInternalServerErrorMessage(errors);
     });
@@ -299,7 +299,7 @@ describe("editOffer", () => {
     });
     const { errors } = await apolloClient.mutate({
       mutation: EDIT_OFFER,
-      variables: { ...attributes, uuid: generateUuid() }
+      variables: { ...attributes, uuid: UUID.generate() }
     });
     expect(errors).toEqualGraphQLErrorType(OfferNotFoundError.name);
   });
@@ -307,12 +307,12 @@ describe("editOffer", () => {
   it("throws an error if the user is not from a company", async () => {
     const { apolloClient } = await TestClientGenerator.applicant();
     const attributes = OfferGenerator.data.withObligatoryData({
-      companyUuid: generateUuid(),
+      companyUuid: UUID.generate(),
       sections: []
     });
     const { errors } = await apolloClient.mutate({
       mutation: EDIT_OFFER,
-      variables: { ...attributes, uuid: generateUuid() }
+      variables: { ...attributes, uuid: UUID.generate() }
     });
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
@@ -325,7 +325,7 @@ describe("editOffer", () => {
     });
     const { errors } = await apolloClient.mutate({
       mutation: EDIT_OFFER,
-      variables: { ...offerData, uuid: generateUuid() }
+      variables: { ...offerData, uuid: UUID.generate() }
     });
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
@@ -335,7 +335,7 @@ describe("editOffer", () => {
     const offerData = OfferGenerator.data.withObligatoryData({ companyUuid: company.uuid });
     const { errors } = await apolloClient.mutate({
       mutation: EDIT_OFFER,
-      variables: { ...offerData, uuid: generateUuid() }
+      variables: { ...offerData, uuid: UUID.generate() }
     });
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
@@ -343,12 +343,12 @@ describe("editOffer", () => {
   it("throws an error when a user is not logged in", async () => {
     const apolloClient = client.loggedOut();
     const offerData = OfferGenerator.data.withObligatoryData({
-      companyUuid: generateUuid(),
+      companyUuid: UUID.generate(),
       sections: []
     });
     const { errors } = await apolloClient.mutate({
       mutation: EDIT_OFFER,
-      variables: { ...offerData, uuid: generateUuid() }
+      variables: { ...offerData, uuid: UUID.generate() }
     });
     expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
   });

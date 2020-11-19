@@ -7,7 +7,7 @@ import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { AdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { v4 as generateUuid } from "uuid";
+import { UUID } from "$models/UUID";
 
 const query = gql`
   query($uuid: ID!) {
@@ -108,7 +108,7 @@ describe("getCompanyByUuid", () => {
   it("returns an error if no user is loggedin", async () => {
     const { errors } = await client.loggedOut().query({
       query: query,
-      variables: { uuid: generateUuid() }
+      variables: { uuid: UUID.generate() }
     });
     expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
   });
@@ -117,7 +117,7 @@ describe("getCompanyByUuid", () => {
     const { apolloClient } = await TestClientGenerator.company();
     const { errors } = await apolloClient.query({
       query: query,
-      variables: { uuid: generateUuid() }
+      variables: { uuid: UUID.generate() }
     });
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
@@ -126,7 +126,7 @@ describe("getCompanyByUuid", () => {
     const { apolloClient } = await TestClientGenerator.applicant();
     const { errors } = await apolloClient.query({
       query: query,
-      variables: { uuid: generateUuid() }
+      variables: { uuid: UUID.generate() }
     });
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
@@ -140,7 +140,7 @@ describe("getCompanyByUuid", () => {
     });
     const { errors } = await apolloClient.query({
       query: query,
-      variables: { uuid: generateUuid() }
+      variables: { uuid: UUID.generate() }
     });
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });

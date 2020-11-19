@@ -1,5 +1,5 @@
 import { ValidationError } from "sequelize";
-import { v4 as generateUuid } from "uuid";
+import { UUID } from "$models/UUID";
 import { User } from "$models";
 import { MissingDniError } from "$models/User/Errors";
 import { UUID_REGEX } from "../index";
@@ -75,7 +75,7 @@ describe("User", () => {
   describe("Errors", () => {
     const expectToThrowErrorForMissingFields = async (fields: string[], message: string) => {
       const attributes = {
-        uuid: generateUuid(),
+        uuid: UUID.generate(),
         dni: DniGenerator.generate(),
         email: "asd@qwe.com",
         password: "somethingVerySecret123",
@@ -89,7 +89,7 @@ describe("User", () => {
 
     it("throws an error if name has a digit", async () => {
       const user = new User({
-        uuid: generateUuid(),
+        uuid: UUID.generate(),
         email: "asd@qwe.com",
         password: "somethingVerySecret123",
         name: 1,
@@ -100,7 +100,7 @@ describe("User", () => {
 
     it("throws an error if surname has a digit", async () => {
       const user = new User({
-        uuid: generateUuid(),
+        uuid: UUID.generate(),
         email: "asd@qwe.com",
         password: "somethingVerySecret123",
         name: "name",

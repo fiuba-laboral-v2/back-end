@@ -2,12 +2,12 @@ import { ValidationError } from "sequelize";
 
 import { OfferSection } from "$models";
 
-import { v4 as generateUuid } from "uuid";
+import { UUID } from "$models/UUID";
 import { UUID_REGEX } from "$test/models";
 
 describe("OfferSection", () => {
   const attributes = {
-    offerUuid: generateUuid(),
+    offerUuid: UUID.generate(),
     title: "title",
     text: "text",
     displayOrder: 1

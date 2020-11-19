@@ -1,11 +1,11 @@
 import { ValidationError } from "sequelize";
 import { OfferCareer } from "$models";
-import { v4 as generateUuid } from "uuid";
+import { UUID } from "$models/UUID";
 
 describe("OfferCareer", () => {
   const attributes = {
-    offerUuid: generateUuid(),
-    careerCode: generateUuid()
+    offerUuid: UUID.generate(),
+    careerCode: UUID.generate()
   };
 
   const expectToThrowErrorOnMissingAttribute = async (attribute: string) => {

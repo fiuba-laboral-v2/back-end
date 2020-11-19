@@ -1,5 +1,5 @@
 import { ValidationError } from "sequelize";
-import { v4 as generateUuid } from "uuid";
+import { UUID } from "$models/UUID";
 import { Applicant } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
@@ -9,7 +9,7 @@ import { isApprovalStatus } from "$models/SequelizeModelValidators";
 describe("Applicant", () => {
   it("creates a valid applicant", async () => {
     const applicant = new Applicant({
-      userUuid: generateUuid(),
+      userUuid: UUID.generate(),
       padron: 1,
       description: "Batman"
     });
@@ -17,7 +17,7 @@ describe("Applicant", () => {
   });
 
   it("creates an applicant with pending approval status by default", async () => {
-    const userUuid = generateUuid();
+    const userUuid = UUID.generate();
     const applicant = new Applicant({
       userUuid,
       padron: 1,
@@ -36,7 +36,7 @@ describe("Applicant", () => {
 
   it("throws an error if approval status is not part of the enum values", async () => {
     const applicant = new Applicant({
-      userUuid: generateUuid(),
+      userUuid: UUID.generate(),
       padron: 98539,
       description: "Batman",
       approvalStatus: "undefinedApprovalStatus"
@@ -60,7 +60,7 @@ describe("Applicant", () => {
 
   it("throws an error if padron is 0", async () => {
     const applicant = new Applicant({
-      userUuid: generateUuid(),
+      userUuid: UUID.generate(),
       padron: 0,
       description: "Batman"
     });
@@ -72,7 +72,7 @@ describe("Applicant", () => {
 
   it("throws an error if padron is negative", async () => {
     const applicant = new Applicant({
-      userUuid: generateUuid(),
+      userUuid: UUID.generate(),
       padron: -243,
       description: "Batman"
     });
@@ -84,7 +84,7 @@ describe("Applicant", () => {
 
   it("throws an error if no padron is provided", async () => {
     const applicant = new Applicant({
-      userUuid: generateUuid(),
+      userUuid: UUID.generate(),
       description: "Batman"
     });
 
@@ -96,7 +96,7 @@ describe("Applicant", () => {
 
   it("throws an error if padron is null", async () => {
     const applicant = new Applicant({
-      userUuid: generateUuid(),
+      userUuid: UUID.generate(),
       padron: null,
       description: "Batman"
     });

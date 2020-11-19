@@ -3,7 +3,6 @@ import {
   CompanyNewJobApplicationNotification,
   CompanyNotificationRepository
 } from "$models/CompanyNotification";
-import { v4 as generateUuid } from "uuid";
 import { UUID } from "$models/UUID";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
@@ -46,7 +45,7 @@ describe("CompanyNotificationRepository", () => {
       jobApplicationUuid: jobApplication.uuid,
       isNew: true
     };
-    attributes[attributeName] = generateUuid();
+    attributes[attributeName] = UUID.generate();
     const notification = new CompanyNewJobApplicationNotification(attributes);
     await expect(CompanyNotificationRepository.save(notification)).rejects.toThrowErrorWithMessage(
       ForeignKeyConstraintError,
@@ -130,7 +129,7 @@ describe("CompanyNotificationRepository", () => {
   });
 
   it("throws an error if the uuid does not belong to a persisted notification", async () => {
-    const uuid = generateUuid();
+    const uuid = UUID.generate();
     await expect(CompanyNotificationRepository.findByUuid(uuid)).rejects.toThrowErrorWithMessage(
       CompanyNotificationNotFoundError,
       CompanyNotificationNotFoundError.buildMessage(uuid)

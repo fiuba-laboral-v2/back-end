@@ -17,7 +17,7 @@ import { IForAllTargets, OfferGenerator } from "$generators/Offer";
 
 import { range } from "lodash";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
-import { v4 as generateUuid } from "uuid";
+import { UUID } from "$models/UUID";
 import { SecretarySettingsGenerator } from "$test/generators/SecretarySettings";
 import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
 
@@ -93,7 +93,7 @@ describe("JobApplicationRepository", () => {
     it("throws an error if the jobApplication already exists", async () => {
       const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
       const attributes = {
-        uuid: generateUuid(),
+        uuid: UUID.generate(),
         offerUuid: offer.uuid,
         applicantUuid: student.uuid
       };
@@ -156,7 +156,7 @@ describe("JobApplicationRepository", () => {
     it("throws an error if given offerUuid that does not exist", async () => {
       const { uuid: applicantUuid } = await ApplicantGenerator.instance.withMinimumData();
       const jobApplication = new JobApplication({
-        offerUuid: generateUuid(),
+        offerUuid: UUID.generate(),
         applicantUuid
       });
       await expect(jobApplication.save()).rejects.toThrowErrorWithMessage(

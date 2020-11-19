@@ -1,6 +1,6 @@
 import { CompanyUser } from "$models";
 import { ValidationError } from "sequelize";
-import { v4 as generateUuid } from "uuid";
+import { UUID } from "$models/UUID";
 
 describe("CompanyUser", () => {
   it("needs to reference a company and a user", () =>
@@ -12,7 +12,7 @@ describe("CompanyUser", () => {
   it("needs to reference a company", async () =>
     expect(
       new CompanyUser({
-        userUuid: generateUuid()
+        userUuid: UUID.generate()
       }).validate()
     ).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -22,7 +22,7 @@ describe("CompanyUser", () => {
   it("needs to reference a user", async () =>
     expect(
       new CompanyUser({
-        companyUuid: generateUuid()
+        companyUuid: UUID.generate()
       }).validate()
     ).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -32,8 +32,8 @@ describe("CompanyUser", () => {
   it("is valid when both references are present", () =>
     expect(
       new CompanyUser({
-        companyUuid: generateUuid(),
-        userUuid: generateUuid()
+        companyUuid: UUID.generate(),
+        userUuid: UUID.generate()
       }).validate()
     ).resolves.not.toThrow());
 });

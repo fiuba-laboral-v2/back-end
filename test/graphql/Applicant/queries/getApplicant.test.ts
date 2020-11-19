@@ -7,7 +7,7 @@ import { AuthenticationError } from "$graphql/Errors";
 
 import { CareerGenerator } from "$generators/Career";
 import { TestClientGenerator } from "$generators/TestClient";
-import { v4 as generateUuid } from "uuid";
+import { UUID } from "$models/UUID";
 import { UserRepository } from "$models/User";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { ApprovalStatus } from "$models/ApprovalStatus";
@@ -119,7 +119,7 @@ describe("getApplicant", () => {
     it("returns an error if the applicant does not exist", async () => {
       const { apolloClient } = await TestClientGenerator.user();
 
-      const uuid = generateUuid();
+      const uuid = UUID.generate();
       const { errors } = await apolloClient.query({
         query: GET_APPLICANT,
         variables: { uuid }
@@ -132,7 +132,7 @@ describe("getApplicant", () => {
   describe("Errors", () => {
     it("returns an error if there is no current user", async () => {
       const apolloClient = client.loggedOut();
-      const uuid = generateUuid();
+      const uuid = UUID.generate();
       const { errors } = await apolloClient.query({
         query: GET_APPLICANT,
         variables: { uuid: uuid }
