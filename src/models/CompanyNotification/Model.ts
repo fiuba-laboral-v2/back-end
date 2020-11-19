@@ -1,20 +1,12 @@
-import { Model, Table, Column, ForeignKey, CreatedAt, BeforeCreate } from "sequelize-typescript";
+import { Table, Column, ForeignKey, CreatedAt } from "sequelize-typescript";
 import { BOOLEAN, TEXT, UUID, ENUM } from "sequelize";
 import { Admin, JobApplication, Company } from "$models";
 import { CompanyNotificationType, companyNotificationTypeEnumValues } from "./Interfaces";
 import { isUuid, isCompanyNotificationType } from "$models/SequelizeModelValidators";
-import { UUID as UUIDModule } from "$models/UUID";
+import { SequelizeModel } from "$models/SequelizeModel";
 
 @Table({ tableName: "CompanyNotifications", timestamps: true, updatedAt: false })
-export class CompanyNotification extends Model<CompanyNotification> {
-  @BeforeCreate
-  public static beforeCreateHook(companyNotification: CompanyNotification) {
-    companyNotification.uuid = UUIDModule.generate();
-  }
-
-  @Column({ allowNull: true, primaryKey: true, type: UUID, ...isUuid })
-  public uuid: string;
-
+export class CompanyNotification extends SequelizeModel<CompanyNotification> {
   @ForeignKey(() => Admin)
   @Column({ allowNull: false, type: UUID, ...isUuid })
   public moderatorUuid: string;

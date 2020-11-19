@@ -11,9 +11,7 @@ export const CompanyNotificationMapper = {
     switch (notification.constructor) {
       case CompanyNewJobApplicationNotification:
         const type = CompanyNotificationType.newJobApplication;
-        const companyNotification = new CompanyNotification({ ...notification, type });
-        companyNotification.isNewRecord = !notification.uuid;
-        return companyNotification;
+        return new CompanyNotification({ ...notification, type });
     }
     throw new Error("Could no map to a persistence model");
   },
