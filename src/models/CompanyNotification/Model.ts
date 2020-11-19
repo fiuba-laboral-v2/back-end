@@ -1,12 +1,13 @@
-import { Model, Table, Column, ForeignKey, CreatedAt, BeforeCreate } from "sequelize-typescript";
+import { Table, Column, ForeignKey, CreatedAt, BeforeCreate } from "sequelize-typescript";
 import { BOOLEAN, TEXT, UUID, ENUM } from "sequelize";
 import { Admin, JobApplication, Company } from "$models";
 import { CompanyNotificationType, companyNotificationTypeEnumValues } from "./Interfaces";
 import { isUuid, isCompanyNotificationType } from "$models/SequelizeModelValidators";
+import { PersistenceModel } from "$models/PersistenceModel";
 import { UUID as UUIDModule } from "$models/UUID";
 
 @Table({ tableName: "CompanyNotifications", timestamps: true, updatedAt: false })
-export class CompanyNotification extends Model<CompanyNotification> {
+export class CompanyNotification extends PersistenceModel<CompanyNotification> {
   @BeforeCreate
   public static beforeCreateHook(companyNotification: CompanyNotification) {
     companyNotification.uuid = UUIDModule.generate();
