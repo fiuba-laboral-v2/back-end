@@ -1,12 +1,12 @@
 import { ValidationError } from "sequelize";
 import { ApplicantExperienceSection } from "$models";
 import { isUuid } from "$models/SequelizeModelValidators";
-import { v4 as generateUuid } from "uuid";
+import { UUID } from "$models/UUID";
 import { UUID_REGEX } from "$test/models";
 
 describe("ApplicantExperienceSection", () => {
   const attributes = {
-    applicantUuid: generateUuid(),
+    applicantUuid: UUID.generate(),
     title: "title",
     text: "text",
     displayOrder: 1

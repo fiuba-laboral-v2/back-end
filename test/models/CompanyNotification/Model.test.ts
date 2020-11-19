@@ -2,24 +2,24 @@ import { ValidationError } from "sequelize";
 import { CompanyNotification } from "$models";
 import { CompanyNotificationType } from "$models/CompanyNotification";
 import { isCompanyNotificationType, isUuid } from "$models/SequelizeModelValidators";
-import { v4 as generateUuid } from "uuid";
+import { UUID } from "$models/UUID";
 import { omit } from "lodash";
 
 describe("CompanyNotification", () => {
   const mandatoryAttributes = {
-    moderatorUuid: generateUuid(),
+    moderatorUuid: UUID.generate(),
     type: CompanyNotificationType.newJobApplication,
-    notifiedCompanyUuid: generateUuid()
+    notifiedCompanyUuid: UUID.generate()
   };
 
   const expectToThrowErrorOnMissingAttribute = async (attributeName: string) => {
     const attributes = {
-      moderatorUuid: generateUuid(),
+      moderatorUuid: UUID.generate(),
       moderatorMessage: "message",
       type: CompanyNotificationType.newJobApplication,
-      notifiedCompanyUuid: generateUuid(),
+      notifiedCompanyUuid: UUID.generate(),
       isNew: false,
-      jobApplicationUuid: generateUuid()
+      jobApplicationUuid: UUID.generate()
     };
     const companyNotification = new CompanyNotification(omit(attributes, attributeName));
     await expect(companyNotification.validate()).rejects.toThrowErrorWithMessage(
@@ -41,12 +41,12 @@ describe("CompanyNotification", () => {
 
   it("creates a valid companyNotification", async () => {
     const attributes = {
-      moderatorUuid: generateUuid(),
+      moderatorUuid: UUID.generate(),
       moderatorMessage: "message",
       type: CompanyNotificationType.newJobApplication,
-      notifiedCompanyUuid: generateUuid(),
+      notifiedCompanyUuid: UUID.generate(),
       isNew: false,
-      jobApplicationUuid: generateUuid()
+      jobApplicationUuid: UUID.generate()
     };
     const companyNotification = new CompanyNotification(attributes);
     await expect(companyNotification.validate()).resolves.not.toThrowError();

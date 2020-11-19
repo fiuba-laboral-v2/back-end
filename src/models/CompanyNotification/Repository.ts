@@ -2,6 +2,8 @@ import { TCompanyNotification, CompanyNotificationMapper } from "$models/Company
 import { CompanyNotification } from "$models";
 import { CompanyNotificationNotFoundError } from "./Errors";
 import { Transaction } from "sequelize";
+import { IFindLatestByCompany } from "./Interfaces";
+import { PaginationQuery } from "$models/PaginationQuery";
 
 export const CompanyNotificationRepository = {
   save: async (notification: TCompanyNotification, transaction?: Transaction) => {
@@ -10,6 +12,21 @@ export const CompanyNotificationRepository = {
     notification.setUuid(companyNotification.uuid);
     notification.setCreatedAt(companyNotification.createdAt);
   },
+  findLatestByCompany: ({ updatedBeforeThan, companyUuid }: IFindLatestByCompany) =>
+    PaginationQuery.findLatest({
+      updatedBeforeThan,
+      where: { notifiedCompanyUuid: companyUuid },
+      timestampKey: "createdAt",
+      query: async options => {
+        const companyNotifications = await CompanyNotification.findAll(options);
+        return companyNotifications.map(CompanyNotificationMapper.toDomainModel);
+      },
+      order: [
+        ["isNew", "DESC"],
+        ["createdAt", "DESC"],
+        ["uuid", "DESC"]
+      ]
+    }),
   findByUuid: async (uuid: string) => {
     const companyNotification = await CompanyNotification.findByPk(uuid);
     if (!companyNotification) throw new CompanyNotificationNotFoundError(uuid);

@@ -1,12 +1,12 @@
-import { v4 as generateUuid } from "uuid";
+import { UUID } from "$models/UUID";
 import { CompanyNewJobApplicationNotification } from "$models/CompanyNotification";
 import { AttributeNotDefinedError, InvalidAttributeFormatError } from "$models/Errors";
 
 describe("CompanyNewJobApplicationNotification", () => {
   const attributes = {
-    moderatorUuid: generateUuid(),
-    notifiedCompanyUuid: generateUuid(),
-    jobApplicationUuid: generateUuid(),
+    moderatorUuid: UUID.generate(),
+    notifiedCompanyUuid: UUID.generate(),
+    jobApplicationUuid: UUID.generate(),
     isNew: true
   };
 
@@ -42,12 +42,12 @@ describe("CompanyNewJobApplicationNotification", () => {
   });
 
   it("creates a valid notification with an uuid", async () => {
-    const uuid = generateUuid();
+    const uuid = UUID.generate();
     const notification = new CompanyNewJobApplicationNotification({
       uuid,
-      moderatorUuid: generateUuid(),
-      notifiedCompanyUuid: generateUuid(),
-      jobApplicationUuid: generateUuid()
+      moderatorUuid: UUID.generate(),
+      notifiedCompanyUuid: UUID.generate(),
+      jobApplicationUuid: UUID.generate()
     });
     expect(notification.uuid).toBe(uuid);
   });
@@ -55,9 +55,9 @@ describe("CompanyNewJobApplicationNotification", () => {
   it("creates a valid notification with a createdAt", async () => {
     const createdAt = new Date();
     const notification = new CompanyNewJobApplicationNotification({
-      moderatorUuid: generateUuid(),
-      notifiedCompanyUuid: generateUuid(),
-      jobApplicationUuid: generateUuid(),
+      moderatorUuid: UUID.generate(),
+      notifiedCompanyUuid: UUID.generate(),
+      jobApplicationUuid: UUID.generate(),
       createdAt
     });
     expect(notification.createdAt).toBe(createdAt);
@@ -71,7 +71,7 @@ describe("CompanyNewJobApplicationNotification", () => {
   });
 
   it("sets its uuid", async () => {
-    const uuid = generateUuid();
+    const uuid = UUID.generate();
     const notification = new CompanyNewJobApplicationNotification(attributes);
     notification.setUuid(uuid);
     expect(notification.uuid).toEqual(uuid);

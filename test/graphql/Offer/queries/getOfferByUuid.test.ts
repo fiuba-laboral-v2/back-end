@@ -19,7 +19,7 @@ import { CareerGenerator } from "$generators/Career";
 import { CompanyGenerator } from "$generators/Company";
 import { TestClientGenerator } from "$generators/TestClient";
 import { AdminGenerator } from "$generators/Admin";
-import { v4 as generateUuid } from "uuid";
+import { UUID } from "$models/UUID";
 
 const GET_OFFER_BY_UUID = gql`
   query($uuid: ID!) {
@@ -333,7 +333,7 @@ describe("getOfferByUuid", () => {
       const apolloClient = await client.loggedOut();
       const { errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID,
-        variables: { uuid: generateUuid() }
+        variables: { uuid: UUID.generate() }
       });
 
       expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
@@ -343,7 +343,7 @@ describe("getOfferByUuid", () => {
       const { apolloClient } = await companyTestClient(ApprovalStatus.pending);
       const { errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID,
-        variables: { uuid: generateUuid() }
+        variables: { uuid: UUID.generate() }
       });
 
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
@@ -353,7 +353,7 @@ describe("getOfferByUuid", () => {
       const { apolloClient } = await companyTestClient(ApprovalStatus.rejected);
       const { errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID,
-        variables: { uuid: generateUuid() }
+        variables: { uuid: UUID.generate() }
       });
 
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
@@ -368,7 +368,7 @@ describe("getOfferByUuid", () => {
       });
       const { errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID,
-        variables: { uuid: generateUuid() }
+        variables: { uuid: UUID.generate() }
       });
 
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
@@ -383,7 +383,7 @@ describe("getOfferByUuid", () => {
       });
       const { errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID,
-        variables: { uuid: generateUuid() }
+        variables: { uuid: UUID.generate() }
       });
 
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);

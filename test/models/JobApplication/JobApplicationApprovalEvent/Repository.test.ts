@@ -12,7 +12,7 @@ import { JobApplicationGenerator } from "$generators/JobApplication";
 import { AdminGenerator } from "$generators/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ValidationError, ForeignKeyConstraintError } from "sequelize";
-import { v4 as generateUuid } from "uuid";
+import { UUID } from "$models/UUID";
 import { UUID_REGEX } from "$test/models";
 
 describe("JobApplicationApprovalEventRepository", () => {
@@ -52,7 +52,7 @@ describe("JobApplicationApprovalEventRepository", () => {
       adminUserUuid: admin.userUuid,
       status: ApprovalStatus.pending
     };
-    attributes[attribute] = generateUuid();
+    attributes[attribute] = UUID.generate();
     const event = new JobApplicationApprovalEvent(attributes);
     const constrain = `JobApplicationApprovalEvent_${attribute}_fkey`;
     const model = "JobApplicationApprovalEvent";
@@ -150,7 +150,7 @@ describe("JobApplicationApprovalEventRepository", () => {
     });
 
     it("throws an error if the uuid does not belong to a persisted event", async () => {
-      const nonPersistedEventUuid = generateUuid();
+      const nonPersistedEventUuid = UUID.generate();
       await expect(
         JobApplicationApprovalEventRepository.findByUuid(nonPersistedEventUuid)
       ).rejects.toThrowErrorWithMessage(

@@ -1,86 +1,86 @@
-import { v4 as generateUuid } from "uuid";
+import { UUID } from "../../models/UUID";
 
 export const uuids = {
   companies: {
     devartis: {
-      uuid: generateUuid()
+      uuid: UUID.generate()
     },
     mercadoLibre: {
-      uuid: generateUuid()
+      uuid: UUID.generate()
     }
   },
   offers: {
-    javaSemiSenior: generateUuid(),
-    javaSenior: generateUuid(),
-    javaJunior: generateUuid(),
-    rubySenior: generateUuid(),
-    rubyJunior: generateUuid(),
-    rubySemiSenior: generateUuid(),
-    swiftInternship: generateUuid(),
-    kotlinInternship: generateUuid()
+    javaSemiSenior: UUID.generate(),
+    javaSenior: UUID.generate(),
+    javaJunior: UUID.generate(),
+    rubySenior: UUID.generate(),
+    rubyJunior: UUID.generate(),
+    rubySemiSenior: UUID.generate(),
+    swiftInternship: UUID.generate(),
+    kotlinInternship: UUID.generate()
   },
   extensionAdmin: {
-    user: generateUuid()
+    user: UUID.generate()
   },
   graduadosAdmin: {
-    user: generateUuid()
+    user: UUID.generate()
   },
   sebastian: {
-    applicant: generateUuid(),
-    user: generateUuid(),
+    applicant: UUID.generate(),
+    user: UUID.generate(),
     sections: {
-      experience: generateUuid()
+      experience: UUID.generate()
     },
     jobApplications: {
-      javaSemiSenior: generateUuid(),
-      javaJunior: generateUuid(),
-      javaSenior: generateUuid(),
-      rubyJunior: generateUuid()
+      javaSemiSenior: UUID.generate(),
+      javaJunior: UUID.generate(),
+      javaSenior: UUID.generate(),
+      rubyJunior: UUID.generate()
     }
   },
   dylan: {
-    applicant: generateUuid(),
-    user: generateUuid(),
+    applicant: UUID.generate(),
+    user: UUID.generate(),
     sections: {
-      experience: generateUuid()
+      experience: UUID.generate()
     },
     jobApplications: {
-      javaSemiSenior: generateUuid(),
-      javaJunior: generateUuid(),
-      rubyJunior: generateUuid()
+      javaSemiSenior: UUID.generate(),
+      javaJunior: UUID.generate(),
+      rubyJunior: UUID.generate()
     }
   },
   manuel: {
-    applicant: generateUuid(),
-    user: generateUuid(),
+    applicant: UUID.generate(),
+    user: UUID.generate(),
     sections: {
-      field1: generateUuid(),
-      field2: generateUuid(),
-      field3: generateUuid()
+      field1: UUID.generate(),
+      field2: UUID.generate(),
+      field3: UUID.generate()
     },
     jobApplications: {
-      javaSemiSenior: generateUuid()
+      javaSemiSenior: UUID.generate()
     }
   },
   claudio: {
-    user: generateUuid()
+    user: UUID.generate()
   },
   marcos: {
-    user: generateUuid()
+    user: UUID.generate()
   },
   capabilities: {
-    node: generateUuid(),
-    RoR: generateUuid(),
-    typescript: generateUuid(),
-    python: generateUuid(),
-    go: generateUuid(),
-    c: generateUuid(),
-    cPlusPlus: generateUuid(),
-    java: generateUuid(),
-    postgres: generateUuid(),
-    mongo: generateUuid(),
-    cassandra: generateUuid(),
-    sql: generateUuid(),
-    noSQL: generateUuid()
+    node: UUID.generate(),
+    RoR: UUID.generate(),
+    typescript: UUID.generate(),
+    python: UUID.generate(),
+    go: UUID.generate(),
+    c: UUID.generate(),
+    cPlusPlus: UUID.generate(),
+    java: UUID.generate(),
+    postgres: UUID.generate(),
+    mongo: UUID.generate(),
+    cassandra: UUID.generate(),
+    sql: UUID.generate(),
+    noSQL: UUID.generate()
   }
 };

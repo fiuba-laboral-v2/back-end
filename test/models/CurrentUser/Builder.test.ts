@@ -1,12 +1,12 @@
 import { CurrentUserBuilder, AdminRole, ApplicantRole, CompanyRole } from "$models/CurrentUser";
-import { v4 as generateUuid } from "uuid";
+import { UUID } from "$models/UUID";
 
 describe("CurrentUserBuilder", () => {
   it("returns a new current user with an applicant role", () => {
     const currentUserTokenData = {
-      uuid: generateUuid(),
+      uuid: UUID.generate(),
       email: "applicant@mail.com",
-      applicant: { uuid: generateUuid() }
+      applicant: { uuid: UUID.generate() }
     };
     const currentUser = CurrentUserBuilder.build(currentUserTokenData);
     const applicantRole = currentUser.getApplicant();
@@ -21,9 +21,9 @@ describe("CurrentUserBuilder", () => {
 
   it("returns a new current user with a company role", () => {
     const currentUserTokenData = {
-      uuid: generateUuid(),
+      uuid: UUID.generate(),
       email: "company@mail.com",
-      company: { uuid: generateUuid() }
+      company: { uuid: UUID.generate() }
     };
     const currentUser = CurrentUserBuilder.build(currentUserTokenData);
     const companyRole = currentUser.getCompany();
@@ -38,9 +38,9 @@ describe("CurrentUserBuilder", () => {
 
   it("returns a new current user with an admin role", () => {
     const currentUserTokenData = {
-      uuid: generateUuid(),
+      uuid: UUID.generate(),
       email: "admin@mail.com",
-      admin: { userUuid: generateUuid() }
+      admin: { userUuid: UUID.generate() }
     };
     const currentUser = CurrentUserBuilder.build(currentUserTokenData);
     const adminRole = currentUser.getAdmin();
@@ -55,10 +55,10 @@ describe("CurrentUserBuilder", () => {
 
   it("returns a new current user with an admin and an applicant role", () => {
     const currentUserTokenData = {
-      uuid: generateUuid(),
+      uuid: UUID.generate(),
       email: "adminAndApplicant@mail.com",
-      admin: { userUuid: generateUuid() },
-      applicant: { uuid: generateUuid() }
+      admin: { userUuid: UUID.generate() },
+      applicant: { uuid: UUID.generate() }
     };
     const currentUser = CurrentUserBuilder.build(currentUserTokenData);
     const applicantRole = currentUser.getApplicant();

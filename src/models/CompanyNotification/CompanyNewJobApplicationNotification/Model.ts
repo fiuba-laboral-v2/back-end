@@ -1,5 +1,5 @@
 import { AttributeNotDefinedError, InvalidAttributeFormatError } from "$models/Errors";
-import { validate } from "uuid";
+import { UUID } from "$models/UUID";
 import { isNil } from "lodash";
 
 export class CompanyNewJobApplicationNotification {
@@ -20,7 +20,7 @@ export class CompanyNewJobApplicationNotification {
   }
 
   public setUuid(uuid?: string) {
-    if (uuid && !validate(uuid)) throw new InvalidAttributeFormatError("uuid");
+    if (uuid && !UUID.validate(uuid)) throw new InvalidAttributeFormatError("uuid");
     this.uuid = uuid;
   }
 
@@ -34,20 +34,21 @@ export class CompanyNewJobApplicationNotification {
 
   private setModeratorUuid(moderatorUuid: string) {
     if (isNil(moderatorUuid)) throw new AttributeNotDefinedError("moderatorUuid");
-    if (!validate(moderatorUuid)) throw new InvalidAttributeFormatError("moderatorUuid");
+    if (!UUID.validate(moderatorUuid)) throw new InvalidAttributeFormatError("moderatorUuid");
     this.moderatorUuid = moderatorUuid;
   }
 
   private setNotifiedCompanyUuid(notifiedCompanyUuid: string) {
     const attributeName = "notifiedCompanyUuid";
     if (isNil(notifiedCompanyUuid)) throw new AttributeNotDefinedError(attributeName);
-    if (!validate(notifiedCompanyUuid)) throw new InvalidAttributeFormatError(attributeName);
+    if (!UUID.validate(notifiedCompanyUuid)) throw new InvalidAttributeFormatError(attributeName);
     this.notifiedCompanyUuid = notifiedCompanyUuid;
   }
 
   private setJobApplicationUuid(jobApplicationUuid: string) {
-    if (isNil(jobApplicationUuid)) throw new AttributeNotDefinedError("jobApplicationUuid");
-    if (!validate(jobApplicationUuid)) throw new InvalidAttributeFormatError("jobApplicationUuid");
+    const attributeName = "jobApplicationUuid";
+    if (isNil(jobApplicationUuid)) throw new AttributeNotDefinedError(attributeName);
+    if (!UUID.validate(jobApplicationUuid)) throw new InvalidAttributeFormatError(attributeName);
     this.jobApplicationUuid = jobApplicationUuid;
   }
 }

@@ -17,7 +17,7 @@ import { AdminGenerator } from "$generators/Admin";
 import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyGenerator } from "$generators/Company";
 import { CareerGenerator } from "$generators/Career";
-import { v4 as generateUuid } from "uuid";
+import { UUID } from "$models/UUID";
 import { UUID_REGEX } from "$test/models";
 import { ApplicantType } from "$models/Applicant";
 
@@ -294,7 +294,7 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.user();
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
-        variables: { offerUuid: generateUuid() }
+        variables: { offerUuid: UUID.generate() }
       });
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });
@@ -303,7 +303,7 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.company();
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
-        variables: { offerUuid: generateUuid() }
+        variables: { offerUuid: UUID.generate() }
       });
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });
@@ -312,7 +312,7 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.admin();
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
-        variables: { offerUuid: generateUuid() }
+        variables: { offerUuid: UUID.generate() }
       });
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });
@@ -321,7 +321,7 @@ describe("saveJobApplication", () => {
       const { apolloClient } = await TestClientGenerator.applicant();
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
-        variables: { offerUuid: generateUuid() }
+        variables: { offerUuid: UUID.generate() }
       });
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });
@@ -335,7 +335,7 @@ describe("saveJobApplication", () => {
       });
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
-        variables: { offerUuid: generateUuid() }
+        variables: { offerUuid: UUID.generate() }
       });
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });

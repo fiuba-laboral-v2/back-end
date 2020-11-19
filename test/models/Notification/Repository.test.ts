@@ -11,7 +11,7 @@ import { JobApplicationGenerator } from "$generators/JobApplication";
 import { NotificationGenerator } from "$generators/Notification";
 import { AdminGenerator } from "$generators/Admin";
 
-import { v4 as generateUuid } from "uuid";
+import { UUID } from "$models/UUID";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import { range } from "lodash";
 import MockDate from "mockdate";
@@ -57,7 +57,7 @@ describe("NotificationRepository", () => {
 
   it("throws an error if the notification has an existing uuid", async () => {
     const attributes = {
-      uuid: generateUuid(),
+      uuid: UUID.generate(),
       userUuid: companyUserUuid,
       adminUserUuid: extensionAdmin.userUuid,
       jobApplicationUuid: jobApplication.uuid
@@ -76,7 +76,7 @@ describe("NotificationRepository", () => {
     const notification = new Notification({
       userUuid: companyUserUuid,
       adminUserUuid: extensionAdmin.userUuid,
-      jobApplicationUuid: generateUuid()
+      jobApplicationUuid: UUID.generate()
     });
     await expect(NotificationRepository.save(notification)).rejects.toThrowErrorWithMessage(
       ForeignKeyConstraintError,
@@ -87,7 +87,7 @@ describe("NotificationRepository", () => {
 
   it("throws an error if the userUuid does not belong to an existing user", async () => {
     const notification = new Notification({
-      userUuid: generateUuid(),
+      userUuid: UUID.generate(),
       adminUserUuid: extensionAdmin.userUuid,
       jobApplicationUuid: jobApplication.uuid
     });
@@ -101,7 +101,7 @@ describe("NotificationRepository", () => {
   it("throws an error if the adminUserUuid does not belong to an existing admin", async () => {
     const notification = new Notification({
       userUuid: companyUserUuid,
-      adminUserUuid: generateUuid(),
+      adminUserUuid: UUID.generate(),
       jobApplicationUuid: jobApplication.uuid
     });
     await expect(NotificationRepository.save(notification)).rejects.toThrowErrorWithMessage(
@@ -142,7 +142,7 @@ describe("NotificationRepository", () => {
 
     it("throws an error if one of the given uuids does not belong to a persisted notification", async () => {
       const { uuid } = await NotificationGenerator.instance.JobApplication.approved(company);
-      const nonExistentUuid = generateUuid();
+      const nonExistentUuid = UUID.generate();
       await expect(
         NotificationRepository.markAsReadByUuids([uuid, nonExistentUuid])
       ).rejects.toThrowErrorWithMessage(
@@ -153,7 +153,7 @@ describe("NotificationRepository", () => {
 
     it("does not update the notifications if it throws an error", async () => {
       const notification = await NotificationGenerator.instance.JobApplication.approved(company);
-      const nonExistentUuid = generateUuid();
+      const nonExistentUuid = UUID.generate();
       const uuids = [notification.uuid, nonExistentUuid];
       await expect(NotificationRepository.markAsReadByUuids(uuids)).rejects.toThrow(
         NotificationsNotUpdatedError

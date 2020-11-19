@@ -1,10 +1,10 @@
 import { CompanyRole } from "$models/CurrentUser";
 import { CompanyPermissions } from "$models/Permissions";
-import { v4 as generateUuid } from "uuid";
+import { UUID } from "$models/UUID";
 
 describe("CompanyRole", () => {
   it("returns an CompanyPermissions instance", async () => {
-    const role = new CompanyRole(generateUuid());
+    const role = new CompanyRole(UUID.generate());
     expect(role.getPermissions()).toBeInstanceOf(CompanyPermissions);
   });
 });

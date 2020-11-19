@@ -16,7 +16,7 @@ import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyGenerator } from "$generators/Company";
 import { IForAllTargets, OfferGenerator } from "$test/generators/Offer";
 
-import { v4 as generateUuid } from "uuid";
+import { UUID } from "$models/UUID";
 import { ApplicantType } from "$models/Applicant";
 import moment from "moment";
 import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
@@ -245,7 +245,7 @@ describe("updateOfferApprovalStatus", () => {
   it("returns an error if the offer does not exists", async () => {
     const { apolloClient } = await TestClientGenerator.admin({ secretary: Secretary.extension });
     const { errors } = await performMutation(apolloClient, {
-      uuid: generateUuid(),
+      uuid: UUID.generate(),
       approvalStatus: ApprovalStatus.approved
     });
     expect(errors).toEqualGraphQLErrorType(OfferNotFoundError.name);
