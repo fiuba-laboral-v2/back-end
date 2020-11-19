@@ -1,6 +1,7 @@
 import { UniqueConstraintError, ForeignKeyConstraintError } from "sequelize";
 import {
   CompanyNewJobApplicationNotification,
+  CompanyNotificationMapper,
   CompanyNotificationRepository
 } from "$models/CompanyNotification";
 import { v4 as generateUuid } from "uuid";
@@ -107,13 +108,15 @@ describe("CompanyNotificationRepository", () => {
     };
     const notification = new CompanyNewJobApplicationNotification(attributes);
     await CompanyNotificationRepository.save(notification);
-    const originalIsNewRecord = CompanyNewJobApplicationNotification.prototype.isNewRecord;
-    CompanyNewJobApplicationNotification.prototype.isNewRecord = jest.fn(() => true);
+    const companyNotification = CompanyNotificationMapper.toPersistenceModel(notification);
+    jest.spyOn(CompanyNotificationMapper, "toPersistenceModel").mockImplementation(() => {
+      companyNotification.isNewRecord = true;
+      return companyNotification;
+    });
     await expect(CompanyNotificationRepository.save(notification)).rejects.toThrowErrorWithMessage(
       UniqueConstraintError,
       "Validation error"
     );
-    CompanyNewJobApplicationNotification.prototype.isNewRecord = originalIsNewRecord;
   });
 
   it("throw an error if the jobApplicationUuid does not belong to an existing one", async () => {

@@ -19,10 +19,6 @@ export class CompanyNewJobApplicationNotification {
     this.setCreatedAt(attributes.createdAt);
   }
 
-  public isNewRecord() {
-    return !this.uuid;
-  }
-
   public setUuid(uuid?: string) {
     if (uuid && !validate(uuid)) throw new InvalidAttributeFormatError("uuid");
     this.uuid = uuid;

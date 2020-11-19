@@ -8,7 +8,6 @@ import { PaginationQuery } from "$models/PaginationQuery";
 export const CompanyNotificationRepository = {
   save: async (notification: TCompanyNotification, transaction?: Transaction) => {
     const companyNotification = CompanyNotificationMapper.toPersistenceModel(notification);
-    companyNotification.isNewRecord = notification.isNewRecord();
     await companyNotification.save({ transaction });
     notification.setUuid(companyNotification.uuid);
     notification.setCreatedAt(companyNotification.createdAt);
