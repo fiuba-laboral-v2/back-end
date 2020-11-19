@@ -3,11 +3,11 @@ import { BOOLEAN, TEXT, UUID, ENUM } from "sequelize";
 import { Admin, JobApplication, Company } from "$models";
 import { CompanyNotificationType, companyNotificationTypeEnumValues } from "./Interfaces";
 import { isUuid, isCompanyNotificationType } from "$models/SequelizeModelValidators";
-import { PersistenceModel } from "$models/PersistenceModel";
+import { SequelizeModel } from "$models/SequelizeModel";
 import { UUID as UUIDModule } from "$models/UUID";
 
 @Table({ tableName: "CompanyNotifications", timestamps: true, updatedAt: false })
-export class CompanyNotification extends PersistenceModel<CompanyNotification> {
+export class CompanyNotification extends SequelizeModel<CompanyNotification> {
   @BeforeCreate
   public static beforeCreateHook(companyNotification: CompanyNotification) {
     companyNotification.uuid = UUIDModule.generate();
