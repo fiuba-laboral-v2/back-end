@@ -14,7 +14,7 @@ export class SequelizeModel<T, Attributes extends IBase = object> extends Model<
 
   constructor(attributes?: Attributes, options?: BuildOptions) {
     super(attributes, options);
-    if (attributes) this.isNewRecord = !attributes.uuid;
+    this.isNewRecord = !attributes?.uuid;
   }
 }
 
