@@ -77,6 +77,18 @@ describe("CompanyNewJobApplicationNotification", () => {
     expect(notification.uuid).toEqual(uuid);
   });
 
+  it("returns false if the uuid is defined", async () => {
+    const uuid = generateUuid();
+    const notification = new CompanyNewJobApplicationNotification(attributes);
+    notification.setUuid(uuid);
+    expect(notification.isNewRecord()).toBe(false);
+  });
+
+  it("returns true if the uuid is not defined", async () => {
+    const notification = new CompanyNewJobApplicationNotification(attributes);
+    expect(notification.isNewRecord()).toBe(true);
+  });
+
   it("throws an error if it is set an uuid has invalid format", async () => {
     const notification = new CompanyNewJobApplicationNotification(attributes);
     expect(() => notification.setUuid("invalidFormat")).toThrowErrorWithMessage(
