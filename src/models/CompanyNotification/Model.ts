@@ -13,9 +13,6 @@ export class CompanyNotification extends PersistenceModel<CompanyNotification> {
     companyNotification.uuid = UUIDModule.generate();
   }
 
-  @Column({ allowNull: true, primaryKey: true, type: UUID, ...isUuid })
-  public uuid: string;
-
   @ForeignKey(() => Admin)
   @Column({ allowNull: false, type: UUID, ...isUuid })
   public moderatorUuid: string;
