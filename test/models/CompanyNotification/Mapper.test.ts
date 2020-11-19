@@ -26,7 +26,8 @@ describe("CompanyNotificationMapper", () => {
       expect(persistenceModel).toBeObjectContaining({
         ...attributes,
         type: CompanyNotificationType.newJobApplication,
-        moderatorMessage: undefined
+        moderatorMessage: undefined,
+        isNewRecord: true
       });
     });
 
@@ -41,6 +42,7 @@ describe("CompanyNotificationMapper", () => {
       });
       const persistenceModel = CompanyNotificationMapper.toPersistenceModel(notification);
       expect(persistenceModel.uuid).toEqual(uuid);
+      expect(persistenceModel.isNewRecord).toBe(false);
     });
 
     it("maps a CompanyNewJobApplicationNotification that has already a createdAt", async () => {
