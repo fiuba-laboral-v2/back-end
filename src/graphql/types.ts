@@ -11,6 +11,7 @@ import { approvalStatusTypes } from "./ApprovalStatus";
 import { adminTaskTypes } from "./AdminTask/Types";
 import { secretarySettingsTypes } from "./SecretarySettings/Types";
 import { notificationTypes } from "./Notification";
+import { companyNotificationTypes } from "./CompanyNotification";
 
 export const types = [
   ...adminTypes,
@@ -25,5 +26,6 @@ export const types = [
   ...approvalStatusTypes,
   ...adminTaskTypes,
   ...secretarySettingsTypes,
-  ...notificationTypes
+  ...notificationTypes,
+  ...companyNotificationTypes
 ];
