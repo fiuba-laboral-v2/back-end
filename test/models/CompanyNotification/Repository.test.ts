@@ -11,7 +11,10 @@ import { JobApplicationRepository } from "$models/JobApplication";
 import { TCompanyNotification } from "$models/CompanyNotification";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { Admin, Company, JobApplication } from "$models";
-import { CompanyNotificationNotFoundError } from "$models/CompanyNotification/Errors";
+import {
+  CompanyNotificationNotFoundError,
+  CompanyNotificationsNotUpdatedError
+} from "$models/CompanyNotification/Errors";
 
 import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { AdminGenerator } from "$generators/Admin";
@@ -134,6 +137,43 @@ describe("CompanyNotificationRepository", () => {
       CompanyNotificationNotFoundError,
       CompanyNotificationNotFoundError.buildMessage(uuid)
     );
+  });
+
+  describe("markAsReadByUuids", () => {
+    it("updates isNew to false for all given notification uuids", async () => {
+      const size = 4;
+      const notifications = await CompanyNotificationGenerator.instance.range({ company, size });
+      expect(notifications.map(({ isNew }) => isNew)).toEqual(Array(size).fill(true));
+
+      const uuids = notifications.map(({ uuid }) => uuid!);
+      await CompanyNotificationRepository.markAsReadByUuids(uuids);
+      const updatedNotifications = await CompanyNotificationRepository.findByUuids(uuids);
+      expect(updatedNotifications.map(({ isNew }) => isNew)).toEqual(Array(size).fill(false));
+    });
+
+    it("throws an error if one of the given uuids does not exist", async () => {
+      const generator = CompanyNotificationGenerator.instance.newJobApplication;
+      const notification = await generator({ company, admin: extensionAdmin });
+      const nonExistentUuid = UUID.generate();
+      const uuids = [notification.uuid!, nonExistentUuid];
+      await expect(
+        CompanyNotificationRepository.markAsReadByUuids(uuids)
+      ).rejects.toThrowErrorWithMessage(
+        CompanyNotificationsNotUpdatedError,
+        CompanyNotificationsNotUpdatedError.buildMessage()
+      );
+    });
+
+    it("does not update the notifications if it throws an error", async () => {
+      const generator = CompanyNotificationGenerator.instance.newJobApplication;
+      const notification = await generator({ company, admin: extensionAdmin });
+      const uuid = notification.uuid!;
+      const nonExistentUuid = UUID.generate();
+      const uuids = [uuid, nonExistentUuid];
+      await expect(CompanyNotificationRepository.markAsReadByUuids(uuids)).rejects.toThrowError();
+      const persistedNotification = await CompanyNotificationRepository.findByUuid(uuid);
+      expect(persistedNotification.isNew).toEqual(true);
+    });
   });
 
   describe("findLatestByUser", () => {
