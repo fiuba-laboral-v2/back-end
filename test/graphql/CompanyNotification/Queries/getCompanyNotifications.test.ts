@@ -18,6 +18,7 @@ import { AdminGenerator } from "$generators/Admin";
 import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyNotificationGenerator } from "$generators/CompanyNotification";
+import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 
 const GET_COMPANY_NOTIFICATIONS = gql`
   query GetCompanyNotifications($updatedBeforeThan: PaginatedInput) {
@@ -92,6 +93,25 @@ describe("getCompanyNotifications", () => {
         }))
       )
     );
+  });
+
+  it("returns the next three notifications", async () => {
+    const size = 6;
+    const itemsPerPage = size / 2;
+    mockItemsPerPage(itemsPerPage);
+    const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
+    const notifications = await CompanyNotificationGenerator.instance.range({ company, size });
+    const { data, errors } = await performQuery(apolloClient, {
+      uuid: notifications[itemsPerPage - 1].uuid!,
+      dateTime: notifications[itemsPerPage - 1].createdAt!
+    });
+    expect(errors).toBeUndefined();
+    const { results, shouldFetchMore } = data!.getCompanyNotifications;
+    const notificationUuids = notifications.map(({ uuid }) => uuid);
+
+    expect(results).toHaveLength(itemsPerPage);
+    expect(results.map(({ uuid }) => uuid)).toEqual(notificationUuids.slice(itemsPerPage, size));
+    expect(shouldFetchMore).toBe(false);
   });
 
   it("returns an error if there is no current user", async () => {
