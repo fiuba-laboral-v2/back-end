@@ -11,6 +11,7 @@ import { adminTaskQueries } from "./AdminTask/Queries";
 import { adminQueries } from "./Admin";
 import { secretarySettingsQueries } from "./SecretarySettings";
 import { notificationQueries } from "./Notification";
+import { companyNotificationQueries } from "./CompanyNotification";
 
 export const queries = () =>
   merge(
@@ -25,5 +26,6 @@ export const queries = () =>
     adminTaskQueries,
     adminQueries,
     secretarySettingsQueries,
-    notificationQueries
+    notificationQueries,
+    companyNotificationQueries
   );
