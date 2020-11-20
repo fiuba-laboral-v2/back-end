@@ -18,9 +18,13 @@ export const getCompanyNotifications = {
     _: undefined,
     { updatedBeforeThan }: { updatedBeforeThan?: IPaginatedInput },
     { currentUser }: IApolloServerContext
-  ) =>
-    CompanyNotificationRepository.findLatestByCompany({
+  ) => {
+    const notifications = await CompanyNotificationRepository.findLatestByCompany({
       updatedBeforeThan,
       companyUuid: currentUser.getCompany().companyUuid
-    })
+    });
+    const notificationUuids = notifications.results.map(({ uuid }) => uuid!);
+    await CompanyNotificationRepository.markAsReadByUuids(notificationUuids);
+    return notifications;
+  }
 };

@@ -19,6 +19,7 @@ import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyNotificationGenerator } from "$generators/CompanyNotification";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
+import { CompanyNotificationRepository } from "$models/CompanyNotification";
 
 const GET_COMPANY_NOTIFICATIONS = gql`
   query GetCompanyNotifications($updatedBeforeThan: PaginatedInput) {
@@ -40,6 +41,7 @@ const GET_COMPANY_NOTIFICATIONS = gql`
     }
   }
 `;
+
 describe("getCompanyNotifications", () => {
   let admin: Admin;
 
@@ -111,6 +113,22 @@ describe("getCompanyNotifications", () => {
 
     expect(results).toHaveLength(itemsPerPage);
     expect(results.map(({ uuid }) => uuid)).toEqual(notificationUuids.slice(itemsPerPage, size));
+    expect(shouldFetchMore).toBe(false);
+  });
+
+  it("updates all returned notifications isNew value to false", async () => {
+    const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
+    const size = 10;
+    const notifications = await CompanyNotificationGenerator.instance.range({ company, size });
+    const { data, errors } = await performQuery(apolloClient);
+    expect(errors).toBeUndefined();
+    const uuids = notifications.map(({ uuid }) => uuid!);
+    const persistedNotifications = await CompanyNotificationRepository.findByUuids(uuids);
+    const { results, shouldFetchMore } = data!.getCompanyNotifications;
+
+    expect(results.map(result => result.isNew)).toEqual(notifications.map(({ isNew }) => isNew));
+    expect(persistedNotifications.map(result => result.isNew)).toEqual(Array(size).fill(false));
+    expect(results).toHaveLength(size);
     expect(shouldFetchMore).toBe(false);
   });
 
