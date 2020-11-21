@@ -10,7 +10,6 @@ import { capabilityQueries } from "./Capability";
 import { adminTaskQueries } from "./AdminTask/Queries";
 import { adminQueries } from "./Admin";
 import { secretarySettingsQueries } from "./SecretarySettings";
-import { notificationQueries } from "./Notification";
 import { companyNotificationQueries } from "./CompanyNotification";
 
 export const queries = () =>
@@ -26,6 +25,5 @@ export const queries = () =>
     adminTaskQueries,
     adminQueries,
     secretarySettingsQueries,
-    notificationQueries,
     companyNotificationQueries
   );
