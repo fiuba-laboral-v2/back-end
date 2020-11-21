@@ -7,11 +7,11 @@ import {
 import { InvalidCuitError, PhoneNumberWithLettersError } from "validations-fiuba-laboral-v2";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
+import { CompanyNotUpdatedError } from "$models/Company/Errors";
 import { Admin } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { CompanyGenerator } from "$generators/Company";
 import { AdminGenerator } from "$generators/Admin";
-import { CompanyNotUpdatedError } from "$models/Company/Errors";
 import { mockItemsPerPage } from "$test/mocks/config/PaginationConfig";
 
 describe("CompanyRepository", () => {

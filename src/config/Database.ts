@@ -25,7 +25,6 @@ import {
   OfferApprovalEvent,
   ApplicantKnowledgeSection,
   User,
-  Notification,
   CompanyNotification,
   SecretarySettings
 } from "$models";
@@ -53,7 +52,6 @@ const models = [
   OfferCareer,
   OfferApprovalEvent,
   User,
-  Notification,
   CompanyNotification,
   SecretarySettings
 ];
