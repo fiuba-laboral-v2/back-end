@@ -12,9 +12,6 @@ import { NotificationGenerator } from "$generators/Notification";
 import { AdminGenerator } from "$generators/Admin";
 
 import { UUID } from "$models/UUID";
-import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
-import { range } from "lodash";
-import MockDate from "mockdate";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 
@@ -125,100 +122,11 @@ describe("NotificationRepository", () => {
     expect(await NotificationRepository.findAll()).toHaveLength(0);
   });
 
-  describe("findAll", () => {
-    let notifications: Notification[] = [];
-    let anotherCompany: Company;
-    const notificationsLength = 20;
-    const anotherCompanyNotificationsLength = 2;
-    let userUuid: string;
-
-    const createNotifications = async ({ aCompany, size }: { size: number; aCompany: Company }) => {
-      const values: Notification[] = [];
-      for (const milliseconds of range(size)) {
-        MockDate.set(milliseconds);
-        values.push(await NotificationGenerator.instance.JobApplication.approved(aCompany));
-        MockDate.reset();
-      }
-      return values.sort(({ createdAt }) => -createdAt);
-    };
-
-    beforeAll(async () => {
-      await NotificationRepository.truncate();
-
-      userUuid = companyUsers[0].uuid;
-      anotherCompany = await CompanyGenerator.instance.withMinimumData();
-
-      await createNotifications({
-        aCompany: anotherCompany,
-        size: anotherCompanyNotificationsLength
-      });
-      notifications = await createNotifications({ aCompany: company, size: notificationsLength });
-    });
-
-    it("finds all notification for all users", async () => {
-      const allNotifications = await NotificationRepository.findAll();
-      expect(allNotifications).toHaveLength(
-        notificationsLength + anotherCompanyNotificationsLength
-      );
-    });
-
-    it("finds all notifications by userUuid", async () => {
-      const { shouldFetchMore, results } = await NotificationRepository.findLatestByUser({
-        userUuid
-      });
-      expect(results).toHaveLength(notificationsLength);
-      expect(shouldFetchMore).toBe(false);
-    });
-
-    it("finds the first three notifications", async () => {
-      const itemsPerPage = 3;
-      mockItemsPerPage(itemsPerPage);
-      const updatedBeforeThan = {
-        dateTime: notifications[0].createdAt,
-        uuid: notifications[0].uuid
-      };
-
-      const { shouldFetchMore, results } = await NotificationRepository.findLatestByUser({
-        userUuid,
-        updatedBeforeThan
-      });
-      expect(results).toHaveLength(itemsPerPage);
-      expect(shouldFetchMore).toBe(true);
-    });
-
-    it("finds the last half of remaining notifications for a company user", async () => {
-      const itemsPerPage = notificationsLength / 2;
-      mockItemsPerPage(itemsPerPage);
-      const updatedBeforeThan = {
-        dateTime: notifications[itemsPerPage - 1].createdAt,
-        uuid: notifications[itemsPerPage - 1].uuid
-      };
-
-      const { shouldFetchMore, results } = await NotificationRepository.findLatestByUser({
-        userUuid,
-        updatedBeforeThan
-      });
-      expect(results).toHaveLength(itemsPerPage);
-      expect(shouldFetchMore).toBe(false);
-    });
-
-    it("finds the latest notifications order by inNew first", async () => {
-      let isNew = true;
-      notifications.map(notification => {
-        notification.isNew = !isNew;
-        isNew = !isNew;
-      });
-      await Promise.all(
-        notifications.map(notification => NotificationRepository.save(notification))
-      );
-      const { shouldFetchMore, results } = await NotificationRepository.findLatestByUser({
-        userUuid
-      });
-      expect(results.map(result => result.isNew)).toEqual([
-        ...Array(notificationsLength / 2).fill(true),
-        ...Array(notificationsLength / 2).fill(false)
-      ]);
-      expect(shouldFetchMore).toBe(false);
-    });
+  it("finds all notification for all users", async () => {
+    const anotherCompany = await CompanyGenerator.instance.withMinimumData();
+    await NotificationGenerator.instance.JobApplication.list({ company, size: 2 });
+    await NotificationGenerator.instance.JobApplication.list({ company: anotherCompany, size: 2 });
+    const allNotifications = await NotificationRepository.findAll();
+    expect(allNotifications).toHaveLength(4);
   });
 });
