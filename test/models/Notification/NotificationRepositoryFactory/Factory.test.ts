@@ -16,7 +16,7 @@ describe("NotificationRepositoryFactory", () => {
     expect(repository).toEqual(CompanyNotificationRepository);
   });
 
-  it("throws an error if the given any object that has no associated repository", async () => {
+  it("throws an error if it is given any object that has no associated repository", async () => {
     expect(() => NotificationRepositoryFactory.getRepositoryFor(new Date() as any)).toThrowError(
       "no repository found for Date"
     );
