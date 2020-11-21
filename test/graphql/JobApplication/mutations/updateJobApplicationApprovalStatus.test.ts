@@ -3,18 +3,17 @@ import { client } from "$test/graphql/ApolloTestClient";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
-import { NotificationRepository } from "$models/Notification";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { JobApplicationRepository } from "$models/JobApplication";
-import { CompanyUserRepository } from "$models/CompanyUser";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { Admin, JobApplication } from "$models";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 import { TestClientGenerator } from "$generators/TestClient";
 import { JobApplicationGenerator } from "$generators/JobApplication";
 import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
+import { CompanyNotificationRepository } from "$models/CompanyNotification";
+import { UUID_REGEX } from "$test/models";
 
 const UPDATE_JOB_APPLICATION_APPROVAL_STATUS = gql`
   mutation updateJobApplicationApprovalStatus($uuid: ID!, $approvalStatus: ApprovalStatus!) {
@@ -126,77 +125,49 @@ describe("updateJobApplicationApprovalStatus", () => {
       return { response, admin };
     };
 
-    const expectNotToFindNotification = async (
-      admin: Admin,
-      jobApplication: JobApplication,
-      userUuid: string
-    ) => {
-      const notifications = await NotificationRepository.findAll();
-      const jobApplicationUuids = notifications.map(({ jobApplicationUuid }) => jobApplicationUuid);
-      const adminUserUuids = notifications.map(({ adminUserUuid }) => adminUserUuid);
-      const userUuids = notifications.map(notification => notification.userUuid);
-      expect(jobApplicationUuids).not.toContain(jobApplication.uuid);
-      expect(adminUserUuids).not.toContain(admin.userUuid);
-      expect(userUuids).not.toContain(userUuid);
-    };
-
-    const expectToFindNotification = async (
-      admin: Admin,
-      jobApplication: JobApplication,
-      userUuid: string
-    ) => {
-      const notifications = await NotificationRepository.findAll();
-      const jobApplicationUuids = notifications.map(({ jobApplicationUuid }) => jobApplicationUuid);
-      const adminUserUuids = notifications.map(({ adminUserUuid }) => adminUserUuid);
-      const userUuids = notifications.map(notification => notification.userUuid);
-      expect(jobApplicationUuids).toContain(jobApplication.uuid);
-      expect(adminUserUuids).toContain(admin.userUuid);
-      expect(userUuids).toContain(userUuid);
-    };
-
-    it("creates a notification for a companyUser if the jobApplication is approved", async () => {
+    it("creates a notification for a company if the jobApplication is approved", async () => {
       const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
-      const offer = await jobApplication.getOffer();
-      const companyUsers = await CompanyUserRepository.findByCompanyUuid(offer.companyUuid);
+      const { uuid: companyUuid } = await CompanyRepository.findByJobApplication(jobApplication);
       const { admin } = await updateJobApplicationWithStatus(
         jobApplication.uuid,
         ApprovalStatus.approved
       );
-      await Promise.all(
-        companyUsers.map(({ userUuid }) =>
-          expectToFindNotification(admin, jobApplication, userUuid)
-        )
-      );
+      const { results, shouldFetchMore } = await CompanyNotificationRepository.findLatestByCompany({
+        companyUuid
+      });
+      expect(shouldFetchMore).toBe(false);
+      expect(results).toEqual([
+        {
+          uuid: expect.stringMatching(UUID_REGEX),
+          moderatorUuid: admin.userUuid,
+          notifiedCompanyUuid: companyUuid,
+          isNew: true,
+          jobApplicationUuid: jobApplication.uuid,
+          createdAt: expect.any(Date)
+        }
+      ]);
     });
 
-    it("does not create a notification for a companyUser if the jobApplication is rejected", async () => {
+    it("does not create a notification for a company if the jobApplication is rejected", async () => {
       const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
-      const offer = await jobApplication.getOffer();
-      const companyUsers = await CompanyUserRepository.findByCompanyUuid(offer.companyUuid);
-      const { admin } = await updateJobApplicationWithStatus(
-        jobApplication.uuid,
-        ApprovalStatus.rejected
-      );
-      await Promise.all(
-        companyUsers.map(({ userUuid }) =>
-          expectNotToFindNotification(admin, jobApplication, userUuid)
-        )
-      );
+      const { uuid: companyUuid } = await CompanyRepository.findByJobApplication(jobApplication);
+      await updateJobApplicationWithStatus(jobApplication.uuid, ApprovalStatus.rejected);
+      const { results, shouldFetchMore } = await CompanyNotificationRepository.findLatestByCompany({
+        companyUuid
+      });
+      expect(shouldFetchMore).toBe(false);
+      expect(results).toEqual([]);
     });
 
     it("does not create a notification for a companyUser if the jobApplication is pending", async () => {
       const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
-      const offer = await jobApplication.getOffer();
-      const companyUsers = await CompanyUserRepository.findByCompanyUuid(offer.companyUuid);
-      const { admin } = await updateJobApplicationWithStatus(
-        jobApplication.uuid,
-        ApprovalStatus.pending
-      );
-      await Promise.all(
-        companyUsers.map(({ userUuid }) =>
-          expectNotToFindNotification(admin, jobApplication, userUuid)
-        )
-      );
+      const { uuid: companyUuid } = await CompanyRepository.findByJobApplication(jobApplication);
+      await updateJobApplicationWithStatus(jobApplication.uuid, ApprovalStatus.pending);
+      const { results, shouldFetchMore } = await CompanyNotificationRepository.findLatestByCompany({
+        companyUuid
+      });
+      expect(shouldFetchMore).toBe(false);
+      expect(results).toEqual([]);
     });
   });
 

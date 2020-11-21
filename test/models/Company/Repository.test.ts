@@ -7,18 +7,25 @@ import {
 import { InvalidCuitError, PhoneNumberWithLettersError } from "validations-fiuba-laboral-v2";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
+import { CareerRepository } from "$models/Career";
+import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { CompanyNotUpdatedError } from "$models/Company/Errors";
 import { Admin } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { CompanyGenerator } from "$generators/Company";
 import { AdminGenerator } from "$generators/Admin";
 import { JobApplicationGenerator } from "$generators/JobApplication";
+import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { mockItemsPerPage } from "$test/mocks/config/PaginationConfig";
 
 describe("CompanyRepository", () => {
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
+    await CareerRepository.truncate();
+    await SecretarySettingsRepository.truncate();
+
+    await SecretarySettingsGenerator.createDefaultSettings();
   });
 
   it("creates a new company", async () => {

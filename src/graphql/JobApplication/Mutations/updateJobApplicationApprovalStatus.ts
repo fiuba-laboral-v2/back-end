@@ -1,10 +1,13 @@
 import { Database } from "$config/Database";
 import { ID, nonNull } from "$graphql/fieldTypes";
-import { CompanyUserRepository } from "$models/CompanyUser";
+import { AdminRepository } from "$models/Admin";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { JobApplicationApprovalEventRepository } from "$models/JobApplication/JobApplicationsApprovalEvent";
-import { JobApplicationApprovalEvent, Notification } from "$models";
-import { NotificationRepository } from "$models/Notification";
+import { JobApplicationApprovalEvent } from "$models";
+import {
+  JobApplicationNotificationFactory,
+  NotificationRepositoryFactory
+} from "$models/Notification";
 import { GraphQLJobApplication } from "../Types/GraphQLJobApplication";
 import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
 import { ApprovalStatus } from "$models/ApprovalStatus";
@@ -26,16 +29,11 @@ export const updateJobApplicationApprovalStatus = {
     { currentUser }: IApolloServerContext
   ) => {
     const adminUserUuid = currentUser.getAdmin().adminUserUuid;
+    const admin = await AdminRepository.findByUserUuid(adminUserUuid);
     const jobApplication = await JobApplicationRepository.findByUuid(jobApplicationUuid);
+
     jobApplication.set({ approvalStatus });
-    const notifications: Notification[] = [];
-    if (approvalStatus === ApprovalStatus.approved) {
-      const { companyUuid } = await jobApplication.getOffer();
-      const companyUsers = await CompanyUserRepository.findByCompanyUuid(companyUuid);
-      companyUsers.map(({ userUuid }) => {
-        notifications.push(new Notification({ userUuid, adminUserUuid, jobApplicationUuid }));
-      });
-    }
+    const notifications = await JobApplicationNotificationFactory.create(jobApplication, admin);
     const event = new JobApplicationApprovalEvent({
       adminUserUuid,
       jobApplicationUuid,
@@ -45,9 +43,10 @@ export const updateJobApplicationApprovalStatus = {
     return Database.transaction(async transaction => {
       await JobApplicationRepository.save(jobApplication, transaction);
       await JobApplicationApprovalEventRepository.save(event, transaction);
-      await Promise.all(
-        notifications.map(notification => NotificationRepository.save(notification, transaction))
-      );
+      for (const notification of notifications) {
+        const repository = NotificationRepositoryFactory.getRepositoryFor(notification);
+        await repository.save(notification, transaction);
+      }
       return jobApplication;
     });
   }

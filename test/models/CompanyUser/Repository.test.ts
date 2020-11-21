@@ -49,26 +49,4 @@ describe("CompanyUserRepository", () => {
     expect(userCompany!.uuid).toEqual(company.uuid);
     expect(companyUser!.uuid).toEqual(user.uuid);
   });
-
-  describe("findByCompany", () => {
-    it("finds all companyUsers from a given company", async () => {
-      const { user: userAttributes, ...companyAttributes } = CompanyGenerator.data.completeData();
-      const company = new Company(companyAttributes);
-      await company.save();
-      const firstUser = await UserGenerator.instance();
-      const secondUser = await UserGenerator.instance();
-      await CompanyUserRepository.create(company, firstUser);
-      await CompanyUserRepository.create(company, secondUser);
-      const companyUsers = await CompanyUserRepository.findByCompanyUuid(company.uuid);
-      expect(companyUsers.map(({ userUuid }) => userUuid)).toEqual(
-        expect.arrayContaining([firstUser.uuid, secondUser.uuid])
-      );
-    });
-
-    it("returns an empty array if the company is not persisted", async () => {
-      const company = new Company({ cuit: "30711819017", companyName: "Mercado Libre" });
-      const companyUsers = await CompanyUserRepository.findByCompanyUuid(company.uuid);
-      expect(companyUsers).toEqual([]);
-    });
-  });
 });
