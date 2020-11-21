@@ -4,6 +4,7 @@ import { Admin, JobApplication, User } from "$models";
 import { MultipleTypeNotificationError, MissingNotificationTypeError } from "./Errors";
 import { isUuid } from "$models/SequelizeModelValidators";
 import { compact } from "lodash";
+import { TCompanyNotification } from "$models/CompanyNotification";
 
 @Table({
   tableName: "Notifications",
@@ -43,3 +44,5 @@ export class Notification extends Model<Notification> {
   @Column
   public createdAt: Date;
 }
+
+export type TNotification = TCompanyNotification;
