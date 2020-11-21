@@ -4,7 +4,7 @@ import { CompanyNewJobApplicationNotification } from "$models/CompanyNotificatio
 import { CompanyRepository } from "$models/Company";
 
 export const JobApplicationNotificationFactory = {
-  create: async (jobApplication: JobApplication, admin: Admin, _?: string) => {
+  create: async (jobApplication: JobApplication, admin: Admin) => {
     if (jobApplication.approvalStatus === ApprovalStatus.approved) {
       const company = await CompanyRepository.findByJobApplication(jobApplication);
       return [
