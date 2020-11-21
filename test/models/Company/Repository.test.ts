@@ -7,11 +7,12 @@ import {
 import { InvalidCuitError, PhoneNumberWithLettersError } from "validations-fiuba-laboral-v2";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
+import { CompanyNotUpdatedError } from "$models/Company/Errors";
 import { Admin } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { CompanyGenerator } from "$generators/Company";
 import { AdminGenerator } from "$generators/Admin";
-import { CompanyNotUpdatedError } from "$models/Company/Errors";
+import { JobApplicationGenerator } from "$generators/JobApplication";
 import { mockItemsPerPage } from "$test/mocks/config/PaginationConfig";
 
 describe("CompanyRepository", () => {
@@ -117,6 +118,15 @@ describe("CompanyRepository", () => {
     expect(await expectedCompany.getPhoneNumbers()).toHaveLength(
       (await company.getPhoneNumbers()).length
     );
+  });
+
+  describe("findByJobApplication", () => {
+    it("return a company by the given jobApplication", async () => {
+      const company = await CompanyGenerator.instance.withMinimumData();
+      const jobApplication = await JobApplicationGenerator.instance.toTheCompany(company.uuid);
+      const { uuid } = await CompanyRepository.findByJobApplication(jobApplication);
+      expect(uuid).toEqual(company.uuid);
+    });
   });
 
   describe("findLatest", () => {
