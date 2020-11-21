@@ -1,8 +1,6 @@
-import { Database } from "$config/Database";
 import { Transaction } from "sequelize";
 import { Notification } from "$models";
 import { IFindAll } from "./Interfaces";
-import { NotificationsNotUpdatedError } from "./Errors";
 import { PaginationQuery } from "$models/PaginationQuery";
 
 export const NotificationRepository = {
@@ -19,14 +17,6 @@ export const NotificationRepository = {
         ["createdAt", "DESC"],
         ["uuid", "DESC"]
       ]
-    }),
-  markAsReadByUuids: async (uuids: string[]) =>
-    Database.transaction(async transaction => {
-      const [updatedNotificationCount] = await Notification.update(
-        { isNew: false },
-        { where: { uuid: uuids }, returning: false, validate: false, transaction }
-      );
-      if (updatedNotificationCount !== uuids.length) throw new NotificationsNotUpdatedError();
     }),
   findByUuids: (uuids: string[]) => Notification.findAll({ where: { uuid: uuids } }),
   findByUuid: (uuid: string) => Notification.findByPk(uuid),
