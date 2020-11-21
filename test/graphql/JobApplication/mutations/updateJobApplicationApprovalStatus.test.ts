@@ -3,6 +3,7 @@ import { client } from "$test/graphql/ApolloTestClient";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
+import { OfferRepository } from "$models/Offer";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { Secretary } from "$models/Admin";
@@ -127,7 +128,7 @@ describe("updateJobApplicationApprovalStatus", () => {
 
     it("creates a notification for a company if the jobApplication is approved", async () => {
       const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
-      const { uuid: companyUuid } = await CompanyRepository.findByJobApplication(jobApplication);
+      const { companyUuid } = await OfferRepository.findByUuid(jobApplication.offerUuid);
       const { admin } = await updateJobApplicationWithStatus(
         jobApplication.uuid,
         ApprovalStatus.approved
@@ -150,7 +151,7 @@ describe("updateJobApplicationApprovalStatus", () => {
 
     it("does not create a notification for a company if the jobApplication is rejected", async () => {
       const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
-      const { uuid: companyUuid } = await CompanyRepository.findByJobApplication(jobApplication);
+      const { companyUuid } = await OfferRepository.findByUuid(jobApplication.offerUuid);
       await updateJobApplicationWithStatus(jobApplication.uuid, ApprovalStatus.rejected);
       const { results, shouldFetchMore } = await CompanyNotificationRepository.findLatestByCompany({
         companyUuid
@@ -161,7 +162,7 @@ describe("updateJobApplicationApprovalStatus", () => {
 
     it("does not create a notification for a companyUser if the jobApplication is pending", async () => {
       const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
-      const { uuid: companyUuid } = await CompanyRepository.findByJobApplication(jobApplication);
+      const { companyUuid } = await OfferRepository.findByUuid(jobApplication.offerUuid);
       await updateJobApplicationWithStatus(jobApplication.uuid, ApprovalStatus.pending);
       const { results, shouldFetchMore } = await CompanyNotificationRepository.findLatestByCompany({
         companyUuid

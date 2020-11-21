@@ -1,16 +1,16 @@
 import { Admin, JobApplication } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { CompanyNewJobApplicationNotification } from "$models/CompanyNotification";
-import { CompanyRepository } from "$models/Company";
+import { OfferRepository } from "$models/Offer";
 
 export const JobApplicationNotificationFactory = {
   create: async (jobApplication: JobApplication, admin: Admin) => {
     if (jobApplication.approvalStatus === ApprovalStatus.approved) {
-      const company = await CompanyRepository.findByJobApplication(jobApplication);
+      const { companyUuid } = await OfferRepository.findByUuid(jobApplication.offerUuid);
       return [
         new CompanyNewJobApplicationNotification({
           moderatorUuid: admin.userUuid,
-          notifiedCompanyUuid: company.uuid,
+          notifiedCompanyUuid: companyUuid,
           jobApplicationUuid: jobApplication.uuid
         })
       ];

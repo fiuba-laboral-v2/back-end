@@ -2,7 +2,9 @@ import { UserPermissions } from "$models/Permissions";
 import { AdminRole, ApplicantRole, CompanyRole, CurrentUser } from "$models/CurrentUser";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
+import { ApplicantCareersRepository } from "$models/Applicant/ApplicantCareer";
 import { CareerRepository } from "$models/Career";
+import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { Secretary } from "$models/Admin";
 import { Admin, Applicant, Company } from "$models";
 
@@ -12,7 +14,7 @@ import { ApplicantGenerator } from "$generators/Applicant";
 import { AdminGenerator } from "$generators/Admin";
 import { UserGenerator } from "$generators/User";
 import { CareerGenerator } from "$generators/Career";
-import { ApplicantCareersRepository } from "$models/Applicant/ApplicantCareer";
+import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { ApplicantType } from "$models/Applicant";
 
 describe("UserPermissions", () => {
@@ -23,7 +25,9 @@ describe("UserPermissions", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
+    await SecretarySettingsRepository.truncate();
 
+    await SecretarySettingsGenerator.createDefaultSettings();
     company = await CompanyGenerator.instance.withMinimumData();
     companyUuid = company.uuid;
   });

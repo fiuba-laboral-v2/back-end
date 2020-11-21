@@ -7,7 +7,7 @@ import { UserRepository } from "$models/User";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { CompanyUserRepository } from "$models/CompanyUser";
 import { CompanyApprovalEventRepository } from "./CompanyApprovalEvent";
-import { Company, JobApplication } from "$models";
+import { Company } from "$models";
 import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedInput";
 import { PaginationQuery } from "../PaginationQuery";
 
@@ -53,10 +53,6 @@ export const CompanyRepository = {
       });
       return updatedCompany;
     }),
-  findByJobApplication: async (jobApplication: JobApplication) => {
-    const { companyUuid } = await jobApplication.getOffer();
-    return CompanyRepository.findByUuid(companyUuid);
-  },
   findByUuid: async (uuid: string) => {
     const company = await Company.findByPk(uuid);
     if (!company) throw new CompanyNotFoundError(uuid);
