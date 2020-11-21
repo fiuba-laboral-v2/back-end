@@ -405,7 +405,7 @@ export const defaultTranslations = {
   ],
   multipleSearchSelector: [{ key: "helperText", value: "Presionar Enter para agregar" }],
   notifications: [{ key: "title", value: "Notificaciones" }],
-  companyJobApplicationNotification: [{ key: "companyTitle", value: "Nueva postulación" }],
+  companyNewJobApplicationNotification: [{ key: "title", value: "Nueva postulación" }],
   applicantJobApplicationNotification: [
     { key: "pendingApplicantTitle", value: "Postulación pendiente de aprobación" },
     { key: "approvedApplicantTitle", value: "Postulación aprobada" },
