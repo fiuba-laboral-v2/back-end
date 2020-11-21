@@ -49,13 +49,13 @@ describe("JobApplicationNotificationFactory", () => {
     ]);
   });
 
-  it("return an empty array of the jobApplication is rejected", async () => {
+  it("return an empty array if the jobApplication is rejected", async () => {
     jobApplication.set({ approvalStatus: ApprovalStatus.rejected });
     const notifications = await JobApplicationNotificationFactory.create(jobApplication, admin);
     expect(notifications).toEqual([]);
   });
 
-  it("return an empty array of the jobApplication is pending", async () => {
+  it("return an empty array if the jobApplication is pending", async () => {
     jobApplication.set({ approvalStatus: ApprovalStatus.pending });
     const notifications = await JobApplicationNotificationFactory.create(jobApplication, admin);
     expect(notifications).toEqual([]);
