@@ -423,7 +423,7 @@ export const defaultTranslations = {
     }
   ],
   emailSignature: [
-    { key: "graduados", value: "signature" },
-    { key: "extension", value: "signature" }
+    { key: "graduados", value: "Bolsa de Trabajo FIUBA" },
+    { key: "extension", value: "Bolsa de Trabajo FIUBA" }
   ]
 };
