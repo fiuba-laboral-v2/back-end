@@ -411,5 +411,18 @@ export const defaultTranslations = {
     { key: "approvedApplicantTitle", value: "Postulación aprobada" },
     { key: "rejectedApplicantTitle", value: "Postulación rechazada" }
   ],
-  isNewLabel: [{ key: "isNew", value: "Nueva" }]
+  isNewLabel: [{ key: "isNew", value: "Nueva" }],
+  companyNewJobApplicationNotificationEmail: [
+    { key: "subject", value: "Nueva postulación a tu oferta laboral" },
+    {
+      key: "body",
+      value: `Nueva postulación a tu oferta laboral: <%= offerTitle %> (<%= offerLink %>) 
+              Postulante: <%= applicantName %> (<%= ApplicantLink %>).
+              <%= signature %>`
+    }
+  ],
+  emailSignature: [
+    { key: "graduados", value: "signature" },
+    { key: "extension", value: "signature" }
+  ]
 };
