@@ -418,6 +418,7 @@ export const defaultTranslations = {
       key: "body",
       value: `Nueva postulación a tu oferta laboral: <%= offerTitle %> (<%= offerLink %>) 
               Postulante: <%= applicantName %> (<%= ApplicantLink %>).
+
               <%= signature %>`
     }
   ],
