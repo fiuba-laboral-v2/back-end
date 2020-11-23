@@ -28,8 +28,6 @@ const UPDATE_JOB_APPLICATION_APPROVAL_STATUS = gql`
 `;
 
 describe("updateJobApplicationApprovalStatus", () => {
-  let emailSendMock: jest.Mock;
-
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
@@ -39,10 +37,7 @@ describe("updateJobApplicationApprovalStatus", () => {
     await SecretarySettingsGenerator.createDefaultSettings();
   });
 
-  beforeEach(() => {
-    emailSendMock = jest.fn();
-    jest.spyOn(EmailService, "send").mockImplementation(emailSendMock);
-  });
+  beforeEach(() => jest.spyOn(EmailService, "send").mockImplementation(jest.fn()));
 
   const expectToLogAnEventForStatus = async (secretary: Secretary, status: ApprovalStatus) => {
     const { apolloClient, admin } = await TestClientGenerator.admin({ secretary });
