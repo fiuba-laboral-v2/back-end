@@ -4,7 +4,7 @@ import { Environment } from "./config/Environment";
 import { sign, verify } from "jsonwebtoken";
 import { Application } from "express";
 import jwt from "express-jwt";
-import { AuthConfig } from "./config/AuthConfig";
+import { JWTConfig } from "./config";
 import { Logger } from "./libs/Logger";
 
 let JWT_SECRET: string;
@@ -31,7 +31,7 @@ export const JWT = {
       })
     };
 
-    return sign(payload, JWT_SECRET, { expiresIn: AuthConfig.JWT.expiresIn });
+    return sign(payload, JWT_SECRET, { expiresIn: JWTConfig.expiresIn });
   },
   decodeToken: (token: string): CurrentUser | undefined => {
     try {
@@ -45,8 +45,8 @@ export const JWT = {
     app.use(
       jwt({
         secret: JWT_SECRET,
-        credentialsRequired: false,
-        algorithms: AuthConfig.JWT.algorithms
+        credentialsRequired: JWTConfig.credentialsRequired,
+        algorithms: JWTConfig.algorithms
       })
     );
   },

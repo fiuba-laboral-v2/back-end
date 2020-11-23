@@ -1,16 +1,8 @@
 import { CookieOptions } from "express-serve-static-core";
-import { Algorithm } from "jsonwebtoken";
 import { Environment } from "./Environment";
+import { TOKEN_EXPIRATION_MILLISECONDS } from "./JWT";
 
-const TOKEN_EXPIRATION_DAYS = 2;
-const TOKEN_EXPIRATION_DAYS_AS_STRING = `${TOKEN_EXPIRATION_DAYS}d`;
-const TOKEN_EXPIRATION_MILLISECONDS = TOKEN_EXPIRATION_DAYS * 24 * 60 * 60 * 1000;
-
-const localAuthConfig: IEnvironment = {
-  JWT: {
-    expiresIn: TOKEN_EXPIRATION_DAYS_AS_STRING,
-    algorithms: ["RS256"]
-  },
+const localCookieConfig = {
   cookieName: "fiuba_laboral_v2_access_token",
   cookieOptions: {
     secure: false,
@@ -20,12 +12,8 @@ const localAuthConfig: IEnvironment = {
   }
 };
 
-export const AuthConfig: IEnvironment = {
+export const CookieConfig: ICookieConfig = {
   production: {
-    JWT: {
-      expiresIn: TOKEN_EXPIRATION_DAYS_AS_STRING,
-      algorithms: ["RS256"]
-    },
     cookieName: "fiuba_laboral_v2_access_token",
     cookieOptions: {
       secure: true,
@@ -35,10 +23,6 @@ export const AuthConfig: IEnvironment = {
     }
   },
   staging: {
-    JWT: {
-      expiresIn: TOKEN_EXPIRATION_DAYS_AS_STRING,
-      algorithms: ["RS256"]
-    },
     cookieName: "fiuba_laboral_v2_access_token",
     cookieOptions: {
       secure: false,
@@ -47,17 +31,11 @@ export const AuthConfig: IEnvironment = {
       sameSite: "strict"
     }
   },
-  development: localAuthConfig,
-  test: localAuthConfig
+  development: localCookieConfig,
+  test: localCookieConfig
 }[Environment.NODE_ENV];
 
-interface IJWT {
-  expiresIn: string;
-  algorithms: Algorithm[];
-}
-
-interface IEnvironment {
-  JWT: IJWT;
+interface ICookieConfig {
   cookieOptions: CookieOptions;
   cookieName: string;
 }

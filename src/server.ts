@@ -4,7 +4,7 @@ import { schema } from "./graphql/Schema";
 import depthLimit from "graphql-depth-limit";
 import { ExpressContext } from "apollo-server-express/dist/ApolloServer";
 import { JWT } from "./JWT";
-import { AuthConfig, FrontendConfig } from "./config";
+import { CookieConfig, FrontendConfig } from "./config";
 import { Context } from "./graphql/Context/graphqlContext";
 
 export const ApolloServer = new Server({
@@ -13,7 +13,7 @@ export const ApolloServer = new Server({
   formatError: apolloErrorConverter(),
   context: (expressContext: ExpressContext) => {
     expressContext.res.header({ "Access-Control-Allow-Origin": FrontendConfig.baseUrl });
-    const token = expressContext.req.cookies[AuthConfig.cookieName] || "";
+    const token = expressContext.req.cookies[CookieConfig.cookieName] || "";
     const currentUser = token && JWT.extractTokenPayload(token);
     const apolloServerContext: Context = {
       ...(currentUser && { currentUser: currentUser }),

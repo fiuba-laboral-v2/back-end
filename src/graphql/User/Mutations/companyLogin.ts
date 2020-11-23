@@ -2,7 +2,7 @@ import { Boolean, nonNull, String } from "$graphql/fieldTypes";
 import { UserRepository } from "$models/User";
 import { JWT } from "$src/JWT";
 import { Context } from "$graphql/Context";
-import { AuthConfig } from "$config/AuthConfig";
+import { CookieConfig } from "$config";
 import { BadCredentialsError } from "$graphql/User/Errors";
 
 export const companyLogin = {
@@ -21,7 +21,7 @@ export const companyLogin = {
     if (!isValid) throw new BadCredentialsError();
 
     const token = await JWT.createToken(user);
-    expressResponse.cookie(AuthConfig.cookieName, token, AuthConfig.cookieOptions);
+    expressResponse.cookie(CookieConfig.cookieName, token, CookieConfig.cookieOptions);
   }
 };
 
