@@ -53,7 +53,7 @@ describe("CompanyNewJobApplicationEmailSender", () => {
               Nueva postulación a tu oferta laboral: title1 (baseUrl/subDomain/empresa/ofertas/${offerUuid}) 
               Postulante: applicantName applicantSurname (baseUrl/subDomain/empresa/postulantes/${applicantUuid}).
 
-              signature
+              Bolsa de Trabajo FIUBA
           `.trim()
           )
         }

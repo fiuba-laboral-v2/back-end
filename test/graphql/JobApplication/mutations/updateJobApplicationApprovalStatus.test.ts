@@ -203,7 +203,7 @@ describe("updateJobApplicationApprovalStatus", () => {
               Nueva postulación a tu oferta laboral: ${title} (baseUrl/subDomain/empresa/ofertas/${offerUuid}) 
               Postulante: applicantName applicantSurname (baseUrl/subDomain/empresa/postulantes/${applicantUuid}).
 
-              signature
+              Bolsa de Trabajo FIUBA
           `.trim()
             )
           }
