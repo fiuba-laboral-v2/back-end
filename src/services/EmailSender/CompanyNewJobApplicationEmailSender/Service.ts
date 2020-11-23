@@ -36,11 +36,12 @@ export const CompanyNewJobApplicationEmailSender = {
       notification.jobApplicationUuid
     );
     const offer = await OfferRepository.findByUuid(offerUuid);
+    const applicant = await ApplicantRepository.findByUuid(applicantUuid);
+    const applicantUser = await UserRepository.findByUuid(applicant.userUuid);
+
     const [subject, body] = TranslationRepository.translate(
       "companyNewJobApplicationNotificationEmail"
     );
-    const applicant = await ApplicantRepository.findByUuid(applicantUuid);
-    const applicantUser = await UserRepository.findByUuid(applicant.userUuid);
     const { baseUrl, subDomain, endpoints } = FrontendConfig;
 
     return EmailService.send({
