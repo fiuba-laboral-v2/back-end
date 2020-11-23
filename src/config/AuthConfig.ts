@@ -32,7 +32,7 @@ const localAuthConfig: IEnvironment = {
   }
 };
 
-const AuthConfigForAllEnvironments: IAuthenticationVariables = {
+export const AuthConfig: IEnvironment = {
   production: {
     cors: {
       options: corsOptions(FrontendConfig.baseUrl),
@@ -69,9 +69,7 @@ const AuthConfigForAllEnvironments: IAuthenticationVariables = {
   },
   development: localAuthConfig,
   test: localAuthConfig
-};
-
-export const AuthConfig: IEnvironment = AuthConfigForAllEnvironments[Environment.NODE_ENV];
+}[Environment.NODE_ENV];
 
 interface IJWT {
   expiresIn: string;
@@ -88,11 +86,4 @@ interface IEnvironment {
   cors: ICors;
   cookieOptions: CookieOptions;
   cookieName: string;
-}
-
-interface IAuthenticationVariables {
-  production: IEnvironment;
-  staging: IEnvironment;
-  development: IEnvironment;
-  test: IEnvironment;
 }
