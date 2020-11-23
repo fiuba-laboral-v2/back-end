@@ -20,7 +20,7 @@ export const FrontendConfig = {
   },
   development: {
     baseUrl: "http://localhost:3000",
-    subDomain: "",
+    subDomain: "#",
     endpoints
   },
   test: {

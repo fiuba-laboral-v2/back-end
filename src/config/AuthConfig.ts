@@ -2,14 +2,11 @@ import { CookieOptions } from "express-serve-static-core";
 import { CorsOptions } from "cors";
 import { Algorithm } from "jsonwebtoken";
 import { Environment } from "./Environment";
+import { FrontendConfig } from "./FrontendConfig";
 
 const TOKEN_EXPIRATION_DAYS = 2;
 const TOKEN_EXPIRATION_DAYS_AS_STRING = `${TOKEN_EXPIRATION_DAYS}d`;
 const TOKEN_EXPIRATION_MILLISECONDS = TOKEN_EXPIRATION_DAYS * 24 * 60 * 60 * 1000;
-
-const LOCAL_FRONT_END_DOMAIN = "http://localhost:3000";
-const STAGING_FRONT_END_DOMAIN = "http://antiguos.fi.uba.ar";
-const PRODUCTION_FRONT_END_DOMAIN = "http://laboral.fi.uba.ar";
 
 const corsOptions = (origin: string): CorsOptions => ({
   origin: origin,
@@ -19,8 +16,8 @@ const corsOptions = (origin: string): CorsOptions => ({
 
 const localAuthConfig: IEnvironment = {
   cors: {
-    options: corsOptions(LOCAL_FRONT_END_DOMAIN),
-    accessControlAllowOrigin: LOCAL_FRONT_END_DOMAIN
+    options: corsOptions(FrontendConfig.baseUrl),
+    accessControlAllowOrigin: FrontendConfig.baseUrl
   },
   JWT: {
     expiresIn: TOKEN_EXPIRATION_DAYS_AS_STRING,
@@ -38,8 +35,8 @@ const localAuthConfig: IEnvironment = {
 const AuthConfigForAllEnvironments: IAuthenticationVariables = {
   production: {
     cors: {
-      options: corsOptions(PRODUCTION_FRONT_END_DOMAIN),
-      accessControlAllowOrigin: PRODUCTION_FRONT_END_DOMAIN
+      options: corsOptions(FrontendConfig.baseUrl),
+      accessControlAllowOrigin: FrontendConfig.baseUrl
     },
     JWT: {
       expiresIn: TOKEN_EXPIRATION_DAYS_AS_STRING,
@@ -55,8 +52,8 @@ const AuthConfigForAllEnvironments: IAuthenticationVariables = {
   },
   staging: {
     cors: {
-      options: corsOptions(STAGING_FRONT_END_DOMAIN),
-      accessControlAllowOrigin: STAGING_FRONT_END_DOMAIN
+      options: corsOptions(FrontendConfig.baseUrl),
+      accessControlAllowOrigin: FrontendConfig.baseUrl
     },
     JWT: {
       expiresIn: TOKEN_EXPIRATION_DAYS_AS_STRING,
@@ -86,7 +83,7 @@ interface ICors {
   accessControlAllowOrigin: string;
 }
 
-export interface IEnvironment {
+interface IEnvironment {
   JWT: IJWT;
   cors: ICors;
   cookieOptions: CookieOptions;
