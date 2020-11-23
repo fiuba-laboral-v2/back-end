@@ -2,12 +2,12 @@ import { CurrentUser } from "$models/CurrentUser";
 import { client } from "$test/graphql/ApolloTestClient";
 import { JWT } from "$src/JWT";
 import { DocumentNode } from "graphql";
-import { AuthConfig } from "$config/AuthConfig";
+import { CookieConfig } from "$config";
 
 export const userTokenAssertions = {
   expectCookieToBeSet: async (expressContext: { res: { cookie: jest.Mock } }) => {
     expect(expressContext.res.cookie.mock.calls).toEqual([
-      [AuthConfig.cookieName, expect.any(String), AuthConfig.cookieOptions]
+      [CookieConfig.cookieName, expect.any(String), CookieConfig.cookieOptions]
     ]);
   },
   createExpressContext: () => ({ res: { cookie: jest.fn() } }),
@@ -25,7 +25,7 @@ export const userTokenAssertions = {
   },
   expectCookieToBeRemoved: (expressContext: { res: { cookie: jest.Mock } }) =>
     expect(expressContext.res.cookie.mock.calls).toEqual([
-      [AuthConfig.cookieName, "", AuthConfig.cookieOptions]
+      [CookieConfig.cookieName, "", CookieConfig.cookieOptions]
     ])
 };
 

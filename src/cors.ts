@@ -1,4 +1,4 @@
 import CORS from "cors";
-import { AuthConfig } from "./config/AuthConfig";
+import { CorsConfig } from "./config";
 
-export const cors = () => CORS(AuthConfig.cors.options);
+export const cors = () => CORS(CorsConfig);
