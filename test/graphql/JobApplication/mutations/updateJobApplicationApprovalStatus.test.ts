@@ -16,7 +16,6 @@ import { JobApplicationGenerator } from "$generators/JobApplication";
 import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { CompanyNotificationRepository } from "$models/CompanyNotification";
 import { UUID_REGEX } from "$test/models";
-import { CompanyGenerator } from "$generators/Company";
 
 const UPDATE_JOB_APPLICATION_APPROVAL_STATUS = gql`
   mutation updateJobApplicationApprovalStatus($uuid: ID!, $approvalStatus: ApprovalStatus!) {
@@ -178,37 +177,6 @@ describe("updateJobApplicationApprovalStatus", () => {
       });
       expect(shouldFetchMore).toBe(false);
       expect(results).toEqual([]);
-    });
-
-    it("sends an email to all company users", async () => {
-      const companyAttributes = await CompanyGenerator.data.completeData();
-      const company = await CompanyRepository.create(companyAttributes);
-      const jobApplication = await JobApplicationGenerator.instance.toTheCompany(company.uuid);
-      const { uuid, offerUuid, applicantUuid } = jobApplication;
-      const { admin } = await updateJobApplicationWithStatus(uuid, ApprovalStatus.approved);
-      const adminUser = await UserRepository.findByUuid(admin.userUuid);
-      const { title } = await OfferRepository.findByUuid(offerUuid);
-
-      expect(emailSendMock.mock.calls).toEqual([
-        [
-          {
-            receiverEmails: [companyAttributes.user.email],
-            sender: {
-              name: `${adminUser.name} ${adminUser.surname}`,
-              email: adminUser.email
-            },
-            subject: "Nueva postulación a tu oferta laboral",
-            body: expect.stringContaining(
-              `
-              Nueva postulación a tu oferta laboral: ${title} (baseUrl/subDomain/empresa/ofertas/${offerUuid}) 
-              Postulante: applicantName applicantSurname (baseUrl/subDomain/empresa/postulantes/${applicantUuid}).
-
-              Bolsa de Trabajo FIUBA
-          `.trim()
-            )
-          }
-        ]
-      ]);
     });
   });
 
