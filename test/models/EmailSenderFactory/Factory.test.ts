@@ -1,6 +1,6 @@
 import { CompanyNewJobApplicationNotification } from "$models/CompanyNotification";
 import { UUID } from "$models/UUID";
-import { EmailSenderFactory } from "$models/EmailSenderFactory/Factory";
+import { EmailSenderFactory } from "$models/EmailSenderFactory";
 import { CompanyNewJobApplicationEmailSender } from "$services/EmailSender";
 
 describe("EmailSenderFactory", () => {
@@ -15,6 +15,8 @@ describe("EmailSenderFactory", () => {
   });
 
   it("throws an error if the factory does not know how to handle the given class", async () => {
-    expect(() => EmailSenderFactory.create(new Date() as any)).toThrowError("");
+    expect(() => EmailSenderFactory.create(new Date() as any)).toThrowError(
+      "no emailSender found for Date"
+    );
   });
 });

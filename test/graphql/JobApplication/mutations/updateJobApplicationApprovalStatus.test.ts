@@ -8,6 +8,7 @@ import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { EmailService } from "$services/Email";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 import { TestClientGenerator } from "$generators/TestClient";
@@ -15,6 +16,7 @@ import { JobApplicationGenerator } from "$generators/JobApplication";
 import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { CompanyNotificationRepository } from "$models/CompanyNotification";
 import { UUID_REGEX } from "$test/models";
+import { CompanyGenerator } from "$generators/Company";
 
 const UPDATE_JOB_APPLICATION_APPROVAL_STATUS = gql`
   mutation updateJobApplicationApprovalStatus($uuid: ID!, $approvalStatus: ApprovalStatus!) {
@@ -27,6 +29,8 @@ const UPDATE_JOB_APPLICATION_APPROVAL_STATUS = gql`
 `;
 
 describe("updateJobApplicationApprovalStatus", () => {
+  let emailSendMock: jest.Mock;
+
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
@@ -34,6 +38,11 @@ describe("updateJobApplicationApprovalStatus", () => {
     await SecretarySettingsRepository.truncate();
 
     await SecretarySettingsGenerator.createDefaultSettings();
+  });
+
+  beforeEach(() => {
+    emailSendMock = jest.fn();
+    jest.spyOn(EmailService, "send").mockImplementation(emailSendMock);
   });
 
   const expectToLogAnEventForStatus = async (secretary: Secretary, status: ApprovalStatus) => {
@@ -118,12 +127,12 @@ describe("updateJobApplicationApprovalStatus", () => {
     const updateJobApplicationWithStatus = async (uuid: string, approvalStatus: ApprovalStatus) => {
       const secretary = Secretary.extension;
       const { apolloClient, admin } = await TestClientGenerator.admin({ secretary });
-      const response = await apolloClient.mutate({
+      const { data, errors } = await apolloClient.mutate({
         mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
         variables: { uuid, approvalStatus }
       });
-      expect(response.errors).toBeUndefined();
-      return { response, admin };
+      expect(errors).toBeUndefined();
+      return { data, admin };
     };
 
     it("creates a notification for a company if the jobApplication is approved", async () => {
@@ -169,6 +178,36 @@ describe("updateJobApplicationApprovalStatus", () => {
       });
       expect(shouldFetchMore).toBe(false);
       expect(results).toEqual([]);
+    });
+
+    it("sends an email to all company users", async () => {
+      const companyAttributes = await CompanyGenerator.data.completeData();
+      const company = await CompanyRepository.create(companyAttributes);
+      const jobApplication = await JobApplicationGenerator.instance.toTheCompany(company.uuid);
+      const { uuid, offerUuid, applicantUuid } = jobApplication;
+      const { admin } = await updateJobApplicationWithStatus(uuid, ApprovalStatus.approved);
+      const adminUser = await UserRepository.findByUuid(admin.userUuid);
+      const { title } = await OfferRepository.findByUuid(offerUuid);
+
+      expect(emailSendMock.mock.calls).toEqual([
+        [
+          {
+            receiverEmails: [companyAttributes.user.email],
+            sender: {
+              name: `${adminUser.name} ${adminUser.surname}`,
+              email: adminUser.email
+            },
+            subject: "Nueva postulación a tu oferta laboral",
+            body: expect.stringContaining(
+              `
+              Nueva postulación a tu oferta laboral: ${title} (baseUrl/subDomain/empresa/ofertas/${offerUuid}) 
+              Postulante: applicantName applicantSurname (baseUrl/subDomain/empresa/postulantes/${applicantUuid}).
+              signature
+          `.trim()
+            )
+          }
+        ]
+      ]);
     });
   });
 

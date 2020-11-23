@@ -11,6 +11,7 @@ import {
 import { GraphQLJobApplication } from "../Types/GraphQLJobApplication";
 import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { EmailSenderFactory } from "$models/EmailSenderFactory";
 import { IApolloServerContext } from "$graphql/Context";
 
 export const updateJobApplicationApprovalStatus = {
@@ -40,15 +41,21 @@ export const updateJobApplicationApprovalStatus = {
       status: approvalStatus
     });
 
-    return Database.transaction(async transaction => {
+    await Database.transaction(async transaction => {
       await JobApplicationRepository.save(jobApplication, transaction);
       await JobApplicationApprovalEventRepository.save(event, transaction);
       for (const notification of notifications) {
         const repository = NotificationRepositoryFactory.getRepositoryFor(notification);
         await repository.save(notification, transaction);
       }
-      return jobApplication;
     });
+
+    for (const notification of notifications) {
+      const emailSender = EmailSenderFactory.create(notification);
+      await emailSender.send(notification);
+    }
+
+    return jobApplication;
   }
 };
 
