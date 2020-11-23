@@ -1,52 +1,89 @@
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
-import { Company, User } from "$models";
-import { CompanyGenerator } from "$generators/Company";
-import { UserGenerator } from "$generators/User";
+import { Company, CompanyUser } from "$models";
 import { CompanyUserRepository } from "$models/CompanyUser/Repository";
 import { ForeignKeyConstraintError } from "sequelize";
+import { UUID } from "$models/UUID";
+
+import { CompanyGenerator } from "$generators/Company";
+import { UserGenerator } from "$generators/User";
 
 describe("CompanyUserRepository", () => {
+  const companyAttributes = {
+    cuit: "30711819017",
+    companyName: "Mercado Libre",
+    businessName: "businessName"
+  };
+
   beforeEach(() => Promise.all([CompanyRepository.truncate(), UserRepository.truncate()]));
 
-  it("needs to reference a persisted company", async () => {
-    const company = new Company({ cuit: "30711819017", companyName: "Mercado Libre" });
+  it("successfully creates when both references are valid", async () => {
+    const company = new Company(companyAttributes);
+    await CompanyRepository.save(company);
     const user = await UserGenerator.instance();
-    await expect(CompanyUserRepository.create(company, user)).rejects.toThrowErrorWithMessage(
+    const companyUser = new CompanyUser({ companyUuid: company.uuid, userUuid: user.uuid });
+    await CompanyUserRepository.save(companyUser);
+    expect(companyUser).toBeObjectContaining({
+      companyUuid: company.uuid,
+      userUuid: user.uuid
+    });
+  });
+
+  it("needs to reference a persisted company", async () => {
+    const user = await UserGenerator.instance();
+    const companyUser = new CompanyUser({ companyUuid: UUID.generate(), userUuid: user.uuid });
+    await expect(CompanyUserRepository.save(companyUser)).rejects.toThrowErrorWithMessage(
       ForeignKeyConstraintError,
       'violates foreign key constraint "CompanyUsers_companyUuid_fkey"'
     );
   });
 
   it("needs to reference a persisted user", async () => {
-    const { user: userAttributes, ...companyAttributes } = CompanyGenerator.data.completeData();
-    const company = await Company.create(companyAttributes);
-    const user = new User(userAttributes);
-    await expect(CompanyUserRepository.create(company, user)).rejects.toThrowErrorWithMessage(
+    const company = await CompanyGenerator.instance.withMinimumData();
+    const companyUser = new CompanyUser({ companyUuid: company.uuid, userUuid: UUID.generate() });
+    await expect(CompanyUserRepository.save(companyUser)).rejects.toThrowErrorWithMessage(
       ForeignKeyConstraintError,
       'violates foreign key constraint "CompanyUsers_userUuid_fkey"'
     );
   });
 
-  it("successfully creates when both references are valid", async () => {
-    const { user: userAttributes, ...companyAttributes } = CompanyGenerator.data.completeData();
-    const company = await Company.create(companyAttributes);
-    const user = await User.create(userAttributes);
-    const companyUser = await CompanyUserRepository.create(company, user);
-    expect(companyUser.companyUuid).toEqual(company.uuid);
-    expect(companyUser.userUuid).toEqual(user.uuid);
+  it("generates a valid association", async () => {
+    const company = new Company(companyAttributes);
+    await CompanyRepository.save(company);
+    const user = await UserGenerator.instance();
+    const companyUser = new CompanyUser({ companyUuid: company.uuid, userUuid: user.uuid });
+    await CompanyUserRepository.save(companyUser);
+
+    expect((await user.getCompany())?.uuid).toEqual(companyUser.companyUuid);
+    expect((await company.getUsers()).map(({ uuid }) => uuid)).toEqual([companyUser.userUuid]);
   });
 
-  it("generates a valid association", async () => {
-    const { user: userAttributes, ...companyAttributes } = CompanyGenerator.data.completeData();
-    const company = await Company.create(companyAttributes);
-    const user = await User.create(userAttributes);
+  describe("findByCompany", () => {
+    it("finds all companyUsers from a given company", async () => {
+      const company = new Company(companyAttributes);
+      await CompanyRepository.save(company);
+      const companyUuid = company.uuid;
+      const firstUser = await UserGenerator.instance();
+      const secondUser = await UserGenerator.instance();
+      const firstCompanyUser = new CompanyUser({ companyUuid, userUuid: firstUser.uuid });
+      const secondCompanyUser = new CompanyUser({ companyUuid, userUuid: secondUser.uuid });
+      await CompanyUserRepository.save(firstCompanyUser);
+      await CompanyUserRepository.save(secondCompanyUser);
 
-    await CompanyUserRepository.create(company, user);
+      const companyUsers = await CompanyUserRepository.findByCompanyUuid(companyUuid);
+      expect(companyUsers).toEqual(
+        expect.arrayContaining(
+          [firstCompanyUser, secondCompanyUser].map(({ userUuid }) =>
+            expect.objectContaining({ companyUuid, userUuid })
+          )
+        )
+      );
+    });
 
-    const userCompany = await user.getCompany();
-    const [companyUser] = await company.getUsers();
-    expect(userCompany!.uuid).toEqual(company.uuid);
-    expect(companyUser!.uuid).toEqual(user.uuid);
+    it("returns an empty array if the company is not persisted", async () => {
+      const company = new Company(companyAttributes);
+      const companyUsers = await CompanyUserRepository.findByCompanyUuid(company.uuid);
+      expect(companyUsers).toEqual([]);
+    });
   });
 });
