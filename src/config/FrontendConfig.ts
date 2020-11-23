@@ -7,7 +7,7 @@ const endpoints = {
   }
 };
 
-export const FrontendConfig = {
+export const FrontendConfig: IFrontendConfig = {
   production: {
     baseUrl: "http://laboral.fi.uba.ar",
     subDomain: "laboral/#",
@@ -29,3 +29,14 @@ export const FrontendConfig = {
     endpoints
   }
 }[Environment.NODE_ENV];
+
+interface IFrontendConfig {
+  baseUrl: string;
+  subDomain: string;
+  endpoints: {
+    company: {
+      offer: (uuid: string) => string;
+      applicant: (uuid: string) => string;
+    };
+  };
+}
