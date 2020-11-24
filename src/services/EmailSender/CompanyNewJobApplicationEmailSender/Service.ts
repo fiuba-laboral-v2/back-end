@@ -27,7 +27,7 @@ const getSender = async (adminUserUuid: string) => {
 const getSignature = async (adminUserUuid: string): Promise<string> => {
   const admin = await AdminRepository.findByUserUuid(adminUserUuid);
   const signatures = TranslationRepository.translate("emailSignature");
-  return signatures.find(({ key }) => key === admin.secretary).value;
+  return signatures[admin.secretary];
 };
 
 export const CompanyNewJobApplicationEmailSender = {
@@ -39,7 +39,7 @@ export const CompanyNewJobApplicationEmailSender = {
     const applicant = await ApplicantRepository.findByUuid(applicantUuid);
     const applicantUser = await UserRepository.findByUuid(applicant.userUuid);
 
-    const [subject, body] = TranslationRepository.translate(
+    const { subject, body } = TranslationRepository.translate(
       "companyNewJobApplicationNotificationEmail"
     );
     const { baseUrl, subDomain, endpoints } = FrontendConfig;
@@ -47,8 +47,8 @@ export const CompanyNewJobApplicationEmailSender = {
     return EmailService.send({
       receiverEmails: await getReceiverEmails(notification.notifiedCompanyUuid),
       sender: await getSender(notification.moderatorUuid),
-      subject: subject.value,
-      body: template(body.value)({
+      subject: subject,
+      body: template(body)({
         offerTitle: offer.title,
         offerLink: `${baseUrl}/${subDomain}/${endpoints.company.offer(offerUuid)}`,
         applicantName: `${applicantUser.name} ${applicantUser.surname}`,

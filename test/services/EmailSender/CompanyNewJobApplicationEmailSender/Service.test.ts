@@ -49,12 +49,11 @@ describe("CompanyNewJobApplicationEmailSender", () => {
           },
           subject: "Nueva postulación a tu oferta laboral",
           body: expect.stringContaining(
-            `
-              Nueva postulación a tu oferta laboral: title1 (baseUrl/subDomain/empresa/ofertas/${offerUuid}) 
-              Postulante: applicantName applicantSurname (baseUrl/subDomain/empresa/postulantes/${applicantUuid}).
-
-              Bolsa de Trabajo FIUBA
-          `.trim()
+            `Nueva postulación a tu oferta laboral: title1 (baseUrl/subDomain/empresa/ofertas/${offerUuid})` +
+              "\n" +
+              `Postulante: applicantName applicantSurname (baseUrl/subDomain/empresa/postulantes/${applicantUuid}).` +
+              "\n\n" +
+              `Bolsa de Trabajo FIUBA`
           )
         }
       ]
