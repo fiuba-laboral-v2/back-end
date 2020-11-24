@@ -1,3 +1,5 @@
+import { Dialect } from "sequelize";
+
 export const PostgresConfig = {
   production: {
     use_env_variable: "DATABASE_URL",
@@ -13,7 +15,8 @@ export const PostgresConfig = {
     database: "development",
     host: "localhost",
     port: 5434,
-    dialect: "postgres"
+    dialect: "postgres",
+    use_env_variable: undefined
   },
   test: {
     username: "postgres",
@@ -22,6 +25,25 @@ export const PostgresConfig = {
     host: "localhost",
     port: 5434,
     dialect: "postgres",
-    logging: false
+    logging: false,
+    use_env_variable: undefined
   }
 };
+
+interface IEnvironmentPostgresConfig {
+  use_env_variable: string;
+  dialect: Dialect;
+}
+
+interface ILocalPostgresConfig {
+  use_env_variable: undefined;
+  username: string;
+  password: string;
+  database: string;
+  host: string;
+  port: number;
+  dialect: Dialect;
+  logging: boolean;
+}
+
+export type TPostgresConfig = IEnvironmentPostgresConfig | ILocalPostgresConfig;

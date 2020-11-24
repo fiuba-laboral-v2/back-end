@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize-typescript";
 import { Environment } from "./Environment";
-import { PostgresConfig } from "./Postgres";
+import { PostgresConfig, TPostgresConfig } from "./Postgres";
 import { QueryOptions, Transaction } from "sequelize";
 import {
   Admin,
@@ -82,9 +82,9 @@ export class Database {
   }
 
   public static setConnection() {
-    const config = PostgresConfig[Environment.NODE_ENV];
+    const config = PostgresConfig[Environment.NODE_ENV()] as TPostgresConfig;
 
-    if (config.use_env_variable) {
+    if (config.use_env_variable !== undefined) {
       const url = Environment.databaseURL();
       if (!url) throw new Error("DATABASE_URL not set");
       this.sequelize = new Sequelize(url, config);

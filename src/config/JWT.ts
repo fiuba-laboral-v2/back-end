@@ -9,28 +9,28 @@ export const JWTConfig: IJWTConfig = {
   production: {
     expiresIn: TOKEN_EXPIRATION_DAYS_AS_STRING,
     credentialsRequired: false,
-    algorithms: ["RS256"],
+    algorithms: ["RS256"] as Algorithm[],
     secret: Environment.JWTSecret() || "Environment.JWT_SECRET"
   },
   staging: {
     expiresIn: TOKEN_EXPIRATION_DAYS_AS_STRING,
     credentialsRequired: false,
-    algorithms: ["RS256"],
+    algorithms: ["RS256"] as Algorithm[],
     secret: Environment.JWTSecret() || "Environment.JWT_SECRET"
   },
   development: {
     expiresIn: TOKEN_EXPIRATION_DAYS_AS_STRING,
     credentialsRequired: false,
-    algorithms: ["RS256"],
+    algorithms: ["RS256"] as Algorithm[],
     secret: Environment.JWTSecret() || "Environment.JWT_SECRET"
   },
   test: {
     expiresIn: TOKEN_EXPIRATION_DAYS_AS_STRING,
     credentialsRequired: false,
-    algorithms: ["RS256"],
+    algorithms: ["RS256"] as Algorithm[],
     secret: Environment.JWTSecret() || "Environment.JWT_SECRET"
   }
-}[Environment.NODE_ENV];
+}[Environment.NODE_ENV()];
 
 interface IJWTConfig {
   expiresIn: string;

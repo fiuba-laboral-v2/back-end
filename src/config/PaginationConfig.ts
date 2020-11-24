@@ -17,7 +17,7 @@ export const PaginationConfig: IPaginationConfig = {
   test: {
     itemsPerPage: () => TEST_ITEMS_PER_PAGE
   }
-}[Environment.NODE_ENV];
+}[Environment.NODE_ENV()];
 
 interface IPaginationConfig {
   itemsPerPage: () => number;

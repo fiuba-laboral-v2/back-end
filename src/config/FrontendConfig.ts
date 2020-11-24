@@ -28,7 +28,7 @@ export const FrontendConfig: IFrontendConfig = {
     subDomain: "subDomain",
     endpoints
   }
-}[Environment.NODE_ENV];
+}[Environment.NODE_ENV()];
 
 interface IFrontendConfig {
   baseUrl: string;

@@ -6,7 +6,7 @@ import { Environment } from "./config/Environment";
 import { ApolloServer } from "./server";
 import { JWT } from "./JWT";
 
-Logger.info(`Running on ${Environment.NODE_ENV} environment`);
+Logger.info(`Running on ${Environment.NODE_ENV()} environment`);
 
 const App: express.Express = express();
 App.use(cors());

@@ -8,7 +8,7 @@ const localCookieConfig = {
     secure: false,
     httpOnly: true,
     maxAge: TOKEN_EXPIRATION_MILLISECONDS,
-    sameSite: "strict"
+    sameSite: "strict" as SameSite
   }
 };
 
@@ -19,7 +19,7 @@ export const CookieConfig: ICookieConfig = {
       secure: true,
       httpOnly: true,
       maxAge: TOKEN_EXPIRATION_MILLISECONDS,
-      sameSite: "strict"
+      sameSite: "strict" as SameSite
     }
   },
   staging: {
@@ -28,12 +28,14 @@ export const CookieConfig: ICookieConfig = {
       secure: false,
       httpOnly: true,
       maxAge: TOKEN_EXPIRATION_MILLISECONDS,
-      sameSite: "strict"
+      sameSite: "strict" as SameSite
     }
   },
   development: localCookieConfig,
   test: localCookieConfig
-}[Environment.NODE_ENV];
+}[Environment.NODE_ENV()];
+
+type SameSite = boolean | "lax" | "strict" | "none";
 
 interface ICookieConfig {
   cookieOptions: CookieOptions;
