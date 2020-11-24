@@ -4,10 +4,7 @@ import { MissingTranslationError } from "$models/Translation/Errors";
 
 const GET_TRANSLATIONS = gql`
   query getTranslations($translationGroup: String!) {
-    getTranslations(translationGroup: $translationGroup) {
-      key
-      value
-    }
+    getTranslations(translationGroup: $translationGroup)
   }
 `;
 
@@ -21,12 +18,10 @@ describe("getTranslations", () => {
     });
 
     expect(errors).toBeUndefined();
-    expect(data).toEqual({
-      getTranslations: [
-        { key: "edit", value: "Editar" },
-        { key: "padron", value: "Padron" },
-        { key: "capabilities", value: "Aptitudes" }
-      ]
+    expect(data!.getTranslations).toEqual({
+      edit: "Editar",
+      padron: "Padron",
+      capabilities: "Aptitudes"
     });
   });
 

@@ -1,9 +1,9 @@
-import { List, nonNull, String } from "$graphql/fieldTypes";
+import { nonNull, String } from "$graphql/fieldTypes";
 import { GraphQLTranslation } from "$graphql/Translation/Types/Translation";
 import { TranslationRepository } from "$models/Translation";
 
 export const getTranslations = {
-  type: nonNull(List(nonNull(GraphQLTranslation))),
+  type: nonNull(GraphQLTranslation),
   args: {
     translationGroup: {
       type: nonNull(String)

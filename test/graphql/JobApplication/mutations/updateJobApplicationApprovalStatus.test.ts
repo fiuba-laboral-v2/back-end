@@ -16,6 +16,7 @@ import { JobApplicationGenerator } from "$generators/JobApplication";
 import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { CompanyNotificationRepository } from "$models/CompanyNotification";
 import { UUID_REGEX } from "$test/models";
+import { Logger } from "$libs/Logger";
 
 const UPDATE_JOB_APPLICATION_APPROVAL_STATUS = gql`
   mutation updateJobApplicationApprovalStatus($uuid: ID!, $approvalStatus: ApprovalStatus!) {
@@ -37,7 +38,11 @@ describe("updateJobApplicationApprovalStatus", () => {
     await SecretarySettingsGenerator.createDefaultSettings();
   });
 
-  beforeEach(() => jest.spyOn(EmailService, "send").mockImplementation(jest.fn()));
+  beforeEach(() => {
+    jest.spyOn(Logger, "info").mockImplementation(jest.fn());
+    jest.spyOn(Logger, "error").mockImplementation(jest.fn());
+    jest.spyOn(EmailService, "send").mockImplementation(jest.fn());
+  });
 
   const expectToLogAnEventForStatus = async (secretary: Secretary, status: ApprovalStatus) => {
     const { apolloClient, admin } = await TestClientGenerator.admin({ secretary });

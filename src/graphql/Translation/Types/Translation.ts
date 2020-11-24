@@ -1,16 +1,6 @@
-import { GraphQLObjectType } from "graphql";
-import { nonNull, String } from "$graphql/fieldTypes";
+import { GraphQLScalarType } from "graphql";
 
-const GraphQLTranslation = new GraphQLObjectType({
+export const GraphQLTranslation = new GraphQLScalarType({
   name: "Translation",
-  fields: () => ({
-    key: {
-      type: nonNull(String)
-    },
-    value: {
-      type: nonNull(String)
-    }
-  })
+  serialize: (translations: object) => translations
 });
-
-export { GraphQLTranslation };
