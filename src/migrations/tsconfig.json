@@ -4,5 +4,6 @@
     "outDir": "../../dist_migrations",
     "rootDir": "../../",
     "sourceMap": false
-  }
+  },
+  "include": ["../config/Postgres.ts", "../config/Sequelize.ts", "../migrations"]
 }

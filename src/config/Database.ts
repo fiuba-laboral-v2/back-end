@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize-typescript";
 import { Environment } from "./Environment";
-import databaseJSON from "../../config/database.json";
+import { PostgresConfig } from "./Postgres";
 import { QueryOptions, Transaction } from "sequelize";
 import {
   Admin,
@@ -82,7 +82,7 @@ export class Database {
   }
 
   public static setConnection() {
-    const config = databaseJSON[Environment.NODE_ENV];
+    const config = PostgresConfig[Environment.NODE_ENV];
 
     if (config.use_env_variable) {
       const url = Environment.databaseURL();
