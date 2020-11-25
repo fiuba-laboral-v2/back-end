@@ -1,20 +1,10 @@
 import { User } from "./models";
 import { CurrentUser, CurrentUserBuilder, ICurrentUserTokenData } from "./models/CurrentUser";
-import { Environment } from "./config/Environment";
 import { sign, verify } from "jsonwebtoken";
 import { Application } from "express";
 import jwt from "express-jwt";
-import { AuthConfig } from "./config/AuthConfig";
+import { JWTConfig } from "./config";
 import { Logger } from "./libs/Logger";
-
-let JWT_SECRET: string;
-if (["test", "development"].includes(Environment.NODE_ENV)) {
-  JWT_SECRET = "Environment.JWT_SECRET";
-} else {
-  const secret = Environment.JWTSecret();
-  if (!secret) throw new Error("JWT_SECRET not set");
-  JWT_SECRET = secret;
-}
 
 export const JWT = {
   createToken: async (user: User) => {
@@ -31,11 +21,11 @@ export const JWT = {
       })
     };
 
-    return sign(payload, JWT_SECRET, { expiresIn: AuthConfig.JWT.expiresIn });
+    return sign(payload, JWTConfig.secret, { expiresIn: JWTConfig.expiresIn });
   },
   decodeToken: (token: string): CurrentUser | undefined => {
     try {
-      return CurrentUserBuilder.build(verify(token, JWT_SECRET) as ICurrentUserTokenData);
+      return CurrentUserBuilder.build(verify(token, JWTConfig.secret) as ICurrentUserTokenData);
     } catch (error) {
       Logger.error(error.message, error);
       return;
@@ -44,9 +34,9 @@ export const JWT = {
   applyMiddleware: ({ app }: { app: Application }) => {
     app.use(
       jwt({
-        secret: JWT_SECRET,
-        credentialsRequired: false,
-        algorithms: AuthConfig.JWT.algorithms
+        secret: JWTConfig.secret,
+        credentialsRequired: JWTConfig.credentialsRequired,
+        algorithms: JWTConfig.algorithms
       })
     );
   },

@@ -2,20 +2,18 @@ import { TranslationRepository } from "$models/Translation";
 import { MissingTranslationError } from "$models/Translation/Errors";
 
 describe("TranslationRepository", () => {
-  it("get an array with the key - values of the path", () => {
-    expect(TranslationRepository.translate("applicantProfileTitle")).toEqual([
-      { key: "title", value: "Mi Perfil" },
-      {
-        key: "subtitle",
-        value: "Así lo va a ver una empresa"
-      }
-    ]);
+  it("returns the translations that belong to the given translationGroup", () => {
+    const translations = TranslationRepository.translate("applicantProfileTitle");
+    expect(translations).toEqual({
+      title: "Mi Perfil",
+      subtitle: "Así lo va a ver una empresa"
+    });
   });
 
-  it("throw an error if the path is incorrect", () => {
-    const path = "something.that.does_not_exist";
-    expect(() => TranslationRepository.translate(path)).toThrow(
-      MissingTranslationError.buildMessage(path)
+  it("throws an error if translationGroup does not exist", () => {
+    const translationGroup = "somethingThatDoesNotExist";
+    expect(() => TranslationRepository.translate(translationGroup)).toThrow(
+      MissingTranslationError.buildMessage(translationGroup)
     );
   });
 });

@@ -1,6 +1,7 @@
 import { UniqueConstraintError, ValidationError } from "sequelize";
 import { UserRepository } from "$models/User/Repository";
 import { FiubaUserNotFoundError, UserNotFoundError } from "$models/User";
+import { UUID } from "$models/UUID";
 import { FiubaUsersService } from "$services";
 import { InvalidEmptyUsernameError } from "$services/FiubaUsers";
 import { UUID_REGEX } from "../index";
@@ -197,6 +198,36 @@ describe("UserRepository", () => {
         UserNotFoundError,
         UserNotFoundError.buildMessage({ email: nonExistentEmail })
       );
+    });
+  });
+
+  describe("findByUuids", () => {
+    it("finds users by the given uuids", async () => {
+      const uuids = [
+        await UserGenerator.instance(),
+        await UserGenerator.instance(),
+        await UserGenerator.instance()
+      ].map(({ uuid }) => uuid);
+
+      const users = await UserRepository.findByUuids(uuids);
+      expect(users).toHaveLength(uuids.length);
+      expect(users.map(({ uuid }) => uuid)).toEqual(expect.arrayContaining(uuids));
+    });
+
+    it("returns an empty array if the given uuids do not belong to a persisted user", async () => {
+      const uuids = [UUID.generate(), UUID.generate(), UUID.generate(), UUID.generate()];
+
+      const users = await UserRepository.findByUuids(uuids);
+      expect(users).toEqual([]);
+    });
+
+    it("finds only the users with an uuid persisted", async () => {
+      const persistedUuids = [await UserGenerator.instance()].map(({ uuid }) => uuid);
+      const nonPersistedUuids = [UUID.generate()];
+
+      const users = await UserRepository.findByUuids([...persistedUuids, ...nonPersistedUuids]);
+      expect(users).toHaveLength(persistedUuids.length);
+      expect(users.map(({ uuid }) => uuid)).toEqual(expect.arrayContaining(persistedUuids));
     });
   });
 

@@ -8,6 +8,7 @@ import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { EmailService } from "$services/Email";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 import { TestClientGenerator } from "$generators/TestClient";
@@ -15,6 +16,7 @@ import { JobApplicationGenerator } from "$generators/JobApplication";
 import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { CompanyNotificationRepository } from "$models/CompanyNotification";
 import { UUID_REGEX } from "$test/models";
+import { Logger } from "$libs/Logger";
 
 const UPDATE_JOB_APPLICATION_APPROVAL_STATUS = gql`
   mutation updateJobApplicationApprovalStatus($uuid: ID!, $approvalStatus: ApprovalStatus!) {
@@ -34,6 +36,12 @@ describe("updateJobApplicationApprovalStatus", () => {
     await SecretarySettingsRepository.truncate();
 
     await SecretarySettingsGenerator.createDefaultSettings();
+  });
+
+  beforeEach(() => {
+    jest.spyOn(Logger, "info").mockImplementation(jest.fn());
+    jest.spyOn(Logger, "error").mockImplementation(jest.fn());
+    jest.spyOn(EmailService, "send").mockImplementation(jest.fn());
   });
 
   const expectToLogAnEventForStatus = async (secretary: Secretary, status: ApprovalStatus) => {
@@ -118,12 +126,12 @@ describe("updateJobApplicationApprovalStatus", () => {
     const updateJobApplicationWithStatus = async (uuid: string, approvalStatus: ApprovalStatus) => {
       const secretary = Secretary.extension;
       const { apolloClient, admin } = await TestClientGenerator.admin({ secretary });
-      const response = await apolloClient.mutate({
+      const { data, errors } = await apolloClient.mutate({
         mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
         variables: { uuid, approvalStatus }
       });
-      expect(response.errors).toBeUndefined();
-      return { response, admin };
+      expect(errors).toBeUndefined();
+      return { data, admin };
     };
 
     it("creates a notification for a company if the jobApplication is approved", async () => {
