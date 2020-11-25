@@ -373,7 +373,7 @@ export const defaultTranslations = {
     { key: "graduate", value: "Graduados" },
     { key: "student", value: "Alumnos" },
     { key: "approved", value: "Visible hasta" },
-    { key: "expired", value: "expirada" },
+    { key: "expired", value: "Expirada" },
     { key: "rejected", value: "No visible" },
     { key: "pending", value: "Pendiente" }
   ],

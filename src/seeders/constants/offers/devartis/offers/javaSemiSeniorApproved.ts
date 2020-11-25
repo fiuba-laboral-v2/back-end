@@ -5,7 +5,7 @@ import { ApplicantType } from "../../../../../models/Applicant/Interface";
 import { ApprovalStatus } from "../../../../../models/ApprovalStatus";
 import moment from "moment";
 
-export const javaSemiSeniorExpired = {
+export const javaSemiSeniorApproved = {
   offer: {
     uuid: uuids.offers.javaSemiSeniorApproved,
     companyUuid: uuids.companies.devartis.uuid,
@@ -16,12 +16,12 @@ export const javaSemiSeniorExpired = {
     hoursPerDay: 6,
     extensionApprovalStatus: ApprovalStatus.approved,
     graduadosApprovalStatus: ApprovalStatus.approved,
-    graduatesExpirationDateTime: moment().endOf("day").subtract(1, "days").toDate(),
-    studentsExpirationDateTime: moment().endOf("day").subtract(1, "days").toDate(),
+    graduatesExpirationDateTime: moment().endOf("day").add(15, "days").toDate(),
+    studentsExpirationDateTime: moment().endOf("day").add(15, "days").toDate(),
     minimumSalary: 52500,
     maximumSalary: 70000,
     createdAt: moment().endOf("day").subtract(16, "days").toDate(),
     updatedAt: moment().endOf("day").subtract(16, "days").toDate()
   },
-  offerSections: sections(uuids.offers.javaSemiSeniorExpired)
+  offerSections: sections(uuids.offers.javaSemiSeniorApproved)
 };
