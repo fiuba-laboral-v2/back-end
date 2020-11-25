@@ -11,6 +11,8 @@ export const uuids = {
   },
   offers: {
     javaSemiSenior: UUID.generate(),
+    javaSemiSeniorExpired: UUID.generate(),
+    javaSemiSeniorApproved: UUID.generate(),
     javaSenior: UUID.generate(),
     javaJunior: UUID.generate(),
     rubySenior: UUID.generate(),

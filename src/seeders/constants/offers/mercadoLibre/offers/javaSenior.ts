@@ -1,5 +1,6 @@
 import { uuids } from "../../../uuids";
 import { ApplicantType } from "../../../../../models/Applicant/Interface";
+import { ApprovalStatus } from "../../../../../models/ApprovalStatus";
 import { description } from "../description";
 
 export const javaSenior = {
@@ -11,6 +12,8 @@ export const javaSenior = {
     description,
     isInternship: false,
     hoursPerDay: 8,
+    extensionApprovalStatus: ApprovalStatus.pending,
+    graduadosApprovalStatus: ApprovalStatus.pending,
     minimumSalary: 80000,
     maximumSalary: 120000,
     createdAt: new Date(),
