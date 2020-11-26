@@ -400,7 +400,8 @@ export const defaultTranslations = {
     tooltipPrefix: "Revisa la",
     graduate: "Graduados",
     student: "Alumnos",
-    approved: "Visible",
+    approved: "Visible hasta",
+    expired: "Expirada",
     rejected: "No visible",
     pending: "Pendiente"
   },
