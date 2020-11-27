@@ -68,12 +68,12 @@ export const defaultTranslations = {
   careersSelectorFormSection: {
     title: "Carreras"
   },
-  fiubaCredentialsFormSection: [
-    { title: "Credenciales de FIUBA" },
-    { subtitle: "Las mismas que usa el SIU Guaraní" },
-    { dni: "DNI" },
-    { password: "Contraseña" }
-  ],
+  fiubaCredentialsFormSection: {
+    title: "Credenciales de FIUBA",
+    subtitle: "Las mismas que usa el SIU Guaraní",
+    dni: "DNI",
+    password: "Contraseña"
+  },
   careersSection: {
     careersTitle: "Carreras"
   },
