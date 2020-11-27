@@ -287,6 +287,7 @@ export const defaultTranslations = {
     rejected: "Rechazados"
   },
   adminTaskList: {
+    emptyList: "No hay tareas",
     none: "Tareas",
     approved: "Tareas aprobadas",
     pending: "Tareas pendientes",
