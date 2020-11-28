@@ -18,13 +18,13 @@ import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyNotificationGenerator } from "$generators/CompanyNotification";
 
-const GET_COMPANY_NOTIFICATION_UNREAD_COUNT = gql`
-  query getCompanyNotificationUnreadCount {
-    getCompanyNotificationUnreadCount
+const HAS_UNREAD_COMPANY_NOTIFICATIONS = gql`
+  query hasUnreadCompanyNotifications {
+    hasUnreadCompanyNotifications
   }
 `;
 
-describe("getCompanyNotificationUnreadCount", () => {
+describe("hasUnreadCompanyNotifications", () => {
   let admin: Admin;
 
   beforeAll(async () => {
@@ -44,9 +44,9 @@ describe("getCompanyNotificationUnreadCount", () => {
     TestClientGenerator.applicant({ status: { approvalStatus, admin } });
 
   const performQuery = (apolloClient: TestClient) =>
-    apolloClient.query({ query: GET_COMPANY_NOTIFICATION_UNREAD_COUNT });
+    apolloClient.query({ query: HAS_UNREAD_COMPANY_NOTIFICATIONS });
 
-  it("returns the number of unread notifications", async () => {
+  it("returns true if there are unread notifications", async () => {
     const size = 10;
     const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
     const notifications = await CompanyNotificationGenerator.instance.range({ company, size });
@@ -58,14 +58,14 @@ describe("getCompanyNotificationUnreadCount", () => {
     }
     const { data, errors } = await performQuery(apolloClient);
     expect(errors).toBeUndefined();
-    expect(data!.getCompanyNotificationUnreadCount).toEqual(size / 2);
+    expect(data!.hasUnreadCompanyNotifications).toBe(true);
   });
 
-  it("returns zero if there is no notifications", async () => {
+  it("returns false if there is no notifications", async () => {
     const { apolloClient } = await createCompanyTestClient(ApprovalStatus.approved);
     const { data, errors } = await performQuery(apolloClient);
     expect(errors).toBeUndefined();
-    expect(data!.getCompanyNotificationUnreadCount).toEqual(0);
+    expect(data!.hasUnreadCompanyNotifications).toBe(false);
   });
 
   it("returns an error if there is no current user", async () => {

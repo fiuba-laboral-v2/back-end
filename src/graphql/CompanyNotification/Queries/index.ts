@@ -1,7 +1,7 @@
 import { getCompanyNotifications } from "./getCompanyNotifications";
-import { getCompanyNotificationUnreadCount } from "./getCompanyNotificationUnreadCount";
+import { hasUnreadCompanyNotifications } from "./hasUnreadCompanyNotifications";
 
 export const companyNotificationQueries = {
   getCompanyNotifications,
-  getCompanyNotificationUnreadCount
+  hasUnreadCompanyNotifications
 };
