@@ -1,9 +1,10 @@
 import { Database } from "$config/Database";
+import { Op } from "sequelize";
 import { TCompanyNotification, CompanyNotificationMapper } from "$models/CompanyNotification";
 import { CompanyNotification } from "$models";
 import { CompanyNotificationNotFoundError, CompanyNotificationsNotUpdatedError } from "./Errors";
 import { Transaction } from "sequelize";
-import { IFindLatestByCompany } from "./Interfaces";
+import { IFindLatestByCompany, IHasUnreadNotification } from "./Interfaces";
 import { PaginationQuery } from "$models/PaginationQuery";
 
 export const CompanyNotificationRepository = {
@@ -12,6 +13,15 @@ export const CompanyNotificationRepository = {
     await companyNotification.save({ transaction });
     notification.setUuid(companyNotification.uuid);
     notification.setCreatedAt(companyNotification.createdAt);
+  },
+  hasUnreadNotification: async ({ companyUuid }: IHasUnreadNotification) => {
+    const notifications = await CompanyNotification.findAll({
+      where: {
+        [Op.and]: [{ notifiedCompanyUuid: companyUuid }, { isNew: true }]
+      }
+    });
+
+    return notifications.length > 0;
   },
   markAsReadByUuids: (uuids: string[]) =>
     Database.transaction(async transaction => {

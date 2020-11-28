@@ -139,6 +139,41 @@ describe("CompanyNotificationRepository", () => {
     );
   });
 
+  describe("hasUnreadNotification", () => {
+    beforeEach(() => CompanyNotificationRepository.truncate());
+
+    it("returns true if there are unread notifications", async () => {
+      const size = 4;
+      const companyUuid = company.uuid;
+      const notifications = await CompanyNotificationGenerator.instance.range({ company, size });
+      let isNew = true;
+      for (const notification of notifications) {
+        notification.isNew = !isNew;
+        isNew = !isNew;
+        await CompanyNotificationRepository.save(notification);
+      }
+      expect(await CompanyNotificationRepository.hasUnreadNotification({ companyUuid })).toBe(true);
+    });
+
+    it("returns false if all notifications were read", async () => {
+      const size = 4;
+      const companyUuid = company.uuid;
+      const notifications = await CompanyNotificationGenerator.instance.range({ company, size });
+      notifications.map(notification => (notification.isNew = false));
+      await Promise.all(notifications.map(n => CompanyNotificationRepository.save(n)));
+      expect(await CompanyNotificationRepository.hasUnreadNotification({ companyUuid })).toBe(
+        false
+      );
+    });
+
+    it("returns false there is no notifications", async () => {
+      const companyUuid = company.uuid;
+      expect(await CompanyNotificationRepository.hasUnreadNotification({ companyUuid })).toBe(
+        false
+      );
+    });
+  });
+
   describe("markAsReadByUuids", () => {
     it("updates isNew to false for all given notification uuids", async () => {
       const size = 4;

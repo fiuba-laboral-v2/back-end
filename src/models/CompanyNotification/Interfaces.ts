@@ -13,3 +13,7 @@ export interface IFindLatestByCompany {
   companyUuid: string;
   updatedBeforeThan?: IPaginatedInput;
 }
+
+export interface IHasUnreadNotification {
+  companyUuid: string;
+}
