@@ -448,6 +448,10 @@ export const defaultTranslations = {
   isNewLabel: {
     isNew: "Nueva"
   },
+  notificationsNotice: {
+    message: "Tenés notificaciones",
+    actionMessage: "Ver"
+  },
   companyNewJobApplicationNotificationEmail: {
     subject: "Nueva postulación a tu oferta laboral",
     body:
