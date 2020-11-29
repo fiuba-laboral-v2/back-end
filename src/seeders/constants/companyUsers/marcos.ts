@@ -4,10 +4,10 @@ import { hashSync } from "bcrypt";
 export const marcos = {
   user: {
     uuid: uuids.marcos.user,
-    email: "marcos@mercadolibre.com",
+    email: "sebastian.e.blanco@gmail.com",
     password: hashSync("SecurePassword1010", 10),
-    name: "Mariano",
-    surname: "Beiró",
+    name: "Marcos",
+    surname: "Galperín",
     createdAt: new Date(),
     updatedAt: new Date()
   },
