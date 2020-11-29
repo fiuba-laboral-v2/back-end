@@ -139,7 +139,7 @@ describe("CompanyNotificationRepository", () => {
     );
   });
 
-  describe("hasUnreadNotification", () => {
+  describe("hasUnreadNotifications", () => {
     beforeEach(() => CompanyNotificationRepository.truncate());
 
     it("returns true if there are unread notifications", async () => {
@@ -152,7 +152,9 @@ describe("CompanyNotificationRepository", () => {
         isNew = !isNew;
         await CompanyNotificationRepository.save(notification);
       }
-      expect(await CompanyNotificationRepository.hasUnreadNotification({ companyUuid })).toBe(true);
+      expect(await CompanyNotificationRepository.hasUnreadNotifications({ companyUuid })).toBe(
+        true
+      );
     });
 
     it("returns false if all notifications were read", async () => {
@@ -161,14 +163,14 @@ describe("CompanyNotificationRepository", () => {
       const notifications = await CompanyNotificationGenerator.instance.range({ company, size });
       notifications.map(notification => (notification.isNew = false));
       await Promise.all(notifications.map(n => CompanyNotificationRepository.save(n)));
-      expect(await CompanyNotificationRepository.hasUnreadNotification({ companyUuid })).toBe(
+      expect(await CompanyNotificationRepository.hasUnreadNotifications({ companyUuid })).toBe(
         false
       );
     });
 
     it("returns false there is no notifications", async () => {
       const companyUuid = company.uuid;
-      expect(await CompanyNotificationRepository.hasUnreadNotification({ companyUuid })).toBe(
+      expect(await CompanyNotificationRepository.hasUnreadNotifications({ companyUuid })).toBe(
         false
       );
     });

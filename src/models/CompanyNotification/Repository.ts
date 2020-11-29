@@ -4,7 +4,7 @@ import { TCompanyNotification, CompanyNotificationMapper } from "$models/Company
 import { CompanyNotification } from "$models";
 import { CompanyNotificationNotFoundError, CompanyNotificationsNotUpdatedError } from "./Errors";
 import { Transaction } from "sequelize";
-import { IFindLatestByCompany, IHasUnreadNotification } from "./Interfaces";
+import { IFindLatestByCompany, IHasUnreadNotifications } from "./Interfaces";
 import { PaginationQuery } from "$models/PaginationQuery";
 
 export const CompanyNotificationRepository = {
@@ -14,7 +14,7 @@ export const CompanyNotificationRepository = {
     notification.setUuid(companyNotification.uuid);
     notification.setCreatedAt(companyNotification.createdAt);
   },
-  hasUnreadNotification: async ({ companyUuid }: IHasUnreadNotification) => {
+  hasUnreadNotifications: async ({ companyUuid }: IHasUnreadNotifications) => {
     const notifications = await CompanyNotification.findAll({
       where: {
         [Op.and]: [{ notifiedCompanyUuid: companyUuid }, { isNew: true }]

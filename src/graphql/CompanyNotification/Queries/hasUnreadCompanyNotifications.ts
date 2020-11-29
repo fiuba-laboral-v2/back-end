@@ -5,7 +5,7 @@ import { IApolloServerContext } from "$graphql/Context";
 export const hasUnreadCompanyNotifications = {
   type: nonNull(Boolean),
   resolve: async (_: undefined, __: undefined, { currentUser }: IApolloServerContext) =>
-    CompanyNotificationRepository.hasUnreadNotification({
+    CompanyNotificationRepository.hasUnreadNotifications({
       companyUuid: currentUser.getCompany().companyUuid
     })
 };
