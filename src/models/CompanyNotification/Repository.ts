@@ -1,5 +1,4 @@
 import { Database } from "$config/Database";
-import { Op } from "sequelize";
 import { TCompanyNotification, CompanyNotificationMapper } from "$models/CompanyNotification";
 import { CompanyNotification } from "$models";
 import { CompanyNotificationNotFoundError, CompanyNotificationsNotUpdatedError } from "./Errors";
@@ -15,13 +14,18 @@ export const CompanyNotificationRepository = {
     notification.setCreatedAt(companyNotification.createdAt);
   },
   hasUnreadNotifications: async ({ companyUuid }: IHasUnreadNotifications) => {
-    const notifications = await CompanyNotification.findAll({
-      where: {
-        [Op.and]: [{ notifiedCompanyUuid: companyUuid }, { isNew: true }]
-      }
-    });
-
-    return notifications.length > 0;
+    const [{ exists }] = await Database.query<Array<{ exists: boolean }>>(
+      `
+      SELECT EXISTS (
+        SELECT *
+         FROM "CompanyNotifications"
+         WHERE "CompanyNotifications"."notifiedCompanyUuid" = '${companyUuid}'
+         AND "CompanyNotifications"."isNew" = true
+       )
+    `,
+      { type: "SELECT" }
+    );
+    return exists;
   },
   markAsReadByUuids: (uuids: string[]) =>
     Database.transaction(async transaction => {
