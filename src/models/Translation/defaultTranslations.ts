@@ -248,6 +248,7 @@ export const defaultTranslations = {
   },
   offerDetail: {
     edit: "Editar",
+    expire: "Expirar",
     apply: "Postularme",
     applySuccess: "Postulación exitosa!",
     alreadyApplied: "Ya te postulaste"

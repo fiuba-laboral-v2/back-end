@@ -150,11 +150,11 @@ export class Offer extends Model<Offer> {
   public getApprovalEvents: HasManyGetAssociationsMixin<OfferApprovalEvent>;
 
   public expireForStudents = () => {
-    this.studentsExpirationDateTime = moment().startOf("day").toDate();
+    this.studentsExpirationDateTime = moment().startOf("day").subtract(1, "day").toDate();
   };
 
   public expireForGraduates = () => {
-    this.graduatesExpirationDateTime = moment().startOf("day").toDate();
+    this.graduatesExpirationDateTime = moment().startOf("day").subtract(1, "day").toDate();
   };
 
   public isExpiredForStudents = () => {
