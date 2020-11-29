@@ -77,8 +77,8 @@ export class Database {
     }
   }
 
-  public static query(sql: string, options: QueryOptions) {
-    return this.sequelize?.query(sql, options);
+  public static query<T = [unknown[], unknown]>(sql: string, options: QueryOptions) {
+    return this.sequelize?.query(sql, options) as Promise<T>;
   }
 
   public static setConnection() {

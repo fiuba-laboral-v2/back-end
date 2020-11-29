@@ -3,7 +3,7 @@ import { TCompanyNotification, CompanyNotificationMapper } from "$models/Company
 import { CompanyNotification } from "$models";
 import { CompanyNotificationNotFoundError, CompanyNotificationsNotUpdatedError } from "./Errors";
 import { Transaction } from "sequelize";
-import { IFindLatestByCompany } from "./Interfaces";
+import { IFindLatestByCompany, IHasUnreadNotifications } from "./Interfaces";
 import { PaginationQuery } from "$models/PaginationQuery";
 
 export const CompanyNotificationRepository = {
@@ -12,6 +12,20 @@ export const CompanyNotificationRepository = {
     await companyNotification.save({ transaction });
     notification.setUuid(companyNotification.uuid);
     notification.setCreatedAt(companyNotification.createdAt);
+  },
+  hasUnreadNotifications: async ({ companyUuid }: IHasUnreadNotifications) => {
+    const [{ exists }] = await Database.query<Array<{ exists: boolean }>>(
+      `
+      SELECT EXISTS (
+        SELECT *
+         FROM "CompanyNotifications"
+         WHERE "CompanyNotifications"."notifiedCompanyUuid" = '${companyUuid}'
+         AND "CompanyNotifications"."isNew" = true
+       )
+    `,
+      { type: "SELECT" }
+    );
+    return exists;
   },
   markAsReadByUuids: (uuids: string[]) =>
     Database.transaction(async transaction => {
