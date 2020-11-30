@@ -21,7 +21,7 @@ export const getMyLatestJobApplications = {
     { currentUser }: IApolloServerContext
   ) =>
     JobApplicationRepository.findLatestByCompanyUuid({
-      companyUuid: currentUser.getCompany().companyUuid,
+      companyUuid: currentUser.getCompanyRole().companyUuid,
       updatedBeforeThan,
       approvalStatus: ApprovalStatus.approved
     })

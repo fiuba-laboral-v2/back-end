@@ -30,7 +30,7 @@ export const updateJobApplicationApprovalStatus = {
     { uuid: jobApplicationUuid, approvalStatus }: IMutationVariables,
     { currentUser }: IApolloServerContext
   ) => {
-    const adminUserUuid = currentUser.getAdmin().adminUserUuid;
+    const adminUserUuid = currentUser.getAdminRole().adminUserUuid;
     const admin = await AdminRepository.findByUserUuid(adminUserUuid);
     const jobApplication = await JobApplicationRepository.findByUuid(jobApplicationUuid);
 

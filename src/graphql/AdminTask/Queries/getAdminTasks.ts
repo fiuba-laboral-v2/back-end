@@ -26,7 +26,7 @@ export const getAdminTasks = {
     filter: IAdminTasksFilter,
     { currentUser }: IApolloServerContext
   ) => {
-    const admin = await AdminRepository.findByUserUuid(currentUser.getAdmin().adminUserUuid);
+    const admin = await AdminRepository.findByUserUuid(currentUser.getAdminRole().adminUserUuid);
     return AdminTaskRepository.find({ ...filter, secretary: admin.secretary });
   }
 };

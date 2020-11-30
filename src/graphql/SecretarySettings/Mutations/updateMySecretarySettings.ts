@@ -17,7 +17,7 @@ export const updateMySecretarySettings = {
     { offerDurationInDays }: IMutationVariables,
     { currentUser }: IApolloServerContext
   ) => {
-    const adminUserUuid = currentUser.getAdmin().adminUserUuid;
+    const adminUserUuid = currentUser.getAdminRole().adminUserUuid;
     const admin = await AdminRepository.findByUserUuid(adminUserUuid);
 
     const secretarySettings = await SecretarySettingsRepository.findBySecretary(admin.secretary);

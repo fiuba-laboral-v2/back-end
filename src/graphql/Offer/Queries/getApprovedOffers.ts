@@ -25,7 +25,7 @@ export const getApprovedOffers = {
     { currentUser }: IApolloServerContext
   ) => {
     const applicant = await ApplicantRepository.findByUuid(
-      currentUser.getApplicant().applicantUuid
+      currentUser.getApplicantRole().applicantUuid
     );
     const applicantType = await applicant.getType();
     return OfferRepository.findAll({
