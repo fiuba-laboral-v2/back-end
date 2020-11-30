@@ -25,7 +25,7 @@ export const saveJobApplication = {
     if (!canSeeOffer) throw new OfferNotTargetedForApplicantError();
 
     const applicant = await ApplicantRepository.findByUuid(
-      currentUser.getApplicant().applicantUuid
+      currentUser.getApplicantRole().applicantUuid
     );
     return JobApplicationRepository.apply(applicant, offer);
   }

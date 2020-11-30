@@ -12,7 +12,7 @@ export class CurrentUser {
     this.roles = roles;
   }
 
-  public getApplicant() {
+  public getApplicantRole() {
     return this.roles.find(role => role instanceof ApplicantRole) as ApplicantRole;
   }
 

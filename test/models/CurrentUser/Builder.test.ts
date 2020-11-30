@@ -9,7 +9,7 @@ describe("CurrentUserBuilder", () => {
       applicant: { uuid: UUID.generate() }
     };
     const currentUser = CurrentUserBuilder.build(currentUserTokenData);
-    const applicantRole = currentUser.getApplicant();
+    const applicantRole = currentUser.getApplicantRole();
 
     expect(currentUser.uuid).toEqual(currentUserTokenData.uuid);
     expect(currentUser.email).toEqual(currentUserTokenData.email);
@@ -30,7 +30,7 @@ describe("CurrentUserBuilder", () => {
 
     expect(currentUser.uuid).toEqual(currentUserTokenData.uuid);
     expect(currentUser.email).toEqual(currentUserTokenData.email);
-    expect(currentUser.getApplicant()).toBeUndefined();
+    expect(currentUser.getApplicantRole()).toBeUndefined();
     expect(currentUser.getAdmin()).toBeUndefined();
     expect(companyRole).toBeInstanceOf(CompanyRole);
     expect(companyRole.companyUuid).toEqual(currentUserTokenData.company.uuid);
@@ -47,7 +47,7 @@ describe("CurrentUserBuilder", () => {
 
     expect(currentUser.uuid).toEqual(currentUserTokenData.uuid);
     expect(currentUser.email).toEqual(currentUserTokenData.email);
-    expect(currentUser.getApplicant()).toBeUndefined();
+    expect(currentUser.getApplicantRole()).toBeUndefined();
     expect(adminRole).toBeInstanceOf(AdminRole);
     expect(adminRole.adminUserUuid).toEqual(currentUserTokenData.admin.userUuid);
     expect(currentUser.getCompany()).toBeUndefined();
@@ -61,7 +61,7 @@ describe("CurrentUserBuilder", () => {
       applicant: { uuid: UUID.generate() }
     };
     const currentUser = CurrentUserBuilder.build(currentUserTokenData);
-    const applicantRole = currentUser.getApplicant();
+    const applicantRole = currentUser.getApplicantRole();
     const adminRole = currentUser.getAdmin();
 
     expect(currentUser.uuid).toEqual(currentUserTokenData.uuid);

@@ -37,5 +37,5 @@ export const updateCurrentApplicant = {
     }
   },
   resolve: async (_: undefined, props: IApplicantEditable, { currentUser }: IApolloServerContext) =>
-    ApplicantRepository.update({ ...props, uuid: currentUser.getApplicant().applicantUuid })
+    ApplicantRepository.update({ ...props, uuid: currentUser.getApplicantRole().applicantUuid })
 };
