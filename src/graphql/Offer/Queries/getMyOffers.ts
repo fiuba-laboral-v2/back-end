@@ -20,7 +20,7 @@ const getMyOffers = {
     { currentUser }: IApolloServerContext
   ) =>
     OfferRepository.findAll({
-      companyUuid: currentUser.getCompany().companyUuid,
+      companyUuid: currentUser.getCompanyRole().companyUuid,
       updatedBeforeThan
     })
 };

@@ -16,7 +16,7 @@ describe("CurrentUserBuilder", () => {
     expect(applicantRole).toBeInstanceOf(ApplicantRole);
     expect(applicantRole.applicantUuid).toEqual(currentUserTokenData.applicant.uuid);
     expect(currentUser.getAdmin()).toBeUndefined();
-    expect(currentUser.getCompany()).toBeUndefined();
+    expect(currentUser.getCompanyRole()).toBeUndefined();
   });
 
   it("returns a new current user with a company role", () => {
@@ -26,7 +26,7 @@ describe("CurrentUserBuilder", () => {
       company: { uuid: UUID.generate() }
     };
     const currentUser = CurrentUserBuilder.build(currentUserTokenData);
-    const companyRole = currentUser.getCompany();
+    const companyRole = currentUser.getCompanyRole();
 
     expect(currentUser.uuid).toEqual(currentUserTokenData.uuid);
     expect(currentUser.email).toEqual(currentUserTokenData.email);
@@ -50,7 +50,7 @@ describe("CurrentUserBuilder", () => {
     expect(currentUser.getApplicantRole()).toBeUndefined();
     expect(adminRole).toBeInstanceOf(AdminRole);
     expect(adminRole.adminUserUuid).toEqual(currentUserTokenData.admin.userUuid);
-    expect(currentUser.getCompany()).toBeUndefined();
+    expect(currentUser.getCompanyRole()).toBeUndefined();
   });
 
   it("returns a new current user with an admin and an applicant role", () => {
@@ -70,6 +70,6 @@ describe("CurrentUserBuilder", () => {
     expect(applicantRole.applicantUuid).toEqual(currentUserTokenData.applicant.uuid);
     expect(adminRole).toBeInstanceOf(AdminRole);
     expect(adminRole.adminUserUuid).toEqual(currentUserTokenData.admin.userUuid);
-    expect(currentUser.getCompany()).toBeUndefined();
+    expect(currentUser.getCompanyRole()).toBeUndefined();
   });
 });

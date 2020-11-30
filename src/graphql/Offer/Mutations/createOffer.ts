@@ -44,7 +44,7 @@ export const createOffer = {
 
     return OfferRepository.create({
       ...attributes,
-      companyUuid: currentUser.getCompany().companyUuid
+      companyUuid: currentUser.getCompanyRole().companyUuid
     });
   }
 };

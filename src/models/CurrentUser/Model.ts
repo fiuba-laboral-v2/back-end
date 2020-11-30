@@ -16,7 +16,7 @@ export class CurrentUser {
     return this.roles.find(role => role instanceof ApplicantRole) as ApplicantRole;
   }
 
-  public getCompany() {
+  public getCompanyRole() {
     return this.roles.find(role => role instanceof CompanyRole) as CompanyRole;
   }
 

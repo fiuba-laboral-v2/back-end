@@ -33,7 +33,7 @@ describe("CurrentUser", () => {
         email: "applicant@mail.com",
         roles: [new ApplicantRole(UUID.generate())]
       });
-      expect(currentUser.getCompany()).toBeUndefined();
+      expect(currentUser.getCompanyRole()).toBeUndefined();
     });
 
     it("returns undefined if the current user has no admin role", async () => {
@@ -131,7 +131,7 @@ describe("CurrentUser", () => {
         email: "admin@mail.com",
         roles: [new AdminRole(userUuid)]
       });
-      expect(currentUser.getCompany()).toBeUndefined();
+      expect(currentUser.getCompanyRole()).toBeUndefined();
     });
   });
 });

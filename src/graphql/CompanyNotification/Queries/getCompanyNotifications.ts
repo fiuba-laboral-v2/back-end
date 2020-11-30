@@ -21,7 +21,7 @@ export const getCompanyNotifications = {
   ) => {
     const notifications = await CompanyNotificationRepository.findLatestByCompany({
       updatedBeforeThan,
-      companyUuid: currentUser.getCompany().companyUuid
+      companyUuid: currentUser.getCompanyRole().companyUuid
     });
     const notificationUuids = notifications.results.map(({ uuid }) => uuid!);
     await CompanyNotificationRepository.markAsReadByUuids(notificationUuids);

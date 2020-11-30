@@ -49,7 +49,7 @@ export const editOffer = {
     if (careers.length === 0) throw new OfferWithNoCareersError();
 
     const offer = await OfferRepository.findByUuid(uuid);
-    const canEdit = await currentUser.getCompany().getPermissions().canSeeOffer(offer);
+    const canEdit = await currentUser.getCompanyRole().getPermissions().canSeeOffer(offer);
     if (!canEdit) throw new OfferNotVisibleByCurrentUserError();
 
     offer.set({
