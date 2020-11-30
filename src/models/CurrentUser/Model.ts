@@ -20,7 +20,7 @@ export class CurrentUser {
     return this.roles.find(role => role instanceof CompanyRole) as CompanyRole;
   }
 
-  public getAdmin() {
+  public getAdminRole() {
     return this.roles.find(role => role instanceof AdminRole) as AdminRole;
   }
 

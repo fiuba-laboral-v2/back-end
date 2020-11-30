@@ -42,7 +42,7 @@ describe("CurrentUser", () => {
         email: "applicant@mail.com",
         roles: [new ApplicantRole(UUID.generate())]
       });
-      expect(currentUser.getAdmin()).toBeUndefined();
+      expect(currentUser.getAdminRole()).toBeUndefined();
     });
   });
 
@@ -85,7 +85,7 @@ describe("CurrentUser", () => {
         email: "company@mail.com",
         roles: [new CompanyRole(UUID.generate())]
       });
-      expect(currentUser.getAdmin()).toBeUndefined();
+      expect(currentUser.getAdminRole()).toBeUndefined();
     });
   });
 

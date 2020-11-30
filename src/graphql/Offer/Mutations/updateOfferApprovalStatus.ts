@@ -23,7 +23,7 @@ export const updateOfferApprovalStatus = {
     { currentUser }: IApolloServerContext
   ) => {
     const offer = await OfferRepository.findByUuid(uuid);
-    const admin = await AdminRepository.findByUserUuid(currentUser.getAdmin().adminUserUuid);
+    const admin = await AdminRepository.findByUserUuid(currentUser.getAdminRole().adminUserUuid);
     const canModerateOffer = await currentUser.getPermissions().canModerateOffer(offer);
     if (!canModerateOffer) throw new AdminCannotModerateOfferError(admin, offer);
     const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
