@@ -46,7 +46,8 @@ describe("CompanyNotification", () => {
       type: CompanyNotificationType.newJobApplication,
       notifiedCompanyUuid: UUID.generate(),
       isNew: false,
-      jobApplicationUuid: UUID.generate()
+      jobApplicationUuid: UUID.generate(),
+      offerUuid: UUID.generate()
     };
     const companyNotification = new CompanyNotification(attributes);
     await expect(companyNotification.validate()).resolves.not.toThrowError();
@@ -63,6 +64,12 @@ describe("CompanyNotification", () => {
     const companyNotification = new CompanyNotification(mandatoryAttributes);
     await expect(companyNotification.validate()).resolves.not.toThrowError();
     expect(companyNotification.jobApplicationUuid).toBeUndefined();
+  });
+
+  it("is valid without an offerUuid", async () => {
+    const companyNotification = new CompanyNotification(mandatoryAttributes);
+    await expect(companyNotification.validate()).resolves.not.toThrowError();
+    expect(companyNotification.offerUuid).toBeUndefined();
   });
 
   it("is created with isNew set to true", async () => {
@@ -97,5 +104,9 @@ describe("CompanyNotification", () => {
 
   it("throws an error if jobApplicationUuid has an invalid value", async () => {
     await expectToThrowErrorInInvalidFormat("jobApplicationUuid", isUuid.validate.isUUID.msg);
+  });
+
+  it("throws an error if offerUuid has an invalid value", async () => {
+    await expectToThrowErrorInInvalidFormat("offerUuid", isUuid.validate.isUUID.msg);
   });
 });
