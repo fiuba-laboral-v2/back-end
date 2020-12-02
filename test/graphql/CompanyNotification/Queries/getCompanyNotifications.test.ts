@@ -12,6 +12,11 @@ import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
+import {
+  CompanyNewJobApplicationNotification,
+  CompanyNotificationRepository,
+  TCompanyNotification
+} from "$models/CompanyNotification";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
 import { AdminGenerator } from "$generators/Admin";
@@ -19,7 +24,6 @@ import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyNotificationGenerator } from "$generators/CompanyNotification";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
-import { CompanyNotificationRepository } from "$models/CompanyNotification";
 
 const GET_COMPANY_NOTIFICATIONS = gql`
   query GetCompanyNotifications($updatedBeforeThan: PaginatedInput) {
@@ -74,6 +78,19 @@ describe("getCompanyNotifications", () => {
   const createApplicantTestClient = (approvalStatus: ApprovalStatus) =>
     TestClientGenerator.applicant({ status: { approvalStatus, admin } });
 
+  const getAttributesFrom = (notification: TCompanyNotification) => {
+    if (notification instanceof CompanyNewJobApplicationNotification) {
+      return {
+        __typename: "CompanyNewJobApplicationNotification",
+        jobApplication: {
+          __typename: GraphQLJobApplication.name,
+          uuid: notification.jobApplicationUuid
+        }
+      };
+    }
+    throw new Error("the function getAttributesFrom failed");
+  };
+
   it("returns all notifications", async () => {
     const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
     const size = 5;
@@ -83,15 +100,11 @@ describe("getCompanyNotifications", () => {
     expect(data!.getCompanyNotifications.results).toEqual(
       await Promise.all(
         notifications.map(async notification => ({
-          __typename: "CompanyNewJobApplicationNotification",
           uuid: notification.uuid,
           adminEmail: (await UserRepository.findByUuid(notification.moderatorUuid)).email,
           isNew: notification.isNew,
           createdAt: notification.createdAt?.toISOString(),
-          jobApplication: {
-            __typename: GraphQLJobApplication.name,
-            uuid: notification.jobApplicationUuid
-          }
+          ...getAttributesFrom(notification)
         }))
       )
     );

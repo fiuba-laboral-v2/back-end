@@ -19,6 +19,6 @@ export class CompanyApprovedOfferNotification extends CompanyNotification {
   }
 }
 
-interface IApprovedOfferNotificationAttributes extends IAttributes {
+export interface IApprovedOfferNotificationAttributes extends IAttributes {
   offerUuid: string;
 }

@@ -1,11 +1,17 @@
-import { CompanyNewJobApplicationNotification } from "$models/CompanyNotification";
+import {
+  CompanyNewJobApplicationNotification,
+  CompanyApprovedOfferNotification
+} from "$models/CompanyNotification";
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 
 export enum CompanyNotificationType {
-  newJobApplication = "newJobApplication"
+  newJobApplication = "newJobApplication",
+  approvedOffer = "approvedOffer"
 }
 
-export type TCompanyNotification = CompanyNewJobApplicationNotification;
+export type TCompanyNotification =
+  | CompanyNewJobApplicationNotification
+  | CompanyApprovedOfferNotification;
 
 export const companyNotificationTypeEnumValues = Object.keys(CompanyNotificationType);
 
