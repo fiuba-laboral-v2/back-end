@@ -4,6 +4,7 @@ import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist
 
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { GraphQLJobApplication } from "$graphql/JobApplication/Types/GraphQLJobApplication";
+import { GraphQLOffer } from "$graphql/Offer/Types/GraphQLOffer";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 import { Admin } from "$models";
@@ -36,6 +37,17 @@ const GET_COMPANY_NOTIFICATIONS = gql`
           isNew
           createdAt
           jobApplication {
+            __typename
+            uuid
+          }
+        }
+        ... on CompanyApprovedOfferNotification {
+          __typename
+          uuid
+          adminEmail
+          isNew
+          createdAt
+          offer {
             __typename
             uuid
           }
@@ -88,7 +100,14 @@ describe("getCompanyNotifications", () => {
         }
       };
     }
-    throw new Error("the function getAttributesFrom failed");
+
+    return {
+      __typename: "CompanyApprovedOfferNotification",
+      offer: {
+        __typename: GraphQLOffer.name,
+        uuid: notification.offerUuid
+      }
+    };
   };
 
   it("returns all notifications", async () => {
