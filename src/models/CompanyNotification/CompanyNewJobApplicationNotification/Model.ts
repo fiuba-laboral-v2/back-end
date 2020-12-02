@@ -1,48 +1,14 @@
 import { AttributeNotDefinedError, InvalidAttributeFormatError } from "$models/Errors";
+import { CompanyNotification, IAttributes } from "../Notification";
 import { UUID } from "$models/UUID";
 import { isNil } from "lodash";
 
-export class CompanyNewJobApplicationNotification {
-  public uuid?: string;
-  public moderatorUuid: string;
-  public notifiedCompanyUuid: string;
+export class CompanyNewJobApplicationNotification extends CompanyNotification {
   public jobApplicationUuid: string;
-  public isNew: boolean;
-  public createdAt?: Date;
 
   constructor(attributes: ICompanyNewJobApplicationNotificationAttributes) {
-    this.setModeratorUuid(attributes.moderatorUuid);
-    this.setNotifiedCompanyUuid(attributes.notifiedCompanyUuid);
+    super(attributes);
     this.setJobApplicationUuid(attributes.jobApplicationUuid);
-    this.setIsNew(attributes.isNew);
-    this.setUuid(attributes.uuid);
-    this.setCreatedAt(attributes.createdAt);
-  }
-
-  public setUuid(uuid?: string) {
-    if (uuid && !UUID.validate(uuid)) throw new InvalidAttributeFormatError("uuid");
-    this.uuid = uuid;
-  }
-
-  public setCreatedAt(createdAt?: Date) {
-    this.createdAt = createdAt;
-  }
-
-  private setIsNew(isNew: boolean = true) {
-    this.isNew = isNew;
-  }
-
-  private setModeratorUuid(moderatorUuid: string) {
-    if (isNil(moderatorUuid)) throw new AttributeNotDefinedError("moderatorUuid");
-    if (!UUID.validate(moderatorUuid)) throw new InvalidAttributeFormatError("moderatorUuid");
-    this.moderatorUuid = moderatorUuid;
-  }
-
-  private setNotifiedCompanyUuid(notifiedCompanyUuid: string) {
-    const attributeName = "notifiedCompanyUuid";
-    if (isNil(notifiedCompanyUuid)) throw new AttributeNotDefinedError(attributeName);
-    if (!UUID.validate(notifiedCompanyUuid)) throw new InvalidAttributeFormatError(attributeName);
-    this.notifiedCompanyUuid = notifiedCompanyUuid;
   }
 
   private setJobApplicationUuid(jobApplicationUuid: string) {
@@ -53,11 +19,6 @@ export class CompanyNewJobApplicationNotification {
   }
 }
 
-export interface ICompanyNewJobApplicationNotificationAttributes {
-  uuid?: string;
-  moderatorUuid: string;
-  notifiedCompanyUuid: string;
+export interface ICompanyNewJobApplicationNotificationAttributes extends IAttributes {
   jobApplicationUuid: string;
-  isNew?: boolean;
-  createdAt?: Date;
 }
