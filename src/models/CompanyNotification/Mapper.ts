@@ -14,7 +14,7 @@ export const CompanyNotificationMapper = {
       [CompanyNewJobApplicationNotification.name]: CompanyNotificationType.newJobApplication,
       [CompanyApprovedOfferNotification.name]: CompanyNotificationType.approvedOffer
     }[notification.constructor.name];
-    if (!type) throw new Error("Could no map to a persistence model");
+    if (!type) throw new Error("Could not map to a persistence model");
 
     return new CompanyNotification({ ...notification, type });
   },
