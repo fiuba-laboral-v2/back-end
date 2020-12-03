@@ -12,8 +12,10 @@ import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { JobApplicationRepository } from "$models/JobApplication";
+import { OfferRepository } from "$models/Offer";
 import { TCompanyNotification } from "$models/CompanyNotification";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
+import { TNotification } from "$models/Notification/Model";
 import { Admin, Company, JobApplication, Offer } from "$models";
 import {
   CompanyNotificationNotFoundError,
@@ -28,7 +30,6 @@ import { CompanyNotificationGenerator } from "$generators/CompanyNotification";
 import { OfferGenerator } from "$generators/Offer";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import { UUID_REGEX } from "$test/models";
-import { TNotification } from "$models/Notification/Model";
 
 describe("CompanyNotificationRepository", () => {
   let extensionAdmin: Admin;
@@ -319,21 +320,39 @@ describe("CompanyNotificationRepository", () => {
   });
 
   describe("Delete Cascade", () => {
-    const attributes = () => ({
+    const newJobApplicationProps = () => ({
       moderatorUuid: extensionAdmin.userUuid,
       notifiedCompanyUuid: company.uuid,
       jobApplicationUuid: jobApplication.uuid,
       isNew: true
     });
 
+    const approvedOfferProps = () => ({
+      moderatorUuid: extensionAdmin.userUuid,
+      notifiedCompanyUuid: company.uuid,
+      offerUuid: offer.uuid,
+      isNew: true
+    });
+
     it("deletes all notifications if JobApplications table is truncated", async () => {
       await CompanyNotificationRepository.truncate();
-      const firstNotification = new CompanyNewJobApplicationNotification(attributes());
-      const secondNotification = new CompanyNewJobApplicationNotification(attributes());
+      const firstNotification = new CompanyNewJobApplicationNotification(newJobApplicationProps());
+      const secondNotification = new CompanyNewJobApplicationNotification(newJobApplicationProps());
       await CompanyNotificationRepository.save(firstNotification);
       await CompanyNotificationRepository.save(secondNotification);
       expect(await CompanyNotificationRepository.findAll()).toHaveLength(2);
       await JobApplicationRepository.truncate();
+      expect(await CompanyNotificationRepository.findAll()).toHaveLength(0);
+    });
+
+    it("deletes all notifications if Offers table is truncated", async () => {
+      await CompanyNotificationRepository.truncate();
+      const firstNotification = new CompanyApprovedOfferNotification(approvedOfferProps());
+      const secondNotification = new CompanyApprovedOfferNotification(approvedOfferProps());
+      await CompanyNotificationRepository.save(firstNotification);
+      await CompanyNotificationRepository.save(secondNotification);
+      expect(await CompanyNotificationRepository.findAll()).toHaveLength(2);
+      await OfferRepository.truncate();
       expect(await CompanyNotificationRepository.findAll()).toHaveLength(0);
     });
   });
