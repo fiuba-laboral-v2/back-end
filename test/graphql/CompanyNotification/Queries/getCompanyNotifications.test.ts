@@ -215,7 +215,7 @@ describe("getCompanyNotifications", () => {
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
-  it("returns an error the query returns an unknown notification", async () => {
+  it("returns an error if the query returns an unknown notification", async () => {
     const { apolloClient } = await createCompanyTestClient(ApprovalStatus.approved);
     const unknownNotification = { uuid: "uuid" } as any;
     jest
