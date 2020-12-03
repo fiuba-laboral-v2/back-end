@@ -6,7 +6,7 @@ import {
   TCompanyNotification
 } from "$models/CompanyNotification";
 import { UUID } from "$models/UUID";
-import { CompanyNotification } from "$models";
+import { CompanyNotificationSequelizeModel } from "$models";
 import { omit } from "lodash";
 import { Constructable } from "$test/types/Constructable";
 
@@ -47,7 +47,7 @@ describe("CompanyNotificationMapper", () => {
 
     it("maps a CompanyNewJobApplicationNotification", async () => {
       const persistenceModel = mapper.toPersistenceModel(newApplicationNotification);
-      expect(persistenceModel).toBeInstanceOf(CompanyNotification);
+      expect(persistenceModel).toBeInstanceOf(CompanyNotificationSequelizeModel);
       expect(persistenceModel).toBeObjectContaining({
         uuid: null,
         ...newApplicationAttributes,
@@ -60,7 +60,7 @@ describe("CompanyNotificationMapper", () => {
 
     it("maps a CompanyApprovedOfferNotification", async () => {
       const persistenceModel = mapper.toPersistenceModel(approvedOfferNotification);
-      expect(persistenceModel).toBeInstanceOf(CompanyNotification);
+      expect(persistenceModel).toBeInstanceOf(CompanyNotificationSequelizeModel);
       expect(persistenceModel).toBeObjectContaining({
         uuid: null,
         ...approvedOfferAttributes,
@@ -111,7 +111,7 @@ describe("CompanyNotificationMapper", () => {
       attributes: object;
       modelClass: Constructable;
     }) => {
-      const companyNotification = new CompanyNotification(attributes);
+      const companyNotification = new CompanyNotificationSequelizeModel(attributes);
       const notification = mapper.toDomainModel(companyNotification);
       expect(notification).toBeInstanceOf(modelClass);
       expect(notification).toEqual({

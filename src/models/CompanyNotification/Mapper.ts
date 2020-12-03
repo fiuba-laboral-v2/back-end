@@ -6,7 +6,7 @@ import {
   TCompanyNotification,
   CompanyNotificationType
 } from "$models/CompanyNotification";
-import { CompanyNotification } from "$models";
+import { CompanyNotificationSequelizeModel } from "$models";
 
 export const CompanyNotificationMapper = {
   toPersistenceModel: (notification: TCompanyNotification) => {
@@ -16,9 +16,9 @@ export const CompanyNotificationMapper = {
     }[notification.constructor.name];
     if (!type) throw new Error("Could not map to a persistence model");
 
-    return new CompanyNotification({ ...notification, type });
+    return new CompanyNotificationSequelizeModel({ ...notification, type });
   },
-  toDomainModel: (companyNotification: CompanyNotification) => {
+  toDomainModel: (companyNotification: CompanyNotificationSequelizeModel) => {
     const attributes = companyNotification.toJSON();
     switch (companyNotification.type) {
       case CompanyNotificationType.newJobApplication:

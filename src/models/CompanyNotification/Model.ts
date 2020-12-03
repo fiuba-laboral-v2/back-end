@@ -6,7 +6,9 @@ import { isUuid, isCompanyNotificationType } from "$models/SequelizeModelValidat
 import { SequelizeModel } from "$models/SequelizeModel";
 
 @Table({ tableName: "CompanyNotifications", timestamps: true, updatedAt: false })
-export class CompanyNotification extends SequelizeModel<CompanyNotification> {
+export class CompanyNotificationSequelizeModel extends SequelizeModel<
+  CompanyNotificationSequelizeModel
+> {
   @ForeignKey(() => Admin)
   @Column({ allowNull: false, type: UUID, ...isUuid })
   public moderatorUuid: string;

@@ -25,7 +25,7 @@ import {
   OfferApprovalEvent,
   ApplicantKnowledgeSection,
   User,
-  CompanyNotification,
+  CompanyNotificationSequelizeModel,
   SecretarySettings
 } from "$models";
 
@@ -52,7 +52,7 @@ const models = [
   OfferCareer,
   OfferApprovalEvent,
   User,
-  CompanyNotification,
+  CompanyNotificationSequelizeModel,
   SecretarySettings
 ];
 
