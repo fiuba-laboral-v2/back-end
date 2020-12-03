@@ -2,7 +2,7 @@ import {
   CompanyNewJobApplicationNotification,
   CompanyApprovedOfferNotification,
   CompanyNotificationRepository,
-  TCompanyNotification
+  CompanyNotification
 } from "$models/CompanyNotification";
 import { AdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
@@ -44,7 +44,7 @@ export const CompanyNotificationGenerator = {
     },
     range: async ({ company, size }: { size: number; company: Company }) => {
       const admin = await AdminGenerator.extension();
-      const values: TCompanyNotification[] = [];
+      const values: CompanyNotification[] = [];
       const generators = [
         CompanyNotificationGenerator.instance.newJobApplication,
         CompanyNotificationGenerator.instance.approvedOffer
@@ -60,7 +60,7 @@ export const CompanyNotificationGenerator = {
   }
 };
 
-type Generator = (attributes: IGeneratorAttributes) => Promise<TCompanyNotification>;
+type Generator = (attributes: IGeneratorAttributes) => Promise<CompanyNotification>;
 
 interface IGeneratorAttributes {
   company?: Company;

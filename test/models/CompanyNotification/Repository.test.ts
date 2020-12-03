@@ -13,7 +13,7 @@ import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { OfferRepository } from "$models/Offer";
-import { TCompanyNotification } from "$models/CompanyNotification";
+import { CompanyNotification } from "$models/CompanyNotification";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { TNotification } from "$models/Notification/Model";
 import { Admin, Company, JobApplication, Offer } from "$models";
@@ -248,7 +248,7 @@ describe("CompanyNotificationRepository", () => {
   });
 
   describe("findLatestByUser", () => {
-    let notifications: TCompanyNotification[] = [];
+    let notifications: CompanyNotification[] = [];
     const notificationsLength = 20;
 
     beforeAll(async () => {

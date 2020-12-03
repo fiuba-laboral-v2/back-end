@@ -15,8 +15,9 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
 import {
   CompanyNewJobApplicationNotification,
+  CompanyApprovedOfferNotification,
   CompanyNotificationRepository,
-  TCompanyNotification,
+  CompanyNotification,
   UnknownNotificationError
 } from "$models/CompanyNotification";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
@@ -91,24 +92,23 @@ describe("getCompanyNotifications", () => {
   const createApplicantTestClient = (approvalStatus: ApprovalStatus) =>
     TestClientGenerator.applicant({ status: { approvalStatus, admin } });
 
-  const getAttributesFrom = (notification: TCompanyNotification) => {
-    if (notification instanceof CompanyNewJobApplicationNotification) {
-      return {
+  const getAttributesFrom = (notification: CompanyNotification) => {
+    return {
+      [CompanyNewJobApplicationNotification.name]: {
         __typename: "CompanyNewJobApplicationNotification",
         jobApplication: {
           __typename: GraphQLJobApplication.name,
-          uuid: notification.jobApplicationUuid
+          uuid: (notification as CompanyNewJobApplicationNotification).jobApplicationUuid
         }
-      };
-    }
-
-    return {
-      __typename: "CompanyApprovedOfferNotification",
-      offer: {
-        __typename: GraphQLOffer.name,
-        uuid: notification.offerUuid
+      },
+      [CompanyApprovedOfferNotification.name]: {
+        __typename: "CompanyApprovedOfferNotification",
+        offer: {
+          __typename: GraphQLOffer.name,
+          uuid: (notification as CompanyApprovedOfferNotification).offerUuid
+        }
       }
-    };
+    }[notification.constructor.name];
   };
 
   it("returns all notifications", async () => {
@@ -217,7 +217,7 @@ describe("getCompanyNotifications", () => {
 
   it("returns an error the query returns an unknown notification", async () => {
     const { apolloClient } = await createCompanyTestClient(ApprovalStatus.approved);
-    const unknownNotification = { uuid: "uuid" } as TCompanyNotification;
+    const unknownNotification = { uuid: "uuid" } as any;
     jest
       .spyOn(CompanyNotificationRepository, "findLatestByCompany")
       .mockReturnValue(Promise.resolve({ results: [unknownNotification], shouldFetchMore: false }));

@@ -2,7 +2,7 @@ import { GraphQLUnionType } from "graphql";
 import { GraphQLCompanyNewJobApplicationNotification } from "./GraphQLCompanyNewJobApplicationNotification";
 import { GraphQLCompanyApprovedOfferNotification } from "./GraphQLCompanyApprovedOfferNotification";
 import {
-  TCompanyNotification,
+  CompanyNotification,
   CompanyApprovedOfferNotification,
   CompanyNewJobApplicationNotification,
   UnknownNotificationError
@@ -11,7 +11,7 @@ import {
 export const GraphQLCompanyNotification = new GraphQLUnionType({
   name: "CompanyNotification",
   types: [GraphQLCompanyNewJobApplicationNotification, GraphQLCompanyApprovedOfferNotification],
-  resolveType(notification: TCompanyNotification) {
+  resolveType(notification: CompanyNotification) {
     const className = notification.constructor.name;
     switch (className) {
       case CompanyApprovedOfferNotification.name:

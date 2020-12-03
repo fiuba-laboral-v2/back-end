@@ -3,13 +3,13 @@ import {
   ICompanyNewJobApplicationNotificationAttributes,
   CompanyApprovedOfferNotification,
   IApprovedOfferNotificationAttributes,
-  TCompanyNotification,
+  CompanyNotification,
   CompanyNotificationType
 } from "$models/CompanyNotification";
 import { CompanyNotificationSequelizeModel } from "$models";
 
 export const CompanyNotificationMapper = {
-  toPersistenceModel: (notification: TCompanyNotification) => {
+  toPersistenceModel: (notification: CompanyNotification) => {
     const type = {
       [CompanyNewJobApplicationNotification.name]: CompanyNotificationType.newJobApplication,
       [CompanyApprovedOfferNotification.name]: CompanyNotificationType.approvedOffer

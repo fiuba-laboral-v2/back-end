@@ -1,5 +1,5 @@
 import { Database } from "$config/Database";
-import { TCompanyNotification, CompanyNotificationMapper } from "$models/CompanyNotification";
+import { CompanyNotification, CompanyNotificationMapper } from "$models/CompanyNotification";
 import { CompanyNotificationSequelizeModel } from "$models";
 import { CompanyNotificationNotFoundError, CompanyNotificationsNotUpdatedError } from "./Errors";
 import { Transaction } from "sequelize";
@@ -7,7 +7,7 @@ import { IFindLatestByCompany, IHasUnreadNotifications } from "./Interfaces";
 import { PaginationQuery } from "$models/PaginationQuery";
 
 export const CompanyNotificationRepository = {
-  save: async (notification: TCompanyNotification, transaction?: Transaction) => {
+  save: async (notification: CompanyNotification, transaction?: Transaction) => {
     const companyNotification = CompanyNotificationMapper.toPersistenceModel(notification);
     await companyNotification.save({ transaction });
     notification.setUuid(companyNotification.uuid);

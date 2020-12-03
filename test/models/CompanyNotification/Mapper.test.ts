@@ -3,7 +3,7 @@ import {
   CompanyNewJobApplicationNotification,
   CompanyNotificationMapper,
   CompanyNotificationType,
-  TCompanyNotification
+  CompanyNotification
 } from "$models/CompanyNotification";
 import { UUID } from "$models/UUID";
 import { CompanyNotificationSequelizeModel } from "$models";
@@ -28,7 +28,7 @@ describe("CompanyNotificationMapper", () => {
     );
     const approvedOfferNotification = new CompanyApprovedOfferNotification(approvedOfferAttributes);
 
-    const expectToNotToBeANewRecord = (notification: TCompanyNotification) => {
+    const expectToNotToBeANewRecord = (notification: CompanyNotification) => {
       const uuid = UUID.generate();
       notification.setUuid(uuid);
       const persistenceModel = mapper.toPersistenceModel(notification);
@@ -37,7 +37,7 @@ describe("CompanyNotificationMapper", () => {
       notification.setUuid(undefined);
     };
 
-    const expectToMapTheCreatedAtTimestamp = (notification: TCompanyNotification) => {
+    const expectToMapTheCreatedAtTimestamp = (notification: CompanyNotification) => {
       const createdAt = new Date();
       notification.setCreatedAt(createdAt);
       const persistenceModel = mapper.toPersistenceModel(notification);
@@ -88,7 +88,7 @@ describe("CompanyNotificationMapper", () => {
     });
 
     it("throws an error it the given object cannot be mapped", async () => {
-      const unknownNotification = (new Error() as unknown) as TCompanyNotification;
+      const unknownNotification = (new Error() as unknown) as CompanyNotification;
       expect(() => CompanyNotificationMapper.toPersistenceModel(unknownNotification)).toThrowError(
         "Could not map to a persistence model"
       );
