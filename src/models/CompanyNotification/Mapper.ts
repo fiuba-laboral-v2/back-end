@@ -18,7 +18,7 @@ export const CompanyNotificationMapper = {
 
     return new CompanyNotificationSequelizeModel({ ...notification, type });
   },
-  toDomainModel: (companyNotification: CompanyNotificationSequelizeModel) => {
+  toDomainModel: (companyNotification: CompanyNotificationSequelizeModel): CompanyNotification => {
     const attributes = companyNotification.toJSON();
     switch (companyNotification.type) {
       case CompanyNotificationType.newJobApplication:

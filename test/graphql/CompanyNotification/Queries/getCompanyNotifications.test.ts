@@ -217,7 +217,7 @@ describe("getCompanyNotifications", () => {
 
   it("returns an error if the query returns an unknown notification", async () => {
     const { apolloClient } = await createCompanyTestClient(ApprovalStatus.approved);
-    const unknownNotification = { uuid: "uuid" } as any;
+    const unknownNotification = { uuid: "uuid" } as CompanyNotification;
     jest
       .spyOn(CompanyNotificationRepository, "findLatestByCompany")
       .mockReturnValue(Promise.resolve({ results: [unknownNotification], shouldFetchMore: false }));
