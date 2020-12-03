@@ -440,6 +440,9 @@ export const defaultTranslations = {
   companyNewJobApplicationNotification: {
     title: "Nueva postulación"
   },
+  companyApprovedOfferNotification: {
+    title: "Oferta aprobada"
+  },
   applicantJobApplicationNotification: {
     pendingApplicantTitle: "Postulación pendiente de aprobación",
     approvedApplicantTitle: "Postulación aprobada",
