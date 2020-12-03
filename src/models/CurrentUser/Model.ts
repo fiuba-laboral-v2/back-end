@@ -12,15 +12,15 @@ export class CurrentUser {
     this.roles = roles;
   }
 
-  public getApplicant() {
+  public getApplicantRole() {
     return this.roles.find(role => role instanceof ApplicantRole) as ApplicantRole;
   }
 
-  public getCompany() {
+  public getCompanyRole() {
     return this.roles.find(role => role instanceof CompanyRole) as CompanyRole;
   }
 
-  public getAdmin() {
+  public getAdminRole() {
     return this.roles.find(role => role instanceof AdminRole) as AdminRole;
   }
 

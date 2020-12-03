@@ -1,21 +1,35 @@
 import { Database } from "$config/Database";
-import { TCompanyNotification, CompanyNotificationMapper } from "$models/CompanyNotification";
-import { CompanyNotification } from "$models";
+import { CompanyNotification, CompanyNotificationMapper } from "$models/CompanyNotification";
+import { CompanyNotificationSequelizeModel } from "$models";
 import { CompanyNotificationNotFoundError, CompanyNotificationsNotUpdatedError } from "./Errors";
 import { Transaction } from "sequelize";
-import { IFindLatestByCompany } from "./Interfaces";
+import { IFindLatestByCompany, IHasUnreadNotifications } from "./Interfaces";
 import { PaginationQuery } from "$models/PaginationQuery";
 
 export const CompanyNotificationRepository = {
-  save: async (notification: TCompanyNotification, transaction?: Transaction) => {
+  save: async (notification: CompanyNotification, transaction?: Transaction) => {
     const companyNotification = CompanyNotificationMapper.toPersistenceModel(notification);
     await companyNotification.save({ transaction });
     notification.setUuid(companyNotification.uuid);
     notification.setCreatedAt(companyNotification.createdAt);
   },
+  hasUnreadNotifications: async ({ companyUuid }: IHasUnreadNotifications) => {
+    const [{ exists }] = await Database.query<Array<{ exists: boolean }>>(
+      `
+      SELECT EXISTS (
+        SELECT *
+         FROM "CompanyNotifications"
+         WHERE "CompanyNotifications"."notifiedCompanyUuid" = '${companyUuid}'
+         AND "CompanyNotifications"."isNew" = true
+       )
+    `,
+      { type: "SELECT" }
+    );
+    return exists;
+  },
   markAsReadByUuids: (uuids: string[]) =>
     Database.transaction(async transaction => {
-      const [updatedCount] = await CompanyNotification.update(
+      const [updatedCount] = await CompanyNotificationSequelizeModel.update(
         { isNew: false },
         { where: { uuid: uuids }, returning: false, validate: false, transaction }
       );
@@ -27,7 +41,7 @@ export const CompanyNotificationRepository = {
       where: { notifiedCompanyUuid: companyUuid },
       timestampKey: "createdAt",
       query: async options => {
-        const companyNotifications = await CompanyNotification.findAll(options);
+        const companyNotifications = await CompanyNotificationSequelizeModel.findAll(options);
         return companyNotifications.map(CompanyNotificationMapper.toDomainModel);
       },
       order: [
@@ -37,20 +51,22 @@ export const CompanyNotificationRepository = {
       ]
     }),
   findByUuids: async (uuids: string[]) => {
-    const companyNotifications = await CompanyNotification.findAll({ where: { uuid: uuids } });
+    const companyNotifications = await CompanyNotificationSequelizeModel.findAll({
+      where: { uuid: uuids }
+    });
     return companyNotifications.map(CompanyNotificationMapper.toDomainModel);
   },
   findByUuid: async (uuid: string) => {
-    const companyNotification = await CompanyNotification.findByPk(uuid);
+    const companyNotification = await CompanyNotificationSequelizeModel.findByPk(uuid);
     if (!companyNotification) throw new CompanyNotificationNotFoundError(uuid);
 
     return CompanyNotificationMapper.toDomainModel(companyNotification);
   },
   findAll: async () => {
-    const companyNotifications = await CompanyNotification.findAll();
+    const companyNotifications = await CompanyNotificationSequelizeModel.findAll();
     return companyNotifications.map(companyNotification =>
       CompanyNotificationMapper.toDomainModel(companyNotification)
     );
   },
-  truncate: () => CompanyNotification.destroy({ truncate: true })
+  truncate: () => CompanyNotificationSequelizeModel.destroy({ truncate: true })
 };

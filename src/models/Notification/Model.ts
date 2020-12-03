@@ -1,3 +1,3 @@
-import { TCompanyNotification } from "$models/CompanyNotification";
+import { CompanyNotification } from "$models/CompanyNotification";
 
-export type TNotification = TCompanyNotification;
+export type TNotification = CompanyNotification;

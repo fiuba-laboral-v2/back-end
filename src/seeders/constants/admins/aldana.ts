@@ -3,7 +3,7 @@ import { uuids } from "../uuids";
 export const aldana = {
   user: {
     uuid: uuids.graduadosAdmin.user,
-    email: "arastrelli@fi.uba.ar",
+    email: "llauromanuel@gmail.com",
     name: "Aldana",
     surname: "Rastrelli",
     dni: "999",

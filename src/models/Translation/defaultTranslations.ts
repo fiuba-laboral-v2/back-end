@@ -68,12 +68,12 @@ export const defaultTranslations = {
   careersSelectorFormSection: {
     title: "Carreras"
   },
-  fiubaCredentialsFormSection: [
-    { title: "Credenciales de FIUBA" },
-    { subtitle: "Las mismas que usa el SIU Guaraní" },
-    { dni: "DNI" },
-    { password: "Contraseña" }
-  ],
+  fiubaCredentialsFormSection: {
+    title: "Credenciales de FIUBA",
+    subtitle: "Las mismas que usa el SIU Guaraní",
+    dni: "DNI",
+    password: "Contraseña"
+  },
   careersSection: {
     careersTitle: "Carreras"
   },
@@ -288,6 +288,7 @@ export const defaultTranslations = {
     rejected: "Rechazados"
   },
   adminTaskList: {
+    emptyList: "No hay tareas",
     none: "Tareas",
     approved: "Tareas aprobadas",
     pending: "Tareas pendientes",
@@ -447,6 +448,10 @@ export const defaultTranslations = {
   },
   isNewLabel: {
     isNew: "Nueva"
+  },
+  notificationsNotice: {
+    message: "Tenés notificaciones",
+    actionMessage: "Ver"
   },
   companyNewJobApplicationNotificationEmail: {
     subject: "Nueva postulación a tu oferta laboral",

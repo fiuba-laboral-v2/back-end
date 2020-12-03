@@ -1,89 +1,144 @@
 import {
+  CompanyApprovedOfferNotification,
   CompanyNewJobApplicationNotification,
   CompanyNotificationMapper,
   CompanyNotificationType,
-  TCompanyNotification
+  CompanyNotification
 } from "$models/CompanyNotification";
 import { UUID } from "$models/UUID";
-import { CompanyNotification } from "$models";
+import { CompanyNotificationSequelizeModel } from "$models";
 import { omit } from "lodash";
+import { Constructable } from "$test/types/Constructable";
 
 describe("CompanyNotificationMapper", () => {
-  describe("toPersistenceModel", () => {
-    it("maps a CompanyNewJobApplicationNotification", async () => {
-      const attributes = {
-        moderatorUuid: UUID.generate(),
-        notifiedCompanyUuid: UUID.generate(),
-        jobApplicationUuid: UUID.generate(),
-        isNew: true
-      };
+  const mapper = CompanyNotificationMapper;
 
-      const notification = new CompanyNewJobApplicationNotification(attributes);
-      const persistenceModel = CompanyNotificationMapper.toPersistenceModel(notification);
-      expect(persistenceModel).toBeInstanceOf(CompanyNotification);
-      expect(persistenceModel.createdAt).toEqual(undefined);
-      expect(persistenceModel.uuid).toEqual(null);
+  describe("toPersistenceModel", () => {
+    const commonAttributes = {
+      moderatorUuid: UUID.generate(),
+      notifiedCompanyUuid: UUID.generate(),
+      isNew: true
+    };
+
+    const newApplicationAttributes = { ...commonAttributes, jobApplicationUuid: UUID.generate() };
+    const approvedOfferAttributes = { ...commonAttributes, offerUuid: UUID.generate() };
+
+    const newApplicationNotification = new CompanyNewJobApplicationNotification(
+      newApplicationAttributes
+    );
+    const approvedOfferNotification = new CompanyApprovedOfferNotification(approvedOfferAttributes);
+
+    const expectToNotToBeANewRecord = (notification: CompanyNotification) => {
+      const uuid = UUID.generate();
+      notification.setUuid(uuid);
+      const persistenceModel = mapper.toPersistenceModel(notification);
+      expect(persistenceModel.uuid).toEqual(uuid);
+      expect(persistenceModel.isNewRecord).toBe(false);
+      notification.setUuid(undefined);
+    };
+
+    const expectToMapTheCreatedAtTimestamp = (notification: CompanyNotification) => {
+      const createdAt = new Date();
+      notification.setCreatedAt(createdAt);
+      const persistenceModel = mapper.toPersistenceModel(notification);
+      expect(persistenceModel.createdAt).toEqual(createdAt);
+      notification.setCreatedAt(undefined);
+    };
+
+    it("maps a CompanyNewJobApplicationNotification", async () => {
+      const persistenceModel = mapper.toPersistenceModel(newApplicationNotification);
+      expect(persistenceModel).toBeInstanceOf(CompanyNotificationSequelizeModel);
       expect(persistenceModel).toBeObjectContaining({
-        ...attributes,
+        uuid: null,
+        ...newApplicationAttributes,
         type: CompanyNotificationType.newJobApplication,
         moderatorMessage: undefined,
-        isNewRecord: true
+        isNewRecord: true,
+        createdAt: undefined
+      });
+    });
+
+    it("maps a CompanyApprovedOfferNotification", async () => {
+      const persistenceModel = mapper.toPersistenceModel(approvedOfferNotification);
+      expect(persistenceModel).toBeInstanceOf(CompanyNotificationSequelizeModel);
+      expect(persistenceModel).toBeObjectContaining({
+        uuid: null,
+        ...approvedOfferAttributes,
+        type: CompanyNotificationType.approvedOffer,
+        moderatorMessage: undefined,
+        isNewRecord: true,
+        createdAt: undefined
       });
     });
 
     it("maps a CompanyNewJobApplicationNotification that has already an uuid", async () => {
-      const uuid = UUID.generate();
-      const notification = new CompanyNewJobApplicationNotification({
-        uuid,
-        moderatorUuid: UUID.generate(),
-        notifiedCompanyUuid: UUID.generate(),
-        jobApplicationUuid: UUID.generate(),
-        isNew: true
-      });
-      const persistenceModel = CompanyNotificationMapper.toPersistenceModel(notification);
-      expect(persistenceModel.uuid).toEqual(uuid);
-      expect(persistenceModel.isNewRecord).toBe(false);
+      expectToNotToBeANewRecord(newApplicationNotification);
+    });
+
+    it("maps a CompanyApprovedOfferNotification that has already an uuid", async () => {
+      expectToNotToBeANewRecord(approvedOfferNotification);
+    });
+
+    it("maps a CompanyApprovedOfferNotification that has already a createdAt", async () => {
+      expectToMapTheCreatedAtTimestamp(approvedOfferNotification);
     });
 
     it("maps a CompanyNewJobApplicationNotification that has already a createdAt", async () => {
-      const createdAt = new Date();
-      const notification = new CompanyNewJobApplicationNotification({
-        moderatorUuid: UUID.generate(),
-        notifiedCompanyUuid: UUID.generate(),
-        jobApplicationUuid: UUID.generate(),
-        isNew: true,
-        createdAt
-      });
-      const persistenceModel = CompanyNotificationMapper.toPersistenceModel(notification);
-      expect(persistenceModel.createdAt).toEqual(createdAt);
+      expectToMapTheCreatedAtTimestamp(newApplicationNotification);
     });
 
     it("throws an error it the given object cannot be mapped", async () => {
-      expect(() =>
-        CompanyNotificationMapper.toPersistenceModel(
-          (new Error() as unknown) as TCompanyNotification
-        )
-      ).toThrowError("Could no map to a persistence model");
+      const unknownNotification = (new Error() as unknown) as CompanyNotification;
+      expect(() => CompanyNotificationMapper.toPersistenceModel(unknownNotification)).toThrowError(
+        "Could not map to a persistence model"
+      );
     });
   });
 
   describe("toDomainModel", () => {
-    it("returns a CompanyNewJobApplicationNotification", () => {
-      const attributes = {
-        uuid: UUID.generate(),
-        moderatorUuid: UUID.generate(),
-        type: CompanyNotificationType.newJobApplication,
-        notifiedCompanyUuid: UUID.generate(),
-        isNew: false,
-        jobApplicationUuid: UUID.generate(),
-        createdAt: new Date()
-      };
-      const companyNotification = new CompanyNotification(attributes);
-      const notification = CompanyNotificationMapper.toDomainModel(companyNotification);
-      expect(notification).toBeInstanceOf(CompanyNewJobApplicationNotification);
+    const commonAttributes = {
+      uuid: UUID.generate(),
+      moderatorUuid: UUID.generate(),
+      notifiedCompanyUuid: UUID.generate(),
+      isNew: false,
+      createdAt: new Date()
+    };
+
+    const expectToMapPersistenceModelToTheGivenNotification = ({
+      attributes,
+      modelClass
+    }: {
+      attributes: object;
+      modelClass: Constructable;
+    }) => {
+      const companyNotification = new CompanyNotificationSequelizeModel(attributes);
+      const notification = mapper.toDomainModel(companyNotification);
+      expect(notification).toBeInstanceOf(modelClass);
       expect(notification).toEqual({
         uuid: companyNotification.uuid,
         ...omit(attributes, "type")
+      });
+    };
+
+    it("returns a CompanyNewJobApplicationNotification", () => {
+      expectToMapPersistenceModelToTheGivenNotification({
+        attributes: {
+          ...commonAttributes,
+          jobApplicationUuid: UUID.generate(),
+          type: CompanyNotificationType.newJobApplication
+        },
+        modelClass: CompanyNewJobApplicationNotification
+      });
+    });
+
+    it("returns a CompanyApprovedOfferNotification", () => {
+      expectToMapPersistenceModelToTheGivenNotification({
+        attributes: {
+          ...commonAttributes,
+          offerUuid: UUID.generate(),
+          type: CompanyNotificationType.approvedOffer
+        },
+        modelClass: CompanyApprovedOfferNotification
       });
     });
   });

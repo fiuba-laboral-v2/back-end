@@ -4,6 +4,7 @@ import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist
 
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { GraphQLJobApplication } from "$graphql/JobApplication/Types/GraphQLJobApplication";
+import { GraphQLOffer } from "$graphql/Offer/Types/GraphQLOffer";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 import { Admin } from "$models";
@@ -12,6 +13,13 @@ import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
+import {
+  CompanyNewJobApplicationNotification,
+  CompanyApprovedOfferNotification,
+  CompanyNotificationRepository,
+  CompanyNotification,
+  UnknownNotificationError
+} from "$models/CompanyNotification";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
 import { AdminGenerator } from "$generators/Admin";
@@ -19,7 +27,6 @@ import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyNotificationGenerator } from "$generators/CompanyNotification";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
-import { CompanyNotificationRepository } from "$models/CompanyNotification";
 
 const GET_COMPANY_NOTIFICATIONS = gql`
   query GetCompanyNotifications($updatedBeforeThan: PaginatedInput) {
@@ -32,6 +39,17 @@ const GET_COMPANY_NOTIFICATIONS = gql`
           isNew
           createdAt
           jobApplication {
+            __typename
+            uuid
+          }
+        }
+        ... on CompanyApprovedOfferNotification {
+          __typename
+          uuid
+          adminEmail
+          isNew
+          createdAt
+          offer {
             __typename
             uuid
           }
@@ -74,6 +92,25 @@ describe("getCompanyNotifications", () => {
   const createApplicantTestClient = (approvalStatus: ApprovalStatus) =>
     TestClientGenerator.applicant({ status: { approvalStatus, admin } });
 
+  const getAttributesFrom = (notification: CompanyNotification) => {
+    return {
+      [CompanyNewJobApplicationNotification.name]: {
+        __typename: "CompanyNewJobApplicationNotification",
+        jobApplication: {
+          __typename: GraphQLJobApplication.name,
+          uuid: (notification as CompanyNewJobApplicationNotification).jobApplicationUuid
+        }
+      },
+      [CompanyApprovedOfferNotification.name]: {
+        __typename: "CompanyApprovedOfferNotification",
+        offer: {
+          __typename: GraphQLOffer.name,
+          uuid: (notification as CompanyApprovedOfferNotification).offerUuid
+        }
+      }
+    }[notification.constructor.name];
+  };
+
   it("returns all notifications", async () => {
     const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
     const size = 5;
@@ -83,15 +120,11 @@ describe("getCompanyNotifications", () => {
     expect(data!.getCompanyNotifications.results).toEqual(
       await Promise.all(
         notifications.map(async notification => ({
-          __typename: "CompanyNewJobApplicationNotification",
           uuid: notification.uuid,
           adminEmail: (await UserRepository.findByUuid(notification.moderatorUuid)).email,
           isNew: notification.isNew,
           createdAt: notification.createdAt?.toISOString(),
-          jobApplication: {
-            __typename: GraphQLJobApplication.name,
-            uuid: notification.jobApplicationUuid
-          }
+          ...getAttributesFrom(notification)
         }))
       )
     );
@@ -180,5 +213,16 @@ describe("getCompanyNotifications", () => {
     const { apolloClient } = await TestClientGenerator.admin({ secretary });
     const { errors } = await performQuery(apolloClient);
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+  });
+
+  it("returns an error if the query returns an unknown notification", async () => {
+    const { apolloClient } = await createCompanyTestClient(ApprovalStatus.approved);
+    const unknownNotification = { uuid: "uuid" } as CompanyNotification;
+    jest
+      .spyOn(CompanyNotificationRepository, "findLatestByCompany")
+      .mockReturnValue(Promise.resolve({ results: [unknownNotification], shouldFetchMore: false }));
+    jest.spyOn(CompanyNotificationRepository, "markAsReadByUuids").mockImplementation(jest.fn());
+    const { errors } = await performQuery(apolloClient);
+    expect(errors).toEqualGraphQLErrorType(UnknownNotificationError.name);
   });
 });

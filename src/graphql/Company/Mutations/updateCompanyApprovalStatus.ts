@@ -21,7 +21,7 @@ export const updateCompanyApprovalStatus = {
     { currentUser }: IApolloServerContext
   ) =>
     CompanyRepository.updateApprovalStatus(
-      currentUser.getAdmin().adminUserUuid,
+      currentUser.getAdminRole().adminUserUuid,
       uuid,
       approvalStatus
     )

@@ -36,5 +36,5 @@ export const updateCurrentCompany = {
     _: undefined,
     attributes: Omit<IUpdateCompany, "uuid">,
     { currentUser }: IApolloServerContext
-  ) => CompanyRepository.update({ uuid: currentUser.getCompany().companyUuid, ...attributes })
+  ) => CompanyRepository.update({ uuid: currentUser.getCompanyRole().companyUuid, ...attributes })
 };
