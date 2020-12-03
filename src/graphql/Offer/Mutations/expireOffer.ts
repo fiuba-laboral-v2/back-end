@@ -4,7 +4,6 @@ import { GraphQLOffer } from "../Types/GraphQLOffer";
 import { Secretary } from "$models/Admin";
 import { IApolloServerContext } from "$graphql/Context";
 import { OfferNotVisibleByCurrentUserError } from "../Queries/Errors";
-import { ApplicantType } from "$models/Applicant";
 
 export const expireOffer = {
   type: GraphQLOffer,
@@ -19,17 +18,9 @@ export const expireOffer = {
     const canEdit = await currentUser.getCompany().getPermissions().canSeeOffer(offer);
     if (!canEdit) throw new OfferNotVisibleByCurrentUserError();
 
-    const offerTarget = offer.targetApplicantType;
+    offer.expire();
 
-    const expireFor = {
-      [ApplicantType.both]: () => OfferRepository.expire({ uuid }),
-      [ApplicantType.graduate]: () =>
-        OfferRepository.expire({ uuid, secretary: Secretary.graduados }),
-      [ApplicantType.student]: () =>
-        OfferRepository.expire({ uuid, secretary: Secretary.extension })
-    }[offerTarget];
-
-    return expireFor();
+    return OfferRepository.save(offer);
   }
 };
 

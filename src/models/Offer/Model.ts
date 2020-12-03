@@ -157,6 +157,16 @@ export class Offer extends Model<Offer> {
     this.graduatesExpirationDateTime = moment().startOf("day").subtract(1, "day").toDate();
   };
 
+  public expire() {
+    if (this.targetApplicantType === ApplicantType.graduate) this.expireForGraduates();
+    if (this.targetApplicantType === ApplicantType.student) this.expireForStudents();
+    if (this.targetApplicantType === ApplicantType.both) {
+      this.expireForGraduates();
+      this.expireForStudents();
+    }
+    return this;
+  }
+
   public isExpiredForStudents = () => {
     return this.studentsExpirationDateTime < new Date();
   };

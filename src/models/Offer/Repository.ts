@@ -1,5 +1,5 @@
 import { Database } from "$config";
-import { Op } from "sequelize";
+import { Op, Transaction } from "sequelize";
 
 import { IFindAll, IOfferAssociations } from "./Interface";
 
@@ -18,6 +18,9 @@ import { OfferNotFoundError, OfferNotUpdatedError } from "./Errors";
 import moment from "moment";
 
 export const OfferRepository = {
+  save: (offer: Offer, transaction?: Transaction) => {
+    return offer.save({ transaction });
+  },
   create: ({ careers, sections, ...attributes }: ICreateOffer) =>
     Database.transaction(async transaction => {
       const offer = new Offer(attributes);

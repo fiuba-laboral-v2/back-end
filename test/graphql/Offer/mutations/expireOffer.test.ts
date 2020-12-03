@@ -15,7 +15,9 @@ import { AdminGenerator } from "$test/generators/Admin";
 import { client } from "$test/graphql/ApolloTestClient";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { UUID } from "$models/UUID";
-import { OfferNotFoundError } from "$models/Offer";
+import { OfferNotFoundError, OfferRepository } from "$models/Offer";
+import { SecretarySettingsGenerator } from "$test/generators/SecretarySettings";
+import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
 const EXPIRE_OFFER = gql`
   mutation($uuid: ID!) {
@@ -36,6 +38,9 @@ describe("expireOffer", () => {
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
+    await OfferRepository.truncate();
+    await SecretarySettingsRepository.truncate();
+    await SecretarySettingsGenerator.createDefaultSettings();
     const admin = await AdminGenerator.extension();
     ({ apolloClient: companyApolloClient, company } = await TestClientGenerator.company({
       status: { admin, approvalStatus: ApprovalStatus.approved }
@@ -103,8 +108,52 @@ describe("expireOffer", () => {
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
+  it("returns an error if the current user is an approved applicant", async () => {
+    const admin = await AdminGenerator.extension();
+    const { apolloClient } = await TestClientGenerator.applicant({
+      status: { admin, approvalStatus: ApprovalStatus.approved }
+    });
+    const { errors } = await performMutation(apolloClient, {
+      uuid: offers[ApplicantType.both].uuid
+    });
+    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+  });
+
+  it("returns an error if the current user is a rejected applicant", async () => {
+    const admin = await AdminGenerator.extension();
+    const { apolloClient } = await TestClientGenerator.applicant({
+      status: { admin, approvalStatus: ApprovalStatus.rejected }
+    });
+    const { errors } = await performMutation(apolloClient, {
+      uuid: offers[ApplicantType.both].uuid
+    });
+    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+  });
+
   it("returns an error if the current user is from a company pending", async () => {
     const { apolloClient } = await TestClientGenerator.company();
+    const { errors } = await performMutation(apolloClient, {
+      uuid: offers[ApplicantType.both].uuid
+    });
+    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+  });
+
+  it("returns an error if the current user is from a rejected company", async () => {
+    const admin = await AdminGenerator.extension();
+    const { apolloClient } = await TestClientGenerator.company({
+      status: { admin, approvalStatus: ApprovalStatus.rejected }
+    });
+    const { errors } = await performMutation(apolloClient, {
+      uuid: offers[ApplicantType.both].uuid
+    });
+    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+  });
+
+  it("returns an error if the current user is from a rejected company", async () => {
+    const admin = await AdminGenerator.extension();
+    const { apolloClient } = await TestClientGenerator.company({
+      status: { admin, approvalStatus: ApprovalStatus.rejected }
+    });
     const { errors } = await performMutation(apolloClient, {
       uuid: offers[ApplicantType.both].uuid
     });
