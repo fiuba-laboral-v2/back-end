@@ -168,10 +168,12 @@ export class Offer extends Model<Offer> {
   }
 
   public isExpiredForStudents = () => {
+    if (!this.studentsExpirationDateTime) return false;
     return this.studentsExpirationDateTime < new Date();
   };
 
   public isExpiredForGraduates = () => {
+    if (!this.graduatesExpirationDateTime) return false;
     return this.graduatesExpirationDateTime < new Date();
   };
 }
