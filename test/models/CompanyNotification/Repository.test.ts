@@ -1,16 +1,22 @@
 import { UniqueConstraintError, ForeignKeyConstraintError } from "sequelize";
 import {
+  CompanyApprovedOfferNotification,
+  ICompanyNewJobApplicationNotificationAttributes,
   CompanyNewJobApplicationNotification,
+  IApprovedOfferNotificationAttributes,
   CompanyNotificationRepository
 } from "$models/CompanyNotification";
+import { IAttributes } from "$models/CompanyNotification/CompanyNotification";
 import { UUID } from "$models/UUID";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { JobApplicationRepository } from "$models/JobApplication";
-import { TCompanyNotification } from "$models/CompanyNotification";
+import { OfferRepository } from "$models/Offer";
+import { CompanyNotification } from "$models/CompanyNotification";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
-import { Admin, Company, JobApplication } from "$models";
+import { TNotification } from "$models/Notification/Model";
+import { Admin, Company, JobApplication, Offer } from "$models";
 import {
   CompanyNotificationNotFoundError,
   CompanyNotificationsNotUpdatedError
@@ -21,13 +27,18 @@ import { AdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
 import { JobApplicationGenerator } from "$generators/JobApplication";
 import { CompanyNotificationGenerator } from "$generators/CompanyNotification";
+import { OfferGenerator } from "$generators/Offer";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import { UUID_REGEX } from "$test/models";
 
 describe("CompanyNotificationRepository", () => {
   let extensionAdmin: Admin;
   let company: Company;
+  let offer: Offer;
   let jobApplication: JobApplication;
+  let commonAttributes: IAttributes;
+  let newApplicationAttributes: ICompanyNewJobApplicationNotificationAttributes;
+  let approvedOfferAttributes: IApprovedOfferNotificationAttributes;
 
   beforeAll(async () => {
     await UserRepository.truncate();
@@ -38,7 +49,15 @@ describe("CompanyNotificationRepository", () => {
     await SecretarySettingsGenerator.createDefaultSettings();
     extensionAdmin = await AdminGenerator.extension();
     company = await CompanyGenerator.instance.withMinimumData();
+    offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
     jobApplication = await JobApplicationGenerator.instance.toTheCompany(company.uuid);
+    commonAttributes = {
+      moderatorUuid: extensionAdmin.userUuid,
+      notifiedCompanyUuid: company.uuid,
+      isNew: true
+    };
+    newApplicationAttributes = { ...commonAttributes, jobApplicationUuid: jobApplication.uuid };
+    approvedOfferAttributes = { ...commonAttributes, offerUuid: offer.uuid };
   });
 
   const expectToThrowErrorOnForeignKeyConstraint = async (attributeName: string) => {
@@ -57,41 +76,23 @@ describe("CompanyNotificationRepository", () => {
     );
   };
 
-  it("saves a CompanyNewJobApplicationNotification in the database", async () => {
-    const attributes = {
-      moderatorUuid: extensionAdmin.userUuid,
-      notifiedCompanyUuid: company.uuid,
-      jobApplicationUuid: jobApplication.uuid,
-      isNew: true
-    };
-    const notification = new CompanyNewJobApplicationNotification(attributes);
+  const expectToSaveAValidNotification = async (notification: TNotification) => {
     await CompanyNotificationRepository.save(notification);
     const savedNotification = await CompanyNotificationRepository.findByUuid(notification.uuid!);
     expect(savedNotification).toEqual(notification);
     expect(notification.uuid).toEqual(expect.stringMatching(UUID_REGEX));
     expect(notification.createdAt).toEqual(expect.any(Date));
-  });
+  };
 
-  it("sets an uuid and a createdAt after it is persisted", async () => {
-    const notification = new CompanyNewJobApplicationNotification({
-      moderatorUuid: extensionAdmin.userUuid,
-      notifiedCompanyUuid: company.uuid,
-      jobApplicationUuid: jobApplication.uuid,
-      isNew: true
-    });
+  const expectToSetUuidAndCreatedAtAfterSave = async (notification: TNotification) => {
     expect(notification.uuid).toBeUndefined();
     expect(notification.createdAt).toBeUndefined();
     await CompanyNotificationRepository.save(notification);
     expect(notification.uuid).toEqual(expect.stringMatching(UUID_REGEX));
     expect(notification.createdAt).toEqual(expect.any(Date));
-  });
+  };
 
-  it("updates isNew to false", async () => {
-    const notification = new CompanyNewJobApplicationNotification({
-      moderatorUuid: extensionAdmin.userUuid,
-      notifiedCompanyUuid: company.uuid,
-      jobApplicationUuid: jobApplication.uuid
-    });
+  const expectToUpdateIsNewAttribute = async (notification: TNotification) => {
     await CompanyNotificationRepository.save(notification);
     const uuid = notification.uuid!;
     expect(notification.isNew).toBe(true);
@@ -99,24 +100,57 @@ describe("CompanyNotificationRepository", () => {
     await CompanyNotificationRepository.save(notification);
     const persistedNotification = await CompanyNotificationRepository.findByUuid(uuid);
     expect(persistedNotification.isNew).toBe(false);
-  });
+  };
 
-  it("throws an error if the notification already exist", async () => {
-    const attributes = {
-      moderatorUuid: extensionAdmin.userUuid,
-      notifiedCompanyUuid: company.uuid,
-      jobApplicationUuid: jobApplication.uuid,
-      isNew: true
-    };
-    const uuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+  const expectToThrowErrorOnUniqueConstraint = async (notification: TNotification) => {
+    const uuid = UUID.generate();
     jest.spyOn(UUID, "generate").mockImplementation(() => uuid);
-    const notification = new CompanyNewJobApplicationNotification(attributes);
     await CompanyNotificationRepository.save(notification);
     expect(notification.uuid).toEqual(uuid);
-    const anotherNotification = new CompanyNewJobApplicationNotification(attributes);
+    const anotherNotification = new CompanyNewJobApplicationNotification(newApplicationAttributes);
     await expect(
       CompanyNotificationRepository.save(anotherNotification)
     ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
+  };
+
+  it("saves a CompanyNewJobApplicationNotification in the database", async () => {
+    const notification = new CompanyNewJobApplicationNotification(newApplicationAttributes);
+    await expectToSaveAValidNotification(notification);
+  });
+
+  it("saves a CompanyApprovedOfferNotification in the database", async () => {
+    const notification = new CompanyApprovedOfferNotification(approvedOfferAttributes);
+    await expectToSaveAValidNotification(notification);
+  });
+
+  it("sets an uuid and a createdAt after it is persisted for a CompanyNewJobApplicationNotification", async () => {
+    const notification = new CompanyNewJobApplicationNotification(newApplicationAttributes);
+    await expectToSetUuidAndCreatedAtAfterSave(notification);
+  });
+
+  it("sets an uuid and a createdAt after it is persisted for a CompanyApprovedOfferNotification", async () => {
+    const notification = new CompanyApprovedOfferNotification(approvedOfferAttributes);
+    await expectToSetUuidAndCreatedAtAfterSave(notification);
+  });
+
+  it("updates isNew to false for CompanyNewJobApplicationNotification", async () => {
+    const notification = new CompanyNewJobApplicationNotification(newApplicationAttributes);
+    await expectToUpdateIsNewAttribute(notification);
+  });
+
+  it("updates isNew to false for CompanyApprovedOfferNotification", async () => {
+    const notification = new CompanyApprovedOfferNotification(approvedOfferAttributes);
+    await expectToUpdateIsNewAttribute(notification);
+  });
+
+  it("throws an error if a CompanyNewJobApplicationNotification already exist", async () => {
+    const notification = new CompanyNewJobApplicationNotification(newApplicationAttributes);
+    await expectToThrowErrorOnUniqueConstraint(notification);
+  });
+
+  it("throws an error if a CompanyApprovedOfferNotification already exist", async () => {
+    const notification = new CompanyApprovedOfferNotification(approvedOfferAttributes);
+    await expectToThrowErrorOnUniqueConstraint(notification);
   });
 
   it("throw an error if the jobApplicationUuid does not belong to an existing one", async () => {
@@ -214,7 +248,7 @@ describe("CompanyNotificationRepository", () => {
   });
 
   describe("findLatestByUser", () => {
-    let notifications: TCompanyNotification[] = [];
+    let notifications: CompanyNotification[] = [];
     const notificationsLength = 20;
 
     beforeAll(async () => {
@@ -286,21 +320,39 @@ describe("CompanyNotificationRepository", () => {
   });
 
   describe("Delete Cascade", () => {
-    const attributes = () => ({
+    const newJobApplicationProps = () => ({
       moderatorUuid: extensionAdmin.userUuid,
       notifiedCompanyUuid: company.uuid,
       jobApplicationUuid: jobApplication.uuid,
       isNew: true
     });
 
+    const approvedOfferProps = () => ({
+      moderatorUuid: extensionAdmin.userUuid,
+      notifiedCompanyUuid: company.uuid,
+      offerUuid: offer.uuid,
+      isNew: true
+    });
+
     it("deletes all notifications if JobApplications table is truncated", async () => {
       await CompanyNotificationRepository.truncate();
-      const firstNotification = new CompanyNewJobApplicationNotification(attributes());
-      const secondNotification = new CompanyNewJobApplicationNotification(attributes());
+      const firstNotification = new CompanyNewJobApplicationNotification(newJobApplicationProps());
+      const secondNotification = new CompanyNewJobApplicationNotification(newJobApplicationProps());
       await CompanyNotificationRepository.save(firstNotification);
       await CompanyNotificationRepository.save(secondNotification);
       expect(await CompanyNotificationRepository.findAll()).toHaveLength(2);
       await JobApplicationRepository.truncate();
+      expect(await CompanyNotificationRepository.findAll()).toHaveLength(0);
+    });
+
+    it("deletes all notifications if Offers table is truncated", async () => {
+      await CompanyNotificationRepository.truncate();
+      const firstNotification = new CompanyApprovedOfferNotification(approvedOfferProps());
+      const secondNotification = new CompanyApprovedOfferNotification(approvedOfferProps());
+      await CompanyNotificationRepository.save(firstNotification);
+      await CompanyNotificationRepository.save(secondNotification);
+      expect(await CompanyNotificationRepository.findAll()).toHaveLength(2);
+      await OfferRepository.truncate();
       expect(await CompanyNotificationRepository.findAll()).toHaveLength(0);
     });
   });

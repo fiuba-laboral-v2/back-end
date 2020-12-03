@@ -41,6 +41,12 @@ export = {
         onDelete: "CASCADE",
         type: UUID
       },
+      offerUuid: {
+        allowNull: true,
+        references: { model: "Offers", key: "uuid" },
+        onDelete: "CASCADE",
+        type: UUID
+      },
       createdAt: {
         allowNull: false,
         type: DATE
