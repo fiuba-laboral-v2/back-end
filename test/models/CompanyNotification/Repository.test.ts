@@ -6,7 +6,7 @@ import {
   IApprovedOfferNotificationAttributes,
   CompanyNotificationRepository
 } from "$models/CompanyNotification";
-import { IAttributes } from "$models/CompanyNotification/Notification";
+import { IAttributes } from "$models/CompanyNotification/CompanyNotification";
 import { UUID } from "$models/UUID";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";

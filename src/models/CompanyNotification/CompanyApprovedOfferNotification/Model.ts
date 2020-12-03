@@ -1,6 +1,6 @@
 import { UUID } from "$models/UUID";
 import { AttributeNotDefinedError, InvalidAttributeFormatError } from "$models/Errors";
-import { CompanyNotification, IAttributes } from "../Notification";
+import { CompanyNotification, IAttributes } from "../CompanyNotification";
 import { isNil } from "lodash";
 
 export class CompanyApprovedOfferNotification extends CompanyNotification {

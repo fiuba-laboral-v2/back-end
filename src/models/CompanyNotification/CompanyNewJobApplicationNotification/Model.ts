@@ -1,5 +1,5 @@
 import { AttributeNotDefinedError, InvalidAttributeFormatError } from "$models/Errors";
-import { CompanyNotification, IAttributes } from "../Notification";
+import { CompanyNotification, IAttributes } from "../CompanyNotification";
 import { UUID } from "$models/UUID";
 import { isNil } from "lodash";
 
