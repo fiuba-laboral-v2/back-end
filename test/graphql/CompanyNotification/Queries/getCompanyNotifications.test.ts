@@ -16,7 +16,8 @@ import { Secretary } from "$models/Admin";
 import {
   CompanyNewJobApplicationNotification,
   CompanyNotificationRepository,
-  TCompanyNotification
+  TCompanyNotification,
+  UnknownNotificationError
 } from "$models/CompanyNotification";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
@@ -212,5 +213,16 @@ describe("getCompanyNotifications", () => {
     const { apolloClient } = await TestClientGenerator.admin({ secretary });
     const { errors } = await performQuery(apolloClient);
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+  });
+
+  it("returns an error the query returns an unknown notification", async () => {
+    const { apolloClient } = await createCompanyTestClient(ApprovalStatus.approved);
+    const unknownNotification = { uuid: "uuid" } as TCompanyNotification;
+    jest
+      .spyOn(CompanyNotificationRepository, "findLatestByCompany")
+      .mockReturnValue(Promise.resolve({ results: [unknownNotification], shouldFetchMore: false }));
+    jest.spyOn(CompanyNotificationRepository, "markAsReadByUuids").mockImplementation(jest.fn());
+    const { errors } = await performQuery(apolloClient);
+    expect(errors).toEqualGraphQLErrorType(UnknownNotificationError.name);
   });
 });
