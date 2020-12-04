@@ -1,9 +1,9 @@
 import { UUID } from "$models/UUID";
-import { CompanyApprovedOfferNotification } from "$models/CompanyNotification";
+import { ApprovedOfferCompanyNotification } from "$models/CompanyNotification";
 import { AttributeNotDefinedError, InvalidAttributeFormatError } from "$models/Errors";
 import { omit } from "lodash";
 
-describe("CompanyApprovedOfferNotification", () => {
+describe("ApprovedOfferCompanyNotification", () => {
   const mandatoryAttributes = {
     moderatorUuid: UUID.generate(),
     notifiedCompanyUuid: UUID.generate(),
@@ -13,7 +13,7 @@ describe("CompanyApprovedOfferNotification", () => {
 
   const expectToThrowErrorOnMissingAttribute = (attributeName: string) => {
     const attributes = { ...mandatoryAttributes, [attributeName]: undefined };
-    expect(() => new CompanyApprovedOfferNotification(attributes)).toThrowErrorWithMessage(
+    expect(() => new ApprovedOfferCompanyNotification(attributes)).toThrowErrorWithMessage(
       AttributeNotDefinedError,
       AttributeNotDefinedError.buildMessage(attributeName)
     );
@@ -21,37 +21,37 @@ describe("CompanyApprovedOfferNotification", () => {
 
   const expectToThrowErrorOnUuidInvalidFormat = (attributeName: string) => {
     const attributes = { ...mandatoryAttributes, [attributeName]: "invalidFormat" };
-    expect(() => new CompanyApprovedOfferNotification(attributes)).toThrowErrorWithMessage(
+    expect(() => new ApprovedOfferCompanyNotification(attributes)).toThrowErrorWithMessage(
       InvalidAttributeFormatError,
       InvalidAttributeFormatError.buildMessage(attributeName)
     );
   };
 
   it("creates a valid notification with only mandatory attributes", async () => {
-    const notification = new CompanyApprovedOfferNotification(mandatoryAttributes);
+    const notification = new ApprovedOfferCompanyNotification(mandatoryAttributes);
     expect(notification).toEqual({ uuid: undefined, ...mandatoryAttributes, createdAt: undefined });
   });
 
   it("creates a valid notification with all attributes", async () => {
     const attributes = { uuid: UUID.generate(), ...mandatoryAttributes, createdAt: new Date() };
-    const notification = new CompanyApprovedOfferNotification(attributes);
+    const notification = new ApprovedOfferCompanyNotification(attributes);
     expect(notification).toEqual(attributes);
   });
 
   it("creates a valid notification with isNew set to true as default if it is not provided", async () => {
-    const notification = new CompanyApprovedOfferNotification(omit(mandatoryAttributes, "isNew"));
+    const notification = new ApprovedOfferCompanyNotification(omit(mandatoryAttributes, "isNew"));
     expect(notification.isNew).toBe(true);
   });
 
   it("creates a valid notification with an uuid", async () => {
     const uuid = UUID.generate();
-    const notification = new CompanyApprovedOfferNotification({ uuid, ...mandatoryAttributes });
+    const notification = new ApprovedOfferCompanyNotification({ uuid, ...mandatoryAttributes });
     expect(notification).toEqual({ uuid, ...mandatoryAttributes, createdAt: undefined });
   });
 
   it("creates a valid notification with a createdAt timestamp", async () => {
     const createdAt = new Date();
-    const notification = new CompanyApprovedOfferNotification({
+    const notification = new ApprovedOfferCompanyNotification({
       ...mandatoryAttributes,
       createdAt
     });
@@ -60,20 +60,20 @@ describe("CompanyApprovedOfferNotification", () => {
 
   it("sets its createdAt timestamp", async () => {
     const createdAt = new Date();
-    const notification = new CompanyApprovedOfferNotification(mandatoryAttributes);
+    const notification = new ApprovedOfferCompanyNotification(mandatoryAttributes);
     notification.setCreatedAt(createdAt);
     expect(notification.createdAt).toEqual(createdAt);
   });
 
   it("sets its uuid", async () => {
     const uuid = UUID.generate();
-    const notification = new CompanyApprovedOfferNotification(mandatoryAttributes);
+    const notification = new ApprovedOfferCompanyNotification(mandatoryAttributes);
     notification.setUuid(uuid);
     expect(notification.uuid).toEqual(uuid);
   });
 
   it("throws an error if it is set an uuid has invalid format", async () => {
-    const notification = new CompanyApprovedOfferNotification(mandatoryAttributes);
+    const notification = new ApprovedOfferCompanyNotification(mandatoryAttributes);
     expect(() => notification.setUuid("invalidFormat")).toThrowErrorWithMessage(
       InvalidAttributeFormatError,
       InvalidAttributeFormatError.buildMessage("uuid")

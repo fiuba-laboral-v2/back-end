@@ -1,6 +1,6 @@
 import { UniqueConstraintError, ForeignKeyConstraintError } from "sequelize";
 import {
-  CompanyApprovedOfferNotification,
+  ApprovedOfferCompanyNotification,
   INewJobApplicationNotificationAttributes,
   NewJobApplicationCompanyNotification,
   IApprovedOfferNotificationAttributes,
@@ -118,8 +118,8 @@ describe("CompanyNotificationRepository", () => {
     await expectToSaveAValidNotification(notification);
   });
 
-  it("saves a CompanyApprovedOfferNotification in the database", async () => {
-    const notification = new CompanyApprovedOfferNotification(approvedOfferAttributes);
+  it("saves a ApprovedOfferCompanyNotification in the database", async () => {
+    const notification = new ApprovedOfferCompanyNotification(approvedOfferAttributes);
     await expectToSaveAValidNotification(notification);
   });
 
@@ -128,8 +128,8 @@ describe("CompanyNotificationRepository", () => {
     await expectToSetUuidAndCreatedAtAfterSave(notification);
   });
 
-  it("sets an uuid and a createdAt after it is persisted for a CompanyApprovedOfferNotification", async () => {
-    const notification = new CompanyApprovedOfferNotification(approvedOfferAttributes);
+  it("sets an uuid and a createdAt after it is persisted for a ApprovedOfferCompanyNotification", async () => {
+    const notification = new ApprovedOfferCompanyNotification(approvedOfferAttributes);
     await expectToSetUuidAndCreatedAtAfterSave(notification);
   });
 
@@ -138,8 +138,8 @@ describe("CompanyNotificationRepository", () => {
     await expectToUpdateIsNewAttribute(notification);
   });
 
-  it("updates isNew to false for CompanyApprovedOfferNotification", async () => {
-    const notification = new CompanyApprovedOfferNotification(approvedOfferAttributes);
+  it("updates isNew to false for ApprovedOfferCompanyNotification", async () => {
+    const notification = new ApprovedOfferCompanyNotification(approvedOfferAttributes);
     await expectToUpdateIsNewAttribute(notification);
   });
 
@@ -148,8 +148,8 @@ describe("CompanyNotificationRepository", () => {
     await expectToThrowErrorOnUniqueConstraint(notification);
   });
 
-  it("throws an error if a CompanyApprovedOfferNotification already exist", async () => {
-    const notification = new CompanyApprovedOfferNotification(approvedOfferAttributes);
+  it("throws an error if a ApprovedOfferCompanyNotification already exist", async () => {
+    const notification = new ApprovedOfferCompanyNotification(approvedOfferAttributes);
     await expectToThrowErrorOnUniqueConstraint(notification);
   });
 
@@ -347,8 +347,8 @@ describe("CompanyNotificationRepository", () => {
 
     it("deletes all notifications if Offers table is truncated", async () => {
       await CompanyNotificationRepository.truncate();
-      const firstNotification = new CompanyApprovedOfferNotification(approvedOfferProps());
-      const secondNotification = new CompanyApprovedOfferNotification(approvedOfferProps());
+      const firstNotification = new ApprovedOfferCompanyNotification(approvedOfferProps());
+      const secondNotification = new ApprovedOfferCompanyNotification(approvedOfferProps());
       await CompanyNotificationRepository.save(firstNotification);
       await CompanyNotificationRepository.save(secondNotification);
       expect(await CompanyNotificationRepository.findAll()).toHaveLength(2);

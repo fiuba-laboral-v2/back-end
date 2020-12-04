@@ -1,6 +1,6 @@
 import {
   NewJobApplicationCompanyNotification,
-  CompanyApprovedOfferNotification,
+  ApprovedOfferCompanyNotification,
   CompanyNotificationRepository,
   CompanyNotification
 } from "$models/CompanyNotification";
@@ -38,7 +38,7 @@ export const CompanyNotificationGenerator = {
         offerUuid: offer.uuid,
         isNew: true
       };
-      const notification = new CompanyApprovedOfferNotification(attributes);
+      const notification = new ApprovedOfferCompanyNotification(attributes);
       await CompanyNotificationRepository.save(notification);
       return notification;
     },

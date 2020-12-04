@@ -15,7 +15,7 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
 import {
   NewJobApplicationCompanyNotification,
-  CompanyApprovedOfferNotification,
+  ApprovedOfferCompanyNotification,
   CompanyNotificationRepository,
   CompanyNotification,
   UnknownNotificationError
@@ -101,11 +101,11 @@ describe("getCompanyNotifications", () => {
           uuid: (notification as NewJobApplicationCompanyNotification).jobApplicationUuid
         }
       },
-      [CompanyApprovedOfferNotification.name]: {
+      [ApprovedOfferCompanyNotification.name]: {
         __typename: "CompanyApprovedOfferNotification",
         offer: {
           __typename: GraphQLOffer.name,
-          uuid: (notification as CompanyApprovedOfferNotification).offerUuid
+          uuid: (notification as ApprovedOfferCompanyNotification).offerUuid
         }
       }
     }[notification.constructor.name];

@@ -1,5 +1,5 @@
 import {
-  CompanyApprovedOfferNotification,
+  ApprovedOfferCompanyNotification,
   NewJobApplicationCompanyNotification,
   CompanyNotificationMapper,
   CompanyNotificationType,
@@ -26,7 +26,7 @@ describe("CompanyNotificationMapper", () => {
     const newApplicationNotification = new NewJobApplicationCompanyNotification(
       newApplicationAttributes
     );
-    const approvedOfferNotification = new CompanyApprovedOfferNotification(approvedOfferAttributes);
+    const approvedOfferNotification = new ApprovedOfferCompanyNotification(approvedOfferAttributes);
 
     const expectToNotToBeANewRecord = (notification: CompanyNotification) => {
       const uuid = UUID.generate();
@@ -58,7 +58,7 @@ describe("CompanyNotificationMapper", () => {
       });
     });
 
-    it("maps a CompanyApprovedOfferNotification", async () => {
+    it("maps a ApprovedOfferCompanyNotification", async () => {
       const persistenceModel = mapper.toPersistenceModel(approvedOfferNotification);
       expect(persistenceModel).toBeInstanceOf(CompanyNotificationSequelizeModel);
       expect(persistenceModel).toBeObjectContaining({
@@ -75,11 +75,11 @@ describe("CompanyNotificationMapper", () => {
       expectToNotToBeANewRecord(newApplicationNotification);
     });
 
-    it("maps a CompanyApprovedOfferNotification that has already an uuid", async () => {
+    it("maps a ApprovedOfferCompanyNotification that has already an uuid", async () => {
       expectToNotToBeANewRecord(approvedOfferNotification);
     });
 
-    it("maps a CompanyApprovedOfferNotification that has already a createdAt", async () => {
+    it("maps a ApprovedOfferCompanyNotification that has already a createdAt", async () => {
       expectToMapTheCreatedAtTimestamp(approvedOfferNotification);
     });
 
@@ -131,14 +131,14 @@ describe("CompanyNotificationMapper", () => {
       });
     });
 
-    it("returns a CompanyApprovedOfferNotification", () => {
+    it("returns a ApprovedOfferCompanyNotification", () => {
       expectToMapPersistenceModelToTheGivenNotification({
         attributes: {
           ...commonAttributes,
           offerUuid: UUID.generate(),
           type: CompanyNotificationType.approvedOffer
         },
-        modelClass: CompanyApprovedOfferNotification
+        modelClass: ApprovedOfferCompanyNotification
       });
     });
   });

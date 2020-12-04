@@ -1,6 +1,6 @@
 export * from "./Interfaces";
 export * from "./NewJobApplicationCompanyNotification";
-export * from "./CompanyApprovedOfferNotification";
+export * from "./ApprovedOfferCompanyNotification";
 export * from "./Mapper";
 export * from "./Repository";
 export * from "./Errors";
