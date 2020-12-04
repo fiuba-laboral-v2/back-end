@@ -43,7 +43,7 @@ const GET_COMPANY_NOTIFICATIONS = gql`
             uuid
           }
         }
-        ... on CompanyApprovedOfferNotification {
+        ... on ApprovedOfferCompanyNotification {
           __typename
           uuid
           adminEmail
@@ -102,7 +102,7 @@ describe("getCompanyNotifications", () => {
         }
       },
       [ApprovedOfferCompanyNotification.name]: {
-        __typename: "CompanyApprovedOfferNotification",
+        __typename: "ApprovedOfferCompanyNotification",
         offer: {
           __typename: GraphQLOffer.name,
           uuid: (notification as ApprovedOfferCompanyNotification).offerUuid

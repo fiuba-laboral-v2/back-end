@@ -5,10 +5,10 @@ import { GraphQLGenericCompanyNotificationFields } from "./GraphQLGenericCompany
 import { ApprovedOfferCompanyNotification } from "$models/CompanyNotification";
 import { OfferRepository } from "$models/Offer";
 
-export const GraphQLCompanyApprovedOfferNotification = new GraphQLObjectType<
+export const GraphQLApprovedOfferCompanyNotification = new GraphQLObjectType<
   ApprovedOfferCompanyNotification
 >({
-  name: "CompanyApprovedOfferNotification",
+  name: "ApprovedOfferCompanyNotification",
   fields: () => ({
     ...GraphQLGenericCompanyNotificationFields,
     offer: {

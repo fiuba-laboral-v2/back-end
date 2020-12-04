@@ -1,6 +1,6 @@
 import { GraphQLUnionType } from "graphql";
 import { GraphQLNewJobApplicationCompanyNotification } from "./GraphQLNewJobApplicationCompanyNotification";
-import { GraphQLCompanyApprovedOfferNotification } from "./GraphQLCompanyApprovedOfferNotification";
+import { GraphQLApprovedOfferCompanyNotification } from "./GraphQLApprovedOfferCompanyNotification";
 import {
   CompanyNotification,
   ApprovedOfferCompanyNotification,
@@ -10,12 +10,12 @@ import {
 
 export const GraphQLCompanyNotification = new GraphQLUnionType({
   name: "CompanyNotification",
-  types: [GraphQLNewJobApplicationCompanyNotification, GraphQLCompanyApprovedOfferNotification],
+  types: [GraphQLNewJobApplicationCompanyNotification, GraphQLApprovedOfferCompanyNotification],
   resolveType(notification: CompanyNotification) {
     const className = notification.constructor.name;
     switch (className) {
       case ApprovedOfferCompanyNotification.name:
-        return GraphQLCompanyApprovedOfferNotification;
+        return GraphQLApprovedOfferCompanyNotification;
       case NewJobApplicationCompanyNotification.name:
         return GraphQLNewJobApplicationCompanyNotification;
     }
