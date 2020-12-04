@@ -30,7 +30,7 @@ const getSignature = async (adminUserUuid: string): Promise<string> => {
   return signatures[admin.secretary];
 };
 
-export const CompanyNewJobApplicationEmailSender = {
+export const NewJobApplicationCompanyNotificationEmailSender = {
   send: async (notification: NewJobApplicationCompanyNotification) => {
     const { offerUuid, applicantUuid } = await JobApplicationRepository.findByUuid(
       notification.jobApplicationUuid
@@ -40,7 +40,7 @@ export const CompanyNewJobApplicationEmailSender = {
     const applicantUser = await UserRepository.findByUuid(applicant.userUuid);
 
     const { subject, body } = TranslationRepository.translate(
-      "companyNewJobApplicationNotificationEmail"
+      "newJobApplicationCompanyNotificationEmail"
     );
     const { baseUrl, subDomain, endpoints } = FrontendConfig;
 

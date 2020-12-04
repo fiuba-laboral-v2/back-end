@@ -456,7 +456,7 @@ export const defaultTranslations = {
     message: "Tenés notificaciones",
     actionMessage: "Ver"
   },
-  companyNewJobApplicationNotificationEmail: {
+  newJobApplicationCompanyNotificationEmail: {
     subject: "Nueva postulación a tu oferta laboral",
     body:
       "Nueva postulación a tu oferta laboral: <%= offerTitle %> (<%= offerLink %>)" +
