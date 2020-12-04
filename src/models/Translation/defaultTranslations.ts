@@ -438,7 +438,7 @@ export const defaultTranslations = {
   notifications: {
     title: "Notificaciones"
   },
-  companyNewJobApplicationNotification: {
+  newJobApplicationCompanyNotification: {
     title: "Nueva postulación"
   },
   companyApprovedOfferNotification: {
