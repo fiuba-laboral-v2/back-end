@@ -1,7 +1,7 @@
 import { GraphQLCompanyNotification } from "./GraphQLCompanyNotification";
-import { GraphQLCompanyNewJobApplicationNotification } from "./GraphQLCompanyNewJobApplicationNotification";
+import { GraphQLNewJobApplicationCompanyNotification } from "./GraphQLNewJobApplicationCompanyNotification";
 
 export const companyNotificationTypes = [
   GraphQLCompanyNotification,
-  GraphQLCompanyNewJobApplicationNotification
+  GraphQLNewJobApplicationCompanyNotification
 ];
