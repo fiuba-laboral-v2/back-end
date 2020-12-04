@@ -15,7 +15,7 @@ export const expireOffer = {
   resolve: async (_: undefined, { uuid }: IExpireOffer, { currentUser }: IApolloServerContext) => {
     const offer = await OfferRepository.findByUuid(uuid);
 
-    const canEdit = await currentUser.getCompany().getPermissions().canSeeOffer(offer);
+    const canEdit = await currentUser.getCompanyRole().getPermissions().canSeeOffer(offer);
     if (!canEdit) throw new OfferNotVisibleByCurrentUserError();
 
     offer.expire();

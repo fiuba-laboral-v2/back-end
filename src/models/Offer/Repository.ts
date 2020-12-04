@@ -18,9 +18,7 @@ import { OfferNotFoundError, OfferNotUpdatedError } from "./Errors";
 import moment from "moment";
 
 export const OfferRepository = {
-  save: (offer: Offer, transaction?: Transaction) => {
-    return offer.save({ transaction });
-  },
+  save: (offer: Offer, transaction?: Transaction) => offer.save({ transaction }),
   create: ({ careers, sections, ...attributes }: ICreateOffer) =>
     Database.transaction(async transaction => {
       const offer = new Offer(attributes);

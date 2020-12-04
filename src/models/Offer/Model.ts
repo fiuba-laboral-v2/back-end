@@ -25,7 +25,7 @@ import { isApprovalStatus, isTargetApplicantType } from "$models/SequelizeModelV
 import { ApplicantType, targetApplicantTypeEnumValues } from "$models/Applicant";
 import { DATE } from "sequelize";
 import { isNil } from "lodash";
-import moment from "moment";
+import { DateTimeManager } from "$libs/DateTimeManager";
 
 @Table({
   tableName: "Offers",
@@ -150,21 +150,16 @@ export class Offer extends Model<Offer> {
   public getApprovalEvents: HasManyGetAssociationsMixin<OfferApprovalEvent>;
 
   public expireForStudents = () => {
-    this.studentsExpirationDateTime = moment().startOf("day").subtract(1, "day").toDate();
+    this.studentsExpirationDateTime = DateTimeManager.yesterday();
   };
 
   public expireForGraduates = () => {
-    this.graduatesExpirationDateTime = moment().startOf("day").subtract(1, "day").toDate();
+    this.graduatesExpirationDateTime = DateTimeManager.yesterday();
   };
 
   public expire() {
-    if (this.targetApplicantType === ApplicantType.graduate) this.expireForGraduates();
-    if (this.targetApplicantType === ApplicantType.student) this.expireForStudents();
-    if (this.targetApplicantType === ApplicantType.both) {
-      this.expireForGraduates();
-      this.expireForStudents();
-    }
-    return this;
+    if (this.isTargetedForGraduates()) this.expireForGraduates();
+    if (this.isTargetedForStudents()) this.expireForStudents();
   }
 
   public isExpiredForStudents = () => {
@@ -175,5 +170,19 @@ export class Offer extends Model<Offer> {
   public isExpiredForGraduates = () => {
     if (!this.graduatesExpirationDateTime) return false;
     return this.graduatesExpirationDateTime < new Date();
+  };
+
+  private isTargetedForStudents = () => {
+    return (
+      this.targetApplicantType === ApplicantType.student ||
+      this.targetApplicantType === ApplicantType.both
+    );
+  };
+
+  private isTargetedForGraduates = () => {
+    return (
+      this.targetApplicantType === ApplicantType.graduate ||
+      this.targetApplicantType === ApplicantType.both
+    );
   };
 }
