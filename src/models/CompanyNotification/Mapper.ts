@@ -1,6 +1,6 @@
 import {
   NewJobApplicationCompanyNotification,
-  ICompanyNewJobApplicationNotificationAttributes,
+  INewJobApplicationNotificationAttributes,
   CompanyApprovedOfferNotification,
   IApprovedOfferNotificationAttributes,
   CompanyNotification,
@@ -23,7 +23,7 @@ export const CompanyNotificationMapper = {
     switch (companyNotification.type) {
       case CompanyNotificationType.newJobApplication:
         return new NewJobApplicationCompanyNotification(
-          attributes as ICompanyNewJobApplicationNotificationAttributes
+          attributes as INewJobApplicationNotificationAttributes
         );
       case CompanyNotificationType.approvedOffer:
         return new CompanyApprovedOfferNotification(

@@ -1,7 +1,7 @@
 import { UniqueConstraintError, ForeignKeyConstraintError } from "sequelize";
 import {
   CompanyApprovedOfferNotification,
-  ICompanyNewJobApplicationNotificationAttributes,
+  INewJobApplicationNotificationAttributes,
   NewJobApplicationCompanyNotification,
   IApprovedOfferNotificationAttributes,
   CompanyNotificationRepository
@@ -37,7 +37,7 @@ describe("CompanyNotificationRepository", () => {
   let offer: Offer;
   let jobApplication: JobApplication;
   let commonAttributes: IAttributes;
-  let newApplicationAttributes: ICompanyNewJobApplicationNotificationAttributes;
+  let newApplicationAttributes: INewJobApplicationNotificationAttributes;
   let approvedOfferAttributes: IApprovedOfferNotificationAttributes;
 
   beforeAll(async () => {
