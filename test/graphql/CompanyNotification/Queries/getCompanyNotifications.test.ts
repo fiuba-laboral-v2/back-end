@@ -14,7 +14,7 @@ import { CareerRepository } from "$models/Career";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
 import {
-  CompanyNewJobApplicationNotification,
+  NewJobApplicationCompanyNotification,
   CompanyApprovedOfferNotification,
   CompanyNotificationRepository,
   CompanyNotification,
@@ -94,11 +94,11 @@ describe("getCompanyNotifications", () => {
 
   const getAttributesFrom = (notification: CompanyNotification) => {
     return {
-      [CompanyNewJobApplicationNotification.name]: {
+      [NewJobApplicationCompanyNotification.name]: {
         __typename: "CompanyNewJobApplicationNotification",
         jobApplication: {
           __typename: GraphQLJobApplication.name,
-          uuid: (notification as CompanyNewJobApplicationNotification).jobApplicationUuid
+          uuid: (notification as NewJobApplicationCompanyNotification).jobApplicationUuid
         }
       },
       [CompanyApprovedOfferNotification.name]: {

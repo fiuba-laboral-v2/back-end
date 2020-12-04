@@ -3,7 +3,7 @@ import { CompanyNotification, IAttributes } from "../CompanyNotification";
 import { UUID } from "$models/UUID";
 import { isNil } from "lodash";
 
-export class CompanyNewJobApplicationNotification extends CompanyNotification {
+export class NewJobApplicationCompanyNotification extends CompanyNotification {
   public jobApplicationUuid: string;
 
   constructor(attributes: ICompanyNewJobApplicationNotificationAttributes) {

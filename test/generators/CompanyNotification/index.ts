@@ -1,5 +1,5 @@
 import {
-  CompanyNewJobApplicationNotification,
+  NewJobApplicationCompanyNotification,
   CompanyApprovedOfferNotification,
   CompanyNotificationRepository,
   CompanyNotification
@@ -24,7 +24,7 @@ export const CompanyNotificationGenerator = {
         jobApplicationUuid: jobApplication.uuid,
         isNew: true
       };
-      const notification = new CompanyNewJobApplicationNotification(attributes);
+      const notification = new NewJobApplicationCompanyNotification(attributes);
       await CompanyNotificationRepository.save(notification);
       return notification;
     },

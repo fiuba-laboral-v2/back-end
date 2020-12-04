@@ -1,6 +1,6 @@
 import {
   CompanyApprovedOfferNotification,
-  CompanyNewJobApplicationNotification,
+  NewJobApplicationCompanyNotification,
   CompanyNotificationMapper,
   CompanyNotificationType,
   CompanyNotification
@@ -23,7 +23,7 @@ describe("CompanyNotificationMapper", () => {
     const newApplicationAttributes = { ...commonAttributes, jobApplicationUuid: UUID.generate() };
     const approvedOfferAttributes = { ...commonAttributes, offerUuid: UUID.generate() };
 
-    const newApplicationNotification = new CompanyNewJobApplicationNotification(
+    const newApplicationNotification = new NewJobApplicationCompanyNotification(
       newApplicationAttributes
     );
     const approvedOfferNotification = new CompanyApprovedOfferNotification(approvedOfferAttributes);
@@ -45,7 +45,7 @@ describe("CompanyNotificationMapper", () => {
       notification.setCreatedAt(undefined);
     };
 
-    it("maps a CompanyNewJobApplicationNotification", async () => {
+    it("maps a NewJobApplicationCompanyNotification", async () => {
       const persistenceModel = mapper.toPersistenceModel(newApplicationNotification);
       expect(persistenceModel).toBeInstanceOf(CompanyNotificationSequelizeModel);
       expect(persistenceModel).toBeObjectContaining({
@@ -71,7 +71,7 @@ describe("CompanyNotificationMapper", () => {
       });
     });
 
-    it("maps a CompanyNewJobApplicationNotification that has already an uuid", async () => {
+    it("maps a NewJobApplicationCompanyNotification that has already an uuid", async () => {
       expectToNotToBeANewRecord(newApplicationNotification);
     });
 
@@ -83,7 +83,7 @@ describe("CompanyNotificationMapper", () => {
       expectToMapTheCreatedAtTimestamp(approvedOfferNotification);
     });
 
-    it("maps a CompanyNewJobApplicationNotification that has already a createdAt", async () => {
+    it("maps a NewJobApplicationCompanyNotification that has already a createdAt", async () => {
       expectToMapTheCreatedAtTimestamp(newApplicationNotification);
     });
 
@@ -120,14 +120,14 @@ describe("CompanyNotificationMapper", () => {
       });
     };
 
-    it("returns a CompanyNewJobApplicationNotification", () => {
+    it("returns a NewJobApplicationCompanyNotification", () => {
       expectToMapPersistenceModelToTheGivenNotification({
         attributes: {
           ...commonAttributes,
           jobApplicationUuid: UUID.generate(),
           type: CompanyNotificationType.newJobApplication
         },
-        modelClass: CompanyNewJobApplicationNotification
+        modelClass: NewJobApplicationCompanyNotification
       });
     });
 

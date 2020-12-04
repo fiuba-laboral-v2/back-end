@@ -1,5 +1,5 @@
 import { FrontendConfig } from "$config";
-import { CompanyNewJobApplicationNotification } from "$models/CompanyNotification";
+import { NewJobApplicationCompanyNotification } from "$models/CompanyNotification";
 import { CompanyUserRepository } from "$models/CompanyUser";
 import { EmailService } from "$services/Email";
 import { UserRepository } from "$models/User";
@@ -31,7 +31,7 @@ const getSignature = async (adminUserUuid: string): Promise<string> => {
 };
 
 export const CompanyNewJobApplicationEmailSender = {
-  send: async (notification: CompanyNewJobApplicationNotification) => {
+  send: async (notification: NewJobApplicationCompanyNotification) => {
     const { offerUuid, applicantUuid } = await JobApplicationRepository.findByUuid(
       notification.jobApplicationUuid
     );

@@ -2,7 +2,7 @@ import { UniqueConstraintError, ForeignKeyConstraintError } from "sequelize";
 import {
   CompanyApprovedOfferNotification,
   ICompanyNewJobApplicationNotificationAttributes,
-  CompanyNewJobApplicationNotification,
+  NewJobApplicationCompanyNotification,
   IApprovedOfferNotificationAttributes,
   CompanyNotificationRepository
 } from "$models/CompanyNotification";
@@ -68,7 +68,7 @@ describe("CompanyNotificationRepository", () => {
       isNew: true
     };
     attributes[attributeName] = UUID.generate();
-    const notification = new CompanyNewJobApplicationNotification(attributes);
+    const notification = new NewJobApplicationCompanyNotification(attributes);
     await expect(CompanyNotificationRepository.save(notification)).rejects.toThrowErrorWithMessage(
       ForeignKeyConstraintError,
       'insert or update on table "CompanyNotifications" violates foreign key ' +
@@ -107,14 +107,14 @@ describe("CompanyNotificationRepository", () => {
     jest.spyOn(UUID, "generate").mockImplementation(() => uuid);
     await CompanyNotificationRepository.save(notification);
     expect(notification.uuid).toEqual(uuid);
-    const anotherNotification = new CompanyNewJobApplicationNotification(newApplicationAttributes);
+    const anotherNotification = new NewJobApplicationCompanyNotification(newApplicationAttributes);
     await expect(
       CompanyNotificationRepository.save(anotherNotification)
     ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
   };
 
-  it("saves a CompanyNewJobApplicationNotification in the database", async () => {
-    const notification = new CompanyNewJobApplicationNotification(newApplicationAttributes);
+  it("saves a NewJobApplicationCompanyNotification in the database", async () => {
+    const notification = new NewJobApplicationCompanyNotification(newApplicationAttributes);
     await expectToSaveAValidNotification(notification);
   });
 
@@ -123,8 +123,8 @@ describe("CompanyNotificationRepository", () => {
     await expectToSaveAValidNotification(notification);
   });
 
-  it("sets an uuid and a createdAt after it is persisted for a CompanyNewJobApplicationNotification", async () => {
-    const notification = new CompanyNewJobApplicationNotification(newApplicationAttributes);
+  it("sets an uuid and a createdAt after it is persisted for a NewJobApplicationCompanyNotification", async () => {
+    const notification = new NewJobApplicationCompanyNotification(newApplicationAttributes);
     await expectToSetUuidAndCreatedAtAfterSave(notification);
   });
 
@@ -133,8 +133,8 @@ describe("CompanyNotificationRepository", () => {
     await expectToSetUuidAndCreatedAtAfterSave(notification);
   });
 
-  it("updates isNew to false for CompanyNewJobApplicationNotification", async () => {
-    const notification = new CompanyNewJobApplicationNotification(newApplicationAttributes);
+  it("updates isNew to false for NewJobApplicationCompanyNotification", async () => {
+    const notification = new NewJobApplicationCompanyNotification(newApplicationAttributes);
     await expectToUpdateIsNewAttribute(notification);
   });
 
@@ -143,8 +143,8 @@ describe("CompanyNotificationRepository", () => {
     await expectToUpdateIsNewAttribute(notification);
   });
 
-  it("throws an error if a CompanyNewJobApplicationNotification already exist", async () => {
-    const notification = new CompanyNewJobApplicationNotification(newApplicationAttributes);
+  it("throws an error if a NewJobApplicationCompanyNotification already exist", async () => {
+    const notification = new NewJobApplicationCompanyNotification(newApplicationAttributes);
     await expectToThrowErrorOnUniqueConstraint(notification);
   });
 
@@ -336,8 +336,8 @@ describe("CompanyNotificationRepository", () => {
 
     it("deletes all notifications if JobApplications table is truncated", async () => {
       await CompanyNotificationRepository.truncate();
-      const firstNotification = new CompanyNewJobApplicationNotification(newJobApplicationProps());
-      const secondNotification = new CompanyNewJobApplicationNotification(newJobApplicationProps());
+      const firstNotification = new NewJobApplicationCompanyNotification(newJobApplicationProps());
+      const secondNotification = new NewJobApplicationCompanyNotification(newJobApplicationProps());
       await CompanyNotificationRepository.save(firstNotification);
       await CompanyNotificationRepository.save(secondNotification);
       expect(await CompanyNotificationRepository.findAll()).toHaveLength(2);

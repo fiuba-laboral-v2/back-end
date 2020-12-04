@@ -53,7 +53,7 @@ describe("JobApplicationNotificationFactory", () => {
 
   beforeEach(() => jest.spyOn(OfferRepository, "findByUuid").mockImplementation(async () => offer));
 
-  it("return an array with a CompanyNewJobApplicationNotification", async () => {
+  it("return an array with a NewJobApplicationCompanyNotification", async () => {
     jobApplication.set({ approvalStatus: ApprovalStatus.approved });
     const notifications = await JobApplicationNotificationFactory.create(jobApplication, admin);
     expect(notifications).toEqual([

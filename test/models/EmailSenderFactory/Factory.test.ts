@@ -1,11 +1,11 @@
-import { CompanyNewJobApplicationNotification } from "$models/CompanyNotification";
+import { NewJobApplicationCompanyNotification } from "$models/CompanyNotification";
 import { UUID } from "$models/UUID";
 import { EmailSenderFactory } from "$models/EmailSenderFactory";
 import { CompanyNewJobApplicationEmailSender } from "$services/EmailSender";
 
 describe("EmailSenderFactory", () => {
   it("returns a CompanyNewJobApplicationEmailSender", async () => {
-    const notification = new CompanyNewJobApplicationNotification({
+    const notification = new NewJobApplicationCompanyNotification({
       moderatorUuid: UUID.generate(),
       notifiedCompanyUuid: UUID.generate(),
       jobApplicationUuid: UUID.generate()
