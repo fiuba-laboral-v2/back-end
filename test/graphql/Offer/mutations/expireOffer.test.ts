@@ -40,6 +40,7 @@ describe("expireOffer", () => {
     await UserRepository.truncate();
     await OfferRepository.truncate();
     await SecretarySettingsRepository.truncate();
+
     await SecretarySettingsGenerator.createDefaultSettings();
     const admin = await AdminGenerator.extension();
     ({ apolloClient: companyApolloClient, company } = await TestClientGenerator.company({
