@@ -152,6 +152,35 @@ describe("Offer", () => {
     expect(offer.isExpiredForGraduates()).toBe(true);
   });
 
+  it("has a function to expire the current Applicant Type expiration date", async () => {
+    const offerForBoth = new Offer({ ...offerAttributes, targetApplicantType: ApplicantType.both });
+    const offerForStudents = new Offer(
+      omit(
+        { ...offerAttributes, targetApplicantType: ApplicantType.student },
+        "graduatesExpirationDateTime"
+      )
+    );
+    const offerForGraduates = new Offer(
+      omit(
+        { ...offerAttributes, targetApplicantType: ApplicantType.graduate },
+        "studentsExpirationDateTime"
+      )
+    );
+
+    offerForBoth.expire();
+    offerForStudents.expire();
+    offerForGraduates.expire();
+
+    expect(offerForBoth.isExpiredForGraduates()).toBe(true);
+    expect(offerForBoth.isExpiredForStudents()).toBe(true);
+
+    expect(offerForStudents.isExpiredForGraduates()).toBe(false);
+    expect(offerForStudents.isExpiredForStudents()).toBe(true);
+
+    expect(offerForGraduates.isExpiredForGraduates()).toBe(true);
+    expect(offerForGraduates.isExpiredForStudents()).toBe(false);
+  });
+
   it("throws an error if offer does not belong to any company", async () => {
     const offer = new Offer({ ...offerAttributes, companyUuid: null });
     await expect(offer.validate()).rejects.toThrow();

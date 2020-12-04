@@ -5,7 +5,8 @@ export const offerPermissions = {
   Mutation: {
     createOffer: isFromApprovedCompany,
     updateOfferApprovalStatus: isAdmin,
-    editOffer: isFromApprovedCompany
+    editOffer: isFromApprovedCompany,
+    expireOffer: isFromApprovedCompany
   },
   Query: {
     getMyOffers: isFromApprovedCompany,

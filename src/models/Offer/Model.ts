@@ -25,7 +25,7 @@ import { isApprovalStatus, isTargetApplicantType } from "$models/SequelizeModelV
 import { ApplicantType, targetApplicantTypeEnumValues } from "$models/Applicant";
 import { DATE } from "sequelize";
 import { isNil } from "lodash";
-import moment from "moment";
+import { DateTimeManager } from "$libs/DateTimeManager";
 
 @Table({
   tableName: "Offers",
@@ -150,18 +150,39 @@ export class Offer extends Model<Offer> {
   public getApprovalEvents: HasManyGetAssociationsMixin<OfferApprovalEvent>;
 
   public expireForStudents = () => {
-    this.studentsExpirationDateTime = moment().startOf("day").toDate();
+    this.studentsExpirationDateTime = DateTimeManager.yesterday();
   };
 
   public expireForGraduates = () => {
-    this.graduatesExpirationDateTime = moment().startOf("day").toDate();
+    this.graduatesExpirationDateTime = DateTimeManager.yesterday();
   };
 
+  public expire() {
+    if (this.isTargetedForGraduates()) this.expireForGraduates();
+    if (this.isTargetedForStudents()) this.expireForStudents();
+  }
+
   public isExpiredForStudents = () => {
+    if (!this.studentsExpirationDateTime) return false;
     return this.studentsExpirationDateTime < new Date();
   };
 
   public isExpiredForGraduates = () => {
+    if (!this.graduatesExpirationDateTime) return false;
     return this.graduatesExpirationDateTime < new Date();
+  };
+
+  private isTargetedForStudents = () => {
+    return (
+      this.targetApplicantType === ApplicantType.student ||
+      this.targetApplicantType === ApplicantType.both
+    );
+  };
+
+  private isTargetedForGraduates = () => {
+    return (
+      this.targetApplicantType === ApplicantType.graduate ||
+      this.targetApplicantType === ApplicantType.both
+    );
   };
 }
