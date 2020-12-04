@@ -8,7 +8,7 @@ import { JobApplicationRepository } from "$models/JobApplication";
 export const GraphQLCompanyNewJobApplicationNotification = new GraphQLObjectType<
   NewJobApplicationCompanyNotification
 >({
-  name: "CompanyNewJobApplicationNotification",
+  name: "NewJobApplicationCompanyNotification",
   fields: () => ({
     ...GraphQLGenericCompanyNotificationFields,
     jobApplication: {

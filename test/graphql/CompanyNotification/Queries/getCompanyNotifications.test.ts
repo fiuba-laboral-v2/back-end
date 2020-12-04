@@ -32,7 +32,7 @@ const GET_COMPANY_NOTIFICATIONS = gql`
   query GetCompanyNotifications($updatedBeforeThan: PaginatedInput) {
     getCompanyNotifications(updatedBeforeThan: $updatedBeforeThan) {
       results {
-        ... on CompanyNewJobApplicationNotification {
+        ... on NewJobApplicationCompanyNotification {
           __typename
           uuid
           adminEmail
@@ -95,7 +95,7 @@ describe("getCompanyNotifications", () => {
   const getAttributesFrom = (notification: CompanyNotification) => {
     return {
       [NewJobApplicationCompanyNotification.name]: {
-        __typename: "CompanyNewJobApplicationNotification",
+        __typename: "NewJobApplicationCompanyNotification",
         jobApplication: {
           __typename: GraphQLJobApplication.name,
           uuid: (notification as NewJobApplicationCompanyNotification).jobApplicationUuid
