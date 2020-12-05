@@ -146,6 +146,19 @@ export class Offer extends Model<Offer> {
     return this.graduadosApprovalStatus;
   }
 
+  public updateStatus(secretary: Secretary, newStatus: ApprovalStatus) {
+    if (secretary === Secretary.extension) return this.updateExtensionApprovalStatus(newStatus);
+    this.updateGraduadosApprovalStatus(newStatus);
+  }
+
+  private updateExtensionApprovalStatus(newStatus: ApprovalStatus) {
+    this.extensionApprovalStatus = newStatus;
+  }
+
+  private updateGraduadosApprovalStatus(newStatus: ApprovalStatus) {
+    this.graduadosApprovalStatus = newStatus;
+  }
+
   private isTargetedForStudents = () => {
     return (
       this.targetApplicantType === ApplicantType.student ||

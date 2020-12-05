@@ -200,6 +200,20 @@ describe("Offer", () => {
     expect(offer.getStatus(Secretary.graduados)).toEqual(ApprovalStatus.rejected);
   });
 
+  it("update extension status", async () => {
+    const offer = new Offer(offerAttributes);
+    expect(offer.extensionApprovalStatus).toEqual(ApprovalStatus.pending);
+    offer.updateStatus(Secretary.extension, ApprovalStatus.approved);
+    expect(offer.extensionApprovalStatus).toEqual(ApprovalStatus.approved);
+  });
+
+  it("update graduados status", async () => {
+    const offer = new Offer(offerAttributes);
+    expect(offer.graduadosApprovalStatus).toEqual(ApprovalStatus.pending);
+    offer.updateStatus(Secretary.graduados, ApprovalStatus.approved);
+    expect(offer.graduadosApprovalStatus).toEqual(ApprovalStatus.approved);
+  });
+
   it("throws an error if offer does not belong to any company", async () => {
     const offer = new Offer({ ...offerAttributes, companyUuid: null });
     await expect(offer.validate()).rejects.toThrow();
