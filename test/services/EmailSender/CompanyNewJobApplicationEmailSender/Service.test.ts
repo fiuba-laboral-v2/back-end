@@ -5,7 +5,7 @@ import { JobApplicationRepository } from "$models/JobApplication";
 import { AdminRepository, Secretary } from "$models/Admin";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
-import { CompanyNewJobApplicationEmailSender } from "$services/EmailSender";
+import { NewJobApplicationCompanyNotificationEmailSender } from "$services/EmailSender";
 import { EmailService } from "$services/Email";
 
 import { CompanyGenerator } from "$generators/Company";
@@ -13,7 +13,7 @@ import { CompanyNotificationGenerator } from "$generators/CompanyNotification";
 import { AdminGenerator } from "$generators/Admin";
 import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 
-describe("CompanyNewJobApplicationEmailSender", () => {
+describe("NewJobApplicationCompanyNotificationEmailSender", () => {
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
@@ -34,7 +34,7 @@ describe("CompanyNewJobApplicationEmailSender", () => {
     });
     const emailSendMock = jest.fn();
     jest.spyOn(EmailService, "send").mockImplementation(emailSendMock);
-    await CompanyNewJobApplicationEmailSender.send(notification);
+    await NewJobApplicationCompanyNotificationEmailSender.send(notification);
 
     const { offerUuid, applicantUuid } = await JobApplicationRepository.findByUuid(
       notification.jobApplicationUuid

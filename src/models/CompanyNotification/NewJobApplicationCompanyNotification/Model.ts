@@ -3,10 +3,10 @@ import { CompanyNotification, IAttributes } from "../CompanyNotification";
 import { UUID } from "$models/UUID";
 import { isNil } from "lodash";
 
-export class CompanyNewJobApplicationNotification extends CompanyNotification {
+export class NewJobApplicationCompanyNotification extends CompanyNotification {
   public jobApplicationUuid: string;
 
-  constructor(attributes: ICompanyNewJobApplicationNotificationAttributes) {
+  constructor(attributes: INewJobApplicationNotificationAttributes) {
     super(attributes);
     this.setJobApplicationUuid(attributes.jobApplicationUuid);
   }
@@ -19,6 +19,6 @@ export class CompanyNewJobApplicationNotification extends CompanyNotification {
   }
 }
 
-export interface ICompanyNewJobApplicationNotificationAttributes extends IAttributes {
+export interface INewJobApplicationNotificationAttributes extends IAttributes {
   jobApplicationUuid: string;
 }

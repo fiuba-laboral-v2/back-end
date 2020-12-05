@@ -1,8 +1,8 @@
 import { UUID } from "$models/UUID";
-import { CompanyNewJobApplicationNotification } from "$models/CompanyNotification";
+import { NewJobApplicationCompanyNotification } from "$models/CompanyNotification";
 import { AttributeNotDefinedError, InvalidAttributeFormatError } from "$models/Errors";
 
-describe("CompanyNewJobApplicationNotification", () => {
+describe("NewJobApplicationCompanyNotification", () => {
   const attributes = {
     moderatorUuid: UUID.generate(),
     notifiedCompanyUuid: UUID.generate(),
@@ -12,7 +12,7 @@ describe("CompanyNewJobApplicationNotification", () => {
 
   const expectToThrowErrorOnMissingAttribute = (attributeName: string) => {
     expect(
-      () => new CompanyNewJobApplicationNotification({ ...attributes, [attributeName]: undefined })
+      () => new NewJobApplicationCompanyNotification({ ...attributes, [attributeName]: undefined })
     ).toThrowErrorWithMessage(
       AttributeNotDefinedError,
       AttributeNotDefinedError.buildMessage(attributeName)
@@ -22,7 +22,7 @@ describe("CompanyNewJobApplicationNotification", () => {
   const expectToThrowErrorOnInvalidFormat = (attributeName: string) => {
     expect(
       () =>
-        new CompanyNewJobApplicationNotification({
+        new NewJobApplicationCompanyNotification({
           ...attributes,
           [attributeName]: "invalidFormat"
         })
@@ -33,7 +33,7 @@ describe("CompanyNewJobApplicationNotification", () => {
   };
 
   it("creates a valid notification", async () => {
-    const notification = new CompanyNewJobApplicationNotification(attributes);
+    const notification = new NewJobApplicationCompanyNotification(attributes);
     expect(notification).toEqual({
       uuid: undefined,
       ...attributes,
@@ -43,7 +43,7 @@ describe("CompanyNewJobApplicationNotification", () => {
 
   it("creates a valid notification with an uuid", async () => {
     const uuid = UUID.generate();
-    const notification = new CompanyNewJobApplicationNotification({
+    const notification = new NewJobApplicationCompanyNotification({
       uuid,
       moderatorUuid: UUID.generate(),
       notifiedCompanyUuid: UUID.generate(),
@@ -54,7 +54,7 @@ describe("CompanyNewJobApplicationNotification", () => {
 
   it("creates a valid notification with a createdAt", async () => {
     const createdAt = new Date();
-    const notification = new CompanyNewJobApplicationNotification({
+    const notification = new NewJobApplicationCompanyNotification({
       moderatorUuid: UUID.generate(),
       notifiedCompanyUuid: UUID.generate(),
       jobApplicationUuid: UUID.generate(),
@@ -65,20 +65,20 @@ describe("CompanyNewJobApplicationNotification", () => {
 
   it("sets its createdAt", async () => {
     const createdAt = new Date();
-    const notification = new CompanyNewJobApplicationNotification(attributes);
+    const notification = new NewJobApplicationCompanyNotification(attributes);
     notification.setCreatedAt(createdAt);
     expect(notification.createdAt).toEqual(createdAt);
   });
 
   it("sets its uuid", async () => {
     const uuid = UUID.generate();
-    const notification = new CompanyNewJobApplicationNotification(attributes);
+    const notification = new NewJobApplicationCompanyNotification(attributes);
     notification.setUuid(uuid);
     expect(notification.uuid).toEqual(uuid);
   });
 
   it("throws an error if it is set an uuid has invalid format", async () => {
-    const notification = new CompanyNewJobApplicationNotification(attributes);
+    const notification = new NewJobApplicationCompanyNotification(attributes);
     expect(() => notification.setUuid("invalidFormat")).toThrowErrorWithMessage(
       InvalidAttributeFormatError,
       InvalidAttributeFormatError.buildMessage("uuid")

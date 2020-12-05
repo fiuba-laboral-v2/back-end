@@ -1,11 +1,11 @@
 import {
-  CompanyNewJobApplicationNotification,
+  NewJobApplicationCompanyNotification,
   CompanyNotificationRepository
 } from "$models/CompanyNotification";
 import { TNotification } from "../Model";
 
 const repositoryMapper = {
-  [CompanyNewJobApplicationNotification.name]: CompanyNotificationRepository
+  [NewJobApplicationCompanyNotification.name]: CompanyNotificationRepository
 };
 
 export const NotificationRepositoryFactory = {

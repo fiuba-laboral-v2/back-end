@@ -3,7 +3,7 @@ import { AttributeNotDefinedError, InvalidAttributeFormatError } from "$models/E
 import { CompanyNotification, IAttributes } from "../CompanyNotification";
 import { isNil } from "lodash";
 
-export class CompanyApprovedOfferNotification extends CompanyNotification {
+export class ApprovedOfferCompanyNotification extends CompanyNotification {
   public offerUuid: string;
 
   constructor(attributes: IApprovedOfferNotificationAttributes) {

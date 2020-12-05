@@ -1,5 +1,5 @@
 import { FrontendConfig } from "$config";
-import { CompanyNewJobApplicationNotification } from "$models/CompanyNotification";
+import { NewJobApplicationCompanyNotification } from "$models/CompanyNotification";
 import { CompanyUserRepository } from "$models/CompanyUser";
 import { EmailService } from "$services/Email";
 import { UserRepository } from "$models/User";
@@ -30,8 +30,8 @@ const getSignature = async (adminUserUuid: string): Promise<string> => {
   return signatures[admin.secretary];
 };
 
-export const CompanyNewJobApplicationEmailSender = {
-  send: async (notification: CompanyNewJobApplicationNotification) => {
+export const NewJobApplicationCompanyNotificationEmailSender = {
+  send: async (notification: NewJobApplicationCompanyNotification) => {
     const { offerUuid, applicantUuid } = await JobApplicationRepository.findByUuid(
       notification.jobApplicationUuid
     );
@@ -40,7 +40,7 @@ export const CompanyNewJobApplicationEmailSender = {
     const applicantUser = await UserRepository.findByUuid(applicant.userUuid);
 
     const { subject, body } = TranslationRepository.translate(
-      "companyNewJobApplicationNotificationEmail"
+      "newJobApplicationCompanyNotificationEmail"
     );
     const { baseUrl, subDomain, endpoints } = FrontendConfig;
 

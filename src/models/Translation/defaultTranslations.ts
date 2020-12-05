@@ -438,10 +438,10 @@ export const defaultTranslations = {
   notifications: {
     title: "Notificaciones"
   },
-  companyNewJobApplicationNotification: {
+  newJobApplicationCompanyNotification: {
     title: "Nueva postulación"
   },
-  companyApprovedOfferNotification: {
+  approvedOfferCompanyNotification: {
     title: "Oferta aprobada"
   },
   applicantJobApplicationNotification: {
@@ -456,7 +456,7 @@ export const defaultTranslations = {
     message: "Tenés notificaciones",
     actionMessage: "Ver"
   },
-  companyNewJobApplicationNotificationEmail: {
+  newJobApplicationCompanyNotificationEmail: {
     subject: "Nueva postulación a tu oferta laboral",
     body:
       "Nueva postulación a tu oferta laboral: <%= offerTitle %> (<%= offerLink %>)" +

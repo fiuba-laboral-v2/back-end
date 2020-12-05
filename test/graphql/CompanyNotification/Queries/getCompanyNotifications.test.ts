@@ -14,8 +14,8 @@ import { CareerRepository } from "$models/Career";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
 import {
-  CompanyNewJobApplicationNotification,
-  CompanyApprovedOfferNotification,
+  NewJobApplicationCompanyNotification,
+  ApprovedOfferCompanyNotification,
   CompanyNotificationRepository,
   CompanyNotification,
   UnknownNotificationError
@@ -32,7 +32,7 @@ const GET_COMPANY_NOTIFICATIONS = gql`
   query GetCompanyNotifications($updatedBeforeThan: PaginatedInput) {
     getCompanyNotifications(updatedBeforeThan: $updatedBeforeThan) {
       results {
-        ... on CompanyNewJobApplicationNotification {
+        ... on NewJobApplicationCompanyNotification {
           __typename
           uuid
           adminEmail
@@ -43,7 +43,7 @@ const GET_COMPANY_NOTIFICATIONS = gql`
             uuid
           }
         }
-        ... on CompanyApprovedOfferNotification {
+        ... on ApprovedOfferCompanyNotification {
           __typename
           uuid
           adminEmail
@@ -94,18 +94,18 @@ describe("getCompanyNotifications", () => {
 
   const getAttributesFrom = (notification: CompanyNotification) => {
     return {
-      [CompanyNewJobApplicationNotification.name]: {
-        __typename: "CompanyNewJobApplicationNotification",
+      [NewJobApplicationCompanyNotification.name]: {
+        __typename: "NewJobApplicationCompanyNotification",
         jobApplication: {
           __typename: GraphQLJobApplication.name,
-          uuid: (notification as CompanyNewJobApplicationNotification).jobApplicationUuid
+          uuid: (notification as NewJobApplicationCompanyNotification).jobApplicationUuid
         }
       },
-      [CompanyApprovedOfferNotification.name]: {
-        __typename: "CompanyApprovedOfferNotification",
+      [ApprovedOfferCompanyNotification.name]: {
+        __typename: "ApprovedOfferCompanyNotification",
         offer: {
           __typename: GraphQLOffer.name,
-          uuid: (notification as CompanyApprovedOfferNotification).offerUuid
+          uuid: (notification as ApprovedOfferCompanyNotification).offerUuid
         }
       }
     }[notification.constructor.name];

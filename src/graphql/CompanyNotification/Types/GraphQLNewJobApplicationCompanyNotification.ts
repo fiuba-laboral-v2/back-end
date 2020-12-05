@@ -2,13 +2,13 @@ import { GraphQLObjectType } from "graphql";
 import { nonNull } from "$graphql/fieldTypes";
 import { GraphQLJobApplication } from "$graphql/JobApplication/Types/GraphQLJobApplication";
 import { GraphQLGenericCompanyNotificationFields } from "./GraphQLGenericCompanyNotificationFields";
-import { CompanyNewJobApplicationNotification } from "$models/CompanyNotification";
+import { NewJobApplicationCompanyNotification } from "$models/CompanyNotification";
 import { JobApplicationRepository } from "$models/JobApplication";
 
-export const GraphQLCompanyNewJobApplicationNotification = new GraphQLObjectType<
-  CompanyNewJobApplicationNotification
+export const GraphQLNewJobApplicationCompanyNotification = new GraphQLObjectType<
+  NewJobApplicationCompanyNotification
 >({
-  name: "CompanyNewJobApplicationNotification",
+  name: "NewJobApplicationCompanyNotification",
   fields: () => ({
     ...GraphQLGenericCompanyNotificationFields,
     jobApplication: {
