@@ -6,6 +6,7 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { isApprovalStatus, isTargetApplicantType } from "$models/SequelizeModelValidators";
 import { omit } from "lodash";
 import moment from "moment";
+import { Secretary } from "$models/Admin";
 
 describe("Offer", () => {
   const offerAttributes = {
@@ -179,6 +180,24 @@ describe("Offer", () => {
 
     expect(offerForGraduates.isExpiredForGraduates()).toBe(true);
     expect(offerForGraduates.isExpiredForStudents()).toBe(false);
+  });
+
+  it("returns the status that the extension admin cares", async () => {
+    const offer = new Offer({
+      ...offerAttributes,
+      extensionApprovalStatus: ApprovalStatus.approved,
+      graduadosApprovalStatus: ApprovalStatus.rejected
+    });
+    expect(offer.getStatus(Secretary.extension)).toEqual(ApprovalStatus.approved);
+  });
+
+  it("returns the status that the extension admin cares", async () => {
+    const offer = new Offer({
+      ...offerAttributes,
+      extensionApprovalStatus: ApprovalStatus.approved,
+      graduadosApprovalStatus: ApprovalStatus.rejected
+    });
+    expect(offer.getStatus(Secretary.graduados)).toEqual(ApprovalStatus.rejected);
   });
 
   it("throws an error if offer does not belong to any company", async () => {

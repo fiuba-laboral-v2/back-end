@@ -38,34 +38,20 @@ import { DateTimeManager } from "$libs/DateTimeManager";
   }
 })
 export class Offer extends Model<Offer> {
-  @Column({
-    allowNull: false,
-    primaryKey: true,
-    type: UUID,
-    defaultValue: UUIDV4
-  })
+  @Column({ allowNull: false, primaryKey: true, type: UUID, defaultValue: UUIDV4 })
   public uuid: string;
 
   @ForeignKey(() => Company)
-  @Column({
-    allowNull: false,
-    type: UUID
-  })
+  @Column({ allowNull: false, type: UUID })
   public companyUuid: string;
 
   @BelongsTo(() => Company)
   public company: Company;
 
-  @Column({
-    allowNull: false,
-    type: TEXT
-  })
+  @Column({ allowNull: false, type: TEXT })
   public title: string;
 
-  @Column({
-    allowNull: false,
-    type: TEXT
-  })
+  @Column({ allowNull: false, type: TEXT })
   public description: string;
 
   @Column({
@@ -92,45 +78,27 @@ export class Offer extends Model<Offer> {
   public targetApplicantType: ApplicantType;
 
   @Is("hoursPerDay", validateIntegerInRange({ min: { value: 0, include: false } }))
-  @Column({
-    allowNull: false,
-    type: INTEGER
-  })
+  @Column({ allowNull: false, type: INTEGER })
   public hoursPerDay: number;
 
-  @Column({
-    allowNull: false,
-    type: BOOLEAN
-  })
+  @Column({ allowNull: false, type: BOOLEAN })
   public isInternship: boolean;
 
   @Is("minimumSalary", validateIntegerInRange({ min: { value: 0, include: false } }))
-  @Column({
-    allowNull: false,
-    type: INTEGER
-  })
+  @Column({ allowNull: false, type: INTEGER })
   public minimumSalary: number;
 
   @Is("maximumSalary", salary => {
     if (!salary) return;
     validateIntegerInRange({ min: { value: 0, include: false } })(salary);
   })
-  @Column({
-    allowNull: true,
-    type: INTEGER
-  })
+  @Column({ allowNull: true, type: INTEGER })
   public maximumSalary?: number;
 
-  @Column({
-    allowNull: true,
-    type: DATE
-  })
+  @Column({ allowNull: true, type: DATE })
   public graduatesExpirationDateTime: Date;
 
-  @Column({
-    allowNull: true,
-    type: DATE
-  })
+  @Column({ allowNull: true, type: DATE })
   public studentsExpirationDateTime: Date;
 
   @HasMany(() => OfferSection)
