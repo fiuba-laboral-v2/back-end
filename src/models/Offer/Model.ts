@@ -19,6 +19,7 @@ import {
   BOOLEAN
 } from "sequelize";
 import { Career, Company, OfferCareer, OfferSection, OfferApprovalEvent } from "$models";
+import { Secretary } from "$models/Admin";
 import { validateIntegerInRange, validateSalaryRange } from "validations-fiuba-laboral-v2";
 import { approvalStatuses, ApprovalStatus } from "$models/ApprovalStatus";
 import { isApprovalStatus, isTargetApplicantType } from "$models/SequelizeModelValidators";
@@ -171,6 +172,11 @@ export class Offer extends Model<Offer> {
     if (!this.graduatesExpirationDateTime) return false;
     return this.graduatesExpirationDateTime < new Date();
   };
+
+  public getStatus(secretary: Secretary) {
+    if (secretary === Secretary.extension) return this.extensionApprovalStatus;
+    return this.graduadosApprovalStatus;
+  }
 
   private isTargetedForStudents = () => {
     return (
