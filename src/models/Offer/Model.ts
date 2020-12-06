@@ -167,8 +167,10 @@ export class Offer extends Model<Offer> {
     return this.graduadosApprovalStatus;
   }
 
-  public updateStatus(secretary: Secretary, newStatus: ApprovalStatus) {
-    if (secretary === Secretary.extension) return this.updateExtensionApprovalStatus(newStatus);
+  public updateStatus(admin: Admin, newStatus: ApprovalStatus) {
+    if (admin.secretary === Secretary.extension) {
+      return this.updateExtensionApprovalStatus(newStatus);
+    }
     this.updateGraduadosApprovalStatus(newStatus);
   }
 

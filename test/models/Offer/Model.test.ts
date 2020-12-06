@@ -193,17 +193,25 @@ describe("Offer", () => {
   });
 
   describe("updateStatus", () => {
+    let extensionAdmin: Admin;
+    let graduadosAdmin: Admin;
+
+    beforeAll(() => {
+      extensionAdmin = new Admin({ userUuid: UUID.generate(), secretary: Secretary.extension });
+      graduadosAdmin = new Admin({ userUuid: UUID.generate(), secretary: Secretary.graduados });
+    });
+
     it("update extension status", async () => {
       const offer = new Offer(offerAttributes);
       expect(offer.extensionApprovalStatus).toEqual(ApprovalStatus.pending);
-      offer.updateStatus(Secretary.extension, ApprovalStatus.approved);
+      offer.updateStatus(extensionAdmin, ApprovalStatus.approved);
       expect(offer.extensionApprovalStatus).toEqual(ApprovalStatus.approved);
     });
 
     it("update graduados status", async () => {
       const offer = new Offer(offerAttributes);
       expect(offer.graduadosApprovalStatus).toEqual(ApprovalStatus.pending);
-      offer.updateStatus(Secretary.graduados, ApprovalStatus.approved);
+      offer.updateStatus(graduadosAdmin, ApprovalStatus.approved);
       expect(offer.graduadosApprovalStatus).toEqual(ApprovalStatus.approved);
     });
   });
