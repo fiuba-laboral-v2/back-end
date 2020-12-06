@@ -1,11 +1,11 @@
 import { ValidationError } from "sequelize";
-
 import { Admin } from "$models";
 import { Secretary } from "$models/Admin";
+import { UUID } from "$models/UUID";
 
 describe("Admin", () => {
   it("creates a valid admin", async () => {
-    const userUuid = "fb047680-e2c0-4127-886b-170d0b474a98";
+    const userUuid = UUID.generate();
     const admin = new Admin({ userUuid, secretary: Secretary.extension });
     await expect(admin.validate()).resolves.not.toThrow();
     expect(admin).toEqual(
@@ -14,6 +14,18 @@ describe("Admin", () => {
         secretary: Secretary.extension
       })
     );
+  });
+
+  it("returns true if the admin is from extension secretary", async () => {
+    const userUuid = UUID.generate();
+    const admin = new Admin({ userUuid, secretary: Secretary.extension });
+    expect(admin.isFromExtensionSecretary()).toBe(true);
+  });
+
+  it("returns true if the admin is from graduados secretary", async () => {
+    const userUuid = UUID.generate();
+    const admin = new Admin({ userUuid, secretary: Secretary.graduados });
+    expect(admin.isFromGraduadosSecretary()).toBe(true);
   });
 
   it("throws an error if no userUuid is provided", async () => {
