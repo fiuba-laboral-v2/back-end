@@ -13,7 +13,6 @@ import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLAppr
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { EmailSenderFactory } from "$models/EmailSenderFactory";
 import { IApolloServerContext } from "$graphql/Context";
-import { Logger } from "$libs/Logger";
 
 export const updateJobApplicationApprovalStatus = {
   type: GraphQLJobApplication,
@@ -53,10 +52,7 @@ export const updateJobApplicationApprovalStatus = {
 
     for (const notification of notifications) {
       const emailSender = EmailSenderFactory.create(notification);
-      emailSender
-        .send(notification)
-        .then(() => Logger.info("email sent"))
-        .catch(error => Logger.error(`Could not send an email: ${error.message}`, error));
+      emailSender.send(notification);
     }
 
     return jobApplication;
