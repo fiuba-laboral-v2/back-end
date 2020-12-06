@@ -48,20 +48,20 @@ export const OfferGenerator = {
   instance: {
     withObligatoryData: (variables: IOfferInput) =>
       OfferRepository.create(OfferGenerator.data.withObligatoryData(variables)),
-    withOneSection: (variables: IOfferInput) =>
-      OfferRepository.create(withOneSection({ index: OfferGenerator.getIndex(), ...variables })),
     updatedWithStatus: async ({
       admin,
       status,
       ...variables
     }: IOfferInput & IUpdatedWithStatus) => {
-      const { uuid } = await OfferRepository.create(
+      const offer = await OfferRepository.create(
         withOneSection({ index: OfferGenerator.getIndex(), ...variables })
       );
       const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
         admin.secretary
       );
-      return OfferRepository.updateApprovalStatus({ uuid, admin, status, offerDurationInDays });
+      offer.updateStatus(admin, status);
+      offer.updateExpirationDate(admin, offerDurationInDays);
+      return OfferRepository.save(offer);
     },
     forStudents: async ({ status, ...variables }: IOfferInput & { status?: ApprovalStatus }) => {
       const admin = await AdminGenerator.extension();
@@ -87,7 +87,7 @@ export const OfferGenerator = {
     }: IOfferInput & { status?: ApprovalStatus }) => {
       const extensionAdmin = await AdminGenerator.extension();
       const graduadosAdmin = await AdminGenerator.graduados();
-      const { uuid } = await OfferGenerator.instance.updatedWithStatus({
+      const offer = await OfferGenerator.instance.updatedWithStatus({
         status: status || ApprovalStatus.approved,
         admin: extensionAdmin,
         targetApplicantType: ApplicantType.both,
@@ -97,12 +97,9 @@ export const OfferGenerator = {
       const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
         graduadosAdmin.secretary
       );
-      return OfferRepository.updateApprovalStatus({
-        uuid,
-        admin: graduadosAdmin,
-        offerDurationInDays,
-        status: status || ApprovalStatus.approved
-      });
+      offer.updateStatus(graduadosAdmin, status || ApprovalStatus.approved);
+      offer.updateExpirationDate(graduadosAdmin, offerDurationInDays);
+      return OfferRepository.save(offer);
     },
     forAllTargets: async (
       variables: IOfferInput & { status?: ApprovalStatus }

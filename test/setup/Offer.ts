@@ -52,12 +52,9 @@ export class OfferTestSetup {
     const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
       this.admins.extension.secretary
     );
-    this.rejectedForBoth = await OfferRepository.updateApprovalStatus({
-      uuid: this.rejectedForBoth.uuid,
-      admin: this.admins.extension,
-      offerDurationInDays,
-      status: ApprovalStatus.rejected
-    });
+    this.rejectedForBoth.updateStatus(this.admins.extension, ApprovalStatus.rejected);
+    this.rejectedForBoth.updateExpirationDate(this.admins.extension, offerDurationInDays);
+    this.rejectedForBoth = await OfferRepository.save(this.rejectedForBoth);
 
     this.approvedForStudents = await OfferGenerator.instance.updatedWithStatus({
       admin: this.admins.extension,
@@ -80,12 +77,9 @@ export class OfferTestSetup {
       targetApplicantType: ApplicantType.both
     });
 
-    this.approvedForBoth = await OfferRepository.updateApprovalStatus({
-      uuid: this.approvedForBoth.uuid,
-      admin: this.admins.extension,
-      offerDurationInDays,
-      status: ApprovalStatus.approved
-    });
+    this.approvedForBoth.updateStatus(this.admins.extension, ApprovalStatus.approved);
+    this.approvedForBoth.updateExpirationDate(this.admins.extension, offerDurationInDays);
+    this.approvedForBoth = await OfferRepository.save(this.approvedForBoth);
 
     this.pendingForStudents = await OfferGenerator.instance.updatedWithStatus({
       admin: this.admins.extension,
@@ -108,12 +102,9 @@ export class OfferTestSetup {
       targetApplicantType: ApplicantType.both
     });
 
-    this.pendingForBoth = await OfferRepository.updateApprovalStatus({
-      uuid: this.pendingForBoth.uuid,
-      admin: this.admins.extension,
-      offerDurationInDays,
-      status: ApprovalStatus.pending
-    });
+    this.pendingForBoth.updateStatus(this.admins.graduados, ApprovalStatus.pending);
+    this.pendingForBoth.updateExpirationDate(this.admins.graduados, offerDurationInDays);
+    this.pendingForBoth = await OfferRepository.save(this.pendingForBoth);
 
     this.tasks = [
       this.approvedForStudents,

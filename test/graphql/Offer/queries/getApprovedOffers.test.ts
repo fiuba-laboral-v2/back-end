@@ -1,25 +1,28 @@
 import { gql } from "apollo-server";
 import { ApolloServerTestClient } from "apollo-server-testing";
 import { CareerRepository } from "$models/Career";
+import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
 import { OfferRepository } from "$models/Offer";
 import { ApplicantType } from "$models/Applicant";
 import { Secretary } from "$models/Admin";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Career, Offer } from "$models";
 import { IApplicantCareer } from "$models/Applicant/ApplicantCareer";
+import { IOfferCareer } from "$models/Offer/OfferCareer";
+import { UnauthorizedError } from "$graphql/Errors";
+
 import { CareerGenerator } from "$generators/Career";
 import { CompanyGenerator } from "$generators/Company";
 import { OfferGenerator } from "$generators/Offer";
 import { TestClientGenerator } from "$generators/TestClient";
-import { UnauthorizedError } from "$graphql/Errors";
-import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AdminGenerator } from "$generators/Admin";
+import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
+
 import { range } from "lodash";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
-import { IOfferCareer } from "$models/Offer/OfferCareer";
 import moment from "moment";
-import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
 
 const GET_APPROVED_OFFERS = gql`
   query($updatedBeforeThan: PaginatedInput, $careerCodes: [ID!]) {
@@ -73,7 +76,9 @@ describe("getApprovedOffers", () => {
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await UserRepository.truncate();
+    await SecretarySettingsRepository.truncate();
 
+    await SecretarySettingsGenerator.createDefaultSettings();
     firstCareer = await CareerGenerator.instance();
     secondCareer = await CareerGenerator.instance();
 
@@ -108,12 +113,15 @@ describe("getApprovedOffers", () => {
     const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
       adminExtension.secretary
     );
-    offerForBothAndApprovedByGraduadosAndExtension = await OfferRepository.updateApprovalStatus({
-      uuid: offerForBothAndApprovedByGraduadosAndExtension.uuid,
-      status: ApprovalStatus.approved,
-      offerDurationInDays,
-      admin: adminExtension
-    });
+    offerForBothAndApprovedByGraduadosAndExtension.updateStatus(
+      adminExtension,
+      ApprovalStatus.approved
+    );
+    offerForBothAndApprovedByGraduadosAndExtension.updateExpirationDate(
+      adminExtension,
+      offerDurationInDays
+    );
+    await OfferRepository.save(offerForBothAndApprovedByGraduadosAndExtension);
     await createOfferWith(ApprovalStatus.rejected, Secretary.graduados, ApplicantType.both);
     const { uuid } = await createOfferWith(
       ApprovalStatus.rejected,
