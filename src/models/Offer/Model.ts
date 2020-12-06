@@ -9,22 +9,22 @@ import {
   Table
 } from "sequelize-typescript";
 import {
+  BOOLEAN,
+  DATE,
+  ENUM,
   HasManyGetAssociationsMixin,
   HasOneGetAssociationMixin,
   INTEGER,
   TEXT,
   UUID,
-  UUIDV4,
-  ENUM,
-  BOOLEAN
+  UUIDV4
 } from "sequelize";
-import { Career, Company, OfferCareer, OfferSection, OfferApprovalEvent } from "$models";
+import { Admin, Career, Company, OfferApprovalEvent, OfferCareer, OfferSection } from "$models";
 import { Secretary } from "$models/Admin";
 import { validateIntegerInRange, validateSalaryRange } from "validations-fiuba-laboral-v2";
-import { approvalStatuses, ApprovalStatus } from "$models/ApprovalStatus";
+import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
 import { isApprovalStatus, isTargetApplicantType } from "$models/SequelizeModelValidators";
 import { ApplicantType, targetApplicantTypeEnumValues } from "$models/Applicant";
-import { DATE } from "sequelize";
 import { isNil } from "lodash";
 import { DateTimeManager } from "$libs/DateTimeManager";
 
@@ -129,6 +129,27 @@ export class Offer extends Model<Offer> {
   public expire() {
     if (this.isTargetedForGraduates()) this.expireForGraduates();
     if (this.isTargetedForStudents()) this.expireForStudents();
+  }
+
+  public updateExpirationDate(admin: Admin, offerDurationInDays: number) {
+    const isExtension = secretary => secretary === Secretary.extension;
+    const isApproved = chooseStatus => chooseStatus === ApprovalStatus.approved;
+    const isRejected = chooseStatus => chooseStatus === ApprovalStatus.rejected;
+    const status = this.getStatus(admin.secretary);
+    const expirationDate = DateTimeManager.daysToDate(offerDurationInDays);
+    const yesterday = DateTimeManager.yesterday();
+    if (!isExtension(admin.secretary) && isApproved(status)) {
+      this.graduatesExpirationDateTime = expirationDate.toDate();
+    }
+    if (!isExtension(admin.secretary) && isRejected(status)) {
+      this.graduatesExpirationDateTime = yesterday;
+    }
+    if (isExtension(admin.secretary) && isApproved(status)) {
+      this.studentsExpirationDateTime = expirationDate.toDate();
+    }
+    if (isExtension(admin.secretary) && isRejected(status)) {
+      this.studentsExpirationDateTime = yesterday;
+    }
   }
 
   public isExpiredForStudents = () => {
