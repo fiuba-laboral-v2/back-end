@@ -1,2 +1,1 @@
-export * from "./NewJobApplicationCompanyNotificationEmailSender";
-export * from "./ApprovedOfferCompanyNotificationEmailSender";
+export * from "./CompanyNotificationEmailSender";
