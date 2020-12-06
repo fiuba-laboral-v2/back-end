@@ -133,22 +133,23 @@ export class Offer extends Model<Offer> {
 
   public updateExpirationDate(admin: Admin, offerDurationInDays: number) {
     const isExtension = secretary => secretary === Secretary.extension;
+    const isGraduados = secretary => secretary === Secretary.graduados;
     const isApproved = chooseStatus => chooseStatus === ApprovalStatus.approved;
-    const isRejected = chooseStatus => chooseStatus === ApprovalStatus.rejected;
     const status = this.getStatus(admin.secretary);
     const expirationDate = DateTimeManager.daysToDate(offerDurationInDays);
-    const yesterday = DateTimeManager.yesterday();
-    if (!isExtension(admin.secretary) && isApproved(status)) {
-      this.graduatesExpirationDateTime = expirationDate.toDate();
+    if (isGraduados(admin.secretary)) {
+      if (isApproved(status)) {
+        this.graduatesExpirationDateTime = expirationDate.toDate();
+      } else {
+        this.graduatesExpirationDateTime = null as any;
+      }
     }
-    if (!isExtension(admin.secretary) && isRejected(status)) {
-      this.graduatesExpirationDateTime = yesterday;
-    }
-    if (isExtension(admin.secretary) && isApproved(status)) {
-      this.studentsExpirationDateTime = expirationDate.toDate();
-    }
-    if (isExtension(admin.secretary) && isRejected(status)) {
-      this.studentsExpirationDateTime = yesterday;
+    if (isExtension(admin.secretary)) {
+      if (isApproved(status)) {
+        this.studentsExpirationDateTime = expirationDate.toDate();
+      } else {
+        this.studentsExpirationDateTime = null as any;
+      }
     }
   }
 

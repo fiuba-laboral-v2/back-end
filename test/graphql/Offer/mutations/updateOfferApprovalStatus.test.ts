@@ -84,7 +84,7 @@ describe("updateOfferApprovalStatus", () => {
 
     const expirationDate = {
       [ApprovalStatus.approved]: DateTimeManager.daysToDate(offerDurationInDays).toISOString(),
-      [ApprovalStatus.rejected]: DateTimeManager.yesterday().toISOString(),
+      [ApprovalStatus.rejected]: null,
       [ApprovalStatus.pending]: null
     }[newStatus];
 

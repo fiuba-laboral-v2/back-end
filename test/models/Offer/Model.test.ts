@@ -5,7 +5,6 @@ import { ApplicantType } from "$models/Applicant";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { isApprovalStatus, isTargetApplicantType } from "$models/SequelizeModelValidators";
 import { omit } from "lodash";
-import moment from "moment";
 import { Secretary } from "$models/Admin";
 import { UUID } from "$models/UUID";
 import { OfferGenerator } from "$generators/Offer";
@@ -20,8 +19,8 @@ describe("Offer", () => {
     hoursPerDay: 8,
     minimumSalary: 52500,
     maximumSalary: 70000,
-    graduatesExpirationDateTime: moment().endOf("day").add(7, "days"),
-    studentsExpirationDateTime: moment().endOf("day").add(7, "days"),
+    graduatesExpirationDateTime: DateTimeManager.daysToDate(7),
+    studentsExpirationDateTime: DateTimeManager.daysToDate(7),
     targetApplicantType: ApplicantType.both
   };
 
@@ -229,8 +228,7 @@ describe("Offer", () => {
     };
 
     const offerDurationInDays = 15;
-    const expirationDate = moment().endOf("day").add(offerDurationInDays, "days");
-    const yesterday = DateTimeManager.yesterday();
+    const expirationDate = DateTimeManager.daysToDate(offerDurationInDays);
 
     let extensionAdmin: Admin;
     let graduadosAdmin: Admin;
@@ -257,7 +255,6 @@ describe("Offer", () => {
     });
 
     beforeEach(() => {
-      jest.spyOn(DateTimeManager, "yesterday").mockImplementation(() => yesterday);
       jest.spyOn(DateTimeManager, "daysToDate").mockImplementation(() => expirationDate);
     });
 
@@ -269,13 +266,12 @@ describe("Offer", () => {
 
     it("updates expiration date for a rejected offer for graduados", async () => {
       rejectedOfferForGraduados.updateExpirationDate(graduadosAdmin, offerDurationInDays);
-      const expirationDateTime = rejectedOfferForGraduados.graduatesExpirationDateTime.toISOString();
-      expect(expirationDateTime).toEqual(yesterday.toISOString());
+      expect(rejectedOfferForGraduados.graduatesExpirationDateTime).toBeNull();
     });
 
     it("updates expiration date for a pending offer for graduados", async () => {
       pendingOfferForGraduados.updateExpirationDate(graduadosAdmin, offerDurationInDays);
-      expect(pendingOfferForGraduados.graduatesExpirationDateTime).toBeUndefined();
+      expect(pendingOfferForGraduados.graduatesExpirationDateTime).toBeNull();
     });
 
     it("updates expiration date for an approved offer for extension", async () => {
@@ -286,13 +282,12 @@ describe("Offer", () => {
 
     it("updates expiration date for a rejected offer for extension", async () => {
       rejectedOfferForExtension.updateExpirationDate(extensionAdmin, offerDurationInDays);
-      const expirationDateTime = rejectedOfferForExtension.studentsExpirationDateTime.toISOString();
-      expect(expirationDateTime).toEqual(yesterday.toISOString());
+      expect(rejectedOfferForExtension.studentsExpirationDateTime).toBeNull();
     });
 
     it("updates expiration date for a pending offer for extension", async () => {
       pendingOfferForExtension.updateExpirationDate(extensionAdmin, offerDurationInDays);
-      expect(pendingOfferForExtension.studentsExpirationDateTime).toBeUndefined();
+      expect(pendingOfferForExtension.studentsExpirationDateTime).toBeNull();
     });
   });
 
