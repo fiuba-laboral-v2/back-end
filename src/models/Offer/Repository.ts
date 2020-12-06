@@ -138,14 +138,5 @@ export const OfferRepository = {
       })
     });
   },
-  expire: async ({ uuid, secretary }: { uuid: string; secretary?: Secretary }) => {
-    const offer = await Offer.findByPk(uuid);
-    if (!offer) throw new OfferNotFoundError(uuid);
-
-    if (secretary === Secretary.extension || !secretary) offer.expireForStudents();
-    if (secretary === Secretary.graduados || !secretary) offer.expireForGraduates();
-
-    return offer.save();
-  },
   truncate: () => Offer.truncate({ cascade: true })
 };
