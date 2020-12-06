@@ -7,7 +7,6 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Applicant";
 import { OfferRepository } from "$models/Offer";
 import { Secretary } from "$models/Admin";
-import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
 
 export class OfferTestSetup {
   public approvedForStudents: Offer;
@@ -49,15 +48,9 @@ export class OfferTestSetup {
       status: ApprovalStatus.rejected,
       targetApplicantType: ApplicantType.both
     });
-    const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
-      this.admins.extension.secretary
-    );
-    this.rejectedForBoth = await OfferRepository.updateApprovalStatus({
-      uuid: this.rejectedForBoth.uuid,
-      admin: this.admins.extension,
-      offerDurationInDays,
-      status: ApprovalStatus.rejected
-    });
+
+    this.rejectedForBoth.updateStatus(this.admins.extension, ApprovalStatus.rejected);
+    this.rejectedForBoth = await OfferRepository.save(this.rejectedForBoth);
 
     this.approvedForStudents = await OfferGenerator.instance.updatedWithStatus({
       admin: this.admins.extension,
@@ -80,12 +73,8 @@ export class OfferTestSetup {
       targetApplicantType: ApplicantType.both
     });
 
-    this.approvedForBoth = await OfferRepository.updateApprovalStatus({
-      uuid: this.approvedForBoth.uuid,
-      admin: this.admins.extension,
-      offerDurationInDays,
-      status: ApprovalStatus.approved
-    });
+    this.approvedForBoth.updateStatus(this.admins.extension, ApprovalStatus.approved);
+    await OfferRepository.save(this.approvedForBoth);
 
     this.pendingForStudents = await OfferGenerator.instance.updatedWithStatus({
       admin: this.admins.extension,
@@ -108,12 +97,8 @@ export class OfferTestSetup {
       targetApplicantType: ApplicantType.both
     });
 
-    this.pendingForBoth = await OfferRepository.updateApprovalStatus({
-      uuid: this.pendingForBoth.uuid,
-      admin: this.admins.extension,
-      offerDurationInDays,
-      status: ApprovalStatus.pending
-    });
+    this.pendingForBoth.updateStatus(this.admins.graduados, ApprovalStatus.pending);
+    this.pendingForBoth = await OfferRepository.save(this.pendingForBoth);
 
     this.tasks = [
       this.approvedForStudents,

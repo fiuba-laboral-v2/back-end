@@ -43,4 +43,12 @@ export class Admin extends Model<Admin> {
   public user: User;
 
   public getUser: HasOneGetAssociationMixin<User>;
+
+  public isFromExtensionSecretary() {
+    return this.secretary === Secretary.extension;
+  }
+
+  public isFromGraduadosSecretary() {
+    return this.secretary === Secretary.graduados;
+  }
 }

@@ -5,10 +5,8 @@ import { ApplicantType } from "$models/Applicant";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { OfferApprovalEventRepository } from "$models/Offer/OfferApprovalEvent";
-import { OfferNotFoundError, OfferNotUpdatedError } from "$models/Offer/Errors";
+import { OfferNotFoundError } from "$models/Offer/Errors";
 import { Admin, Career, Company, Offer, OfferCareer, OfferSection } from "$models";
-import { isApprovalStatus } from "$models/SequelizeModelValidators";
 
 import { CompanyGenerator } from "$generators/Company";
 import { OfferGenerator } from "$generators/Offer";
@@ -19,7 +17,6 @@ import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import MockDate from "mockdate";
 import moment from "moment";
 
-import { Secretary } from "$src/models/Admin";
 import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
 import { SecretarySettingsGenerator } from "$test/generators/SecretarySettings";
 
@@ -324,24 +321,9 @@ describe("OfferRepository", () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const attributes = OfferGenerator.data.withObligatoryData({ companyUuid });
       const offer = await OfferRepository.create(attributes);
-      const {
-        offerDurationInDays: extensionOfferDurationInDays
-      } = await SecretarySettingsRepository.findBySecretary(graduadosAdmin.secretary);
-      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
-        graduadosAdmin.secretary
-      );
-      await OfferRepository.updateApprovalStatus({
-        uuid: offer.uuid,
-        admin: extensionAdmin,
-        offerDurationInDays: extensionOfferDurationInDays,
-        status: ApprovalStatus.approved
-      });
-      await OfferRepository.updateApprovalStatus({
-        uuid: offer.uuid,
-        admin: graduadosAdmin,
-        offerDurationInDays,
-        status: ApprovalStatus.approved
-      });
+      offer.updateStatus(extensionAdmin, ApprovalStatus.approved);
+      offer.updateStatus(graduadosAdmin, ApprovalStatus.approved);
+      await OfferRepository.save(offer);
       offer.set({
         extensionApprovalStatus: ApprovalStatus.pending,
         graduadosApprovalStatus: ApprovalStatus.pending
@@ -357,334 +339,6 @@ describe("OfferRepository", () => {
       ).rejects.toThrowErrorWithMessage(
         ValidationError,
         "notNull Violation: Offer.companyUuid cannot be null"
-      );
-    });
-  });
-
-  describe("UpdateApprovalStatus", () => {
-    const expectExpirationDateToBeSet = (
-      offerBeforeUpdate,
-      offerAfterUpdate,
-      offerDurationInDays,
-      expirationAttribute
-    ) => {
-      const expirationDate = moment().endOf("day").add(offerDurationInDays, "days");
-
-      expect(offerBeforeUpdate[expirationAttribute]).toBeNull();
-      expect(expirationDate.toISOString()).toEqual(
-        offerAfterUpdate[expirationAttribute].toISOString()
-      );
-    };
-
-    const expectExpirationDateToBeNull = (
-      offerBeforeUpdate,
-      offerAfterUpdate,
-      expirationAttribute
-    ) => {
-      expect(offerBeforeUpdate[expirationAttribute]).toBeNull();
-      expect(offerAfterUpdate[expirationAttribute]).toBeNull();
-    };
-
-    it("graduados admin approves offer for graduates", async () => {
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const offerBeforeUpdate = await OfferGenerator.instance.forGraduates({
-        status: ApprovalStatus.pending,
-        companyUuid
-      });
-      const newStatus = ApprovalStatus.approved;
-      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
-        graduadosAdmin.secretary
-      );
-      await OfferRepository.updateApprovalStatus({
-        uuid: offerBeforeUpdate.uuid,
-        admin: graduadosAdmin,
-        offerDurationInDays,
-        status: newStatus
-      });
-      const offerAfterUpdate = await OfferRepository.findByUuid(offerBeforeUpdate.uuid);
-
-      expect(offerAfterUpdate.graduadosApprovalStatus).toEqual(newStatus);
-      expectExpirationDateToBeSet(
-        offerBeforeUpdate,
-        offerAfterUpdate,
-        offerDurationInDays,
-        "graduatesExpirationDateTime"
-      );
-      expectExpirationDateToBeNull(
-        offerBeforeUpdate,
-        offerAfterUpdate,
-        "studentsExpirationDateTime"
-      );
-    });
-
-    it("graduados admin approves offer for graduates and students", async () => {
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const offerBeforeUpdate = await OfferGenerator.instance.forStudentsAndGraduates({
-        status: ApprovalStatus.pending,
-        companyUuid
-      });
-      const newStatus = ApprovalStatus.approved;
-      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
-        graduadosAdmin.secretary
-      );
-      await OfferRepository.updateApprovalStatus({
-        uuid: offerBeforeUpdate.uuid,
-        admin: graduadosAdmin,
-        offerDurationInDays,
-        status: newStatus
-      });
-      const offerAfterUpdate = await OfferRepository.findByUuid(offerBeforeUpdate.uuid);
-
-      expect(offerAfterUpdate.graduadosApprovalStatus).toEqual(newStatus);
-      expectExpirationDateToBeSet(
-        offerBeforeUpdate,
-        offerAfterUpdate,
-        offerDurationInDays,
-        "graduatesExpirationDateTime"
-      );
-      expectExpirationDateToBeNull(
-        offerBeforeUpdate,
-        offerAfterUpdate,
-        "studentsExpirationDateTime"
-      );
-    });
-
-    it("extension admin approves offer for students", async () => {
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const offerBeforeUpdate = await OfferGenerator.instance.forStudents({
-        status: ApprovalStatus.pending,
-        companyUuid
-      });
-      const newStatus = ApprovalStatus.approved;
-      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
-        extensionAdmin.secretary
-      );
-      await OfferRepository.updateApprovalStatus({
-        uuid: offerBeforeUpdate.uuid,
-        admin: extensionAdmin,
-        offerDurationInDays,
-        status: newStatus
-      });
-      const offerAfterUpdate = await OfferRepository.findByUuid(offerBeforeUpdate.uuid);
-
-      expect(offerAfterUpdate.extensionApprovalStatus).toEqual(newStatus);
-      expectExpirationDateToBeSet(
-        offerBeforeUpdate,
-        offerAfterUpdate,
-        offerDurationInDays,
-        "studentsExpirationDateTime"
-      );
-      expectExpirationDateToBeNull(
-        offerBeforeUpdate,
-        offerAfterUpdate,
-        "graduatesExpirationDateTime"
-      );
-    });
-
-    it("extension admin approves offer for students and graduates", async () => {
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const offerBeforeUpdate = await OfferGenerator.instance.forStudentsAndGraduates({
-        status: ApprovalStatus.pending,
-        companyUuid
-      });
-      const newStatus = ApprovalStatus.approved;
-      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
-        extensionAdmin.secretary
-      );
-      await OfferRepository.updateApprovalStatus({
-        uuid: offerBeforeUpdate.uuid,
-        admin: extensionAdmin,
-        offerDurationInDays,
-        status: newStatus
-      });
-      const offerAfterUpdate = await OfferRepository.findByUuid(offerBeforeUpdate.uuid);
-      expect(offerAfterUpdate.extensionApprovalStatus).toEqual(newStatus);
-      expectExpirationDateToBeSet(
-        offerBeforeUpdate,
-        offerAfterUpdate,
-        offerDurationInDays,
-        "studentsExpirationDateTime"
-      );
-      expectExpirationDateToBeNull(
-        offerBeforeUpdate,
-        offerAfterUpdate,
-        "graduatesExpirationDateTime"
-      );
-    });
-
-    it("creates an entry on OfferApprovalEvents table", async () => {
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { uuid } = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
-      const newStatus = ApprovalStatus.approved;
-      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
-        extensionAdmin.secretary
-      );
-      const params = {
-        uuid,
-        admin: extensionAdmin,
-        offerDurationInDays,
-        status: newStatus
-      };
-      await OfferRepository.updateApprovalStatus(params);
-      const offerApprovalEvents = await OfferApprovalEventRepository.findAll();
-
-      expect(offerApprovalEvents[offerApprovalEvents.length - 1].offerUuid).toEqual(uuid);
-    });
-
-    it("throws an error if the offer does not exist", async () => {
-      const unknownOfferUuid = "1dd69a27-0f6c-4859-be9e-4de5adf22826";
-      const newStatus = ApprovalStatus.approved;
-      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
-        graduadosAdmin.secretary
-      );
-      const params = {
-        uuid: unknownOfferUuid,
-        admin: graduadosAdmin,
-        offerDurationInDays,
-        status: newStatus
-      };
-
-      await expect(OfferRepository.updateApprovalStatus(params)).rejects.toThrow(
-        OfferNotUpdatedError
-      );
-    });
-
-    it("throws an error if the status is not a valid ApprovalStatus value", async () => {
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { uuid } = await OfferGenerator.instance.forStudents({ companyUuid });
-      const newStatus = "pepito" as ApprovalStatus;
-      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
-        extensionAdmin.secretary
-      );
-      const params = {
-        uuid,
-        admin: extensionAdmin,
-        offerDurationInDays,
-        status: newStatus
-      };
-
-      await expect(OfferRepository.updateApprovalStatus(params)).rejects.toThrowErrorWithMessage(
-        ValidationError,
-        isApprovalStatus.validate.isIn.msg
-      );
-    });
-  });
-
-  describe("Expire", () => {
-    it("graduados admin expires an offer for graduates", async () => {
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { uuid } = await OfferGenerator.instance.forGraduates({
-        status: ApprovalStatus.approved,
-        companyUuid
-      });
-      const offerAfterUpdate = await OfferRepository.expire({
-        uuid,
-        secretary: Secretary.graduados
-      });
-
-      expect(offerAfterUpdate.isExpiredForGraduates()).toBeTruthy();
-    });
-
-    it("graduados admin expires an offer for graduates and students", async () => {
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { uuid } = await OfferGenerator.instance.forStudentsAndGraduates({
-        status: ApprovalStatus.approved,
-        companyUuid
-      });
-
-      const offerAfterUpdate = await OfferRepository.expire({
-        uuid,
-        secretary: Secretary.graduados
-      });
-
-      expect(offerAfterUpdate.isExpiredForGraduates()).toBeTruthy();
-      expect(offerAfterUpdate.isExpiredForStudents()).toBeFalsy();
-    });
-
-    it("extension admin expires an offer for students", async () => {
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { uuid } = await OfferGenerator.instance.forStudents({
-        status: ApprovalStatus.approved,
-        companyUuid
-      });
-      const offerAfterUpdate = await OfferRepository.expire({
-        uuid,
-        secretary: Secretary.extension
-      });
-
-      expect(offerAfterUpdate.isExpiredForStudents()).toBeTruthy();
-    });
-
-    it("extension admin expires an offer for students and graduates", async () => {
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { uuid } = await OfferGenerator.instance.forStudentsAndGraduates({
-        status: ApprovalStatus.approved,
-        companyUuid
-      });
-
-      const offerAfterUpdate = await OfferRepository.expire({
-        uuid,
-        secretary: Secretary.extension
-      });
-
-      expect(offerAfterUpdate.isExpiredForGraduates()).toBeFalsy();
-      expect(offerAfterUpdate.isExpiredForStudents()).toBeTruthy();
-    });
-
-    it("creates an entry on OfferApprovalEvents table", async () => {
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { uuid } = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
-      const newStatus = ApprovalStatus.approved;
-      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
-        extensionAdmin.secretary
-      );
-      const params = {
-        uuid,
-        admin: extensionAdmin,
-        offerDurationInDays,
-        status: newStatus
-      };
-      await OfferRepository.updateApprovalStatus(params);
-      const offerApprovalEvents = await OfferApprovalEventRepository.findAll();
-
-      expect(offerApprovalEvents[offerApprovalEvents.length - 1].offerUuid).toEqual(uuid);
-    });
-
-    it("throws an error if the offer does not exist", async () => {
-      const unknownOfferUuid = "1dd69a27-0f6c-4859-be9e-4de5adf22826";
-      const newStatus = ApprovalStatus.approved;
-      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
-        graduadosAdmin.secretary
-      );
-      const params = {
-        uuid: unknownOfferUuid,
-        admin: graduadosAdmin,
-        offerDurationInDays,
-        status: newStatus
-      };
-
-      await expect(OfferRepository.updateApprovalStatus(params)).rejects.toThrow(
-        OfferNotUpdatedError
-      );
-    });
-
-    it("throws an error if the status is not a valid ApprovalStatus value", async () => {
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { uuid } = await OfferGenerator.instance.forStudents({ companyUuid });
-      const newStatus = "pepito" as ApprovalStatus;
-      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
-        extensionAdmin.secretary
-      );
-      const params = {
-        uuid,
-        admin: extensionAdmin,
-        offerDurationInDays,
-        status: newStatus
-      };
-
-      await expect(OfferRepository.updateApprovalStatus(params)).rejects.toThrowErrorWithMessage(
-        ValidationError,
-        isApprovalStatus.validate.isIn.msg
       );
     });
   });
@@ -947,17 +601,18 @@ describe("OfferRepository", () => {
 
     it("won't return expired offers", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { uuid } = await OfferGenerator.instance.forGraduates({
+      const offerForGraduates = await OfferGenerator.instance.forGraduates({
         status: ApprovalStatus.approved,
         companyUuid
       });
 
-      const updatedOffer = await OfferRepository.expire({ uuid, secretary: Secretary.graduados });
+      offerForGraduates.expire();
+      await OfferRepository.save(offerForGraduates);
 
       const itemsPerPage = 5;
       mockItemsPerPage(itemsPerPage);
       const result = await OfferRepository.findAll({ applicantType: ApplicantType.graduate });
-      expect(result.results.map(offer => offer.uuid).includes(updatedOffer.uuid)).toBe(false);
+      expect(result.results.map(offer => offer.uuid).includes(offerForGraduates.uuid)).toBe(false);
     });
 
     describe("when there are offers with equal updatedAt", () => {
