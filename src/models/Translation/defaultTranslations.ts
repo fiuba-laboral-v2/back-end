@@ -348,7 +348,9 @@ export const defaultTranslations = {
   },
   adminActions: {
     approve: "Aprobar",
-    reject: "Rechazar"
+    reject: "Rechazar",
+    confirmDialogDescription: "Se va a notificar por email a quien(es) corresponda.",
+    confirmDialogCancel: "Seguir revisando"
   },
   adminApplicantListHeader: {
     names: "Nombre y Apellido",
