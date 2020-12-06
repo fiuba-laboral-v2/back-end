@@ -12,7 +12,7 @@ import { ICreateOffer } from "$models/Offer/Interface";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
 import { PaginationQuery } from "$models/PaginationQuery";
-import { Offer, OfferCareer } from "$models";
+import { Offer, OfferApprovalEvent, OfferCareer } from "$models";
 
 import { OfferNotFoundError, OfferNotUpdatedError } from "./Errors";
 import moment from "moment";
@@ -74,12 +74,12 @@ export const OfferRepository = {
       });
       if (!updatedOffer) throw new OfferNotUpdatedError(uuid);
 
-      await OfferApprovalEventRepository.create({
+      const event = new OfferApprovalEvent({
         adminUserUuid: admin.userUuid,
-        offer: updatedOffer,
-        status: status,
-        transaction
+        offerUuid: updatedOffer.uuid,
+        status
       });
+      await OfferApprovalEventRepository.save(event, transaction);
       return updatedOffer;
     }),
   findByUuid: async (uuid: string) => {

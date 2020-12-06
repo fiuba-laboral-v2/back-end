@@ -1,95 +1,82 @@
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { OfferApprovalEventRepository } from "$models/Offer/OfferApprovalEvent";
+import { OfferApprovalEvent, OfferApprovalEventRepository } from "$models/Offer/OfferApprovalEvent";
+import { OfferApprovalEventNotFoundError } from "$models/Offer/OfferApprovalEvent/Errors";
 import { ForeignKeyConstraintError } from "sequelize";
 import { CompanyGenerator } from "$generators/Company";
 import { AdminGenerator } from "$generators/Admin";
 import { OfferRepository } from "$models/Offer";
 import { OfferGenerator } from "$test/generators/Offer";
+import { UUID } from "$models/UUID";
+import { Offer } from "$models";
 
 describe("OfferApprovalEventRepository", () => {
+  let offer: Offer;
+
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await OfferRepository.truncate();
+
+    const company = await CompanyGenerator.instance.withCompleteData();
+    offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
   });
 
-  describe("create", () => {
-    const expectValidCreationWithStatus = async (status: ApprovalStatus) => {
-      const company = await CompanyGenerator.instance.withCompleteData();
-      const admin = await AdminGenerator.extension();
-      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
-      const adminUserUuid = admin.userUuid;
-      const event = await OfferApprovalEventRepository.create({
-        adminUserUuid,
-        offer,
-        status
-      });
-      expect(event.adminUserUuid).toEqual(admin.userUuid);
-      expect(event.offerUuid).toEqual(offer.uuid);
-      expect(event.status).toEqual(status);
-    };
-
-    it("creates a valid OfferApprovalEvent with approved status", async () => {
-      await expectValidCreationWithStatus(ApprovalStatus.approved);
+  const expectValidCreationWithStatus = async (status: ApprovalStatus) => {
+    const admin = await AdminGenerator.extension();
+    const adminUserUuid = admin.userUuid;
+    const offerUuid = offer.uuid;
+    const event = new OfferApprovalEvent({ adminUserUuid, offerUuid, status });
+    await OfferApprovalEventRepository.save(event);
+    const persistedEvent = await OfferApprovalEventRepository.findByUuid(event.uuid);
+    expect(persistedEvent).toBeObjectContaining({
+      uuid: event.uuid,
+      adminUserUuid,
+      offerUuid,
+      status
     });
+  };
 
-    it("creates a valid OfferApprovalEvent with rejected status", async () => {
-      await expectValidCreationWithStatus(ApprovalStatus.rejected);
-    });
+  it("saves a valid OfferApprovalEvent with approved status", async () => {
+    await expectValidCreationWithStatus(ApprovalStatus.approved);
+  });
 
-    it("creates a valid OfferApprovalEvent with pending status", async () => {
-      await expectValidCreationWithStatus(ApprovalStatus.pending);
-    });
+  it("saves a valid OfferApprovalEvent with rejected status", async () => {
+    await expectValidCreationWithStatus(ApprovalStatus.rejected);
+  });
 
-    it("throws an error if adminUserUuid does not belong to an admin", async () => {
-      const company = await CompanyGenerator.instance.withCompleteData();
-      const notAnAdminUserUuid = "b11a1432-1a79-4bce-aa2b-9dd0cb6aa648";
+  it("saves a valid OfferApprovalEvent with pending status", async () => {
+    await expectValidCreationWithStatus(ApprovalStatus.pending);
+  });
 
-      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
-      const status = ApprovalStatus.approved;
-      await expect(
-        OfferApprovalEventRepository.create({
-          adminUserUuid: notAnAdminUserUuid,
-          offer,
-          status
-        })
-      ).rejects.toThrowErrorWithMessage(
-        ForeignKeyConstraintError,
-        'insert or update on table "OfferApprovalEvents" violates ' +
-          'foreign key constraint "OfferApprovalEvents_adminUserUuid_fkey"'
-      );
-    });
+  it("throws an error if adminUserUuid does not belong to an admin", async () => {
+    const status = ApprovalStatus.approved;
+    const adminUserUuid = UUID.generate();
+    const offerUuid = offer.uuid;
+    const event = new OfferApprovalEvent({ adminUserUuid, offerUuid, status });
+    await expect(OfferApprovalEventRepository.save(event)).rejects.toThrowErrorWithMessage(
+      ForeignKeyConstraintError,
+      'insert or update on table "OfferApprovalEvents" violates ' +
+        'foreign key constraint "OfferApprovalEvents_adminUserUuid_fkey"'
+    );
+  });
 
-    it("gets offer and admin by association", async () => {
-      const company = await CompanyGenerator.instance.withCompleteData();
-      const admin = await AdminGenerator.extension();
-      const status = ApprovalStatus.approved;
-      const adminUserUuid = admin.userUuid;
-      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
-      const event = await OfferApprovalEventRepository.create({
-        adminUserUuid,
-        offer,
-        status
-      });
-
-      expect((await event.getOffer()).toJSON()).toEqual(offer.toJSON());
-      expect((await event.getAdmin()).toJSON()).toEqual(admin.toJSON());
-    });
+  it("throws an error if the given uuid does no belong to  persisted event", async () => {
+    const uuid = UUID.generate();
+    await expect(OfferApprovalEventRepository.findByUuid(uuid)).rejects.toThrowErrorWithMessage(
+      OfferApprovalEventNotFoundError,
+      OfferApprovalEventNotFoundError.buildMessage(uuid)
+    );
   });
 
   describe("Delete cascade", () => {
     const createOfferApprovalEvent = async () => {
-      const company = await CompanyGenerator.instance.withCompleteData();
       const { userUuid: adminUserUuid } = await AdminGenerator.extension();
       const status = ApprovalStatus.approved;
-      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
-      return OfferApprovalEventRepository.create({
-        adminUserUuid,
-        offer,
-        status
-      });
+      const offerUuid = offer.uuid;
+      const event = new OfferApprovalEvent({ adminUserUuid, offerUuid, status });
+      return OfferApprovalEventRepository.save(event);
     };
 
     it("deletes all events if offers table is truncated", async () => {
