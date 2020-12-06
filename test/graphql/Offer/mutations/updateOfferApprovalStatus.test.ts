@@ -5,6 +5,8 @@ import { client } from "$test/graphql/ApolloTestClient";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
 import { OfferApprovalEventRepository } from "$models/Offer/OfferApprovalEvent";
+import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
+import { CompanyNotificationRepository } from "$models/CompanyNotification";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Offer } from "$models";
@@ -15,11 +17,12 @@ import { AdminCannotModerateOfferError, OfferNotFoundError } from "$models/Offer
 
 import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyGenerator } from "$generators/Company";
+import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { IForAllTargets, OfferGenerator } from "$test/generators/Offer";
 
 import { UUID } from "$models/UUID";
 import { ApplicantType } from "$models/Applicant";
-import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
+import { UUID_REGEX } from "$test/models";
 
 const UPDATE_OFFER_APPROVAL_STATUS = gql`
   mutation($uuid: ID!, $approvalStatus: ApprovalStatus!) {
@@ -39,6 +42,9 @@ describe("updateOfferApprovalStatus", () => {
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
+    await SecretarySettingsRepository.truncate();
+
+    await SecretarySettingsGenerator.createDefaultSettings();
     const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
     offers = await OfferGenerator.instance.forAllTargets({
       status: ApprovalStatus.pending,
@@ -193,6 +199,60 @@ describe("updateOfferApprovalStatus", () => {
       Secretary.graduados,
       offers[ApplicantType.both]
     );
+  });
+
+  describe("Notifications", () => {
+    const updateOffer = async (offer: Offer, secretary: Secretary, status: ApprovalStatus) => {
+      const { admin, apolloClient } = await TestClientGenerator.admin({ secretary });
+      const { errors } = await performMutation(apolloClient, {
+        uuid: offer.uuid,
+        approvalStatus: status
+      });
+      expect(errors).toBeUndefined();
+      return { admin };
+    };
+
+    it("creates a notification for a company if the offer is approved", async () => {
+      await CompanyNotificationRepository.truncate();
+      const offer = offers[ApplicantType.student];
+      const { admin } = await updateOffer(offer, Secretary.extension, ApprovalStatus.approved);
+      const { shouldFetchMore, results } = await CompanyNotificationRepository.findLatestByCompany({
+        companyUuid: offer.companyUuid
+      });
+      expect(shouldFetchMore).toBe(false);
+      expect(results).toEqual([
+        {
+          uuid: expect.stringMatching(UUID_REGEX),
+          moderatorUuid: admin.userUuid,
+          notifiedCompanyUuid: offer.companyUuid,
+          isNew: true,
+          offerUuid: offer.uuid,
+          createdAt: expect.any(Date)
+        }
+      ]);
+    });
+
+    it("does not creates a notification for a company if the offer is rejected", async () => {
+      await CompanyNotificationRepository.truncate();
+      const offer = offers[ApplicantType.student];
+      await updateOffer(offer, Secretary.extension, ApprovalStatus.rejected);
+      const { shouldFetchMore, results } = await CompanyNotificationRepository.findLatestByCompany({
+        companyUuid: offer.companyUuid
+      });
+      expect(shouldFetchMore).toBe(false);
+      expect(results).toEqual([]);
+    });
+
+    it("does not creates a notification for a company if the offer is pending", async () => {
+      await CompanyNotificationRepository.truncate();
+      const offer = offers[ApplicantType.student];
+      await updateOffer(offer, Secretary.extension, ApprovalStatus.pending);
+      const { shouldFetchMore, results } = await CompanyNotificationRepository.findLatestByCompany({
+        companyUuid: offer.companyUuid
+      });
+      expect(shouldFetchMore).toBe(false);
+      expect(results).toEqual([]);
+    });
   });
 
   it("throws an error if the offer is for graduates and the admin is from extension", async () => {

@@ -10,6 +10,8 @@ import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
 import { AdminRepository } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { OfferApprovalEvent } from "$models";
+import { OfferNotificationFactory } from "$models/Notification/OfferNotificationFactory";
+import { NotificationRepositoryFactory } from "$models/Notification";
 
 export const updateOfferApprovalStatus = {
   type: GraphQLOffer,
@@ -38,9 +40,15 @@ export const updateOfferApprovalStatus = {
     offer.updateStatus(admin, status);
     offer.updateExpirationDate(admin, offerDurationInDays);
     const event = new OfferApprovalEvent({ adminUserUuid, offerUuid: offer.uuid, status });
+    const notifications = OfferNotificationFactory.create(offer, admin);
+
     return Database.transaction(async transaction => {
       await OfferRepository.save(offer, transaction);
       await OfferApprovalEventRepository.save(event, transaction);
+      for (const notification of notifications) {
+        const repository = NotificationRepositoryFactory.getRepositoryFor(notification);
+        await repository.save(notification, transaction);
+      }
       return offer;
     });
   }
