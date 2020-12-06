@@ -83,7 +83,7 @@ describe("updateOfferApprovalStatus", () => {
     const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(secretary);
 
     const expirationDate = {
-      [ApprovalStatus.approved]: DateTimeManager.daysToDate(offerDurationInDays).toISOString(),
+      [ApprovalStatus.approved]: DateTimeManager.daysFromNow(offerDurationInDays).toISOString(),
       [ApprovalStatus.rejected]: null,
       [ApprovalStatus.pending]: null
     }[newStatus];

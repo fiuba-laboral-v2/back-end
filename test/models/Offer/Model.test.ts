@@ -19,8 +19,8 @@ describe("Offer", () => {
     hoursPerDay: 8,
     minimumSalary: 52500,
     maximumSalary: 70000,
-    graduatesExpirationDateTime: DateTimeManager.daysToDate(7),
-    studentsExpirationDateTime: DateTimeManager.daysToDate(7),
+    graduatesExpirationDateTime: DateTimeManager.daysFromNow(7),
+    studentsExpirationDateTime: DateTimeManager.daysFromNow(7),
     targetApplicantType: ApplicantType.both
   };
 
@@ -228,7 +228,7 @@ describe("Offer", () => {
     };
 
     const offerDurationInDays = 15;
-    const expirationDate = DateTimeManager.daysToDate(offerDurationInDays);
+    const expirationDate = DateTimeManager.daysFromNow(offerDurationInDays);
 
     let extensionAdmin: Admin;
     let graduadosAdmin: Admin;
@@ -255,7 +255,7 @@ describe("Offer", () => {
     });
 
     beforeEach(() => {
-      jest.spyOn(DateTimeManager, "daysToDate").mockImplementation(() => expirationDate);
+      jest.spyOn(DateTimeManager, "daysFromNow").mockImplementation(() => expirationDate);
     });
 
     it("updates expiration date for an approved offer for graduados", async () => {

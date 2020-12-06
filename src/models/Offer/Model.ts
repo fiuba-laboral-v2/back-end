@@ -136,7 +136,7 @@ export class Offer extends Model<Offer> {
     const isGraduados = secretary => secretary === Secretary.graduados;
     const isApproved = chooseStatus => chooseStatus === ApprovalStatus.approved;
     const status = this.getStatus(admin.secretary);
-    const expirationDate = DateTimeManager.daysToDate(offerDurationInDays);
+    const expirationDate = DateTimeManager.daysFromNow(offerDurationInDays);
     if (isGraduados(admin.secretary)) {
       if (isApproved(status)) {
         this.graduatesExpirationDateTime = expirationDate.toDate();
