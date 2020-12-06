@@ -23,7 +23,7 @@ describe("NewJobApplicationCompanyNotificationEmailSender", () => {
     await SecretarySettingsGenerator.createDefaultSettings();
   });
 
-  it("sends an email to alñ company users that a new application has arrived", async () => {
+  it("sends an email to all company users that a new application has arrived", async () => {
     const companyAttributes = CompanyGenerator.data.completeData();
     const company = await CompanyRepository.create(companyAttributes);
     const adminAttributes = AdminGenerator.data(Secretary.graduados);
