@@ -8,6 +8,7 @@ import { OfferApprovalEventRepository } from "$models/Offer/OfferApprovalEvent";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Offer } from "$models";
+import { DateTimeManager } from "$libs/DateTimeManager";
 
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { AdminCannotModerateOfferError, OfferNotFoundError } from "$models/Offer/Errors";
@@ -18,7 +19,6 @@ import { IForAllTargets, OfferGenerator } from "$test/generators/Offer";
 
 import { UUID } from "$models/UUID";
 import { ApplicantType } from "$models/Applicant";
-import moment from "moment";
 import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
 
 const UPDATE_OFFER_APPROVAL_STATUS = gql`
@@ -77,11 +77,8 @@ describe("updateOfferApprovalStatus", () => {
     const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(secretary);
 
     const expirationDate = {
-      [ApprovalStatus.approved]: moment()
-        .endOf("day")
-        .add(offerDurationInDays, "days")
-        .toISOString(),
-      [ApprovalStatus.rejected]: moment().startOf("day").toISOString(),
+      [ApprovalStatus.approved]: DateTimeManager.daysToDate(offerDurationInDays).toISOString(),
+      [ApprovalStatus.rejected]: DateTimeManager.yesterday().toISOString(),
       [ApprovalStatus.pending]: null
     }[newStatus];
 
