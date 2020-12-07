@@ -5,7 +5,7 @@ import { ApplicantNotificationType, applicantNotificationTypeEnumValues } from "
 import { isUuid, isApplicantNotificationType } from "$models/SequelizeModelValidators";
 import { SequelizeModel } from "$models/SequelizeModel";
 
-@Table({ tableName: "CompanyNotifications", timestamps: true, updatedAt: false })
+@Table({ tableName: "ApplicantNotifications", timestamps: true, updatedAt: false })
 export class ApplicantNotificationSequelizeModel extends SequelizeModel<
   ApplicantNotificationSequelizeModel
 > {
