@@ -12,6 +12,7 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { OfferApprovalEvent } from "$models";
 import { OfferNotificationFactory } from "$models/Notification/OfferNotificationFactory";
 import { NotificationRepositoryFactory } from "$models/Notification";
+import { EmailSenderFactory } from "$models/EmailSenderFactory";
 
 export const updateOfferApprovalStatus = {
   type: GraphQLOffer,
@@ -42,15 +43,21 @@ export const updateOfferApprovalStatus = {
     const event = new OfferApprovalEvent({ adminUserUuid, offerUuid: offer.uuid, status });
     const notifications = OfferNotificationFactory.create(offer, admin);
 
-    return Database.transaction(async transaction => {
+    await Database.transaction(async transaction => {
       await OfferRepository.save(offer, transaction);
       await OfferApprovalEventRepository.save(event, transaction);
       for (const notification of notifications) {
         const repository = NotificationRepositoryFactory.getRepositoryFor(notification);
         await repository.save(notification, transaction);
       }
-      return offer;
     });
+
+    for (const notification of notifications) {
+      const emailSender = EmailSenderFactory.create(notification);
+      emailSender.send(notification);
+    }
+
+    return offer;
   }
 };
 

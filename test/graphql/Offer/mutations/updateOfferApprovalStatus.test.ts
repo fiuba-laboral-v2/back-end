@@ -23,6 +23,7 @@ import { IForAllTargets, OfferGenerator } from "$test/generators/Offer";
 import { UUID } from "$models/UUID";
 import { ApplicantType } from "$models/Applicant";
 import { UUID_REGEX } from "$test/models";
+import { EmailService } from "$services/Email";
 
 const UPDATE_OFFER_APPROVAL_STATUS = gql`
   mutation($uuid: ID!, $approvalStatus: ApprovalStatus!) {
@@ -52,7 +53,10 @@ describe("updateOfferApprovalStatus", () => {
     });
   });
 
-  beforeEach(() => OfferApprovalEventRepository.truncate());
+  beforeEach(async () => {
+    await OfferApprovalEventRepository.truncate();
+    jest.spyOn(EmailService, "send").mockImplementation(jest.fn());
+  });
 
   const performMutation = (apolloClient: TestClient, dataToUpdate: object) =>
     apolloClient.mutate({

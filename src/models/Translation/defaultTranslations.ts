@@ -467,6 +467,13 @@ export const defaultTranslations = {
       "\n\n" +
       "<%= signature %>"
   },
+  approvedOfferCompanyNotificationEmail: {
+    subject: "Oferta laboral aprobada",
+    body:
+      "Tu oferta laboral ha sido aprobada: <%= offerTitle %> (<%= offerLink %>)" +
+      "\n\n" +
+      "<%= signature %>"
+  },
   emailSignature: {
     graduados: "Bolsa de Trabajo FIUBA",
     extension: "Bolsa de Trabajo FIUBA"
