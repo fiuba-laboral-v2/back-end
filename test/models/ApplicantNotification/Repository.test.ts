@@ -118,7 +118,7 @@ describe("ApplicantNotificationRepository", () => {
     );
   });
 
-  it("throw an error if the notifiedApplicantUuid does not belong to an existing admin", async () => {
+  it("throw an error if the notifiedApplicantUuid does not belong to an existing applicant", async () => {
     const attributes = { ...approvedApplicationProps, notifiedApplicantUuid: UUID.generate() };
     const notification = new ApprovedJobApplicationApplicantNotification(attributes);
     await expect(
