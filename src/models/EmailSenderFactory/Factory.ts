@@ -1,4 +1,4 @@
-import { TNotification } from "$models/Notification/Model";
+import { Notification } from "$models/Notification/Model";
 import {
   NewJobApplicationCompanyNotification,
   ApprovedOfferCompanyNotification
@@ -9,7 +9,7 @@ import {
 } from "$services/EmailSender";
 
 export const EmailSenderFactory = {
-  create: (notification: TNotification): IEmailSenderFactory => {
+  create: (notification: Notification): IEmailSenderFactory => {
     const className = notification.constructor.name;
     const emailSender = {
       [NewJobApplicationCompanyNotification.name]: NewJobApplicationCompanyNotificationEmailSender,
@@ -22,5 +22,5 @@ export const EmailSenderFactory = {
 };
 
 interface IEmailSenderFactory {
-  send: (notifications: TNotification) => Promise<void>;
+  send: (notifications: Notification) => Promise<void>;
 }

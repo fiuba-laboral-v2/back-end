@@ -4,6 +4,7 @@ import {
   INewJobApplicationNotificationAttributes,
   NewJobApplicationCompanyNotification,
   IApprovedOfferNotificationAttributes,
+  CompanyNotification,
   CompanyNotificationRepository
 } from "$models/CompanyNotification";
 import { IAttributes } from "$models/CompanyNotification/CompanyNotification";
@@ -13,9 +14,7 @@ import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { OfferRepository } from "$models/Offer";
-import { CompanyNotification } from "$models/CompanyNotification";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
-import { TNotification } from "$models/Notification/Model";
 import { Admin, Company, JobApplication, Offer } from "$models";
 import {
   CompanyNotificationNotFoundError,
@@ -76,7 +75,7 @@ describe("CompanyNotificationRepository", () => {
     );
   };
 
-  const expectToSaveAValidNotification = async (notification: TNotification) => {
+  const expectToSaveAValidNotification = async (notification: CompanyNotification) => {
     await CompanyNotificationRepository.save(notification);
     const savedNotification = await CompanyNotificationRepository.findByUuid(notification.uuid!);
     expect(savedNotification).toEqual(notification);
@@ -84,7 +83,7 @@ describe("CompanyNotificationRepository", () => {
     expect(notification.createdAt).toEqual(expect.any(Date));
   };
 
-  const expectToSetUuidAndCreatedAtAfterSave = async (notification: TNotification) => {
+  const expectToSetUuidAndCreatedAtAfterSave = async (notification: CompanyNotification) => {
     expect(notification.uuid).toBeUndefined();
     expect(notification.createdAt).toBeUndefined();
     await CompanyNotificationRepository.save(notification);
@@ -92,7 +91,7 @@ describe("CompanyNotificationRepository", () => {
     expect(notification.createdAt).toEqual(expect.any(Date));
   };
 
-  const expectToUpdateIsNewAttribute = async (notification: TNotification) => {
+  const expectToUpdateIsNewAttribute = async (notification: CompanyNotification) => {
     await CompanyNotificationRepository.save(notification);
     const uuid = notification.uuid!;
     expect(notification.isNew).toBe(true);
@@ -102,7 +101,7 @@ describe("CompanyNotificationRepository", () => {
     expect(persistedNotification.isNew).toBe(false);
   };
 
-  const expectToThrowErrorOnUniqueConstraint = async (notification: TNotification) => {
+  const expectToThrowErrorOnUniqueConstraint = async (notification: CompanyNotification) => {
     const uuid = UUID.generate();
     jest.spyOn(UUID, "generate").mockImplementation(() => uuid);
     await CompanyNotificationRepository.save(notification);

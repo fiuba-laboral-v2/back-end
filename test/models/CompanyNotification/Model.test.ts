@@ -1,52 +1,46 @@
-import { ValidationError } from "sequelize";
 import { CompanyNotificationSequelizeModel } from "$models";
 import { CompanyNotificationType } from "$models/CompanyNotification";
 import { isCompanyNotificationType, isUuid } from "$models/SequelizeModelValidators";
+import { SequelizeModelAssertions } from "../Notification/SequelizeModelAssertions";
 import { UUID } from "$models/UUID";
-import { omit } from "lodash";
 
 describe("CompanyNotificationSequelizeModel", () => {
+  const {
+    expectToThrowErrorOnMissingAttribute,
+    expectToThrowErrorInInvalidFormat
+  } = SequelizeModelAssertions;
+
   const mandatoryAttributes = {
     moderatorUuid: UUID.generate(),
     type: CompanyNotificationType.newJobApplication,
     notifiedCompanyUuid: UUID.generate()
   };
 
-  const expectToThrowErrorOnMissingAttribute = async (attributeName: string) => {
-    const attributes = {
-      moderatorUuid: UUID.generate(),
-      moderatorMessage: "message",
-      type: CompanyNotificationType.newJobApplication,
-      notifiedCompanyUuid: UUID.generate(),
-      isNew: false,
-      jobApplicationUuid: UUID.generate()
-    };
-    const companyNotification = new CompanyNotificationSequelizeModel(
-      omit(attributes, attributeName)
-    );
-    await expect(companyNotification.validate()).rejects.toThrowErrorWithMessage(
-      ValidationError,
-      `notNull Violation: CompanyNotificationSequelizeModel.${attributeName} cannot be null`
-    );
+  const newJobApplicationAttributes = {
+    ...mandatoryAttributes,
+    moderatorMessage: "message",
+    isNew: false,
+    jobApplicationUuid: UUID.generate()
   };
 
-  const expectToThrowErrorInInvalidFormat = async (attributeName: string, message: string) => {
-    const companyNotification = new CompanyNotificationSequelizeModel({
+  it("creates a valid companyNotification with a newJobApplication type", async () => {
+    const attributes = {
       ...mandatoryAttributes,
-      [attributeName]: "invalidValue"
-    });
-    await expect(companyNotification.validate()).rejects.toThrowErrorWithMessage(
-      ValidationError,
-      message
-    );
-  };
-
-  it("creates a valid companyNotification", async () => {
-    const attributes = {
-      moderatorUuid: UUID.generate(),
       moderatorMessage: "message",
-      type: CompanyNotificationType.newJobApplication,
-      notifiedCompanyUuid: UUID.generate(),
+      isNew: false,
+      jobApplicationUuid: UUID.generate(),
+      offerUuid: UUID.generate()
+    };
+    const companyNotification = new CompanyNotificationSequelizeModel(attributes);
+    await expect(companyNotification.validate()).resolves.not.toThrowError();
+    expect(companyNotification).toBeObjectContaining(attributes);
+  });
+
+  it("creates a valid companyNotification with a approvedOffer type", async () => {
+    const attributes = {
+      ...mandatoryAttributes,
+      type: CompanyNotificationType.approvedOffer,
+      moderatorMessage: "message",
       isNew: false,
       jobApplicationUuid: UUID.generate(),
       offerUuid: UUID.generate()
@@ -81,34 +75,71 @@ describe("CompanyNotificationSequelizeModel", () => {
   });
 
   it("throws an error if no moderatorUuid is provided", async () => {
-    await expectToThrowErrorOnMissingAttribute("moderatorUuid");
+    await expectToThrowErrorOnMissingAttribute({
+      attributeName: "moderatorUuid",
+      attributes: newJobApplicationAttributes,
+      sequelizeModelClass: CompanyNotificationSequelizeModel
+    });
   });
 
   it("throws an error if no type is provided", async () => {
-    await expectToThrowErrorOnMissingAttribute("type");
+    await expectToThrowErrorOnMissingAttribute({
+      attributeName: "type",
+      attributes: newJobApplicationAttributes,
+      sequelizeModelClass: CompanyNotificationSequelizeModel
+    });
   });
 
   it("throws an error if no notifiedCompanyUuid is provided", async () => {
-    await expectToThrowErrorOnMissingAttribute("notifiedCompanyUuid");
+    await expectToThrowErrorOnMissingAttribute({
+      attributeName: "notifiedCompanyUuid",
+      attributes: newJobApplicationAttributes,
+      sequelizeModelClass: CompanyNotificationSequelizeModel
+    });
   });
 
   it("throws an error if type has an invalid value", async () => {
-    await expectToThrowErrorInInvalidFormat("type", isCompanyNotificationType.validate.isIn.msg);
+    await expectToThrowErrorInInvalidFormat({
+      attributes: newJobApplicationAttributes,
+      attributeName: "type",
+      message: isCompanyNotificationType.validate.isIn.msg,
+      sequelizeModelClass: CompanyNotificationSequelizeModel
+    });
   });
 
   it("throws an error if moderatorUuid has an invalid value", async () => {
-    await expectToThrowErrorInInvalidFormat("moderatorUuid", isUuid.validate.isUUID.msg);
+    await expectToThrowErrorInInvalidFormat({
+      attributes: newJobApplicationAttributes,
+      attributeName: "moderatorUuid",
+      message: isUuid.validate.isUUID.msg,
+      sequelizeModelClass: CompanyNotificationSequelizeModel
+    });
   });
 
   it("throws an error if notifiedCompanyUuid has an invalid value", async () => {
-    await expectToThrowErrorInInvalidFormat("notifiedCompanyUuid", isUuid.validate.isUUID.msg);
+    await expectToThrowErrorInInvalidFormat({
+      attributes: newJobApplicationAttributes,
+      attributeName: "notifiedCompanyUuid",
+      message: isUuid.validate.isUUID.msg,
+      sequelizeModelClass: CompanyNotificationSequelizeModel
+    });
   });
 
   it("throws an error if jobApplicationUuid has an invalid value", async () => {
-    await expectToThrowErrorInInvalidFormat("jobApplicationUuid", isUuid.validate.isUUID.msg);
+    await expectToThrowErrorInInvalidFormat({
+      attributes: newJobApplicationAttributes,
+      attributeName: "jobApplicationUuid",
+      message: isUuid.validate.isUUID.msg,
+      sequelizeModelClass: CompanyNotificationSequelizeModel
+    });
   });
 
   it("throws an error if offerUuid has an invalid value", async () => {
-    await expectToThrowErrorInInvalidFormat("offerUuid", isUuid.validate.isUUID.msg);
+    await expectToThrowErrorInInvalidFormat({
+      attributes: newJobApplicationAttributes,
+      attributeName: "offerUuid",
+      message: isUuid.validate.isUUID.msg,
+      sequelizeModelClass: CompanyNotificationSequelizeModel
+    });
   });
 });

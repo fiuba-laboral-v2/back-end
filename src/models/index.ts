@@ -1,5 +1,6 @@
 export { Admin } from "./Admin/Model";
 export { Applicant } from "./Applicant/Model";
+export { ApplicantNotificationSequelizeModel } from "./ApplicantNotification/SequelizeModel";
 export { ApplicantApprovalEvent } from "./Applicant/ApplicantApprovalEvent/Model";
 export { ApplicantKnowledgeSection } from "./Applicant/ApplicantKnowledgeSection/Model";
 export { ApplicantExperienceSection } from "./Applicant/ApplicantExperienceSection/Model";
