@@ -1,36 +1,19 @@
 import { UUID } from "$models/UUID";
 import { ApplicantNotificationType } from "$models/ApplicantNotification";
 import { ApplicantNotificationSequelizeModel } from "$models";
-import { omit } from "lodash";
-import { ValidationError } from "sequelize";
 import { isApplicantNotificationType, isUuid } from "$models/SequelizeModelValidators";
+import { SequelizeModelAssertions } from "$test/models/Notification/SequelizeModelAssertions";
 
 describe("ApplicantNotificationSequelizeModel", () => {
+  const {
+    expectToThrowErrorOnMissingAttribute,
+    expectToThrowErrorInInvalidFormat
+  } = SequelizeModelAssertions;
+
   const mandatoryAttributes = {
     moderatorUuid: UUID.generate(),
     type: ApplicantNotificationType.approvedJobApplication,
     notifiedApplicantUuid: UUID.generate()
-  };
-
-  const expectToThrowErrorOnMissingAttribute = async (attributeName: string) => {
-    const attributes = {
-      ...mandatoryAttributes,
-      moderatorMessage: "message",
-      jobApplicationUuid: UUID.generate()
-    };
-    const notification = new ApplicantNotificationSequelizeModel(omit(attributes, attributeName));
-    await expect(notification.validate()).rejects.toThrowErrorWithMessage(
-      ValidationError,
-      `notNull Violation: ApplicantNotificationSequelizeModel.${attributeName} cannot be null`
-    );
-  };
-
-  const expectToThrowErrorInInvalidFormat = async (attributeName: string, message: string) => {
-    const notification = new ApplicantNotificationSequelizeModel({
-      ...mandatoryAttributes,
-      [attributeName]: "invalidValue"
-    });
-    await expect(notification.validate()).rejects.toThrowErrorWithMessage(ValidationError, message);
   };
 
   it("creates a valid notification with an approvedJobApplication type", async () => {
@@ -64,34 +47,62 @@ describe("ApplicantNotificationSequelizeModel", () => {
   });
 
   it("throws an error if no moderatorUuid is provided", async () => {
-    await expectToThrowErrorOnMissingAttribute("moderatorUuid");
+    await expectToThrowErrorOnMissingAttribute({
+      attributeName: "moderatorUuid",
+      attributes: mandatoryAttributes,
+      sequelizeModelClass: ApplicantNotificationSequelizeModel
+    });
   });
 
   it("throws an error if no type is provided", async () => {
-    await expectToThrowErrorOnMissingAttribute("type");
+    await expectToThrowErrorOnMissingAttribute({
+      attributeName: "type",
+      attributes: mandatoryAttributes,
+      sequelizeModelClass: ApplicantNotificationSequelizeModel
+    });
   });
 
   it("throws an error if no notifiedApplicantUuid is provided", async () => {
-    await expectToThrowErrorOnMissingAttribute("notifiedApplicantUuid");
+    await expectToThrowErrorOnMissingAttribute({
+      attributeName: "notifiedApplicantUuid",
+      attributes: mandatoryAttributes,
+      sequelizeModelClass: ApplicantNotificationSequelizeModel
+    });
   });
 
   it("throws an error if type has an invalid value", async () => {
-    await expectToThrowErrorInInvalidFormat("type", isApplicantNotificationType.validate.isIn.msg);
-  });
-
-  it("throws an error if type has an invalid value", async () => {
-    await expectToThrowErrorInInvalidFormat("type", isApplicantNotificationType.validate.isIn.msg);
+    await expectToThrowErrorInInvalidFormat({
+      attributeName: "type",
+      message: isApplicantNotificationType.validate.isIn.msg,
+      attributes: mandatoryAttributes,
+      sequelizeModelClass: ApplicantNotificationSequelizeModel
+    });
   });
 
   it("throws an error if moderatorUuid has an invalid value", async () => {
-    await expectToThrowErrorInInvalidFormat("moderatorUuid", isUuid.validate.isUUID.msg);
+    await expectToThrowErrorInInvalidFormat({
+      attributeName: "moderatorUuid",
+      message: isUuid.validate.isUUID.msg,
+      attributes: mandatoryAttributes,
+      sequelizeModelClass: ApplicantNotificationSequelizeModel
+    });
   });
 
   it("throws an error if notifiedApplicantUuid has an invalid value", async () => {
-    await expectToThrowErrorInInvalidFormat("notifiedApplicantUuid", isUuid.validate.isUUID.msg);
+    await expectToThrowErrorInInvalidFormat({
+      attributeName: "notifiedApplicantUuid",
+      message: isUuid.validate.isUUID.msg,
+      attributes: mandatoryAttributes,
+      sequelizeModelClass: ApplicantNotificationSequelizeModel
+    });
   });
 
   it("throws an error if jobApplicationUuid has an invalid value", async () => {
-    await expectToThrowErrorInInvalidFormat("jobApplicationUuid", isUuid.validate.isUUID.msg);
+    await expectToThrowErrorInInvalidFormat({
+      attributeName: "jobApplicationUuid",
+      message: isUuid.validate.isUUID.msg,
+      attributes: mandatoryAttributes,
+      sequelizeModelClass: ApplicantNotificationSequelizeModel
+    });
   });
 });
