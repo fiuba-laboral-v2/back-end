@@ -6,7 +6,7 @@ import { isNil } from "lodash";
 export class ApprovedJobApplicationApplicantNotification extends ApplicantNotification {
   public jobApplicationUuid: string;
 
-  constructor(attributes: IAttributes) {
+  constructor(attributes: IApprovedJobApplicationAttributes) {
     super(attributes);
     this.setJobApplicationUuid(attributes.jobApplicationUuid);
   }
@@ -19,6 +19,6 @@ export class ApprovedJobApplicationApplicantNotification extends ApplicantNotifi
   }
 }
 
-interface IAttributes extends IApplicantNotificationAttributes {
+export interface IApprovedJobApplicationAttributes extends IApplicantNotificationAttributes {
   jobApplicationUuid: string;
 }
