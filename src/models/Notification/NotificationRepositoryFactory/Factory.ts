@@ -8,6 +8,7 @@ import {
   ApplicantNotificationRepository
 } from "$models/ApplicantNotification";
 import { Notification } from "../Model";
+import { UnknownRepositoryError } from "../Errors";
 import { Transaction } from "sequelize";
 
 const repositoryMapper = {
@@ -18,8 +19,9 @@ const repositoryMapper = {
 
 export const NotificationRepositoryFactory = {
   getRepositoryFor: (notification: Notification): INotificationRepository => {
-    const repository = repositoryMapper[notification.constructor.name];
-    if (!repository) throw new Error(`no repository found for ${notification.constructor.name}`);
+    const className = notification.constructor.name;
+    const repository = repositoryMapper[className];
+    if (!repository) throw new UnknownRepositoryError(className);
 
     return repository;
   }

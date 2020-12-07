@@ -7,7 +7,7 @@ import {
   ApprovedOfferCompanyNotification,
   CompanyNotificationRepository
 } from "$models/CompanyNotification";
-import { NotificationRepositoryFactory } from "$models/Notification";
+import { NotificationRepositoryFactory, UnknownRepositoryError } from "$models/Notification";
 import { UUID } from "$models/UUID";
 
 describe("NotificationRepositoryFactory", () => {
@@ -42,8 +42,11 @@ describe("NotificationRepositoryFactory", () => {
   });
 
   it("throws an error if it is given any object that has no associated repository", async () => {
-    expect(() => NotificationRepositoryFactory.getRepositoryFor(new Date() as any)).toThrowError(
-      "no repository found for Date"
+    expect(() =>
+      NotificationRepositoryFactory.getRepositoryFor(new Date() as any)
+    ).toThrowErrorWithMessage(
+      UnknownRepositoryError,
+      UnknownRepositoryError.buildMessage(Date.name)
     );
   });
 });
