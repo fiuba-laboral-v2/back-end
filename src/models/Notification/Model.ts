@@ -1,9 +1,6 @@
-import { CompanyNotification } from "$models/CompanyNotification";
 import { UUID } from "$models/UUID";
 import { AttributeNotDefinedError, InvalidAttributeFormatError } from "$models/Errors";
 import { isNil } from "lodash";
-
-export type TNotification = CompanyNotification;
 
 export abstract class Notification {
   public uuid?: string;
