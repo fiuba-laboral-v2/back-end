@@ -218,7 +218,8 @@ export const defaultTranslations = {
     dni: "DNI",
     signup: "Crear tu cuenta",
     recoverPassword: "Recuperar contraseña",
-    goToCompany: "Ingresar como empresa"
+    goToCompany: "Ingresar como empresa",
+    userNotFoundErrorMessage: "Para ingresar tenés que crear tu cuenta"
   },
   companyLogin: {
     title: "Ingresá como empresa",
