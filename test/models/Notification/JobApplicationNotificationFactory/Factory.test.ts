@@ -1,4 +1,5 @@
 import { JobApplicationNotificationFactory } from "$models/Notification";
+import { NewJobApplicationCompanyNotification } from "$models/CompanyNotification";
 import { OfferRepository } from "$models/Offer";
 import { Admin, Company, JobApplication, Offer } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
@@ -37,9 +38,18 @@ describe("JobApplicationNotificationFactory", () => {
 
   beforeEach(() => jest.spyOn(OfferRepository, "findByUuid").mockImplementation(async () => offer));
 
-  it("return an array with a NewJobApplicationCompanyNotification", async () => {
+  it("return an array with a NewJobApplicationCompanyNotification and ApprovedJobApplicationApplicantNotification", async () => {
     jobApplication.set({ approvalStatus: ApprovalStatus.approved });
     const notifications = await JobApplicationNotificationFactory.create(jobApplication, admin);
+    expect(notifications).toHaveLength(1);
+    const [firstNotification] = notifications;
+    expect(firstNotification).toBeInstanceOf(NewJobApplicationCompanyNotification);
+  });
+
+  it("return an array with a the correct attributes", async () => {
+    jobApplication.set({ approvalStatus: ApprovalStatus.approved });
+    const notifications = await JobApplicationNotificationFactory.create(jobApplication, admin);
+
     expect(notifications).toEqual([
       {
         uuid: undefined,
