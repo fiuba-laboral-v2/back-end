@@ -1,18 +1,21 @@
 import {
   ApplicantNotificationMapper,
   ApprovedJobApplicationApplicantNotification,
-  ApplicantNotificationType,
-  ApplicantNotification
+  ApplicantNotificationType
 } from "$models/ApplicantNotification";
 import { UUID } from "$models/UUID";
 import { ApplicantNotificationSequelizeModel } from "$models";
-import { Constructable } from "$test/types/Constructable";
-import { omit } from "lodash";
+import { NotificationMapperAssertions } from "../Notification/NotificationMapperAssertions";
 
 describe("ApplicantNotificationMapper", () => {
   const mapper = ApplicantNotificationMapper;
 
   describe("toPersistenceModel", () => {
+    const {
+      expectToNotToBeANewRecord,
+      expectToMapTheCreatedAtTimestamp
+    } = NotificationMapperAssertions;
+
     const commonAttributes = {
       moderatorUuid: UUID.generate(),
       notifiedApplicantUuid: UUID.generate(),
@@ -28,23 +31,6 @@ describe("ApplicantNotificationMapper", () => {
       approvedJobApplicationAttributes
     );
 
-    const expectToNotToBeANewRecord = (notification: ApplicantNotification) => {
-      const uuid = UUID.generate();
-      notification.setUuid(uuid);
-      const persistenceModel = mapper.toPersistenceModel(notification);
-      expect(persistenceModel.uuid).toEqual(uuid);
-      expect(persistenceModel.isNewRecord).toBe(false);
-      notification.setUuid(undefined);
-    };
-
-    const expectToMapTheCreatedAtTimestamp = (notification: ApplicantNotification) => {
-      const createdAt = new Date();
-      notification.setCreatedAt(createdAt);
-      const persistenceModel = mapper.toPersistenceModel(notification);
-      expect(persistenceModel.createdAt).toEqual(createdAt);
-      notification.setCreatedAt(undefined);
-    };
-
     it("maps a ApprovedJobApplicationApplicantNotification", async () => {
       const persistenceModel = mapper.toPersistenceModel(approvedJobApplicationNotification);
       expect(persistenceModel).toBeInstanceOf(ApplicantNotificationSequelizeModel);
@@ -59,15 +45,17 @@ describe("ApplicantNotificationMapper", () => {
     });
 
     it("maps a ApprovedJobApplicationApplicantNotification that has already an uuid", async () => {
-      expectToNotToBeANewRecord(approvedJobApplicationNotification);
+      expectToNotToBeANewRecord(mapper, approvedJobApplicationNotification);
     });
 
     it("maps a ApprovedJobApplicationApplicantNotification that has already a createdAt", async () => {
-      expectToMapTheCreatedAtTimestamp(approvedJobApplicationNotification);
+      expectToMapTheCreatedAtTimestamp(mapper, approvedJobApplicationNotification);
     });
   });
 
   describe("toDomainModel", () => {
+    const { expectToMapPersistenceModelToTheGivenNotification } = NotificationMapperAssertions;
+
     const commonAttributes = {
       uuid: UUID.generate(),
       moderatorUuid: UUID.generate(),
@@ -76,29 +64,17 @@ describe("ApplicantNotificationMapper", () => {
       createdAt: new Date()
     };
 
-    const expectToMapPersistenceModelToTheGivenNotification = ({
-      attributes,
-      modelClass
-    }: {
-      attributes: object;
-      modelClass: Constructable;
-    }) => {
-      const sequelizeModel = new ApplicantNotificationSequelizeModel(attributes);
-      const notification = mapper.toDomainModel(sequelizeModel);
-      expect(notification).toBeInstanceOf(modelClass);
-      expect(notification).toEqual({
-        uuid: sequelizeModel.uuid,
-        ...omit(attributes, "type")
-      });
-    };
-
     it("returns a ApprovedJobApplicationApplicantNotification", () => {
+      const attributes = {
+        ...commonAttributes,
+        jobApplicationUuid: UUID.generate(),
+        type: ApplicantNotificationType.approvedJobApplication
+      };
+      const sequelizeModel = new ApplicantNotificationSequelizeModel(attributes);
       expectToMapPersistenceModelToTheGivenNotification({
-        attributes: {
-          ...commonAttributes,
-          jobApplicationUuid: UUID.generate(),
-          type: ApplicantNotificationType.approvedJobApplication
-        },
+        mapper,
+        sequelizeModel,
+        attributes,
         modelClass: ApprovedJobApplicationApplicantNotification
       });
     });
