@@ -14,10 +14,8 @@ describe("CompanyNotificationSequelizeModel", () => {
 
   const expectToThrowErrorOnMissingAttribute = async (attributeName: string) => {
     const attributes = {
-      moderatorUuid: UUID.generate(),
+      ...mandatoryAttributes,
       moderatorMessage: "message",
-      type: CompanyNotificationType.newJobApplication,
-      notifiedCompanyUuid: UUID.generate(),
       isNew: false,
       jobApplicationUuid: UUID.generate()
     };
@@ -41,12 +39,24 @@ describe("CompanyNotificationSequelizeModel", () => {
     );
   };
 
-  it("creates a valid companyNotification", async () => {
+  it("creates a valid companyNotification with a newJobApplication type", async () => {
     const attributes = {
-      moderatorUuid: UUID.generate(),
+      ...mandatoryAttributes,
       moderatorMessage: "message",
-      type: CompanyNotificationType.newJobApplication,
-      notifiedCompanyUuid: UUID.generate(),
+      isNew: false,
+      jobApplicationUuid: UUID.generate(),
+      offerUuid: UUID.generate()
+    };
+    const companyNotification = new CompanyNotificationSequelizeModel(attributes);
+    await expect(companyNotification.validate()).resolves.not.toThrowError();
+    expect(companyNotification).toBeObjectContaining(attributes);
+  });
+
+  it("creates a valid companyNotification with a approvedOffer type", async () => {
+    const attributes = {
+      ...mandatoryAttributes,
+      type: CompanyNotificationType.approvedOffer,
+      moderatorMessage: "message",
       isNew: false,
       jobApplicationUuid: UUID.generate(),
       offerUuid: UUID.generate()

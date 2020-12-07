@@ -5,3 +5,4 @@ export { isSecretary } from "./isSecretary";
 export { isTargetApplicantType } from "./isTargetApplicantType";
 export { optional } from "./optional";
 export { isCompanyNotificationType } from "./isCompanyNotificationType";
+export { isApplicantNotificationType } from "./isApplicantNotificationType";
