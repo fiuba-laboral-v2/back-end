@@ -1,4 +1,8 @@
 import {
+  ApplicantNotificationRepository,
+  ApprovedJobApplicationApplicantNotification
+} from "$models/ApplicantNotification";
+import {
   NewJobApplicationCompanyNotification,
   ApprovedOfferCompanyNotification,
   CompanyNotificationRepository
@@ -25,6 +29,16 @@ describe("NotificationRepositoryFactory", () => {
     });
     const repository = NotificationRepositoryFactory.getRepositoryFor(notification);
     expect(repository).toEqual(CompanyNotificationRepository);
+  });
+
+  it("returns an ApplicantNotificationRepository for ApprovedJobApplicationApplicantNotification", async () => {
+    const notification = new ApprovedJobApplicationApplicantNotification({
+      moderatorUuid: UUID.generate(),
+      notifiedApplicantUuid: UUID.generate(),
+      jobApplicationUuid: UUID.generate()
+    });
+    const repository = NotificationRepositoryFactory.getRepositoryFor(notification);
+    expect(repository).toEqual(ApplicantNotificationRepository);
   });
 
   it("throws an error if it is given any object that has no associated repository", async () => {
