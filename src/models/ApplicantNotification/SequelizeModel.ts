@@ -1,6 +1,6 @@
 import { Table, Column, ForeignKey, CreatedAt } from "sequelize-typescript";
 import { BOOLEAN, TEXT, UUID, ENUM } from "sequelize";
-import { Admin, JobApplication, Company } from "$models";
+import { Admin, JobApplication, Applicant } from "$models";
 import { ApplicantNotificationType, applicantNotificationTypeEnumValues } from "./Interfaces";
 import { isUuid, isApplicantNotificationType } from "$models/SequelizeModelValidators";
 import { SequelizeModel } from "$models/SequelizeModel";
@@ -23,7 +23,7 @@ export class ApplicantNotificationSequelizeModel extends SequelizeModel<
   })
   public type: ApplicantNotificationType;
 
-  @ForeignKey(() => Company)
+  @ForeignKey(() => Applicant)
   @Column({ allowNull: false, type: UUID, ...isUuid })
   public notifiedApplicantUuid: string;
 
