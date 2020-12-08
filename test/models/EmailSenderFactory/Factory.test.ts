@@ -3,7 +3,7 @@ import {
   NewJobApplicationCompanyNotification,
   ApprovedOfferCompanyNotification
 } from "$models/CompanyNotification";
-import { EmailSenderFactory } from "$models/EmailSenderFactory";
+import { EmailSenderFactory, UnknownEmailSenderError } from "$models/EmailSenderFactory";
 import {
   NewJobApplicationCompanyNotificationEmailSender,
   ApprovedOfferCompanyNotificationEmailSender,
@@ -43,8 +43,9 @@ describe("EmailSenderFactory", () => {
   });
 
   it("throws an error if the factory does not know how to handle the given class", async () => {
-    expect(() => EmailSenderFactory.create(new Date() as any)).toThrowError(
-      "no emailSender found for Date"
+    expect(() => EmailSenderFactory.create(new Date() as any)).toThrowErrorWithMessage(
+      UnknownEmailSenderError,
+      UnknownEmailSenderError.buildMessage(Date.name)
     );
   });
 });

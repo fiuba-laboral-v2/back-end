@@ -9,6 +9,7 @@ import {
   ApprovedOfferCompanyNotificationEmailSender,
   ApprovedJobApplicationApplicantNotificationEmailSender
 } from "$services/EmailSender";
+import { UnknownEmailSenderError } from "./Errors";
 
 export const EmailSenderFactory = {
   create: (notification: Notification): IEmailSenderFactory => {
@@ -18,7 +19,7 @@ export const EmailSenderFactory = {
       [ApprovedOfferCompanyNotification.name]: ApprovedOfferCompanyNotificationEmailSender,
       [ApprovedJobApplicationApplicantNotification.name]: ApprovedJobApplicationApplicantNotificationEmailSender
     }[className];
-    if (!emailSender) throw new Error(`no emailSender found for ${className}`);
+    if (!emailSender) throw new UnknownEmailSenderError(className);
 
     return emailSender;
   }
