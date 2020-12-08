@@ -478,7 +478,7 @@ export const defaultTranslations = {
   approvedJobApplicationApplicantNotificationEmail: {
     subject: "Postulación a oferta de trabajo aprobado",
     body:
-      "Postulación a la oferta de trabajo ha sido aprobada: <%= offerTitle %> (<%= offerLink %>)" +
+      "Tu postulación a la oferta de trabajo: <%= offerTitle %> (<%= offerLink %>) ha sido aprobada. Se envió una notificación a la empresa" +
       "\n\n" +
       "<%= signature %>"
   },
