@@ -1,5 +1,6 @@
 import { GraphQLUnionType } from "graphql";
 import { GraphQLApprovedJobApplicationApplicantNotification } from "./GraphQLApprovedJobApplicationApplicantNotification";
+import { UnknownNotificationError } from "$models/Notification";
 import {
   ApplicantNotification,
   ApprovedJobApplicationApplicantNotification
@@ -14,6 +15,6 @@ export const GraphQLApplicantNotification = new GraphQLUnionType({
       case ApprovedJobApplicationApplicantNotification.name:
         return GraphQLApprovedJobApplicationApplicantNotification;
     }
-    throw new Error(className);
+    throw new UnknownNotificationError(className);
   }
 });

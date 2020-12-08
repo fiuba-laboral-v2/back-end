@@ -13,12 +13,12 @@ import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
+import { UnknownNotificationError } from "$models/Notification";
 import {
   NewJobApplicationCompanyNotification,
   ApprovedOfferCompanyNotification,
   CompanyNotificationRepository,
-  CompanyNotification,
-  UnknownNotificationError
+  CompanyNotification
 } from "$models/CompanyNotification";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
 

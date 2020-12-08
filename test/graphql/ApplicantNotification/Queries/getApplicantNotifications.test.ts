@@ -7,7 +7,12 @@ import { GraphQLJobApplication } from "$graphql/JobApplication/Types/GraphQLJobA
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
-import { ApprovedJobApplicationApplicantNotification } from "$models/ApplicantNotification";
+import { UnknownNotificationError } from "$models/Notification";
+import {
+  ApplicantNotification,
+  ApplicantNotificationRepository,
+  ApprovedJobApplicationApplicantNotification
+} from "$models/ApplicantNotification";
 import { Admin } from "$models";
 
 import { UserRepository } from "$models/User";
@@ -161,5 +166,17 @@ describe("getApplicantNotifications", () => {
     const { apolloClient } = await TestClientGenerator.admin({ secretary });
     const { errors } = await performQuery(apolloClient);
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+  });
+
+  it("returns an error if the query returns an unknown notification", async () => {
+    const { apolloClient } = await createApplicantTestClient(ApprovalStatus.approved);
+    const unknownNotification = { uuid: "uuid" } as ApplicantNotification;
+    jest
+      .spyOn(ApplicantNotificationRepository, "findLatestByApplicant")
+      .mockImplementation(() =>
+        Promise.resolve({ results: [unknownNotification], shouldFetchMore: false })
+      );
+    const { errors } = await performQuery(apolloClient);
+    expect(errors).toEqualGraphQLErrorType(UnknownNotificationError.name);
   });
 });

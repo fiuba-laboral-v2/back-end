@@ -1,11 +1,11 @@
 import { GraphQLUnionType } from "graphql";
 import { GraphQLNewJobApplicationCompanyNotification } from "./GraphQLNewJobApplicationCompanyNotification";
 import { GraphQLApprovedOfferCompanyNotification } from "./GraphQLApprovedOfferCompanyNotification";
+import { UnknownNotificationError } from "$models/Notification";
 import {
   CompanyNotification,
   ApprovedOfferCompanyNotification,
-  NewJobApplicationCompanyNotification,
-  UnknownNotificationError
+  NewJobApplicationCompanyNotification
 } from "$models/CompanyNotification";
 
 export const GraphQLCompanyNotification = new GraphQLUnionType({
