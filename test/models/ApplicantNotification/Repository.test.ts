@@ -9,6 +9,7 @@ import {
 } from "$models/ApplicantNotification";
 
 import { UserRepository } from "$models/User";
+import { JobApplicationRepository } from "$models/JobApplication";
 import { ApplicantRepository } from "$models/Applicant";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
@@ -136,5 +137,25 @@ describe("ApplicantNotificationRepository", () => {
       ApplicantNotificationNotFoundError,
       ApplicantNotificationNotFoundError.buildMessage(uuid)
     );
+  });
+
+  describe("DELETE CASCADE", () => {
+    const approvedJobApplicationAttributes = () => ({
+      moderatorUuid: extensionAdmin.userUuid,
+      notifiedApplicantUuid: applicant.uuid,
+      jobApplicationUuid: jobApplication.uuid
+    });
+
+    it("deletes all notifications if JobApplications table is truncated", async () => {
+      await ApplicantNotificationRepository.truncate();
+      const attributes = approvedJobApplicationAttributes();
+      const firstNotification = new ApprovedJobApplicationApplicantNotification(attributes);
+      const secondNotification = new ApprovedJobApplicationApplicantNotification(attributes);
+      await ApplicantNotificationRepository.save(firstNotification);
+      await ApplicantNotificationRepository.save(secondNotification);
+      expect(await ApplicantNotificationRepository.findAll()).toHaveLength(2);
+      await JobApplicationRepository.truncate();
+      expect(await ApplicantNotificationRepository.findAll()).toHaveLength(0);
+    });
   });
 });
