@@ -143,6 +143,7 @@ describe("ApplicantNotificationRepository", () => {
   });
 
   describe("findLatestByApplicant", () => {
+    const { findLatestByApplicant } = ApplicantNotificationRepository;
     let notifications: ApplicantNotification[] = [];
     const notificationsLength = 20;
 
@@ -165,16 +166,14 @@ describe("ApplicantNotificationRepository", () => {
     });
 
     it("finds the first three notifications", async () => {
+      const applicantUuid = applicant.uuid;
       const itemsPerPage = 3;
       mockItemsPerPage(itemsPerPage);
       const updatedBeforeThan = {
         dateTime: notifications[0].createdAt!,
         uuid: notifications[0].uuid!
       };
-      const result = await ApplicantNotificationRepository.findLatestByApplicant({
-        updatedBeforeThan,
-        applicantUuid: applicant.uuid
-      });
+      const result = await findLatestByApplicant({ updatedBeforeThan, applicantUuid });
       const { shouldFetchMore, results } = result;
       expect(results).toHaveLength(itemsPerPage);
       expect(results).toEqual(notifications.slice(1, itemsPerPage + 1));
@@ -182,16 +181,14 @@ describe("ApplicantNotificationRepository", () => {
     });
 
     it("finds the last half of remaining notifications", async () => {
+      const applicantUuid = applicant.uuid;
       const itemsPerPage = notificationsLength / 2;
       mockItemsPerPage(itemsPerPage);
       const updatedBeforeThan = {
         dateTime: notifications[itemsPerPage - 1].createdAt!,
         uuid: notifications[itemsPerPage - 1].uuid!
       };
-      const result = await ApplicantNotificationRepository.findLatestByApplicant({
-        updatedBeforeThan,
-        applicantUuid: applicant.uuid
-      });
+      const result = await findLatestByApplicant({ updatedBeforeThan, applicantUuid });
       const { shouldFetchMore, results } = result;
       expect(results).toHaveLength(itemsPerPage);
       expect(results).toEqual(notifications.slice(itemsPerPage, notificationsLength + 1));
@@ -199,6 +196,7 @@ describe("ApplicantNotificationRepository", () => {
     });
 
     it("finds the latest notifications order by inNew first", async () => {
+      const applicantUuid = applicant.uuid;
       let isNew = true;
       notifications.forEach(notification => {
         notification.isNew = !isNew;
@@ -207,12 +205,7 @@ describe("ApplicantNotificationRepository", () => {
       await Promise.all(
         notifications.map(notification => ApplicantNotificationRepository.save(notification))
       );
-      const {
-        shouldFetchMore,
-        results
-      } = await ApplicantNotificationRepository.findLatestByApplicant({
-        applicantUuid: applicant.uuid
-      });
+      const { shouldFetchMore, results } = await findLatestByApplicant({ applicantUuid });
 
       expect(results.map(result => result.isNew)).toEqual([
         ...Array(notificationsLength / 2).fill(true),
