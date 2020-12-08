@@ -1,6 +1,7 @@
 import { FrontendConfig } from "$config";
 import { ApprovedJobApplicationApplicantNotification } from "$models/ApplicantNotification";
 import { EmailService } from "$services/Email";
+import { Sender } from "$services/EmailSender/Sender";
 
 import { ApplicantRepository } from "$models/Applicant";
 import { JobApplicationRepository } from "$models/JobApplication";
@@ -8,14 +9,6 @@ import { OfferRepository } from "$models/Offer";
 import { UserRepository } from "$models/User";
 import { TranslationRepository } from "$models/Translation";
 import { template } from "lodash";
-
-const getSender = async (adminUserUuid: string) => {
-  const sender = await UserRepository.findByUuid(adminUserUuid);
-  return {
-    email: sender.email,
-    name: `${sender.name} ${sender.surname}`
-  };
-};
 
 export const ApprovedJobApplicationApplicantNotificationEmailSender = {
   send: async (notification: ApprovedJobApplicationApplicantNotification) => {
@@ -33,7 +26,7 @@ export const ApprovedJobApplicationApplicantNotificationEmailSender = {
 
     return EmailService.send({
       receiverEmails: [applicantUser.email],
-      sender: await getSender(notification.moderatorUuid),
+      sender: await Sender.findByAdmin(notification.moderatorUuid),
       subject,
       body: template(body)({
         offerTitle: offer.title,
