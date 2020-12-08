@@ -3,7 +3,6 @@ import { CompanyUserRepository } from "$models/CompanyUser";
 import { EmailService } from "$services/Email";
 import { UserRepository } from "$models/User";
 import { TranslationRepository } from "$models/Translation";
-import { AdminRepository } from "$models/Admin";
 
 const getReceiverEmails = async (companyUuid: string) => {
   const companyUsers = await CompanyUserRepository.findByCompanyUuid(companyUuid);
@@ -19,12 +18,6 @@ const getSender = async (adminUserUuid: string) => {
   };
 };
 
-const getSignature = async (adminUserUuid: string): Promise<string> => {
-  const admin = await AdminRepository.findByUserUuid(adminUserUuid);
-  const signatures = TranslationRepository.translate("emailSignature");
-  return signatures[admin.secretary];
-};
-
 export const CompanyNotificationEmailSender = {
   send: async (
     notification: CompanyNotification,
@@ -35,7 +28,7 @@ export const CompanyNotificationEmailSender = {
       receiverEmails: await getReceiverEmails(notification.notifiedCompanyUuid),
       sender: await getSender(notification.moderatorUuid),
       subject,
-      body: body(await getSignature(notification.moderatorUuid))
+      body: body(await TranslationRepository.findSignatureByAdmin(notification.moderatorUuid))
     });
   }
 };

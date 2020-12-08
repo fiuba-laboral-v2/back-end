@@ -6,7 +6,6 @@ import { ApplicantRepository } from "$models/Applicant";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { OfferRepository } from "$models/Offer";
 import { UserRepository } from "$models/User";
-import { AdminRepository } from "$models/Admin";
 import { TranslationRepository } from "$models/Translation";
 import { template } from "lodash";
 
@@ -16,12 +15,6 @@ const getSender = async (adminUserUuid: string) => {
     email: sender.email,
     name: `${sender.name} ${sender.surname}`
   };
-};
-
-const getSignature = async (adminUserUuid: string): Promise<string> => {
-  const admin = await AdminRepository.findByUserUuid(adminUserUuid);
-  const signatures = TranslationRepository.translate("emailSignature");
-  return signatures[admin.secretary];
 };
 
 export const ApprovedJobApplicationApplicantNotificationEmailSender = {
@@ -45,7 +38,7 @@ export const ApprovedJobApplicationApplicantNotificationEmailSender = {
       body: template(body)({
         offerTitle: offer.title,
         offerLink: `${baseUrl}/${subDomain}/${endpoints.company.offer(offer.uuid)}`,
-        signature: await getSignature(notification.moderatorUuid)
+        signature: await TranslationRepository.findSignatureByAdmin(notification.moderatorUuid)
       })
     });
   }
