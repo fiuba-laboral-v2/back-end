@@ -1,5 +1,6 @@
 import { JobApplicationNotificationFactory } from "$models/Notification";
 import { NewJobApplicationCompanyNotification } from "$models/CompanyNotification";
+import { ApprovedJobApplicationApplicantNotification } from "$models/ApplicantNotification";
 import { OfferRepository } from "$models/Offer";
 import { Admin, Company, JobApplication, Offer } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
@@ -41,9 +42,10 @@ describe("JobApplicationNotificationFactory", () => {
   it("return an array with a NewJobApplicationCompanyNotification and ApprovedJobApplicationApplicantNotification", async () => {
     jobApplication.set({ approvalStatus: ApprovalStatus.approved });
     const notifications = await JobApplicationNotificationFactory.create(jobApplication, admin);
-    expect(notifications).toHaveLength(1);
-    const [firstNotification] = notifications;
+    expect(notifications).toHaveLength(2);
+    const [firstNotification, secondNotification] = notifications;
     expect(firstNotification).toBeInstanceOf(NewJobApplicationCompanyNotification);
+    expect(secondNotification).toBeInstanceOf(ApprovedJobApplicationApplicantNotification);
   });
 
   it("return an array with a the correct attributes", async () => {
@@ -55,6 +57,14 @@ describe("JobApplicationNotificationFactory", () => {
         uuid: undefined,
         moderatorUuid: admin.userUuid,
         notifiedCompanyUuid: company.uuid,
+        jobApplicationUuid: jobApplication.uuid,
+        isNew: true,
+        createdAt: undefined
+      },
+      {
+        uuid: undefined,
+        moderatorUuid: admin.userUuid,
+        notifiedApplicantUuid: jobApplication.applicantUuid,
         jobApplicationUuid: jobApplication.uuid,
         isNew: true,
         createdAt: undefined
