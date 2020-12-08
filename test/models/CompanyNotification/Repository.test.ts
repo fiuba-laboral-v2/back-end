@@ -246,7 +246,7 @@ describe("CompanyNotificationRepository", () => {
     });
   });
 
-  describe("findLatestByUser", () => {
+  describe("findLatestByCompany", () => {
     let notifications: CompanyNotification[] = [];
     const notificationsLength = 20;
 

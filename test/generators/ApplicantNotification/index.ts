@@ -36,7 +36,7 @@ export const ApplicantNotificationGenerator = {
         values.push(await generator!({ applicant, admin }));
         MockDate.reset();
       }
-      return values.sort(({ createdAt }) => -createdAt!);
+      return values.sort(value => -value.createdAt!);
     }
   }
 };
