@@ -305,7 +305,7 @@ describe("getOfferByUuid", () => {
       expect(data!.getOfferByUuid.hasApplied).toBe(false);
     });
 
-    it("return an error if a company request the hasApplied field", async () => {
+    it("returns an error if a company request the hasApplied field", async () => {
       const { company, apolloClient } = await companyTestClient(ApprovalStatus.approved);
       const offer = await OfferGenerator.instance.forStudents({ companyUuid: company.uuid });
       const { errors } = await apolloClient.query({
@@ -316,7 +316,7 @@ describe("getOfferByUuid", () => {
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });
 
-    it("return an error if an admin request the hasApplied field", async () => {
+    it("returns an error if an admin request the hasApplied field", async () => {
       const { apolloClient } = await TestClientGenerator.admin();
       const offer = await OfferGenerator.instance.forStudents({ companyUuid });
       const { errors } = await apolloClient.query({

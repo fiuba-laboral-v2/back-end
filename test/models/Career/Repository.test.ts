@@ -120,7 +120,7 @@ describe("CareerRepository", () => {
   });
 
   describe("findByCode", () => {
-    it("return a career by code", async () => {
+    it("returns a career by code", async () => {
       const { code } = await CareerRepository.create(CareerGenerator.data());
       const career = await CareerRepository.findByCode(code);
       expect(career.code).toEqual(code);

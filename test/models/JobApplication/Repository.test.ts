@@ -394,7 +394,7 @@ describe("JobApplicationRepository", () => {
   });
 
   describe("findByUuid", () => {
-    it("return a jobApplication By Uuid", async () => {
+    it("returns a jobApplication By Uuid", async () => {
       const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
       expect((await JobApplicationRepository.findByUuid(jobApplication.uuid)).toJSON()).toEqual(
         jobApplication.toJSON()

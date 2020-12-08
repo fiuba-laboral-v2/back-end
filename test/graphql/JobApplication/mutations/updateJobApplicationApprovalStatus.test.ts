@@ -225,7 +225,7 @@ describe("updateJobApplicationApprovalStatus", () => {
     expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
   });
 
-  it("return an error if no uuid is provided", async () => {
+  it("returns an error if no uuid is provided", async () => {
     const { apolloClient } = await TestClientGenerator.admin();
     const { errors } = await apolloClient.mutate({
       mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
@@ -234,7 +234,7 @@ describe("updateJobApplicationApprovalStatus", () => {
     expect(errors).not.toBeUndefined();
   });
 
-  it("return an error if no approvalStatus is provided", async () => {
+  it("returns an error if no approvalStatus is provided", async () => {
     const { apolloClient } = await TestClientGenerator.admin();
     const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
     const { errors } = await apolloClient.mutate({
