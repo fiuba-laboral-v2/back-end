@@ -62,7 +62,7 @@ describe("ApprovedJobApplicationApplicantNotificationEmailSender", () => {
             name: `${adminAttributes.user.name} ${adminAttributes.user.surname}`,
             email: adminAttributes.user.email
           },
-          subject: "Postulación a oferta de trabajo aprobado",
+          subject: "Postulación a oferta de trabajo aprobada",
           body: expect.stringContaining(
             `Tu postulación a la oferta de trabajo: ${offer.title} (baseUrl/subDomain/empresa/ofertas/${offer.uuid}) ha sido aprobada. Se envió una notificación a la empresa` +
               "\n\n" +
