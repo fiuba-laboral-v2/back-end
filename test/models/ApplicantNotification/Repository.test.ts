@@ -5,7 +5,8 @@ import {
   IApprovedJobApplicationAttributes,
   IApplicantNotificationAttributes,
   ApprovedJobApplicationApplicantNotification,
-  ApplicantNotificationRepository
+  ApplicantNotificationRepository,
+  ApplicantNotification
 } from "$models/ApplicantNotification";
 
 import { UserRepository } from "$models/User";
@@ -20,8 +21,10 @@ import { AdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { JobApplicationGenerator } from "$generators/JobApplication";
+import { ApplicantNotificationGenerator } from "$generators/ApplicantNotification";
 import { UUID_REGEX } from "$test/models";
 import { UUID } from "$models/UUID";
+import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 
 describe("ApplicantNotificationRepository", () => {
   let extensionAdmin: Admin;
@@ -137,6 +140,79 @@ describe("ApplicantNotificationRepository", () => {
       ApplicantNotificationNotFoundError,
       ApplicantNotificationNotFoundError.buildMessage(uuid)
     );
+  });
+
+  describe("findLatestByApplicant", () => {
+    const { findLatestByApplicant } = ApplicantNotificationRepository;
+    let notifications: ApplicantNotification[] = [];
+    const notificationsLength = 20;
+
+    beforeAll(async () => {
+      await ApplicantNotificationRepository.truncate();
+
+      const anotherApplicant = await ApplicantGenerator.instance.withMinimumData();
+      const size = notificationsLength;
+
+      notifications = await ApplicantNotificationGenerator.instance.range({ applicant, size });
+      await ApplicantNotificationGenerator.instance.range({ applicant: anotherApplicant, size: 2 });
+    });
+
+    it("finds all notifications by applicant", async () => {
+      const applicantUuid = applicant.uuid;
+      const result = await ApplicantNotificationRepository.findLatestByApplicant({ applicantUuid });
+      const { shouldFetchMore, results } = result;
+      expect(results).toHaveLength(notificationsLength);
+      expect(shouldFetchMore).toBe(false);
+    });
+
+    it("finds the first three notifications", async () => {
+      const applicantUuid = applicant.uuid;
+      const itemsPerPage = 3;
+      mockItemsPerPage(itemsPerPage);
+      const updatedBeforeThan = {
+        dateTime: notifications[0].createdAt!,
+        uuid: notifications[0].uuid!
+      };
+      const result = await findLatestByApplicant({ updatedBeforeThan, applicantUuid });
+      const { shouldFetchMore, results } = result;
+      expect(results).toHaveLength(itemsPerPage);
+      expect(results).toEqual(notifications.slice(1, itemsPerPage + 1));
+      expect(shouldFetchMore).toBe(true);
+    });
+
+    it("finds the last half of remaining notifications", async () => {
+      const applicantUuid = applicant.uuid;
+      const itemsPerPage = notificationsLength / 2;
+      mockItemsPerPage(itemsPerPage);
+      const updatedBeforeThan = {
+        dateTime: notifications[itemsPerPage - 1].createdAt!,
+        uuid: notifications[itemsPerPage - 1].uuid!
+      };
+      const result = await findLatestByApplicant({ updatedBeforeThan, applicantUuid });
+      const { shouldFetchMore, results } = result;
+      expect(results).toHaveLength(itemsPerPage);
+      expect(results).toEqual(notifications.slice(itemsPerPage, notificationsLength + 1));
+      expect(shouldFetchMore).toBe(false);
+    });
+
+    it("finds the latest notifications order by inNew first", async () => {
+      const applicantUuid = applicant.uuid;
+      let isNew = true;
+      notifications.forEach(notification => {
+        notification.isNew = !isNew;
+        isNew = !isNew;
+      });
+      await Promise.all(
+        notifications.map(notification => ApplicantNotificationRepository.save(notification))
+      );
+      const { shouldFetchMore, results } = await findLatestByApplicant({ applicantUuid });
+
+      expect(results.map(result => result.isNew)).toEqual([
+        ...Array(notificationsLength / 2).fill(true),
+        ...Array(notificationsLength / 2).fill(false)
+      ]);
+      expect(shouldFetchMore).toBe(false);
+    });
   });
 
   describe("DELETE CASCADE", () => {
