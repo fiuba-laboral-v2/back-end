@@ -6,6 +6,8 @@ import { CareerRepository } from "$models/Career";
 import { OfferRepository } from "$models/Offer";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { JobApplicationRepository } from "$models/JobApplication";
+import { ApplicantNotificationRepository } from "$models/ApplicantNotification";
+import { CompanyNotificationRepository } from "$models/CompanyNotification";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { EmailService } from "$services/Email";
@@ -14,7 +16,6 @@ import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { TestClientGenerator } from "$generators/TestClient";
 import { JobApplicationGenerator } from "$generators/JobApplication";
 import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
-import { CompanyNotificationRepository } from "$models/CompanyNotification";
 import { UUID_REGEX } from "$test/models";
 
 const UPDATE_JOB_APPLICATION_APPROVAL_STATUS = gql`
@@ -131,6 +132,42 @@ describe("updateJobApplicationApprovalStatus", () => {
       return { data, admin };
     };
 
+    it("creates a notification for an applicant if the jobApplication is approved", async () => {
+      await ApplicantNotificationRepository.truncate();
+      const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      const { admin } = await updateJobApplicationWithStatus(
+        jobApplication.uuid,
+        ApprovalStatus.approved
+      );
+      const notifications = await ApplicantNotificationRepository.findAll();
+      expect(notifications).toEqual([
+        {
+          uuid: expect.stringMatching(UUID_REGEX),
+          moderatorUuid: admin.userUuid,
+          notifiedApplicantUuid: jobApplication.applicantUuid,
+          isNew: true,
+          jobApplicationUuid: jobApplication.uuid,
+          createdAt: expect.any(Date)
+        }
+      ]);
+    });
+
+    it("does not create a notification for an applicant if the jobApplication is rejected", async () => {
+      await ApplicantNotificationRepository.truncate();
+      const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      await updateJobApplicationWithStatus(jobApplication.uuid, ApprovalStatus.rejected);
+      const notifications = await ApplicantNotificationRepository.findAll();
+      expect(notifications).toEqual([]);
+    });
+
+    it("does not create a notification for an applicant if the jobApplication is pending", async () => {
+      await ApplicantNotificationRepository.truncate();
+      const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      await updateJobApplicationWithStatus(jobApplication.uuid, ApprovalStatus.pending);
+      const notifications = await ApplicantNotificationRepository.findAll();
+      expect(notifications).toEqual([]);
+    });
+
     it("creates a notification for a company if the jobApplication is approved", async () => {
       const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
       const { companyUuid } = await OfferRepository.findByUuid(jobApplication.offerUuid);
@@ -188,7 +225,7 @@ describe("updateJobApplicationApprovalStatus", () => {
     expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
   });
 
-  it("return an error if no uuid is provided", async () => {
+  it("returns an error if no uuid is provided", async () => {
     const { apolloClient } = await TestClientGenerator.admin();
     const { errors } = await apolloClient.mutate({
       mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
@@ -197,7 +234,7 @@ describe("updateJobApplicationApprovalStatus", () => {
     expect(errors).not.toBeUndefined();
   });
 
-  it("return an error if no approvalStatus is provided", async () => {
+  it("returns an error if no approvalStatus is provided", async () => {
     const { apolloClient } = await TestClientGenerator.admin();
     const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
     const { errors } = await apolloClient.mutate({

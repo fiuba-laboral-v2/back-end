@@ -219,7 +219,7 @@ describe("getMyLatestJobApplications", () => {
   });
 
   describe("Errors", () => {
-    it("return an error if there is no current user", async () => {
+    it("returns an error if there is no current user", async () => {
       const apolloClient = client.loggedOut();
       const { errors } = await performQuery(apolloClient);
 

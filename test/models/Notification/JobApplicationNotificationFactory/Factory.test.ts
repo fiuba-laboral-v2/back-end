@@ -1,4 +1,6 @@
 import { JobApplicationNotificationFactory } from "$models/Notification";
+import { NewJobApplicationCompanyNotification } from "$models/CompanyNotification";
+import { ApprovedJobApplicationApplicantNotification } from "$models/ApplicantNotification";
 import { OfferRepository } from "$models/Offer";
 import { Admin, Company, JobApplication, Offer } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
@@ -37,9 +39,19 @@ describe("JobApplicationNotificationFactory", () => {
 
   beforeEach(() => jest.spyOn(OfferRepository, "findByUuid").mockImplementation(async () => offer));
 
-  it("return an array with a NewJobApplicationCompanyNotification", async () => {
+  it("returns an array with a NewJobApplicationCompanyNotification and ApprovedJobApplicationApplicantNotification", async () => {
     jobApplication.set({ approvalStatus: ApprovalStatus.approved });
     const notifications = await JobApplicationNotificationFactory.create(jobApplication, admin);
+    expect(notifications).toHaveLength(2);
+    const [firstNotification, secondNotification] = notifications;
+    expect(firstNotification).toBeInstanceOf(NewJobApplicationCompanyNotification);
+    expect(secondNotification).toBeInstanceOf(ApprovedJobApplicationApplicantNotification);
+  });
+
+  it("returns an array with a the correct attributes", async () => {
+    jobApplication.set({ approvalStatus: ApprovalStatus.approved });
+    const notifications = await JobApplicationNotificationFactory.create(jobApplication, admin);
+
     expect(notifications).toEqual([
       {
         uuid: undefined,
@@ -48,17 +60,25 @@ describe("JobApplicationNotificationFactory", () => {
         jobApplicationUuid: jobApplication.uuid,
         isNew: true,
         createdAt: undefined
+      },
+      {
+        uuid: undefined,
+        moderatorUuid: admin.userUuid,
+        notifiedApplicantUuid: jobApplication.applicantUuid,
+        jobApplicationUuid: jobApplication.uuid,
+        isNew: true,
+        createdAt: undefined
       }
     ]);
   });
 
-  it("return an empty array if the jobApplication is rejected", async () => {
+  it("returns an empty array if the jobApplication is rejected", async () => {
     jobApplication.set({ approvalStatus: ApprovalStatus.rejected });
     const notifications = await JobApplicationNotificationFactory.create(jobApplication, admin);
     expect(notifications).toEqual([]);
   });
 
-  it("return an empty array if the jobApplication is pending", async () => {
+  it("returns an empty array if the jobApplication is pending", async () => {
     jobApplication.set({ approvalStatus: ApprovalStatus.pending });
     const notifications = await JobApplicationNotificationFactory.create(jobApplication, admin);
     expect(notifications).toEqual([]);

@@ -108,7 +108,7 @@ describe("CompanyNotificationMapper", () => {
       });
     });
 
-    it("returns a ApprovedOfferCompanyNotification", () => {
+    it("returns a ApprovedOfferCompanyNotification", async () => {
       const attributes = {
         ...commonAttributes,
         offerUuid: UUID.generate(),

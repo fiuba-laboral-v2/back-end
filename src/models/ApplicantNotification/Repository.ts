@@ -16,5 +16,9 @@ export const ApplicantNotificationRepository = {
 
     return ApplicantNotificationMapper.toDomainModel(sequelizeModel);
   },
+  findAll: async () => {
+    const notifications = await ApplicantNotificationSequelizeModel.findAll();
+    return notifications.map(ApplicantNotificationMapper.toDomainModel);
+  },
   truncate: () => ApplicantNotificationSequelizeModel.destroy({ truncate: true })
 };

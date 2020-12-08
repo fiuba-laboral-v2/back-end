@@ -1,9 +1,13 @@
 import {
+  ApplicantNotificationRepository,
+  ApprovedJobApplicationApplicantNotification
+} from "$models/ApplicantNotification";
+import {
   NewJobApplicationCompanyNotification,
   ApprovedOfferCompanyNotification,
   CompanyNotificationRepository
 } from "$models/CompanyNotification";
-import { NotificationRepositoryFactory } from "$models/Notification";
+import { NotificationRepositoryFactory, UnknownRepositoryError } from "$models/Notification";
 import { UUID } from "$models/UUID";
 
 describe("NotificationRepositoryFactory", () => {
@@ -27,9 +31,22 @@ describe("NotificationRepositoryFactory", () => {
     expect(repository).toEqual(CompanyNotificationRepository);
   });
 
+  it("returns an ApplicantNotificationRepository for ApprovedJobApplicationApplicantNotification", async () => {
+    const notification = new ApprovedJobApplicationApplicantNotification({
+      moderatorUuid: UUID.generate(),
+      notifiedApplicantUuid: UUID.generate(),
+      jobApplicationUuid: UUID.generate()
+    });
+    const repository = NotificationRepositoryFactory.getRepositoryFor(notification);
+    expect(repository).toEqual(ApplicantNotificationRepository);
+  });
+
   it("throws an error if it is given any object that has no associated repository", async () => {
-    expect(() => NotificationRepositoryFactory.getRepositoryFor(new Date() as any)).toThrowError(
-      "no repository found for Date"
+    expect(() =>
+      NotificationRepositoryFactory.getRepositoryFor(new Date() as any)
+    ).toThrowErrorWithMessage(
+      UnknownRepositoryError,
+      UnknownRepositoryError.buildMessage(Date.name)
     );
   });
 });
