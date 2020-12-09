@@ -29,6 +29,10 @@ export const defaultTranslations = {
     text: "No hay notificaciones",
     button: "Ver postulaciones"
   },
+  applicantEmptyNotificationList: {
+    text: "No hay notificaciones",
+    button: "Ver ofertas de trabajo"
+  },
   offerCreationInfoMessage: {
     message:
       "La oferta será revisada por personal de FIUBA. Una vez aprobada, permanecerá publicada por <%= studentsOfferDuration %> días para alumnos y/o <%= graduatesOfferDuration %> días para graduados, a menos que la remuevas antes."
@@ -451,6 +455,9 @@ export const defaultTranslations = {
     pendingApplicantTitle: "Postulación pendiente de aprobación",
     approvedApplicantTitle: "Postulación aprobada",
     rejectedApplicantTitle: "Postulación rechazada"
+  },
+  approvedJobApplicationApplicantNotification: {
+    title: "Postulación aprobada"
   },
   isNewLabel: {
     isNew: "Nueva"
