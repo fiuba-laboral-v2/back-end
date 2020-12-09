@@ -10,3 +10,7 @@ export interface IFindLatestByApplicant {
   applicantUuid: string;
   updatedBeforeThan?: IPaginatedInput;
 }
+
+export interface IHasUnreadNotifications {
+  applicantUuid: string;
+}
