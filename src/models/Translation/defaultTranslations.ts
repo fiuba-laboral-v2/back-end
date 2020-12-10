@@ -492,6 +492,15 @@ export const defaultTranslations = {
       "\n\n" +
       "<%= signature %>"
   },
+  rejectedJobApplicationApplicantNotificationEmail: {
+    subject: "Postulación a oferta de trabajo rechazada",
+    body:
+      "Tu postulación a la oferta de trabajo: <%= offerTitle %> (<%= offerLink %>) ha sido rechazada." +
+      "\n" +
+      "Motivo: <%= rejectionReason %>" +
+      "\n\n" +
+      "<%= signature %>"
+  },
   emailSignature: {
     graduados: "Bolsa de Trabajo FIUBA",
     extension: "Bolsa de Trabajo FIUBA"
