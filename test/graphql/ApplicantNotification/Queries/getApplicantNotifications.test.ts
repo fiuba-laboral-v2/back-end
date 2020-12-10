@@ -89,25 +89,34 @@ describe("getApplicantNotifications", () => {
   const createApplicantTestClient = (approvalStatus: ApprovalStatus) =>
     TestClientGenerator.applicant({ status: { approvalStatus, admin } });
 
-  const getFields = (notification: ApplicantNotification) =>
-    ({
-      [ApprovedJobApplicationApplicantNotification.name]: {
-        __typename: "ApprovedJobApplicationApplicantNotification",
-        jobApplication: {
-          __typename: GraphQLJobApplication.name,
-          uuid: (notification as ApprovedJobApplicationApplicantNotification).jobApplicationUuid
-        }
-      },
-      [RejectedJobApplicationApplicantNotification.name]: {
-        __typename: "RejectedJobApplicationApplicantNotification",
-        moderatorMessage: (notification as RejectedJobApplicationApplicantNotification)
-          .moderatorMessage,
-        jobApplication: {
-          __typename: GraphQLJobApplication.name,
-          uuid: (notification as RejectedJobApplicationApplicantNotification).jobApplicationUuid
-        }
-      }
-    }[notification.constructor.name]);
+  const getFields = (notification: ApplicantNotification) => {
+    const notificationClassName = notification.constructor.name;
+    switch (notificationClassName) {
+      case ApprovedJobApplicationApplicantNotification.name:
+        const approvedJobApplicationNotification = notification as ApprovedJobApplicationApplicantNotification;
+        return {
+          __typename: "ApprovedJobApplicationApplicantNotification",
+          jobApplication: {
+            __typename: GraphQLJobApplication.name,
+            uuid: approvedJobApplicationNotification.jobApplicationUuid
+          }
+        };
+      case RejectedJobApplicationApplicantNotification.name:
+        const rejectedJobApplicationNotification = notification as RejectedJobApplicationApplicantNotification;
+        return {
+          __typename: "RejectedJobApplicationApplicantNotification",
+          moderatorMessage: rejectedJobApplicationNotification.moderatorMessage,
+          jobApplication: {
+            __typename: GraphQLJobApplication.name,
+            uuid: rejectedJobApplicationNotification.jobApplicationUuid
+          }
+        };
+    }
+    throw new Error(`
+      The local function getFields in the getApplicantNotification test failed because
+      it received an unknown notification: ${notificationClassName}
+    `);
+  };
 
   it("returns all notifications", async () => {
     const { apolloClient, applicant } = await createApplicantTestClient(ApprovalStatus.approved);
