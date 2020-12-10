@@ -118,6 +118,43 @@ describe("getApplicantNotifications", () => {
     expect(shouldFetchMore).toBe(false);
   });
 
+  it("updates the returned notifications isNew value to false", async () => {
+    const { apolloClient, applicant } = await createApplicantTestClient(ApprovalStatus.approved);
+    const size = 10;
+    const notifications = await ApplicantNotificationGenerator.instance.range({ applicant, size });
+    const { data, errors } = await performQuery(apolloClient);
+    expect(errors).toBeUndefined();
+    const uuids = notifications.map(({ uuid }) => uuid!);
+    const persistedNotifications = await ApplicantNotificationRepository.findByUuids(uuids);
+    const { results, shouldFetchMore } = data!.getApplicantNotifications;
+
+    expect(results).toHaveLength(size);
+    results.map(notification => expect(notification.isNew).toBe(true));
+    persistedNotifications.map(notification => expect(notification.isNew).toBe(false));
+    expect(shouldFetchMore).toBe(false);
+  });
+
+  it("updates the last five notifications isNew value to false", async () => {
+    const size = 10;
+    const itemsPerPage = size / 2;
+    mockItemsPerPage(itemsPerPage);
+    const { apolloClient, applicant } = await createApplicantTestClient(ApprovalStatus.approved);
+    const notifications = await ApplicantNotificationGenerator.instance.range({ applicant, size });
+    const { data, errors } = await performQuery(apolloClient, {
+      uuid: notifications[itemsPerPage - 1].uuid!,
+      dateTime: notifications[itemsPerPage - 1].createdAt!
+    });
+    expect(errors).toBeUndefined();
+    const uuids = notifications.slice(itemsPerPage + 1, size).map(({ uuid }) => uuid!);
+    const persistedNotifications = await ApplicantNotificationRepository.findByUuids(uuids);
+    const { results, shouldFetchMore } = data!.getApplicantNotifications;
+
+    expect(results).toHaveLength(itemsPerPage);
+    results.map(notification => expect(notification.isNew).toBe(true));
+    persistedNotifications.map(notification => expect(notification.isNew).toBe(false));
+    expect(shouldFetchMore).toBe(false);
+  });
+
   it("returns an error if there is no current user", async () => {
     const apolloClient = client.loggedOut();
     const { errors } = await performQuery(apolloClient);
@@ -176,6 +213,7 @@ describe("getApplicantNotifications", () => {
       .mockImplementation(() =>
         Promise.resolve({ results: [unknownNotification], shouldFetchMore: false })
       );
+    jest.spyOn(ApplicantNotificationRepository, "markAsReadByUuids").mockImplementation(jest.fn());
     const { errors } = await performQuery(apolloClient);
     expect(errors).toEqualGraphQLErrorType(UnknownNotificationError.name);
   });

@@ -1,5 +1,8 @@
 import { ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
-import { ApplicantNotificationNotFoundError } from "$models/ApplicantNotification/Errors";
+import {
+  ApplicantNotificationNotFoundError,
+  ApplicantNotificationsNotUpdatedError
+} from "$models/ApplicantNotification/Errors";
 import { Admin, Applicant, Company, JobApplication } from "$models";
 import {
   IApprovedJobApplicationAttributes,
@@ -251,6 +254,44 @@ describe("ApplicantNotificationRepository", () => {
         ...Array(notificationsLength / 2).fill(false)
       ]);
       expect(shouldFetchMore).toBe(false);
+    });
+  });
+
+  describe("markAsReadByUuids", () => {
+    it("updates isNew to false for all given notification uuids", async () => {
+      const size = 4;
+      const generator = ApplicantNotificationGenerator.instance.range;
+      const notifications = await generator({ applicant, size });
+      notifications.map(notification => expect(notification.isNew).toBe(true));
+
+      const uuids = notifications.map(({ uuid }) => uuid!);
+      await ApplicantNotificationRepository.markAsReadByUuids(uuids);
+      const updatedNotifications = await ApplicantNotificationRepository.findByUuids(uuids);
+      updatedNotifications.map(notification => expect(notification.isNew).toBe(false));
+    });
+
+    it("throws an error if one of the given uuids does not exist", async () => {
+      const nonExistentUuid = UUID.generate();
+      const generator = ApplicantNotificationGenerator.instance.approvedJobApplication;
+      const notification = await generator({ applicant, admin: extensionAdmin });
+      const uuids = [nonExistentUuid, notification.uuid!];
+      await expect(
+        ApplicantNotificationRepository.markAsReadByUuids(uuids)
+      ).rejects.toThrowErrorWithMessage(
+        ApplicantNotificationsNotUpdatedError,
+        ApplicantNotificationsNotUpdatedError.buildMessage()
+      );
+    });
+
+    it("does not update the notifications if it throws an error", async () => {
+      const nonExistentUuid = UUID.generate();
+      const generator = ApplicantNotificationGenerator.instance.approvedJobApplication;
+      const notification = await generator({ applicant, admin: extensionAdmin });
+      const uuid = notification.uuid!;
+      const uuids = [nonExistentUuid, uuid];
+      await expect(ApplicantNotificationRepository.markAsReadByUuids(uuids)).rejects.toThrowError();
+      const persistedNotification = await ApplicantNotificationRepository.findByUuid(uuid);
+      expect(persistedNotification.isNew).toEqual(true);
     });
   });
 
