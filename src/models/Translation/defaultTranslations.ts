@@ -459,6 +459,9 @@ export const defaultTranslations = {
   approvedJobApplicationApplicantNotification: {
     title: "Postulación aprobada"
   },
+  rejectedJobApplicationApplicantNotification: {
+    title: "Postulación rechazada"
+  },
   isNewLabel: {
     isNew: "Nueva"
   },
