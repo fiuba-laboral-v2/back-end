@@ -1,9 +1,13 @@
+import {
+  ApplicantNotificationNotFoundError,
+  ApplicantNotificationsNotUpdatedError
+} from "./Errors";
 import { ApplicantNotification, ApplicantNotificationMapper } from "$models/ApplicantNotification";
-import { ApplicantNotificationNotFoundError } from "./Errors";
 import { IFindLatestByApplicant } from "./Interfaces";
 import { Transaction } from "sequelize";
 import { ApplicantNotificationSequelizeModel } from "$models";
 import { PaginationQuery } from "$models/PaginationQuery";
+import { Database } from "$config";
 
 export const ApplicantNotificationRepository = {
   save: async (notification: ApplicantNotification, transaction?: Transaction) => {
@@ -27,11 +31,25 @@ export const ApplicantNotificationRepository = {
         ["uuid", "DESC"]
       ]
     }),
+  markAsReadByUuids: (uuids: string[]) =>
+    Database.transaction(async transaction => {
+      const [updatedCount] = await ApplicantNotificationSequelizeModel.update(
+        { isNew: false },
+        { where: { uuid: uuids }, returning: false, validate: false, transaction }
+      );
+      if (updatedCount !== uuids.length) throw new ApplicantNotificationsNotUpdatedError();
+    }),
   findByUuid: async (uuid: string) => {
     const sequelizeModel = await ApplicantNotificationSequelizeModel.findByPk(uuid);
     if (!sequelizeModel) throw new ApplicantNotificationNotFoundError(uuid);
 
     return ApplicantNotificationMapper.toDomainModel(sequelizeModel);
+  },
+  findByUuids: async (uuids: string[]) => {
+    const notifications = await ApplicantNotificationSequelizeModel.findAll({
+      where: { uuid: uuids }
+    });
+    return notifications.map(ApplicantNotificationMapper.toDomainModel);
   },
   findAll: async () => {
     const notifications = await ApplicantNotificationSequelizeModel.findAll();
