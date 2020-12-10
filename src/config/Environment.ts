@@ -13,7 +13,7 @@ export const Environment = {
   STAGING: "staging",
   DEVELOPMENT: "development",
   TEST: "test",
-  NODE_ENV: process.env[variablesKeys.NODE_ENV] || "development",
+  NODE_ENV: () => process.env[variablesKeys.NODE_ENV] || "development",
   databaseURL: () => process.env[variablesKeys.DATABASE_URL],
   JWTSecret: () => process.env[variablesKeys.JWT_SECRET],
   FiubaUsersApi: {
@@ -25,10 +25,10 @@ export const Environment = {
     url: () => process.env[variablesKeys.EMAIL_API_URL] as string
   },
   isStaging() {
-    return this.NODE_ENV === this.STAGING;
+    return this.NODE_ENV() === this.STAGING;
   },
   isLocal() {
-    return [this.DEVELOPMENT, this.TEST].includes(this.NODE_ENV);
+    return [this.DEVELOPMENT, this.TEST].includes(this.NODE_ENV());
   },
   validate() {
     if (this.isLocal()) return;

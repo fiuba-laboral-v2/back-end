@@ -33,7 +33,7 @@ export const CookieConfig: ICookieConfig = {
   },
   development: localCookieConfig,
   test: localCookieConfig
-}[Environment.NODE_ENV];
+}[Environment.NODE_ENV()];
 
 interface ICookieConfig {
   cookieOptions: CookieOptions;
