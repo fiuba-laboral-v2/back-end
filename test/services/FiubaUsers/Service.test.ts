@@ -1,5 +1,6 @@
 import {
   FiubaUsersService,
+  FiubaUsersApi,
   InvalidEmptyPasswordError,
   InvalidEmptyUsernameError
 } from "$services/FiubaUsers";
@@ -51,5 +52,14 @@ describe("FiubaUsersService", () => {
 
   it("always returns true in the staging environment", async () => {
     await expectToReturnTrueForEnvironment(Environment.STAGING);
+  });
+
+  it("calls the fiuba users api in the production environment", async () => {
+    const authenticate = jest.fn();
+    const parameters = { dni: DniGenerator.generate(), password: "password" };
+    jest.spyOn(Environment, "NODE_ENV").mockImplementation(() => Environment.PRODUCTION);
+    jest.spyOn(FiubaUsersApi, "authenticate").mockImplementation(authenticate);
+    await FiubaUsersService.authenticate(parameters);
+    expect(authenticate.mock.calls).toEqual([[parameters]]);
   });
 });
