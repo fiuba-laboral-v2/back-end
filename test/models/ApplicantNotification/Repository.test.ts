@@ -145,6 +145,45 @@ describe("ApplicantNotificationRepository", () => {
     );
   });
 
+  describe("hasUnreadNotifications", () => {
+    beforeEach(() => ApplicantNotificationRepository.truncate());
+
+    it("returns true if there are unread notifications", async () => {
+      const size = 4;
+      const generator = ApplicantNotificationGenerator.instance.range;
+      const notifications = await generator({ applicant, size });
+      let isNew = true;
+      for (const notification of notifications) {
+        notification.isNew = !isNew;
+        isNew = !isNew;
+        await ApplicantNotificationRepository.save(notification);
+      }
+      const hasUnreadNotifications = await ApplicantNotificationRepository.hasUnreadNotifications({
+        applicantUuid: applicant.uuid
+      });
+      expect(hasUnreadNotifications).toBe(true);
+    });
+
+    it("returns false if all notifications were read", async () => {
+      const size = 4;
+      const generator = ApplicantNotificationGenerator.instance.range;
+      const notifications = await generator({ applicant, size });
+      notifications.map(notification => (notification.isNew = false));
+      await Promise.all(notifications.map(n => ApplicantNotificationRepository.save(n)));
+      const hasUnreadNotifications = await ApplicantNotificationRepository.hasUnreadNotifications({
+        applicantUuid: applicant.uuid
+      });
+      expect(hasUnreadNotifications).toBe(false);
+    });
+
+    it("returns false there is no notifications", async () => {
+      const hasUnreadNotifications = await ApplicantNotificationRepository.hasUnreadNotifications({
+        applicantUuid: applicant.uuid
+      });
+      expect(hasUnreadNotifications).toBe(false);
+    });
+  });
+
   describe("findLatestByApplicant", () => {
     const { findLatestByApplicant } = ApplicantNotificationRepository;
     let notifications: ApplicantNotification[] = [];
