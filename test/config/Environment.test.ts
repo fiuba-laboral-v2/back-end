@@ -17,7 +17,7 @@ describe("Environment", () => {
       expect(() => Environment.validate()).not.toThrowError();
     });
 
-    it("throws an error if DATABASE_URL is nor present", async () => {
+    it("throws an error if DATABASE_URL is not present", async () => {
       setMandatoryEnvironmentVariables();
       jest.spyOn(Environment, "databaseURL").mockImplementation(() => undefined);
       expect(() => Environment.validate()).toThrowError(
@@ -25,13 +25,13 @@ describe("Environment", () => {
       );
     });
 
-    it("throws an error if JWT_SECRET is nor present", async () => {
+    it("throws an error if JWT_SECRET is not present", async () => {
       setMandatoryEnvironmentVariables();
       jest.spyOn(Environment, "JWTSecret").mockImplementation(() => undefined);
       expect(() => Environment.validate()).toThrowError("Missing environment variable: JWT_SECRET");
     });
 
-    it("throws an error if JWT_SECRET is nor present", async () => {
+    it("throws an error if JWT_SECRET is not present", async () => {
       setMandatoryEnvironmentVariables();
       jest.spyOn(Environment.emailApi, "applicationID").mockImplementation(() => undefined);
       expect(() => Environment.validate()).toThrowError(
@@ -39,7 +39,7 @@ describe("Environment", () => {
       );
     });
 
-    it("throws an error if EMAIL_API_PASSWORD is nor present", async () => {
+    it("throws an error if EMAIL_API_PASSWORD is not present", async () => {
       setMandatoryEnvironmentVariables();
       jest.spyOn(Environment.emailApi, "password").mockImplementation(() => undefined);
       expect(() => Environment.validate()).toThrowError(
@@ -47,7 +47,7 @@ describe("Environment", () => {
       );
     });
 
-    it("throws an error if EMAIL_API_URL is nor present", async () => {
+    it("throws an error if EMAIL_API_URL is not present", async () => {
       setMandatoryEnvironmentVariables();
       jest.spyOn(Environment.emailApi, "url").mockImplementation(() => undefined as any);
       expect(() => Environment.validate()).toThrowError(
@@ -55,7 +55,7 @@ describe("Environment", () => {
       );
     });
 
-    it("throws an error if FIUBA_USERS_API_URL is nor present", async () => {
+    it("throws an error if FIUBA_USERS_API_URL is not present", async () => {
       setMandatoryEnvironmentVariables();
       jest.spyOn(Environment.FiubaUsersApi, "url").mockImplementation(() => undefined as any);
       expect(() => Environment.validate()).toThrowError(
