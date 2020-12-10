@@ -11,7 +11,8 @@ import { UnknownNotificationError } from "$models/Notification";
 import {
   ApplicantNotification,
   ApplicantNotificationRepository,
-  ApprovedJobApplicationApplicantNotification
+  ApprovedJobApplicationApplicantNotification,
+  RejectedJobApplicationApplicantNotification
 } from "$models/ApplicantNotification";
 import { Admin } from "$models";
 
@@ -34,6 +35,18 @@ const GET_APPLICANT_NOTIFICATIONS = gql`
           __typename
           uuid
           adminEmail
+          isNew
+          createdAt
+          jobApplication {
+            __typename
+            uuid
+          }
+        }
+        ... on RejectedJobApplicationApplicantNotification {
+          __typename
+          uuid
+          adminEmail
+          moderatorMessage
           isNew
           createdAt
           jobApplication {
@@ -76,6 +89,26 @@ describe("getApplicantNotifications", () => {
   const createApplicantTestClient = (approvalStatus: ApprovalStatus) =>
     TestClientGenerator.applicant({ status: { approvalStatus, admin } });
 
+  const getFields = (notification: ApplicantNotification) =>
+    ({
+      [ApprovedJobApplicationApplicantNotification.name]: {
+        __typename: "ApprovedJobApplicationApplicantNotification",
+        jobApplication: {
+          __typename: GraphQLJobApplication.name,
+          uuid: (notification as ApprovedJobApplicationApplicantNotification).jobApplicationUuid
+        }
+      },
+      [RejectedJobApplicationApplicantNotification.name]: {
+        __typename: "RejectedJobApplicationApplicantNotification",
+        moderatorMessage: (notification as RejectedJobApplicationApplicantNotification)
+          .moderatorMessage,
+        jobApplication: {
+          __typename: GraphQLJobApplication.name,
+          uuid: (notification as RejectedJobApplicationApplicantNotification).jobApplicationUuid
+        }
+      }
+    }[notification.constructor.name]);
+
   it("returns all notifications", async () => {
     const { apolloClient, applicant } = await createApplicantTestClient(ApprovalStatus.approved);
     const size = 5;
@@ -89,11 +122,7 @@ describe("getApplicantNotifications", () => {
           adminEmail: (await UserRepository.findByUuid(notification.moderatorUuid)).email,
           isNew: notification.isNew,
           createdAt: notification.createdAt?.toISOString(),
-          __typename: "ApprovedJobApplicationApplicantNotification",
-          jobApplication: {
-            __typename: GraphQLJobApplication.name,
-            uuid: (notification as ApprovedJobApplicationApplicantNotification).jobApplicationUuid
-          }
+          ...getFields(notification)
         }))
       )
     );
