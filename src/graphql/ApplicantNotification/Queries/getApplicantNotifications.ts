@@ -18,9 +18,13 @@ export const getApplicantNotifications = {
     _: undefined,
     { updatedBeforeThan }: { updatedBeforeThan?: IPaginatedInput },
     { currentUser }: IApolloServerContext
-  ) =>
-    ApplicantNotificationRepository.findLatestByApplicant({
+  ) => {
+    const notifications = await ApplicantNotificationRepository.findLatestByApplicant({
       updatedBeforeThan,
       applicantUuid: currentUser.getApplicantRole().applicantUuid
-    })
+    });
+    const notificationUuids = notifications.results.map(({ uuid }) => uuid!);
+    await ApplicantNotificationRepository.markAsReadByUuids(notificationUuids);
+    return notifications;
+  }
 };
