@@ -30,7 +30,7 @@ export const JWTConfig: IJWTConfig = {
     algorithms: ["RS256"],
     secret: Environment.JWTSecret() || "Environment.JWT_SECRET"
   }
-}[Environment.NODE_ENV];
+}[Environment.NODE_ENV()];
 
 interface IJWTConfig {
   expiresIn: string;

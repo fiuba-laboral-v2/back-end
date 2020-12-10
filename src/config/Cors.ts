@@ -12,4 +12,4 @@ export const CorsConfig: CorsOptions = {
   staging: corsOptions(FrontendConfig.baseUrl),
   development: corsOptions(FrontendConfig.baseUrl),
   test: corsOptions(FrontendConfig.baseUrl)
-}[Environment.NODE_ENV];
+}[Environment.NODE_ENV()];

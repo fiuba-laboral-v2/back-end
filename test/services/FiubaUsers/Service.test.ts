@@ -8,7 +8,7 @@ import { DniGenerator } from "$generators/DNI";
 
 describe("FiubaUsersService", () => {
   const expectToReturnTrueForEnvironment = async (environment: string) => {
-    Environment.NODE_ENV = environment;
+    jest.spyOn(Environment, "NODE_ENV").mockImplementation(() => environment);
     expect(
       await FiubaUsersService.authenticate({
         dni: DniGenerator.generate(),
@@ -16,8 +16,6 @@ describe("FiubaUsersService", () => {
       })
     ).toBe(true);
   };
-
-  afterEach(() => (Environment.NODE_ENV = Environment.TEST));
 
   it("throws an error if the username is empty", async () => {
     await expect(
