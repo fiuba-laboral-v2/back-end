@@ -1,5 +1,5 @@
-import { IExpected } from "../config/customMatchers/toBeAggregateErrorIncluding";
-import { IOptions } from "../config/customMatchers/toBeSortedBy";
+import { IExpected } from "../jestConfig/customMatchers/toBeAggregateErrorIncluding";
+import { IOptions } from "../jestConfig/customMatchers/toBeSortedBy";
 
 export {};
 
