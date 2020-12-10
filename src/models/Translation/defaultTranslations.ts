@@ -462,6 +462,10 @@ export const defaultTranslations = {
   rejectedJobApplicationApplicantNotification: {
     title: "Postulación rechazada"
   },
+  rejectionReason: {
+    reason: "Motivo",
+    contactModerator: "Contactar moderador/a"
+  },
   isNewLabel: {
     isNew: "Nueva"
   },
