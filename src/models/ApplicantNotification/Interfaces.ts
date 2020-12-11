@@ -1,7 +1,8 @@
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 
 export enum ApplicantNotificationType {
-  approvedJobApplication = "approvedJobApplication"
+  approvedJobApplication = "approvedJobApplication",
+  rejectedJobApplication = "rejectedJobApplication"
 }
 
 export const applicantNotificationTypeEnumValues = Object.keys(ApplicantNotificationType);

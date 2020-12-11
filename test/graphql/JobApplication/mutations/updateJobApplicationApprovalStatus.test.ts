@@ -12,6 +12,7 @@ import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { EmailService } from "$services/Email";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
+import { AttributeNotDefinedError } from "$models/Errors";
 
 import { TestClientGenerator } from "$generators/TestClient";
 import { JobApplicationGenerator } from "$generators/JobApplication";
@@ -19,8 +20,16 @@ import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { UUID_REGEX } from "$test/models";
 
 const UPDATE_JOB_APPLICATION_APPROVAL_STATUS = gql`
-  mutation updateJobApplicationApprovalStatus($uuid: ID!, $approvalStatus: ApprovalStatus!) {
-    updateJobApplicationApprovalStatus(uuid: $uuid, approvalStatus: $approvalStatus) {
+  mutation updateJobApplicationApprovalStatus(
+    $uuid: ID!
+    $approvalStatus: ApprovalStatus!
+    $moderatorMessage: String
+  ) {
+    updateJobApplicationApprovalStatus(
+      uuid: $uuid
+      approvalStatus: $approvalStatus
+      moderatorMessage: $moderatorMessage
+    ) {
       offerUuid
       applicantUuid
       approvalStatus
@@ -29,6 +38,8 @@ const UPDATE_JOB_APPLICATION_APPROVAL_STATUS = gql`
 `;
 
 describe("updateJobApplicationApprovalStatus", () => {
+  const moderatorMessage = "moderatorMessage";
+
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
@@ -38,16 +49,14 @@ describe("updateJobApplicationApprovalStatus", () => {
     await SecretarySettingsGenerator.createDefaultSettings();
   });
 
-  beforeEach(() => {
-    jest.spyOn(EmailService, "send").mockImplementation(jest.fn());
-  });
+  beforeEach(() => jest.spyOn(EmailService, "send").mockImplementation(jest.fn()));
 
   const expectToLogAnEventForStatus = async (secretary: Secretary, status: ApprovalStatus) => {
     const { apolloClient, admin } = await TestClientGenerator.admin({ secretary });
     const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
     const { errors } = await apolloClient.mutate({
       mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
-      variables: { uuid, approvalStatus: status }
+      variables: { uuid, approvalStatus: status, moderatorMessage }
     });
     expect(errors).toBeUndefined();
     const jobApplication = await JobApplicationRepository.findByUuid(uuid);
@@ -65,7 +74,7 @@ describe("updateJobApplicationApprovalStatus", () => {
     const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
     const { errors, data } = await apolloClient.mutate({
       mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
-      variables: { uuid, approvalStatus }
+      variables: { uuid, approvalStatus, moderatorMessage }
     });
 
     expect(errors).toBeUndefined();
@@ -126,38 +135,45 @@ describe("updateJobApplicationApprovalStatus", () => {
       const { apolloClient, admin } = await TestClientGenerator.admin({ secretary });
       const { data, errors } = await apolloClient.mutate({
         mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
-        variables: { uuid, approvalStatus }
+        variables: { uuid, approvalStatus, moderatorMessage }
       });
       expect(errors).toBeUndefined();
       return { data, admin };
     };
 
     it("creates a notification for an applicant if the jobApplication is approved", async () => {
-      await ApplicantNotificationRepository.truncate();
-      const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
-      const { admin } = await updateJobApplicationWithStatus(
-        jobApplication.uuid,
-        ApprovalStatus.approved
-      );
-      const notifications = await ApplicantNotificationRepository.findAll();
-      expect(notifications).toEqual([
+      const repository = ApplicantNotificationRepository;
+      const { uuid, applicantUuid } = await JobApplicationGenerator.instance.withMinimumData();
+      const { admin } = await updateJobApplicationWithStatus(uuid, ApprovalStatus.approved);
+      const { results } = await repository.findLatestByApplicant({ applicantUuid });
+      expect(results).toEqual([
         {
           uuid: expect.stringMatching(UUID_REGEX),
           moderatorUuid: admin.userUuid,
-          notifiedApplicantUuid: jobApplication.applicantUuid,
+          notifiedApplicantUuid: applicantUuid,
           isNew: true,
-          jobApplicationUuid: jobApplication.uuid,
+          jobApplicationUuid: uuid,
           createdAt: expect.any(Date)
         }
       ]);
     });
 
-    it("does not create a notification for an applicant if the jobApplication is rejected", async () => {
-      await ApplicantNotificationRepository.truncate();
-      const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
-      await updateJobApplicationWithStatus(jobApplication.uuid, ApprovalStatus.rejected);
-      const notifications = await ApplicantNotificationRepository.findAll();
-      expect(notifications).toEqual([]);
+    it("creates a notification for an applicant if the jobApplication is rejected", async () => {
+      const repository = ApplicantNotificationRepository;
+      const { uuid, applicantUuid } = await JobApplicationGenerator.instance.withMinimumData();
+      const { admin } = await updateJobApplicationWithStatus(uuid, ApprovalStatus.rejected);
+      const { results } = await repository.findLatestByApplicant({ applicantUuid });
+      expect(results).toEqual([
+        {
+          uuid: expect.stringMatching(UUID_REGEX),
+          moderatorUuid: admin.userUuid,
+          notifiedApplicantUuid: applicantUuid,
+          moderatorMessage,
+          isNew: true,
+          jobApplicationUuid: uuid,
+          createdAt: expect.any(Date)
+        }
+      ]);
     });
 
     it("does not create a notification for an applicant if the jobApplication is pending", async () => {
@@ -212,6 +228,17 @@ describe("updateJobApplicationApprovalStatus", () => {
       expect(shouldFetchMore).toBe(false);
       expect(results).toEqual([]);
     });
+  });
+
+  it("returns an error no moderatorMessage is provides when rejecting the jobApplication", async () => {
+    const secretary = Secretary.extension;
+    const { apolloClient } = await TestClientGenerator.admin({ secretary });
+    const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
+    const { errors } = await apolloClient.mutate({
+      mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
+      variables: { uuid, approvalStatus: ApprovalStatus.rejected }
+    });
+    expect(errors).toEqualGraphQLErrorType(AttributeNotDefinedError.name);
   });
 
   it("returns an error if no user is logged in", async () => {

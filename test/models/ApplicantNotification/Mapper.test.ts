@@ -1,6 +1,7 @@
 import {
   ApplicantNotificationMapper,
   ApprovedJobApplicationApplicantNotification,
+  RejectedJobApplicationApplicantNotification,
   ApplicantNotificationType
 } from "$models/ApplicantNotification";
 import { UUID } from "$models/UUID";
@@ -22,34 +23,67 @@ describe("ApplicantNotificationMapper", () => {
       isNew: true
     };
 
-    const approvedJobApplicationAttributes = {
-      ...commonAttributes,
-      jobApplicationUuid: UUID.generate()
-    };
+    describe("ApprovedJobApplicationApplicantNotification", () => {
+      const attributes = { ...commonAttributes, jobApplicationUuid: UUID.generate() };
+      const notification = new ApprovedJobApplicationApplicantNotification(attributes);
 
-    const approvedJobApplicationNotification = new ApprovedJobApplicationApplicantNotification(
-      approvedJobApplicationAttributes
-    );
+      it("returns an instance of ApplicantNotificationSequelizeModel", async () => {
+        const persistenceModel = mapper.toPersistenceModel(notification);
+        expect(persistenceModel).toBeInstanceOf(ApplicantNotificationSequelizeModel);
+      });
 
-    it("maps a ApprovedJobApplicationApplicantNotification", async () => {
-      const persistenceModel = mapper.toPersistenceModel(approvedJobApplicationNotification);
-      expect(persistenceModel).toBeInstanceOf(ApplicantNotificationSequelizeModel);
-      expect(persistenceModel).toBeObjectContaining({
-        uuid: null,
-        ...approvedJobApplicationAttributes,
-        type: ApplicantNotificationType.approvedJobApplication,
-        moderatorMessage: undefined,
-        isNewRecord: true,
-        createdAt: undefined
+      it("returns a SequelizeModel with the correct attributes", async () => {
+        const persistenceModel = mapper.toPersistenceModel(notification);
+        expect(persistenceModel).toBeObjectContaining({
+          uuid: null,
+          ...attributes,
+          type: ApplicantNotificationType.approvedJobApplication,
+          moderatorMessage: undefined,
+          isNewRecord: true,
+          createdAt: undefined
+        });
+      });
+
+      it("maps the notification that has already an uuid", async () => {
+        expectToNotToBeANewRecord(mapper, notification);
+      });
+
+      it("maps the notification that has already a createdAt", async () => {
+        expectToMapTheCreatedAtTimestamp(mapper, notification);
       });
     });
 
-    it("maps a ApprovedJobApplicationApplicantNotification that has already an uuid", async () => {
-      expectToNotToBeANewRecord(mapper, approvedJobApplicationNotification);
-    });
+    describe("RejectedJobApplicationApplicantNotification", () => {
+      const attributes = {
+        ...commonAttributes,
+        jobApplicationUuid: UUID.generate(),
+        moderatorMessage: "message"
+      };
+      const notification = new RejectedJobApplicationApplicantNotification(attributes);
 
-    it("maps a ApprovedJobApplicationApplicantNotification that has already a createdAt", async () => {
-      expectToMapTheCreatedAtTimestamp(mapper, approvedJobApplicationNotification);
+      it("returns an instance of ApplicantNotificationSequelizeModel", async () => {
+        const persistenceModel = mapper.toPersistenceModel(notification);
+        expect(persistenceModel).toBeInstanceOf(ApplicantNotificationSequelizeModel);
+      });
+
+      it("returns a SequelizeModel with the correct attributes", async () => {
+        const persistenceModel = mapper.toPersistenceModel(notification);
+        expect(persistenceModel).toBeObjectContaining({
+          uuid: null,
+          ...attributes,
+          type: ApplicantNotificationType.rejectedJobApplication,
+          isNewRecord: true,
+          createdAt: undefined
+        });
+      });
+
+      it("maps the notification that has already an uuid", async () => {
+        expectToNotToBeANewRecord(mapper, notification);
+      });
+
+      it("maps the notification that has already a createdAt", async () => {
+        expectToMapTheCreatedAtTimestamp(mapper, notification);
+      });
     });
   });
 
@@ -76,6 +110,22 @@ describe("ApplicantNotificationMapper", () => {
         sequelizeModel,
         attributes,
         modelClass: ApprovedJobApplicationApplicantNotification
+      });
+    });
+
+    it("returns a RejectedJobApplicationApplicantNotification", () => {
+      const attributes = {
+        ...commonAttributes,
+        jobApplicationUuid: UUID.generate(),
+        moderatorMessage: "message",
+        type: ApplicantNotificationType.rejectedJobApplication
+      };
+      const sequelizeModel = new ApplicantNotificationSequelizeModel(attributes);
+      expectToMapPersistenceModelToTheGivenNotification({
+        mapper,
+        sequelizeModel,
+        attributes,
+        modelClass: RejectedJobApplicationApplicantNotification
       });
     });
   });

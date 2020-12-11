@@ -355,7 +355,8 @@ export const defaultTranslations = {
     approve: "Aprobar",
     reject: "Rechazar",
     confirmDialogDescription: "Se va a notificar por email a quien(es) corresponda.",
-    confirmDialogCancel: "Seguir revisando"
+    confirmDialogCancel: "Seguir revisando",
+    rejectReasonLabel: "Motivo"
   },
   adminApplicantListHeader: {
     names: "Nombre y Apellido",
@@ -459,6 +460,13 @@ export const defaultTranslations = {
   approvedJobApplicationApplicantNotification: {
     title: "Postulación aprobada"
   },
+  rejectedJobApplicationApplicantNotification: {
+    title: "Postulación rechazada"
+  },
+  rejectionReason: {
+    reason: "Motivo",
+    contactModerator: "Contactar moderador/a"
+  },
   isNewLabel: {
     isNew: "Nueva"
   },
@@ -482,6 +490,17 @@ export const defaultTranslations = {
     subject: "Postulación a oferta de trabajo aprobada",
     body:
       "Tu postulación a la oferta de trabajo: <%= offerTitle %> (<%= offerLink %>) ha sido aprobada. Se envió una notificación a la empresa" +
+      "\n\n" +
+      "<%= signature %>"
+  },
+  rejectedJobApplicationApplicantNotificationEmail: {
+    subject: "Postulación a oferta de trabajo rechazada",
+    body:
+      "Tu postulación a la oferta de trabajo: <%= offerTitle %> (<%= offerLink %>) ha sido rechazada." +
+      "\n" +
+      "Motivo: <%= rejectionReason %>" +
+      "\n" +
+      "Para mas detalles se puede responder a este email" +
       "\n\n" +
       "<%= signature %>"
   },

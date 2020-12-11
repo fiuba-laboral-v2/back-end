@@ -3,11 +3,15 @@ import {
   NewJobApplicationCompanyNotification,
   ApprovedOfferCompanyNotification
 } from "$models/CompanyNotification";
-import { ApprovedJobApplicationApplicantNotification } from "$models/ApplicantNotification";
+import {
+  ApprovedJobApplicationApplicantNotification,
+  RejectedJobApplicationApplicantNotification
+} from "$models/ApplicantNotification";
 import {
   NewJobApplicationCompanyNotificationEmailSender,
   ApprovedOfferCompanyNotificationEmailSender,
-  ApprovedJobApplicationApplicantNotificationEmailSender
+  ApprovedJobApplicationApplicantNotificationEmailSender,
+  RejectedJobApplicationApplicantNotificationEmailSender
 } from "$services/EmailSender";
 import { UnknownEmailSenderError } from "./Errors";
 
@@ -17,7 +21,8 @@ export const EmailSenderFactory = {
     const emailSender = {
       [NewJobApplicationCompanyNotification.name]: NewJobApplicationCompanyNotificationEmailSender,
       [ApprovedOfferCompanyNotification.name]: ApprovedOfferCompanyNotificationEmailSender,
-      [ApprovedJobApplicationApplicantNotification.name]: ApprovedJobApplicationApplicantNotificationEmailSender
+      [ApprovedJobApplicationApplicantNotification.name]: ApprovedJobApplicationApplicantNotificationEmailSender,
+      [RejectedJobApplicationApplicantNotification.name]: RejectedJobApplicationApplicantNotificationEmailSender
     }[className];
     if (!emailSender) throw new UnknownEmailSenderError(className);
 
