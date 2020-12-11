@@ -1,5 +1,5 @@
 import { Database } from "$config/Database";
-import { ID, nonNull } from "$graphql/fieldTypes";
+import { ID, nonNull, String } from "$graphql/fieldTypes";
 import { AdminRepository } from "$models/Admin";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { JobApplicationApprovalEventRepository } from "$models/JobApplication/JobApplicationsApprovalEvent";
@@ -22,11 +22,14 @@ export const updateJobApplicationApprovalStatus = {
     },
     approvalStatus: {
       type: nonNull(GraphQLApprovalStatus)
+    },
+    moderatorMessage: {
+      type: String
     }
   },
   resolve: async (
     _: undefined,
-    { uuid: jobApplicationUuid, approvalStatus }: IMutationVariables,
+    { uuid: jobApplicationUuid, approvalStatus, moderatorMessage }: IMutationVariables,
     { currentUser }: IApolloServerContext
   ) => {
     const adminUserUuid = currentUser.getAdminRole().adminUserUuid;
@@ -34,7 +37,8 @@ export const updateJobApplicationApprovalStatus = {
     const jobApplication = await JobApplicationRepository.findByUuid(jobApplicationUuid);
 
     jobApplication.set({ approvalStatus });
-    const notifications = await JobApplicationNotificationFactory.create(jobApplication, admin);
+    const factory = JobApplicationNotificationFactory;
+    const notifications = await factory.create(jobApplication, admin, moderatorMessage);
     const event = new JobApplicationApprovalEvent({
       adminUserUuid,
       jobApplicationUuid,
@@ -62,4 +66,5 @@ export const updateJobApplicationApprovalStatus = {
 interface IMutationVariables {
   uuid: string;
   approvalStatus: ApprovalStatus;
+  moderatorMessage?: string;
 }
