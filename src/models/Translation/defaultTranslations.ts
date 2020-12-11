@@ -499,6 +499,8 @@ export const defaultTranslations = {
       "Tu postulación a la oferta de trabajo: <%= offerTitle %> (<%= offerLink %>) ha sido rechazada." +
       "\n" +
       "Motivo: <%= rejectionReason %>" +
+      "\n" +
+      "Para mas detalles se puede responder a este email" +
       "\n\n" +
       "<%= signature %>"
   },

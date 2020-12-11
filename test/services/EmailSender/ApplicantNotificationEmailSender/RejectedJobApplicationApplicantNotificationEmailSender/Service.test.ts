@@ -68,6 +68,8 @@ describe("RejectedJobApplicationApplicantNotificationEmailSender", () => {
             `Tu postulación a la oferta de trabajo: ${offer.title} (baseUrl/subDomain/empresa/ofertas/${offer.uuid}) ha sido rechazada.` +
               "\n" +
               `Motivo: ${notification.moderatorMessage}` +
+              "\n" +
+              "Para mas detalles se puede responder a este email" +
               "\n\n" +
               `Bolsa de Trabajo FIUBA`
           )
