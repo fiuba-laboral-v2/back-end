@@ -76,11 +76,11 @@ describe("CompanyNotificationMapper", () => {
         });
       });
 
-      it("maps a ApprovedOfferCompanyNotification that has already an uuid", async () => {
+      it("maps a notification that has already an uuid", async () => {
         expectToNotToBeANewRecord(mapper, notification);
       });
 
-      it("maps a ApprovedOfferCompanyNotification that has already a createdAt", async () => {
+      it("maps a notification that has already a createdAt", async () => {
         expectToMapTheCreatedAtTimestamp(mapper, notification);
       });
     });
@@ -109,11 +109,11 @@ describe("CompanyNotificationMapper", () => {
         });
       });
 
-      it("maps a ApprovedOfferCompanyNotification that has already an uuid", async () => {
+      it("maps a notification that has already an uuid", async () => {
         expectToNotToBeANewRecord(mapper, notification);
       });
 
-      it("maps a ApprovedOfferCompanyNotification that has already a createdAt", async () => {
+      it("maps a notification that has already a createdAt", async () => {
         expectToMapTheCreatedAtTimestamp(mapper, notification);
       });
     });
