@@ -2,6 +2,8 @@ import { UniqueConstraintError, ForeignKeyConstraintError } from "sequelize";
 import {
   ApprovedOfferCompanyNotification,
   INewJobApplicationNotificationAttributes,
+  RejectedOfferCompanyNotification,
+  IRejectedOfferNotificationAttributes,
   NewJobApplicationCompanyNotification,
   IApprovedOfferNotificationAttributes,
   CompanyNotification,
@@ -192,6 +194,49 @@ describe("CompanyNotificationRepository", () => {
 
       it("throw an error if the notifiedCompanyUuid does not belong to an existing company", async () => {
         const notification = new ApprovedOfferCompanyNotification(attributes);
+        await expectToThrowErrorOnForeignKeyConstraint(notification, "notifiedCompanyUuid");
+      });
+    });
+
+    describe("RejectedOfferCompanyNotification", () => {
+      let attributes: IRejectedOfferNotificationAttributes;
+
+      beforeAll(() => {
+        attributes = { ...commonAttributes, offerUuid: offer.uuid, moderatorMessage: "message" };
+      });
+
+      it("saves the notification in the database", async () => {
+        const notification = new RejectedOfferCompanyNotification(attributes);
+        await expectToSaveAValidNotification(notification);
+      });
+
+      it("sets an uuid and a createdAt after it is persisted", async () => {
+        const notification = new RejectedOfferCompanyNotification(attributes);
+        await expectToSetUuidAndCreatedAtAfterSave(notification);
+      });
+
+      it("updates isNew to false", async () => {
+        const notification = new RejectedOfferCompanyNotification(attributes);
+        await expectToUpdateIsNewAttribute(notification);
+      });
+
+      it("throws an error if the notification already exist", async () => {
+        const notification = new RejectedOfferCompanyNotification(attributes);
+        await expectToThrowErrorOnUniqueConstraint(notification);
+      });
+
+      it("throw an error if the jobApplicationUuid does not belong to an existing one", async () => {
+        const notification = new RejectedOfferCompanyNotification(attributes);
+        await expectToThrowErrorOnForeignKeyConstraint(notification, "jobApplicationUuid");
+      });
+
+      it("throw an error if the moderatorUuid does not belong to an existing admin", async () => {
+        const notification = new RejectedOfferCompanyNotification(attributes);
+        await expectToThrowErrorOnForeignKeyConstraint(notification, "moderatorUuid");
+      });
+
+      it("throw an error if the notifiedCompanyUuid does not belong to an existing company", async () => {
+        const notification = new RejectedOfferCompanyNotification(attributes);
         await expectToThrowErrorOnForeignKeyConstraint(notification, "notifiedCompanyUuid");
       });
     });
