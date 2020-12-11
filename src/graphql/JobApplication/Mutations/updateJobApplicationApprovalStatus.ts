@@ -29,24 +29,20 @@ export const updateJobApplicationApprovalStatus = {
   },
   resolve: async (
     _: undefined,
-    { uuid: jobApplicationUuid, approvalStatus, moderatorMessage }: IMutationVariables,
+    { uuid: jobApplicationUuid, approvalStatus: status, moderatorMessage }: IMutationVariables,
     { currentUser }: IApolloServerContext
   ) => {
     const adminUserUuid = currentUser.getAdminRole().adminUserUuid;
     const admin = await AdminRepository.findByUserUuid(adminUserUuid);
     const jobApplication = await JobApplicationRepository.findByUuid(jobApplicationUuid);
 
-    jobApplication.set({ approvalStatus });
+    jobApplication.set({ approvalStatus: status });
     const notifications = await JobApplicationNotificationFactory.create(
       jobApplication,
       admin,
       moderatorMessage
     );
-    const event = new JobApplicationApprovalEvent({
-      adminUserUuid,
-      jobApplicationUuid,
-      status: approvalStatus
-    });
+    const event = new JobApplicationApprovalEvent({ adminUserUuid, jobApplicationUuid, status });
 
     await Database.transaction(async transaction => {
       await JobApplicationRepository.save(jobApplication, transaction);
