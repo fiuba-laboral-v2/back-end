@@ -486,6 +486,15 @@ export const defaultTranslations = {
       "\n\n" +
       "<%= signature %>"
   },
+  rejectedOfferCompanyNotificationEmail: {
+    subject: "Oferta laboral rechazada",
+    body:
+      "Tu oferta laboral ha sido rechazada: <%= offerTitle %> (<%= offerLink %>)." +
+      "\n" +
+      "Motivo: <%= rejectionReason %>." +
+      "\n\n" +
+      "<%= signature %>."
+  },
   approvedJobApplicationApplicantNotificationEmail: {
     subject: "Postulación a oferta de trabajo aprobada",
     body:
