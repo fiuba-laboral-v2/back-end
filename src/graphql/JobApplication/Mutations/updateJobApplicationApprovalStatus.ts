@@ -37,8 +37,11 @@ export const updateJobApplicationApprovalStatus = {
     const jobApplication = await JobApplicationRepository.findByUuid(jobApplicationUuid);
 
     jobApplication.set({ approvalStatus });
-    const factory = JobApplicationNotificationFactory;
-    const notifications = await factory.create(jobApplication, admin, moderatorMessage);
+    const notifications = await JobApplicationNotificationFactory.create(
+      jobApplication,
+      admin,
+      moderatorMessage
+    );
     const event = new JobApplicationApprovalEvent({
       adminUserUuid,
       jobApplicationUuid,
