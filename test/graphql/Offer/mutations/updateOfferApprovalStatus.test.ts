@@ -31,7 +31,11 @@ import { ApplicantType } from "$models/Applicant";
 import { UUID_REGEX } from "$test/models";
 
 const UPDATE_OFFER_APPROVAL_STATUS = gql`
-  mutation($uuid: ID!, $approvalStatus: ApprovalStatus!, $moderatorMessage: String) {
+  mutation UpdateOfferApprovalStatus(
+    $uuid: ID!
+    $approvalStatus: ApprovalStatus!
+    $moderatorMessage: String
+  ) {
     updateOfferApprovalStatus(
       uuid: $uuid
       approvalStatus: $approvalStatus
