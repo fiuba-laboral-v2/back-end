@@ -50,10 +50,7 @@ describe("updateJobApplicationApprovalStatus", () => {
   });
 
   beforeEach(() => {
-    const mock = jest.fn(async () => {
-      await Promise.resolve();
-    });
-    jest.spyOn(EmailService, "send").mockImplementation(mock);
+    jest.spyOn(EmailService, "send").mockImplementation(jest.fn());
   });
 
   const expectToLogAnEventForStatus = async (secretary: Secretary, status: ApprovalStatus) => {
