@@ -20,10 +20,12 @@ export const CompanyNotificationEmailSender = {
   ) => {
     const { subject, body } = TranslationRepository.translate(emailTranslationGroup);
     const signature = await TranslationRepository.findSignatureByAdmin(notification.moderatorUuid);
+    const receiverEmails = await getReceiverEmails(notification.notifiedCompanyUuid);
+    const sender = await Sender.findByAdmin(notification.moderatorUuid);
 
     return EmailService.send({
-      receiverEmails: await getReceiverEmails(notification.notifiedCompanyUuid),
-      sender: await Sender.findByAdmin(notification.moderatorUuid),
+      receiverEmails,
+      sender,
       subject,
       body: template(body)(bodyTemplate(signature))
     });
