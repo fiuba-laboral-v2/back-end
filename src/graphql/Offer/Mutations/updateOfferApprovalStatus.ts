@@ -1,5 +1,5 @@
 import { Database } from "$config";
-import { ID, nonNull } from "$graphql/fieldTypes";
+import { ID, nonNull, String } from "$graphql/fieldTypes";
 import { GraphQLOffer } from "../Types/GraphQLOffer";
 import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
 import { IApolloServerContext } from "$graphql/Context";
@@ -22,11 +22,14 @@ export const updateOfferApprovalStatus = {
     },
     approvalStatus: {
       type: nonNull(GraphQLApprovalStatus)
+    },
+    moderatorMessage: {
+      type: String
     }
   },
   resolve: async (
     _: undefined,
-    { uuid, approvalStatus: status }: IUpdateOfferApprovalStatusArguments,
+    { uuid, approvalStatus: status, moderatorMessage }: IUpdateOfferApprovalStatusArguments,
     { currentUser }: IApolloServerContext
   ) => {
     const offer = await OfferRepository.findByUuid(uuid);
@@ -41,7 +44,7 @@ export const updateOfferApprovalStatus = {
     offer.updateStatus(admin, status);
     offer.updateExpirationDate(admin, offerDurationInDays);
     const event = new OfferApprovalEvent({ adminUserUuid, offerUuid: offer.uuid, status });
-    const notifications = OfferNotificationFactory.create(offer, admin);
+    const notifications = OfferNotificationFactory.create(offer, admin, moderatorMessage);
 
     await Database.transaction(async transaction => {
       await OfferRepository.save(offer, transaction);
@@ -64,4 +67,5 @@ export const updateOfferApprovalStatus = {
 interface IUpdateOfferApprovalStatusArguments {
   uuid: string;
   approvalStatus: ApprovalStatus;
+  moderatorMessage?: string;
 }

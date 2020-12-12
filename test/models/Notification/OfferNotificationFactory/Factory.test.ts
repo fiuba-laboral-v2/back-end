@@ -1,4 +1,4 @@
-import { OfferNotificationFactory } from "$models/Notification/OfferNotificationFactory";
+import { OfferNotificationFactory, MissingModeratorMessageError } from "$models/Notification";
 import { UUID } from "$models/UUID";
 import { Admin, Company, Offer } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
@@ -85,7 +85,7 @@ describe("OfferNotificationFactory", () => {
 
       it("throws an error if no moderatorMessage is provided", async () => {
         expect(() => OfferNotificationFactory.create(offer, admin)).toThrowError(
-          "moderatorMessage must be present"
+          MissingModeratorMessageError.buildMessage()
         );
       });
     });
@@ -151,7 +151,7 @@ describe("OfferNotificationFactory", () => {
 
       it("throws an error if no moderatorMessage is provided", async () => {
         expect(() => OfferNotificationFactory.create(offer, admin)).toThrowError(
-          "moderatorMessage must be present"
+          MissingModeratorMessageError.buildMessage()
         );
       });
     });

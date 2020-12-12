@@ -1,5 +1,6 @@
 import { Admin, Offer } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { MissingModeratorMessageError } from "..";
 import {
   ApprovedOfferCompanyNotification,
   RejectedOfferCompanyNotification
@@ -16,7 +17,7 @@ export const OfferNotificationFactory = {
         })
       ];
     } else if (offer.getStatus(admin.secretary) === ApprovalStatus.rejected) {
-      if (!moderatorMessage) throw new Error("moderatorMessage must be present");
+      if (!moderatorMessage) throw new MissingModeratorMessageError();
       return [
         new RejectedOfferCompanyNotification({
           moderatorUuid: admin.userUuid,
