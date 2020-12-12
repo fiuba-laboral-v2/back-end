@@ -12,7 +12,7 @@ import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { EmailService } from "$services/Email";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
-import { AttributeNotDefinedError } from "$models/Errors";
+import { MissingModeratorMessageError } from "$models/Notification";
 
 import { TestClientGenerator } from "$generators/TestClient";
 import { JobApplicationGenerator } from "$generators/JobApplication";
@@ -240,7 +240,7 @@ describe("updateJobApplicationApprovalStatus", () => {
       mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
       variables: { uuid, approvalStatus: ApprovalStatus.rejected }
     });
-    expect(errors).toEqualGraphQLErrorType(AttributeNotDefinedError.name);
+    expect(errors).toEqualGraphQLErrorType(MissingModeratorMessageError.name);
   });
 
   it("returns an error if no user is logged in", async () => {
