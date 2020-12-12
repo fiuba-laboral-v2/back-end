@@ -1,6 +1,7 @@
 import {
   NewJobApplicationCompanyNotification,
   ApprovedOfferCompanyNotification,
+  RejectedOfferCompanyNotification,
   CompanyNotificationRepository
 } from "$models/CompanyNotification";
 import {
@@ -15,6 +16,7 @@ import { Transaction } from "sequelize";
 const repositoryMapper = {
   [NewJobApplicationCompanyNotification.name]: CompanyNotificationRepository,
   [ApprovedOfferCompanyNotification.name]: CompanyNotificationRepository,
+  [RejectedOfferCompanyNotification.name]: CompanyNotificationRepository,
   [ApprovedJobApplicationApplicantNotification.name]: ApplicantNotificationRepository,
   [RejectedJobApplicationApplicantNotification.name]: ApplicantNotificationRepository
 };

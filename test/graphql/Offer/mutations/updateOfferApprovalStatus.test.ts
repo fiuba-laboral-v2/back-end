@@ -55,7 +55,10 @@ describe("updateOfferApprovalStatus", () => {
 
   beforeEach(async () => {
     await OfferApprovalEventRepository.truncate();
-    jest.spyOn(EmailService, "send").mockImplementation(jest.fn());
+    const mock = jest.fn(async () => {
+      await Promise.resolve();
+    });
+    jest.spyOn(EmailService, "send").mockImplementation(mock);
   });
 
   const performMutation = (apolloClient: TestClient, dataToUpdate: object) =>

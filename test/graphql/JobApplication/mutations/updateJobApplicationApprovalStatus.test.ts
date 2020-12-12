@@ -49,7 +49,12 @@ describe("updateJobApplicationApprovalStatus", () => {
     await SecretarySettingsGenerator.createDefaultSettings();
   });
 
-  beforeEach(() => jest.spyOn(EmailService, "send").mockImplementation(jest.fn()));
+  beforeEach(() => {
+    const mock = jest.fn(async () => {
+      await Promise.resolve();
+    });
+    jest.spyOn(EmailService, "send").mockImplementation(mock);
+  });
 
   const expectToLogAnEventForStatus = async (secretary: Secretary, status: ApprovalStatus) => {
     const { apolloClient, admin } = await TestClientGenerator.admin({ secretary });
