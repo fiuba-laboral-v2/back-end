@@ -91,7 +91,7 @@
   },
   "scripts": {
     "dev": "nodemon -r tsconfig-paths/register src/index.ts",
-    "test": "jest --coverage --runInBand --colors --verbose=false --detectOpenHandles",
+    "test": "jest --coverage --runInBand --colors --verbose=false",
     "lint:src": "tslint -c tslint.json 'src/**/*.ts'",
     "lint:test": "tslint -c tslint.json 'test/**/*.ts'",
     "lint": "yarn prettier --check . && yarn lint:src && yarn lint:test && yarn compiler:lint:src && yarn compiler:lint:test",
