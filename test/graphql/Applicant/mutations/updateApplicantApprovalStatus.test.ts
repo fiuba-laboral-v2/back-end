@@ -113,7 +113,7 @@ describe("updateApplicantApprovalStatus", () => {
       expect(notifications).toEqual([]);
     });
 
-    it("does not creates a notification for an applicant if it is set to pending", async () => {
+    it("does not create a notification for an applicant if it is set to pending", async () => {
       await ApplicantNotificationRepository.truncate();
       await updateApplicantWithStatus(ApprovalStatus.pending);
       const notifications = await ApplicantNotificationRepository.findAll();
