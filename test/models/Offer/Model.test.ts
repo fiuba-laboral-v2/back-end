@@ -9,6 +9,8 @@ import { Secretary } from "$models/Admin";
 import { UUID } from "$models/UUID";
 import { OfferGenerator } from "$generators/Offer";
 import { DateTimeManager } from "$libs/DateTimeManager";
+import { InternshipsCannotHaveMaximumSalaryError } from "$models/Offer/Errors/InternshipsCannotHaveMaximumSalaryError";
+import { InternshipsMustTargetStudentsError } from "$models/Offer/Errors/InternshipsMustTargetStudentsError";
 
 describe("Offer", () => {
   const offerAttributes = {
@@ -36,18 +38,18 @@ describe("Offer", () => {
     await expect(offer.validate()).resolves.not.toThrow();
   });
 
-  it("creates a valid internship with maximum salary", async () => {
-    const offer = new Offer({ ...offerAttributes, isInternship: true });
-    await expect(offer.validate()).resolves.not.toThrow();
-  });
-
   it("creates a valid non-internship without maximum salary", async () => {
     const offer = new Offer({ ...offerAttributes, maximumSalary: null });
     await expect(offer.validate()).resolves.not.toThrow();
   });
 
-  it("creates a valid internship without maximum salary", async () => {
-    const offer = new Offer({ ...offerAttributes, isInternship: true, maximumSalary: null });
+  it("creates a valid internship", async () => {
+    const offer = new Offer({
+      ...offerAttributes,
+      isInternship: true,
+      maximumSalary: null,
+      targetApplicantType: ApplicantType.student
+    });
     await expect(offer.validate()).resolves.not.toThrow();
   });
 
@@ -338,6 +340,30 @@ describe("Offer", () => {
       maximumSalary: 50
     });
     await expect(offer.validate()).rejects.toThrow(SalaryRangeError.buildMessage());
+  });
+
+  it("throws an error if it's an internship that doesn't target students", async () => {
+    const offer = new Offer({
+      ...offerAttributes,
+      isInternship: true,
+      maximumSalary: null,
+      targetApplicantType: ApplicantType.graduate
+    });
+    await expect(offer.validate()).rejects.toThrow(
+      InternshipsMustTargetStudentsError.buildMessage()
+    );
+  });
+
+  it("throws an error if it's an internship with a maximum salary", async () => {
+    const offer = new Offer({
+      ...offerAttributes,
+      isInternship: true,
+      maximumSalary: 123,
+      targetApplicantType: ApplicantType.student
+    });
+    await expect(offer.validate()).rejects.toThrow(
+      InternshipsCannotHaveMaximumSalaryError.buildMessage()
+    );
   });
 
   it("throws an error if graduadosApprovalStatus isn't a ApprovalStatus enum value", async () => {

@@ -20,6 +20,8 @@ import { CompanyGenerator } from "$generators/Company";
 import { TestClientGenerator } from "$generators/TestClient";
 import { AdminGenerator } from "$generators/Admin";
 import { UUID } from "$models/UUID";
+import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
+import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
 const GET_OFFER_BY_UUID = gql`
   query($uuid: ID!) {
@@ -29,6 +31,7 @@ const GET_OFFER_BY_UUID = gql`
       description
       targetApplicantType
       hoursPerDay
+      isInternship
       minimumSalary
       maximumSalary
       createdAt
@@ -75,6 +78,8 @@ describe("getOfferByUuid", () => {
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await UserRepository.truncate();
+    await SecretarySettingsRepository.truncate();
+    await SecretarySettingsGenerator.createDefaultSettings();
 
     companyUuid = (await CompanyGenerator.instance.withCompleteData()).uuid;
 
@@ -160,6 +165,7 @@ describe("getOfferByUuid", () => {
       description: offer.description,
       targetApplicantType: offer.targetApplicantType,
       hoursPerDay: offer.hoursPerDay,
+      isInternship: offer.isInternship,
       minimumSalary: offer.minimumSalary,
       maximumSalary: offer.maximumSalary,
       createdAt: offer.createdAt.toISOString(),

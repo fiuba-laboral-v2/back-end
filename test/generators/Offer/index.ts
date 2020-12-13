@@ -14,6 +14,7 @@ export interface IOfferInput {
   careers?: IOfferCareer[];
   sections?: IOfferSection[];
   targetApplicantType?: ApplicantType;
+  isInternship?: boolean;
 }
 
 interface IUpdatedWithStatus {

@@ -26,6 +26,9 @@ export const GraphQLOffer = new GraphQLObjectType<Offer, IApolloServerContext>({
     hoursPerDay: {
       type: nonNull(Int)
     },
+    isInternship: {
+      type: nonNull(Boolean)
+    },
     minimumSalary: {
       type: nonNull(Int)
     },
