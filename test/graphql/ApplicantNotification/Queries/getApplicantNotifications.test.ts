@@ -13,7 +13,8 @@ import {
   ApplicantNotificationRepository,
   ApprovedJobApplicationApplicantNotification,
   RejectedJobApplicationApplicantNotification,
-  ApprovedProfileApplicantNotification
+  ApprovedProfileApplicantNotification,
+  RejectedProfileApplicantNotification
 } from "$models/ApplicantNotification";
 import { Admin } from "$models";
 
@@ -59,6 +60,14 @@ const GET_APPLICANT_NOTIFICATIONS = gql`
           __typename
           uuid
           adminEmail
+          isNew
+          createdAt
+        }
+        ... on RejectedProfileApplicantNotification {
+          __typename
+          uuid
+          adminEmail
+          moderatorMessage
           isNew
           createdAt
         }
@@ -122,6 +131,12 @@ describe("getApplicantNotifications", () => {
       case ApprovedProfileApplicantNotification.name:
         return {
           __typename: "ApprovedProfileApplicantNotification"
+        };
+      case RejectedProfileApplicantNotification.name:
+        const rejectedProfileNotification = notification as RejectedProfileApplicantNotification;
+        return {
+          __typename: "RejectedProfileApplicantNotification",
+          moderatorMessage: rejectedProfileNotification.moderatorMessage
         };
     }
     throw new Error(`
