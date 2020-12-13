@@ -12,6 +12,8 @@ import {
   RejectedJobApplicationApplicantNotification,
   ApprovedProfileApplicantNotification,
   IApprovedProfileAttributes,
+  RejectedProfileApplicantNotification,
+  IRejectedProfileAttributes,
   ApplicantNotificationRepository,
   ApplicantNotification
 } from "$models/ApplicantNotification";
@@ -256,6 +258,51 @@ describe("ApplicantNotificationRepository", () => {
 
       it("throws an error if the notifiedApplicantUuid does not belong to an existing applicant", async () => {
         const notification = new ApprovedProfileApplicantNotification(attributes);
+        await expectToThrowErrorOnForeignKeyConstraint(notification, "notifiedApplicantUuid");
+      });
+    });
+
+    describe("RejectedProfileApplicantNotification", () => {
+      let attributes: IRejectedProfileAttributes;
+
+      beforeAll(async () => (attributes = { ...commonAttributes, moderatorMessage: "message" }));
+
+      it("saves the notification in the database", async () => {
+        const notification = new RejectedProfileApplicantNotification(attributes);
+        await expectNotificationToBeSaved(notification);
+      });
+
+      it("generates an uuid after it is saved", async () => {
+        const notification = new RejectedProfileApplicantNotification(attributes);
+        await expectToGenerateUuidAfterItIsSaved(notification);
+      });
+
+      it("generates a createdAt timestamp after it is saved", async () => {
+        const notification = new RejectedProfileApplicantNotification(attributes);
+        await expectToSetACreatedAtAfterItIsSaved(notification);
+      });
+
+      it("updates isNew to false", async () => {
+        const notification = new RejectedProfileApplicantNotification(attributes);
+        await ApplicantNotificationRepository.save(notification);
+        expect(notification.isNew).toBe(true);
+        notification.isNew = false;
+        await ApplicantNotificationRepository.save(notification);
+        expect(notification.isNew).toBe(false);
+      });
+
+      it("throws an error if the notification already exist", async () => {
+        const notification = new RejectedProfileApplicantNotification(attributes);
+        await expectToThrowErrorOnUniqueConstraint(notification);
+      });
+
+      it("throws an error if the moderatorUuid does not belong to an existing admin", async () => {
+        const notification = new RejectedProfileApplicantNotification(attributes);
+        await expectToThrowErrorOnForeignKeyConstraint(notification, "moderatorUuid");
+      });
+
+      it("throws an error if the notifiedApplicantUuid does not belong to an existing applicant", async () => {
+        const notification = new RejectedProfileApplicantNotification(attributes);
         await expectToThrowErrorOnForeignKeyConstraint(notification, "notifiedApplicantUuid");
       });
     });
