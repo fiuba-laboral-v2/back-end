@@ -1,4 +1,4 @@
-import { FrontendConfig } from "$config";
+import { FrontEndLinksBuilder } from "$services/EmailSender/FrontEndLinksBuilder";
 import { NewJobApplicationCompanyNotification } from "$models/CompanyNotification";
 import { UserRepository } from "$models/User";
 import { JobApplicationRepository } from "$models/JobApplication";
@@ -14,13 +14,12 @@ export const NewJobApplicationCompanyNotificationEmailSender = {
     const offer = await OfferRepository.findByUuid(offerUuid);
     const applicant = await ApplicantRepository.findByUuid(applicantUuid);
     const applicantUser = await UserRepository.findByUuid(applicant.userUuid);
-    const { baseUrl, subDomain, endpoints } = FrontendConfig;
 
     const bodyTemplate = (signature: string) => ({
       offerTitle: offer.title,
-      offerLink: `${baseUrl}/${subDomain}/${endpoints.company.offer(offerUuid)}`,
+      offerLink: FrontEndLinksBuilder.company.offerLink(offer.uuid),
       applicantName: `${applicantUser.name} ${applicantUser.surname}`,
-      ApplicantLink: `${baseUrl}/${subDomain}/${endpoints.company.applicant(applicantUuid)}`,
+      applicantLink: FrontEndLinksBuilder.company.applicantLink(applicant.uuid),
       signature
     });
 

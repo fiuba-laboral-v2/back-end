@@ -1,4 +1,4 @@
-import { FrontendConfig } from "$config";
+import { FrontEndLinksBuilder } from "$services/EmailSender/FrontEndLinksBuilder";
 import { ApprovedOfferCompanyNotification } from "$models/CompanyNotification";
 import { OfferRepository } from "$models/Offer";
 import { CompanyNotificationEmailSender } from "..";
@@ -6,11 +6,10 @@ import { CompanyNotificationEmailSender } from "..";
 export const ApprovedOfferCompanyNotificationEmailSender = {
   send: async (notification: ApprovedOfferCompanyNotification) => {
     const offer = await OfferRepository.findByUuid(notification.offerUuid);
-    const { baseUrl, subDomain, endpoints } = FrontendConfig;
 
     const bodyTemplate = (signature: string) => ({
       offerTitle: offer.title,
-      offerLink: `${baseUrl}/${subDomain}/${endpoints.company.offer(offer.uuid)}`,
+      offerLink: FrontEndLinksBuilder.company.offerLink(offer.uuid),
       signature
     });
 

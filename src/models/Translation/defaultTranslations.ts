@@ -463,6 +463,9 @@ export const defaultTranslations = {
   approvedJobApplicationApplicantNotification: {
     title: "Postulación aprobada"
   },
+  approvedProfileApplicantNotification: {
+    title: "Perfil aprobado"
+  },
   rejectedJobApplicationApplicantNotification: {
     title: "Postulación rechazada"
   },
@@ -478,7 +481,7 @@ export const defaultTranslations = {
     body:
       "Nueva postulación a tu oferta laboral: <%= offerTitle %> (<%= offerLink %>)" +
       "\n" +
-      "Postulante: <%= applicantName %> (<%= ApplicantLink %>)." +
+      "Postulante: <%= applicantName %> (<%= applicantLink %>)." +
       "\n\n" +
       "<%= signature %>"
   },
@@ -515,6 +518,10 @@ export const defaultTranslations = {
       "Para mas detalles se puede responder a este email" +
       "\n\n" +
       "<%= signature %>"
+  },
+  approvedProfileApplicantNotificationEmail: {
+    subject: "Perfil aprobado",
+    body: "Tu perfil ha sido aprobado: (<%= profileLink %>)." + "\n\n" + "<%= signature %>"
   },
   emailSignature: {
     graduados: "Bolsa de Trabajo FIUBA",

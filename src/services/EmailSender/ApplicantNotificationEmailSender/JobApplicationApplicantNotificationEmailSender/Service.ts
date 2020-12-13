@@ -1,10 +1,10 @@
-import { FrontendConfig } from "$config";
 import {
   RejectedJobApplicationApplicantNotification,
   ApprovedJobApplicationApplicantNotification
 } from "$models/ApplicantNotification";
 import { EmailService } from "$services/Email";
 import { Sender } from "$services/EmailSender/Sender";
+import { FrontEndLinksBuilder } from "$services/EmailSender/FrontEndLinksBuilder";
 
 import { ApplicantRepository } from "$models/Applicant";
 import { JobApplicationRepository } from "$models/JobApplication";
@@ -33,7 +33,6 @@ export const JobApplicationApplicantNotificationEmailSender = {
     const { subject, body } = TranslationRepository.translate(emailTranslationGroup);
     const signature = await TranslationRepository.findSignatureByAdmin(notification.moderatorUuid);
     const sender = await Sender.findByAdmin(notification.moderatorUuid);
-    const { baseUrl, subDomain, endpoints } = FrontendConfig;
 
     return EmailService.send({
       receiverEmails: [applicantUser.email],
@@ -41,7 +40,7 @@ export const JobApplicationApplicantNotificationEmailSender = {
       subject,
       body: template(body)({
         offerTitle: offer.title,
-        offerLink: `${baseUrl}/${subDomain}/${endpoints.company.offer(offer.uuid)}`,
+        offerLink: FrontEndLinksBuilder.applicant.offerLink(offer.uuid),
         ...getRejectionReason(notification),
         signature
       })

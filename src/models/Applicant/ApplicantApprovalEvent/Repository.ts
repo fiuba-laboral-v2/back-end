@@ -1,16 +1,8 @@
-import { ICreateApplicantApprovalEvent } from "./Interfaces";
+import { Transaction } from "sequelize";
 import { ApplicantApprovalEvent } from "$models";
 
 export const ApplicantApprovalEventRepository = {
-  create: ({ adminUserUuid, applicantUuid, status, transaction }: ICreateApplicantApprovalEvent) =>
-    ApplicantApprovalEvent.create(
-      {
-        adminUserUuid,
-        applicantUuid,
-        status
-      },
-      { transaction }
-    ),
+  save: (event: ApplicantApprovalEvent, transaction?: Transaction) => event.save({ transaction }),
   findAll: () => ApplicantApprovalEvent.findAll(),
   truncate: () => ApplicantApprovalEvent.truncate({ cascade: true })
 };

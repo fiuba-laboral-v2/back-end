@@ -1,17 +1,20 @@
 import { gql } from "apollo-server";
+import { client } from "$test/graphql/ApolloTestClient";
 import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist/createTestClient";
 
-import { ApplicantNotUpdatedError, ApplicantRepository } from "$models/Applicant";
+import { ApplicantNotFound, ApplicantRepository } from "$models/Applicant";
 import { Applicant } from "$models";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
+import { EmailService } from "$services/Email";
 import { ApplicantApprovalEventRepository } from "$models/Applicant/ApplicantApprovalEvent";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
-import { ApprovalStatus } from "$models/ApprovalStatus";
-import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
+import { ApplicantNotificationRepository } from "$models/ApplicantNotification";
 
 import { ApplicantGenerator } from "$generators/Applicant";
 import { TestClientGenerator } from "$generators/TestClient";
-import { client } from "../../ApolloTestClient";
+import { UUID_REGEX } from "$test/models";
 
 const UPDATE_APPLICANT_APPROVAL_STATUS = gql`
   mutation($uuid: ID!, $approvalStatus: ApprovalStatus!) {
@@ -22,14 +25,21 @@ const UPDATE_APPLICANT_APPROVAL_STATUS = gql`
   }
 `;
 
-describe("updateCompanyApprovalStatus", () => {
+describe("updateApplicantApprovalStatus", () => {
+  let applicant: Applicant;
+
   beforeAll(async () => {
     await UserRepository.truncate();
     await ApplicantRepository.truncate();
     await CompanyRepository.truncate();
+
+    applicant = await ApplicantGenerator.instance.withMinimumData();
   });
 
-  beforeEach(() => ApplicantApprovalEventRepository.truncate());
+  beforeEach(async () => {
+    await ApplicantApprovalEventRepository.truncate();
+    jest.spyOn(EmailService, "send").mockImplementation(jest.fn());
+  });
 
   const performMutation = (apolloClient: TestClient, dataToUpdate: object) =>
     apolloClient.mutate({
@@ -38,15 +48,14 @@ describe("updateCompanyApprovalStatus", () => {
     });
 
   const updateApplicantWithStatus = async (newStatus: ApprovalStatus) => {
-    const applicant = await ApplicantGenerator.instance.withMinimumData();
     const { admin, apolloClient } = await TestClientGenerator.admin();
     const dataToUpdate = { uuid: applicant.uuid, approvalStatus: newStatus };
     const { data, errors } = await performMutation(apolloClient, dataToUpdate);
-    return { data, errors, admin, applicant };
+    return { data, errors, admin };
   };
 
   const expectApplicantToBeUpdatedWithStatus = async (newStatus: ApprovalStatus) => {
-    const { applicant, data } = await updateApplicantWithStatus(newStatus);
+    const { data } = await updateApplicantWithStatus(newStatus);
     expect(data!.updateApplicantApprovalStatus).toEqual({
       uuid: applicant.uuid,
       approvalStatus: newStatus
@@ -54,7 +63,7 @@ describe("updateCompanyApprovalStatus", () => {
   };
 
   const expectToCreateANewEventWithStatus = async (newStatus: ApprovalStatus) => {
-    const { errors, applicant, admin } = await updateApplicantWithStatus(newStatus);
+    const { errors, admin } = await updateApplicantWithStatus(newStatus);
     expect(errors).toBeUndefined();
     expect(await ApplicantApprovalEventRepository.findAll()).toEqual([
       expect.objectContaining({
@@ -81,13 +90,38 @@ describe("updateCompanyApprovalStatus", () => {
     await expectToCreateANewEventWithStatus(ApprovalStatus.rejected);
   });
 
-  describe("Errors", () => {
-    let applicant: Applicant;
-
-    beforeAll(async () => {
-      applicant = await ApplicantGenerator.instance.withMinimumData();
+  describe("Notifications", () => {
+    it("creates a notification for an applicant if it gets approved", async () => {
+      await ApplicantNotificationRepository.truncate();
+      const { admin } = await updateApplicantWithStatus(ApprovalStatus.approved);
+      const notifications = await ApplicantNotificationRepository.findAll();
+      expect(notifications).toEqual([
+        {
+          uuid: expect.stringMatching(UUID_REGEX),
+          moderatorUuid: admin.userUuid,
+          notifiedApplicantUuid: applicant.uuid,
+          isNew: true,
+          createdAt: expect.any(Date)
+        }
+      ]);
     });
 
+    it("does not creates a notification for an applicant if it gets rejected", async () => {
+      await ApplicantNotificationRepository.truncate();
+      await updateApplicantWithStatus(ApprovalStatus.rejected);
+      const notifications = await ApplicantNotificationRepository.findAll();
+      expect(notifications).toEqual([]);
+    });
+
+    it("does not create a notification for an applicant if it is set to pending", async () => {
+      await ApplicantNotificationRepository.truncate();
+      await updateApplicantWithStatus(ApprovalStatus.pending);
+      const notifications = await ApplicantNotificationRepository.findAll();
+      expect(notifications).toEqual([]);
+    });
+  });
+
+  describe("Errors", () => {
     it("returns an error if no uuid is provided", async () => {
       const { apolloClient } = await TestClientGenerator.admin();
       const dataToUpdate = { approvalStatus: ApprovalStatus.approved };
@@ -132,7 +166,7 @@ describe("updateCompanyApprovalStatus", () => {
         uuid: nonExistentApplicantUuid,
         approvalStatus: ApprovalStatus.approved
       });
-      expect(errors).toEqualGraphQLErrorType(ApplicantNotUpdatedError.name);
+      expect(errors).toEqualGraphQLErrorType(ApplicantNotFound.name);
     });
 
     it("returns an error if the approvalStatus is invalid", async () => {

@@ -1,9 +1,20 @@
 import { ID, nonNull } from "$graphql/fieldTypes";
-import { ApplicantRepository } from "$models/Applicant";
 import { GraphQLApplicant } from "../Types/GraphQLApplicant";
 import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
-import { ApprovalStatus } from "$models/ApprovalStatus";
 import { IApolloServerContext } from "$graphql/Context";
+
+import { Database } from "$config";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import {
+  ApplicantProfileNotificationFactory,
+  NotificationRepositoryFactory
+} from "$models/Notification";
+import { EmailSenderFactory } from "$models/EmailSenderFactory";
+import { ApplicantApprovalEvent } from "$models";
+
+import { AdminRepository } from "$models/Admin";
+import { ApplicantRepository } from "$models/Applicant";
+import { ApplicantApprovalEventRepository } from "$models/Applicant/ApplicantApprovalEvent";
 
 export const updateApplicantApprovalStatus = {
   type: GraphQLApplicant,
@@ -17,14 +28,33 @@ export const updateApplicantApprovalStatus = {
   },
   resolve: async (
     _: undefined,
-    { uuid, approvalStatus }: IUpdateApplicantApprovalStatusArguments,
+    { uuid: applicantUuid, approvalStatus: status }: IUpdateApplicantApprovalStatusArguments,
     { currentUser }: IApolloServerContext
-  ) =>
-    ApplicantRepository.updateApprovalStatus(
-      currentUser.getAdminRole().adminUserUuid,
-      uuid,
-      approvalStatus
-    )
+  ) => {
+    const adminUserUuid = currentUser.getAdminRole().adminUserUuid;
+    const applicant = await ApplicantRepository.findByUuid(applicantUuid);
+    const admin = await AdminRepository.findByUserUuid(adminUserUuid);
+
+    applicant.set({ approvalStatus: status });
+    const event = new ApplicantApprovalEvent({ adminUserUuid, applicantUuid, status });
+    const notifications = ApplicantProfileNotificationFactory.create(applicant, admin);
+
+    await Database.transaction(async transaction => {
+      await ApplicantRepository.save(applicant, transaction);
+      await ApplicantApprovalEventRepository.save(event, transaction);
+      for (const notification of notifications) {
+        const repository = NotificationRepositoryFactory.getRepositoryFor(notification);
+        await repository.save(notification, transaction);
+      }
+    });
+
+    for (const notification of notifications) {
+      const emailSender = EmailSenderFactory.create(notification);
+      emailSender.send(notification);
+    }
+
+    return applicant;
+  }
 };
 
 interface IUpdateApplicantApprovalStatusArguments {

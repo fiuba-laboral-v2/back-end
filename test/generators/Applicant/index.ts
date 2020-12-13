@@ -67,8 +67,9 @@ export const ApplicantGenerator = {
         withMinimumData({ index: ApplicantGenerator.getIndex(), careers: variables?.careers })
       );
       if (!variables) return applicant;
-      const { admin, status } = variables;
-      return ApplicantRepository.updateApprovalStatus(admin.userUuid, applicant.uuid, status);
+      applicant.set({ approvalStatus: variables.status });
+      await ApplicantRepository.save(applicant);
+      return applicant;
     }
   },
   data: {

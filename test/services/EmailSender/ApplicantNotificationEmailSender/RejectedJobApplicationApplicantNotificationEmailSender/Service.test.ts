@@ -65,7 +65,7 @@ describe("RejectedJobApplicationApplicantNotificationEmailSender", () => {
           },
           subject: "Postulación a oferta de trabajo rechazada",
           body: expect.stringContaining(
-            `Tu postulación a la oferta de trabajo: ${offer.title} (baseUrl/subDomain/empresa/ofertas/${offer.uuid}) ha sido rechazada.` +
+            `Tu postulación a la oferta de trabajo: ${offer.title} (baseUrl/subDomain/postulante/ofertas/${offer.uuid}) ha sido rechazada.` +
               "\n" +
               `Motivo: ${notification.moderatorMessage}` +
               "\n" +

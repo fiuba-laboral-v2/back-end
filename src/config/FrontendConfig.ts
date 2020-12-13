@@ -4,6 +4,10 @@ const endpoints = {
   company: {
     offer: (uuid: string) => `empresa/ofertas/${uuid}`,
     applicant: (uuid: string) => `empresa/postulantes/${uuid}`
+  },
+  applicant: {
+    profile: () => "postulante/perfil",
+    offer: (uuid: string) => `postulante/ofertas/${uuid}`
   }
 };
 
@@ -37,6 +41,10 @@ interface IFrontendConfig {
     company: {
       offer: (uuid: string) => string;
       applicant: (uuid: string) => string;
+    };
+    applicant: {
+      profile: () => string;
+      offer: (uuid: string) => string;
     };
   };
 }

@@ -8,17 +8,14 @@ export const applicantTestClient = async ({
   expressContext,
   ...applicantAttributes
 }: IApplicantTestClientAttributes) => {
-  let applicant = await ApplicantGenerator.instance.withMinimumData(applicantAttributes);
+  const applicant = await ApplicantGenerator.instance.withMinimumData(applicantAttributes);
   const user = await applicant.getUser();
   const applicantContext = { applicant: { uuid: applicant.uuid } };
   const apolloClient = createApolloTestClient(user, expressContext, applicantContext);
   if (status) {
-    const { admin, approvalStatus } = status;
-    applicant = await ApplicantRepository.updateApprovalStatus(
-      admin.userUuid,
-      applicant.uuid,
-      approvalStatus
-    );
+    const { approvalStatus } = status;
+    applicant.set({ approvalStatus });
+    await ApplicantRepository.save(applicant);
   }
   return { apolloClient, user, applicant };
 };
