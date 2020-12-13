@@ -10,7 +10,7 @@ import { ApplicantExperienceSectionRepository } from "./ApplicantExperienceSecti
 import { ApplicantLinkRepository } from "./Link";
 import { UserRepository } from "../User";
 import { ApprovalStatus } from "../ApprovalStatus";
-import { Applicant } from "..";
+import { Applicant, ApplicantApprovalEvent } from "..";
 import { PaginationQuery } from "../PaginationQuery";
 
 export const ApplicantRepository = {
@@ -86,12 +86,9 @@ export const ApplicantRepository = {
         { where: { uuid: applicantUuid }, returning: true, transaction }
       );
       if (numberOfUpdatedApplicants !== 1) throw new ApplicantNotUpdatedError(applicantUuid);
-      await ApplicantApprovalEventRepository.save({
-        adminUserUuid,
-        applicantUuid,
-        status,
-        transaction
-      });
+
+      const event = new ApplicantApprovalEvent({ adminUserUuid, applicantUuid, status });
+      await ApplicantApprovalEventRepository.save(event, transaction);
       return updatedApplicant;
     }),
   truncate: () => Applicant.truncate({ cascade: true })
