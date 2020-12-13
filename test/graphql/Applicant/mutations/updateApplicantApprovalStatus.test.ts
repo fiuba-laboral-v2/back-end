@@ -22,7 +22,7 @@ const UPDATE_APPLICANT_APPROVAL_STATUS = gql`
   }
 `;
 
-describe("updateCompanyApprovalStatus", () => {
+describe("updateApplicantApprovalStatus", () => {
   beforeAll(async () => {
     await UserRepository.truncate();
     await ApplicantRepository.truncate();
