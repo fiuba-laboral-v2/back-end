@@ -516,6 +516,10 @@ export const defaultTranslations = {
       "\n\n" +
       "<%= signature %>"
   },
+  approvedProfileApplicantNotificationEmail: {
+    subject: "Perfil aprobado",
+    body: "Tu perfil ha sido aprobado: (<%= profileLink %>)." + "\n\n" + "<%= signature %>"
+  },
   emailSignature: {
     graduados: "Bolsa de Trabajo FIUBA",
     extension: "Bolsa de Trabajo FIUBA"
