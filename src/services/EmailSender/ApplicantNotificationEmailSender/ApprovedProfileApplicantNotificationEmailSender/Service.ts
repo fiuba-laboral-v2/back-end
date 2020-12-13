@@ -1,7 +1,7 @@
-import { FrontendConfig } from "$config";
 import { ApprovedProfileApplicantNotification } from "$models/ApplicantNotification";
 
 import { Sender } from "$services/EmailSender/Sender";
+import { FrontEndLinksBuilder } from "$services/EmailSender/FrontEndLinksBuilder";
 import { EmailService } from "$services/Email";
 
 import { ApplicantRepository } from "$models/Applicant";
@@ -17,14 +17,13 @@ export const ApprovedProfileApplicantNotificationEmailSender = {
     const { subject, body } = TranslationRepository.translate(
       "approvedProfileApplicantNotificationEmail"
     );
-    const { baseUrl, subDomain, endpoints } = FrontendConfig;
 
     return EmailService.send({
       receiverEmails: [applicantUser.email],
       sender: await Sender.findByAdmin(notification.moderatorUuid),
       subject,
       body: template(body)({
-        profileLink: `${baseUrl}/${subDomain}/${endpoints.applicant.profile()}`,
+        profileLink: FrontEndLinksBuilder.applicant.profileLink(),
         signature: await TranslationRepository.findSignatureByAdmin(notification.moderatorUuid)
       })
     });

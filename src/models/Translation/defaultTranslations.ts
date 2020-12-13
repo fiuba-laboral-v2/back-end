@@ -481,7 +481,7 @@ export const defaultTranslations = {
     body:
       "Nueva postulación a tu oferta laboral: <%= offerTitle %> (<%= offerLink %>)" +
       "\n" +
-      "Postulante: <%= applicantName %> (<%= ApplicantLink %>)." +
+      "Postulante: <%= applicantName %> (<%= applicantLink %>)." +
       "\n\n" +
       "<%= signature %>"
   },
