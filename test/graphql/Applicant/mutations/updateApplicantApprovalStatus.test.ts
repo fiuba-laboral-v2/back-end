@@ -6,6 +6,7 @@ import { ApplicantNotFound, ApplicantRepository } from "$models/Applicant";
 import { Applicant } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
+import { EmailService } from "$services/Email";
 import { ApplicantApprovalEventRepository } from "$models/Applicant/ApplicantApprovalEvent";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
@@ -35,7 +36,10 @@ describe("updateApplicantApprovalStatus", () => {
     applicant = await ApplicantGenerator.instance.withMinimumData();
   });
 
-  beforeEach(() => ApplicantApprovalEventRepository.truncate());
+  beforeEach(async () => {
+    await ApplicantApprovalEventRepository.truncate();
+    jest.spyOn(EmailService, "send").mockImplementation(jest.fn());
+  });
 
   const performMutation = (apolloClient: TestClient, dataToUpdate: object) =>
     apolloClient.mutate({

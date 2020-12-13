@@ -9,6 +9,7 @@ import {
   ApplicantProfileNotificationFactory,
   NotificationRepositoryFactory
 } from "$models/Notification";
+import { EmailSenderFactory } from "$models/EmailSenderFactory";
 import { ApplicantApprovalEvent } from "$models";
 
 import { AdminRepository } from "$models/Admin";
@@ -38,15 +39,21 @@ export const updateApplicantApprovalStatus = {
     const event = new ApplicantApprovalEvent({ adminUserUuid, applicantUuid, status });
     const notifications = ApplicantProfileNotificationFactory.create(applicant, admin);
 
-    return Database.transaction(async transaction => {
+    await Database.transaction(async transaction => {
       await ApplicantRepository.save(applicant, transaction);
       await ApplicantApprovalEventRepository.save(event, transaction);
       for (const notification of notifications) {
         const repository = NotificationRepositoryFactory.getRepositoryFor(notification);
         await repository.save(notification, transaction);
       }
-      return applicant;
     });
+
+    for (const notification of notifications) {
+      const emailSender = EmailSenderFactory.create(notification);
+      emailSender.send(notification);
+    }
+
+    return applicant;
   }
 };
 
