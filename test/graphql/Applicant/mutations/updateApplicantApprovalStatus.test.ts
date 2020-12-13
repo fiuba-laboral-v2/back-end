@@ -25,10 +25,14 @@ const UPDATE_APPLICANT_APPROVAL_STATUS = gql`
 `;
 
 describe("updateApplicantApprovalStatus", () => {
+  let applicant: Applicant;
+
   beforeAll(async () => {
     await UserRepository.truncate();
     await ApplicantRepository.truncate();
     await CompanyRepository.truncate();
+
+    applicant = await ApplicantGenerator.instance.withMinimumData();
   });
 
   beforeEach(() => ApplicantApprovalEventRepository.truncate());
@@ -40,15 +44,14 @@ describe("updateApplicantApprovalStatus", () => {
     });
 
   const updateApplicantWithStatus = async (newStatus: ApprovalStatus) => {
-    const applicant = await ApplicantGenerator.instance.withMinimumData();
     const { admin, apolloClient } = await TestClientGenerator.admin();
     const dataToUpdate = { uuid: applicant.uuid, approvalStatus: newStatus };
     const { data, errors } = await performMutation(apolloClient, dataToUpdate);
-    return { data, errors, admin, applicant };
+    return { data, errors, admin };
   };
 
   const expectApplicantToBeUpdatedWithStatus = async (newStatus: ApprovalStatus) => {
-    const { applicant, data } = await updateApplicantWithStatus(newStatus);
+    const { data } = await updateApplicantWithStatus(newStatus);
     expect(data!.updateApplicantApprovalStatus).toEqual({
       uuid: applicant.uuid,
       approvalStatus: newStatus
@@ -56,7 +59,7 @@ describe("updateApplicantApprovalStatus", () => {
   };
 
   const expectToCreateANewEventWithStatus = async (newStatus: ApprovalStatus) => {
-    const { errors, applicant, admin } = await updateApplicantWithStatus(newStatus);
+    const { errors, admin } = await updateApplicantWithStatus(newStatus);
     expect(errors).toBeUndefined();
     expect(await ApplicantApprovalEventRepository.findAll()).toEqual([
       expect.objectContaining({
@@ -85,12 +88,10 @@ describe("updateApplicantApprovalStatus", () => {
 
   describe("Notifications", () => {
     it("creates a notification for an applicant if it gets approved", async () => {
-      const findLatestByApplicant = ApplicantNotificationRepository.findLatestByApplicant;
-      const { applicant, admin } = await updateApplicantWithStatus(ApprovalStatus.approved);
-      const applicantUuid = applicant.uuid;
-      const { results, shouldFetchMore } = await findLatestByApplicant({ applicantUuid });
-      expect(shouldFetchMore).toBe(false);
-      expect(results).toEqual([
+      await ApplicantNotificationRepository.truncate();
+      const { admin } = await updateApplicantWithStatus(ApprovalStatus.approved);
+      const notifications = await ApplicantNotificationRepository.findAll();
+      expect(notifications).toEqual([
         {
           uuid: expect.stringMatching(UUID_REGEX),
           moderatorUuid: admin.userUuid,
@@ -102,31 +103,21 @@ describe("updateApplicantApprovalStatus", () => {
     });
 
     it("does not creates a notification for an applicant if it gets rejected", async () => {
-      const findLatestByApplicant = ApplicantNotificationRepository.findLatestByApplicant;
-      const { applicant } = await updateApplicantWithStatus(ApprovalStatus.rejected);
-      const applicantUuid = applicant.uuid;
-      const { results, shouldFetchMore } = await findLatestByApplicant({ applicantUuid });
-      expect(shouldFetchMore).toBe(false);
-      expect(results).toEqual([]);
+      await ApplicantNotificationRepository.truncate();
+      await updateApplicantWithStatus(ApprovalStatus.rejected);
+      const notifications = await ApplicantNotificationRepository.findAll();
+      expect(notifications).toEqual([]);
     });
 
     it("does not creates a notification for an applicant if it is set to pending", async () => {
-      const findLatestByApplicant = ApplicantNotificationRepository.findLatestByApplicant;
-      const { applicant } = await updateApplicantWithStatus(ApprovalStatus.pending);
-      const applicantUuid = applicant.uuid;
-      const { results, shouldFetchMore } = await findLatestByApplicant({ applicantUuid });
-      expect(shouldFetchMore).toBe(false);
-      expect(results).toEqual([]);
+      await ApplicantNotificationRepository.truncate();
+      await updateApplicantWithStatus(ApprovalStatus.pending);
+      const notifications = await ApplicantNotificationRepository.findAll();
+      expect(notifications).toEqual([]);
     });
   });
 
   describe("Errors", () => {
-    let applicant: Applicant;
-
-    beforeAll(async () => {
-      applicant = await ApplicantGenerator.instance.withMinimumData();
-    });
-
     it("returns an error if no uuid is provided", async () => {
       const { apolloClient } = await TestClientGenerator.admin();
       const dataToUpdate = { approvalStatus: ApprovalStatus.approved };
