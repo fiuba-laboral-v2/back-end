@@ -12,7 +12,8 @@ import {
   ApplicantNotification,
   ApplicantNotificationRepository,
   ApprovedJobApplicationApplicantNotification,
-  RejectedJobApplicationApplicantNotification
+  RejectedJobApplicationApplicantNotification,
+  ApprovedProfileApplicantNotification
 } from "$models/ApplicantNotification";
 import { Admin } from "$models";
 
@@ -53,6 +54,13 @@ const GET_APPLICANT_NOTIFICATIONS = gql`
             __typename
             uuid
           }
+        }
+        ... on ApprovedProfileApplicantNotification {
+          __typename
+          uuid
+          adminEmail
+          isNew
+          createdAt
         }
       }
       shouldFetchMore
@@ -110,6 +118,10 @@ describe("getApplicantNotifications", () => {
             __typename: GraphQLJobApplication.name,
             uuid: rejectedJobApplicationNotification.jobApplicationUuid
           }
+        };
+      case ApprovedProfileApplicantNotification.name:
+        return {
+          __typename: "ApprovedProfileApplicantNotification"
         };
     }
     throw new Error(`
