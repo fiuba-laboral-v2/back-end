@@ -2,18 +2,18 @@ import { gql } from "apollo-server";
 import { client } from "$test/graphql/ApolloTestClient";
 import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist/createTestClient";
 
-import { ApplicantNotFound } from "$models/Applicant";
+import { ApplicantNotFound, ApplicantRepository } from "$models/Applicant";
 import { Applicant } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
-
-import { ApplicantRepository } from "$models/Applicant";
 import { ApplicantApprovalEventRepository } from "$models/Applicant/ApplicantApprovalEvent";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
+import { ApplicantNotificationRepository } from "$models/ApplicantNotification";
 
 import { ApplicantGenerator } from "$generators/Applicant";
 import { TestClientGenerator } from "$generators/TestClient";
+import { UUID_REGEX } from "$test/models";
 
 const UPDATE_APPLICANT_APPROVAL_STATUS = gql`
   mutation($uuid: ID!, $approvalStatus: ApprovalStatus!) {
@@ -81,6 +81,43 @@ describe("updateApplicantApprovalStatus", () => {
 
   it("creates a new event after rejecting an applicant", async () => {
     await expectToCreateANewEventWithStatus(ApprovalStatus.rejected);
+  });
+
+  describe("Notifications", () => {
+    it("creates a notification for an applicant if it gets approved", async () => {
+      const findLatestByApplicant = ApplicantNotificationRepository.findLatestByApplicant;
+      const { applicant, admin } = await updateApplicantWithStatus(ApprovalStatus.approved);
+      const applicantUuid = applicant.uuid;
+      const { results, shouldFetchMore } = await findLatestByApplicant({ applicantUuid });
+      expect(shouldFetchMore).toBe(false);
+      expect(results).toEqual([
+        {
+          uuid: expect.stringMatching(UUID_REGEX),
+          moderatorUuid: admin.userUuid,
+          notifiedApplicantUuid: applicant.uuid,
+          isNew: true,
+          createdAt: expect.any(Date)
+        }
+      ]);
+    });
+
+    it("does not creates a notification for an applicant if it gets rejected", async () => {
+      const findLatestByApplicant = ApplicantNotificationRepository.findLatestByApplicant;
+      const { applicant } = await updateApplicantWithStatus(ApprovalStatus.rejected);
+      const applicantUuid = applicant.uuid;
+      const { results, shouldFetchMore } = await findLatestByApplicant({ applicantUuid });
+      expect(shouldFetchMore).toBe(false);
+      expect(results).toEqual([]);
+    });
+
+    it("does not creates a notification for an applicant if it is set to pending", async () => {
+      const findLatestByApplicant = ApplicantNotificationRepository.findLatestByApplicant;
+      const { applicant } = await updateApplicantWithStatus(ApprovalStatus.pending);
+      const applicantUuid = applicant.uuid;
+      const { results, shouldFetchMore } = await findLatestByApplicant({ applicantUuid });
+      expect(shouldFetchMore).toBe(false);
+      expect(results).toEqual([]);
+    });
   });
 
   describe("Errors", () => {
