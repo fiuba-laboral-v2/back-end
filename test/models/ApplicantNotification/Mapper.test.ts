@@ -2,6 +2,7 @@ import {
   ApplicantNotificationMapper,
   ApprovedJobApplicationApplicantNotification,
   RejectedJobApplicationApplicantNotification,
+  ApprovedProfileApplicantNotification,
   ApplicantNotificationType
 } from "$models/ApplicantNotification";
 import { UUID } from "$models/UUID";
@@ -85,6 +86,36 @@ describe("ApplicantNotificationMapper", () => {
         expectToMapTheCreatedAtTimestamp(mapper, notification);
       });
     });
+
+    describe("ApprovedProfileApplicantNotification", () => {
+      const attributes = commonAttributes;
+      const notification = new ApprovedProfileApplicantNotification(attributes);
+
+      it("returns an instance of ApplicantNotificationSequelizeModel", async () => {
+        const persistenceModel = mapper.toPersistenceModel(notification);
+        expect(persistenceModel).toBeInstanceOf(ApplicantNotificationSequelizeModel);
+      });
+
+      it("returns a SequelizeModel with the correct attributes", async () => {
+        const persistenceModel = mapper.toPersistenceModel(notification);
+        expect(persistenceModel).toBeObjectContaining({
+          uuid: null,
+          ...attributes,
+          type: ApplicantNotificationType.approvedProfile,
+          moderatorMessage: undefined,
+          isNewRecord: true,
+          createdAt: undefined
+        });
+      });
+
+      it("maps the notification that has already an uuid", async () => {
+        expectToNotToBeANewRecord(mapper, notification);
+      });
+
+      it("maps the notification that has already a createdAt", async () => {
+        expectToMapTheCreatedAtTimestamp(mapper, notification);
+      });
+    });
   });
 
   describe("toDomainModel", () => {
@@ -126,6 +157,20 @@ describe("ApplicantNotificationMapper", () => {
         sequelizeModel,
         attributes,
         modelClass: RejectedJobApplicationApplicantNotification
+      });
+    });
+
+    it("returns a ApprovedProfileApplicantNotification", () => {
+      const attributes = {
+        ...commonAttributes,
+        type: ApplicantNotificationType.approvedProfile
+      };
+      const sequelizeModel = new ApplicantNotificationSequelizeModel(attributes);
+      expectToMapPersistenceModelToTheGivenNotification({
+        mapper,
+        sequelizeModel,
+        attributes,
+        modelClass: ApprovedProfileApplicantNotification
       });
     });
   });
