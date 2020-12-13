@@ -41,7 +41,7 @@ export const JobApplicationApplicantNotificationEmailSender = {
       subject,
       body: template(body)({
         offerTitle: offer.title,
-        offerLink: `${baseUrl}/${subDomain}/${endpoints.company.offer(offer.uuid)}`,
+        offerLink: `${baseUrl}/${subDomain}/${endpoints.applicant.offer(offer.uuid)}`,
         ...getRejectionReason(notification),
         signature
       })
