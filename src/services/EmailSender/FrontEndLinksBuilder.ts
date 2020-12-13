@@ -1,25 +1,20 @@
 import { FrontendConfig } from "$config";
 
+const buildBaseUrl = () => {
+  const { baseUrl, subDomain } = FrontendConfig;
+  return `${baseUrl}/${subDomain}`;
+};
+
 export const FrontEndLinksBuilder = {
   company: {
-    offerLink: (uuid: string) => {
-      const { baseUrl, subDomain, endpoints } = FrontendConfig;
-
-      return `${baseUrl}/${subDomain}/${endpoints.company.offer(uuid)}`;
-    },
-    applicantLink: (uuid: string) => {
-      const { baseUrl, subDomain, endpoints } = FrontendConfig;
-      return `${baseUrl}/${subDomain}/${endpoints.company.applicant(uuid)}`;
-    }
+    offerLink: (uuid: string) =>
+      `${buildBaseUrl()}/${FrontendConfig.endpoints.company.offer(uuid)}`,
+    applicantLink: (uuid: string) =>
+      `${buildBaseUrl()}/${FrontendConfig.endpoints.company.applicant(uuid)}`
   },
   applicant: {
-    profileLink: () => {
-      const { baseUrl, subDomain, endpoints } = FrontendConfig;
-      return `${baseUrl}/${subDomain}/${endpoints.applicant.profile()}`;
-    },
-    offerLink: (uuid: string) => {
-      const { baseUrl, subDomain, endpoints } = FrontendConfig;
-      return `${baseUrl}/${subDomain}/${endpoints.applicant.offer(uuid)}`;
-    }
+    profileLink: () => `${buildBaseUrl()}/${FrontendConfig.endpoints.applicant.profile()}`,
+    offerLink: (uuid: string) =>
+      `${buildBaseUrl()}/${FrontendConfig.endpoints.applicant.offer(uuid)}`
   }
 };
