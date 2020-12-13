@@ -86,7 +86,7 @@ export const ApplicantRepository = {
         { where: { uuid: applicantUuid }, returning: true, transaction }
       );
       if (numberOfUpdatedApplicants !== 1) throw new ApplicantNotUpdatedError(applicantUuid);
-      await ApplicantApprovalEventRepository.create({
+      await ApplicantApprovalEventRepository.save({
         adminUserUuid,
         applicantUuid,
         status,

@@ -2,7 +2,7 @@ import { ICreateApplicantApprovalEvent } from "./Interfaces";
 import { ApplicantApprovalEvent } from "$models";
 
 export const ApplicantApprovalEventRepository = {
-  create: ({ adminUserUuid, applicantUuid, status, transaction }: ICreateApplicantApprovalEvent) =>
+  save: ({ adminUserUuid, applicantUuid, status, transaction }: ICreateApplicantApprovalEvent) =>
     ApplicantApprovalEvent.create(
       {
         adminUserUuid,

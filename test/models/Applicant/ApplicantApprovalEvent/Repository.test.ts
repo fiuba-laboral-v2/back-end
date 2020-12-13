@@ -25,7 +25,7 @@ describe("ApplicantApprovalEventRepository", () => {
       applicantUuid: applicant.uuid,
       status
     };
-    const applicantApprovalEvent = await ApplicantApprovalEventRepository.create(
+    const applicantApprovalEvent = await ApplicantApprovalEventRepository.save(
       applicantApprovalEventAttributes
     );
     expect(applicantApprovalEvent).toEqual(
@@ -53,7 +53,7 @@ describe("ApplicantApprovalEventRepository", () => {
   it("gets applicant by association", async () => {
     const applicant = await ApplicantGenerator.instance.withMinimumData();
     const admin = await AdminGenerator.extension();
-    const applicantApprovalEvent = await ApplicantApprovalEventRepository.create({
+    const applicantApprovalEvent = await ApplicantApprovalEventRepository.save({
       adminUserUuid: admin.userUuid,
       applicantUuid: applicant.uuid,
       status: ApprovalStatus.approved
@@ -64,7 +64,7 @@ describe("ApplicantApprovalEventRepository", () => {
   it("gets admin by association", async () => {
     const applicant = await ApplicantGenerator.instance.withMinimumData();
     const admin = await AdminGenerator.extension();
-    const applicantApprovalEvent = await ApplicantApprovalEventRepository.create({
+    const applicantApprovalEvent = await ApplicantApprovalEventRepository.save({
       adminUserUuid: admin.userUuid,
       applicantUuid: applicant.uuid,
       status: ApprovalStatus.approved
@@ -76,7 +76,7 @@ describe("ApplicantApprovalEventRepository", () => {
     const applicant = await ApplicantGenerator.instance.withMinimumData();
     const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
     await expect(
-      ApplicantApprovalEventRepository.create({
+      ApplicantApprovalEventRepository.save({
         adminUserUuid: randomUuid,
         applicantUuid: applicant.uuid,
         status: ApprovalStatus.approved
@@ -92,7 +92,7 @@ describe("ApplicantApprovalEventRepository", () => {
     const randomUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
     const admin = await AdminGenerator.extension();
     await expect(
-      ApplicantApprovalEventRepository.create({
+      ApplicantApprovalEventRepository.save({
         adminUserUuid: admin.userUuid,
         applicantUuid: randomUuid,
         status: ApprovalStatus.approved
@@ -107,7 +107,7 @@ describe("ApplicantApprovalEventRepository", () => {
     const createApplicantApprovalEvent = async () => {
       const admin = await AdminGenerator.extension();
       const applicant = await ApplicantGenerator.instance.withMinimumData();
-      return ApplicantApprovalEventRepository.create({
+      return ApplicantApprovalEventRepository.save({
         adminUserUuid: admin.userUuid,
         applicantUuid: applicant.uuid,
         status: ApprovalStatus.approved
