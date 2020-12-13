@@ -1,5 +1,6 @@
 import { Admin, JobApplication } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { MissingModeratorMessageError } from "..";
 import { NewJobApplicationCompanyNotification } from "$models/CompanyNotification";
 import {
   ApprovedJobApplicationApplicantNotification,
@@ -29,12 +30,13 @@ export const JobApplicationNotificationFactory = {
         })
       ];
     } else if (jobApplication.approvalStatus === ApprovalStatus.rejected) {
+      if (!moderatorMessage) throw new MissingModeratorMessageError();
       return [
         new RejectedJobApplicationApplicantNotification({
           moderatorUuid: admin.userUuid,
           notifiedApplicantUuid: jobApplication.applicantUuid,
           jobApplicationUuid: jobApplication.uuid,
-          moderatorMessage: moderatorMessage!
+          moderatorMessage
         })
       ];
     }
