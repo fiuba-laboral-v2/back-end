@@ -57,7 +57,7 @@ export const updateOfferApprovalStatus = {
 
     for (const notification of notifications) {
       const emailSender = EmailSenderFactory.create(notification);
-      emailSender.send(notification).then();
+      emailSender.send(notification);
     }
 
     return offer;
