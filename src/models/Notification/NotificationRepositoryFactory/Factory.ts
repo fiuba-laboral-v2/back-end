@@ -8,6 +8,7 @@ import {
   ApprovedJobApplicationApplicantNotification,
   RejectedJobApplicationApplicantNotification,
   ApprovedProfileApplicantNotification,
+  RejectedProfileApplicantNotification,
   ApplicantNotificationRepository
 } from "$models/ApplicantNotification";
 import { Notification } from "../Model";
@@ -20,7 +21,8 @@ const repositoryMapper = {
   [RejectedOfferCompanyNotification.name]: CompanyNotificationRepository,
   [ApprovedJobApplicationApplicantNotification.name]: ApplicantNotificationRepository,
   [RejectedJobApplicationApplicantNotification.name]: ApplicantNotificationRepository,
-  [ApprovedProfileApplicantNotification.name]: ApplicantNotificationRepository
+  [ApprovedProfileApplicantNotification.name]: ApplicantNotificationRepository,
+  [RejectedProfileApplicantNotification.name]: ApplicantNotificationRepository
 };
 
 export const NotificationRepositoryFactory = {
