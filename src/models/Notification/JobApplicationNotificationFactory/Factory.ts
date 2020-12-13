@@ -1,12 +1,20 @@
 import { Admin, JobApplication } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { MissingModeratorMessageError } from "..";
 import { NewJobApplicationCompanyNotification } from "$models/CompanyNotification";
-import { ApprovedJobApplicationApplicantNotification } from "$models/ApplicantNotification";
+import {
+  ApprovedJobApplicationApplicantNotification,
+  RejectedJobApplicationApplicantNotification
+} from "$models/ApplicantNotification";
 import { Notification } from "$models/Notification";
 import { OfferRepository } from "$models/Offer";
 
 export const JobApplicationNotificationFactory = {
-  create: async (jobApplication: JobApplication, admin: Admin): Promise<Notification[]> => {
+  create: async (
+    jobApplication: JobApplication,
+    admin: Admin,
+    moderatorMessage?: string
+  ): Promise<Notification[]> => {
     if (jobApplication.approvalStatus === ApprovalStatus.approved) {
       const { companyUuid } = await OfferRepository.findByUuid(jobApplication.offerUuid);
       return [
@@ -19,6 +27,16 @@ export const JobApplicationNotificationFactory = {
           moderatorUuid: admin.userUuid,
           notifiedApplicantUuid: jobApplication.applicantUuid,
           jobApplicationUuid: jobApplication.uuid
+        })
+      ];
+    } else if (jobApplication.approvalStatus === ApprovalStatus.rejected) {
+      if (!moderatorMessage) throw new MissingModeratorMessageError();
+      return [
+        new RejectedJobApplicationApplicantNotification({
+          moderatorUuid: admin.userUuid,
+          notifiedApplicantUuid: jobApplication.applicantUuid,
+          jobApplicationUuid: jobApplication.uuid,
+          moderatorMessage
         })
       ];
     }

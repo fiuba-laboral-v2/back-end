@@ -3,6 +3,8 @@ import {
   INewJobApplicationNotificationAttributes,
   ApprovedOfferCompanyNotification,
   IApprovedOfferNotificationAttributes,
+  RejectedOfferCompanyNotification,
+  IRejectedOfferNotificationAttributes,
   CompanyNotification,
   CompanyNotificationType
 } from "$models/CompanyNotification";
@@ -12,7 +14,8 @@ export const CompanyNotificationMapper = {
   toPersistenceModel: (notification: CompanyNotification) => {
     const type = {
       [NewJobApplicationCompanyNotification.name]: CompanyNotificationType.newJobApplication,
-      [ApprovedOfferCompanyNotification.name]: CompanyNotificationType.approvedOffer
+      [ApprovedOfferCompanyNotification.name]: CompanyNotificationType.approvedOffer,
+      [RejectedOfferCompanyNotification.name]: CompanyNotificationType.rejectedOffer
     }[notification.constructor.name];
     if (!type) throw new Error("Could not map to a persistence model");
 
@@ -28,6 +31,10 @@ export const CompanyNotificationMapper = {
       case CompanyNotificationType.approvedOffer:
         return new ApprovedOfferCompanyNotification(
           attributes as IApprovedOfferNotificationAttributes
+        );
+      case CompanyNotificationType.rejectedOffer:
+        return new RejectedOfferCompanyNotification(
+          attributes as IRejectedOfferNotificationAttributes
         );
     }
   }

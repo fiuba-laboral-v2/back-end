@@ -1,6 +1,10 @@
 import {
   ApprovedJobApplicationApplicantNotification,
   IApprovedJobApplicationAttributes,
+  RejectedJobApplicationApplicantNotification,
+  IRejectedJobApplicationAttributes,
+  ApprovedProfileApplicantNotification,
+  IApprovedProfileAttributes,
   ApplicantNotification,
   ApplicantNotificationType as Type
 } from "$models/ApplicantNotification";
@@ -9,7 +13,9 @@ import { ApplicantNotificationSequelizeModel } from "$models";
 export const ApplicantNotificationMapper = {
   toPersistenceModel: (notification: ApplicantNotification) => {
     const type = {
-      [ApprovedJobApplicationApplicantNotification.name]: Type.approvedJobApplication
+      [ApprovedJobApplicationApplicantNotification.name]: Type.approvedJobApplication,
+      [RejectedJobApplicationApplicantNotification.name]: Type.rejectedJobApplication,
+      [ApprovedProfileApplicantNotification.name]: Type.approvedProfile
     }[notification.constructor.name];
     if (!type) throw new Error("Could not map to a persistence model");
 
@@ -22,6 +28,12 @@ export const ApplicantNotificationMapper = {
         return new ApprovedJobApplicationApplicantNotification(
           attributes as IApprovedJobApplicationAttributes
         );
+      case Type.rejectedJobApplication:
+        return new RejectedJobApplicationApplicantNotification(
+          attributes as IRejectedJobApplicationAttributes
+        );
+      case Type.approvedProfile:
+        return new ApprovedProfileApplicantNotification(attributes as IApprovedProfileAttributes);
     }
   }
 };

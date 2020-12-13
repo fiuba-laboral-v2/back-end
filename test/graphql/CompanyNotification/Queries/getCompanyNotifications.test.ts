@@ -17,6 +17,7 @@ import { UnknownNotificationError } from "$models/Notification";
 import {
   NewJobApplicationCompanyNotification,
   ApprovedOfferCompanyNotification,
+  RejectedOfferCompanyNotification,
   CompanyNotificationRepository,
   CompanyNotification
 } from "$models/CompanyNotification";
@@ -47,6 +48,18 @@ const GET_COMPANY_NOTIFICATIONS = gql`
           __typename
           uuid
           adminEmail
+          isNew
+          createdAt
+          offer {
+            __typename
+            uuid
+          }
+        }
+        ... on RejectedOfferCompanyNotification {
+          __typename
+          uuid
+          adminEmail
+          moderatorMessage
           isNew
           createdAt
           offer {
@@ -92,23 +105,42 @@ describe("getCompanyNotifications", () => {
   const createApplicantTestClient = (approvalStatus: ApprovalStatus) =>
     TestClientGenerator.applicant({ status: { approvalStatus, admin } });
 
-  const getAttributesFrom = (notification: CompanyNotification) => {
-    return {
-      [NewJobApplicationCompanyNotification.name]: {
-        __typename: "NewJobApplicationCompanyNotification",
-        jobApplication: {
-          __typename: GraphQLJobApplication.name,
-          uuid: (notification as NewJobApplicationCompanyNotification).jobApplicationUuid
-        }
-      },
-      [ApprovedOfferCompanyNotification.name]: {
-        __typename: "ApprovedOfferCompanyNotification",
-        offer: {
-          __typename: GraphQLOffer.name,
-          uuid: (notification as ApprovedOfferCompanyNotification).offerUuid
-        }
-      }
-    }[notification.constructor.name];
+  const getFields = (notification: CompanyNotification) => {
+    const notificationClassName = notification.constructor.name;
+    switch (notificationClassName) {
+      case NewJobApplicationCompanyNotification.name:
+        const newJobApplicationNotification = notification as NewJobApplicationCompanyNotification;
+        return {
+          __typename: "NewJobApplicationCompanyNotification",
+          jobApplication: {
+            __typename: GraphQLJobApplication.name,
+            uuid: newJobApplicationNotification.jobApplicationUuid
+          }
+        };
+      case ApprovedOfferCompanyNotification.name:
+        const approvedOfferNotification = notification as ApprovedOfferCompanyNotification;
+        return {
+          __typename: "ApprovedOfferCompanyNotification",
+          offer: {
+            __typename: GraphQLOffer.name,
+            uuid: approvedOfferNotification.offerUuid
+          }
+        };
+      case RejectedOfferCompanyNotification.name:
+        const rejectedOfferNotification = notification as RejectedOfferCompanyNotification;
+        return {
+          __typename: "RejectedOfferCompanyNotification",
+          moderatorMessage: rejectedOfferNotification.moderatorMessage,
+          offer: {
+            __typename: GraphQLOffer.name,
+            uuid: rejectedOfferNotification.offerUuid
+          }
+        };
+    }
+    throw new Error(`
+      The local function getFields in the getCompanyNotification test failed because
+      it received an unknown notification: ${notificationClassName}
+    `);
   };
 
   it("returns all notifications", async () => {
@@ -124,7 +156,7 @@ describe("getCompanyNotifications", () => {
           adminEmail: (await UserRepository.findByUuid(notification.moderatorUuid)).email,
           isNew: notification.isNew,
           createdAt: notification.createdAt?.toISOString(),
-          ...getAttributesFrom(notification)
+          ...getFields(notification)
         }))
       )
     );

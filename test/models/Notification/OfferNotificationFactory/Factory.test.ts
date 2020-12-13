@@ -1,13 +1,18 @@
-import { OfferNotificationFactory } from "$models/Notification/OfferNotificationFactory";
+import { OfferNotificationFactory, MissingModeratorMessageError } from "$models/Notification";
 import { UUID } from "$models/UUID";
 import { Admin, Company, Offer } from "$models";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import {
+  ApprovedOfferCompanyNotification,
+  RejectedOfferCompanyNotification
+} from "$models/CompanyNotification";
 import { Secretary } from "$models/Admin";
 
 import { CuitGenerator } from "$generators/Cuit";
 import { OfferGenerator } from "$generators/Offer";
-import { ApprovalStatus } from "$models/ApprovalStatus";
 
 describe("OfferNotificationFactory", () => {
+  const moderatorMessage = "message";
   let offer: Offer;
   let admin: Admin;
   let company: Company;
@@ -24,61 +29,136 @@ describe("OfferNotificationFactory", () => {
     offer = new Offer(OfferGenerator.data.withObligatoryData({ companyUuid: company.uuid }));
   });
 
-  it("returns an array with an ApprovedOfferCompanyNotification for extension admin", async () => {
-    offer.set({ extensionApprovalStatus: ApprovalStatus.approved });
-    admin.set({ secretary: Secretary.extension });
+  describe("Graduados admin", () => {
+    beforeAll(() => admin.set({ secretary: Secretary.graduados }));
 
-    const notifications = OfferNotificationFactory.create(offer, admin);
-    expect(notifications).toEqual([
-      {
-        uuid: undefined,
-        moderatorUuid: admin.userUuid,
-        notifiedCompanyUuid: company.uuid,
-        offerUuid: offer.uuid,
-        isNew: true,
-        createdAt: undefined
-      }
-    ]);
+    describe("Approved Offer", () => {
+      beforeAll(() => offer.set({ graduadosApprovalStatus: ApprovalStatus.approved }));
+
+      it("returns an array with an ApprovedOfferCompanyNotification if the offer is approved", async () => {
+        const notifications = OfferNotificationFactory.create(offer, admin);
+        expect(notifications).toHaveLength(1);
+        const [notification] = notifications;
+        expect(notification).toBeInstanceOf(ApprovedOfferCompanyNotification);
+      });
+
+      it("returns an array with the correct attributes", async () => {
+        const notifications = OfferNotificationFactory.create(offer, admin);
+        expect(notifications).toEqual([
+          {
+            uuid: undefined,
+            moderatorUuid: admin.userUuid,
+            notifiedCompanyUuid: company.uuid,
+            offerUuid: offer.uuid,
+            isNew: true,
+            createdAt: undefined
+          }
+        ]);
+      });
+    });
+
+    describe("Rejected Offer", () => {
+      beforeAll(() => offer.set({ graduadosApprovalStatus: ApprovalStatus.rejected }));
+
+      it("returns an array with a RejectedOfferCompanyNotification", async () => {
+        const notifications = OfferNotificationFactory.create(offer, admin, moderatorMessage);
+        const [notification] = notifications;
+
+        expect(notifications).toHaveLength(1);
+        expect(notification).toBeInstanceOf(RejectedOfferCompanyNotification);
+      });
+
+      it("returns an array with the correct attributes", async () => {
+        const notifications = OfferNotificationFactory.create(offer, admin, moderatorMessage);
+        expect(notifications).toEqual([
+          {
+            uuid: undefined,
+            moderatorUuid: admin.userUuid,
+            notifiedCompanyUuid: company.uuid,
+            offerUuid: offer.uuid,
+            moderatorMessage,
+            isNew: true,
+            createdAt: undefined
+          }
+        ]);
+      });
+
+      it("throws an error if no moderatorMessage is provided", async () => {
+        expect(() => OfferNotificationFactory.create(offer, admin)).toThrowError(
+          MissingModeratorMessageError.buildMessage()
+        );
+      });
+    });
+
+    it("returns an empty array if the offer is pending", async () => {
+      offer.set({ graduadosApprovalStatus: ApprovalStatus.pending });
+      expect(OfferNotificationFactory.create(offer, admin)).toEqual([]);
+    });
   });
 
-  it("returns an array with an ApprovedOfferCompanyNotification for graduados admin", async () => {
-    offer.set({ graduadosApprovalStatus: ApprovalStatus.approved });
-    admin.set({ secretary: Secretary.graduados });
+  describe("Extension admin", () => {
+    beforeAll(() => admin.set({ secretary: Secretary.extension }));
 
-    const notifications = OfferNotificationFactory.create(offer, admin);
-    expect(notifications).toEqual([
-      {
-        uuid: undefined,
-        moderatorUuid: admin.userUuid,
-        notifiedCompanyUuid: company.uuid,
-        offerUuid: offer.uuid,
-        isNew: true,
-        createdAt: undefined
-      }
-    ]);
-  });
+    describe("Approved Offer", () => {
+      beforeAll(() => offer.set({ extensionApprovalStatus: ApprovalStatus.approved }));
 
-  it("returns an empty array if the offer is rejected for extension admin", async () => {
-    offer.set({ extensionApprovalStatus: ApprovalStatus.rejected });
-    admin.set({ secretary: Secretary.extension });
-    expect(OfferNotificationFactory.create(offer, admin)).toEqual([]);
-  });
+      it("returns an array with an ApprovedOfferCompanyNotification", async () => {
+        const notifications = OfferNotificationFactory.create(offer, admin);
+        const [notification] = notifications;
+        expect(notifications).toHaveLength(1);
+        expect(notification).toBeInstanceOf(ApprovedOfferCompanyNotification);
+      });
 
-  it("returns an empty array if the offer is pending for extension admin", async () => {
-    offer.set({ extensionApprovalStatus: ApprovalStatus.pending });
-    admin.set({ secretary: Secretary.extension });
-    expect(OfferNotificationFactory.create(offer, admin)).toEqual([]);
-  });
+      it("returns an array with the correct attributes", async () => {
+        const notifications = OfferNotificationFactory.create(offer, admin);
+        expect(notifications).toEqual([
+          {
+            uuid: undefined,
+            moderatorUuid: admin.userUuid,
+            notifiedCompanyUuid: company.uuid,
+            offerUuid: offer.uuid,
+            isNew: true,
+            createdAt: undefined
+          }
+        ]);
+      });
+    });
 
-  it("returns an empty array if the offer is rejected for graduados admin", async () => {
-    offer.set({ graduadosApprovalStatus: ApprovalStatus.rejected });
-    admin.set({ secretary: Secretary.graduados });
-    expect(OfferNotificationFactory.create(offer, admin)).toEqual([]);
-  });
+    describe("Rejected Offer", () => {
+      beforeAll(() => offer.set({ extensionApprovalStatus: ApprovalStatus.rejected }));
 
-  it("returns an empty array if the offer is pending for graduados admin", async () => {
-    offer.set({ graduadosApprovalStatus: ApprovalStatus.pending });
-    admin.set({ secretary: Secretary.graduados });
-    expect(OfferNotificationFactory.create(offer, admin)).toEqual([]);
+      it("returns an array with an RejectedOfferCompanyNotification", async () => {
+        const notifications = OfferNotificationFactory.create(offer, admin, moderatorMessage);
+        const [notification] = notifications;
+        expect(notifications).toHaveLength(1);
+        expect(notification).toBeInstanceOf(RejectedOfferCompanyNotification);
+      });
+
+      it("returns an array with the correct attributes", async () => {
+        const notifications = OfferNotificationFactory.create(offer, admin, moderatorMessage);
+        expect(notifications).toEqual([
+          {
+            uuid: undefined,
+            moderatorUuid: admin.userUuid,
+            notifiedCompanyUuid: company.uuid,
+            offerUuid: offer.uuid,
+            moderatorMessage,
+            isNew: true,
+            createdAt: undefined
+          }
+        ]);
+      });
+
+      it("throws an error if no moderatorMessage is provided", async () => {
+        expect(() => OfferNotificationFactory.create(offer, admin)).toThrowError(
+          MissingModeratorMessageError.buildMessage()
+        );
+      });
+    });
+
+    it("returns an empty array if the offer is pending for extension admin", async () => {
+      offer.set({ extensionApprovalStatus: ApprovalStatus.pending });
+      expect(OfferNotificationFactory.create(offer, admin)).toEqual([]);
+    });
   });
 });

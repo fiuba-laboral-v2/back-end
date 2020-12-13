@@ -2,15 +2,21 @@ import { gql } from "apollo-server";
 import { ApolloServerTestClient as TestClient } from "apollo-server-testing";
 import { client } from "$test/graphql/ApolloTestClient";
 
+import { EmailService } from "$services/Email";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
 import { OfferApprovalEventRepository } from "$models/Offer/OfferApprovalEvent";
 import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
-import { CompanyNotificationRepository } from "$models/CompanyNotification";
+import {
+  CompanyNotificationRepository,
+  RejectedOfferCompanyNotification,
+  ApprovedOfferCompanyNotification
+} from "$models/CompanyNotification";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Offer } from "$models";
 import { DateTimeManager } from "$libs/DateTimeManager";
+import { MissingModeratorMessageError } from "$models/Notification";
 
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { AdminCannotModerateOfferError, OfferNotFoundError } from "$models/Offer/Errors";
@@ -23,11 +29,18 @@ import { IForAllTargets, OfferGenerator } from "$test/generators/Offer";
 import { UUID } from "$models/UUID";
 import { ApplicantType } from "$models/Applicant";
 import { UUID_REGEX } from "$test/models";
-import { EmailService } from "$services/Email";
 
 const UPDATE_OFFER_APPROVAL_STATUS = gql`
-  mutation($uuid: ID!, $approvalStatus: ApprovalStatus!) {
-    updateOfferApprovalStatus(uuid: $uuid, approvalStatus: $approvalStatus) {
+  mutation UpdateOfferApprovalStatus(
+    $uuid: ID!
+    $approvalStatus: ApprovalStatus!
+    $moderatorMessage: String
+  ) {
+    updateOfferApprovalStatus(
+      uuid: $uuid
+      approvalStatus: $approvalStatus
+      moderatorMessage: $moderatorMessage
+    ) {
       uuid
       extensionApprovalStatus
       graduadosApprovalStatus
@@ -38,6 +51,7 @@ const UPDATE_OFFER_APPROVAL_STATUS = gql`
 `;
 
 describe("updateOfferApprovalStatus", () => {
+  const moderatorMessage = "message";
   let offers: IForAllTargets;
 
   beforeAll(async () => {
@@ -72,7 +86,8 @@ describe("updateOfferApprovalStatus", () => {
     const { admin, apolloClient } = await TestClientGenerator.admin({ secretary });
     const { data, errors } = await performMutation(apolloClient, {
       uuid: offer.uuid,
-      approvalStatus: newStatus
+      approvalStatus: newStatus,
+      moderatorMessage
     });
     const changedStatusColumn = {
       [Secretary.graduados]: "graduadosApprovalStatus",
@@ -210,7 +225,8 @@ describe("updateOfferApprovalStatus", () => {
       const { admin, apolloClient } = await TestClientGenerator.admin({ secretary });
       const { errors } = await performMutation(apolloClient, {
         uuid: offer.uuid,
-        approvalStatus: status
+        approvalStatus: status,
+        moderatorMessage
       });
       expect(errors).toBeUndefined();
       return { admin };
@@ -223,6 +239,9 @@ describe("updateOfferApprovalStatus", () => {
       const { shouldFetchMore, results } = await CompanyNotificationRepository.findLatestByCompany({
         companyUuid: offer.companyUuid
       });
+      const [result] = results;
+
+      expect(result).toBeInstanceOf(ApprovedOfferCompanyNotification);
       expect(shouldFetchMore).toBe(false);
       expect(results).toEqual([
         {
@@ -236,15 +255,28 @@ describe("updateOfferApprovalStatus", () => {
       ]);
     });
 
-    it("does not creates a notification for a company if the offer is rejected", async () => {
+    it("creates a notification for a company if the offer is rejected", async () => {
       await CompanyNotificationRepository.truncate();
       const offer = offers[ApplicantType.student];
-      await updateOffer(offer, Secretary.extension, ApprovalStatus.rejected);
+      const { admin } = await updateOffer(offer, Secretary.extension, ApprovalStatus.rejected);
       const { shouldFetchMore, results } = await CompanyNotificationRepository.findLatestByCompany({
         companyUuid: offer.companyUuid
       });
+      const [result] = results;
+
       expect(shouldFetchMore).toBe(false);
-      expect(results).toEqual([]);
+      expect(result).toBeInstanceOf(RejectedOfferCompanyNotification);
+      expect(results).toEqual([
+        {
+          uuid: expect.stringMatching(UUID_REGEX),
+          moderatorUuid: admin.userUuid,
+          notifiedCompanyUuid: offer.companyUuid,
+          isNew: true,
+          moderatorMessage,
+          offerUuid: offer.uuid,
+          createdAt: expect.any(Date)
+        }
+      ]);
     });
 
     it("does not creates a notification for a company if the offer is pending", async () => {
@@ -259,7 +291,16 @@ describe("updateOfferApprovalStatus", () => {
     });
   });
 
-  it("throws an error if the offer is for graduates and the admin is from extension", async () => {
+  it("returns an error if no moderatorMessage is provided when rejecting the offer", async () => {
+    const { apolloClient } = await TestClientGenerator.admin({ secretary: Secretary.extension });
+    const { errors } = await performMutation(apolloClient, {
+      uuid: offers[ApplicantType.student].uuid,
+      approvalStatus: ApprovalStatus.rejected
+    });
+    expect(errors).toEqualGraphQLErrorType(MissingModeratorMessageError.name);
+  });
+
+  it("returns an error if the offer is for graduates and the admin is from extension", async () => {
     const { apolloClient } = await TestClientGenerator.admin({ secretary: Secretary.extension });
     const { errors } = await performMutation(apolloClient, {
       uuid: offers[ApplicantType.graduate].uuid,
@@ -268,7 +309,7 @@ describe("updateOfferApprovalStatus", () => {
     expect(errors).toEqualGraphQLErrorType(AdminCannotModerateOfferError.name);
   });
 
-  it("throws an error if the offer is for students and the admin is from graduados", async () => {
+  it("returns an error if the offer is for students and the admin is from graduados", async () => {
     const { apolloClient } = await TestClientGenerator.admin({ secretary: Secretary.graduados });
     const { errors } = await performMutation(apolloClient, {
       uuid: offers[ApplicantType.student].uuid,

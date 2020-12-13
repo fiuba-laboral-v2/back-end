@@ -10,6 +10,7 @@ module.exports = {
       isolatedModules: true
     }
   },
+  forceExit: true,
   watchPathIgnorePatterns: ["/node_modules/"],
   testPathIgnorePatterns: [".d.ts", ".js"],
   setupFiles: ["core-js"],

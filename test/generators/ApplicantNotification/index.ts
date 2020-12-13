@@ -1,5 +1,6 @@
 import {
   ApprovedJobApplicationApplicantNotification,
+  RejectedJobApplicationApplicantNotification,
   ApplicantNotification,
   ApplicantNotificationRepository
 } from "$models/ApplicantNotification";
@@ -26,10 +27,28 @@ export const ApplicantNotificationGenerator = {
       await ApplicantNotificationRepository.save(notification);
       return notification;
     },
+    rejectedJobApplication: async ({ applicant, admin }: IGeneratorAttributes) => {
+      const { userUuid: moderatorUuid } = admin || (await AdminGenerator.extension());
+      const { uuid } = applicant || (await ApplicantGenerator.instance.withMinimumData());
+      const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      const attributes = {
+        moderatorUuid,
+        notifiedApplicantUuid: uuid,
+        jobApplicationUuid: jobApplication.uuid,
+        moderatorMessage: "message",
+        isNew: true
+      };
+      const notification = new RejectedJobApplicationApplicantNotification(attributes);
+      await ApplicantNotificationRepository.save(notification);
+      return notification;
+    },
     range: async ({ applicant, size }: { size: number; applicant: Applicant }) => {
       const admin = await AdminGenerator.extension();
       const values: ApplicantNotification[] = [];
-      const generators = [ApplicantNotificationGenerator.instance.approvedJobApplication];
+      const generators = [
+        ApplicantNotificationGenerator.instance.approvedJobApplication,
+        ApplicantNotificationGenerator.instance.rejectedJobApplication
+      ];
       for (const milliseconds of range(size)) {
         MockDate.set(milliseconds);
         const generator = sample<Generator>(generators);

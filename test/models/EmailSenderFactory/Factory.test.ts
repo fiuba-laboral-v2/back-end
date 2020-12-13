@@ -1,13 +1,19 @@
-import { ApprovedJobApplicationApplicantNotification } from "$models/ApplicantNotification";
+import {
+  ApprovedJobApplicationApplicantNotification,
+  RejectedJobApplicationApplicantNotification
+} from "$models/ApplicantNotification";
 import {
   NewJobApplicationCompanyNotification,
-  ApprovedOfferCompanyNotification
+  ApprovedOfferCompanyNotification,
+  RejectedOfferCompanyNotification
 } from "$models/CompanyNotification";
 import { EmailSenderFactory, UnknownEmailSenderError } from "$models/EmailSenderFactory";
 import {
   NewJobApplicationCompanyNotificationEmailSender,
   ApprovedOfferCompanyNotificationEmailSender,
-  ApprovedJobApplicationApplicantNotificationEmailSender
+  RejectedOfferCompanyNotificationEmailSender,
+  ApprovedJobApplicationApplicantNotificationEmailSender,
+  RejectedJobApplicationApplicantNotificationEmailSender
 } from "$services/EmailSender";
 import { UUID } from "$models/UUID";
 
@@ -40,6 +46,28 @@ describe("EmailSenderFactory", () => {
     });
     const emailSender = EmailSenderFactory.create(notification);
     expect(emailSender).toBe(ApprovedJobApplicationApplicantNotificationEmailSender);
+  });
+
+  it("returns a RejectedJobApplicationApplicantNotificationEmailSender", async () => {
+    const notification = new RejectedJobApplicationApplicantNotification({
+      moderatorUuid: UUID.generate(),
+      notifiedApplicantUuid: UUID.generate(),
+      jobApplicationUuid: UUID.generate(),
+      moderatorMessage: "message"
+    });
+    const emailSender = EmailSenderFactory.create(notification);
+    expect(emailSender).toBe(RejectedJobApplicationApplicantNotificationEmailSender);
+  });
+
+  it("returns a RejectedOfferCompanyNotificationEmailSender", async () => {
+    const notification = new RejectedOfferCompanyNotification({
+      moderatorUuid: UUID.generate(),
+      notifiedCompanyUuid: UUID.generate(),
+      offerUuid: UUID.generate(),
+      moderatorMessage: "message"
+    });
+    const emailSender = EmailSenderFactory.create(notification);
+    expect(emailSender).toBe(RejectedOfferCompanyNotificationEmailSender);
   });
 
   it("throws an error if the factory does not know how to handle the given class", async () => {
