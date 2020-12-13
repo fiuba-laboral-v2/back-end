@@ -17,8 +17,16 @@ import { TestClientGenerator } from "$generators/TestClient";
 import { UUID_REGEX } from "$test/models";
 
 const UPDATE_APPLICANT_APPROVAL_STATUS = gql`
-  mutation($uuid: ID!, $approvalStatus: ApprovalStatus!) {
-    updateApplicantApprovalStatus(uuid: $uuid, approvalStatus: $approvalStatus) {
+  mutation UpdateApplicantApprovalStatus(
+    $uuid: ID!
+    $approvalStatus: ApprovalStatus!
+    $moderatorMessage: String
+  ) {
+    updateApplicantApprovalStatus(
+      uuid: $uuid
+      approvalStatus: $approvalStatus
+      moderatorMessage: $moderatorMessage
+    ) {
       uuid
       approvalStatus
     }
@@ -26,6 +34,7 @@ const UPDATE_APPLICANT_APPROVAL_STATUS = gql`
 `;
 
 describe("updateApplicantApprovalStatus", () => {
+  const moderatorMessage = "message";
   let applicant: Applicant;
 
   beforeAll(async () => {
@@ -49,7 +58,7 @@ describe("updateApplicantApprovalStatus", () => {
 
   const updateApplicantWithStatus = async (newStatus: ApprovalStatus) => {
     const { admin, apolloClient } = await TestClientGenerator.admin();
-    const dataToUpdate = { uuid: applicant.uuid, approvalStatus: newStatus };
+    const dataToUpdate = { uuid: applicant.uuid, approvalStatus: newStatus, moderatorMessage };
     const { data, errors } = await performMutation(apolloClient, dataToUpdate);
     return { data, errors, admin };
   };
@@ -108,9 +117,18 @@ describe("updateApplicantApprovalStatus", () => {
 
     it("does not creates a notification for an applicant if it gets rejected", async () => {
       await ApplicantNotificationRepository.truncate();
-      await updateApplicantWithStatus(ApprovalStatus.rejected);
+      const { admin } = await updateApplicantWithStatus(ApprovalStatus.rejected);
       const notifications = await ApplicantNotificationRepository.findAll();
-      expect(notifications).toEqual([]);
+      expect(notifications).toEqual([
+        {
+          uuid: expect.stringMatching(UUID_REGEX),
+          moderatorUuid: admin.userUuid,
+          notifiedApplicantUuid: applicant.uuid,
+          moderatorMessage,
+          isNew: true,
+          createdAt: expect.any(Date)
+        }
+      ]);
     });
 
     it("does not create a notification for an applicant if it is set to pending", async () => {
