@@ -1,17 +1,19 @@
 import { gql } from "apollo-server";
+import { client } from "$test/graphql/ApolloTestClient";
 import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist/createTestClient";
 
-import { ApplicantNotUpdatedError, ApplicantRepository } from "$models/Applicant";
+import { ApplicantNotFound } from "$models/Applicant";
 import { Applicant } from "$models";
-import { ApplicantApprovalEventRepository } from "$models/Applicant/ApplicantApprovalEvent";
-import { UserRepository } from "$models/User";
-import { CompanyRepository } from "$models/Company";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
+import { ApplicantRepository } from "$models/Applicant";
+import { ApplicantApprovalEventRepository } from "$models/Applicant/ApplicantApprovalEvent";
+import { UserRepository } from "$models/User";
+import { CompanyRepository } from "$models/Company";
+
 import { ApplicantGenerator } from "$generators/Applicant";
 import { TestClientGenerator } from "$generators/TestClient";
-import { client } from "../../ApolloTestClient";
 
 const UPDATE_APPLICANT_APPROVAL_STATUS = gql`
   mutation($uuid: ID!, $approvalStatus: ApprovalStatus!) {
@@ -132,7 +134,7 @@ describe("updateApplicantApprovalStatus", () => {
         uuid: nonExistentApplicantUuid,
         approvalStatus: ApprovalStatus.approved
       });
-      expect(errors).toEqualGraphQLErrorType(ApplicantNotUpdatedError.name);
+      expect(errors).toEqualGraphQLErrorType(ApplicantNotFound.name);
     });
 
     it("returns an error if the approvalStatus is invalid", async () => {

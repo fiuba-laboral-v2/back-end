@@ -1,19 +1,19 @@
+import { Transaction } from "sequelize";
 import { IApplicantEditable, ISaveApplicant } from "./index";
-import { ApplicantNotFound, ApplicantNotUpdatedError } from "./Errors";
+import { ApplicantNotFound } from "./Errors";
 import { Database } from "$config";
 import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedInput";
 import { ApplicantCareersRepository } from "./ApplicantCareer";
 import { ApplicantCapabilityRepository } from "../ApplicantCapability";
-import { ApplicantApprovalEventRepository } from "./ApplicantApprovalEvent";
 import { ApplicantKnowledgeSectionRepository } from "./ApplicantKnowledgeSection";
 import { ApplicantExperienceSectionRepository } from "./ApplicantExperienceSection";
 import { ApplicantLinkRepository } from "./Link";
 import { UserRepository } from "../User";
-import { ApprovalStatus } from "../ApprovalStatus";
-import { Applicant, ApplicantApprovalEvent } from "..";
+import { Applicant } from "..";
 import { PaginationQuery } from "../PaginationQuery";
 
 export const ApplicantRepository = {
+  save: (applicant: Applicant, transaction?: Transaction) => applicant.save({ transaction }),
   create: ({
     padron,
     description,
@@ -78,18 +78,6 @@ export const ApplicantRepository = {
       await ApplicantCapabilityRepository.update(newCapabilities, applicant, transaction);
       await applicant.save({ transaction });
       return applicant;
-    }),
-  updateApprovalStatus: (adminUserUuid: string, applicantUuid: string, status: ApprovalStatus) =>
-    Database.transaction(async transaction => {
-      const [numberOfUpdatedApplicants, [updatedApplicant]] = await Applicant.update(
-        { approvalStatus: status },
-        { where: { uuid: applicantUuid }, returning: true, transaction }
-      );
-      if (numberOfUpdatedApplicants !== 1) throw new ApplicantNotUpdatedError(applicantUuid);
-
-      const event = new ApplicantApprovalEvent({ adminUserUuid, applicantUuid, status });
-      await ApplicantApprovalEventRepository.save(event, transaction);
-      return updatedApplicant;
     }),
   truncate: () => Applicant.truncate({ cascade: true })
 };
