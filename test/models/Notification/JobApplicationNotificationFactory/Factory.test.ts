@@ -1,4 +1,7 @@
-import { JobApplicationNotificationFactory } from "$models/Notification";
+import {
+  JobApplicationNotificationFactory,
+  MissingModeratorMessageError
+} from "$models/Notification";
 import { NewJobApplicationCompanyNotification } from "$models/CompanyNotification";
 import {
   ApprovedJobApplicationApplicantNotification,
@@ -103,6 +106,14 @@ describe("JobApplicationNotificationFactory", () => {
           createdAt: undefined
         }
       ]);
+    });
+
+    it("throws an error if no moderatorMessage is provided", async () => {
+      jobApplication.set({ approvalStatus: ApprovalStatus.rejected });
+      await expect(factory.create(jobApplication, admin)).rejects.toThrowErrorWithMessage(
+        MissingModeratorMessageError,
+        MissingModeratorMessageError.buildMessage()
+      );
     });
   });
 

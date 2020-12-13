@@ -17,6 +17,7 @@ import { UnknownNotificationError } from "$models/Notification";
 import {
   NewJobApplicationCompanyNotification,
   ApprovedOfferCompanyNotification,
+  RejectedOfferCompanyNotification,
   CompanyNotificationRepository,
   CompanyNotification
 } from "$models/CompanyNotification";
@@ -47,6 +48,18 @@ const GET_COMPANY_NOTIFICATIONS = gql`
           __typename
           uuid
           adminEmail
+          isNew
+          createdAt
+          offer {
+            __typename
+            uuid
+          }
+        }
+        ... on RejectedOfferCompanyNotification {
+          __typename
+          uuid
+          adminEmail
+          moderatorMessage
           isNew
           createdAt
           offer {
@@ -111,6 +124,16 @@ describe("getCompanyNotifications", () => {
           offer: {
             __typename: GraphQLOffer.name,
             uuid: approvedOfferNotification.offerUuid
+          }
+        };
+      case RejectedOfferCompanyNotification.name:
+        const rejectedOfferNotification = notification as RejectedOfferCompanyNotification;
+        return {
+          __typename: "RejectedOfferCompanyNotification",
+          moderatorMessage: rejectedOfferNotification.moderatorMessage,
+          offer: {
+            __typename: GraphQLOffer.name,
+            uuid: rejectedOfferNotification.offerUuid
           }
         };
     }

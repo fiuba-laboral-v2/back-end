@@ -452,6 +452,9 @@ export const defaultTranslations = {
   approvedOfferCompanyNotification: {
     title: "Oferta aprobada"
   },
+  rejectedOfferCompanyNotification: {
+    title: "Oferta rechazada"
+  },
   applicantJobApplicationNotification: {
     pendingApplicantTitle: "Postulación pendiente de aprobación",
     approvedApplicantTitle: "Postulación aprobada",
@@ -485,6 +488,15 @@ export const defaultTranslations = {
       "Tu oferta laboral ha sido aprobada: <%= offerTitle %> (<%= offerLink %>)" +
       "\n\n" +
       "<%= signature %>"
+  },
+  rejectedOfferCompanyNotificationEmail: {
+    subject: "Oferta laboral rechazada",
+    body:
+      "Tu oferta laboral ha sido rechazada: <%= offerTitle %> (<%= offerLink %>)." +
+      "\n" +
+      "Motivo: <%= rejectionReason %>." +
+      "\n\n" +
+      "<%= signature %>."
   },
   approvedJobApplicationApplicantNotificationEmail: {
     subject: "Postulación a oferta de trabajo aprobada",

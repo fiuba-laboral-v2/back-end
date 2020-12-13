@@ -31,18 +31,19 @@ export const JobApplicationApplicantNotificationEmailSender = {
     );
     const offer = await OfferRepository.findByUuid(offerUuid);
     const { subject, body } = TranslationRepository.translate(emailTranslationGroup);
-
+    const signature = await TranslationRepository.findSignatureByAdmin(notification.moderatorUuid);
+    const sender = await Sender.findByAdmin(notification.moderatorUuid);
     const { baseUrl, subDomain, endpoints } = FrontendConfig;
 
     return EmailService.send({
       receiverEmails: [applicantUser.email],
-      sender: await Sender.findByAdmin(notification.moderatorUuid),
+      sender,
       subject,
       body: template(body)({
         offerTitle: offer.title,
         offerLink: `${baseUrl}/${subDomain}/${endpoints.company.offer(offer.uuid)}`,
         ...getRejectionReason(notification),
-        signature: await TranslationRepository.findSignatureByAdmin(notification.moderatorUuid)
+        signature
       })
     });
   }
