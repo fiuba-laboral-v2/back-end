@@ -402,6 +402,9 @@ export const defaultTranslations = {
     student: "Alumnos",
     both: "Alumnos y graduados"
   },
+  internshipLabel: {
+    text: "Pasantía"
+  },
   statusLabel: {
     approved: "Aprobado",
     rejected: "Rechazado",
