@@ -512,7 +512,7 @@ export const defaultTranslations = {
   rejectedProfileCompanyNotificationEmail: {
     subject: "Perfil rechazado",
     body:
-      "Tu perfil ha sido rechazado: (<%= profileLink %>)." +
+      "El perfil de tu empresa ha sido rechazado: (<%= profileLink %>)." +
       "\n" +
       "Motivo: <%= rejectionReason %>." +
       "\n\n" +

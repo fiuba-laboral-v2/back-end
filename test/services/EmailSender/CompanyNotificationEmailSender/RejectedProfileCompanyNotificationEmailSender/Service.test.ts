@@ -54,7 +54,7 @@ describe("RejectedProfileCompanyNotificationEmailSender", () => {
           },
           subject: "Perfil rechazado",
           body:
-            "Tu perfil ha sido rechazado: (baseUrl/subDomain/empresa/perfil)." +
+            "El perfil de tu empresa ha sido rechazado: (baseUrl/subDomain/empresa/perfil)." +
             "\n" +
             `Motivo: ${notification.moderatorMessage}.` +
             "\n\n" +
