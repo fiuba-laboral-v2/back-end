@@ -3,6 +3,7 @@ import { ApolloServerTestClient as TestClient } from "apollo-server-testing";
 import { client } from "../../ApolloTestClient";
 
 import { UUID } from "$models/UUID";
+import { EmailService } from "$services/Email";
 import { Company } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
@@ -11,9 +12,11 @@ import { CompanyNotFoundError } from "$models/Company/Errors";
 import { CompanyApprovalEventRepository } from "$models/Company/CompanyApprovalEvent";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
+import { CompanyNotificationRepository } from "$models/CompanyNotification";
 
 import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyGenerator } from "$generators/Company";
+import { UUID_REGEX } from "$test/models";
 
 const UPDATE_COMPANY_APPROVAL_STATUS = gql`
   mutation($uuid: ID!, $approvalStatus: ApprovalStatus!) {
@@ -33,7 +36,10 @@ describe("updateCompanyApprovalStatus", () => {
     company = await CompanyGenerator.instance.withMinimumData();
   });
 
-  beforeEach(() => CompanyApprovalEventRepository.truncate());
+  beforeEach(async () => {
+    await CompanyApprovalEventRepository.truncate();
+    jest.spyOn(EmailService, "send").mockImplementation(jest.fn());
+  });
 
   const performMutation = (apolloClient: TestClient, dataToUpdate: object) =>
     apolloClient.mutate({
@@ -90,6 +96,36 @@ describe("updateCompanyApprovalStatus", () => {
 
   it("logs an event after changing the  company status to pending", async () => {
     await expectToLogEvent(ApprovalStatus.pending);
+  });
+
+  describe("Notifications", () => {
+    beforeEach(() => CompanyNotificationRepository.truncate());
+
+    it("creates a notification for a company if it is approved", async () => {
+      const { admin } = await updateStatus(ApprovalStatus.approved);
+      const notifications = await CompanyNotificationRepository.findAll();
+      expect(notifications).toEqual([
+        {
+          uuid: expect.stringMatching(UUID_REGEX),
+          moderatorUuid: admin.userUuid,
+          notifiedCompanyUuid: company.uuid,
+          isNew: true,
+          createdAt: expect.any(Date)
+        }
+      ]);
+    });
+
+    it("does not create a notification for a company if it is rejected", async () => {
+      await updateStatus(ApprovalStatus.rejected);
+      const notifications = await CompanyNotificationRepository.findAll();
+      expect(notifications).toEqual([]);
+    });
+
+    it("does not create a notification for a company if it is set to pending", async () => {
+      await updateStatus(ApprovalStatus.pending);
+      const notifications = await CompanyNotificationRepository.findAll();
+      expect(notifications).toEqual([]);
+    });
   });
 
   it("does not log an event if the status update fails", async () => {
