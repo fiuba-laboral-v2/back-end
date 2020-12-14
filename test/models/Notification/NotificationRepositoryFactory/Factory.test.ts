@@ -2,7 +2,8 @@ import {
   ApplicantNotificationRepository,
   ApprovedJobApplicationApplicantNotification,
   RejectedJobApplicationApplicantNotification,
-  ApprovedProfileApplicantNotification
+  ApprovedProfileApplicantNotification,
+  RejectedProfileApplicantNotification
 } from "$models/ApplicantNotification";
 import {
   NewJobApplicationCompanyNotification,
@@ -70,6 +71,16 @@ describe("NotificationRepositoryFactory", () => {
     const notification = new ApprovedProfileApplicantNotification({
       moderatorUuid: UUID.generate(),
       notifiedApplicantUuid: UUID.generate()
+    });
+    const repository = NotificationRepositoryFactory.getRepositoryFor(notification);
+    expect(repository).toEqual(ApplicantNotificationRepository);
+  });
+
+  it("returns an ApplicantNotificationRepository for RejectedProfileApplicantNotification", async () => {
+    const notification = new RejectedProfileApplicantNotification({
+      moderatorUuid: UUID.generate(),
+      notifiedApplicantUuid: UUID.generate(),
+      moderatorMessage: "message"
     });
     const repository = NotificationRepositoryFactory.getRepositoryFor(notification);
     expect(repository).toEqual(ApplicantNotificationRepository);

@@ -1,8 +1,14 @@
 import { Applicant, Admin } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
-import { ApplicantProfileNotificationFactory } from "$models/Notification";
-import { ApprovedProfileApplicantNotification } from "$models/ApplicantNotification";
+import {
+  ApplicantProfileNotificationFactory,
+  MissingModeratorMessageError
+} from "$models/Notification";
+import {
+  ApprovedProfileApplicantNotification,
+  RejectedProfileApplicantNotification
+} from "$models/ApplicantNotification";
 import { UUID } from "$models/UUID";
 
 describe("ApplicantProfileNotificationFactory", () => {
@@ -42,11 +48,38 @@ describe("ApplicantProfileNotificationFactory", () => {
   });
 
   describe("Rejected applicant", () => {
+    const moderatorMessage = "message";
+
     beforeAll(() => applicant.set({ approvalStatus: ApprovalStatus.rejected }));
 
-    it("returns an empty array", async () => {
-      const notifications = factory.create(applicant, admin);
-      expect(notifications).toEqual([]);
+    it("returns an array with RejectedProfileApplicantNotification", async () => {
+      const notifications = factory.create(applicant, admin, moderatorMessage);
+      const [notification] = notifications;
+
+      expect(notifications).toHaveLength(1);
+      expect(notification).toBeInstanceOf(RejectedProfileApplicantNotification);
+    });
+
+    it("returns an array with a the correct attributes", async () => {
+      const notifications = factory.create(applicant, admin, moderatorMessage);
+
+      expect(notifications).toEqual([
+        {
+          uuid: undefined,
+          moderatorUuid: admin.userUuid,
+          notifiedApplicantUuid: applicant.uuid,
+          moderatorMessage,
+          isNew: true,
+          createdAt: undefined
+        }
+      ]);
+    });
+
+    it("throws an error if no moderatorMessage is provided", async () => {
+      expect(() => factory.create(applicant, admin)).toThrowErrorWithMessage(
+        MissingModeratorMessageError,
+        MissingModeratorMessageError.buildMessage()
+      );
     });
   });
 

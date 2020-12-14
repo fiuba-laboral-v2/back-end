@@ -2,12 +2,14 @@ import { GraphQLUnionType } from "graphql";
 import { GraphQLApprovedJobApplicationApplicantNotification } from "./GraphQLApprovedJobApplicationApplicantNotification";
 import { GraphQLRejectedJobApplicationApplicantNotification } from "./GraphQLRejectedJobApplicationApplicantNotification";
 import { GraphQLApprovedProfileApplicantNotification } from "./GraphQLApprovedProfileApplicantNotification";
+import { GraphQLRejectedProfileApplicantNotification } from "./GraphQLRejectedProfileApplicantNotification";
 import { UnknownNotificationError } from "$models/Notification";
 import {
   ApplicantNotification,
   ApprovedJobApplicationApplicantNotification,
   RejectedJobApplicationApplicantNotification,
-  ApprovedProfileApplicantNotification
+  ApprovedProfileApplicantNotification,
+  RejectedProfileApplicantNotification
 } from "$models/ApplicantNotification";
 
 export const GraphQLApplicantNotification = new GraphQLUnionType({
@@ -15,7 +17,8 @@ export const GraphQLApplicantNotification = new GraphQLUnionType({
   types: [
     GraphQLApprovedJobApplicationApplicantNotification,
     GraphQLRejectedJobApplicationApplicantNotification,
-    GraphQLApprovedProfileApplicantNotification
+    GraphQLApprovedProfileApplicantNotification,
+    GraphQLRejectedProfileApplicantNotification
   ],
   resolveType(notification: ApplicantNotification) {
     const className = notification.constructor.name;
@@ -26,6 +29,8 @@ export const GraphQLApplicantNotification = new GraphQLUnionType({
         return GraphQLRejectedJobApplicationApplicantNotification;
       case ApprovedProfileApplicantNotification.name:
         return GraphQLApprovedProfileApplicantNotification;
+      case RejectedProfileApplicantNotification.name:
+        return GraphQLRejectedProfileApplicantNotification;
     }
     throw new UnknownNotificationError(className);
   }
