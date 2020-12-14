@@ -41,32 +41,76 @@ describe("updateCompanyApprovalStatus", () => {
       variables: dataToUpdate
     });
 
-  const expectToUpdateStatusAndLogEvent = async (newStatus: ApprovalStatus) => {
-    const { admin, apolloClient } = await TestClientGenerator.admin();
-    const dataToUpdate = { uuid: company.uuid, approvalStatus: newStatus };
+  const updateStatus = async (approvalStatus: ApprovalStatus) => {
+    const { apolloClient, admin } = await TestClientGenerator.admin();
+    const dataToUpdate = { uuid: company.uuid, approvalStatus };
     const { data, errors } = await performMutation(apolloClient, dataToUpdate);
+    return { data, errors, admin };
+  };
+
+  const expectToUpdateStatus = async (approvalStatus: ApprovalStatus) => {
+    const { data, errors } = await updateStatus(approvalStatus);
     expect(errors).toBeUndefined();
     expect(data!.updateCompanyApprovalStatus).toEqual({
       uuid: company.uuid,
-      approvalStatus: newStatus
+      approvalStatus
     });
-    expect(await CompanyApprovalEventRepository.findAll()).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          userUuid: admin.userUuid,
-          companyUuid: company.uuid,
-          status: newStatus
-        })
-      ])
-    );
   };
 
-  it("approves company and logs event", async () => {
-    await expectToUpdateStatusAndLogEvent(ApprovalStatus.approved);
+  const expectToLogEvent = async (approvalStatus: ApprovalStatus) => {
+    const { errors, admin } = await updateStatus(approvalStatus);
+    expect(errors).toBeUndefined();
+    const [event] = await CompanyApprovalEventRepository.findAll();
+    expect(event).toBeObjectContaining({
+      userUuid: admin.userUuid,
+      companyUuid: company.uuid,
+      status: approvalStatus
+    });
+  };
+
+  it("sets company status to pending", async () => {
+    await expectToUpdateStatus(ApprovalStatus.pending);
   });
 
-  it("rejects company and logs event", async () => {
-    await expectToUpdateStatusAndLogEvent(ApprovalStatus.rejected);
+  it("approves company", async () => {
+    await expectToUpdateStatus(ApprovalStatus.approved);
+  });
+
+  it("rejects company", async () => {
+    await expectToUpdateStatus(ApprovalStatus.rejected);
+  });
+
+  it("logs an event after approving the  company", async () => {
+    await expectToLogEvent(ApprovalStatus.approved);
+  });
+
+  it("logs an event after rejecting the  company", async () => {
+    await expectToLogEvent(ApprovalStatus.rejected);
+  });
+
+  it("logs an event after changing the  company status to pending", async () => {
+    await expectToLogEvent(ApprovalStatus.pending);
+  });
+
+  it("does not log an event if the status update fails", async () => {
+    const { errors } = await updateStatus("InvalidApprovalStatus" as ApprovalStatus);
+    const events = await CompanyApprovalEventRepository.findAll();
+
+    expect(errors).not.toBeUndefined();
+    expect(events).toEqual([]);
+  });
+
+  it("does not update the status if the event log fails", async () => {
+    jest.spyOn(CompanyApprovalEventRepository, "save").mockImplementation(() => {
+      throw new Error();
+    });
+    company.set({ approvalStatus: ApprovalStatus.pending });
+    CompanyRepository.save(company);
+    expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
+    const { errors } = await updateStatus(ApprovalStatus.rejected);
+
+    expect(errors).not.toBeUndefined();
+    expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
   });
 
   it("throws an error if no user is logged in", async () => {
