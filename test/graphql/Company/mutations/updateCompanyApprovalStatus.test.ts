@@ -1,6 +1,6 @@
 import { gql } from "apollo-server";
 import { ApolloServerTestClient as TestClient } from "apollo-server-testing";
-import { client } from "../../ApolloTestClient";
+import { client } from "$test/graphql/ApolloTestClient";
 
 import { UUID } from "$models/UUID";
 import { EmailService } from "$services/Email";
@@ -8,6 +8,7 @@ import { Company } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { CompanyNotFoundError } from "$models/Company/Errors";
+import { MissingModeratorMessageError } from "$models/Notification";
 
 import { CompanyApprovalEventRepository } from "$models/Company/CompanyApprovalEvent";
 import { UserRepository } from "$models/User";
@@ -19,8 +20,16 @@ import { CompanyGenerator } from "$generators/Company";
 import { UUID_REGEX } from "$test/models";
 
 const UPDATE_COMPANY_APPROVAL_STATUS = gql`
-  mutation($uuid: ID!, $approvalStatus: ApprovalStatus!) {
-    updateCompanyApprovalStatus(uuid: $uuid, approvalStatus: $approvalStatus) {
+  mutation UpdateCompanyApprovalStatus(
+    $uuid: ID!
+    $approvalStatus: ApprovalStatus!
+    $moderatorMessage: String
+  ) {
+    updateCompanyApprovalStatus(
+      uuid: $uuid
+      approvalStatus: $approvalStatus
+      moderatorMessage: $moderatorMessage
+    ) {
       uuid
       approvalStatus
     }
@@ -28,6 +37,7 @@ const UPDATE_COMPANY_APPROVAL_STATUS = gql`
 `;
 
 describe("updateCompanyApprovalStatus", () => {
+  const moderatorMessage = "message";
   let company: Company;
 
   beforeAll(async () => {
@@ -49,7 +59,7 @@ describe("updateCompanyApprovalStatus", () => {
 
   const updateStatus = async (approvalStatus: ApprovalStatus) => {
     const { apolloClient, admin } = await TestClientGenerator.admin();
-    const dataToUpdate = { uuid: company.uuid, approvalStatus };
+    const dataToUpdate = { uuid: company.uuid, approvalStatus, moderatorMessage };
     const { data, errors } = await performMutation(apolloClient, dataToUpdate);
     return { data, errors, admin };
   };
@@ -115,10 +125,19 @@ describe("updateCompanyApprovalStatus", () => {
       ]);
     });
 
-    it("does not create a notification for a company if it is rejected", async () => {
-      await updateStatus(ApprovalStatus.rejected);
+    it("creates a notification for a company if it is rejected", async () => {
+      const { admin } = await updateStatus(ApprovalStatus.rejected);
       const notifications = await CompanyNotificationRepository.findAll();
-      expect(notifications).toEqual([]);
+      expect(notifications).toEqual([
+        {
+          uuid: expect.stringMatching(UUID_REGEX),
+          moderatorUuid: admin.userUuid,
+          notifiedCompanyUuid: company.uuid,
+          moderatorMessage,
+          isNew: true,
+          createdAt: expect.any(Date)
+        }
+      ]);
     });
 
     it("does not create a notification for a company if it is set to pending", async () => {
@@ -182,5 +201,12 @@ describe("updateCompanyApprovalStatus", () => {
     const dataToUpdate = { uuid: company.uuid, approvalStatus: "invalidApprovalStatus" };
     const { errors } = await performMutation(apolloClient, dataToUpdate);
     expect(errors).not.toBeUndefined();
+  });
+
+  it("throws an error if no moderatorMessage is provided when rejecting the company", async () => {
+    const { apolloClient } = await TestClientGenerator.admin();
+    const dataToUpdate = { uuid: company.uuid, approvalStatus: ApprovalStatus.rejected };
+    const { errors } = await performMutation(apolloClient, dataToUpdate);
+    expect(errors).toEqualGraphQLErrorType(MissingModeratorMessageError.name);
   });
 });

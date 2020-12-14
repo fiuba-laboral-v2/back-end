@@ -1,4 +1,4 @@
-import { ID, nonNull } from "$graphql/fieldTypes";
+import { ID, nonNull, String } from "$graphql/fieldTypes";
 import { GraphQLCompany } from "../Types/GraphQLCompany";
 import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
 import { IApolloServerContext } from "$graphql/Context";
@@ -23,11 +23,18 @@ export const updateCompanyApprovalStatus = {
     },
     approvalStatus: {
       type: nonNull(GraphQLApprovalStatus)
+    },
+    moderatorMessage: {
+      type: String
     }
   },
   resolve: async (
     _: undefined,
-    { uuid: companyUuid, approvalStatus: status }: IUpdateCompanyApprovalStatusArguments,
+    {
+      uuid: companyUuid,
+      approvalStatus: status,
+      moderatorMessage
+    }: IUpdateCompanyApprovalStatusArguments,
     { currentUser }: IApolloServerContext
   ) => {
     const userUuid = currentUser.getAdminRole().adminUserUuid;
@@ -35,7 +42,11 @@ export const updateCompanyApprovalStatus = {
     const company = await CompanyRepository.findByUuid(companyUuid);
     company.set({ approvalStatus: status });
     const event = new CompanyApprovalEvent({ userUuid, companyUuid, status });
-    const notifications = CompanyProfileNotificationFactory.create(company, admin);
+    const notifications = CompanyProfileNotificationFactory.create(
+      company,
+      admin,
+      moderatorMessage
+    );
 
     await Database.transaction(async transaction => {
       await CompanyRepository.save(company, transaction);
@@ -58,4 +69,5 @@ export const updateCompanyApprovalStatus = {
 interface IUpdateCompanyApprovalStatusArguments {
   uuid: string;
   approvalStatus: ApprovalStatus;
+  moderatorMessage?: string;
 }
