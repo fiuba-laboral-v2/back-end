@@ -4,7 +4,8 @@ export enum CompanyNotificationType {
   newJobApplication = "newJobApplication",
   approvedOffer = "approvedOffer",
   rejectedOffer = "rejectedOffer",
-  approvedProfile = "approvedProfile"
+  approvedProfile = "approvedProfile",
+  rejectedProfile = "rejectedProfile"
 }
 
 export const companyNotificationTypeEnumValues = Object.keys(CompanyNotificationType);
