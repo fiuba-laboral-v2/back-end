@@ -9,7 +9,7 @@ export const companyTestClient = async ({
   expressContext,
   user: userAttributes
 }: ICompanyTestClientAttributes) => {
-  let company = await CompanyGenerator.instance.withMinimumData({
+  const company = await CompanyGenerator.instance.withMinimumData({
     photos,
     user: userAttributes
   });
@@ -17,12 +17,9 @@ export const companyTestClient = async ({
   const companyContext = { company: { uuid: company.uuid } };
   const apolloClient = createApolloTestClient(user, expressContext, companyContext);
   if (status) {
-    const { admin, approvalStatus } = status;
-    company = await CompanyRepository.updateApprovalStatus(
-      admin.userUuid,
-      company.uuid,
-      approvalStatus
-    );
+    const { approvalStatus } = status;
+    company.set({ approvalStatus });
+    await CompanyRepository.save(company);
   }
   return { apolloClient, user, company };
 };

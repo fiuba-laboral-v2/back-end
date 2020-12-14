@@ -2,11 +2,9 @@ import { Database } from "$config";
 import { ICompany, IUpdateCompany } from "./index";
 import { CompanyPhotoRepository } from "$models/CompanyPhoto";
 import { CompanyPhoneNumberRepository } from "$models/CompanyPhoneNumber";
-import { CompanyNotFoundError, CompanyNotUpdatedError } from "./Errors";
+import { CompanyNotFoundError } from "./Errors";
 import { UserRepository } from "$models/User";
-import { ApprovalStatus } from "$models/ApprovalStatus";
 import { CompanyUserRepository } from "$models/CompanyUser";
-import { CompanyApprovalEventRepository } from "./CompanyApprovalEvent";
 import { Company, CompanyUser } from "$models";
 import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedInput";
 import { PaginationQuery } from "../PaginationQuery";
@@ -40,22 +38,6 @@ export const CompanyRepository = {
 
     return updatedCompany;
   },
-  updateApprovalStatus: (adminUserUuid: string, companyUuid: string, status: ApprovalStatus) =>
-    Database.transaction(async transaction => {
-      const [numberOfUpdatedCompanies, [updatedCompany]] = await Company.update(
-        { approvalStatus: status },
-        { where: { uuid: companyUuid }, returning: true, transaction }
-      );
-      if (numberOfUpdatedCompanies !== 1) throw new CompanyNotUpdatedError(companyUuid);
-
-      await CompanyApprovalEventRepository.create({
-        adminUserUuid,
-        company: updatedCompany,
-        status: status,
-        transaction
-      });
-      return updatedCompany;
-    }),
   findByUuid: async (uuid: string) => {
     const company = await Company.findByPk(uuid);
     if (!company) throw new CompanyNotFoundError(uuid);

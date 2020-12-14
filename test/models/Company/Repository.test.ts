@@ -1,17 +1,9 @@
-import {
-  DatabaseError,
-  ForeignKeyConstraintError,
-  UniqueConstraintError,
-  ValidationError
-} from "sequelize";
+import { UniqueConstraintError, ValidationError } from "sequelize";
 import { InvalidCuitError, PhoneNumberWithLettersError } from "validations-fiuba-laboral-v2";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
-import { CompanyNotUpdatedError } from "$models/Company/Errors";
-import { Admin } from "$models";
-import { ApprovalStatus } from "$models/ApprovalStatus";
 import { CompanyGenerator } from "$generators/Company";
-import { AdminGenerator } from "$generators/Admin";
 import { mockItemsPerPage } from "$test/mocks/config/PaginationConfig";
 
 describe("CompanyRepository", () => {
@@ -264,121 +256,6 @@ describe("CompanyRepository", () => {
       await expect(
         CompanyRepository.update({ uuid, cuit: "invalidCuit" })
       ).rejects.toThrowErrorWithMessage(ValidationError, InvalidCuitError.buildMessage());
-    });
-  });
-
-  describe("updateApprovalStatus", () => {
-    let admin: Admin;
-
-    beforeAll(async () => {
-      admin = await AdminGenerator.extension();
-    });
-
-    it("approves company only by an admin and create new event", async () => {
-      const company = await CompanyRepository.create(CompanyGenerator.data.completeData());
-      expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
-      const approvedCompany = await CompanyRepository.updateApprovalStatus(
-        admin.userUuid,
-        company.uuid,
-        ApprovalStatus.approved
-      );
-      expect(approvedCompany.approvalStatus).toEqual(ApprovalStatus.approved);
-      expect(await approvedCompany.getApprovalEvents()).toEqual([
-        expect.objectContaining({
-          userUuid: admin.userUuid,
-          companyUuid: company.uuid,
-          status: ApprovalStatus.approved
-        })
-      ]);
-    });
-
-    it("rejects company only by an admin and create new event", async () => {
-      const company = await CompanyRepository.create(CompanyGenerator.data.completeData());
-      expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
-      const approvedCompany = await CompanyRepository.updateApprovalStatus(
-        admin.userUuid,
-        company.uuid,
-        ApprovalStatus.rejected
-      );
-      expect(approvedCompany.approvalStatus).toEqual(ApprovalStatus.rejected);
-      expect(await approvedCompany.getApprovalEvents()).toEqual([
-        expect.objectContaining({
-          userUuid: admin.userUuid,
-          companyUuid: company.uuid,
-          status: ApprovalStatus.rejected
-        })
-      ]);
-    });
-
-    it("throws an error if status is invalid and not change the company", async () => {
-      const company = await CompanyRepository.create(CompanyGenerator.data.completeData());
-      expect(company.approvalStatus).toEqual(ApprovalStatus.pending);
-      await expect(
-        CompanyRepository.updateApprovalStatus(
-          admin.userUuid,
-          company.uuid,
-          "notDefinedStatus" as ApprovalStatus
-        )
-      ).rejects.toThrowErrorWithMessage(
-        DatabaseError,
-        'invalid input value for enum approval_status: "notDefinedStatus"'
-      );
-      expect((await CompanyRepository.findByUuid(company.uuid)).approvalStatus).toEqual(
-        ApprovalStatus.pending
-      );
-    });
-
-    it("throws an error if admin does not exist", async () => {
-      const company = await CompanyRepository.create(CompanyGenerator.data.completeData());
-      const nonExistentAdminUserUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
-      await expect(
-        CompanyRepository.updateApprovalStatus(
-          nonExistentAdminUserUuid,
-          company.uuid,
-          ApprovalStatus.approved
-        )
-      ).rejects.toThrowErrorWithMessage(
-        ForeignKeyConstraintError,
-        'insert or update on table "CompanyApprovalEvents" violates foreign ' +
-          'key constraint "CompanyApprovalEvents_userUuid_fkey"'
-      );
-    });
-
-    it("throws an error if company does not exist", async () => {
-      const nonExistentAdminCompanyUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
-      await expect(
-        CompanyRepository.updateApprovalStatus(
-          admin.userUuid,
-          nonExistentAdminCompanyUuid,
-          ApprovalStatus.approved
-        )
-      ).rejects.toThrowErrorWithMessage(
-        CompanyNotUpdatedError,
-        CompanyNotUpdatedError.buildMessage(nonExistentAdminCompanyUuid)
-      );
-    });
-
-    it("throws an error if company uuid has an invalid format", async () => {
-      await expect(
-        CompanyRepository.updateApprovalStatus(
-          admin.userUuid,
-          "invalidUuid",
-          ApprovalStatus.approved
-        )
-      ).rejects.toThrowErrorWithMessage(
-        DatabaseError,
-        'invalid input syntax for type uuid: "invalidUuid"'
-      );
-    });
-
-    it("throws an error if admin userUuid has an invalid format", async () => {
-      const company = await CompanyRepository.create(CompanyGenerator.data.completeData());
-      await expect(
-        CompanyRepository.updateApprovalStatus("invalidUuid", company.uuid, ApprovalStatus.approved)
-      ).rejects.toThrowErrorWithMessage(
-        DatabaseError,
-        'invalid input syntax for type uuid: "invalidUuid"'
-      );
     });
   });
 });
