@@ -1,92 +1,97 @@
-import { CompanyRepository } from "$models/Company";
-import { UserRepository } from "$models/User";
-import { Admin } from "$models";
-import { ApprovalStatus } from "$models/ApprovalStatus";
-import { CompanyApprovalEventRepository } from "$models/Company/CompanyApprovalEvent";
 import { ForeignKeyConstraintError } from "sequelize";
+import { CompanyApprovalEventNotFoundError } from "$models/Company/CompanyApprovalEvent/Errors";
+import { UUID } from "$models/UUID";
+import { Admin, Company, CompanyApprovalEvent } from "$models";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+
+import { CompanyRepository } from "$models/Company";
+import { AdminRepository } from "$models/Admin";
+import { UserRepository } from "$models/User";
+import { CompanyApprovalEventRepository } from "$models/Company/CompanyApprovalEvent";
+
 import { CompanyGenerator } from "$generators/Company";
 import { AdminGenerator } from "$generators/Admin";
 
 describe("CompanyApprovalEventRepository", () => {
+  let company: Company;
+  let admin: Admin;
+
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
+
+    company = await CompanyGenerator.instance.withCompleteData();
+    admin = await AdminGenerator.extension();
   });
 
-  describe("create", () => {
-    const expectValidCreation = async (status: ApprovalStatus) => {
-      const company = await CompanyGenerator.instance.withCompleteData();
-      const admin = await AdminGenerator.extension();
-      const adminUserUuid = admin.userUuid;
-      const event = await CompanyApprovalEventRepository.save({
-        adminUserUuid,
-        company,
-        status
-      });
-      expect(event.userUuid).toEqual(admin.userUuid);
-      expect(event.companyUuid).toEqual(company.uuid);
-      expect(event.status).toEqual(status);
-      expect(event.createdAt).toEqual(expect.any(Date));
-      expect(event.updatedAt).toEqual(expect.any(Date));
-    };
-
-    it("creates a valid CompanyApprovalEvent with approved status", async () => {
-      await expectValidCreation(ApprovalStatus.approved);
+  const expectValidCreation = async (status: ApprovalStatus) => {
+    const { uuid: companyUuid } = company;
+    const { userUuid } = admin;
+    const event = new CompanyApprovalEvent({ userUuid, companyUuid, status });
+    await CompanyApprovalEventRepository.save(event);
+    const persistedEvent = await CompanyApprovalEventRepository.findByUuid(event.uuid);
+    expect(persistedEvent).toBeObjectContaining({
+      uuid: event.uuid,
+      userUuid,
+      companyUuid,
+      status,
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date)
     });
+  };
 
-    it("creates a valid CompanyApprovalEvent with rejected status", async () => {
-      await expectValidCreation(ApprovalStatus.rejected);
-    });
+  it("creates a valid CompanyApprovalEvent with approved status", async () => {
+    await expectValidCreation(ApprovalStatus.approved);
+  });
 
-    it("creates a valid CompanyApprovalEvent with pending status", async () => {
-      await expectValidCreation(ApprovalStatus.pending);
-    });
+  it("creates a valid CompanyApprovalEvent with rejected status", async () => {
+    await expectValidCreation(ApprovalStatus.rejected);
+  });
 
-    it("throws an error if userUuid does not belong to an admin", async () => {
-      const company = await CompanyGenerator.instance.withCompleteData();
-      const [userCompany] = await company.getUsers();
-      const { userUuid: adminUserUuid } = new Admin({
-        userUuid: userCompany.uuid
-      });
-      const status = ApprovalStatus.approved;
-      await expect(
-        CompanyApprovalEventRepository.save({
-          adminUserUuid,
-          company,
-          status
-        })
-      ).rejects.toThrowErrorWithMessage(
-        ForeignKeyConstraintError,
-        'insert or update on table "CompanyApprovalEvents" violates ' +
-          'foreign key constraint "CompanyApprovalEvents_userUuid_fkey"'
-      );
-    });
+  it("creates a valid CompanyApprovalEvent with pending status", async () => {
+    await expectValidCreation(ApprovalStatus.pending);
+  });
 
-    it("gets company and admin by association", async () => {
-      const company = await CompanyGenerator.instance.withCompleteData();
-      const admin = await AdminGenerator.extension();
-      const status = ApprovalStatus.approved;
-      const adminUserUuid = admin.userUuid;
-      const event = await CompanyApprovalEventRepository.save({
-        adminUserUuid,
-        company,
-        status
-      });
-      expect((await event.getCompany()).toJSON()).toEqual(company.toJSON());
-      expect((await event.getAdmin()).toJSON()).toEqual(admin.toJSON());
-    });
+  it("throws an error if userUuid does not belong to an admin", async () => {
+    const { uuid: companyUuid } = company;
+    const userUuid = UUID.generate();
+    const status = ApprovalStatus.approved;
+    const event = new CompanyApprovalEvent({ userUuid, companyUuid, status });
+    await expect(CompanyApprovalEventRepository.save(event)).rejects.toThrowErrorWithMessage(
+      ForeignKeyConstraintError,
+      'insert or update on table "CompanyApprovalEvents" violates ' +
+        'foreign key constraint "CompanyApprovalEvents_userUuid_fkey"'
+    );
+  });
+
+  it("throws an error if companyUuid does not belong to a persisted company", async () => {
+    const companyUuid = UUID.generate();
+    const { userUuid } = admin;
+    const status = ApprovalStatus.approved;
+    const event = new CompanyApprovalEvent({ userUuid, companyUuid, status });
+    await expect(CompanyApprovalEventRepository.save(event)).rejects.toThrowErrorWithMessage(
+      ForeignKeyConstraintError,
+      'insert or update on table "CompanyApprovalEvents" violates ' +
+        'foreign key constraint "CompanyApprovalEvents_companyUuid_fkey"'
+    );
+  });
+
+  it("throws an error if given an uuid that does not belong to a persisted event", async () => {
+    const uuid = UUID.generate();
+    await expect(CompanyApprovalEventRepository.findByUuid(uuid)).rejects.toThrowErrorWithMessage(
+      CompanyApprovalEventNotFoundError,
+      CompanyApprovalEventNotFoundError.buildMessage(uuid)
+    );
   });
 
   describe("Delete cascade", () => {
     const createCompanyApprovalEvent = async () => {
-      const company = await CompanyGenerator.instance.withCompleteData();
-      const { userUuid: adminUserUuid } = await AdminGenerator.extension();
+      const { uuid: companyUuid } = await CompanyGenerator.instance.withCompleteData();
+      const { userUuid } = await AdminGenerator.extension();
       const status = ApprovalStatus.approved;
-      return CompanyApprovalEventRepository.save({
-        adminUserUuid,
-        company,
-        status
-      });
+      const event = new CompanyApprovalEvent({ userUuid, companyUuid, status });
+      await CompanyApprovalEventRepository.save(event);
+      return event;
     };
 
     it("deletes all events if companies tables is truncated", async () => {
@@ -95,6 +100,15 @@ describe("CompanyApprovalEventRepository", () => {
       await createCompanyApprovalEvent();
       expect((await CompanyApprovalEventRepository.findAll()).length).toBeGreaterThan(0);
       await CompanyRepository.truncate();
+      expect(await CompanyApprovalEventRepository.findAll()).toHaveLength(0);
+    });
+
+    it("deletes all events if admins tables is truncated", async () => {
+      await createCompanyApprovalEvent();
+      await createCompanyApprovalEvent();
+      await createCompanyApprovalEvent();
+      expect((await CompanyApprovalEventRepository.findAll()).length).toBeGreaterThan(0);
+      await AdminRepository.truncate();
       expect(await CompanyApprovalEventRepository.findAll()).toHaveLength(0);
     });
   });

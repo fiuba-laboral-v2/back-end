@@ -7,7 +7,7 @@ import { UserRepository } from "$models/User";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { CompanyUserRepository } from "$models/CompanyUser";
 import { CompanyApprovalEventRepository } from "./CompanyApprovalEvent";
-import { Company, CompanyUser } from "$models";
+import { Company, CompanyApprovalEvent, CompanyUser } from "$models";
 import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedInput";
 import { PaginationQuery } from "../PaginationQuery";
 import { Transaction } from "sequelize";
@@ -40,7 +40,7 @@ export const CompanyRepository = {
 
     return updatedCompany;
   },
-  updateApprovalStatus: (adminUserUuid: string, companyUuid: string, status: ApprovalStatus) =>
+  updateApprovalStatus: (userUuid: string, companyUuid: string, status: ApprovalStatus) =>
     Database.transaction(async transaction => {
       const [numberOfUpdatedCompanies, [updatedCompany]] = await Company.update(
         { approvalStatus: status },
@@ -48,12 +48,8 @@ export const CompanyRepository = {
       );
       if (numberOfUpdatedCompanies !== 1) throw new CompanyNotUpdatedError(companyUuid);
 
-      await CompanyApprovalEventRepository.save({
-        adminUserUuid,
-        company: updatedCompany,
-        status: status,
-        transaction
-      });
+      const event = new CompanyApprovalEvent({ userUuid, companyUuid, status });
+      await CompanyApprovalEventRepository.save(event, transaction);
       return updatedCompany;
     }),
   findByUuid: async (uuid: string) => {
