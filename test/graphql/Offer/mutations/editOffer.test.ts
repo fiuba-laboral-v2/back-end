@@ -30,6 +30,7 @@ const EDIT_OFFER = gql`
     $description: String!
     $targetApplicantType: ApplicantType!
     $hoursPerDay: Int!
+    $isInternship: Boolean!
     $minimumSalary: Int!
     $maximumSalary: Int
     $sections: [OfferSectionInput]!
@@ -41,6 +42,7 @@ const EDIT_OFFER = gql`
       description: $description
       targetApplicantType: $targetApplicantType
       hoursPerDay: $hoursPerDay
+      isInternship: $isInternship
       minimumSalary: $minimumSalary
       maximumSalary: $maximumSalary
       sections: $sections
@@ -51,6 +53,7 @@ const EDIT_OFFER = gql`
       description
       targetApplicantType
       hoursPerDay
+      isInternship
       minimumSalary
       maximumSalary
       sections {
@@ -112,12 +115,79 @@ describe("editOffer", () => {
 
   it("set both status to pending", async () => {
     const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
-    const initialAttributes = OfferGenerator.data.withObligatoryData({ companyUuid: company.uuid });
+    const initialAttributes = OfferGenerator.data.withObligatoryData({
+      companyUuid: company.uuid,
+      careers: [{ careerCode: firstCareer.code }]
+    });
     const { uuid } = await OfferRepository.create(initialAttributes);
-    await apolloClient.mutate({ mutation: EDIT_OFFER, variables: { uuid, ...initialAttributes } });
+    const { errors } = await apolloClient.mutate({
+      mutation: EDIT_OFFER,
+      variables: { uuid, ...initialAttributes }
+    });
+    expect(errors).toBeUndefined();
     const updatedOffer = await OfferRepository.findByUuid(uuid);
     expect(updatedOffer.graduadosApprovalStatus).toEqual(ApprovalStatus.pending);
     expect(updatedOffer.extensionApprovalStatus).toEqual(ApprovalStatus.pending);
+  });
+
+  it("turns a regular offer into an internship", async () => {
+    const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
+    const initialAttributes = OfferGenerator.data.withObligatoryData({
+      companyUuid: company.uuid,
+      careers: [{ careerCode: firstCareer.code }]
+    });
+    const { uuid } = await OfferRepository.create(initialAttributes);
+    const { errors } = await apolloClient.mutate({
+      mutation: EDIT_OFFER,
+      variables: {
+        uuid,
+        ...initialAttributes,
+        isInternship: true,
+        maximumSalary: null,
+        targetApplicantType: ApplicantType.student
+      }
+    });
+    expect(errors).toBeUndefined();
+    const updatedOffer = await OfferRepository.findByUuid(uuid);
+    expect(updatedOffer.isInternship).toEqual(true);
+  });
+
+  it("throws an error if turning offer into internship without removing maximumSalary", async () => {
+    const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
+    const initialAttributes = OfferGenerator.data.withObligatoryData({
+      companyUuid: company.uuid,
+      careers: [{ careerCode: firstCareer.code }]
+    });
+    const { uuid } = await OfferRepository.create(initialAttributes);
+    const { errors } = await apolloClient.mutate({
+      mutation: EDIT_OFFER,
+      variables: {
+        uuid,
+        ...initialAttributes,
+        isInternship: true,
+        targetApplicantType: ApplicantType.student
+      }
+    });
+    expect(errors).toEqualGraphQLErrorType("ValidationError");
+  });
+
+  it("throws an error if turning offer into internship without changing target applicant to student", async () => {
+    const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
+    const initialAttributes = OfferGenerator.data.withObligatoryData({
+      companyUuid: company.uuid,
+      careers: [{ careerCode: firstCareer.code }]
+    });
+    const { uuid } = await OfferRepository.create(initialAttributes);
+    const { errors } = await apolloClient.mutate({
+      mutation: EDIT_OFFER,
+      variables: {
+        uuid,
+        ...initialAttributes,
+        isInternship: true,
+        maximumSalary: null
+      }
+    });
+    expect(errors).toEqualGraphQLErrorType("ValidationError");
   });
 
   it("edits an offer title", async () => {

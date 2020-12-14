@@ -14,6 +14,8 @@ export interface IOfferInput {
   careers?: IOfferCareer[];
   sections?: IOfferSection[];
   targetApplicantType?: ApplicantType;
+  isInternship?: boolean;
+  maximumSalary?: number | null;
 }
 
 interface IUpdatedWithStatus {
@@ -147,6 +149,14 @@ export const OfferGenerator = {
   },
   data: {
     withObligatoryData: (variables: IOfferInput) =>
-      withObligatoryData({ index: OfferGenerator.getIndex(), ...variables })
+      withObligatoryData({ index: OfferGenerator.getIndex(), ...variables }),
+    internship: (variables: IOfferInput) =>
+      withObligatoryData({
+        index: OfferGenerator.getIndex(),
+        isInternship: true,
+        maximumSalary: null,
+        targetApplicantType: ApplicantType.student,
+        ...variables
+      })
   }
 };
