@@ -153,15 +153,13 @@ describe("createOffer", () => {
 
     it("creates a new internship", async () => {
       const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
-      const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
+      const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.internship({
         companyUuid: company.uuid,
-        isInternship: true,
-        targetApplicantType: ApplicantType.student,
         careers: [{ careerCode: firstCareer.code }]
       });
       const { data, errors } = await apolloClient.mutate({
         mutation: CREATE_OFFER,
-        variables: { ...createOfferAttributes, maximumSalary: null }
+        variables: createOfferAttributes
       });
       expect(errors).toBeUndefined();
       expect(data!.createOffer).toBeObjectContaining({
@@ -174,10 +172,9 @@ describe("createOffer", () => {
 
     it("throws an error when an internship has maximum salary", async () => {
       const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
-      const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
+      const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.internship({
         companyUuid: company.uuid,
-        isInternship: true,
-        targetApplicantType: ApplicantType.student,
+        maximumSalary: 999,
         careers: [{ careerCode: firstCareer.code }]
       });
       const { errors } = await apolloClient.mutate({
@@ -189,9 +186,8 @@ describe("createOffer", () => {
 
     it("throws an error when an internship targets graduates", async () => {
       const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
-      const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
+      const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.internship({
         companyUuid: company.uuid,
-        isInternship: true,
         targetApplicantType: ApplicantType.graduate,
         careers: [{ careerCode: firstCareer.code }]
       });
@@ -204,9 +200,8 @@ describe("createOffer", () => {
 
     it("throws an error when an internship targets both graduates and students", async () => {
       const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
-      const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.withObligatoryData({
+      const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.internship({
         companyUuid: company.uuid,
-        isInternship: true,
         targetApplicantType: ApplicantType.both,
         careers: [{ careerCode: firstCareer.code }]
       });
