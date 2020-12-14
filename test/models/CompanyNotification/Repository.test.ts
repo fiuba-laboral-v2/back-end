@@ -8,6 +8,8 @@ import {
   IApprovedOfferNotificationAttributes,
   ApprovedProfileCompanyNotification,
   IApprovedProfileNotificationAttributes,
+  RejectedProfileCompanyNotification,
+  IRejectedProfileNotificationAttributes,
   CompanyNotification,
   CompanyNotificationRepository
 } from "$models/CompanyNotification";
@@ -275,6 +277,42 @@ describe("CompanyNotificationRepository", () => {
 
       it("throws an error if the notifiedCompanyUuid does not belong to an existing company", async () => {
         const notification = new ApprovedProfileCompanyNotification(attributes);
+        await expectToThrowErrorOnForeignKeyConstraint(notification, "notifiedCompanyUuid");
+      });
+    });
+
+    describe("RejectedProfileCompanyNotification", () => {
+      let attributes: IRejectedProfileNotificationAttributes;
+
+      beforeAll(() => (attributes = { ...commonAttributes, moderatorMessage: "message" }));
+
+      it("saves the notification in the database", async () => {
+        const notification = new RejectedProfileCompanyNotification(attributes);
+        await expectToSaveAValidNotification(notification);
+      });
+
+      it("sets an uuid and a createdAt after it is persisted", async () => {
+        const notification = new RejectedProfileCompanyNotification(attributes);
+        await expectToSetUuidAndCreatedAtAfterSave(notification);
+      });
+
+      it("updates isNew to false", async () => {
+        const notification = new RejectedProfileCompanyNotification(attributes);
+        await expectToUpdateIsNewAttribute(notification);
+      });
+
+      it("throws an error if the notification already exist", async () => {
+        const notification = new RejectedProfileCompanyNotification(attributes);
+        await expectToThrowErrorOnUniqueConstraint(notification);
+      });
+
+      it("throws an error if the moderatorUuid does not belong to an existing admin", async () => {
+        const notification = new RejectedProfileCompanyNotification(attributes);
+        await expectToThrowErrorOnForeignKeyConstraint(notification, "moderatorUuid");
+      });
+
+      it("throws an error if the notifiedCompanyUuid does not belong to an existing company", async () => {
+        const notification = new RejectedProfileCompanyNotification(attributes);
         await expectToThrowErrorOnForeignKeyConstraint(notification, "notifiedCompanyUuid");
       });
     });
