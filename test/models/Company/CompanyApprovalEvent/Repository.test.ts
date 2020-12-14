@@ -18,7 +18,7 @@ describe("CompanyApprovalEventRepository", () => {
       const company = await CompanyGenerator.instance.withCompleteData();
       const admin = await AdminGenerator.extension();
       const adminUserUuid = admin.userUuid;
-      const event = await CompanyApprovalEventRepository.create({
+      const event = await CompanyApprovalEventRepository.save({
         adminUserUuid,
         company,
         status
@@ -50,7 +50,7 @@ describe("CompanyApprovalEventRepository", () => {
       });
       const status = ApprovalStatus.approved;
       await expect(
-        CompanyApprovalEventRepository.create({
+        CompanyApprovalEventRepository.save({
           adminUserUuid,
           company,
           status
@@ -67,7 +67,7 @@ describe("CompanyApprovalEventRepository", () => {
       const admin = await AdminGenerator.extension();
       const status = ApprovalStatus.approved;
       const adminUserUuid = admin.userUuid;
-      const event = await CompanyApprovalEventRepository.create({
+      const event = await CompanyApprovalEventRepository.save({
         adminUserUuid,
         company,
         status
@@ -82,7 +82,7 @@ describe("CompanyApprovalEventRepository", () => {
       const company = await CompanyGenerator.instance.withCompleteData();
       const { userUuid: adminUserUuid } = await AdminGenerator.extension();
       const status = ApprovalStatus.approved;
-      return CompanyApprovalEventRepository.create({
+      return CompanyApprovalEventRepository.save({
         adminUserUuid,
         company,
         status

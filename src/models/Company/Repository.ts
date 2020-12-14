@@ -48,7 +48,7 @@ export const CompanyRepository = {
       );
       if (numberOfUpdatedCompanies !== 1) throw new CompanyNotUpdatedError(companyUuid);
 
-      await CompanyApprovalEventRepository.create({
+      await CompanyApprovalEventRepository.save({
         adminUserUuid,
         company: updatedCompany,
         status: status,
