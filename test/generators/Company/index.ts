@@ -38,8 +38,10 @@ export const CompanyGenerator = {
         })
       );
       if (!variables) return company;
-      const { admin, status } = variables;
-      return CompanyRepository.updateApprovalStatus(admin.userUuid, company.uuid, status);
+      const { status } = variables;
+      company.set({ approvalStatus: status });
+      await CompanyRepository.save(company);
+      return company;
     }
   },
   data: {
