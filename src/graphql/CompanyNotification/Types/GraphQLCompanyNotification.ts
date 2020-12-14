@@ -2,12 +2,14 @@ import { GraphQLUnionType } from "graphql";
 import { GraphQLNewJobApplicationCompanyNotification } from "./GraphQLNewJobApplicationCompanyNotification";
 import { GraphQLApprovedOfferCompanyNotification } from "./GraphQLApprovedOfferCompanyNotification";
 import { GraphQLRejectedOfferCompanyNotification } from "./GraphQLRejectedOfferCompanyNotification";
+import { GraphQLApprovedProfileCompanyNotification } from "./GraphQLApprovedProfileCompanyNotification";
 import { UnknownNotificationError } from "$models/Notification";
 import {
   CompanyNotification,
   ApprovedOfferCompanyNotification,
   NewJobApplicationCompanyNotification,
-  RejectedOfferCompanyNotification
+  RejectedOfferCompanyNotification,
+  ApprovedProfileCompanyNotification
 } from "$models/CompanyNotification";
 
 export const GraphQLCompanyNotification = new GraphQLUnionType({
@@ -15,7 +17,8 @@ export const GraphQLCompanyNotification = new GraphQLUnionType({
   types: [
     GraphQLNewJobApplicationCompanyNotification,
     GraphQLApprovedOfferCompanyNotification,
-    GraphQLRejectedOfferCompanyNotification
+    GraphQLRejectedOfferCompanyNotification,
+    GraphQLApprovedProfileCompanyNotification
   ],
   resolveType(notification: CompanyNotification) {
     const className = notification.constructor.name;
@@ -26,6 +29,8 @@ export const GraphQLCompanyNotification = new GraphQLUnionType({
         return GraphQLNewJobApplicationCompanyNotification;
       case RejectedOfferCompanyNotification.name:
         return GraphQLRejectedOfferCompanyNotification;
+      case ApprovedProfileCompanyNotification.name:
+        return GraphQLApprovedProfileCompanyNotification;
     }
     throw new UnknownNotificationError(className);
   }

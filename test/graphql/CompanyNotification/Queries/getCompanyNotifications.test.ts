@@ -18,6 +18,7 @@ import {
   NewJobApplicationCompanyNotification,
   ApprovedOfferCompanyNotification,
   RejectedOfferCompanyNotification,
+  ApprovedProfileCompanyNotification,
   CompanyNotificationRepository,
   CompanyNotification
 } from "$models/CompanyNotification";
@@ -66,6 +67,13 @@ const GET_COMPANY_NOTIFICATIONS = gql`
             __typename
             uuid
           }
+        }
+        ... on ApprovedProfileCompanyNotification {
+          __typename
+          uuid
+          adminEmail
+          isNew
+          createdAt
         }
       }
       shouldFetchMore
@@ -135,6 +143,10 @@ describe("getCompanyNotifications", () => {
             __typename: GraphQLOffer.name,
             uuid: rejectedOfferNotification.offerUuid
           }
+        };
+      case ApprovedProfileCompanyNotification.name:
+        return {
+          __typename: "ApprovedProfileCompanyNotification"
         };
     }
     throw new Error(`
