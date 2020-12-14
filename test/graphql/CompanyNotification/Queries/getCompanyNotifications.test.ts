@@ -19,6 +19,7 @@ import {
   ApprovedOfferCompanyNotification,
   RejectedOfferCompanyNotification,
   ApprovedProfileCompanyNotification,
+  RejectedProfileCompanyNotification,
   CompanyNotificationRepository,
   CompanyNotification
 } from "$models/CompanyNotification";
@@ -72,6 +73,21 @@ const GET_COMPANY_NOTIFICATIONS = gql`
           __typename
           uuid
           adminEmail
+          isNew
+          createdAt
+        }
+        ... on ApprovedProfileCompanyNotification {
+          __typename
+          uuid
+          adminEmail
+          isNew
+          createdAt
+        }
+        ... on RejectedProfileCompanyNotification {
+          __typename
+          uuid
+          adminEmail
+          moderatorMessage
           isNew
           createdAt
         }
@@ -147,6 +163,12 @@ describe("getCompanyNotifications", () => {
       case ApprovedProfileCompanyNotification.name:
         return {
           __typename: "ApprovedProfileCompanyNotification"
+        };
+      case RejectedProfileCompanyNotification.name:
+        const rejectedProfileNotification = notification as RejectedProfileCompanyNotification;
+        return {
+          __typename: "RejectedProfileCompanyNotification",
+          moderatorMessage: rejectedProfileNotification.moderatorMessage
         };
     }
     throw new Error(`

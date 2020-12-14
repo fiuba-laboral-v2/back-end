@@ -3,6 +3,7 @@ import {
   ApprovedOfferCompanyNotification,
   RejectedOfferCompanyNotification,
   ApprovedProfileCompanyNotification,
+  RejectedProfileCompanyNotification,
   CompanyNotificationRepository
 } from "$models/CompanyNotification";
 import {
@@ -21,6 +22,7 @@ const repositoryMapper = {
   [ApprovedOfferCompanyNotification.name]: CompanyNotificationRepository,
   [RejectedOfferCompanyNotification.name]: CompanyNotificationRepository,
   [ApprovedProfileCompanyNotification.name]: CompanyNotificationRepository,
+  [RejectedProfileCompanyNotification.name]: CompanyNotificationRepository,
   [ApprovedJobApplicationApplicantNotification.name]: ApplicantNotificationRepository,
   [RejectedJobApplicationApplicantNotification.name]: ApplicantNotificationRepository,
   [ApprovedProfileApplicantNotification.name]: ApplicantNotificationRepository,

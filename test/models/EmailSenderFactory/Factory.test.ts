@@ -8,7 +8,8 @@ import {
   NewJobApplicationCompanyNotification,
   ApprovedOfferCompanyNotification,
   RejectedOfferCompanyNotification,
-  ApprovedProfileCompanyNotification
+  ApprovedProfileCompanyNotification,
+  RejectedProfileCompanyNotification
 } from "$models/CompanyNotification";
 import { EmailSenderFactory, UnknownEmailSenderError } from "$models/EmailSenderFactory";
 import {
@@ -19,7 +20,8 @@ import {
   RejectedJobApplicationApplicantNotificationEmailSender,
   ApprovedProfileApplicantNotificationEmailSender,
   RejectedProfileApplicantNotificationEmailSender,
-  ApprovedProfileCompanyNotificationEmailSender
+  ApprovedProfileCompanyNotificationEmailSender,
+  RejectedProfileCompanyNotificationEmailSender
 } from "$services/EmailSender";
 import { UUID } from "$models/UUID";
 
@@ -102,6 +104,16 @@ describe("EmailSenderFactory", () => {
     });
     const emailSender = EmailSenderFactory.create(notification);
     expect(emailSender).toBe(ApprovedProfileCompanyNotificationEmailSender);
+  });
+
+  it("returns a RejectedProfileCompanyNotificationEmailSender", async () => {
+    const notification = new RejectedProfileCompanyNotification({
+      moderatorUuid: UUID.generate(),
+      notifiedCompanyUuid: UUID.generate(),
+      moderatorMessage: "message"
+    });
+    const emailSender = EmailSenderFactory.create(notification);
+    expect(emailSender).toBe(RejectedProfileCompanyNotificationEmailSender);
   });
 
   it("throws an error if the factory does not know how to handle the given class", async () => {

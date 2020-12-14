@@ -9,7 +9,8 @@ export = {
         'newJobApplication',
         'approvedOffer',
         'rejectedOffer',
-        'approvedProfile'
+        'approvedProfile',
+        'rejectedProfile'
       );
     `),
   down: (queryInterface: QueryInterface) =>

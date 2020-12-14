@@ -3,6 +3,7 @@ import {
   NewJobApplicationCompanyNotification,
   RejectedOfferCompanyNotification,
   ApprovedProfileCompanyNotification,
+  RejectedProfileCompanyNotification,
   CompanyNotificationMapper,
   CompanyNotificationType,
   CompanyNotification
@@ -148,6 +149,35 @@ describe("CompanyNotificationMapper", () => {
       });
     });
 
+    describe("RejectedProfileCompanyNotification", () => {
+      const attributes = { ...commonAttributes, moderatorMessage: "message" };
+      const notification = new RejectedProfileCompanyNotification(attributes);
+
+      it("returns an instance of CompanyNotificationSequelizeModel", async () => {
+        const persistenceModel = mapper.toPersistenceModel(notification);
+        expect(persistenceModel).toBeInstanceOf(CompanyNotificationSequelizeModel);
+      });
+
+      it("returns a SequelizeModel with the correct attributes", async () => {
+        const persistenceModel = mapper.toPersistenceModel(notification);
+        expect(persistenceModel).toBeObjectContaining({
+          uuid: null,
+          ...attributes,
+          type: CompanyNotificationType.rejectedProfile,
+          isNewRecord: true,
+          createdAt: undefined
+        });
+      });
+
+      it("maps a notification that has already an uuid", async () => {
+        expectToNotToBeANewRecord(mapper, notification);
+      });
+
+      it("maps a notification that has already a createdAt", async () => {
+        expectToMapTheCreatedAtTimestamp(mapper, notification);
+      });
+    });
+
     it("throws an error it the given object cannot be mapped", async () => {
       const unknownNotification = (new Error() as unknown) as CompanyNotification;
       expect(() => CompanyNotificationMapper.toPersistenceModel(unknownNotification)).toThrowError(
@@ -224,6 +254,21 @@ describe("CompanyNotificationMapper", () => {
         sequelizeModel,
         attributes,
         modelClass: ApprovedProfileCompanyNotification
+      });
+    });
+
+    it("returns a RejectedProfileCompanyNotification", async () => {
+      const attributes = {
+        ...commonAttributes,
+        type: CompanyNotificationType.rejectedProfile,
+        moderatorMessage: "message"
+      };
+      const sequelizeModel = new CompanyNotificationSequelizeModel(attributes);
+      expectToMapPersistenceModelToTheGivenNotification({
+        mapper,
+        sequelizeModel,
+        attributes,
+        modelClass: RejectedProfileCompanyNotification
       });
     });
   });

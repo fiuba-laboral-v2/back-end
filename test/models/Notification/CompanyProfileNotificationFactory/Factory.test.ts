@@ -1,6 +1,12 @@
-import { CompanyProfileNotificationFactory } from "$models/Notification";
+import {
+  CompanyProfileNotificationFactory,
+  MissingModeratorMessageError
+} from "$models/Notification";
 import { Admin, Company } from "$models";
-import { ApprovedProfileCompanyNotification } from "$models/CompanyNotification";
+import {
+  ApprovedProfileCompanyNotification,
+  RejectedProfileCompanyNotification
+} from "$models/CompanyNotification";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
@@ -49,11 +55,38 @@ describe("CompanyProfileNotificationFactory", () => {
   });
 
   describe("Rejected company", () => {
+    const moderatorMessage = "message";
+
     beforeAll(() => company.set({ approvalStatus: ApprovalStatus.rejected }));
 
-    it("returns an empty array", () => {
-      const notifications = factory.create(company, admin);
-      expect(notifications).toEqual([]);
+    it("returns an array with a RejectedProfileCompanyNotification", () => {
+      const notifications = factory.create(company, admin, moderatorMessage);
+      const [notification] = notifications;
+
+      expect(notifications).toHaveLength(1);
+      expect(notification).toBeInstanceOf(RejectedProfileCompanyNotification);
+    });
+
+    it("returns an array with the correct attributes", () => {
+      const notifications = factory.create(company, admin, moderatorMessage);
+
+      expect(notifications).toEqual([
+        {
+          uuid: undefined,
+          moderatorUuid: admin.userUuid,
+          notifiedCompanyUuid: company.uuid,
+          moderatorMessage,
+          isNew: true,
+          createdAt: undefined
+        }
+      ]);
+    });
+
+    it("throws an error if no moderatorMessage is provided", () => {
+      expect(() => factory.create(company, admin)).toThrowErrorWithMessage(
+        MissingModeratorMessageError,
+        MissingModeratorMessageError.buildMessage()
+      );
     });
   });
 

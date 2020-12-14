@@ -10,6 +10,7 @@ import {
   ApprovedOfferCompanyNotification,
   RejectedOfferCompanyNotification,
   ApprovedProfileCompanyNotification,
+  RejectedProfileCompanyNotification,
   CompanyNotificationRepository
 } from "$models/CompanyNotification";
 import { NotificationRepositoryFactory, UnknownRepositoryError } from "$models/Notification";
@@ -51,6 +52,16 @@ describe("NotificationRepositoryFactory", () => {
     const notification = new ApprovedProfileCompanyNotification({
       moderatorUuid: UUID.generate(),
       notifiedCompanyUuid: UUID.generate()
+    });
+    const repository = NotificationRepositoryFactory.getRepositoryFor(notification);
+    expect(repository).toEqual(CompanyNotificationRepository);
+  });
+
+  it("returns a CompanyNotificationRepository for RejectedProfileCompanyNotification", async () => {
+    const notification = new RejectedProfileCompanyNotification({
+      moderatorUuid: UUID.generate(),
+      notifiedCompanyUuid: UUID.generate(),
+      moderatorMessage: "message"
     });
     const repository = NotificationRepositoryFactory.getRepositoryFor(notification);
     expect(repository).toEqual(CompanyNotificationRepository);

@@ -462,6 +462,9 @@ export const defaultTranslations = {
   approvedProfileCompanyNotification: {
     title: "Perfil aprobado"
   },
+  rejectedProfileCompanyNotification: {
+    title: "Perfil rechazado"
+  },
   applicantJobApplicationNotification: {
     pendingApplicantTitle: "Postulación pendiente de aprobación",
     approvedApplicantTitle: "Postulación aprobada",
@@ -505,6 +508,15 @@ export const defaultTranslations = {
   approvedProfileCompanyNotificationEmail: {
     subject: "Perfil aprobado",
     body: "Tu perfil ha sido aprobado: (<%= profileLink %>)." + "\n\n" + "<%= signature %>"
+  },
+  rejectedProfileCompanyNotificationEmail: {
+    subject: "Perfil rechazado",
+    body:
+      "El perfil de tu empresa ha sido rechazado: (<%= profileLink %>)." +
+      "\n" +
+      "Motivo: <%= rejectionReason %>." +
+      "\n\n" +
+      "<%= signature %>"
   },
   rejectedOfferCompanyNotificationEmail: {
     subject: "Oferta laboral rechazada",
