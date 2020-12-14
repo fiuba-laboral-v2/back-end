@@ -342,12 +342,24 @@ describe("Offer", () => {
     await expect(offer.validate()).rejects.toThrow(SalaryRangeError.buildMessage());
   });
 
-  it("throws an error if it's an internship that doesn't target students", async () => {
+  it("throws an error if it's an internship that targets graduates", async () => {
     const offer = new Offer({
       ...offerAttributes,
       isInternship: true,
       maximumSalary: null,
       targetApplicantType: ApplicantType.graduate
+    });
+    await expect(offer.validate()).rejects.toThrow(
+      InternshipsMustTargetStudentsError.buildMessage()
+    );
+  });
+
+  it("throws an error if it's an internship that targets both", async () => {
+    const offer = new Offer({
+      ...offerAttributes,
+      isInternship: true,
+      maximumSalary: null,
+      targetApplicantType: ApplicantType.both
     });
     await expect(offer.validate()).rejects.toThrow(
       InternshipsMustTargetStudentsError.buildMessage()
