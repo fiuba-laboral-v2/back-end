@@ -1,9 +1,13 @@
 import { ID, nonNull } from "$graphql/fieldTypes";
-import { CompanyRepository } from "$models/Company";
 import { GraphQLCompany } from "../Types/GraphQLCompany";
 import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
-import { ApprovalStatus } from "$models/ApprovalStatus";
 import { IApolloServerContext } from "$graphql/Context";
+
+import { Database } from "$config";
+import { CompanyRepository } from "$models/Company";
+import { CompanyApprovalEventRepository } from "$models/Company/CompanyApprovalEvent";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { CompanyApprovalEvent } from "$models";
 
 export const updateCompanyApprovalStatus = {
   type: GraphQLCompany,
@@ -17,14 +21,20 @@ export const updateCompanyApprovalStatus = {
   },
   resolve: async (
     _: undefined,
-    { uuid, approvalStatus }: IUpdateCompanyApprovalStatusArguments,
+    { uuid: companyUuid, approvalStatus: status }: IUpdateCompanyApprovalStatusArguments,
     { currentUser }: IApolloServerContext
-  ) =>
-    CompanyRepository.updateApprovalStatus(
-      currentUser.getAdminRole().adminUserUuid,
-      uuid,
-      approvalStatus
-    )
+  ) => {
+    const userUuid = currentUser.getAdminRole().adminUserUuid;
+    const company = await CompanyRepository.findByUuid(companyUuid);
+    company.set({ approvalStatus: status });
+    const event = new CompanyApprovalEvent({ userUuid, companyUuid, status });
+
+    return Database.transaction(async transaction => {
+      await CompanyRepository.save(company, transaction);
+      await CompanyApprovalEventRepository.save(event, transaction);
+      return company;
+    });
+  }
 };
 
 interface IUpdateCompanyApprovalStatusArguments {

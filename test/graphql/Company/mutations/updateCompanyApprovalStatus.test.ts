@@ -6,7 +6,7 @@ import { UUID } from "$models/UUID";
 import { Company } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
-import { CompanyNotUpdatedError } from "$models/Company/Errors";
+import { CompanyNotFoundError } from "$models/Company/Errors";
 
 import { CompanyApprovalEventRepository } from "$models/Company/CompanyApprovalEvent";
 import { UserRepository } from "$models/User";
@@ -138,7 +138,7 @@ describe("updateCompanyApprovalStatus", () => {
     const { apolloClient } = await TestClientGenerator.admin();
     const dataToUpdate = { uuid: UUID.generate(), approvalStatus: ApprovalStatus.approved };
     const { errors } = await performMutation(apolloClient, dataToUpdate);
-    expect(errors).toEqualGraphQLErrorType(CompanyNotUpdatedError.name);
+    expect(errors).toEqualGraphQLErrorType(CompanyNotFoundError.name);
   });
 
   it("throws an error if the approvalStatus is invalid", async () => {
