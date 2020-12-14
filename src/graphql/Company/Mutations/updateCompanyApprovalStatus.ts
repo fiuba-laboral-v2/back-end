@@ -59,7 +59,7 @@ export const updateCompanyApprovalStatus = {
 
     for (const notification of notifications) {
       const emailSender = EmailSenderFactory.create(notification);
-      await emailSender.send(notification);
+      emailSender.send(notification);
     }
 
     return company;
