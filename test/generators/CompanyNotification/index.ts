@@ -2,6 +2,7 @@ import {
   NewJobApplicationCompanyNotification,
   ApprovedOfferCompanyNotification,
   RejectedOfferCompanyNotification,
+  ApprovedProfileCompanyNotification,
   CompanyNotificationRepository,
   CompanyNotification
 } from "$models/CompanyNotification";
@@ -58,13 +59,22 @@ export const CompanyNotificationGenerator = {
       await CompanyNotificationRepository.save(notification);
       return notification;
     },
+    approvedProfile: async ({ company, admin }: IGeneratorAttributes) => {
+      const { userUuid: moderatorUuid } = admin || (await AdminGenerator.extension());
+      const { uuid: companyUuid } = company || (await CompanyGenerator.instance.withMinimumData());
+      const attributes = { moderatorUuid, notifiedCompanyUuid: companyUuid };
+      const notification = new ApprovedProfileCompanyNotification(attributes);
+      await CompanyNotificationRepository.save(notification);
+      return notification;
+    },
     range: async ({ company, size }: { size: number; company: Company }) => {
       const admin = await AdminGenerator.extension();
       const values: CompanyNotification[] = [];
       const generators = [
         CompanyNotificationGenerator.instance.newJobApplication,
         CompanyNotificationGenerator.instance.approvedOffer,
-        CompanyNotificationGenerator.instance.rejectedOffer
+        CompanyNotificationGenerator.instance.rejectedOffer,
+        CompanyNotificationGenerator.instance.approvedProfile
       ];
       for (const milliseconds of range(size)) {
         MockDate.set(milliseconds);
