@@ -27,6 +27,8 @@ import { isApprovalStatus, isTargetApplicantType } from "$models/SequelizeModelV
 import { ApplicantType, targetApplicantTypeEnumValues } from "$models/Applicant";
 import { isNil } from "lodash";
 import { DateTimeManager } from "$libs/DateTimeManager";
+import { InternshipsCannotHaveMaximumSalaryError } from "./Errors/InternshipsCannotHaveMaximumSalaryError";
+import { InternshipsMustTargetStudentsError } from "./Errors/InternshipsMustTargetStudentsError";
 
 @Table({
   tableName: "Offers",
@@ -34,6 +36,13 @@ import { DateTimeManager } from "$libs/DateTimeManager";
     validateSalaryRange(this: Offer) {
       if (isNil(this.maximumSalary)) return;
       validateSalaryRange(this.minimumSalary, this.maximumSalary);
+    },
+    validateInternship(this: Offer) {
+      if (!this.isInternship) return;
+      if (this.maximumSalary !== null) throw new InternshipsCannotHaveMaximumSalaryError();
+      if (this.targetApplicantType !== ApplicantType.student) {
+        throw new InternshipsMustTargetStudentsError();
+      }
     }
   }
 })

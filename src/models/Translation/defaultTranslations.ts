@@ -119,7 +119,8 @@ export const defaultTranslations = {
     description: "Resumen",
     hoursPerDay: "Horas por día",
     minimumSalary: "Salario mínimo",
-    maximumSalary: "Salario máximo"
+    maximumSalary: "Salario máximo",
+    isInternship: "Pasantía"
   },
   descriptionFormSection: {
     title: "Descripción",

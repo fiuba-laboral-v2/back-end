@@ -20,6 +20,7 @@ import { Admin, Career, Company } from "$models";
 import { OfferWithNoCareersError } from "$graphql/Offer/Errors";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { GraphQLFormattedError } from "graphql";
+import { ApplicantType } from "$models/Applicant";
 
 const CREATE_OFFER = gql`
   mutation createOffer(
@@ -49,6 +50,7 @@ const CREATE_OFFER = gql`
       description
       targetApplicantType
       hoursPerDay
+      isInternship
       minimumSalary
       maximumSalary
       sections {
@@ -113,6 +115,7 @@ describe("createOffer", () => {
         title: createOfferAttributes.title,
         description: createOfferAttributes.description,
         hoursPerDay: createOfferAttributes.hoursPerDay,
+        isInternship: createOfferAttributes.isInternship,
         minimumSalary: createOfferAttributes.minimumSalary,
         maximumSalary: createOfferAttributes.maximumSalary,
         targetApplicantType: createOfferAttributes.targetApplicantType,
@@ -140,11 +143,73 @@ describe("createOffer", () => {
         title: createOfferAttributes.title,
         description: createOfferAttributes.description,
         hoursPerDay: createOfferAttributes.hoursPerDay,
+        isInternship: createOfferAttributes.isInternship,
         minimumSalary: createOfferAttributes.minimumSalary,
         maximumSalary: null,
         targetApplicantType: createOfferAttributes.targetApplicantType,
         careers: [{ code: firstCareer.code, description: firstCareer.description }]
       });
+    });
+
+    it("creates a new internship", async () => {
+      const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
+      const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.internship({
+        companyUuid: company.uuid,
+        careers: [{ careerCode: firstCareer.code }]
+      });
+      const { data, errors } = await apolloClient.mutate({
+        mutation: CREATE_OFFER,
+        variables: createOfferAttributes
+      });
+      expect(errors).toBeUndefined();
+      expect(data!.createOffer).toBeObjectContaining({
+        isInternship: true,
+        minimumSalary: createOfferAttributes.minimumSalary,
+        maximumSalary: null,
+        targetApplicantType: ApplicantType.student
+      });
+    });
+
+    it("throws an error when an internship has maximum salary", async () => {
+      const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
+      const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.internship({
+        companyUuid: company.uuid,
+        maximumSalary: 999,
+        careers: [{ careerCode: firstCareer.code }]
+      });
+      const { errors } = await apolloClient.mutate({
+        mutation: CREATE_OFFER,
+        variables: createOfferAttributes
+      });
+      expect(errors).toEqualGraphQLErrorType("ValidationError");
+    });
+
+    it("throws an error when an internship targets graduates", async () => {
+      const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
+      const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.internship({
+        companyUuid: company.uuid,
+        targetApplicantType: ApplicantType.graduate,
+        careers: [{ careerCode: firstCareer.code }]
+      });
+      const { errors } = await apolloClient.mutate({
+        mutation: CREATE_OFFER,
+        variables: { ...createOfferAttributes, maximumSalary: null }
+      });
+      expect(errors).toEqualGraphQLErrorType("ValidationError");
+    });
+
+    it("throws an error when an internship targets both graduates and students", async () => {
+      const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
+      const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.internship({
+        companyUuid: company.uuid,
+        targetApplicantType: ApplicantType.both,
+        careers: [{ careerCode: firstCareer.code }]
+      });
+      const { errors } = await apolloClient.mutate({
+        mutation: CREATE_OFFER,
+        variables: { ...createOfferAttributes, maximumSalary: null }
+      });
+      expect(errors).toEqualGraphQLErrorType("ValidationError");
     });
 
     it("creates a new offer with one section and one career", async () => {
