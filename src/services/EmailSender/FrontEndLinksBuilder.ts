@@ -10,7 +10,8 @@ export const FrontEndLinksBuilder = {
     offerLink: (uuid: string) =>
       `${buildBaseUrl()}/${FrontendConfig.endpoints.company.offer(uuid)}`,
     applicantLink: (uuid: string) =>
-      `${buildBaseUrl()}/${FrontendConfig.endpoints.company.applicant(uuid)}`
+      `${buildBaseUrl()}/${FrontendConfig.endpoints.company.applicant(uuid)}`,
+    profileLink: () => `${buildBaseUrl()}/${FrontendConfig.endpoints.company.profile()}`
   },
   applicant: {
     profileLink: () => `${buildBaseUrl()}/${FrontendConfig.endpoints.applicant.profile()}`,

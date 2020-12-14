@@ -3,7 +3,8 @@ import { Environment } from "$config/Environment";
 const endpoints = {
   company: {
     offer: (uuid: string) => `empresa/ofertas/${uuid}`,
-    applicant: (uuid: string) => `empresa/postulantes/${uuid}`
+    applicant: (uuid: string) => `empresa/postulantes/${uuid}`,
+    profile: () => "empresa/perfil"
   },
   applicant: {
     profile: () => "postulante/perfil",
@@ -41,6 +42,7 @@ interface IFrontendConfig {
     company: {
       offer: (uuid: string) => string;
       applicant: (uuid: string) => string;
+      profile: () => string;
     };
     applicant: {
       profile: () => string;

@@ -11,6 +11,11 @@ describe("FrontEndLinksBuilder", () => {
     expect(link).toEqual("baseUrl/subDomain/empresa/postulantes/uuid");
   });
 
+  it("builds the profile link for a company", () => {
+    const link = FrontEndLinksBuilder.company.profileLink();
+    expect(link).toEqual("baseUrl/subDomain/empresa/perfil");
+  });
+
   it("builds the profile link for an applicant", () => {
     const link = FrontEndLinksBuilder.applicant.profileLink();
     expect(link).toEqual("baseUrl/subDomain/postulante/perfil");
