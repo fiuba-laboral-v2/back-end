@@ -506,6 +506,15 @@ export const defaultTranslations = {
     subject: "Perfil aprobado",
     body: "Tu perfil ha sido aprobado: (<%= profileLink %>)." + "\n\n" + "<%= signature %>"
   },
+  rejectedProfileCompanyNotificationEmail: {
+    subject: "Perfil rechazado",
+    body:
+      "Tu perfil ha sido rechazado: (<%= profileLink %>)." +
+      "\n" +
+      "Motivo: <%= rejectionReason %>." +
+      "\n\n" +
+      "<%= signature %>"
+  },
   rejectedOfferCompanyNotificationEmail: {
     subject: "Oferta laboral rechazada",
     body:
