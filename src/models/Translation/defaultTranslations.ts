@@ -462,6 +462,9 @@ export const defaultTranslations = {
   approvedProfileCompanyNotification: {
     title: "Perfil aprobado"
   },
+  rejectedProfileCompanyNotification: {
+    title: "Perfil rechazado"
+  },
   applicantJobApplicationNotification: {
     pendingApplicantTitle: "Postulación pendiente de aprobación",
     approvedApplicantTitle: "Postulación aprobada",
