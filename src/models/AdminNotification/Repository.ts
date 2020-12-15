@@ -4,7 +4,7 @@ import { AdminNotificationNotFoundError, AdminNotificationsNotUpdatedError } fro
 import { AdminNotificationMapper } from "./Mapper";
 import { AdminNotification } from "./AdminNotification";
 import { AdminNotificationSequelizeModel } from "$models";
-import { IFindLatestBySecretary } from "./Interfaces";
+import { IFindLatestBySecretary, IHasUnreadNotifications } from "./Interfaces";
 import { Database } from "$config";
 
 export const AdminNotificationRepository = {
@@ -37,6 +37,20 @@ export const AdminNotificationRepository = {
       );
       if (updatedCount !== uuids.length) throw new AdminNotificationsNotUpdatedError();
     }),
+  hasUnreadNotifications: async ({ secretary }: IHasUnreadNotifications) => {
+    const [{ exists }] = await Database.query<Array<{ exists: boolean }>>(
+      `
+      SELECT EXISTS (
+        SELECT *
+         FROM "AdminNotifications"
+         WHERE "AdminNotifications"."secretary" = '${secretary}'
+         AND "AdminNotifications"."isNew" = true
+       )
+    `,
+      { type: "SELECT" }
+    );
+    return exists;
+  },
   findByUuid: async (uuid: string) => {
     const sequelizeModel = await AdminNotificationSequelizeModel.findByPk(uuid);
     if (!sequelizeModel) throw new AdminNotificationNotFoundError(uuid);

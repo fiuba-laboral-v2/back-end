@@ -245,6 +245,45 @@ describe("AdminNotificationRepository", () => {
     });
   });
 
+  describe("hasUnreadNotifications", () => {
+    beforeEach(() => AdminNotificationRepository.truncate());
+
+    it("returns true if there are unread notifications", async () => {
+      const size = 4;
+      const generator = AdminNotificationGenerator.instance.range;
+      const notifications = await generator({ admin: extensionAdmin, size });
+      let isNew = true;
+      for (const notification of notifications) {
+        notification.isNew = !isNew;
+        isNew = !isNew;
+        await AdminNotificationRepository.save(notification);
+      }
+      const hasUnreadNotifications = await AdminNotificationRepository.hasUnreadNotifications({
+        secretary: extensionAdmin.secretary
+      });
+      expect(hasUnreadNotifications).toBe(true);
+    });
+
+    it("returns false if all notifications were read", async () => {
+      const size = 4;
+      const generator = AdminNotificationGenerator.instance.range;
+      const notifications = await generator({ admin: extensionAdmin, size });
+      notifications.map(notification => (notification.isNew = false));
+      await Promise.all(notifications.map(n => AdminNotificationRepository.save(n)));
+      const hasUnreadNotifications = await AdminNotificationRepository.hasUnreadNotifications({
+        secretary: extensionAdmin.secretary
+      });
+      expect(hasUnreadNotifications).toBe(false);
+    });
+
+    it("returns false there is no notifications", async () => {
+      const hasUnreadNotifications = await AdminNotificationRepository.hasUnreadNotifications({
+        secretary: extensionAdmin.secretary
+      });
+      expect(hasUnreadNotifications).toBe(false);
+    });
+  });
+
   describe("DELETE CASCADE", () => {
     const updatedCompanyProfileAdminNotificationAttributes = () => ({
       secretary: extensionAdmin.secretary,
