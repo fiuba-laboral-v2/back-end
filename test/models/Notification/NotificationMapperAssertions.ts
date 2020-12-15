@@ -1,6 +1,10 @@
 import { UUID } from "$models/UUID";
 import { Notification } from "$models/Notification";
-import { ApplicantNotificationSequelizeModel, CompanyNotificationSequelizeModel } from "$models";
+import {
+  ApplicantNotificationSequelizeModel,
+  CompanyNotificationSequelizeModel,
+  AdminNotificationSequelizeModel
+} from "$models";
 import { omit } from "lodash";
 import { Constructable } from "$test/types/Constructable";
 
@@ -42,7 +46,10 @@ interface IExpectToMapPersistenceModelToTheGivenNotification {
   mapper: IMapper;
 }
 
-type SequelizeModel = CompanyNotificationSequelizeModel | ApplicantNotificationSequelizeModel;
+type SequelizeModel =
+  | CompanyNotificationSequelizeModel
+  | ApplicantNotificationSequelizeModel
+  | AdminNotificationSequelizeModel;
 
 interface IMapper {
   toPersistenceModel: (notification: Notification) => SequelizeModel;
