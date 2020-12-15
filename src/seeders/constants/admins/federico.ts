@@ -3,7 +3,7 @@ import { uuids } from "../uuids";
 export const federico = {
   user: {
     uuid: uuids.extensionAdmin.user,
-    email: "dylanalvarez1995@gmail.com",
+    email: "dalvarez@fi.uba.ar",
     name: "Federico",
     surname: "Resnik",
     dni: "888",

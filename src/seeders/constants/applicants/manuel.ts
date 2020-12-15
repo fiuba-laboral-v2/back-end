@@ -5,7 +5,7 @@ import { ApprovalStatus } from "../../../models/ApprovalStatus/index";
 export const manuel = {
   user: {
     uuid: uuids.manuel.user,
-    email: "mllauro@fi.uba.ar",
+    email: "llauromanuel@gmail.com",
     name: "Manuel Luis",
     surname: "Llauró",
     dni: "222",

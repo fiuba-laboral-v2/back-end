@@ -5,7 +5,7 @@ import { careerCodes } from "../careerCodes";
 export const dylan = {
   user: {
     uuid: uuids.dylan.user,
-    email: "dalvarez@fi.uba.ar",
+    email: "dylanalvarez1995@gmail.com",
     name: "Dylan Gustavo",
     surname: "Alvarez Avalos",
     dni: "111",
