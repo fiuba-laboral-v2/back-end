@@ -6,17 +6,21 @@ import {
   IUpdatedCompanyProfileNotification,
   IAdminNotificationAttributes,
   AdminNotification,
+  AdminNotificationsNotUpdatedError,
   AdminNotificationRepository
 } from "$models/AdminNotification";
 
+import { UUID } from "$models/UUID";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 
 import { AdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
+import { AdminNotificationGenerator } from "$generators/AdminNotification";
+
 import { UUID_REGEX } from "$test/models";
-import { UUID } from "$models/UUID";
+import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 
 describe("AdminNotificationRepository", () => {
   let extensionAdmin: Admin;
@@ -128,6 +132,156 @@ describe("AdminNotificationRepository", () => {
       AdminNotificationNotFoundError,
       AdminNotificationNotFoundError.buildMessage(uuid)
     );
+  });
+
+  describe("findLatestBySecretary", () => {
+    const { findLatestBySecretary } = AdminNotificationRepository;
+    let notifications: AdminNotification[] = [];
+    const notificationsLength = 20;
+
+    beforeAll(async () => {
+      await AdminNotificationRepository.truncate();
+
+      const size = notificationsLength;
+      const admin = extensionAdmin;
+      const graduadosAdmin = await AdminGenerator.graduados();
+      notifications = await AdminNotificationGenerator.instance.range({ admin, size });
+      await AdminNotificationGenerator.instance.range({ admin: graduadosAdmin, size: 2 });
+    });
+
+    it("finds all notifications by applicant", async () => {
+      const secretary = extensionAdmin.secretary;
+      const result = await findLatestBySecretary({ secretary });
+      const { shouldFetchMore, results } = result;
+      expect(results).toHaveLength(notificationsLength);
+      expect(shouldFetchMore).toBe(false);
+    });
+
+    it("finds the first three notifications", async () => {
+      const secretary = extensionAdmin.secretary;
+      const itemsPerPage = 3;
+      mockItemsPerPage(itemsPerPage);
+      const updatedBeforeThan = {
+        dateTime: notifications[0].createdAt!,
+        uuid: notifications[0].uuid!
+      };
+      const result = await findLatestBySecretary({ updatedBeforeThan, secretary });
+      const { shouldFetchMore, results } = result;
+      expect(results).toHaveLength(itemsPerPage);
+      expect(results).toEqual(notifications.slice(1, itemsPerPage + 1));
+      expect(shouldFetchMore).toBe(true);
+    });
+
+    it("finds the last half of remaining notifications", async () => {
+      const secretary = extensionAdmin.secretary;
+      const itemsPerPage = notificationsLength / 2;
+      mockItemsPerPage(itemsPerPage);
+      const updatedBeforeThan = {
+        dateTime: notifications[itemsPerPage - 1].createdAt!,
+        uuid: notifications[itemsPerPage - 1].uuid!
+      };
+      const result = await findLatestBySecretary({ updatedBeforeThan, secretary });
+      const { shouldFetchMore, results } = result;
+      expect(results).toHaveLength(itemsPerPage);
+      expect(results).toEqual(notifications.slice(itemsPerPage, notificationsLength + 1));
+      expect(shouldFetchMore).toBe(false);
+    });
+
+    it("finds the latest notifications order by inNew first", async () => {
+      const secretary = extensionAdmin.secretary;
+      let isNew = true;
+      notifications.forEach(notification => {
+        notification.isNew = !isNew;
+        isNew = !isNew;
+      });
+      await Promise.all(
+        notifications.map(notification => AdminNotificationRepository.save(notification))
+      );
+      const { shouldFetchMore, results } = await findLatestBySecretary({ secretary });
+
+      expect(results.map(result => result.isNew)).toEqual([
+        ...Array(notificationsLength / 2).fill(true),
+        ...Array(notificationsLength / 2).fill(false)
+      ]);
+      expect(shouldFetchMore).toBe(false);
+    });
+  });
+
+  describe("markAsReadByUuids", () => {
+    it("updates isNew to false for all given notification uuids", async () => {
+      const size = 4;
+      const generator = AdminNotificationGenerator.instance.range;
+      const notifications = await generator({ admin: extensionAdmin, size });
+      notifications.map(notification => expect(notification.isNew).toBe(true));
+
+      const uuids = notifications.map(({ uuid }) => uuid!);
+      await AdminNotificationRepository.markAsReadByUuids(uuids);
+      const updatedNotifications = await AdminNotificationRepository.findByUuids(uuids);
+      updatedNotifications.map(notification => expect(notification.isNew).toBe(false));
+    });
+
+    it("throws an error if one of the given uuids does not exist", async () => {
+      const nonExistentUuid = UUID.generate();
+      const generator = AdminNotificationGenerator.instance.updatedCompanyProfile;
+      const notification = await generator({ admin: extensionAdmin });
+      const uuids = [nonExistentUuid, notification.uuid!];
+      await expect(
+        AdminNotificationRepository.markAsReadByUuids(uuids)
+      ).rejects.toThrowErrorWithMessage(
+        AdminNotificationsNotUpdatedError,
+        AdminNotificationsNotUpdatedError.buildMessage()
+      );
+    });
+
+    it("does not update the notifications if it throws an error", async () => {
+      const nonExistentUuid = UUID.generate();
+      const generator = AdminNotificationGenerator.instance.updatedCompanyProfile;
+      const notification = await generator({ admin: extensionAdmin });
+      const uuid = notification.uuid!;
+      const uuids = [nonExistentUuid, uuid];
+      await expect(AdminNotificationRepository.markAsReadByUuids(uuids)).rejects.toThrowError();
+      const persistedNotification = await AdminNotificationRepository.findByUuid(uuid);
+      expect(persistedNotification.isNew).toEqual(true);
+    });
+  });
+
+  describe("hasUnreadNotifications", () => {
+    beforeEach(() => AdminNotificationRepository.truncate());
+
+    it("returns true if there are unread notifications", async () => {
+      const size = 4;
+      const generator = AdminNotificationGenerator.instance.range;
+      const notifications = await generator({ admin: extensionAdmin, size });
+      let isNew = true;
+      for (const notification of notifications) {
+        notification.isNew = !isNew;
+        isNew = !isNew;
+        await AdminNotificationRepository.save(notification);
+      }
+      const hasUnreadNotifications = await AdminNotificationRepository.hasUnreadNotifications({
+        secretary: extensionAdmin.secretary
+      });
+      expect(hasUnreadNotifications).toBe(true);
+    });
+
+    it("returns false if all notifications were read", async () => {
+      const size = 4;
+      const generator = AdminNotificationGenerator.instance.range;
+      const notifications = await generator({ admin: extensionAdmin, size });
+      notifications.map(notification => (notification.isNew = false));
+      await Promise.all(notifications.map(n => AdminNotificationRepository.save(n)));
+      const hasUnreadNotifications = await AdminNotificationRepository.hasUnreadNotifications({
+        secretary: extensionAdmin.secretary
+      });
+      expect(hasUnreadNotifications).toBe(false);
+    });
+
+    it("returns false there is no notifications", async () => {
+      const hasUnreadNotifications = await AdminNotificationRepository.hasUnreadNotifications({
+        secretary: extensionAdmin.secretary
+      });
+      expect(hasUnreadNotifications).toBe(false);
+    });
   });
 
   describe("DELETE CASCADE", () => {
