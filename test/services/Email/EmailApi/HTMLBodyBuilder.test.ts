@@ -1,6 +1,9 @@
 import { HTMLBodyBuilder } from "$services/Email/EmailApi/HTMLBodyBuilder";
 
-const expectedResult = `<!DOCTYPE html>
+describe("HTMLBodyBuilder", () => {
+  it("wraps given text in a template html", async () => {
+    const text = HTMLBodyBuilder.build("hey!", "hi\n\nbye");
+    expect(text).toEqual(`<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="utf-8">
@@ -14,11 +17,6 @@ const expectedResult = `<!DOCTYPE html>
   <body>hi
 
 bye</body>
-</html>`;
-
-describe("HTMLBodyBuilder", () => {
-  it("wraps given text in a template html", async () => {
-    const text = HTMLBodyBuilder.build("hey!", "hi\n\nbye");
-    expect(text).toEqual(expectedResult);
+</html>`);
   });
 });
