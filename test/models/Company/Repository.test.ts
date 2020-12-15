@@ -13,18 +13,18 @@ import { CuitGenerator } from "$generators/Cuit";
 import { mockItemsPerPage } from "$test/mocks/config/PaginationConfig";
 
 describe("CompanyRepository", () => {
+  const companyAttributes = () => ({
+    cuit: CuitGenerator.generate(),
+    companyName: CompanyGenerator.data.completeData().companyName,
+    businessName: CompanyGenerator.data.completeData().businessName
+  });
+
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
   });
 
   describe("Save", () => {
-    const companyAttributes = () => ({
-      cuit: CuitGenerator.generate(),
-      companyName: CompanyGenerator.data.completeData().companyName,
-      businessName: CompanyGenerator.data.completeData().businessName
-    });
-
     const expectToUpdateAttribute = async (attributeName: string, value: string | number) => {
       const attributes = {
         cuit: CuitGenerator.generate(),
@@ -257,11 +257,12 @@ describe("CompanyRepository", () => {
     });
   });
 
-  it("deletes a company", async () => {
-    const companyCompleteData = CompanyGenerator.data.completeData();
-    const { uuid } = await CompanyRepository.create(companyCompleteData);
-    expect(await CompanyRepository.findByUuid(uuid)).not.toBeNull();
+  it("deletes the companies table", async () => {
     await CompanyRepository.truncate();
-    await expect(CompanyRepository.findByUuid(uuid)).rejects.toThrow();
+    await CompanyRepository.save(new Company(companyAttributes()));
+    await CompanyRepository.save(new Company(companyAttributes()));
+    expect(await CompanyRepository.findAll()).toHaveLength(2);
+    await CompanyRepository.truncate();
+    expect(await CompanyRepository.findAll()).toHaveLength(0);
   });
 });
