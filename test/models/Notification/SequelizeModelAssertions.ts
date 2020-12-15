@@ -1,4 +1,8 @@
-import { ApplicantNotificationSequelizeModel, CompanyNotificationSequelizeModel } from "$models";
+import {
+  ApplicantNotificationSequelizeModel,
+  CompanyNotificationSequelizeModel,
+  AdminNotificationSequelizeModel
+} from "$models";
 import { omit } from "lodash";
 import { ValidationError } from "sequelize";
 
@@ -28,7 +32,10 @@ export const SequelizeModelAssertions = {
   }
 };
 
-type SequelizeModel = CompanyNotificationSequelizeModel | ApplicantNotificationSequelizeModel;
+type SequelizeModel =
+  | CompanyNotificationSequelizeModel
+  | ApplicantNotificationSequelizeModel
+  | AdminNotificationSequelizeModel;
 type SequelizeModelConstructor = new (...args: any[]) => SequelizeModel;
 
 interface IExpectToThrowErrorInInvalidFormat {
