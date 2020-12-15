@@ -8,6 +8,7 @@ import {
   CompanyNotificationType,
   CompanyNotification
 } from "$models/CompanyNotification";
+import { UnknownNotificationError } from "$models/Notification";
 import { UUID } from "$models/UUID";
 import { CompanyNotificationSequelizeModel } from "$models";
 import { NotificationMapperAssertions } from "$test/models/Notification/NotificationMapperAssertions";
@@ -179,9 +180,10 @@ describe("CompanyNotificationMapper", () => {
     });
 
     it("throws an error it the given object cannot be mapped", async () => {
-      const unknownNotification = (new Error() as unknown) as CompanyNotification;
-      expect(() => CompanyNotificationMapper.toPersistenceModel(unknownNotification)).toThrowError(
-        "Could not map to a persistence model"
+      const unknownNotification = (new Date() as unknown) as CompanyNotification;
+      expect(() => mapper.toPersistenceModel(unknownNotification)).toThrowErrorWithMessage(
+        UnknownNotificationError,
+        UnknownNotificationError.buildMessage("Date")
       );
     });
   });

@@ -4,8 +4,10 @@ import {
   RejectedJobApplicationApplicantNotification,
   ApprovedProfileApplicantNotification,
   RejectedProfileApplicantNotification,
-  ApplicantNotificationType
+  ApplicantNotificationType,
+  ApplicantNotification
 } from "$models/ApplicantNotification";
+import { UnknownNotificationError } from "$models/Notification";
 import { UUID } from "$models/UUID";
 import { ApplicantNotificationSequelizeModel } from "$models";
 import { NotificationMapperAssertions } from "../Notification/NotificationMapperAssertions";
@@ -145,6 +147,14 @@ describe("ApplicantNotificationMapper", () => {
       it("maps the notification that has already a createdAt", async () => {
         expectToMapTheCreatedAtTimestamp(mapper, notification);
       });
+    });
+
+    it("throws an error it the given object cannot be mapped", async () => {
+      const unknownNotification = (new Error() as unknown) as ApplicantNotification;
+      expect(() => mapper.toPersistenceModel(unknownNotification)).toThrowErrorWithMessage(
+        UnknownNotificationError,
+        UnknownNotificationError.buildMessage("Error")
+      );
     });
   });
 

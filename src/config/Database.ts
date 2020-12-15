@@ -27,6 +27,7 @@ import {
   User,
   CompanyNotificationSequelizeModel,
   ApplicantNotificationSequelizeModel,
+  AdminNotificationSequelizeModel,
   SecretarySettings
 } from "$models";
 
@@ -55,6 +56,7 @@ const models = [
   User,
   CompanyNotificationSequelizeModel,
   ApplicantNotificationSequelizeModel,
+  AdminNotificationSequelizeModel,
   SecretarySettings
 ];
 
