@@ -32,9 +32,14 @@ export const updateCurrentCompany = {
       type: List(String)
     }
   },
-  resolve: (
+  resolve: async (
     _: undefined,
-    attributes: Omit<IUpdateCompany, "uuid">,
+    { phoneNumbers, photos, ...attributes }: IUpdateCompany,
     { currentUser }: IApolloServerContext
-  ) => CompanyRepository.update({ uuid: currentUser.getCompanyRole().companyUuid, ...attributes })
+  ) => {
+    const company = await CompanyRepository.findByUuid(currentUser.getCompanyRole().companyUuid);
+    company.set(attributes);
+    await CompanyRepository.save(company);
+    return company;
+  }
 };

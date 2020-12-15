@@ -1,5 +1,5 @@
 import { Database } from "$config";
-import { ICompany, IUpdateCompany } from "./index";
+import { ICompany } from "./index";
 import { CompanyPhotoRepository } from "$models/CompanyPhoto";
 import { CompanyPhoneNumberRepository } from "$models/CompanyPhoneNumber";
 import { CompanyNotFoundError } from "./Errors";
@@ -29,15 +29,6 @@ export const CompanyRepository = {
       await CompanyPhoneNumberRepository.bulkCreate(phoneNumbers, company, transaction);
       return company;
     }),
-  update: async ({ uuid, phoneNumbers, photos, ...companyAttributes }: IUpdateCompany) => {
-    const [, [updatedCompany]] = await Company.update(companyAttributes, {
-      where: { uuid },
-      returning: true
-    });
-    if (!updatedCompany) throw new CompanyNotFoundError(uuid);
-
-    return updatedCompany;
-  },
   findByUuid: async (uuid: string) => {
     const company = await Company.findByPk(uuid);
     if (!company) throw new CompanyNotFoundError(uuid);
