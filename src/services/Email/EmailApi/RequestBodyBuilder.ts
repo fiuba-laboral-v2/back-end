@@ -30,7 +30,7 @@ export const RequestBodyBuilder = {
             </to>
             <subject xsi:type="xsd:string">${subject}</subject>
             <htmlbody xsi:type="xsd:string">
-              ${toBase64(HTMLBodyBuilder.build(subject, body))}
+              ${toBase64(HTMLBodyBuilder.build(body))}
             </htmlbody>
             <altbody xsi:type="xsd:string">${toBase64(body)}</altbody>
           </misc:SendMail_safe>
