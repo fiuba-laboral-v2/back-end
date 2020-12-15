@@ -22,9 +22,12 @@ export const getAdminNotifications = {
     { currentUser }: IApolloServerContext
   ) => {
     const admin = await AdminRepository.findByUserUuid(currentUser.getAdminRole().adminUserUuid);
-    return AdminNotificationRepository.findLatestBySecretary({
+    const notifications = await AdminNotificationRepository.findLatestBySecretary({
       updatedBeforeThan,
       secretary: admin.secretary
     });
+    const notificationUuids = notifications.results.map(({ uuid }) => uuid!);
+    await AdminNotificationRepository.markAsReadByUuids(notificationUuids);
+    return notifications;
   }
 };

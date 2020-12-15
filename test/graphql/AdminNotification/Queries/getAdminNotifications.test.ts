@@ -17,12 +17,9 @@ import { Admin } from "$models";
 
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
-import { CareerRepository } from "$models/Career";
-import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
 import { AdminNotificationGenerator } from "$generators/AdminNotification";
 import { AdminGenerator } from "$generators/Admin";
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { TestClientGenerator } from "$generators/TestClient";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 
@@ -52,12 +49,11 @@ describe("getAdminNotifications", () => {
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
-    await CareerRepository.truncate();
-    await SecretarySettingsRepository.truncate();
 
     graduadosAdmin = await AdminGenerator.graduados();
-    await SecretarySettingsGenerator.createDefaultSettings();
   });
+
+  beforeEach(() => AdminNotificationRepository.truncate());
 
   const performQuery = (apolloClient: TestClient, updatedBeforeThan?: IPaginatedInput) => {
     const variables = updatedBeforeThan && {
@@ -134,6 +130,23 @@ describe("getAdminNotifications", () => {
     expect(shouldFetchMore).toBe(false);
   });
 
+  it("updates the returned notifications isNew value to false", async () => {
+    const secretary = Secretary.graduados;
+    const { apolloClient, admin } = await TestClientGenerator.admin({ secretary });
+    const size = 10;
+    const notifications = await AdminNotificationGenerator.instance.range({ admin, size });
+    const { data, errors } = await performQuery(apolloClient);
+    expect(errors).toBeUndefined();
+    const uuids = notifications.map(({ uuid }) => uuid!);
+    const persistedNotifications = await AdminNotificationRepository.findByUuids(uuids);
+    const { results, shouldFetchMore } = data!.getAdminNotifications;
+
+    expect(results).toHaveLength(size);
+    results.map(notification => expect(notification.isNew).toBe(true));
+    persistedNotifications.map(notification => expect(notification.isNew).toBe(false));
+    expect(shouldFetchMore).toBe(false);
+  });
+
   it("returns an error if there is no current user", async () => {
     const apolloClient = client.loggedOut();
     const { errors } = await performQuery(apolloClient);
@@ -185,6 +198,7 @@ describe("getAdminNotifications", () => {
       .mockImplementation(() =>
         Promise.resolve({ results: [unknownNotification], shouldFetchMore: false })
       );
+    jest.spyOn(AdminNotificationRepository, "markAsReadByUuids").mockImplementation(jest.fn());
     const { errors } = await performQuery(apolloClient);
     expect(errors).toEqualGraphQLErrorType(UnknownNotificationError.name);
   });

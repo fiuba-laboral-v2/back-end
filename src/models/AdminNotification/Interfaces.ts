@@ -11,3 +11,7 @@ export interface IFindLatestBySecretary {
   secretary: Secretary;
   updatedBeforeThan?: IPaginatedInput;
 }
+
+export interface IHasUnreadNotifications {
+  secretary: Secretary;
+}

@@ -1,10 +1,11 @@
 import { Transaction } from "sequelize";
 import { PaginationQuery } from "$models/PaginationQuery";
-import { AdminNotificationNotFoundError } from "./Errors";
+import { AdminNotificationNotFoundError, AdminNotificationsNotUpdatedError } from "./Errors";
 import { AdminNotificationMapper } from "./Mapper";
 import { AdminNotification } from "./AdminNotification";
 import { AdminNotificationSequelizeModel } from "$models";
-import { IFindLatestBySecretary } from "./Interfaces";
+import { IFindLatestBySecretary, IHasUnreadNotifications } from "./Interfaces";
+import { Database } from "$config";
 
 export const AdminNotificationRepository = {
   save: async (notification: AdminNotification, transaction?: Transaction) => {
@@ -28,11 +29,39 @@ export const AdminNotificationRepository = {
         ["uuid", "DESC"]
       ]
     }),
+  markAsReadByUuids: (uuids: string[]) =>
+    Database.transaction(async transaction => {
+      const [updatedCount] = await AdminNotificationSequelizeModel.update(
+        { isNew: false },
+        { where: { uuid: uuids }, returning: false, validate: false, transaction }
+      );
+      if (updatedCount !== uuids.length) throw new AdminNotificationsNotUpdatedError();
+    }),
+  hasUnreadNotifications: async ({ secretary }: IHasUnreadNotifications) => {
+    const [{ exists }] = await Database.query<Array<{ exists: boolean }>>(
+      `
+      SELECT EXISTS (
+        SELECT *
+         FROM "AdminNotifications"
+         WHERE "AdminNotifications"."secretary" = '${secretary}'
+         AND "AdminNotifications"."isNew" = true
+       )
+    `,
+      { type: "SELECT" }
+    );
+    return exists;
+  },
   findByUuid: async (uuid: string) => {
     const sequelizeModel = await AdminNotificationSequelizeModel.findByPk(uuid);
     if (!sequelizeModel) throw new AdminNotificationNotFoundError(uuid);
 
     return AdminNotificationMapper.toDomainModel(sequelizeModel);
+  },
+  findByUuids: async (uuids: string[]) => {
+    const sequelizeModels = await AdminNotificationSequelizeModel.findAll({
+      where: { uuid: uuids }
+    });
+    return sequelizeModels.map(AdminNotificationMapper.toDomainModel);
   },
   findAll: async () => {
     const notifications = await AdminNotificationSequelizeModel.findAll();
