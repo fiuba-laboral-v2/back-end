@@ -486,6 +486,9 @@ export const defaultTranslations = {
   rejectedJobApplicationApplicantNotification: {
     title: "Postulación rechazada"
   },
+  updatedCompanyProfileAdminNotification: {
+    title: "Perfil de empresa actualizado"
+  },
   rejectionReason: {
     reason: "Motivo",
     contactModerator: "Contactar moderador/a"
