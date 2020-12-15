@@ -1,10 +1,11 @@
 import { Transaction } from "sequelize";
 import { PaginationQuery } from "$models/PaginationQuery";
-import { AdminNotificationNotFoundError } from "./Errors";
+import { AdminNotificationNotFoundError, AdminNotificationsNotUpdatedError } from "./Errors";
 import { AdminNotificationMapper } from "./Mapper";
 import { AdminNotification } from "./AdminNotification";
 import { AdminNotificationSequelizeModel } from "$models";
 import { IFindLatestBySecretary } from "./Interfaces";
+import { Database } from "$config";
 
 export const AdminNotificationRepository = {
   save: async (notification: AdminNotification, transaction?: Transaction) => {
@@ -28,11 +29,25 @@ export const AdminNotificationRepository = {
         ["uuid", "DESC"]
       ]
     }),
+  markAsReadByUuids: (uuids: string[]) =>
+    Database.transaction(async transaction => {
+      const [updatedCount] = await AdminNotificationSequelizeModel.update(
+        { isNew: false },
+        { where: { uuid: uuids }, returning: false, validate: false, transaction }
+      );
+      if (updatedCount !== uuids.length) throw new AdminNotificationsNotUpdatedError();
+    }),
   findByUuid: async (uuid: string) => {
     const sequelizeModel = await AdminNotificationSequelizeModel.findByPk(uuid);
     if (!sequelizeModel) throw new AdminNotificationNotFoundError(uuid);
 
     return AdminNotificationMapper.toDomainModel(sequelizeModel);
+  },
+  findByUuids: async (uuids: string[]) => {
+    const sequelizeModels = await AdminNotificationSequelizeModel.findAll({
+      where: { uuid: uuids }
+    });
+    return sequelizeModels.map(AdminNotificationMapper.toDomainModel);
   },
   findAll: async () => {
     const notifications = await AdminNotificationSequelizeModel.findAll();
