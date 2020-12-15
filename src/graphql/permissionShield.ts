@@ -14,6 +14,7 @@ import { adminPermissions } from "./Admin";
 import { secretarySettingsPermissions } from "./SecretarySettings";
 import { companyNotificationPermissions } from "./CompanyNotification";
 import { applicantNotificationPermissions } from "./ApplicantNotification";
+import { adminNotificationPermissions } from "./AdminNotification";
 
 const permissions = merge(
   offerPermissions,
@@ -27,7 +28,8 @@ const permissions = merge(
   adminPermissions,
   secretarySettingsPermissions,
   companyNotificationPermissions,
-  applicantNotificationPermissions
+  applicantNotificationPermissions,
+  adminNotificationPermissions
 );
 
 export const permissionShield = shield(permissions, {
