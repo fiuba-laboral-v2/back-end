@@ -180,7 +180,7 @@ describe("CompanyNotificationMapper", () => {
 
     it("throws an error it the given object cannot be mapped", async () => {
       const unknownNotification = (new Error() as unknown) as CompanyNotification;
-      expect(() => CompanyNotificationMapper.toPersistenceModel(unknownNotification)).toThrowError(
+      expect(() => mapper.toPersistenceModel(unknownNotification)).toThrowError(
         "Could not map to a persistence model"
       );
     });
