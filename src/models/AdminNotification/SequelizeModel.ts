@@ -28,7 +28,7 @@ export class AdminNotificationSequelizeModel extends SequelizeModel<
   })
   public type: AdminNotificationType;
 
-  @Column({ allowNull: true, type: BOOLEAN, defaultValue: true })
+  @Column({ allowNull: false, type: BOOLEAN, defaultValue: true })
   public isNew: boolean;
 
   @CreatedAt
