@@ -1,10 +1,12 @@
 import { ISendEmail } from "$services/Email/interface";
 import { Environment } from "$config";
+import { HTMLBodyBuilder } from "$services/Email/EmailApi/HTMLBodyBuilder";
+
+const toBase64 = (text: string) => Buffer.from(text).toString("base64");
 
 export const RequestBodyBuilder = {
-  build: ({ sender, receiverEmails, subject, body }: ISendEmail) => {
-    const base64Body = Buffer.from(body).toString("base64");
-    return `
+  build: ({ sender, receiverEmails, subject, body }: ISendEmail) =>
+    `
       <soapenv:Envelope
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -27,11 +29,12 @@ export const RequestBodyBuilder = {
               ${receiverEmails.map(email => `<item>${email}</item>`).join("\n")}
             </to>
             <subject xsi:type="xsd:string">${subject}</subject>
-            <htmlbody xsi:type="xsd:string">${base64Body}</htmlbody>
-            <altbody xsi:type="xsd:string">${base64Body}</altbody>
+            <htmlbody xsi:type="xsd:string">
+              ${toBase64(HTMLBodyBuilder.build(subject, body))}
+            </htmlbody>
+            <altbody xsi:type="xsd:string">${toBase64(body)}</altbody>
           </misc:SendMail_safe>
         </soapenv:Body>
       </soapenv:Envelope>
-  `.trim();
-  }
+  `.trim()
 };

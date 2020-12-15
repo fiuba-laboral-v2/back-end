@@ -89,7 +89,9 @@ describe("EmailApi", () => {
                 ${params.receiverEmails.map(email => `<item>${email}</item>`).join("\n")}
               </to>
               <subject xsi:type="xsd:string">${params.subject}</subject>
-              <htmlbody xsi:type="xsd:string">R29vZGJ5ZSB3b3JsZCE=</htmlbody>
+              <htmlbody xsi:type="xsd:string">
+                PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVzIj4KICA8aGVhZD4KICAgIDxtZXRhIGNoYXJzZXQ9InV0Zi04Ij4KICAgIDx0aXRsZT5Hb29kYnllIHdvcmxkPC90aXRsZT4KICAgIDxzdHlsZT4KICAgICAgYm9keSB7CiAgICAgICAgd2hpdGUtc3BhY2U6IHByZS13cmFwOwogICAgICB9CiAgICA8L3N0eWxlPgogIDwvaGVhZD4KICA8Ym9keT5Hb29kYnllIHdvcmxkITwvYm9keT4KPC9odG1sPg==
+              </htmlbody>
               <altbody xsi:type="xsd:string">R29vZGJ5ZSB3b3JsZCE=</altbody>
             </misc:SendMail_safe>
           </soapenv:Body>
