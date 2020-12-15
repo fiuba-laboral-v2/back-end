@@ -7,6 +7,7 @@ import {
   ApplicantNotificationType,
   ApplicantNotification
 } from "$models/ApplicantNotification";
+import { UnknownNotificationError } from "$models/Notification";
 import { UUID } from "$models/UUID";
 import { ApplicantNotificationSequelizeModel } from "$models";
 import { NotificationMapperAssertions } from "../Notification/NotificationMapperAssertions";
@@ -150,8 +151,9 @@ describe("ApplicantNotificationMapper", () => {
 
     it("throws an error it the given object cannot be mapped", async () => {
       const unknownNotification = (new Error() as unknown) as ApplicantNotification;
-      expect(() => mapper.toPersistenceModel(unknownNotification)).toThrowError(
-        "Could not map to a persistence model"
+      expect(() => mapper.toPersistenceModel(unknownNotification)).toThrowErrorWithMessage(
+        UnknownNotificationError,
+        UnknownNotificationError.buildMessage("Error")
       );
     });
   });

@@ -12,18 +12,20 @@ import {
   CompanyNotification,
   CompanyNotificationType
 } from "$models/CompanyNotification";
+import { UnknownNotificationError } from "$models/Notification/Errors";
 import { CompanyNotificationSequelizeModel } from "$models";
 
 export const CompanyNotificationMapper = {
   toPersistenceModel: (notification: CompanyNotification) => {
+    const notificationClassName = notification.constructor.name;
     const type = {
       [NewJobApplicationCompanyNotification.name]: CompanyNotificationType.newJobApplication,
       [ApprovedOfferCompanyNotification.name]: CompanyNotificationType.approvedOffer,
       [RejectedOfferCompanyNotification.name]: CompanyNotificationType.rejectedOffer,
       [ApprovedProfileCompanyNotification.name]: CompanyNotificationType.approvedProfile,
       [RejectedProfileCompanyNotification.name]: CompanyNotificationType.rejectedProfile
-    }[notification.constructor.name];
-    if (!type) throw new Error("Could not map to a persistence model");
+    }[notificationClassName];
+    if (!type) throw new UnknownNotificationError(notificationClassName);
 
     return new CompanyNotificationSequelizeModel({ ...notification, type });
   },

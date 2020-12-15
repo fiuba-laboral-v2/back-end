@@ -4,6 +4,7 @@ import {
   AdminNotificationMapper,
   AdminNotification
 } from "$models/AdminNotification";
+import { UnknownNotificationError } from "$models/Notification";
 import { AdminNotificationSequelizeModel } from "$models";
 
 import { Secretary } from "$models/Admin";
@@ -51,9 +52,10 @@ describe("AdminNotificationMapper", () => {
     });
 
     it("throws an error it the given object cannot be mapped", async () => {
-      const unknownNotification = (new Error() as unknown) as AdminNotification;
-      expect(() => mapper.toPersistenceModel(unknownNotification)).toThrowError(
-        "Could not map to a persistence model"
+      const unknownNotification = (new Date() as unknown) as AdminNotification;
+      expect(() => mapper.toPersistenceModel(unknownNotification)).toThrowErrorWithMessage(
+        UnknownNotificationError,
+        UnknownNotificationError.buildMessage("Date")
       );
     });
   });

@@ -4,14 +4,16 @@ import {
   AdminNotification,
   AdminNotificationType as Type
 } from "$models/AdminNotification";
+import { UnknownNotificationError } from "$models/Notification/Errors";
 import { AdminNotificationSequelizeModel } from "$models";
 
 export const AdminNotificationMapper = {
   toPersistenceModel: (notification: AdminNotification) => {
+    const notificationClassName = notification.constructor.name;
     const type = {
       [UpdatedCompanyProfileAdminNotification.name]: Type.updatedCompanyProfile
-    }[notification.constructor.name];
-    if (!type) throw new Error("Could not map to a persistence model");
+    }[notificationClassName];
+    if (!type) throw new UnknownNotificationError(notificationClassName);
 
     return new AdminNotificationSequelizeModel({ ...notification, type });
   },
