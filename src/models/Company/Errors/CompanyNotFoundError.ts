@@ -1,5 +1,9 @@
 export class CompanyNotFoundError extends Error {
+  public static buildMessage(uuid: string) {
+    return `Company with uuid: ${uuid} does not exists`;
+  }
+
   constructor(uuid: string) {
-    super(`Company with uuid: ${uuid} does not exists`);
+    super(CompanyNotFoundError.buildMessage(uuid));
   }
 }
