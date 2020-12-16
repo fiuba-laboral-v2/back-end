@@ -154,6 +154,18 @@ describe("updateCurrentCompany", () => {
     });
   });
 
+  it("does not update the company if the notifications persistence fails", async () => {
+    const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
+    const oldCompanyName = company.companyName;
+    jest.spyOn(AdminNotificationRepository, "save").mockImplementation(() => {
+      throw new Error();
+    });
+    const { errors } = await performQuery(apolloClient, { companyName: "NEW_NAME" });
+    expect(errors).toEqualGraphQLErrorType(Error.name);
+    const persistedCompany = await CompanyRepository.findByUuid(company.uuid);
+    expect(persistedCompany.companyName).toEqual(oldCompanyName);
+  });
+
   it("throws an error if there is no current user", async () => {
     const apolloClient = client.loggedOut();
     const dataToUpdate = { companyName: "new company name" };
