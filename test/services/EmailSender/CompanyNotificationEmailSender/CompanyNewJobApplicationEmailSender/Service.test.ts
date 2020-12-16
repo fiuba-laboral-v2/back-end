@@ -1,6 +1,7 @@
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
+import { OfferRepository } from "$models/Offer";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { AdminRepository, Secretary } from "$models/Admin";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
@@ -40,6 +41,8 @@ describe("NewJobApplicationCompanyNotificationEmailSender", () => {
     const { offerUuid, applicantUuid } = await JobApplicationRepository.findByUuid(
       notification.jobApplicationUuid
     );
+    const offer = await OfferRepository.findByUuid(offerUuid);
+
     expect(emailSendMock.mock.calls).toEqual([
       [
         {
@@ -49,13 +52,12 @@ describe("NewJobApplicationCompanyNotificationEmailSender", () => {
             email: settings.email
           },
           subject: "Nueva postulación a tu oferta laboral",
-          body: expect.stringContaining(
-            `Nueva postulación a tu oferta laboral: title1 (baseUrl/subDomain/empresa/ofertas/${offerUuid})` +
-              "\n" +
-              `Postulante: applicantName applicantSurname (baseUrl/subDomain/empresa/postulantes/${applicantUuid}).` +
-              "\n\n" +
-              `Bolsa de Trabajo FIUBA`
-          )
+          body:
+            `Nueva postulación a tu oferta laboral: ${offer.title} (baseUrl/subDomain/empresa/ofertas/${offerUuid})` +
+            "\n" +
+            `Postulante: applicantName applicantSurname (baseUrl/subDomain/empresa/postulantes/${applicantUuid}).` +
+            "\n\n" +
+            "Bolsa de Trabajo FIUBA."
         }
       ]
     ]);

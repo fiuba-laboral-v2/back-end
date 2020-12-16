@@ -59,7 +59,7 @@ describe("RejectedProfileCompanyNotificationEmailSender", () => {
             "\n" +
             `Motivo de rechazo: "${notification.moderatorMessage}"` +
             "\n\n" +
-            "Bolsa de Trabajo FIUBA"
+            "Bolsa de Trabajo FIUBA."
         }
       ]
     ]);

@@ -64,7 +64,7 @@ describe("RejectedProfileApplicantNotificationEmailSender", () => {
             "\n" +
             "Para mas detalles se puede responder a este email." +
             "\n\n" +
-            "Bolsa de Trabajo FIUBA"
+            "Bolsa de Trabajo FIUBA."
         }
       ]
     ]);

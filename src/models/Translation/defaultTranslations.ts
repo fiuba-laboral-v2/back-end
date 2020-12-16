@@ -532,7 +532,7 @@ export const defaultTranslations = {
       "\n" +
       'Motivo de rechazo: "<%= rejectionReason %>"' +
       "\n\n" +
-      "<%= signature %>."
+      "<%= signature %>"
   },
   approvedJobApplicationApplicantNotificationEmail: {
     subject: "Postulación a oferta de trabajo aprobada",
@@ -572,7 +572,7 @@ export const defaultTranslations = {
     body: "El perfil de la empresa '<%= companyName %>' (<%= companyLink %>) ha sido actualizado."
   },
   emailSignature: {
-    graduados: "Bolsa de Trabajo FIUBA",
-    extension: "Bolsa de Trabajo FIUBA"
+    graduados: "Bolsa de Trabajo FIUBA.",
+    extension: "Bolsa de Trabajo FIUBA."
   }
 };
