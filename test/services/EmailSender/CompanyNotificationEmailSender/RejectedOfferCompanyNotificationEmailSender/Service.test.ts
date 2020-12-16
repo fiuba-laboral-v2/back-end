@@ -49,7 +49,7 @@ describe("RejectedOfferCompanyNotificationEmailSender", () => {
           body: expect.stringContaining(
             `Tu oferta laboral ha sido rechazada: ${offer.title} (baseUrl/subDomain/empresa/ofertas/${offer.uuid}).` +
               "\n" +
-              `Motivo de rechazo: ${notification.moderatorMessage}.` +
+              `Motivo de rechazo: "${notification.moderatorMessage}"` +
               "\n\n" +
               "Bolsa de Trabajo FIUBA."
           )
