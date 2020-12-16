@@ -3,13 +3,10 @@ import { GraphQLCompany } from "../Types/GraphQLCompany";
 import { IApolloServerContext } from "$graphql/Context";
 
 import { Database } from "$config";
-import { Secretary } from "$models/Admin";
 import { IUpdateCompany } from "$models/Company/Interface";
 import { CompanyRepository } from "$models/Company";
-import {
-  AdminNotificationRepository,
-  UpdatedCompanyProfileAdminNotification
-} from "$models/AdminNotification";
+import { UpdatedCompanyProfileNotificationFactory } from "$models/Notification";
+import { AdminNotificationRepository } from "$models/AdminNotification";
 
 export const updateCurrentCompany = {
   type: GraphQLCompany,
@@ -46,16 +43,7 @@ export const updateCurrentCompany = {
   ) => {
     const company = await CompanyRepository.findByUuid(currentUser.getCompanyRole().companyUuid);
     company.set(attributes);
-    const notifications = [
-      new UpdatedCompanyProfileAdminNotification({
-        companyUuid: company.uuid,
-        secretary: Secretary.extension
-      }),
-      new UpdatedCompanyProfileAdminNotification({
-        companyUuid: company.uuid,
-        secretary: Secretary.graduados
-      })
-    ];
+    const notifications = UpdatedCompanyProfileNotificationFactory.create(company);
 
     await Database.transaction(async transaction => {
       await CompanyRepository.save(company, transaction);
