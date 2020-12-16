@@ -42,6 +42,7 @@ const GET_COMPANY_NOTIFICATIONS = gql`
           adminEmail
           isNew
           createdAt
+          secretary
           jobApplication {
             __typename
             uuid
@@ -53,6 +54,7 @@ const GET_COMPANY_NOTIFICATIONS = gql`
           adminEmail
           isNew
           createdAt
+          secretary
           offer {
             __typename
             uuid
@@ -65,6 +67,7 @@ const GET_COMPANY_NOTIFICATIONS = gql`
           moderatorMessage
           isNew
           createdAt
+          secretary
           offer {
             __typename
             uuid
@@ -76,6 +79,7 @@ const GET_COMPANY_NOTIFICATIONS = gql`
           adminEmail
           isNew
           createdAt
+          secretary
         }
         ... on ApprovedProfileCompanyNotification {
           __typename
@@ -83,6 +87,7 @@ const GET_COMPANY_NOTIFICATIONS = gql`
           adminEmail
           isNew
           createdAt
+          secretary
         }
         ... on RejectedProfileCompanyNotification {
           __typename
@@ -91,6 +96,7 @@ const GET_COMPANY_NOTIFICATIONS = gql`
           moderatorMessage
           isNew
           createdAt
+          secretary
         }
       }
       shouldFetchMore
@@ -192,6 +198,7 @@ describe("getCompanyNotifications", () => {
           const settings = await SecretarySettingsRepository.findBySecretary(secretary);
           return {
             uuid: notification.uuid,
+            secretary,
             adminEmail: settings.email,
             isNew: notification.isNew,
             createdAt: notification.createdAt?.toISOString(),
