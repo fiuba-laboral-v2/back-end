@@ -11,9 +11,11 @@ import { EmailService } from "$services/Email";
 import { CompanyRepository } from "$models/Company";
 import { AdminNotificationRepository } from "$models/AdminNotification";
 import { UserRepository } from "$models/User";
+import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
 import { TestClientGenerator } from "$generators/TestClient";
 import { AdminGenerator } from "$generators/Admin";
+import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { UUID_REGEX } from "$test/models";
 
 const UPDATE_CURRENT_COMPANY = gql`
@@ -53,7 +55,9 @@ describe("updateCurrentCompany", () => {
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
+    await SecretarySettingsRepository.truncate();
 
+    await SecretarySettingsGenerator.createDefaultSettings();
     admin = await AdminGenerator.graduados();
   });
 

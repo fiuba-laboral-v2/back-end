@@ -1,4 +1,4 @@
-import { QueryInterface, INTEGER } from "sequelize";
+import { QueryInterface, INTEGER, STRING } from "sequelize";
 
 const TABLE_NAME = "SecretarySettings";
 
@@ -13,6 +13,10 @@ export = {
       offerDurationInDays: {
         allowNull: false,
         type: INTEGER
+      },
+      email: {
+        allowNull: false,
+        type: STRING
       }
     }),
   down: (queryInterface: QueryInterface) => queryInterface.dropTable(TABLE_NAME)

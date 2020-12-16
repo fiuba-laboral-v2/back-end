@@ -41,6 +41,7 @@ describe("RejectedJobApplicationApplicantNotificationEmailSender", () => {
     const company = await CompanyRepository.create(companyAttributes);
     const adminAttributes = AdminGenerator.data(Secretary.graduados);
     const admin = await AdminRepository.create(adminAttributes);
+    const settings = await SecretarySettingsRepository.findBySecretary(admin.secretary);
     const applicantAttributes = ApplicantGenerator.data.minimum();
     const applicant = await ApplicantRepository.create(applicantAttributes);
     const jobApplication = await JobApplicationGenerator.instance.toTheCompany(company.uuid);
@@ -61,7 +62,7 @@ describe("RejectedJobApplicationApplicantNotificationEmailSender", () => {
           receiverEmails: [applicantAttributes.user.email],
           sender: {
             name: `${adminAttributes.user.name} ${adminAttributes.user.surname}`,
-            email: adminAttributes.user.email
+            email: settings.email
           },
           subject: "Postulación a oferta de trabajo rechazada",
           body: expect.stringContaining(

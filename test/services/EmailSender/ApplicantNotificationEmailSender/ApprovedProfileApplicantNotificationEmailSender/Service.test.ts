@@ -9,10 +9,12 @@ import { UserRepository } from "$models/User";
 import { ApplicantRepository } from "$models/Applicant";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
+import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { AdminRepository, Secretary } from "$models/Admin";
 
 import { ApplicantGenerator } from "$generators/Applicant";
 import { AdminGenerator } from "$generators/Admin";
+import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 
 describe("ApprovedProfileApplicantNotificationEmailSender", () => {
   const emailSendMock = jest.fn();
@@ -21,6 +23,9 @@ describe("ApprovedProfileApplicantNotificationEmailSender", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
+    await SecretarySettingsRepository.truncate();
+
+    await SecretarySettingsGenerator.createDefaultSettings();
   });
 
   beforeEach(() => {
@@ -31,6 +36,7 @@ describe("ApprovedProfileApplicantNotificationEmailSender", () => {
   it("sends an email to an applicant user that a the profile its been approved", async () => {
     const adminAttributes = AdminGenerator.data(Secretary.graduados);
     const admin = await AdminRepository.create(adminAttributes);
+    const settings = await SecretarySettingsRepository.findBySecretary(admin.secretary);
     const applicantAttributes = ApplicantGenerator.data.minimum();
     const applicant = await ApplicantRepository.create(applicantAttributes);
     const notification = new ApprovedProfileApplicantNotification({
@@ -47,7 +53,7 @@ describe("ApprovedProfileApplicantNotificationEmailSender", () => {
           receiverEmails: [applicantAttributes.user.email],
           sender: {
             name: `${adminAttributes.user.name} ${adminAttributes.user.surname}`,
-            email: adminAttributes.user.email
+            email: settings.email
           },
           subject: "Perfil aprobado",
           body:
