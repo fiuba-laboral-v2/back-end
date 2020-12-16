@@ -11,7 +11,7 @@ export = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.bulkInsert("SecretarySettings", [
       createRecord(Secretary.graduados, 15, "seblanco@fi.uba.ar"),
-      createRecord(Secretary.extension, 15, "seblanco@fi.uba.ar")
+      createRecord(Secretary.extension, 15, "fiubalaboralv2@gmail.com")
     ]);
   },
   down: (queryInterface: QueryInterface) => {
