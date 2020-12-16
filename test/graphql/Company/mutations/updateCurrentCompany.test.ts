@@ -7,6 +7,7 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
 import { Admin } from "$models";
 
+import { EmailService } from "$services/Email";
 import { CompanyRepository } from "$models/Company";
 import { AdminNotificationRepository } from "$models/AdminNotification";
 import { UserRepository } from "$models/User";
@@ -54,6 +55,10 @@ describe("updateCurrentCompany", () => {
     await UserRepository.truncate();
 
     admin = await AdminGenerator.graduados();
+  });
+
+  beforeEach(() => {
+    jest.spyOn(EmailService, "send").mockImplementation(jest.fn());
   });
 
   const performQuery = (apolloClient: TestClient, variables?: object) =>

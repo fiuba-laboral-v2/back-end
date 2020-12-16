@@ -5,6 +5,7 @@ import { IApolloServerContext } from "$graphql/Context";
 import { Database } from "$config";
 import { IUpdateCompany } from "$models/Company/Interface";
 import { CompanyRepository } from "$models/Company";
+import { EmailSenderFactory } from "$models/EmailSenderFactory";
 import {
   UpdatedCompanyProfileNotificationFactory,
   NotificationRepositoryFactory
@@ -54,6 +55,12 @@ export const updateCurrentCompany = {
         await repository.save(notification, transaction);
       }
     });
+
+    for (const notification of notifications) {
+      const emailSender = EmailSenderFactory.create(notification);
+      emailSender.send(notification);
+    }
+
     return company;
   }
 };
