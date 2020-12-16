@@ -6,7 +6,7 @@ import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { GraphQLJobApplication } from "$graphql/JobApplication/Types/GraphQLJobApplication";
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { Secretary } from "$models/Admin";
+import { AdminRepository, Secretary } from "$models/Admin";
 import { UnknownNotificationError } from "$models/Notification";
 import {
   ApplicantNotification,
@@ -153,13 +153,17 @@ describe("getApplicantNotifications", () => {
     expect(errors).toBeUndefined();
     expect(data!.getApplicantNotifications.results).toEqual(
       await Promise.all(
-        notifications.map(async notification => ({
-          uuid: notification.uuid,
-          adminEmail: (await UserRepository.findByUuid(notification.moderatorUuid)).email,
-          isNew: notification.isNew,
-          createdAt: notification.createdAt?.toISOString(),
-          ...getFields(notification)
-        }))
+        notifications.map(async notification => {
+          const { secretary } = await AdminRepository.findByUserUuid(notification.moderatorUuid);
+          const settings = await SecretarySettingsRepository.findBySecretary(secretary);
+          return {
+            uuid: notification.uuid,
+            adminEmail: settings.email,
+            isNew: notification.isNew,
+            createdAt: notification.createdAt?.toISOString(),
+            ...getFields(notification)
+          };
+        })
       )
     );
   });

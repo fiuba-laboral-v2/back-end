@@ -23,6 +23,7 @@ describe("ApprovedProfileApplicantNotificationEmailSender", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
+    await SecretarySettingsRepository.truncate();
 
     await SecretarySettingsGenerator.createDefaultSettings();
   });
