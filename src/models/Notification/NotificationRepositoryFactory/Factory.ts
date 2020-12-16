@@ -1,4 +1,8 @@
 import {
+  UpdatedCompanyProfileAdminNotification,
+  AdminNotificationRepository
+} from "$models/AdminNotification";
+import {
   NewJobApplicationCompanyNotification,
   ApprovedOfferCompanyNotification,
   RejectedOfferCompanyNotification,
@@ -18,6 +22,7 @@ import { UnknownRepositoryError } from "../Errors";
 import { Transaction } from "sequelize";
 
 const repositoryMapper = {
+  [UpdatedCompanyProfileAdminNotification.name]: AdminNotificationRepository,
   [NewJobApplicationCompanyNotification.name]: CompanyNotificationRepository,
   [ApprovedOfferCompanyNotification.name]: CompanyNotificationRepository,
   [RejectedOfferCompanyNotification.name]: CompanyNotificationRepository,

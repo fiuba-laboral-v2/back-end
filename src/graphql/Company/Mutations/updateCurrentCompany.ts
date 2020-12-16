@@ -5,8 +5,10 @@ import { IApolloServerContext } from "$graphql/Context";
 import { Database } from "$config";
 import { IUpdateCompany } from "$models/Company/Interface";
 import { CompanyRepository } from "$models/Company";
-import { UpdatedCompanyProfileNotificationFactory } from "$models/Notification";
-import { AdminNotificationRepository } from "$models/AdminNotification";
+import {
+  UpdatedCompanyProfileNotificationFactory,
+  NotificationRepositoryFactory
+} from "$models/Notification";
 
 export const updateCurrentCompany = {
   type: GraphQLCompany,
@@ -48,7 +50,8 @@ export const updateCurrentCompany = {
     await Database.transaction(async transaction => {
       await CompanyRepository.save(company, transaction);
       for (const notification of notifications) {
-        await AdminNotificationRepository.save(notification, transaction);
+        const repository = NotificationRepositoryFactory.getRepositoryFor(notification);
+        await repository.save(notification, transaction);
       }
     });
     return company;

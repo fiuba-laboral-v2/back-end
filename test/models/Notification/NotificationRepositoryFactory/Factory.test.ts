@@ -1,22 +1,36 @@
 import {
+  AdminNotificationRepository,
+  UpdatedCompanyProfileAdminNotification
+} from "$models/AdminNotification";
+import {
   ApplicantNotificationRepository,
   ApprovedJobApplicationApplicantNotification,
-  RejectedJobApplicationApplicantNotification,
   ApprovedProfileApplicantNotification,
+  RejectedJobApplicationApplicantNotification,
   RejectedProfileApplicantNotification
 } from "$models/ApplicantNotification";
 import {
-  NewJobApplicationCompanyNotification,
   ApprovedOfferCompanyNotification,
-  RejectedOfferCompanyNotification,
   ApprovedProfileCompanyNotification,
-  RejectedProfileCompanyNotification,
-  CompanyNotificationRepository
+  CompanyNotificationRepository,
+  NewJobApplicationCompanyNotification,
+  RejectedOfferCompanyNotification,
+  RejectedProfileCompanyNotification
 } from "$models/CompanyNotification";
 import { NotificationRepositoryFactory, UnknownRepositoryError } from "$models/Notification";
 import { UUID } from "$models/UUID";
+import { Secretary } from "$models/Admin";
 
 describe("NotificationRepositoryFactory", () => {
+  it("returns a AdminNotificationRepository for UpdatedCompanyProfileAdminNotification", async () => {
+    const notification = new UpdatedCompanyProfileAdminNotification({
+      secretary: Secretary.graduados,
+      companyUuid: UUID.generate()
+    });
+    const repository = NotificationRepositoryFactory.getRepositoryFor(notification);
+    expect(repository).toEqual(AdminNotificationRepository);
+  });
+
   it("returns a CompanyNotificationRepository for NewJobApplicationCompanyNotification", async () => {
     const notification = new NewJobApplicationCompanyNotification({
       moderatorUuid: UUID.generate(),
