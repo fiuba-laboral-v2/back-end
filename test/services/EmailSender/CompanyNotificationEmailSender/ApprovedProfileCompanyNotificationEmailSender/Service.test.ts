@@ -36,6 +36,7 @@ describe("ApprovedProfileCompanyNotificationEmailSender", () => {
     const company = await CompanyRepository.create(companyAttributes);
     const adminAttributes = AdminGenerator.data(Secretary.graduados);
     const admin = await AdminRepository.create(adminAttributes);
+    const settings = await SecretarySettingsRepository.findBySecretary(admin.secretary);
     const notification = new ApprovedProfileCompanyNotification({
       notifiedCompanyUuid: company.uuid,
       moderatorUuid: admin.userUuid
@@ -49,7 +50,7 @@ describe("ApprovedProfileCompanyNotificationEmailSender", () => {
           receiverEmails: [companyAttributes.user.email],
           sender: {
             name: `${adminAttributes.user.name} ${adminAttributes.user.surname}`,
-            email: adminAttributes.user.email
+            email: settings.email
           },
           subject: "Perfil aprobado",
           body:
