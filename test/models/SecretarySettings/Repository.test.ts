@@ -12,15 +12,13 @@ describe("SecretarySettingsRepository", () => {
     const secretary = Secretary.graduados;
     const secretarySettings = new SecretarySettings({
       secretary,
-      offerDurationInDays: 15
+      offerDurationInDays: 15,
+      email: "graduados@fi.uba.ar"
     });
     await SecretarySettingsRepository.save(secretarySettings);
-    const savedSecretarySettings = (await SecretarySettingsRepository.findBySecretary(secretary))!;
+    const savedSecretarySettings = await SecretarySettingsRepository.findBySecretary(secretary);
 
-    expect({
-      secretary: savedSecretarySettings.secretary,
-      offerDurationInDays: savedSecretarySettings.offerDurationInDays
-    }).toEqual({
+    expect(savedSecretarySettings).toBeObjectContaining({
       secretary: secretarySettings.secretary,
       offerDurationInDays: secretarySettings.offerDurationInDays
     });
@@ -30,7 +28,8 @@ describe("SecretarySettingsRepository", () => {
     const secretary = Secretary.extension;
     const attributes = {
       secretary,
-      offerDurationInDays: 15
+      offerDurationInDays: 15,
+      email: "graduados@fi.uba.ar"
     };
     const secretarySettings = new SecretarySettings(attributes);
     const existentSecretarySettings = new SecretarySettings(attributes);
@@ -59,12 +58,13 @@ describe("SecretarySettingsRepository", () => {
     );
   });
 
-  it("deletes all notifications if JobApplications table is truncated", async () => {
+  it("deletes all settings if the table is truncated", async () => {
     await SecretarySettingsRepository.truncate();
     await SecretarySettingsRepository.save(
       new SecretarySettings({
         secretary: Secretary.graduados,
-        offerDurationInDays: 15
+        offerDurationInDays: 15,
+        email: "graduados@fi.uba.ar"
       })
     );
     expect(await SecretarySettings.findAll()).toHaveLength(1);

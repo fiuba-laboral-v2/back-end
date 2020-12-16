@@ -9,6 +9,7 @@ import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 import { Admin } from "$models";
 import { UserRepository } from "$models/User";
+import { AdminRepository } from "$models/Admin";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { ApprovalStatus } from "$models/ApprovalStatus";
@@ -182,16 +183,21 @@ describe("getCompanyNotifications", () => {
     const size = 5;
     const notifications = await CompanyNotificationGenerator.instance.range({ company, size });
     const { data, errors } = await performQuery(apolloClient);
+
     expect(errors).toBeUndefined();
     expect(data!.getCompanyNotifications.results).toEqual(
       await Promise.all(
-        notifications.map(async notification => ({
-          uuid: notification.uuid,
-          adminEmail: (await UserRepository.findByUuid(notification.moderatorUuid)).email,
-          isNew: notification.isNew,
-          createdAt: notification.createdAt?.toISOString(),
-          ...getFields(notification)
-        }))
+        notifications.map(async notification => {
+          const { secretary } = await AdminRepository.findByUserUuid(notification.moderatorUuid);
+          const settings = await SecretarySettingsRepository.findBySecretary(secretary);
+          return {
+            uuid: notification.uuid,
+            adminEmail: settings.email,
+            isNew: notification.isNew,
+            createdAt: notification.createdAt?.toISOString(),
+            ...getFields(notification)
+          };
+        })
       )
     );
   });

@@ -3,7 +3,7 @@ import { ID, nonNull, String, Boolean } from "$graphql/fieldTypes";
 import { AdminRepository } from "$models/Admin";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
-export const GraphQLGenericCompanyNotificationFields = {
+export const GraphQLGenericApplicantNotificationFields = {
   uuid: {
     type: nonNull(ID)
   },

@@ -28,6 +28,7 @@ describe("NewJobApplicationCompanyNotificationEmailSender", () => {
     const company = await CompanyRepository.create(companyAttributes);
     const adminAttributes = AdminGenerator.data(Secretary.graduados);
     const admin = await AdminRepository.create(adminAttributes);
+    const settings = await SecretarySettingsRepository.findBySecretary(admin.secretary);
     const notification = await CompanyNotificationGenerator.instance.newJobApplication({
       company,
       admin
@@ -45,7 +46,7 @@ describe("NewJobApplicationCompanyNotificationEmailSender", () => {
           receiverEmails: [companyAttributes.user.email],
           sender: {
             name: `${adminAttributes.user.name} ${adminAttributes.user.surname}`,
-            email: adminAttributes.user.email
+            email: settings.email
           },
           subject: "Nueva postulación a tu oferta laboral",
           body: expect.stringContaining(

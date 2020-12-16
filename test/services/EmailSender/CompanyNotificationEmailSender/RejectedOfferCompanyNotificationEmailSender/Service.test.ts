@@ -29,6 +29,7 @@ describe("RejectedOfferCompanyNotificationEmailSender", () => {
     const company = await CompanyRepository.create(companyAttributes);
     const adminAttributes = AdminGenerator.data(Secretary.graduados);
     const admin = await AdminRepository.create(adminAttributes);
+    const settings = await SecretarySettingsRepository.findBySecretary(admin.secretary);
     const notification = await generator({ company, admin });
     const offer = await OfferRepository.findByUuid(notification.offerUuid);
 
@@ -42,13 +43,13 @@ describe("RejectedOfferCompanyNotificationEmailSender", () => {
           receiverEmails: [companyAttributes.user.email],
           sender: {
             name: `${adminAttributes.user.name} ${adminAttributes.user.surname}`,
-            email: adminAttributes.user.email
+            email: settings.email
           },
           subject: "Oferta laboral rechazada",
           body: expect.stringContaining(
             `Tu oferta laboral ha sido rechazada: ${offer.title} (baseUrl/subDomain/empresa/ofertas/${offer.uuid}).` +
               "\n" +
-              `Motivo: ${notification.moderatorMessage}.` +
+              `Motivo de rechazo: ${notification.moderatorMessage}.` +
               "\n\n" +
               "Bolsa de Trabajo FIUBA."
           )

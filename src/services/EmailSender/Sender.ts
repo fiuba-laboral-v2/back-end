@@ -1,10 +1,14 @@
 import { UserRepository } from "$models/User";
+import { AdminRepository } from "$models/Admin";
+import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
 export const Sender = {
   findByAdmin: async (adminUserUuid: string) => {
     const sender = await UserRepository.findByUuid(adminUserUuid);
+    const admin = await AdminRepository.findByUserUuid(adminUserUuid);
+    const settings = await SecretarySettingsRepository.findBySecretary(admin.secretary);
     return {
-      email: sender.email,
+      email: settings.email,
       name: `${sender.name} ${sender.surname}`
     };
   },
