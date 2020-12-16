@@ -361,7 +361,7 @@ export const defaultTranslations = {
     reject: "Rechazar",
     confirmDialogDescription: "Se va a notificar por email a quien(es) corresponda.",
     confirmDialogCancel: "Seguir revisando",
-    rejectReasonLabel: "Motivo"
+    rejectReasonLabel: "Motivo de rechazo"
   },
   adminApplicantListHeader: {
     names: "Nombre y Apellido",
@@ -490,7 +490,7 @@ export const defaultTranslations = {
     title: "Perfil de empresa actualizado"
   },
   rejectionReason: {
-    reason: "Motivo",
+    reason: "Motivo de rechazo",
     contactModerator: "Contactar moderador/a"
   },
   isNewLabel: {
@@ -521,7 +521,7 @@ export const defaultTranslations = {
     body:
       "El perfil de tu empresa ha sido rechazado: (<%= profileLink %>)." +
       "\n" +
-      "Motivo: <%= rejectionReason %>." +
+      "Motivo de rechazo: <%= rejectionReason %>." +
       "\n\n" +
       "<%= signature %>"
   },
@@ -530,7 +530,7 @@ export const defaultTranslations = {
     body:
       "Tu oferta laboral ha sido rechazada: <%= offerTitle %> (<%= offerLink %>)." +
       "\n" +
-      "Motivo: <%= rejectionReason %>." +
+      "Motivo de rechazo: <%= rejectionReason %>." +
       "\n\n" +
       "<%= signature %>."
   },
@@ -546,7 +546,7 @@ export const defaultTranslations = {
     body:
       "Tu postulación a la oferta de trabajo: <%= offerTitle %> (<%= offerLink %>) ha sido rechazada." +
       "\n" +
-      "Motivo: <%= rejectionReason %>" +
+      "Motivo de rechazo: <%= rejectionReason %>" +
       "\n" +
       "Para mas detalles se puede responder a este email" +
       "\n\n" +
@@ -561,7 +561,7 @@ export const defaultTranslations = {
     body:
       "Tu perfil ha sido rechazado: (<%= profileLink %>)." +
       "\n" +
-      "Motivo: <%= rejectionReason %>." +
+      "Motivo de rechazo: <%= rejectionReason %>." +
       "\n" +
       "Para mas detalles se puede responder a este email." +
       "\n\n" +
