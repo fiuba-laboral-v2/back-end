@@ -458,7 +458,9 @@ export const defaultTranslations = {
     title: "Nueva postulación"
   },
   approvedOfferCompanyNotification: {
-    title: "Oferta aprobada"
+    title: "Oferta aprobada",
+    forGraduates: "para graduados/as",
+    forStudents: "para alumnos/as"
   },
   rejectedOfferCompanyNotification: {
     title: "Oferta rechazada",
