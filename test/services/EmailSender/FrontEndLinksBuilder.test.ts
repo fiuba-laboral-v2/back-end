@@ -25,4 +25,9 @@ describe("FrontEndLinksBuilder", () => {
     const link = FrontEndLinksBuilder.applicant.offerLink("uuid");
     expect(link).toEqual("baseUrl/subDomain/postulante/ofertas/uuid");
   });
+
+  it("builds the company profile link for an admin", () => {
+    const link = FrontEndLinksBuilder.admin.company.profileLink("uuid");
+    expect(link).toEqual("baseUrl/subDomain/admin/empresas/uuid");
+  });
 });

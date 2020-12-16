@@ -17,5 +17,11 @@ export const FrontEndLinksBuilder = {
     profileLink: () => `${buildBaseUrl()}/${FrontendConfig.endpoints.applicant.profile()}`,
     offerLink: (uuid: string) =>
       `${buildBaseUrl()}/${FrontendConfig.endpoints.applicant.offer(uuid)}`
+  },
+  admin: {
+    company: {
+      profileLink: (uuid: string) =>
+        `${buildBaseUrl()}/${FrontendConfig.endpoints.admin.company.profile(uuid)}`
+    }
   }
 };
