@@ -65,7 +65,7 @@ describe("ApprovedJobApplicationApplicantNotificationEmailSender", () => {
           },
           subject: "Postulación a oferta de trabajo aprobada",
           body:
-            `Tu postulación a la oferta de trabajo: ${offer.title} (baseUrl/subDomain/postulante/ofertas/${offer.uuid}) ha sido aprobada. Se envió una notificación a la empresa` +
+            `Tu postulación a la oferta de trabajo: ${offer.title} (baseUrl/subDomain/postulante/ofertas/${offer.uuid}) ha sido aprobada. Se envió una notificación a la empresa.` +
             "\n\n" +
             `Bolsa de Trabajo FIUBA.`
         }

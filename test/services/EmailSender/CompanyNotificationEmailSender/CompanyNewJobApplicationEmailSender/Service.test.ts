@@ -53,7 +53,7 @@ describe("NewJobApplicationCompanyNotificationEmailSender", () => {
           },
           subject: "Nueva postulación a tu oferta laboral",
           body:
-            `Nueva postulación a tu oferta laboral: ${offer.title} (baseUrl/subDomain/empresa/ofertas/${offerUuid})` +
+            `Nueva postulación a tu oferta laboral: ${offer.title} (baseUrl/subDomain/empresa/ofertas/${offerUuid}).` +
             "\n" +
             `Postulante: applicantName applicantSurname (baseUrl/subDomain/empresa/postulantes/${applicantUuid}).` +
             "\n\n" +

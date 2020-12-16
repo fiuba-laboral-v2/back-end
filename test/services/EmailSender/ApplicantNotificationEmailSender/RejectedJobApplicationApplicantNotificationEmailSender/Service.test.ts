@@ -70,7 +70,7 @@ describe("RejectedJobApplicationApplicantNotificationEmailSender", () => {
             "\n" +
             `Motivo de rechazo: "${notification.moderatorMessage}"` +
             "\n" +
-            "Para mas detalles se puede responder a este email" +
+            "Para mas detalles se puede responder a este email." +
             "\n\n" +
             "Bolsa de Trabajo FIUBA."
         }

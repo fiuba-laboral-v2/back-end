@@ -499,7 +499,7 @@ export const defaultTranslations = {
   newJobApplicationCompanyNotificationEmail: {
     subject: "Nueva postulación a tu oferta laboral",
     body:
-      "Nueva postulación a tu oferta laboral: <%= offerTitle %> (<%= offerLink %>)" +
+      "Nueva postulación a tu oferta laboral: <%= offerTitle %> (<%= offerLink %>)." +
       "\n" +
       "Postulante: <%= applicantName %> (<%= applicantLink %>)." +
       "\n\n" +
@@ -508,7 +508,7 @@ export const defaultTranslations = {
   approvedOfferCompanyNotificationEmail: {
     subject: "Oferta laboral aprobada",
     body:
-      "Tu oferta laboral ha sido aprobada: <%= offerTitle %> (<%= offerLink %>)" +
+      "Tu oferta laboral ha sido aprobada: <%= offerTitle %> (<%= offerLink %>)." +
       "\n\n" +
       "<%= signature %>"
   },
@@ -537,7 +537,7 @@ export const defaultTranslations = {
   approvedJobApplicationApplicantNotificationEmail: {
     subject: "Postulación a oferta de trabajo aprobada",
     body:
-      "Tu postulación a la oferta de trabajo: <%= offerTitle %> (<%= offerLink %>) ha sido aprobada. Se envió una notificación a la empresa" +
+      "Tu postulación a la oferta de trabajo: <%= offerTitle %> (<%= offerLink %>) ha sido aprobada. Se envió una notificación a la empresa." +
       "\n\n" +
       "<%= signature %>"
   },
@@ -548,7 +548,7 @@ export const defaultTranslations = {
       "\n" +
       'Motivo de rechazo: "<%= rejectionReason %>"' +
       "\n" +
-      "Para mas detalles se puede responder a este email" +
+      "Para mas detalles se puede responder a este email." +
       "\n\n" +
       "<%= signature %>"
   },
