@@ -1,8 +1,15 @@
 import { List, String } from "$graphql/fieldTypes";
-import { CompanyRepository } from "$models/Company";
 import { GraphQLCompany } from "../Types/GraphQLCompany";
-import { IUpdateCompany } from "$models/Company/Interface";
 import { IApolloServerContext } from "$graphql/Context";
+
+import { Database } from "$config";
+import { IUpdateCompany } from "$models/Company/Interface";
+import { CompanyRepository } from "$models/Company";
+import { EmailSenderFactory } from "$models/EmailSenderFactory";
+import {
+  UpdatedCompanyProfileNotificationFactory,
+  NotificationRepositoryFactory
+} from "$models/Notification";
 
 export const updateCurrentCompany = {
   type: GraphQLCompany,
@@ -32,9 +39,28 @@ export const updateCurrentCompany = {
       type: List(String)
     }
   },
-  resolve: (
+  resolve: async (
     _: undefined,
-    attributes: Omit<IUpdateCompany, "uuid">,
+    { phoneNumbers, photos, ...attributes }: IUpdateCompany,
     { currentUser }: IApolloServerContext
-  ) => CompanyRepository.update({ uuid: currentUser.getCompanyRole().companyUuid, ...attributes })
+  ) => {
+    const company = await CompanyRepository.findByUuid(currentUser.getCompanyRole().companyUuid);
+    company.set(attributes);
+    const notifications = UpdatedCompanyProfileNotificationFactory.create(company);
+
+    await Database.transaction(async transaction => {
+      await CompanyRepository.save(company, transaction);
+      for (const notification of notifications) {
+        const repository = NotificationRepositoryFactory.getRepositoryFor(notification);
+        await repository.save(notification, transaction);
+      }
+    });
+
+    for (const notification of notifications) {
+      const emailSender = EmailSenderFactory.create(notification);
+      emailSender.send(notification);
+    }
+
+    return company;
+  }
 };

@@ -15,7 +15,6 @@ export interface ICompany {
 }
 
 export interface IUpdateCompany {
-  uuid: string;
   cuit?: string;
   companyName?: string;
   businessName?: string;
