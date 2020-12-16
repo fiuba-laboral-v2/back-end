@@ -8,10 +8,12 @@ import { Secretary } from "$models/Admin";
 import { Admin } from "$models";
 
 import { CompanyRepository } from "$models/Company";
+import { AdminNotificationRepository } from "$models/AdminNotification";
 import { UserRepository } from "$models/User";
 
 import { TestClientGenerator } from "$generators/TestClient";
 import { AdminGenerator } from "$generators/Admin";
+import { UUID_REGEX } from "$test/models";
 
 const UPDATE_CURRENT_COMPANY = gql`
   mutation(
@@ -100,6 +102,56 @@ describe("updateCurrentCompany", () => {
     const { apolloClient } = await createCompanyTestClient(ApprovalStatus.approved);
     const { errors } = await performQuery(apolloClient, { companyName: "Devartis SA" });
     expect(errors).toBeUndefined();
+  });
+
+  describe("Notifications", () => {
+    beforeEach(() => AdminNotificationRepository.truncate());
+
+    it("creates one notifications for graduados and another one for extension", async () => {
+      const { apolloClient } = await createCompanyTestClient(ApprovalStatus.approved);
+      await performQuery(apolloClient, { companyName: "Devartis SA" });
+      const extensionNotifications = await AdminNotificationRepository.findLatestBySecretary({
+        secretary: Secretary.extension
+      });
+      const graduadosNotifications = await AdminNotificationRepository.findLatestBySecretary({
+        secretary: Secretary.graduados
+      });
+
+      expect(extensionNotifications.shouldFetchMore).toBe(false);
+      expect(extensionNotifications.results).toHaveLength(1);
+
+      expect(graduadosNotifications.shouldFetchMore).toBe(false);
+      expect(graduadosNotifications.results).toHaveLength(1);
+    });
+
+    it("creates the  notifications with the correct attributes", async () => {
+      const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
+      await performQuery(apolloClient, { companyName: "Devartis SA" });
+      const extensionNotifications = await AdminNotificationRepository.findLatestBySecretary({
+        secretary: Secretary.extension
+      });
+      const graduadosNotifications = await AdminNotificationRepository.findLatestBySecretary({
+        secretary: Secretary.graduados
+      });
+      expect(extensionNotifications.results).toEqual([
+        {
+          uuid: expect.stringMatching(UUID_REGEX),
+          secretary: Secretary.extension,
+          companyUuid: company.uuid,
+          isNew: true,
+          createdAt: expect.any(Date)
+        }
+      ]);
+      expect(graduadosNotifications.results).toEqual([
+        {
+          uuid: expect.stringMatching(UUID_REGEX),
+          secretary: Secretary.graduados,
+          companyUuid: company.uuid,
+          isNew: true,
+          createdAt: expect.any(Date)
+        }
+      ]);
+    });
   });
 
   it("throws an error if there is no current user", async () => {
