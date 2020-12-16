@@ -1,29 +1,32 @@
+import { UpdatedCompanyProfileAdminNotification } from "$models/AdminNotification";
 import {
   ApprovedJobApplicationApplicantNotification,
-  RejectedJobApplicationApplicantNotification,
   ApprovedProfileApplicantNotification,
+  RejectedJobApplicationApplicantNotification,
   RejectedProfileApplicantNotification
 } from "$models/ApplicantNotification";
 import {
-  NewJobApplicationCompanyNotification,
   ApprovedOfferCompanyNotification,
-  RejectedOfferCompanyNotification,
   ApprovedProfileCompanyNotification,
+  NewJobApplicationCompanyNotification,
+  RejectedOfferCompanyNotification,
   RejectedProfileCompanyNotification
 } from "$models/CompanyNotification";
 import { EmailSenderFactory, UnknownEmailSenderError } from "$models/EmailSenderFactory";
 import {
-  NewJobApplicationCompanyNotificationEmailSender,
-  ApprovedOfferCompanyNotificationEmailSender,
-  RejectedOfferCompanyNotificationEmailSender,
   ApprovedJobApplicationApplicantNotificationEmailSender,
-  RejectedJobApplicationApplicantNotificationEmailSender,
+  ApprovedOfferCompanyNotificationEmailSender,
   ApprovedProfileApplicantNotificationEmailSender,
-  RejectedProfileApplicantNotificationEmailSender,
   ApprovedProfileCompanyNotificationEmailSender,
-  RejectedProfileCompanyNotificationEmailSender
+  NewJobApplicationCompanyNotificationEmailSender,
+  RejectedJobApplicationApplicantNotificationEmailSender,
+  RejectedOfferCompanyNotificationEmailSender,
+  RejectedProfileApplicantNotificationEmailSender,
+  RejectedProfileCompanyNotificationEmailSender,
+  UpdatedCompanyProfileAdminNotificationEmailSender
 } from "$services/EmailSender";
 import { UUID } from "$models/UUID";
+import { Secretary } from "$models/Admin";
 
 describe("EmailSenderFactory", () => {
   it("returns a NewJobApplicationCompanyNotificationEmailSender", async () => {
@@ -114,6 +117,15 @@ describe("EmailSenderFactory", () => {
     });
     const emailSender = EmailSenderFactory.create(notification);
     expect(emailSender).toBe(RejectedProfileCompanyNotificationEmailSender);
+  });
+
+  it("returns a UpdatedCompanyProfileAdminNotificationEmailSender", async () => {
+    const notification = new UpdatedCompanyProfileAdminNotification({
+      companyUuid: UUID.generate(),
+      secretary: Secretary.graduados
+    });
+    const emailSender = EmailSenderFactory.create(notification);
+    expect(emailSender).toBe(UpdatedCompanyProfileAdminNotificationEmailSender);
   });
 
   it("throws an error if the factory does not know how to handle the given class", async () => {
