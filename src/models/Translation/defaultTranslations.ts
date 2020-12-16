@@ -490,7 +490,7 @@ export const defaultTranslations = {
     title: "Perfil de empresa actualizado"
   },
   rejectionReason: {
-    reason: "Motivo",
+    reason: "Motivo de rechazo",
     contactModerator: "Contactar moderador/a"
   },
   isNewLabel: {
