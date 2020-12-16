@@ -48,7 +48,7 @@ describe("UpdatedCompanyProfileAdminNotificationEmailSender", () => {
             name: "No contestar a este correo"
           },
           subject: "Perfil de empresa actualizado",
-          body: `El perfil de una empresa ha sido actualizado: (baseUrl/subDomain/admin/empresas/${company.uuid}).`
+          body: `El perfil de la empresa '${company.companyName}' (baseUrl/subDomain/admin/empresas/${company.uuid}) ha sido actualizado.`
         }
       ]
     ]);

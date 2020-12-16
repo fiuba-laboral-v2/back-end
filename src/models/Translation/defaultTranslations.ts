@@ -569,7 +569,7 @@ export const defaultTranslations = {
   },
   updatedCompanyProfileAdminNotificationEmail: {
     subject: "Perfil de empresa actualizado",
-    body: "El perfil de una empresa ha sido actualizado: (<%= companyLink %>)."
+    body: "El perfil de la empresa '<%= companyName %>' (<%= companyLink %>) ha sido actualizado."
   },
   emailSignature: {
     graduados: "Bolsa de Trabajo FIUBA",
