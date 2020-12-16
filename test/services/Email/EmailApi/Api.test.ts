@@ -54,52 +54,50 @@ describe("EmailApi", () => {
   afterEach(() => fetchMock.restore());
 
   it("sends an email successfully", async () => {
-    // jest.spyOn(Environment.emailApi, "applicationID").mockImplementation(() => "application_id");
-    // jest.spyOn(Environment.emailApi, "password").mockImplementation(() => "myVerySecretPassword");
-    // const params = {
-    //   sender: {
-    //     name: "The Other Sender",
-    //     email: "othersender@mail.com"
-    //   },
-    //   receiverEmails: ["goodbye@world.com", "world@goodbye.com"],
-    //   subject: "Goodbye world",
-    //   body: "Goodbye world!"
-    // };
-    // mockFetch({
-    //   request: `
-    //     <soapenv:Envelope
-    //       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    //       xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-    //       xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-    //       xmlns:misc="https://services.fi.uba.ar/misc.php"
-    //       xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
-    //     >
-    //       <soapenv:Header/>
-    //       <soapenv:Body>
-    //         <misc:SendMail_safe
-    //           soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
-    //         >
-    //           <aplic_id xsi:type="xsd:string">application_id</aplic_id>
-    //           <password xsi:type="xsd:string">myVerySecretPassword</password>
-    //           <from xsi:type="misc:InfoRemitente">
-    //             <nombre xsi:type="xsd:string">${params.sender.name}</nombre>
-    //             <email xsi:type="xsd:string">${params.sender.email}</email>
-    //           </from>
-    //           <to xsi:type="misc:ArrayOfString" soapenc:arrayType="xsd:string[]">
-    //             ${params.receiverEmails.map(email => `<item>${email}</item>`).join("\n")}
-    //           </to>
-    //           <subject xsi:type="xsd:string">${params.subject}</subject>
-    //           <htmlbody xsi:type="xsd:string">
-    //             PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVzIj4KICA8aGVhZD4KICAgIDxtZXRhIGNoYXJzZXQ9InV0Zi04Ij4KICAgIDx0aXRsZT5Hb29kYnllIHdvcmxkPC90aXRsZT4KICAgIDxzdHlsZT4KICAgICAgYm9keSB7CiAgICAgICAgd2hpdGUtc3BhY2U6IHByZS13cmFwOwogICAgICB9CiAgICA8L3N0eWxlPgogIDwvaGVhZD4KICA8Ym9keT5Hb29kYnllIHdvcmxkITwvYm9keT4KPC9odG1sPg==
-    //           </htmlbody>
-    //           <altbody xsi:type="xsd:string">R29vZGJ5ZSB3b3JsZCE=</altbody>
-    //         </misc:SendMail_safe>
-    //       </soapenv:Body>
-    //     </soapenv:Envelope>
-    //   `.trim(),
-    //   response: { status: 200, body: responseBody({ success: true }) }
-    // });
-    // await expect(EmailApi.send(params)).resolves.not.toThrow();
+    jest.spyOn(Environment.emailApi, "applicationID").mockImplementation(() => "application_id");
+    jest.spyOn(Environment.emailApi, "password").mockImplementation(() => "myVerySecretPassword");
+    const params = {
+      sender: {
+        name: "The Other Sender",
+        email: "othersender@mail.com"
+      },
+      receiverEmails: ["goodbye@world.com", "world@goodbye.com"],
+      subject: "Goodbye world",
+      body: "Goodbye world!\nGreetings"
+    };
+    mockFetch({
+      request: `
+        <soapenv:Envelope
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+          xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+          xmlns:misc="https://services.fi.uba.ar/misc.php"
+          xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+        >
+          <soapenv:Header/>
+          <soapenv:Body>
+            <misc:SendMail_safe
+              soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+            >
+              <aplic_id xsi:type="xsd:string">application_id</aplic_id>
+              <password xsi:type="xsd:string">myVerySecretPassword</password>
+              <from xsi:type="misc:InfoRemitente">
+                <nombre xsi:type="xsd:string">${params.sender.name}</nombre>
+                <email xsi:type="xsd:string">${params.sender.email}</email>
+              </from>
+              <to xsi:type="misc:ArrayOfString" soapenc:arrayType="xsd:string[]">
+                ${params.receiverEmails.map(email => `<item>${email}</item>`).join("\n")}
+              </to>
+              <subject xsi:type="xsd:string">${params.subject}</subject>
+              <htmlbody xsi:type="xsd:string">R29vZGJ5ZSB3b3JsZCE8YnI+R3JlZXRpbmdz</htmlbody>
+              <altbody xsi:type="xsd:string">R29vZGJ5ZSB3b3JsZCEKR3JlZXRpbmdz</altbody>
+            </misc:SendMail_safe>
+          </soapenv:Body>
+        </soapenv:Envelope>
+      `.trim(),
+      response: { status: 200, body: responseBody({ success: true }) }
+    });
+    await expect(EmailApi.send(params)).resolves.not.toThrow();
   });
 
   it(`throws error when the API returns false,
