@@ -9,7 +9,7 @@ export const Sender = {
     };
   },
   noReply: () => ({
-    email: "bolsa.de.trabajo.notify@fi.uba.ar",
-    name: "No contestar a este correo"
+    email: "no-reply@fi.uba.ar",
+    name: "[No responder] Bolsa de Trabajo FIUBA"
   })
 };

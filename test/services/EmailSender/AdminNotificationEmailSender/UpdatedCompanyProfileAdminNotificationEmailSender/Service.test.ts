@@ -44,8 +44,8 @@ describe("UpdatedCompanyProfileAdminNotificationEmailSender", () => {
         {
           receiverEmails: [""],
           sender: {
-            email: "bolsa.de.trabajo.notify@fi.uba.ar",
-            name: "No contestar a este correo"
+            email: "no-reply@fi.uba.ar",
+            name: "[No responder] Bolsa de Trabajo FIUBA"
           },
           subject: "Perfil de empresa actualizado",
           body: `El perfil de la empresa '${company.companyName}' (baseUrl/subDomain/admin/empresas/${company.uuid}) ha sido actualizado.`
