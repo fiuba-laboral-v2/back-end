@@ -1,6 +1,7 @@
 import { GraphQLDateTime } from "graphql-iso-date";
 import { ID, nonNull, String, Boolean } from "$graphql/fieldTypes";
-import { UserRepository } from "$models/User";
+import { AdminRepository } from "$models/Admin";
+import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
 export const GraphQLGenericCompanyNotificationFields = {
   uuid: {
@@ -15,8 +16,9 @@ export const GraphQLGenericCompanyNotificationFields = {
   adminEmail: {
     type: nonNull(String),
     resolve: async notification => {
-      const user = await UserRepository.findByUuid(notification.moderatorUuid);
-      return user.email;
+      const admin = await AdminRepository.findByUserUuid(notification.moderatorUuid);
+      const settings = await SecretarySettingsRepository.findBySecretary(admin.secretary);
+      return settings.email;
     }
   }
 };
