@@ -461,7 +461,9 @@ export const defaultTranslations = {
     title: "Oferta aprobada"
   },
   rejectedOfferCompanyNotification: {
-    title: "Oferta rechazada"
+    title: "Oferta rechazada",
+    forGraduates: "para graduados/as",
+    forStudents: "para alumnos/as"
   },
   approvedProfileCompanyNotification: {
     title: "Perfil aprobado"
