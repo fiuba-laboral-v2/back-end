@@ -7,5 +7,9 @@ export const Sender = {
       email: sender.email,
       name: `${sender.name} ${sender.surname}`
     };
-  }
+  },
+  noReply: () => ({
+    email: "bolsa.de.trabajo.notify@fi.uba.ar",
+    name: "No contestar a este correo"
+  })
 };
