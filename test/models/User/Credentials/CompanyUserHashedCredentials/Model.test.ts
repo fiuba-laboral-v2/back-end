@@ -1,12 +1,11 @@
 import { CompanyUserHashedCredentials } from "$models/User/Credentials";
-import { CompanyUserRawCredentials } from "$models/User/Credentials";
 import { AttributeNotDefinedError } from "$models/Errors";
-import { hashSync } from "bcrypt";
+import { PasswordEncryptor } from "$libs/PasswordEncryptor";
 
 describe("CompanyUserHashedCredentials", () => {
   const secretPassword = "somethingVerySecret123";
   const mandatoryAttributes = {
-    password: hashSync(secretPassword, CompanyUserRawCredentials.bcryptSaltOrRounds)
+    password: PasswordEncryptor.encrypt(secretPassword)
   };
 
   it("creates a valid CompanyUserHashedCredentials", () => {

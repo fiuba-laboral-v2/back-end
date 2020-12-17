@@ -1,5 +1,5 @@
 import { isNil } from "lodash";
-import { compare } from "bcrypt";
+import { PasswordEncryptor } from "$libs/PasswordEncryptor";
 import { ICredentials } from "../../Interface";
 import { AttributeNotDefinedError } from "$models/Errors";
 
@@ -11,7 +11,7 @@ export class CompanyUserHashedCredentials implements ICredentials {
   }
 
   public authenticate(password: string) {
-    return compare(password, this.password);
+    return PasswordEncryptor.authenticate(password, this.password);
   }
 
   private setPassword(password: string) {
