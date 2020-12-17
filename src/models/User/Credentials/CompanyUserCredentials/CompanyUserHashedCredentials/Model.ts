@@ -1,19 +1,13 @@
 import { isNil } from "lodash";
-import { PasswordEncryptor } from "$libs/PasswordEncryptor";
-import { ICredentials } from "../../Interface";
 import { AttributeNotDefinedError } from "$models/Errors";
-import { BadCredentialsError } from "../../Errors";
+import { CompanyUserCredentials } from "../Model";
 
-export class CompanyUserHashedCredentials implements ICredentials {
+export class CompanyUserHashedCredentials extends CompanyUserCredentials {
   public password: string;
 
   constructor(attributes: ICompanyUserHashedCredentialsAttributes) {
+    super();
     this.setPassword(attributes.password);
-  }
-
-  public async authenticate(password: string) {
-    const isValid = await PasswordEncryptor.passwordMatches(password, this.password);
-    if (!isValid) throw new BadCredentialsError();
   }
 
   private setPassword(password: string) {

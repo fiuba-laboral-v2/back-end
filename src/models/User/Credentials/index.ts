@@ -1,3 +1,2 @@
-export * from "./CompanyUserHashedCredentials";
-export * from "./CompanyUserRawCredentials";
+export * from "./CompanyUserCredentials";
 export * from "./FiubaCredentials";

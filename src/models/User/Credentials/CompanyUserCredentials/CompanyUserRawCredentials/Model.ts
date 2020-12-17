@@ -1,20 +1,15 @@
 import { isNil } from "lodash";
-import { ICredentials } from "../../Interface";
 import { AttributeNotDefinedError } from "$models/Errors";
 import { validatePassword } from "validations-fiuba-laboral-v2";
 import { PasswordEncryptor } from "$libs/PasswordEncryptor";
-import { BadCredentialsError } from "../../Errors";
+import { CompanyUserCredentials } from "../Model";
 
-export class CompanyUserRawCredentials implements ICredentials {
+export class CompanyUserRawCredentials extends CompanyUserCredentials {
   public password: string;
 
   constructor(attributes: ICompanyUserRawCredentialsAttributes) {
+    super();
     this.setPassword(attributes.password);
-  }
-
-  public async authenticate(password: string) {
-    const isValid = await PasswordEncryptor.passwordMatches(password, this.password);
-    if (!isValid) throw new BadCredentialsError();
   }
 
   private setPassword(password: string) {
