@@ -1,6 +1,9 @@
 import { User } from "$models/User";
-import { CompanyUserRawCredentials } from "$models/User/Credentials/CompanyUserRawCredentials";
-import { FiubaCredentials } from "$models/User/Credentials/FiubaCredentials";
+import {
+  FiubaCredentials,
+  CompanyUserRawCredentials,
+  CompanyUserHashedCredentials
+} from "$models/User/Credentials";
 import { AttributeNotDefinedError, InvalidAttributeFormatError } from "$models/Errors";
 import { UUID } from "$models/UUID";
 import {
@@ -26,9 +29,17 @@ describe("User", () => {
     );
   };
 
-  it("creates a valid User with companyUserCredentials", () => {
+  it("creates a valid User with CompanyUserRawCredentials", () => {
     const fiubaUser = new User(mandatoryAttributes);
     expect(fiubaUser).toEqual(mandatoryAttributes);
+  });
+
+  it("creates a valid User with CompanyUserHashedCredentials", () => {
+    const hashedPassword = "$2b$10$KrYD1NqSyMabjPoZu2UZS.ZI5/5CN5cjQ/5FQhGCbsyhuUClkdU/q";
+    const credentials = new CompanyUserHashedCredentials({ password: hashedPassword });
+    const attributes = { ...mandatoryAttributes, credentials };
+    const fiubaUser = new User(attributes);
+    expect(fiubaUser).toEqual(attributes);
   });
 
   it("creates a valid User with FiubaCredentials", () => {
