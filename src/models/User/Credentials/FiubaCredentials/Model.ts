@@ -2,7 +2,7 @@ import { isNil } from "lodash";
 import { ICredentials } from "../../Interface";
 import { FiubaUsersService } from "$services";
 import { AttributeNotDefinedError } from "$models/Errors";
-import { BadCredentialsError } from "$graphql/User/Errors";
+import { BadCredentialsError } from "../../Errors";
 
 export class FiubaCredentials implements ICredentials {
   public dni: string;

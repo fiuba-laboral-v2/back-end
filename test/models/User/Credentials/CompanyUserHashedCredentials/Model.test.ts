@@ -1,7 +1,7 @@
 import { CompanyUserHashedCredentials } from "$models/User/Credentials";
+import { BadCredentialsError } from "$models/User";
 import { AttributeNotDefinedError } from "$models/Errors";
 import { PasswordEncryptor } from "$libs/PasswordEncryptor";
-import { BadCredentialsError } from "$graphql/User/Errors";
 
 describe("CompanyUserHashedCredentials", () => {
   const secretPassword = "somethingVerySecret123";

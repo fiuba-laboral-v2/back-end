@@ -1,10 +1,9 @@
 import { Boolean, nonNull, String } from "$graphql/fieldTypes";
-import { UserRepository } from "$models/User";
+import { UserRepository, BadCredentialsError } from "$models/User";
 import { CompanyUserHashedCredentials } from "$models/User/Credentials";
 import { JWT } from "$src/JWT";
 import { Context } from "$graphql/Context";
 import { CookieConfig } from "$config";
-import { BadCredentialsError } from "$graphql/User/Errors";
 
 export const companyLogin = {
   type: Boolean,

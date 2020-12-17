@@ -1,11 +1,10 @@
 import { AdminRepository, Secretary } from "$models/Admin";
-import { UserRepository } from "$models/User";
+import { UserRepository, BadCredentialsError } from "$models/User";
 import { UniqueConstraintError } from "sequelize";
 import { AdminGenerator } from "$generators/Admin";
 import { AdminNotFoundError } from "$models/Admin/Errors";
 import { mockItemsPerPage } from "$test/mocks/config/PaginationConfig";
 import { FiubaUsersService } from "$services";
-import { BadCredentialsError } from "$graphql/User/Errors";
 
 describe("AdminRepository", () => {
   beforeAll(() => UserRepository.truncate());

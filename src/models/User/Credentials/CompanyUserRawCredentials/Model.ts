@@ -3,7 +3,7 @@ import { ICredentials } from "../../Interface";
 import { AttributeNotDefinedError } from "$models/Errors";
 import { validatePassword } from "validations-fiuba-laboral-v2";
 import { PasswordEncryptor } from "$libs/PasswordEncryptor";
-import { BadCredentialsError } from "$graphql/User/Errors";
+import { BadCredentialsError } from "../../Errors";
 
 export class CompanyUserRawCredentials implements ICredentials {
   public password: string;

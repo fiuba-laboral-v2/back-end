@@ -1,10 +1,10 @@
 import { CompanyUserRawCredentials } from "$models/User/Credentials";
+import { BadCredentialsError } from "$models/User";
 import { AttributeNotDefinedError } from "$models/Errors";
 import {
   PasswordWithoutDigitsError,
   PasswordWithoutUppercaseError
 } from "validations-fiuba-laboral-v2";
-import { BadCredentialsError } from "$graphql/User/Errors";
 
 describe("CompanyUserRawCredentials", () => {
   const mandatoryAttributes = {

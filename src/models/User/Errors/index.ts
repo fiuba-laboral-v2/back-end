@@ -1,2 +1,3 @@
-export { UserNotFoundError } from "./UserNotFoundError";
-export { MissingDniError } from "./MissingDniError";
+export * from "./UserNotFoundError";
+export * from "./MissingDniError";
+export * from "./BadCredentialsError";

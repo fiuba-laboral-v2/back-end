@@ -4,8 +4,7 @@ import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { Secretary } from "$models/Admin";
 import { CurrentUserBuilder } from "$models/CurrentUser";
-import { BadCredentialsError } from "$graphql/User/Errors";
-import { UserNotFoundError } from "$models/User/Errors";
+import { UserNotFoundError, BadCredentialsError } from "$models/User/Errors";
 
 import { UserGenerator } from "$generators/User";
 import { ApplicantGenerator } from "$generators/Applicant";

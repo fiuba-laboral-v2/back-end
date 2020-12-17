@@ -1,8 +1,8 @@
 import { FiubaCredentials } from "$models/User/Credentials";
+import { BadCredentialsError } from "$models/User";
 import { FiubaUsersService } from "$services";
 import { AttributeNotDefinedError } from "$models/Errors";
 import { DniGenerator } from "$generators/DNI";
-import { BadCredentialsError } from "$graphql/User/Errors";
 
 describe("FiubaCredentials", () => {
   const dni = DniGenerator.generate();

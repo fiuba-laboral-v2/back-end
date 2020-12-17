@@ -2,7 +2,7 @@ import { isNil } from "lodash";
 import { PasswordEncryptor } from "$libs/PasswordEncryptor";
 import { ICredentials } from "../../Interface";
 import { AttributeNotDefinedError } from "$models/Errors";
-import { BadCredentialsError } from "$graphql/User/Errors";
+import { BadCredentialsError } from "../../Errors";
 
 export class CompanyUserHashedCredentials implements ICredentials {
   public password: string;
