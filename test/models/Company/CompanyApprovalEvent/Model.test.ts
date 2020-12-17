@@ -11,7 +11,7 @@ describe("CompanyApprovalEvent", () => {
     status: ApprovalStatus.approved
   };
 
-  it("persist a valid event", async () => {
+  it("creates a valid event", async () => {
     const event = new CompanyApprovalEvent(mandatoryAttributes);
     await expect(event.validate()).resolves.not.toThrow();
     expect(event).toBeObjectContaining({
@@ -21,21 +21,21 @@ describe("CompanyApprovalEvent", () => {
     });
   });
 
-  it("persist an approved CompanyApprovalEvent", async () => {
+  it("creates an approved CompanyApprovalEvent", async () => {
     const status = ApprovalStatus.approved;
     const event = new CompanyApprovalEvent({ ...mandatoryAttributes, status });
     await expect(event.validate()).resolves.not.toThrow();
     expect(event.status).toEqual(status);
   });
 
-  it("persist a rejected CompanyApprovalEvent", async () => {
+  it("creates a rejected CompanyApprovalEvent", async () => {
     const status = ApprovalStatus.rejected;
     const event = new CompanyApprovalEvent({ ...mandatoryAttributes, status });
     await expect(event.validate()).resolves.not.toThrow();
     expect(event.status).toEqual(status);
   });
 
-  it("persist a rejected event with a moderator message", async () => {
+  it("creates a rejected event with a moderator message", async () => {
     const status = ApprovalStatus.rejected;
     const moderatorMessage = "message";
     const event = new CompanyApprovalEvent({ ...mandatoryAttributes, status, moderatorMessage });

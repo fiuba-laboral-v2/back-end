@@ -1,8 +1,10 @@
-import { QueryInterface, UUID, DATE } from "sequelize";
+import { QueryInterface, UUID, DATE, TEXT } from "sequelize";
+
+const TABLE_NAME = "CompanyApprovalEvents";
 
 export = {
   up: (queryInterface: QueryInterface) =>
-    queryInterface.createTable("CompanyApprovalEvents", {
+    queryInterface.createTable(TABLE_NAME, {
       uuid: {
         allowNull: false,
         primaryKey: true,
@@ -20,6 +22,10 @@ export = {
         onDelete: "CASCADE",
         type: UUID
       },
+      moderatorMessage: {
+        allowNull: true,
+        type: TEXT
+      },
       status: {
         allowNull: false,
         type: "approval_status",
@@ -34,5 +40,5 @@ export = {
         type: DATE
       }
     }),
-  down: (queryInterface: QueryInterface) => queryInterface.dropTable("CompanyApprovalEvents")
+  down: (queryInterface: QueryInterface) => queryInterface.dropTable(TABLE_NAME)
 };
