@@ -1,5 +1,5 @@
 import { Column, CreatedAt, ForeignKey, Model, Table, UpdatedAt } from "sequelize-typescript";
-import { ENUM, UUID, UUIDV4 } from "sequelize";
+import { ENUM, TEXT, UUID, UUIDV4 } from "sequelize";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
 import { Admin, Company } from "$models";
 
@@ -15,6 +15,9 @@ export class CompanyApprovalEvent extends Model<CompanyApprovalEvent> {
   @ForeignKey(() => Company)
   @Column({ allowNull: false, references: { model: "Companies", key: "uuid" }, type: UUID })
   public companyUuid: string;
+
+  @Column({ allowNull: true, type: TEXT })
+  public moderatorMessage?: string;
 
   @Column({ allowNull: false, type: ENUM<string>({ values: approvalStatuses }) })
   public status: ApprovalStatus;
