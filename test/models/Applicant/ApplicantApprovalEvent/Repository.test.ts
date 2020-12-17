@@ -1,4 +1,5 @@
 import { ForeignKeyConstraintError } from "sequelize";
+import { ApplicantApprovalEventNotFoundError } from "$models/Applicant/ApplicantApprovalEvent/Errors";
 import { ApplicantRepository } from "$models/Applicant";
 import { UserRepository } from "$models/User";
 import { AdminRepository } from "$models/Admin";
@@ -25,26 +26,26 @@ describe("ApplicantApprovalEventRepository", () => {
   const expectToCreateAValidInstanceWithAStatus = async (status: ApprovalStatus) => {
     const attributes = { adminUserUuid: admin.userUuid, applicantUuid: applicant.uuid, status };
     const event = new ApplicantApprovalEvent(attributes);
-    const applicantApprovalEvent = await ApplicantApprovalEventRepository.save(event);
-    expect(applicantApprovalEvent).toEqual(
-      expect.objectContaining({
-        uuid: expect.stringMatching(UUID_REGEX),
-        createdAt: expect.any(Date),
-        updatedAt: expect.any(Date),
-        ...attributes
-      })
-    );
+    await ApplicantApprovalEventRepository.save(event);
+    const persistedEvent = await ApplicantApprovalEventRepository.findByUuid(event.uuid);
+    expect(persistedEvent).toBeObjectContaining({
+      uuid: expect.stringMatching(UUID_REGEX),
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date),
+      moderatorMessage: null,
+      ...attributes
+    });
   };
 
-  it("creates a valid pending ApplicantApprovalEvent", async () => {
+  it("persists a valid pending ApplicantApprovalEvent", async () => {
     await expectToCreateAValidInstanceWithAStatus(ApprovalStatus.pending);
   });
 
-  it("creates a valid approved ApplicantApprovalEvent", async () => {
+  it("persists a valid approved ApplicantApprovalEvent", async () => {
     await expectToCreateAValidInstanceWithAStatus(ApprovalStatus.approved);
   });
 
-  it("creates a valid rejected ApplicantApprovalEvent", async () => {
+  it("persists a valid rejected ApplicantApprovalEvent", async () => {
     await expectToCreateAValidInstanceWithAStatus(ApprovalStatus.rejected);
   });
 
@@ -71,6 +72,14 @@ describe("ApplicantApprovalEventRepository", () => {
       ForeignKeyConstraintError,
       'insert or update on table "ApplicantApprovalEvents" violates foreign' +
         ' key constraint "ApplicantApprovalEvents_applicantUuid_fkey"'
+    );
+  });
+
+  it("throws an error the given uuid does not belong to a persisted event", async () => {
+    const uuid = UUID.generate();
+    await expect(ApplicantApprovalEventRepository.findByUuid(uuid)).rejects.toThrowErrorWithMessage(
+      ApplicantApprovalEventNotFoundError,
+      ApplicantApprovalEventNotFoundError.buildMessage(uuid)
     );
   });
 
