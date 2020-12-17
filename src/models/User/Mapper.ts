@@ -9,35 +9,18 @@ import { ICredentials } from "$models/User/Interface";
 
 export const UserMapper = {
   toPersistenceModel: (user: User) => {
-    const credentials = user.credentials;
+    const { credentials, ...commonAttributes } = user;
+    let additionalAttributes = {};
     if (credentials instanceof FiubaCredentials) {
-      return new UserSequelizeModel({
-        uuid: user.uuid,
-        name: user.name,
-        surname: user.surname,
-        email: user.email,
-        dni: credentials.dni
-      });
+      additionalAttributes = { dni: credentials.dni };
     }
     if (credentials instanceof CompanyUserRawCredentials) {
-      return new UserSequelizeModel({
-        uuid: user.uuid,
-        name: user.name,
-        surname: user.surname,
-        email: user.email,
-        password: credentials.password
-      });
+      additionalAttributes = { password: credentials.password };
     }
     if (credentials instanceof CompanyUserHashedCredentials) {
-      return new UserSequelizeModel({
-        uuid: user.uuid,
-        name: user.name,
-        surname: user.surname,
-        email: user.email,
-        password: credentials.password
-      });
+      additionalAttributes = { password: credentials.password };
     }
-    throw new Error();
+    return new UserSequelizeModel({ ...commonAttributes, ...additionalAttributes });
   },
   toDomainModel: (sequelizeModel: UserSequelizeModel) => {
     let credentials: ICredentials;
