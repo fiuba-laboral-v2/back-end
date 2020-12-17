@@ -7,6 +7,11 @@ export interface IUser {
   password?: string;
 }
 
+export interface ICreateCompanyUser extends IUser {
+  dni?: undefined;
+  password: string;
+}
+
 export interface ICreateFiubaUser extends IUser {
   dni: string;
   password: string;

@@ -21,7 +21,7 @@ export const CompanyRepository = {
   }: ICompany) =>
     Database.transaction(async transaction => {
       const { password, email, surname, name } = userAttributes;
-      const credentials = new CompanyUserRawCredentials({ password: password! });
+      const credentials = new CompanyUserRawCredentials({ password });
       const user = new User({ name, surname, email, credentials });
       await UserRepository.save(user, transaction);
       const company = await Company.create(companyAttributes, { transaction });
