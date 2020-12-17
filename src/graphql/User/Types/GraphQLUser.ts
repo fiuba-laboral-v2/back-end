@@ -7,7 +7,6 @@ import { GraphQLApplicant } from "$graphql/Applicant/Types/GraphQLApplicant";
 import { GraphQLCompany } from "$graphql/Company/Types/GraphQLCompany";
 import { AdminRepository } from "$models/Admin";
 import { ApplicantRepository } from "$models/Applicant";
-import { CompanyUserRepository } from "$models/CompanyUser";
 import { CompanyRepository } from "$models/Company";
 
 export const GraphQLUser = new GraphQLObjectType<User>({
@@ -42,10 +41,7 @@ export const GraphQLUser = new GraphQLObjectType<User>({
     },
     company: {
       type: GraphQLCompany,
-      resolve: async user => {
-        const companyUser = await CompanyUserRepository.findByUserUuidIfExists(user.uuid!);
-        return companyUser && CompanyRepository.findByUuid(companyUser.companyUuid);
-      }
+      resolve: async user => CompanyRepository.findByUserUuidIfExists(user.uuid!)
     }
   })
 });
