@@ -18,7 +18,7 @@ export class JobApplicationApprovalEvent extends Model<JobApplicationApprovalEve
   public adminUserUuid: string;
 
   @Column({ allowNull: true, type: TEXT })
-  public moderatorMessage?: true;
+  public moderatorMessage?: string;
 
   @Column({
     allowNull: false,
