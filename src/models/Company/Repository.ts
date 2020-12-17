@@ -37,14 +37,8 @@ export const CompanyRepository = {
 
     return company;
   },
-  findByUserUuid: async (userUuid: string) => {
-    const company = await Company.findOne({
-      include: [{ model: UserSequelizeModel, where: { uuid: userUuid } }]
-    });
-    if (!company) throw new CompanyNotFoundError();
-
-    return company;
-  },
+  findByUserUuidIfExists: async (userUuid: string) =>
+    Company.findOne({ include: [{ model: UserSequelizeModel, where: { uuid: userUuid } }] }),
   findAll: () => Company.findAll(),
   findLatest: (updatedBeforeThan?: IPaginatedInput) =>
     PaginationQuery.findLatest({

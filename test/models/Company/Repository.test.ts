@@ -174,15 +174,15 @@ describe("CompanyRepository", () => {
     });
   });
 
-  describe("findByUserUuid", () => {
+  describe("findByUserUuidIfExists", () => {
     it("returns the company given a user uuid", async () => {
       const company = await CompanyGenerator.instance.withMinimumData();
       const [companyUser] = await CompanyUserRepository.findByCompanyUuid(company.uuid);
-      const persistedCompany = await CompanyRepository.findByUserUuid(companyUser.userUuid);
-      expect(persistedCompany.uuid).toEqual(company.uuid);
+      const persistedCompany = await CompanyRepository.findByUserUuidIfExists(companyUser.userUuid);
+      expect(persistedCompany?.uuid).toEqual(company.uuid);
     });
 
-    it("throws an error if the given userUuid is not from a companyUser", async () => {
+    it("returns null if the given userUuid is not from a companyUser", async () => {
       const credentials = new FiubaCredentials(DniGenerator.generate());
       const user = new User({
         name: "name",
@@ -192,10 +192,8 @@ describe("CompanyRepository", () => {
       });
       await UserRepository.save(user);
       const userUuid = user.uuid!;
-      await expect(CompanyRepository.findByUserUuid(userUuid)).rejects.toThrowErrorWithMessage(
-        CompanyNotFoundError,
-        CompanyNotFoundError.buildMessage()
-      );
+      const persistedCompany = await CompanyRepository.findByUserUuidIfExists(userUuid);
+      expect(persistedCompany).toBeNull();
     });
   });
 
