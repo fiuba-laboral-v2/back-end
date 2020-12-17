@@ -3,13 +3,18 @@ import { CompanyUserCredentials } from "$models/User/CompanyUserCredentials";
 import { FiubaCredentials } from "$models/User/FiubaCredentials";
 import { AttributeNotDefinedError, InvalidAttributeFormatError } from "$models/Errors";
 import { UUID } from "$models/UUID";
-import { NameWithDigitsError, EmptyNameError } from "validations-fiuba-laboral-v2";
+import {
+  NameWithDigitsError,
+  EmptyNameError,
+  InvalidEmailError
+} from "validations-fiuba-laboral-v2";
 import { DniGenerator } from "$generators/DNI";
 
 describe("User", () => {
   const mandatoryAttributes = {
     name: "name",
     surname: "surname",
+    email: "email@fi.uba.ar",
     credentials: new CompanyUserCredentials({ email: "email@fi.uba.ar", password: "fdmgkfHGH4353" })
   };
 
@@ -69,6 +74,10 @@ describe("User", () => {
     expectToThrowErrorOnMissingAttribute("surname");
   });
 
+  it("throws an error no email is provided", async () => {
+    expectToThrowErrorOnMissingAttribute("email");
+  });
+
   it("throws an error no credentials is provided", async () => {
     expectToThrowErrorOnMissingAttribute("credentials");
   });
@@ -110,6 +119,15 @@ describe("User", () => {
     expect(() => new User(attributes)).toThrowErrorWithMessage(
       EmptyNameError,
       EmptyNameError.buildMessage()
+    );
+  });
+
+  it("throws an error the email has invalid format", async () => {
+    const email = "invalidFormat";
+    const attributes = { ...mandatoryAttributes, email };
+    expect(() => new User(attributes)).toThrowErrorWithMessage(
+      InvalidEmailError,
+      InvalidEmailError.buildMessage(email)
     );
   });
 });
