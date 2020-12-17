@@ -1,23 +1,23 @@
-import { CompanyUserCredentials } from "$models/User/CompanyUserCredentials";
+import { CompanyUserRawCredentials } from "$models/User/CompanyUserRawCredentials";
 import { AttributeNotDefinedError } from "$models/Errors";
 import {
   PasswordWithoutDigitsError,
   PasswordWithoutUppercaseError
 } from "validations-fiuba-laboral-v2";
 
-describe("CompanyUserCredentials", () => {
+describe("CompanyUserRawCredentials", () => {
   const mandatoryAttributes = {
     password: "somethingVerySecret123"
   };
 
-  it("creates a valid CompanyUserCredentials", () => {
-    const credentials = new CompanyUserCredentials(mandatoryAttributes);
-    expect(credentials.password).not.toEqual(mandatoryAttributes.password);
+  it("creates a valid CompanyUserRawCredentials", () => {
+    const credentials = new CompanyUserRawCredentials(mandatoryAttributes);
+    expect(credentials).toEqual(mandatoryAttributes);
   });
 
   it("throws an error no password is provided", () => {
     const attributes = { password: undefined as any };
-    expect(() => new CompanyUserCredentials(attributes)).toThrowErrorWithMessage(
+    expect(() => new CompanyUserRawCredentials(attributes)).toThrowErrorWithMessage(
       AttributeNotDefinedError,
       AttributeNotDefinedError.buildMessage("password")
     );
@@ -26,7 +26,7 @@ describe("CompanyUserCredentials", () => {
   it("throws an error if the password has no digits", async () => {
     const password = "somethingWithoutDigits";
     const attributes = { ...mandatoryAttributes, password };
-    expect(() => new CompanyUserCredentials(attributes)).toThrowErrorWithMessage(
+    expect(() => new CompanyUserRawCredentials(attributes)).toThrowErrorWithMessage(
       PasswordWithoutDigitsError,
       "La contraseña debe contener numeros"
     );
@@ -35,7 +35,7 @@ describe("CompanyUserCredentials", () => {
   it("throws an error if the password is invalid", async () => {
     const password = "an invalid password";
     const attributes = { ...mandatoryAttributes, password };
-    expect(() => new CompanyUserCredentials(attributes)).toThrowErrorWithMessage(
+    expect(() => new CompanyUserRawCredentials(attributes)).toThrowErrorWithMessage(
       PasswordWithoutUppercaseError,
       "La contraseña debe contener letras mayúsculas"
     );
@@ -43,13 +43,13 @@ describe("CompanyUserCredentials", () => {
 
   describe("authenticate", () => {
     it("returns true if the password matches", async () => {
-      const credentials = new CompanyUserCredentials(mandatoryAttributes);
+      const credentials = new CompanyUserRawCredentials(mandatoryAttributes);
       const isValid = await credentials.authenticate(mandatoryAttributes.password);
       expect(isValid).toBe(true);
     });
 
     it("returns false if the password does not match", async () => {
-      const credentials = new CompanyUserCredentials(mandatoryAttributes);
+      const credentials = new CompanyUserRawCredentials(mandatoryAttributes);
       const isValid = await credentials.authenticate("InvalidPassword");
       expect(isValid).toBe(false);
     });

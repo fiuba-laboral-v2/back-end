@@ -1,5 +1,5 @@
 import { User } from "$models/User";
-import { CompanyUserCredentials } from "$models/User/CompanyUserCredentials";
+import { CompanyUserRawCredentials } from "$models/User/CompanyUserRawCredentials";
 import { FiubaCredentials } from "$models/User/FiubaCredentials";
 import { AttributeNotDefinedError, InvalidAttributeFormatError } from "$models/Errors";
 import { UUID } from "$models/UUID";
@@ -15,7 +15,7 @@ describe("User", () => {
     name: "name",
     surname: "surname",
     email: "email@fi.uba.ar",
-    credentials: new CompanyUserCredentials({ password: "fdmgkfHGH4353" })
+    credentials: new CompanyUserRawCredentials({ password: "fdmgkfHGH4353" })
   };
 
   const expectToThrowErrorOnMissingAttribute = (attributeName: string) => {
