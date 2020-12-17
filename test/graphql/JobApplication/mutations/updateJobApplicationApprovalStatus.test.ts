@@ -60,13 +60,15 @@ describe("updateJobApplicationApprovalStatus", () => {
       mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
       variables: { uuid, approvalStatus: status, moderatorMessage }
     });
+
     expect(errors).toBeUndefined();
     const jobApplication = await JobApplicationRepository.findByUuid(uuid);
     expect(await jobApplication.getApprovalEvents()).toEqual([
       expect.objectContaining({
         adminUserUuid: admin.userUuid,
         jobApplicationUuid: jobApplication.uuid,
-        status
+        status,
+        ...(status === ApprovalStatus.rejected && { moderatorMessage })
       })
     ]);
   };

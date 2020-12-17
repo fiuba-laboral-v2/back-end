@@ -42,7 +42,12 @@ export const updateJobApplicationApprovalStatus = {
       admin,
       moderatorMessage
     );
-    const event = new JobApplicationApprovalEvent({ adminUserUuid, jobApplicationUuid, status });
+    const event = new JobApplicationApprovalEvent({
+      adminUserUuid,
+      jobApplicationUuid,
+      status,
+      moderatorMessage
+    });
 
     await Database.transaction(async transaction => {
       await JobApplicationRepository.save(jobApplication, transaction);
