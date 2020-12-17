@@ -2,6 +2,7 @@ import { isNil } from "lodash";
 import { PasswordEncryptor } from "$libs/PasswordEncryptor";
 import { ICredentials } from "../../Interface";
 import { AttributeNotDefinedError } from "$models/Errors";
+import { BadCredentialsError } from "$graphql/User/Errors";
 
 export class CompanyUserHashedCredentials implements ICredentials {
   public password: string;
@@ -10,8 +11,9 @@ export class CompanyUserHashedCredentials implements ICredentials {
     this.setPassword(attributes.password);
   }
 
-  public authenticate(password: string) {
-    return PasswordEncryptor.authenticate(password, this.password);
+  public async authenticate(password: string) {
+    const isValid = await PasswordEncryptor.authenticate(password, this.password);
+    if (!isValid) throw new BadCredentialsError();
   }
 
   private setPassword(password: string) {

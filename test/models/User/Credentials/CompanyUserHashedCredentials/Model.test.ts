@@ -1,6 +1,7 @@
 import { CompanyUserHashedCredentials } from "$models/User/Credentials";
 import { AttributeNotDefinedError } from "$models/Errors";
 import { PasswordEncryptor } from "$libs/PasswordEncryptor";
+import { BadCredentialsError } from "$graphql/User/Errors";
 
 describe("CompanyUserHashedCredentials", () => {
   const secretPassword = "somethingVerySecret123";
@@ -28,16 +29,17 @@ describe("CompanyUserHashedCredentials", () => {
   });
 
   describe("authenticate", () => {
-    it("returns true if the password matches", async () => {
+    it("does not throw an error if the password matches", async () => {
       const credentials = new CompanyUserHashedCredentials(mandatoryAttributes);
-      const isValid = await credentials.authenticate(secretPassword);
-      expect(isValid).toBe(true);
+      await expect(credentials.authenticate(secretPassword)).resolves.not.toThrowError();
     });
 
-    it("returns false if the password does not match", async () => {
+    it("throws an error if the password does not match", async () => {
       const credentials = new CompanyUserHashedCredentials(mandatoryAttributes);
-      const isValid = await credentials.authenticate("InvalidPassword");
-      expect(isValid).toBe(false);
+      await expect(credentials.authenticate("InvalidPassword")).rejects.toThrowErrorWithMessage(
+        BadCredentialsError,
+        BadCredentialsError.buildMessage()
+      );
     });
   });
 });
