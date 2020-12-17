@@ -1,5 +1,5 @@
 import { isNil } from "lodash";
-import { ICredentials } from "../Interface";
+import { ICredentials } from "../../Interface";
 import { AttributeNotDefinedError } from "$models/Errors";
 import { validatePassword } from "validations-fiuba-laboral-v2";
 import { compare, hashSync } from "bcrypt";
@@ -8,7 +8,7 @@ export class CompanyUserRawCredentials implements ICredentials {
   public static readonly bcryptSaltOrRounds = 10;
   public password: string;
 
-  constructor(attributes: ICompanyUserCredentials) {
+  constructor(attributes: ICompanyUserRawCredentialsAttributes) {
     this.setPassword(attributes.password);
   }
 
@@ -23,6 +23,6 @@ export class CompanyUserRawCredentials implements ICredentials {
   }
 }
 
-export interface ICompanyUserCredentials {
+interface ICompanyUserRawCredentialsAttributes {
   password: string;
 }

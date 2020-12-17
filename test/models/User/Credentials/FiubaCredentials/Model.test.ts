@@ -1,4 +1,4 @@
-import { FiubaCredentials } from "$models/User/FiubaCredentials";
+import { FiubaCredentials } from "$models/User/Credentials";
 import { FiubaUsersService } from "$services";
 import { AttributeNotDefinedError } from "$models/Errors";
 import { DniGenerator } from "$generators/DNI";

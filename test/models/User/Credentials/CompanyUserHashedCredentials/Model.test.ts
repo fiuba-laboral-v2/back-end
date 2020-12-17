@@ -1,5 +1,5 @@
-import { CompanyUserHashedCredentials } from "$models/User/CompanyUserHashedCredentials";
-import { CompanyUserRawCredentials } from "$models/User/CompanyUserRawCredentials";
+import { CompanyUserHashedCredentials } from "$models/User/Credentials";
+import { CompanyUserRawCredentials } from "$models/User/Credentials";
 import { AttributeNotDefinedError } from "$models/Errors";
 import { hashSync } from "bcrypt";
 

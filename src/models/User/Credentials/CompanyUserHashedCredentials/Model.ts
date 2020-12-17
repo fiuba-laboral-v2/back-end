@@ -1,12 +1,12 @@
 import { isNil } from "lodash";
 import { compare } from "bcrypt";
-import { ICredentials } from "../Interface";
+import { ICredentials } from "../../Interface";
 import { AttributeNotDefinedError } from "$models/Errors";
 
 export class CompanyUserHashedCredentials implements ICredentials {
   public password: string;
 
-  constructor(attributes: ICompanyUserCredentials) {
+  constructor(attributes: ICompanyUserHashedCredentialsAttributes) {
     this.setPassword(attributes.password);
   }
 
@@ -20,6 +20,6 @@ export class CompanyUserHashedCredentials implements ICredentials {
   }
 }
 
-export interface ICompanyUserCredentials {
+interface ICompanyUserHashedCredentialsAttributes {
   password: string;
 }

@@ -1,4 +1,4 @@
-import { CompanyUserRawCredentials } from "$models/User/CompanyUserRawCredentials";
+import { CompanyUserRawCredentials } from "$models/User/Credentials";
 import { AttributeNotDefinedError } from "$models/Errors";
 import {
   PasswordWithoutDigitsError,

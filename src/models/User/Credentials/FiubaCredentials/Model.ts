@@ -1,5 +1,5 @@
 import { isNil } from "lodash";
-import { ICredentials } from "../Interface";
+import { ICredentials } from "../../Interface";
 import { FiubaUsersService } from "$services";
 import { AttributeNotDefinedError } from "$models/Errors";
 

@@ -1,6 +1,6 @@
 import { User } from "$models/User";
-import { CompanyUserRawCredentials } from "$models/User/CompanyUserRawCredentials";
-import { FiubaCredentials } from "$models/User/FiubaCredentials";
+import { CompanyUserRawCredentials } from "$models/User/Credentials/CompanyUserRawCredentials";
+import { FiubaCredentials } from "$models/User/Credentials/FiubaCredentials";
 import { AttributeNotDefinedError, InvalidAttributeFormatError } from "$models/Errors";
 import { UUID } from "$models/UUID";
 import {
