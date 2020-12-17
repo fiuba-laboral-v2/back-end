@@ -20,12 +20,12 @@ export const ApplicantRepository = {
     description,
     careers: applicantCareers = [],
     capabilities = [],
-    user: userAttributes
+    user: { name, surname, email, password, dni }
   }: ISaveApplicant) =>
     Database.transaction(async transaction => {
-      const credentials = new FiubaCredentials(userAttributes.dni);
-      const user = new User({ ...userAttributes, credentials });
-      await user.credentials.authenticate(userAttributes.password);
+      const credentials = new FiubaCredentials(dni);
+      const user = new User({ name, surname, email, credentials });
+      await user.credentials.authenticate(password);
       await UserRepository.save(user, transaction);
       const applicant = await Applicant.create(
         { padron, description, userUuid: user.uuid! },

@@ -8,11 +8,11 @@ import { PaginationQuery } from "../PaginationQuery";
 import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedInput";
 
 export const AdminRepository = {
-  create: ({ user: userAttributes, secretary }: ISaveAdmin) =>
+  create: ({ user: { dni, password, name, surname, email }, secretary }: ISaveAdmin) =>
     Database.transaction(async transaction => {
-      const credentials = new FiubaCredentials(userAttributes.dni);
-      const user = new User({ ...userAttributes, credentials });
-      await user.credentials.authenticate(userAttributes.password);
+      const credentials = new FiubaCredentials(dni);
+      const user = new User({ name, surname, email, credentials });
+      await user.credentials.authenticate(password);
       await UserRepository.save(user, transaction);
       return Admin.create({ userUuid: user.uuid!, secretary }, { transaction });
     }),
