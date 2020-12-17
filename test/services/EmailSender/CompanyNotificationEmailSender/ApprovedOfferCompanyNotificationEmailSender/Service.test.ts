@@ -47,11 +47,10 @@ describe("ApprovedOfferCompanyNotificationEmailSender", () => {
             email: settings.email
           },
           subject: "Oferta laboral aprobada",
-          body: expect.stringContaining(
-            `Tu oferta laboral ha sido aprobada: ${offer.title} (baseUrl/subDomain/empresa/ofertas/${offer.uuid})` +
-              "\n\n" +
-              `Bolsa de Trabajo FIUBA`
-          )
+          body:
+            `Tu oferta laboral ha sido aprobada: ${offer.title} (baseUrl/subDomain/empresa/ofertas/${offer.uuid}).` +
+            "\n\n" +
+            "Bolsa de Trabajo FIUBA."
         }
       ]
     ]);

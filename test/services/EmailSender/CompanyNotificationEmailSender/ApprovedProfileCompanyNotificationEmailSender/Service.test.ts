@@ -56,7 +56,7 @@ describe("ApprovedProfileCompanyNotificationEmailSender", () => {
           body:
             "Tu perfil ha sido aprobado: (baseUrl/subDomain/empresa/perfil)." +
             "\n\n" +
-            "Bolsa de Trabajo FIUBA"
+            "Bolsa de Trabajo FIUBA."
         }
       ]
     ]);

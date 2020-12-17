@@ -57,9 +57,9 @@ describe("RejectedProfileCompanyNotificationEmailSender", () => {
           body:
             "El perfil de tu empresa ha sido rechazado: (baseUrl/subDomain/empresa/perfil)." +
             "\n" +
-            `Motivo de rechazo: ${notification.moderatorMessage}.` +
+            `Motivo de rechazo: "${notification.moderatorMessage}"` +
             "\n\n" +
-            "Bolsa de Trabajo FIUBA"
+            "Bolsa de Trabajo FIUBA."
         }
       ]
     ]);
