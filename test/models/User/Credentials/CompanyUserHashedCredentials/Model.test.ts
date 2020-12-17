@@ -13,6 +13,12 @@ describe("CompanyUserHashedCredentials", () => {
     expect(credentials).toEqual(mandatoryAttributes);
   });
 
+  it("creates a valid CompanyUserHashedCredentials with a hashed password", () => {
+    const password = "$2b$10$KrYD1NqSyMabjPoZu2UZS.ZI5/5CN5cjQ/5FQhGCbsyhuUClkdU/q";
+    const credentials = new CompanyUserHashedCredentials({ password });
+    expect(credentials.password).toEqual(password);
+  });
+
   it("throws an error no password is provided", () => {
     const attributes = { password: undefined as any };
     expect(() => new CompanyUserHashedCredentials(attributes)).toThrowErrorWithMessage(

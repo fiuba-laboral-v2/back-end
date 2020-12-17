@@ -1,9 +1,9 @@
 import { User } from "./User";
 import { UserSequelizeModel } from "./Model";
 import {
-  FiubaCredentials,
   CompanyUserHashedCredentials,
-  CompanyUserRawCredentials
+  CompanyUserRawCredentials,
+  FiubaCredentials
 } from "./Credentials";
 import { ICredentials } from "$models/User/Interface";
 

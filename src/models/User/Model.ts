@@ -1,4 +1,4 @@
-import { BeforeCreate, Column, HasOne, Table } from "sequelize-typescript";
+import { Column, HasOne, Table } from "sequelize-typescript";
 import { compare, hashSync } from "bcrypt";
 import { HasOneGetAssociationMixin, STRING, TEXT } from "sequelize";
 import { Admin, Applicant, Company, CompanyUser } from "$models";
@@ -15,13 +15,6 @@ import { validateEmail, validateName, validatePassword } from "validations-fiuba
   }
 })
 export class UserSequelizeModel extends SequelizeModel<UserSequelizeModel> {
-  @BeforeCreate
-  public static beforeCreateUserHook(user: UserSequelizeModel): void {
-    super.beforeCreateHook(user);
-    if (!user.password) return;
-    user.setPassword(user.password);
-  }
-
   private static readonly bcryptSaltOrRounds = 10;
   @Column({
     allowNull: true,
