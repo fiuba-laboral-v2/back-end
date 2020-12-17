@@ -11,7 +11,7 @@ import { Logger } from "./libs/Logger";
 
 export const JWT = {
   createToken: async (user: User) => {
-    const admin = await AdminRepository.findByUserUuidIfExits(user.uuid!);
+    const admin = await AdminRepository.findByUserUuidIfExists(user.uuid!);
     const applicant = await ApplicantRepository.findByUserUuidIfExists(user.uuid!);
     const companyUser = await CompanyUserRepository.findByUserUuid(user.uuid!);
     const payload = {

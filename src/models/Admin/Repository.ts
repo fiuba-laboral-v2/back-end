@@ -16,7 +16,7 @@ export const AdminRepository = {
       await UserRepository.save(user, transaction);
       return Admin.create({ userUuid: user.uuid!, secretary }, { transaction });
     }),
-  findByUserUuidIfExits: async (userUuid: string) => Admin.findByPk(userUuid),
+  findByUserUuidIfExists: async (userUuid: string) => Admin.findByPk(userUuid),
   findByUserUuid: async (userUuid: string) => {
     const admin = await Admin.findByPk(userUuid);
     if (!admin) throw new AdminNotFoundError(userUuid);

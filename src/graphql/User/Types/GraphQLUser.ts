@@ -34,7 +34,7 @@ export const GraphQLUser = new GraphQLObjectType<User>({
     },
     admin: {
       type: GraphQLAdmin,
-      resolve: user => AdminRepository.findByUserUuidIfExits(user.uuid!)
+      resolve: user => AdminRepository.findByUserUuidIfExists(user.uuid!)
     },
     applicant: {
       type: GraphQLApplicant,
