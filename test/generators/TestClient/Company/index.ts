@@ -1,7 +1,6 @@
 import { ICompanyTestClientAttributes } from "$generators/interfaces";
 import { createApolloTestClient } from "../createApolloTestClient";
 import { CompanyRepository } from "$models/Company";
-import { CompanyUserRepository } from "$models/CompanyUser";
 import { UserRepository } from "$models/User";
 import { CompanyGenerator } from "$generators/Company";
 
@@ -15,9 +14,7 @@ export const companyTestClient = async ({
     photos,
     user: userAttributes
   });
-  const companyUsers = await CompanyUserRepository.findByCompanyUuid(company.uuid);
-  const userUuids = companyUsers.map(({ userUuid }) => userUuid);
-  const [user] = await UserRepository.findByUuids(userUuids);
+  const [user] = await UserRepository.findByCompanyUuid(company.uuid);
   const companyContext = { company: { uuid: company.uuid } };
   const apolloClient = createApolloTestClient(user, expressContext, companyContext);
   if (status) {

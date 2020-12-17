@@ -4,7 +4,6 @@ import { ID, List, nonNull, String } from "$graphql/fieldTypes";
 import { Company } from "$models";
 import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
 import { GraphQLUser } from "$graphql/User/Types/GraphQLUser";
-import { CompanyUserRepository } from "$models/CompanyUser";
 import { UserRepository } from "$models/User";
 
 export const GraphQLCompany = new GraphQLObjectType<Company>({
@@ -57,11 +56,7 @@ export const GraphQLCompany = new GraphQLObjectType<Company>({
     },
     users: {
       type: List(GraphQLUser),
-      resolve: async company => {
-        const companyUsers = await CompanyUserRepository.findByCompanyUuid(company.uuid);
-        const userUuids = companyUsers.map(companyUser => companyUser.userUuid);
-        return UserRepository.findByUuids(userUuids);
-      }
+      resolve: async company => UserRepository.findByCompanyUuid(company.uuid)
     }
   })
 });

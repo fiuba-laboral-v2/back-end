@@ -14,10 +14,8 @@ describe("AdminRepository", () => {
       const adminAttributes = AdminGenerator.data(Secretary.extension);
       const admin = await AdminRepository.create(adminAttributes);
       const user = await UserRepository.findByUuid(admin.userUuid);
-      expect(user).toBeObjectContaining({
-        ...adminAttributes.user,
-        password: null
-      });
+      const { dni, password, ...userAttributes } = adminAttributes.user;
+      expect(user).toBeObjectContaining(userAttributes);
       expect(admin).toBeObjectContaining({ secretary: adminAttributes.secretary });
     });
 
@@ -25,10 +23,8 @@ describe("AdminRepository", () => {
       const adminAttributes = AdminGenerator.data(Secretary.graduados);
       const admin = await AdminRepository.create(adminAttributes);
       const user = await UserRepository.findByUuid(admin.userUuid);
-      expect(user).toBeObjectContaining({
-        ...adminAttributes.user,
-        password: null
-      });
+      const { dni, password, ...userAttributes } = adminAttributes.user;
+      expect(user).toBeObjectContaining(userAttributes);
       expect(admin).toBeObjectContaining({ secretary: adminAttributes.secretary });
     });
 

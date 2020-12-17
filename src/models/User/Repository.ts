@@ -1,6 +1,7 @@
 import { UserNotFoundError } from "./Errors";
 import { Transaction } from "sequelize/types";
 import { UserSequelizeModel } from "$models";
+import { CompanyUserRepository } from "$models/CompanyUser";
 import { User } from "./User";
 import { UserMapper } from "./Mapper";
 
@@ -31,6 +32,11 @@ export const UserRepository = {
   findByUuids: async (uuids: string[]) => {
     const sequelizeModels = await UserSequelizeModel.findAll({ where: { uuid: uuids } });
     return sequelizeModels.map(UserMapper.toDomainModel);
+  },
+  findByCompanyUuid: async (companyUuid: string) => {
+    const companyUsers = await CompanyUserRepository.findByCompanyUuid(companyUuid);
+    const userUuids = companyUsers.map(companyUser => companyUser.userUuid);
+    return UserRepository.findByUuids(userUuids);
   },
   findAll: async () => {
     const sequelizeModels = await UserSequelizeModel.findAll();
