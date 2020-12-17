@@ -80,7 +80,8 @@ describe("updateCompanyApprovalStatus", () => {
     expect(event).toBeObjectContaining({
       userUuid: admin.userUuid,
       companyUuid: company.uuid,
-      status: approvalStatus
+      status: approvalStatus,
+      ...(approvalStatus === ApprovalStatus.rejected && { moderatorMessage })
     });
   };
 
