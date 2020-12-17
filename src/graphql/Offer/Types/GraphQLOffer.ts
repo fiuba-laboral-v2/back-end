@@ -7,6 +7,7 @@ import { GraphQLCareer } from "$graphql/Career/Types/GraphQLCareer";
 import { GraphQLCompany } from "$graphql/Company/Types/GraphQLCompany";
 import { Offer } from "$models";
 import { UserRepository } from "$models/User";
+import { ApplicantRepository } from "$models/Applicant";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
 import { GraphQLApplicantType } from "../../Applicant/Types/GraphQLApplicantType";
@@ -72,8 +73,7 @@ export const GraphQLOffer = new GraphQLObjectType<Offer, IApolloServerContext>({
       type: nonNull(Boolean),
       resolve: async (offer, _, { currentUser }) => {
         const user = await UserRepository.findByEmail(currentUser.email);
-        const applicant = await user.getApplicant();
-
+        const applicant = await ApplicantRepository.findByUserUuid(user.uuid!);
         return JobApplicationRepository.hasApplied(applicant, offer);
       }
     }

@@ -9,6 +9,7 @@ import { GraphQLApplicantExperienceSectionType } from "./ApplicantExperienceSect
 import { GraphQLLink } from "./Link";
 import { Applicant } from "$models";
 import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
+import { UserRepository } from "$models/User";
 
 export const GraphQLApplicant = new GraphQLObjectType<Applicant>({
   name: "Applicant",
@@ -18,7 +19,7 @@ export const GraphQLApplicant = new GraphQLObjectType<Applicant>({
     },
     user: {
       type: nonNull(GraphQLUser),
-      resolve: applicant => applicant.getUser()
+      resolve: applicant => UserRepository.findByUuid(applicant.userUuid)
     },
     padron: {
       type: nonNull(Int)

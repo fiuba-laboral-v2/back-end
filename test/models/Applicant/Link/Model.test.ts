@@ -1,6 +1,9 @@
 import { ValidationError } from "sequelize";
 import { Applicant, ApplicantLink } from "$models";
-import { UserRepository } from "$models/User";
+import { UserRepository, User } from "$models/User";
+import { ApplicantRepository } from "$models/Applicant";
+import { FiubaCredentials } from "$models/User/Credentials";
+import { DniGenerator } from "$generators/DNI";
 
 describe("ApplicantLink", () => {
   let applicant: Applicant;
@@ -8,17 +11,17 @@ describe("ApplicantLink", () => {
   beforeAll(async () => {
     await UserRepository.truncate();
     await ApplicantLink.truncate({ cascade: true });
-    const { uuid: userUuid } = await UserRepository.create({
+    const credentials = new FiubaCredentials(DniGenerator.generate());
+    const user = new User({
       email: "sblanco@yahoo.com",
-      password: "fdmgkfHGH4353",
       name: "Bruno",
-      surname: "Diaz"
+      surname: "Diaz",
+      credentials
     });
-    applicant = await Applicant.create({
-      padron: 1,
-      description: "Batman",
-      userUuid: userUuid
-    });
+    await UserRepository.save(user);
+
+    applicant = new Applicant({ padron: 1, description: "Batman", userUuid: user.uuid });
+    await ApplicantRepository.save(applicant);
   });
 
   it("should create a valid link with a name and a url", async () => {

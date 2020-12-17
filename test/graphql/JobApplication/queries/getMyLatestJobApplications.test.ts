@@ -85,7 +85,7 @@ describe("getMyLatestJobApplications", () => {
 
       const { data } = await apolloClient.query({ query: GET_MY_LATEST_JOB_APPLICATIONS });
 
-      const user = await applicant.getUser();
+      const user = await UserRepository.findByUuid(applicant.userUuid);
       expect(data!.getMyLatestJobApplications.shouldFetchMore).toEqual(false);
       expect(data!.getMyLatestJobApplications.results).toEqual([
         {

@@ -64,23 +64,23 @@ describe("companyLogin", () => {
   it("returns an error if the user is an applicant", async () => {
     const password = "AValidPassword1";
     const applicant = await ApplicantGenerator.instance.withMinimumData({ password });
-    const user = await applicant.getUser();
+    const user = await UserRepository.findByUuid(applicant.userUuid);
     const { errors } = await client.loggedOut().mutate({
       mutation: COMPANY_LOGIN,
       variables: { email: user.email, password }
     });
-    expect(errors).toEqualGraphQLErrorType(Error.name);
+    expect(errors).toEqualGraphQLErrorType(BadCredentialsError.name);
   });
 
   it("returns an error if the user is an admin", async () => {
     const password = "AValidPassword3";
     const admin = await AdminGenerator.instance({ secretary: Secretary.extension, password });
-    const user = await admin.getUser();
+    const user = await UserRepository.findByUuid(admin.userUuid);
     const { errors } = await client.loggedOut().mutate({
       mutation: COMPANY_LOGIN,
       variables: { email: user.email, password }
     });
-    expect(errors).toEqualGraphQLErrorType(Error.name);
+    expect(errors).toEqualGraphQLErrorType(BadCredentialsError.name);
   });
 
   it("returns error if user does not exist", async () => {

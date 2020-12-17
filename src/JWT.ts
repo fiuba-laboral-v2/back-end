@@ -1,4 +1,7 @@
-import { UserSequelizeModel } from "./models";
+import { User } from "$models/User";
+import { AdminRepository } from "$models/Admin";
+import { ApplicantRepository } from "$models/Applicant";
+import { CompanyUserRepository } from "$models/CompanyUser";
 import { CurrentUser, CurrentUserBuilder, ICurrentUserTokenData } from "./models/CurrentUser";
 import { sign, verify } from "jsonwebtoken";
 import { Application } from "express";
@@ -7,10 +10,10 @@ import { JWTConfig } from "./config";
 import { Logger } from "./libs/Logger";
 
 export const JWT = {
-  createToken: async (user: UserSequelizeModel) => {
-    const admin = await user.getAdmin();
-    const applicant = await user.getApplicant();
-    const companyUser = await user.getCompanyUser();
+  createToken: async (user: User) => {
+    const admin = await AdminRepository.findByUserUuidIfExits(user.uuid!);
+    const applicant = await ApplicantRepository.findByUserUuidIfExists(user.uuid!);
+    const companyUser = await CompanyUserRepository.findByUserUuid(user.uuid!);
     const payload = {
       uuid: user.uuid,
       email: user.email,

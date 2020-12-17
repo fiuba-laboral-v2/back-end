@@ -400,8 +400,10 @@ describe("ApplicantRepository", () => {
       let newProps: IApplicantEditable = { uuid };
       newProps = set(newProps, attributeKey, newValue);
       const applicant = await ApplicantRepository.update(newProps);
-      applicant.user = await applicant.getUser();
-      expect(get(applicant, attributeKey)).toEqual(get(newProps, attributeKey));
+      const user = await UserRepository.findByUuid(applicant.userUuid);
+      expect(get({ ...applicant.toJSON(), user }, attributeKey)).toEqual(
+        get(newProps, attributeKey)
+      );
     };
 
     it("updates all props", async () => {
@@ -459,7 +461,7 @@ describe("ApplicantRepository", () => {
       const sections = await applicant.getKnowledgeSections();
       const experienceSections = await applicant.getExperienceSections();
       const links = await applicant.getLinks();
-      const user = await applicant.getUser();
+      const user = await UserRepository.findByUuid(applicant.userUuid);
 
       expect(applicant).toBeObjectContaining({ description: newProps.description });
       expect(user).toBeObjectContaining(newProps.user!);
