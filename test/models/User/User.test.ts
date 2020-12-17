@@ -15,7 +15,7 @@ describe("User", () => {
     name: "name",
     surname: "surname",
     email: "email@fi.uba.ar",
-    credentials: new CompanyUserCredentials({ email: "email@fi.uba.ar", password: "fdmgkfHGH4353" })
+    credentials: new CompanyUserCredentials({ password: "fdmgkfHGH4353" })
   };
 
   const expectToThrowErrorOnMissingAttribute = (attributeName: string) => {
