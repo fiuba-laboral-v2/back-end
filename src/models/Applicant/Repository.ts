@@ -48,7 +48,7 @@ export const ApplicantRepository = {
   },
   findByUserUuidIfExists: async (userUuid: string) => Applicant.findOne({ where: { userUuid } }),
   findByUserUuid: async (userUuid: string) => {
-    const applicant = await Applicant.findOne({ where: { userUuid } });
+    const applicant = await ApplicantRepository.findByUserUuidIfExists(userUuid);
     if (!applicant) throw new ApplicantNotFound(userUuid);
 
     return applicant;
