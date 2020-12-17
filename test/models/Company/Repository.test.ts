@@ -3,14 +3,15 @@ import { InvalidCuitError, PhoneNumberWithLettersError } from "validations-fiuba
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Company } from "$models";
 import { CompanyNotFoundError } from "$models/Company/Errors";
+import { UserRepository, User, FiubaCredentials } from "$models/User";
 import { UUID } from "$models/UUID";
-
 import { CompanyRepository } from "$models/Company";
-import { UserRepository } from "$models/User";
 
 import { CompanyGenerator } from "$generators/Company";
 import { CuitGenerator } from "$generators/Cuit";
+import { DniGenerator } from "$generators/DNI";
 import { mockItemsPerPage } from "$test/mocks/config/PaginationConfig";
+import { CompanyUserRepository } from "$models/CompanyUser";
 
 describe("CompanyRepository", () => {
   const companyAttributes = () => ({
@@ -170,6 +171,31 @@ describe("CompanyRepository", () => {
           phoneNumbers: ["1159821066", "1159821066"]
         })
       ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
+    });
+  });
+
+  describe("findByUserUuid", () => {
+    it("returns the company given a user uuid", async () => {
+      const company = await CompanyGenerator.instance.withMinimumData();
+      const [companyUser] = await CompanyUserRepository.findByCompanyUuid(company.uuid);
+      const persistedCompany = await CompanyRepository.findByUserUuid(companyUser.userUuid);
+      expect(persistedCompany.uuid).toEqual(company.uuid);
+    });
+
+    it("throws an error if the given userUuid is not from a companyUser", async () => {
+      const credentials = new FiubaCredentials(DniGenerator.generate());
+      const user = new User({
+        name: "name",
+        surname: "surname",
+        email: "email@email.com",
+        credentials
+      });
+      await UserRepository.save(user);
+      const userUuid = user.uuid!;
+      await expect(CompanyRepository.findByUserUuid(userUuid)).rejects.toThrowErrorWithMessage(
+        CompanyNotFoundError,
+        CompanyNotFoundError.buildMessage()
+      );
     });
   });
 
