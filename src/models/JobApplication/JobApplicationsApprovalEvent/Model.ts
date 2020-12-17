@@ -7,39 +7,26 @@ import {
   Table,
   UpdatedAt
 } from "sequelize-typescript";
-import { ENUM, HasOneGetAssociationMixin, UUID, UUIDV4 } from "sequelize";
+import { ENUM, HasOneGetAssociationMixin, UUID, UUIDV4, TEXT } from "sequelize";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
 import { Admin, JobApplication } from "$models";
 import { isApprovalStatus, isUuid } from "$models/SequelizeModelValidators";
 
 @Table({ tableName: "JobApplicationApprovalEvent", timestamps: true })
 export class JobApplicationApprovalEvent extends Model<JobApplicationApprovalEvent> {
-  @Column({
-    allowNull: false,
-    primaryKey: true,
-    type: UUID,
-    defaultValue: UUIDV4,
-    ...isUuid
-  })
+  @Column({ allowNull: false, primaryKey: true, type: UUID, defaultValue: UUIDV4, ...isUuid })
   public uuid: string;
 
   @ForeignKey(() => JobApplication)
-  @Column({
-    allowNull: false,
-    references: { model: "JobApplications", key: "uuid" },
-    type: UUID,
-    ...isUuid
-  })
+  @Column({ allowNull: false, type: UUID, ...isUuid })
   public jobApplicationUuid: string;
 
   @ForeignKey(() => Admin)
-  @Column({
-    allowNull: false,
-    references: { model: "Admins", key: "uuid" },
-    type: UUID,
-    ...isUuid
-  })
+  @Column({ allowNull: false, type: UUID, ...isUuid })
   public adminUserUuid: string;
+
+  @Column({ allowNull: true, type: TEXT })
+  public moderatorMessage?: true;
 
   @Column({
     allowNull: false,
