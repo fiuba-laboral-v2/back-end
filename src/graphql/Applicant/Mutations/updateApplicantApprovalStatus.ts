@@ -43,7 +43,12 @@ export const updateApplicantApprovalStatus = {
     const admin = await AdminRepository.findByUserUuid(adminUserUuid);
 
     applicant.set({ approvalStatus: status });
-    const event = new ApplicantApprovalEvent({ adminUserUuid, applicantUuid, status });
+    const event = new ApplicantApprovalEvent({
+      adminUserUuid,
+      applicantUuid,
+      status,
+      moderatorMessage
+    });
     const notifications = ApplicantProfileNotificationFactory.create(
       applicant,
       admin,
