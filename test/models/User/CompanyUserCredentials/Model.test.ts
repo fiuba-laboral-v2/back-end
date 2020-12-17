@@ -21,9 +21,9 @@ describe("CompanyUserCredentials", () => {
   };
 
   it("creates a valid CompanyUserCredentials", () => {
-    const fiubaUser = new CompanyUserCredentials(mandatoryAttributes);
-    expect(fiubaUser.email).toEqual(mandatoryAttributes.email);
-    expect(fiubaUser.password).not.toEqual(mandatoryAttributes.password);
+    const credentials = new CompanyUserCredentials(mandatoryAttributes);
+    expect(credentials.email).toEqual(mandatoryAttributes.email);
+    expect(credentials.password).not.toEqual(mandatoryAttributes.password);
   });
 
   it("throws an error no email is provided", () => {
@@ -61,16 +61,16 @@ describe("CompanyUserCredentials", () => {
     );
   });
 
-  describe("", () => {
+  describe("authenticate", () => {
     it("returns true if the password matches", async () => {
-      const fiubaUser = new CompanyUserCredentials(mandatoryAttributes);
-      const isValid = await fiubaUser.authenticate(mandatoryAttributes.password);
+      const credentials = new CompanyUserCredentials(mandatoryAttributes);
+      const isValid = await credentials.authenticate(mandatoryAttributes.password);
       expect(isValid).toBe(true);
     });
 
     it("returns false if the password does not match", async () => {
-      const fiubaUser = new CompanyUserCredentials(mandatoryAttributes);
-      const isValid = await fiubaUser.authenticate("InvalidPassword");
+      const credentials = new CompanyUserCredentials(mandatoryAttributes);
+      const isValid = await credentials.authenticate("InvalidPassword");
       expect(isValid).toBe(false);
     });
   });
