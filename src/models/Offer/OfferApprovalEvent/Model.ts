@@ -1,4 +1,11 @@
-import { Column, CreatedAt, ForeignKey, Model, Table, UpdatedAt } from "sequelize-typescript";
+import {
+  Column,
+  CreatedAt,
+  ForeignKey,
+  Model,
+  Table,
+  UpdatedAt
+} from "sequelize-typescript";
 import { ENUM, TEXT, UUID, UUIDV4 } from "sequelize";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
 import { Admin, Offer } from "$models";
