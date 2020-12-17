@@ -11,8 +11,12 @@ describe("CompanyUserRawCredentials", () => {
   };
 
   it("creates a valid CompanyUserRawCredentials", () => {
+    expect(() => new CompanyUserRawCredentials(mandatoryAttributes)).not.toThrowError();
+  });
+
+  it("creates a CompanyUserRawCredentials with its password hashed", () => {
     const credentials = new CompanyUserRawCredentials(mandatoryAttributes);
-    expect(credentials).toEqual(mandatoryAttributes);
+    expect(credentials.password).not.toEqual(mandatoryAttributes.password);
   });
 
   it("throws an error no password is provided", () => {
