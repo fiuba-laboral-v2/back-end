@@ -60,11 +60,11 @@ describe("RejectedProfileApplicantNotificationEmailSender", () => {
           body:
             "Tu perfil ha sido rechazado: (baseUrl/subDomain/postulante/perfil)." +
             "\n" +
-            `Motivo de rechazo: ${notification.moderatorMessage}.` +
+            `Motivo de rechazo: "${notification.moderatorMessage}"` +
             "\n" +
             "Para mas detalles se puede responder a este email." +
             "\n\n" +
-            "Bolsa de Trabajo FIUBA"
+            "Bolsa de Trabajo FIUBA."
         }
       ]
     ]);
