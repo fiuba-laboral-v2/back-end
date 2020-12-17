@@ -68,7 +68,7 @@ describe("companyLogin", () => {
       mutation: COMPANY_LOGIN,
       variables: { email: user.email, password }
     });
-    expect(errors).toEqualGraphQLErrorType(BadCredentialsError.name);
+    expect(errors).toEqualGraphQLErrorType(UserNotFoundError.name);
   });
 
   it("returns an error if the user is an admin", async () => {
@@ -79,7 +79,7 @@ describe("companyLogin", () => {
       mutation: COMPANY_LOGIN,
       variables: { email: user.email, password }
     });
-    expect(errors).toEqualGraphQLErrorType(BadCredentialsError.name);
+    expect(errors).toEqualGraphQLErrorType(UserNotFoundError.name);
   });
 
   it("returns error if user does not exist", async () => {

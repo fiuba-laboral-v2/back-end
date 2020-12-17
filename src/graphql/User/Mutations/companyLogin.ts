@@ -1,6 +1,5 @@
 import { Boolean, nonNull, String } from "$graphql/fieldTypes";
-import { UserRepository, BadCredentialsError } from "$models/User";
-import { CompanyUserHashedCredentials } from "$models/User/Credentials";
+import { UserRepository } from "$models/User";
 import { JWT } from "$src/JWT";
 import { Context } from "$graphql/Context";
 import { CookieConfig } from "$config";
@@ -16,11 +15,8 @@ export const companyLogin = {
     }
   },
   resolve: async (_: undefined, { email, password }: ILogin, { res: expressResponse }: Context) => {
-    const user = await UserRepository.findByEmail(email);
-    const credentials = user.credentials;
-    if (!(credentials instanceof CompanyUserHashedCredentials)) throw new BadCredentialsError();
+    const user = await UserRepository.findCompanyUserByEmail(email);
     await user.credentials.authenticate(password);
-
     const token = await JWT.createToken(user);
     expressResponse.cookie(CookieConfig.cookieName, token, CookieConfig.cookieOptions);
   }
