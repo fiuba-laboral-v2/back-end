@@ -96,5 +96,4 @@ export class Company extends Model<Company> {
   public getPhotos: HasManyGetAssociationsMixin<CompanyPhoto>;
   public getOffers: HasManyGetAssociationsMixin<Offer>;
   public getUsers: HasManyGetAssociationsMixin<UserSequelizeModel>;
-  public getApprovalEvents: HasManyGetAssociationsMixin<CompanyApprovalEvent>;
 }

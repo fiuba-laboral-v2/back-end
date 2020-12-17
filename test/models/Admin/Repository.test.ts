@@ -13,7 +13,8 @@ describe("AdminRepository", () => {
     it("creates a valid Admin of extension", async () => {
       const adminAttributes = AdminGenerator.data(Secretary.extension);
       const admin = await AdminRepository.create(adminAttributes);
-      expect(await admin.getUser()).toBeObjectContaining({
+      const user = await UserRepository.findByUuid(admin.userUuid);
+      expect(user).toBeObjectContaining({
         ...adminAttributes.user,
         password: null
       });
@@ -23,7 +24,8 @@ describe("AdminRepository", () => {
     it("creates a valid Admin of graduados", async () => {
       const adminAttributes = AdminGenerator.data(Secretary.graduados);
       const admin = await AdminRepository.create(adminAttributes);
-      expect(await admin.getUser()).toBeObjectContaining({
+      const user = await UserRepository.findByUuid(admin.userUuid);
+      expect(user).toBeObjectContaining({
         ...adminAttributes.user,
         password: null
       });

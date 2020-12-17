@@ -8,15 +8,7 @@ import {
   Model,
   Table
 } from "sequelize-typescript";
-import {
-  ENUM,
-  HasManyGetAssociationsMixin,
-  HasOneGetAssociationMixin,
-  INTEGER,
-  TEXT,
-  UUID,
-  UUIDV4
-} from "sequelize";
+import { ENUM, HasManyGetAssociationsMixin, INTEGER, TEXT, UUID, UUIDV4 } from "sequelize";
 import { validateIntegerInRange } from "validations-fiuba-laboral-v2";
 import {
   ApplicantApprovalEvent,
@@ -101,14 +93,12 @@ export class Applicant extends Model<Applicant> {
   public approvalEvents: ApplicantApprovalEvent;
 
   public getCareers: HasManyGetAssociationsMixin<Career>;
-  public getUser: HasOneGetAssociationMixin<UserSequelizeModel>;
   public getCapabilities: HasManyGetAssociationsMixin<Capability>;
   public getApplicantCareers: HasManyGetAssociationsMixin<ApplicantCareer>;
   public getKnowledgeSections: HasManyGetAssociationsMixin<ApplicantKnowledgeSection>;
   public getExperienceSections: HasManyGetAssociationsMixin<ApplicantExperienceSection>;
   public getLinks: HasManyGetAssociationsMixin<ApplicantLink>;
   public getJobApplications: HasManyGetAssociationsMixin<JobApplication>;
-  public getApprovalEvents: HasManyGetAssociationsMixin<ApplicantApprovalEvent>;
 
   public async getType() {
     const applicantCareers = await this.getApplicantCareers();

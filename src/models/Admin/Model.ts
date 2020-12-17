@@ -7,7 +7,7 @@ import {
   Table,
   UpdatedAt
 } from "sequelize-typescript";
-import { ENUM, HasOneGetAssociationMixin, UUID } from "sequelize";
+import { ENUM, UUID } from "sequelize";
 import { UserSequelizeModel } from "..";
 import { Secretary, SecretaryEnumValues } from "./Interface";
 import { isSecretary } from "../SequelizeModelValidators";
@@ -41,8 +41,6 @@ export class Admin extends Model<Admin> {
 
   @BelongsTo(() => UserSequelizeModel, "userUuid")
   public user: UserSequelizeModel;
-
-  public getUser: HasOneGetAssociationMixin<UserSequelizeModel>;
 
   public isFromExtensionSecretary() {
     return this.secretary === Secretary.extension;
