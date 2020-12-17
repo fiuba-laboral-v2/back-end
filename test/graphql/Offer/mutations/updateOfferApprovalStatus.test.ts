@@ -8,9 +8,9 @@ import { UserRepository } from "$models/User";
 import { OfferApprovalEventRepository } from "$models/Offer/OfferApprovalEvent";
 import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
 import {
+  ApprovedOfferCompanyNotification,
   CompanyNotificationRepository,
-  RejectedOfferCompanyNotification,
-  ApprovedOfferCompanyNotification
+  RejectedOfferCompanyNotification
 } from "$models/CompanyNotification";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
@@ -119,7 +119,8 @@ describe("updateOfferApprovalStatus", () => {
       expect.objectContaining({
         adminUserUuid: admin.userUuid,
         offerUuid: offer.uuid,
-        status: newStatus
+        status: newStatus,
+        ...(newStatus === ApprovalStatus.rejected && { moderatorMessage })
       })
     ]);
   };
