@@ -56,7 +56,7 @@ export const GraphQLCompany = new GraphQLObjectType<Company>({
     },
     users: {
       type: List(GraphQLUser),
-      resolve: async company => UserRepository.findByCompanyUuid(company.uuid)
+      resolve: company => UserRepository.findByCompanyUuid(company.uuid)
     }
   })
 });
