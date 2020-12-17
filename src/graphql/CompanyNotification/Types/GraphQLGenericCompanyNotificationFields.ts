@@ -15,7 +15,7 @@ export const GraphQLGenericCompanyNotificationFields = {
   createdAt: {
     type: nonNull(GraphQLDateTime)
   },
-  secretary: {
+  moderatorSecretary: {
     type: nonNull(GraphQLSecretary),
     resolve: async notification => {
       const admin = await AdminRepository.findByUserUuid(notification.moderatorUuid);
