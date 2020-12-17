@@ -1,10 +1,11 @@
 import { AdminRepository, Secretary } from "$models/Admin";
-import { FiubaUserNotFoundError, UserRepository } from "$models/User";
+import { UserRepository } from "$models/User";
 import { UniqueConstraintError } from "sequelize";
 import { AdminGenerator } from "$generators/Admin";
 import { AdminNotFoundError } from "$models/Admin/Errors";
 import { mockItemsPerPage } from "$test/mocks/config/PaginationConfig";
 import { FiubaUsersService } from "$services";
+import { BadCredentialsError } from "$graphql/User/Errors";
 
 describe("AdminRepository", () => {
   beforeAll(() => UserRepository.truncate());
@@ -39,8 +40,8 @@ describe("AdminRepository", () => {
       jest.spyOn(FiubaUsersService, "authenticate").mockImplementation(async () => false);
       const adminAttributes = AdminGenerator.data(Secretary.graduados);
       await expect(AdminRepository.create(adminAttributes)).rejects.toThrowErrorWithMessage(
-        FiubaUserNotFoundError,
-        FiubaUserNotFoundError.buildMessage(adminAttributes.user.dni)
+        BadCredentialsError,
+        BadCredentialsError.buildMessage()
       );
     });
 

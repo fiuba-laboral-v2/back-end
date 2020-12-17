@@ -2,6 +2,7 @@ import { FiubaCredentials } from "$models/User/Credentials";
 import { FiubaUsersService } from "$services";
 import { AttributeNotDefinedError } from "$models/Errors";
 import { DniGenerator } from "$generators/DNI";
+import { BadCredentialsError } from "$graphql/User/Errors";
 
 describe("FiubaCredentials", () => {
   const dni = DniGenerator.generate();
@@ -19,18 +20,19 @@ describe("FiubaCredentials", () => {
   });
 
   describe("authenticate", () => {
-    it("returns true if the password matches", async () => {
+    it("does not throw an error if the password matches", async () => {
       jest.spyOn(FiubaUsersService, "authenticate").mockImplementation(async () => true);
       const credentials = new FiubaCredentials(dni);
-      const isValid = await credentials.authenticate("secretPassword");
-      expect(isValid).toBe(true);
+      await expect(credentials.authenticate("secretPassword")).resolves.not.toThrowError();
     });
 
-    it("returns false if the does not password match", async () => {
+    it("throws an error if the password does not password match", async () => {
       jest.spyOn(FiubaUsersService, "authenticate").mockImplementation(async () => false);
       const credentials = new FiubaCredentials(dni);
-      const isValid = await credentials.authenticate("InvalidPassword");
-      expect(isValid).toBe(false);
+      await expect(credentials.authenticate("secretPassword")).rejects.toThrowErrorWithMessage(
+        BadCredentialsError,
+        BadCredentialsError.buildMessage()
+      );
     });
   });
 });

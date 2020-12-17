@@ -2,6 +2,7 @@ import { isNil } from "lodash";
 import { ICredentials } from "../../Interface";
 import { FiubaUsersService } from "$services";
 import { AttributeNotDefinedError } from "$models/Errors";
+import { BadCredentialsError } from "$graphql/User/Errors";
 
 export class FiubaCredentials implements ICredentials {
   public dni: string;
@@ -10,8 +11,9 @@ export class FiubaCredentials implements ICredentials {
     this.setDni(dni);
   }
 
-  public authenticate(password: string) {
-    return FiubaUsersService.authenticate({ dni: this.dni, password });
+  public async authenticate(password: string) {
+    const isValid = await FiubaUsersService.authenticate({ dni: this.dni, password });
+    if (!isValid) throw new BadCredentialsError();
   }
 
   private setDni(dni: string) {

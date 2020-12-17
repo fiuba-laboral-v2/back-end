@@ -1,6 +1,5 @@
 import { ValidationError, UniqueConstraintError } from "sequelize";
 import { ApplicantNotFound, ApplicantWithNoCareersError } from "$models/Applicant/Errors";
-import { FiubaUserNotFoundError } from "$models/User/Errors";
 import {
   ForbiddenCurrentCareerYearError,
   MissingApprovedSubjectCountError
@@ -23,6 +22,7 @@ import { CareerGenerator } from "$generators/Career";
 import { UUID_REGEX } from "$test/models";
 import { get, set } from "lodash";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
+import { BadCredentialsError } from "$graphql/User/Errors";
 
 describe("ApplicantRepository", () => {
   beforeAll(async () => {
@@ -207,8 +207,8 @@ describe("ApplicantRepository", () => {
 
       const applicantData = ApplicantGenerator.data.minimum();
       await expect(ApplicantRepository.create(applicantData)).rejects.toThrowErrorWithMessage(
-        FiubaUserNotFoundError,
-        FiubaUserNotFoundError.buildMessage(applicantData.user.dni)
+        BadCredentialsError,
+        BadCredentialsError.buildMessage()
       );
     });
   });

@@ -1,6 +1,6 @@
 import { Database } from "$config";
 import { ISaveAdmin } from "./Interface";
-import { UserRepository, User, FiubaUserNotFoundError } from "$models/User";
+import { UserRepository, User } from "$models/User";
 import { FiubaCredentials } from "$models/User/Credentials";
 import { AdminNotFoundError } from "./Errors";
 import { Admin } from "..";
@@ -12,8 +12,7 @@ export const AdminRepository = {
     Database.transaction(async transaction => {
       const credentials = new FiubaCredentials(userAttributes.dni);
       const user = new User({ ...userAttributes, credentials });
-      const isValid = await user.credentials.authenticate(userAttributes.password);
-      if (!isValid) throw new FiubaUserNotFoundError(credentials.dni);
+      await user.credentials.authenticate(userAttributes.password);
       await UserRepository.save(user, transaction);
       return Admin.create({ userUuid: user.uuid!, secretary }, { transaction });
     }),

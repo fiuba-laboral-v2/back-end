@@ -8,7 +8,7 @@ import { ApplicantCapabilityRepository } from "../ApplicantCapability";
 import { ApplicantKnowledgeSectionRepository } from "./ApplicantKnowledgeSection";
 import { ApplicantExperienceSectionRepository } from "./ApplicantExperienceSection";
 import { ApplicantLinkRepository } from "./Link";
-import { FiubaUserNotFoundError, User, UserRepository } from "../User";
+import { User, UserRepository } from "../User";
 import { Applicant } from "..";
 import { PaginationQuery } from "../PaginationQuery";
 import { FiubaCredentials } from "$models/User/Credentials";
@@ -25,8 +25,7 @@ export const ApplicantRepository = {
     Database.transaction(async transaction => {
       const credentials = new FiubaCredentials(userAttributes.dni);
       const user = new User({ ...userAttributes, credentials });
-      const isValid = await user.credentials.authenticate(userAttributes.password);
-      if (!isValid) throw new FiubaUserNotFoundError(credentials.dni);
+      await user.credentials.authenticate(userAttributes.password);
       await UserRepository.save(user, transaction);
       const applicant = await Applicant.create(
         { padron, description, userUuid: user.uuid! },
