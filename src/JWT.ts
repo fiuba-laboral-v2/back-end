@@ -13,7 +13,7 @@ export const JWT = {
   createToken: async (user: User) => {
     const admin = await AdminRepository.findByUserUuidIfExists(user.uuid!);
     const applicant = await ApplicantRepository.findByUserUuidIfExists(user.uuid!);
-    const companyUser = await CompanyUserRepository.findByUserUuid(user.uuid!);
+    const companyUser = await CompanyUserRepository.findByUserUuidIfExists(user.uuid!);
     const payload = {
       uuid: user.uuid,
       email: user.email,

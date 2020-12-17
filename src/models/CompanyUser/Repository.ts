@@ -6,5 +6,5 @@ export const CompanyUserRepository = {
     return companyUser.save({ transaction });
   },
   findByCompanyUuid: (companyUuid: string) => CompanyUser.findAll({ where: { companyUuid } }),
-  findByUserUuid: (userUuid: string) => CompanyUser.findOne({ where: { userUuid } })
+  findByUserUuidIfExists: (userUuid: string) => CompanyUser.findOne({ where: { userUuid } })
 };

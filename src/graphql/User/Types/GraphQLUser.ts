@@ -43,7 +43,7 @@ export const GraphQLUser = new GraphQLObjectType<User>({
     company: {
       type: GraphQLCompany,
       resolve: async user => {
-        const companyUser = await CompanyUserRepository.findByUserUuid(user.uuid!);
+        const companyUser = await CompanyUserRepository.findByUserUuidIfExists(user.uuid!);
         return companyUser && CompanyRepository.findByUuid(companyUser.companyUuid);
       }
     }
