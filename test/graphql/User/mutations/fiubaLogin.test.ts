@@ -37,7 +37,7 @@ describe("fiubaLogin", () => {
         variables: { dni: user.dni, password }
       },
       jwtTokenContents: CurrentUserBuilder.build({
-        uuid: user.uuid,
+        uuid: user.uuid!,
         email: user.email,
         applicant: { uuid: applicant.uuid }
       })
@@ -54,7 +54,7 @@ describe("fiubaLogin", () => {
         variables: { dni: user.dni, password }
       },
       jwtTokenContents: CurrentUserBuilder.build({
-        uuid: user.uuid,
+        uuid: user.uuid!,
         email: user.email,
         admin: {
           userUuid: admin.userUuid

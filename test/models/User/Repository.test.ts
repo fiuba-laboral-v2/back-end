@@ -207,7 +207,7 @@ describe("UserRepository", () => {
         await UserGenerator.instance(),
         await UserGenerator.instance(),
         await UserGenerator.instance()
-      ].map(({ uuid }) => uuid);
+      ].map(({ uuid }) => uuid!);
 
       const users = await UserRepository.findByUuids(uuids);
       expect(users).toHaveLength(uuids.length);
@@ -222,7 +222,7 @@ describe("UserRepository", () => {
     });
 
     it("finds only the users with an uuid persisted", async () => {
-      const persistedUuids = [await UserGenerator.instance()].map(({ uuid }) => uuid);
+      const persistedUuids = [await UserGenerator.instance()].map(({ uuid }) => uuid!);
       const nonPersistedUuids = [UUID.generate()];
 
       const users = await UserRepository.findByUuids([...persistedUuids, ...nonPersistedUuids]);
@@ -259,7 +259,7 @@ describe("UserRepository", () => {
       await UserGenerator.instance();
       const secondUser = await UserGenerator.instance();
       await UserGenerator.instance();
-      const user = await UserRepository.findByUuid(secondUser.uuid);
+      const user = await UserRepository.findByUuid(secondUser.uuid!);
       expect(user.toJSON()).toEqual(secondUser.toJSON());
     });
 

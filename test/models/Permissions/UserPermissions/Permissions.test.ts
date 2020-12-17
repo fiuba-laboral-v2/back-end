@@ -112,7 +112,7 @@ describe("UserPermissions", () => {
         const offer = await OfferGenerator.instance.forGraduates({ companyUuid });
         const [user] = await company.getUsers();
         const currentUser = new CurrentUser({
-          uuid: user.uuid,
+          uuid: user.uuid!,
           email: "email@email.com",
           roles: [new CompanyRole(companyUuid)]
         });
@@ -125,7 +125,7 @@ describe("UserPermissions", () => {
         const anotherCompany = await CompanyGenerator.instance.withCompleteData();
         const [user] = await anotherCompany.getUsers();
         const currentUser = new CurrentUser({
-          uuid: user.uuid,
+          uuid: user.uuid!,
           email: "email@email.com",
           roles: [new CompanyRole(anotherCompany.uuid)]
         });
@@ -167,7 +167,7 @@ describe("UserPermissions", () => {
         await ApplicantCareersRepository.bulkCreate([{ careerCode, isGraduate: true }], applicant);
         const admin = await Admin.create({ userUuid: user.uuid, secretary: Secretary.extension });
         const currentUser = new CurrentUser({
-          uuid: user.uuid,
+          uuid: user.uuid!,
           email: "email@email.com",
           roles: [new AdminRole(admin.userUuid), new ApplicantRole(applicant.uuid)]
         });
@@ -321,7 +321,7 @@ describe("UserPermissions", () => {
       beforeAll(async () => {
         const [user] = await company.getUsers();
         currentCompanyUser = new CurrentUser({
-          uuid: user.uuid,
+          uuid: user.uuid!,
           email: "company@mail.com",
           roles: [new CompanyRole(company.uuid)]
         });

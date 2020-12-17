@@ -2,7 +2,6 @@ import { ValidationError } from "sequelize";
 import { UUID } from "$models/UUID";
 import { User } from "$models";
 import { MissingDniError } from "$models/User/Errors";
-import { UUID_REGEX } from "../index";
 import {
   InvalidEmailError,
   NameWithDigitsError,
@@ -66,7 +65,7 @@ describe("User", () => {
     await expect(user.validate()).resolves.not.toThrow();
     expect(user).toEqual(
       expect.objectContaining({
-        uuid: expect.stringMatching(UUID_REGEX),
+        uuid: null,
         ...params
       })
     );
@@ -154,7 +153,7 @@ describe("User", () => {
         name: "name",
         surname: "surname"
       });
-      expect(() => User.beforeCreateHook(user)).toThrow(PasswordWithoutDigitsError);
+      expect(() => User.beforeCreateUserHook(user)).toThrow(PasswordWithoutDigitsError);
     });
 
     it("hashes password before creation", async () => {
@@ -165,7 +164,7 @@ describe("User", () => {
         name: "name",
         surname: "surname"
       });
-      User.beforeCreateHook(user);
+      User.beforeCreateUserHook(user);
       expect(user.password).not.toEqual(unhashedPassword);
     });
   });
@@ -180,7 +179,7 @@ describe("User", () => {
         name: "name",
         surname: "surname"
       });
-      User.beforeCreateHook(user);
+      User.beforeCreateUserHook(user);
 
       expect(await user.passwordMatches(unhashedPassword)).toBe(true);
     });

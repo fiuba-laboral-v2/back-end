@@ -1,7 +1,8 @@
-import { BeforeCreate, Column, HasOne, Model, Table } from "sequelize-typescript";
+import { BeforeCreate, Column, HasOne, Table } from "sequelize-typescript";
 import { compare, hashSync } from "bcrypt";
-import { HasOneGetAssociationMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
+import { HasOneGetAssociationMixin, STRING, TEXT } from "sequelize";
 import { Admin, Applicant, Company, CompanyUser } from "$models";
+import { SequelizeModel } from "$models/SequelizeModel";
 import { MissingDniError } from "./Errors";
 import { validateEmail, validateName, validatePassword } from "validations-fiuba-laboral-v2";
 
@@ -13,9 +14,10 @@ import { validateEmail, validateName, validatePassword } from "validations-fiuba
     }
   }
 })
-export class User extends Model<User> {
+export class User extends SequelizeModel<User> {
   @BeforeCreate
-  public static beforeCreateHook(user: User): void {
+  public static beforeCreateUserHook(user: User): void {
+    super.beforeCreateHook(user);
     if (!user.password) return;
     user.setPassword(user.password);
   }
@@ -26,14 +28,6 @@ export class User extends Model<User> {
     type: STRING
   })
   public password: string;
-
-  @Column({
-    allowNull: false,
-    primaryKey: true,
-    type: UUID,
-    defaultValue: UUIDV4
-  })
-  public uuid: string;
 
   @Column({
     allowNull: false,
