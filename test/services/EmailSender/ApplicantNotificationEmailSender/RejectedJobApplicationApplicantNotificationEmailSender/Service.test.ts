@@ -65,15 +65,14 @@ describe("RejectedJobApplicationApplicantNotificationEmailSender", () => {
             email: settings.email
           },
           subject: "Postulación a oferta de trabajo rechazada",
-          body: expect.stringContaining(
+          body:
             `Tu postulación a la oferta de trabajo: ${offer.title} (baseUrl/subDomain/postulante/ofertas/${offer.uuid}) ha sido rechazada.` +
-              "\n" +
-              `Motivo de rechazo: ${notification.moderatorMessage}` +
-              "\n" +
-              "Para mas detalles se puede responder a este email" +
-              "\n\n" +
-              `Bolsa de Trabajo FIUBA`
-          )
+            "\n" +
+            `Motivo de rechazo: "${notification.moderatorMessage}"` +
+            "\n" +
+            "Para mas detalles se puede responder a este email." +
+            "\n\n" +
+            "Bolsa de Trabajo FIUBA."
         }
       ]
     ]);
