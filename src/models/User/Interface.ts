@@ -18,3 +18,7 @@ export interface IUserEditable {
   name?: string;
   surname?: string;
 }
+
+export interface ICredentials {
+  authenticate: (password: string) => Promise<boolean>;
+}

@@ -1,5 +1,4 @@
 export { UserRepository } from "./Repository";
-export * from "./SystemUser";
-export * from "./FiubaUser";
+export { User } from "./User";
 export * from "./Interface";
 export * from "./Errors";

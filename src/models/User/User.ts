@@ -1,31 +1,25 @@
 import { InvalidAttributeFormatError, AttributeNotDefinedError } from "$models/Errors";
+import { ICredentials } from "./Interface";
 import { UUID } from "$models/UUID";
 import { isNil } from "lodash";
-import { validateEmail, validateName } from "validations-fiuba-laboral-v2";
+import { validateName } from "validations-fiuba-laboral-v2";
 
-export abstract class User {
+export class User {
   public uuid?: string;
-  public email: string;
   public name: string;
   public surname: string;
+  public credentials: ICredentials;
 
-  protected constructor(attributes: IUserAttributes) {
+  constructor(attributes: IUserAttributes) {
     this.setUuid(attributes.uuid);
-    this.setEmail(attributes.email);
     this.setName(attributes.name);
     this.setSurname(attributes.surname);
+    this.setCredentials(attributes.credentials);
   }
 
   public setUuid(uuid?: string) {
     if (uuid && !UUID.validate(uuid)) throw new InvalidAttributeFormatError("uuid");
     this.uuid = uuid;
-  }
-
-  private setEmail(email: string) {
-    const attributeName = "email";
-    if (isNil(email)) throw new AttributeNotDefinedError(attributeName);
-    validateEmail(email);
-    this.email = email;
   }
 
   private setName(name: string) {
@@ -39,11 +33,16 @@ export abstract class User {
     validateName(surname);
     this.surname = surname;
   }
+
+  private setCredentials(credentials: ICredentials) {
+    if (isNil(credentials)) throw new AttributeNotDefinedError("credentials");
+    this.credentials = credentials;
+  }
 }
 
 export interface IUserAttributes {
   uuid?: string;
-  email: string;
   name: string;
   surname: string;
+  credentials: ICredentials;
 }

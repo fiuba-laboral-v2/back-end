@@ -1,8 +1,9 @@
 import { isNil } from "lodash";
+import { ICredentials } from "../Interface";
 import { FiubaUsersService } from "$services";
 import { AttributeNotDefinedError } from "$models/Errors";
 
-export class FiubaCredentials {
+export class FiubaCredentials implements ICredentials {
   public dni: string;
 
   constructor(dni: string) {
