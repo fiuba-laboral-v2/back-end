@@ -3,6 +3,7 @@ import { ICredentials } from "../../Interface";
 import { AttributeNotDefinedError } from "$models/Errors";
 import { validatePassword } from "validations-fiuba-laboral-v2";
 import { PasswordEncryptor } from "$libs/PasswordEncryptor";
+import { BadCredentialsError } from "$graphql/User/Errors";
 
 export class CompanyUserRawCredentials implements ICredentials {
   public password: string;
@@ -11,8 +12,9 @@ export class CompanyUserRawCredentials implements ICredentials {
     this.setPassword(attributes.password);
   }
 
-  public authenticate(password: string) {
-    return PasswordEncryptor.authenticate(password, this.password);
+  public async authenticate(password: string) {
+    const isValid = await PasswordEncryptor.authenticate(password, this.password);
+    if (!isValid) throw new BadCredentialsError();
   }
 
   private setPassword(password: string) {

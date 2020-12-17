@@ -20,8 +20,7 @@ export const companyLogin = {
     const user = await UserRepository.findByEmail(email);
     const credentials = user.credentials;
     if (!(credentials instanceof CompanyUserHashedCredentials)) throw new BadCredentialsError();
-    const isValid = await user.credentials.authenticate(password);
-    if (!isValid) throw new BadCredentialsError();
+    await user.credentials.authenticate(password);
 
     const token = await JWT.createToken(user);
     expressResponse.cookie(CookieConfig.cookieName, token, CookieConfig.cookieOptions);

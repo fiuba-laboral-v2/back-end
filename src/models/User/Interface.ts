@@ -20,5 +20,5 @@ export interface IUserEditable {
 }
 
 export interface ICredentials {
-  authenticate: (password: string) => Promise<boolean | void>;
+  authenticate: (password: string) => Promise<void>;
 }
