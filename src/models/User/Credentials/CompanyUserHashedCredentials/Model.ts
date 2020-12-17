@@ -12,7 +12,7 @@ export class CompanyUserHashedCredentials implements ICredentials {
   }
 
   public async authenticate(password: string) {
-    const isValid = await PasswordEncryptor.authenticate(password, this.password);
+    const isValid = await PasswordEncryptor.passwordMatches(password, this.password);
     if (!isValid) throw new BadCredentialsError();
   }
 
