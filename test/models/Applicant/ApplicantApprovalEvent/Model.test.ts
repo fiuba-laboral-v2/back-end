@@ -6,20 +6,21 @@ import { isApprovalStatus, isUuid } from "$models/SequelizeModelValidators";
 import { UUID } from "$models/UUID";
 
 describe("ApplicantApprovalEvent", () => {
+  const mandatoryAttributes = {
+    adminUserUuid: UUID.generate(),
+    applicantUuid: UUID.generate(),
+    status: ApprovalStatus.approved
+  };
+
   const expectToCreateAValidInstanceWithAStatus = async (status: ApprovalStatus) => {
-    const applicantApprovalEventAttributes = {
-      adminUserUuid: UUID.generate(),
-      applicantUuid: UUID.generate(),
-      status
-    };
-    const applicantApprovalEvent = new ApplicantApprovalEvent(applicantApprovalEventAttributes);
-    await expect(applicantApprovalEvent.validate()).resolves.not.toThrow();
-    expect(applicantApprovalEvent).toEqual(
-      expect.objectContaining({
-        uuid: expect.stringMatching(UUID_REGEX),
-        ...applicantApprovalEventAttributes
-      })
-    );
+    const attributes = { ...mandatoryAttributes, status };
+    const event = new ApplicantApprovalEvent(attributes);
+    await expect(event.validate()).resolves.not.toThrow();
+    expect(event).toBeObjectContaining({
+      uuid: expect.stringMatching(UUID_REGEX),
+      moderatorMessage: undefined,
+      ...attributes
+    });
   };
 
   it("creates a valid pending ApplicantApprovalEvent", async () => {
@@ -34,70 +35,72 @@ describe("ApplicantApprovalEvent", () => {
     await expectToCreateAValidInstanceWithAStatus(ApprovalStatus.rejected);
   });
 
+  it("creates a rejected event with a moderatorMessage", async () => {
+    const moderatorMessage = "message";
+    const attributes = { ...mandatoryAttributes, moderatorMessage };
+    const event = new ApplicantApprovalEvent(attributes);
+    await expect(event.validate()).resolves.not.toThrow();
+    expect(event.moderatorMessage).toEqual(moderatorMessage);
+  });
+
   it("throws an error if approvalStatus is not part of the enum values", async () => {
-    const applicantApprovalEvent = new ApplicantApprovalEvent({
-      adminUserUuid: UUID.generate(),
-      applicantUuid: UUID.generate(),
+    const event = new ApplicantApprovalEvent({
+      ...mandatoryAttributes,
       status: "notDefinedStatusInEnum"
     });
-    await expect(applicantApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
+    await expect(event.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       isApprovalStatus.validate.isIn.msg
     );
   });
 
   it("throws an error if no adminUserUuid is provided", async () => {
-    const applicantApprovalEvent = new ApplicantApprovalEvent({
+    const event = new ApplicantApprovalEvent({
       applicantUuid: UUID.generate(),
       status: ApprovalStatus.approved
     });
-    await expect(applicantApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
+    await expect(event.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       "notNull Violation: ApplicantApprovalEvent.adminUserUuid cannot be null"
     );
   });
 
   it("throws an error if no applicantUuid is provided", async () => {
-    const applicantApprovalEvent = new ApplicantApprovalEvent({
+    const event = new ApplicantApprovalEvent({
       adminUserUuid: UUID.generate(),
       status: ApprovalStatus.approved
     });
-    await expect(applicantApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
+    await expect(event.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       "notNull Violation: ApplicantApprovalEvent.applicantUuid cannot be null"
     );
   });
 
   it("throws an error if no status is provided", async () => {
-    const applicantApprovalEvent = new ApplicantApprovalEvent({
+    const event = new ApplicantApprovalEvent({
       adminUserUuid: UUID.generate(),
       applicantUuid: UUID.generate()
     });
-    await expect(applicantApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
+    await expect(event.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       "notNull Violation: ApplicantApprovalEvent.status cannot be null"
     );
   });
 
   it("throws an error if no status is provided", async () => {
-    const applicantApprovalEvent = new ApplicantApprovalEvent({
+    const event = new ApplicantApprovalEvent({
       adminUserUuid: UUID.generate(),
       applicantUuid: UUID.generate()
     });
-    await expect(applicantApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
+    await expect(event.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       "notNull Violation: ApplicantApprovalEvent.status cannot be null"
     );
   });
 
   it("throws an error if uuid has an invalid format", async () => {
-    const applicantApprovalEvent = new ApplicantApprovalEvent({
-      uuid: "invalidFormat",
-      adminUserUuid: UUID.generate(),
-      applicantUuid: UUID.generate(),
-      status: ApprovalStatus.approved
-    });
-    await expect(applicantApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
+    const event = new ApplicantApprovalEvent({ ...mandatoryAttributes, uuid: "invalidFormat" });
+    await expect(event.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       isUuid.validate.isUUID.msg
     );
@@ -105,9 +108,8 @@ describe("ApplicantApprovalEvent", () => {
 
   it("throws an error if adminUserUuid has an invalid format", async () => {
     const applicantApprovalEvent = new ApplicantApprovalEvent({
-      adminUserUuid: "invalidFormat",
-      applicantUuid: UUID.generate(),
-      status: ApprovalStatus.approved
+      ...mandatoryAttributes,
+      adminUserUuid: "invalidFormat"
     });
     await expect(applicantApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -117,9 +119,8 @@ describe("ApplicantApprovalEvent", () => {
 
   it("throws an error if applicantUuid has an invalid format", async () => {
     const applicantApprovalEvent = new ApplicantApprovalEvent({
-      adminUserUuid: UUID.generate(),
-      applicantUuid: "invalidFormat",
-      status: ApprovalStatus.approved
+      ...mandatoryAttributes,
+      applicantUuid: "invalidFormat"
     });
     await expect(applicantApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
