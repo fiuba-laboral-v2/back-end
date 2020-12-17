@@ -60,7 +60,7 @@ export const ApplicantRepository = {
     return applicant;
   },
   update: ({
-    user: userAttributes = {},
+    user: { name, surname, email } = {},
     description,
     uuid,
     knowledgeSections = [],
@@ -73,9 +73,9 @@ export const ApplicantRepository = {
       const applicant = await ApplicantRepository.findByUuid(uuid);
       await applicant.set({ description });
       const user = await UserRepository.findByUuid(applicant.userUuid);
-      if (userAttributes.name) user.name = userAttributes.name;
-      if (userAttributes.surname) user.surname = userAttributes.surname!;
-      if (userAttributes.email) user.email = userAttributes.email!;
+      if (name) user.name = name;
+      if (surname) user.surname = surname;
+      if (email) user.email = email;
       await UserRepository.save(user, transaction);
       await new ApplicantKnowledgeSectionRepository().update({
         sections: knowledgeSections,
