@@ -1,10 +1,10 @@
-import { User } from "$models";
+import { UserSequelizeModel } from "$models";
 import { CurrentUserBuilder } from "$models/CurrentUser";
 import { IExpressContext } from "$test/graphql/ExpressContext";
 import { client } from "$test/graphql/ApolloTestClient";
 
 export const createApolloTestClient = (
-  user: User,
+  user: UserSequelizeModel,
   expressContext?: IExpressContext,
   entityContext?: object
 ) =>

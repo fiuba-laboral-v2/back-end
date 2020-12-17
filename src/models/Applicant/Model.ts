@@ -28,7 +28,7 @@ import {
   JobApplication,
   ApplicantKnowledgeSection,
   ApplicantExperienceSection,
-  User
+  UserSequelizeModel
 } from "$models";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Applicant";
@@ -58,7 +58,7 @@ export class Applicant extends Model<Applicant> {
   })
   public description: string;
 
-  @ForeignKey(() => User)
+  @ForeignKey(() => UserSequelizeModel)
   @Column({
     allowNull: false,
     type: UUID
@@ -73,8 +73,8 @@ export class Applicant extends Model<Applicant> {
   })
   public approvalStatus: ApprovalStatus;
 
-  @BelongsTo(() => User, "userUuid")
-  public user: User;
+  @BelongsTo(() => UserSequelizeModel, "userUuid")
+  public user: UserSequelizeModel;
 
   @HasMany(() => ApplicantKnowledgeSection)
   public knowledgeSections: ApplicantKnowledgeSection[];
@@ -101,7 +101,7 @@ export class Applicant extends Model<Applicant> {
   public approvalEvents: ApplicantApprovalEvent;
 
   public getCareers: HasManyGetAssociationsMixin<Career>;
-  public getUser: HasOneGetAssociationMixin<User>;
+  public getUser: HasOneGetAssociationMixin<UserSequelizeModel>;
   public getCapabilities: HasManyGetAssociationsMixin<Capability>;
   public getApplicantCareers: HasManyGetAssociationsMixin<ApplicantCareer>;
   public getKnowledgeSections: HasManyGetAssociationsMixin<ApplicantKnowledgeSection>;

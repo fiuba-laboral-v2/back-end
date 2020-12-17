@@ -1,5 +1,5 @@
 import { AllowNull, Column, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript";
-import { Company, User } from "$models";
+import { Company, UserSequelizeModel } from "$models";
 
 @Table
 export class CompanyUser extends Model<CompanyUser> {
@@ -9,7 +9,7 @@ export class CompanyUser extends Model<CompanyUser> {
   @Column
   public companyUuid: string;
 
-  @ForeignKey(() => User)
+  @ForeignKey(() => UserSequelizeModel)
   @AllowNull(false)
   @PrimaryKey
   @Column

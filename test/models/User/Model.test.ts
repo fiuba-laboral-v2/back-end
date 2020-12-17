@@ -1,6 +1,6 @@
 import { ValidationError } from "sequelize";
 import { UUID } from "$models/UUID";
-import { User } from "$models";
+import { UserSequelizeModel } from "$models";
 import { MissingDniError } from "$models/User/Errors";
 import {
   InvalidEmailError,
@@ -9,9 +9,9 @@ import {
 } from "validations-fiuba-laboral-v2";
 import { DniGenerator } from "$generators/DNI";
 
-describe("User", () => {
+describe("UserSequelizeModel", () => {
   it("instantiates a valid user", async () => {
-    const user = new User({
+    const user = new UserSequelizeModel({
       email: "asd@qwe.com",
       dni: DniGenerator.generate(),
       password: "somethingVerySecret123",
@@ -22,7 +22,7 @@ describe("User", () => {
   });
 
   it("instantiates a valid user with no dni", async () => {
-    const user = new User({
+    const user = new UserSequelizeModel({
       email: "asd@qwe.com",
       password: "somethingVerySecret123",
       name: "name",
@@ -33,7 +33,7 @@ describe("User", () => {
   });
 
   it("instantiates a valid fiuba user", async () => {
-    const user = new User({
+    const user = new UserSequelizeModel({
       email: "asd@qwe.com",
       dni: DniGenerator.generate(),
       name: "name",
@@ -44,7 +44,7 @@ describe("User", () => {
   });
 
   it("instantiates a user with no password when a dni is given", async () => {
-    const user = new User({
+    const user = new UserSequelizeModel({
       email: "asd@qwe.com",
       dni: DniGenerator.generate(),
       name: "name",
@@ -61,7 +61,7 @@ describe("User", () => {
       name: "A Very Very Very Very Very Very Very Very Very Very Very Long Name",
       surname: "surname"
     };
-    const user = new User(params);
+    const user = new UserSequelizeModel(params);
     await expect(user.validate()).resolves.not.toThrow();
     expect(user).toEqual(
       expect.objectContaining({
@@ -82,12 +82,12 @@ describe("User", () => {
         surname: "surname"
       };
       fields.map(field => delete attributes[field]);
-      const user = new User(attributes);
+      const user = new UserSequelizeModel(attributes);
       await expect(user.validate()).rejects.toThrowErrorWithMessage(ValidationError, message);
     };
 
     it("throws an error if name has a digit", async () => {
-      const user = new User({
+      const user = new UserSequelizeModel({
         uuid: UUID.generate(),
         email: "asd@qwe.com",
         password: "somethingVerySecret123",
@@ -98,7 +98,7 @@ describe("User", () => {
     });
 
     it("throws an error if surname has a digit", async () => {
-      const user = new User({
+      const user = new UserSequelizeModel({
         uuid: UUID.generate(),
         email: "asd@qwe.com",
         password: "somethingVerySecret123",
@@ -114,20 +114,20 @@ describe("User", () => {
     it("throws an error if name is null", async () => {
       await expectToThrowErrorForMissingFields(
         ["name"],
-        "notNull Violation: User.name cannot be null"
+        "notNull Violation: UserSequelizeModel.name cannot be null"
       );
     });
 
     it("throws an error if surname is null", async () => {
       await expectToThrowErrorForMissingFields(
         ["surname"],
-        "notNull Violation: User.surname cannot be null"
+        "notNull Violation: UserSequelizeModel.surname cannot be null"
       );
     });
 
     it("throws an error if email format is invalid", async () => {
       const email = "asdqwe.com";
-      const user = new User({
+      const user = new UserSequelizeModel({
         email: email,
         password: "somethingVerySecret123",
         name: "name",
@@ -147,24 +147,26 @@ describe("User", () => {
 
   describe("Before create", () => {
     it("throws error if password is invalid in before creation hook", async () => {
-      const user = new User({
+      const user = new UserSequelizeModel({
         email: "asd@qwe.com",
         password: "somethingWithoutDigits",
         name: "name",
         surname: "surname"
       });
-      expect(() => User.beforeCreateUserHook(user)).toThrow(PasswordWithoutDigitsError);
+      expect(() => UserSequelizeModel.beforeCreateUserHook(user)).toThrow(
+        PasswordWithoutDigitsError
+      );
     });
 
     it("hashes password before creation", async () => {
       const unhashedPassword = "somethingWithDigits99";
-      const user = new User({
+      const user = new UserSequelizeModel({
         email: "asd@qwe.com",
         password: unhashedPassword,
         name: "name",
         surname: "surname"
       });
-      User.beforeCreateUserHook(user);
+      UserSequelizeModel.beforeCreateUserHook(user);
       expect(user.password).not.toEqual(unhashedPassword);
     });
   });
@@ -173,20 +175,20 @@ describe("User", () => {
     it("tests valid password match after creation", async () => {
       const unhashedPassword = "somethingWithDigits99";
 
-      const user = new User({
+      const user = new UserSequelizeModel({
         email: "asd@qwe.com",
         password: unhashedPassword,
         name: "name",
         surname: "surname"
       });
-      User.beforeCreateUserHook(user);
+      UserSequelizeModel.beforeCreateUserHook(user);
 
       expect(await user.passwordMatches(unhashedPassword)).toBe(true);
     });
   });
 
   it("tests invalid password match", async () => {
-    const user = new User({
+    const user = new UserSequelizeModel({
       email: "asd@qwe.com",
       password: "somethingWithDigits99",
       name: "name",

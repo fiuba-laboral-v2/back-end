@@ -9,14 +9,14 @@ import { validateEmail, validateName, validatePassword } from "validations-fiuba
 @Table({
   tableName: "Users",
   validate: {
-    validateUser(this: User) {
+    validateUser(this: UserSequelizeModel) {
       this.validateUser();
     }
   }
 })
-export class User extends SequelizeModel<User> {
+export class UserSequelizeModel extends SequelizeModel<UserSequelizeModel> {
   @BeforeCreate
-  public static beforeCreateUserHook(user: User): void {
+  public static beforeCreateUserHook(user: UserSequelizeModel): void {
     super.beforeCreateHook(user);
     if (!user.password) return;
     user.setPassword(user.password);
@@ -79,7 +79,7 @@ export class User extends SequelizeModel<User> {
 
   public setPassword(password: string) {
     validatePassword(password);
-    this.password = hashSync(password, User.bcryptSaltOrRounds);
+    this.password = hashSync(password, UserSequelizeModel.bcryptSaltOrRounds);
   }
 
   public passwordMatches(password) {

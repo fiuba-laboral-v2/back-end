@@ -1,4 +1,4 @@
-import { User } from "./models";
+import { UserSequelizeModel } from "./models";
 import { CurrentUser, CurrentUserBuilder, ICurrentUserTokenData } from "./models/CurrentUser";
 import { sign, verify } from "jsonwebtoken";
 import { Application } from "express";
@@ -7,7 +7,7 @@ import { JWTConfig } from "./config";
 import { Logger } from "./libs/Logger";
 
 export const JWT = {
-  createToken: async (user: User) => {
+  createToken: async (user: UserSequelizeModel) => {
     const admin = await user.getAdmin();
     const applicant = await user.getApplicant();
     const companyUser = await user.getCompanyUser();
