@@ -180,6 +180,35 @@ describe("UserRepository", () => {
     });
   });
 
+  describe("findCompanyUserByEmail", () => {
+    it("finds a user with CompanyUserCredentials by email", async () => {
+      const credentials = new CompanyUserRawCredentials({ password: "fdmgkfHGH4353" });
+      const user = new User({ ...userAttributes(), credentials });
+      await UserRepository.save(user);
+      const persistedUser = await UserRepository.findCompanyUserByEmail(user.email);
+      expect(persistedUser).toEqual(user);
+    });
+
+    it("throws an error if the email belongs to a user with FiubaCredentials", async () => {
+      const credentials = new FiubaCredentials(DniGenerator.generate());
+      const user = new User({ ...userAttributes(), credentials });
+      await UserRepository.save(user);
+      const email = user.email;
+      await expect(UserRepository.findCompanyUserByEmail(email)).rejects.toThrowErrorWithMessage(
+        UserNotFoundError,
+        UserNotFoundError.buildMessage({ email })
+      );
+    });
+
+    it("throws an error if the given email does not belong to a persisted user", async () => {
+      const email = "notPersisted@gmail.com.ar";
+      await expect(UserRepository.findCompanyUserByEmail(email)).rejects.toThrowErrorWithMessage(
+        UserNotFoundError,
+        UserNotFoundError.buildMessage({ email })
+      );
+    });
+  });
+
   describe("findByEmail", () => {
     const expectToFindUserByEmail = async (credentials: ICredentials) => {
       const user = new User({ ...userAttributes(), credentials });

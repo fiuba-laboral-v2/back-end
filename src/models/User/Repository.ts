@@ -11,6 +11,12 @@ export const UserRepository = {
     await sequelizeModel.save({ transaction });
     user.setUuid(sequelizeModel.uuid);
   },
+  findCompanyUserByEmail: async (email: string) => {
+    const sequelizeModel = await UserSequelizeModel.findOne({ where: { email, dni: null } });
+    if (!sequelizeModel) throw new UserNotFoundError({ email });
+
+    return UserMapper.toDomainModel(sequelizeModel);
+  },
   findByEmail: async (email: string) => {
     const sequelizeModel = await UserSequelizeModel.findOne({ where: { email } });
     if (!sequelizeModel) throw new UserNotFoundError({ email });
