@@ -1,4 +1,4 @@
-import { IUser } from "$models/User";
+import { ICreateCompanyUser } from "$models/User";
 
 export interface ICompany {
   cuit: string;
@@ -11,7 +11,7 @@ export interface ICompany {
   email?: string;
   phoneNumbers?: string[];
   photos?: string[];
-  user: IUser;
+  user: ICreateCompanyUser;
 }
 
 export interface IUpdateCompany {

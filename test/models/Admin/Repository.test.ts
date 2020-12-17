@@ -1,5 +1,5 @@
 import { AdminRepository, Secretary } from "$models/Admin";
-import { FiubaUserNotFoundError, UserRepository } from "$models/User";
+import { UserRepository, BadCredentialsError } from "$models/User";
 import { UniqueConstraintError } from "sequelize";
 import { AdminGenerator } from "$generators/Admin";
 import { AdminNotFoundError } from "$models/Admin/Errors";
@@ -13,20 +13,18 @@ describe("AdminRepository", () => {
     it("creates a valid Admin of extension", async () => {
       const adminAttributes = AdminGenerator.data(Secretary.extension);
       const admin = await AdminRepository.create(adminAttributes);
-      expect(await admin.getUser()).toBeObjectContaining({
-        ...adminAttributes.user,
-        password: null
-      });
+      const user = await UserRepository.findByUuid(admin.userUuid);
+      const { dni, password, ...userAttributes } = adminAttributes.user;
+      expect(user).toBeObjectContaining(userAttributes);
       expect(admin).toBeObjectContaining({ secretary: adminAttributes.secretary });
     });
 
     it("creates a valid Admin of graduados", async () => {
       const adminAttributes = AdminGenerator.data(Secretary.graduados);
       const admin = await AdminRepository.create(adminAttributes);
-      expect(await admin.getUser()).toBeObjectContaining({
-        ...adminAttributes.user,
-        password: null
-      });
+      const user = await UserRepository.findByUuid(admin.userUuid);
+      const { dni, password, ...userAttributes } = adminAttributes.user;
+      expect(user).toBeObjectContaining(userAttributes);
       expect(admin).toBeObjectContaining({ secretary: adminAttributes.secretary });
     });
 
@@ -41,8 +39,8 @@ describe("AdminRepository", () => {
       jest.spyOn(FiubaUsersService, "authenticate").mockImplementation(async () => false);
       const adminAttributes = AdminGenerator.data(Secretary.graduados);
       await expect(AdminRepository.create(adminAttributes)).rejects.toThrowErrorWithMessage(
-        FiubaUserNotFoundError,
-        FiubaUserNotFoundError.buildMessage(adminAttributes.user.dni)
+        BadCredentialsError,
+        BadCredentialsError.buildMessage()
       );
     });
 

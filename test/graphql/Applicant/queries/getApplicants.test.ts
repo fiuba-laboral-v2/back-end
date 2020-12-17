@@ -151,7 +151,7 @@ describe("getApplicants", () => {
 
       const expectedApplicants = await Promise.all(
         applicants.map(async applicant => {
-          const user = await applicant.getUser();
+          const user = await UserRepository.findByUuid(applicant.userUuid);
           const capabilities = await applicant.getCapabilities();
           return {
             uuid: applicant.uuid,

@@ -52,7 +52,7 @@ describe("getJobApplicationByUuid", () => {
 
       const offer = await jobApplication.getOffer();
       const applicant = await jobApplication.getApplicant();
-      const user = await applicant.getUser();
+      const user = await UserRepository.findByUuid(applicant.userUuid);
       expect(data!.getJobApplicationByUuid).toEqual({
         uuid: jobApplication.uuid,
         updatedAt: jobApplication.updatedAt.toISOString(),

@@ -1,18 +1,32 @@
 import { ValidationError } from "sequelize";
 import { UUID } from "$models/UUID";
-import { User } from "$models";
+import { UserSequelizeModel } from "$models";
 import { MissingDniError } from "$models/User/Errors";
-import { UUID_REGEX } from "../index";
-import {
-  InvalidEmailError,
-  NameWithDigitsError,
-  PasswordWithoutDigitsError
-} from "validations-fiuba-laboral-v2";
+import { InvalidEmailError, NameWithDigitsError } from "validations-fiuba-laboral-v2";
 import { DniGenerator } from "$generators/DNI";
+import { omit } from "lodash";
 
-describe("User", () => {
+describe("UserSequelizeModel", () => {
+  const userAttributes = {
+    uuid: UUID.generate(),
+    dni: DniGenerator.generate(),
+    email: "asd@qwe.com",
+    password: "somethingVerySecret123",
+    name: "name",
+    surname: "surname"
+  };
+
+  const expectToThrowErrorForMissingAttribute = async (attributeName: string) => {
+    const attributes = omit(userAttributes, attributeName);
+    const user = new UserSequelizeModel(attributes);
+    await expect(user.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      `notNull Violation: UserSequelizeModel.${attributeName} cannot be null`
+    );
+  };
+
   it("instantiates a valid user", async () => {
-    const user = new User({
+    const user = new UserSequelizeModel({
       email: "asd@qwe.com",
       dni: DniGenerator.generate(),
       password: "somethingVerySecret123",
@@ -23,7 +37,7 @@ describe("User", () => {
   });
 
   it("instantiates a valid user with no dni", async () => {
-    const user = new User({
+    const user = new UserSequelizeModel({
       email: "asd@qwe.com",
       password: "somethingVerySecret123",
       name: "name",
@@ -34,7 +48,7 @@ describe("User", () => {
   });
 
   it("instantiates a valid fiuba user", async () => {
-    const user = new User({
+    const user = new UserSequelizeModel({
       email: "asd@qwe.com",
       dni: DniGenerator.generate(),
       name: "name",
@@ -45,7 +59,7 @@ describe("User", () => {
   });
 
   it("instantiates a user with no password when a dni is given", async () => {
-    const user = new User({
+    const user = new UserSequelizeModel({
       email: "asd@qwe.com",
       dni: DniGenerator.generate(),
       name: "name",
@@ -62,138 +76,63 @@ describe("User", () => {
       name: "A Very Very Very Very Very Very Very Very Very Very Very Long Name",
       surname: "surname"
     };
-    const user = new User(params);
+    const user = new UserSequelizeModel(params);
     await expect(user.validate()).resolves.not.toThrow();
-    expect(user).toEqual(
-      expect.objectContaining({
-        uuid: expect.stringMatching(UUID_REGEX),
-        ...params
-      })
+    expect(user).toBeObjectContaining({ uuid: null, ...params });
+  });
+
+  it("throws an error if name has a digit", async () => {
+    const user = new UserSequelizeModel({
+      uuid: UUID.generate(),
+      email: "asd@qwe.com",
+      password: "somethingVerySecret123",
+      name: 1,
+      surname: "surname"
+    });
+    await expect(user.validate()).rejects.toThrow(NameWithDigitsError.buildMessage());
+  });
+
+  it("throws an error if surname has a digit", async () => {
+    const user = new UserSequelizeModel({
+      uuid: UUID.generate(),
+      email: "asd@qwe.com",
+      password: "somethingVerySecret123",
+      name: "name",
+      surname: 22
+    });
+    await expect(user.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      NameWithDigitsError.buildMessage()
     );
   });
 
-  describe("Errors", () => {
-    const expectToThrowErrorForMissingFields = async (fields: string[], message: string) => {
-      const attributes = {
-        uuid: UUID.generate(),
-        dni: DniGenerator.generate(),
-        email: "asd@qwe.com",
-        password: "somethingVerySecret123",
-        name: "name",
-        surname: "surname"
-      };
-      fields.map(field => delete attributes[field]);
-      const user = new User(attributes);
-      await expect(user.validate()).rejects.toThrowErrorWithMessage(ValidationError, message);
-    };
-
-    it("throws an error if name has a digit", async () => {
-      const user = new User({
-        uuid: UUID.generate(),
-        email: "asd@qwe.com",
-        password: "somethingVerySecret123",
-        name: 1,
-        surname: "surname"
-      });
-      await expect(user.validate()).rejects.toThrow(NameWithDigitsError.buildMessage());
-    });
-
-    it("throws an error if surname has a digit", async () => {
-      const user = new User({
-        uuid: UUID.generate(),
-        email: "asd@qwe.com",
-        password: "somethingVerySecret123",
-        name: "name",
-        surname: 22
-      });
-      await expect(user.validate()).rejects.toThrowErrorWithMessage(
-        ValidationError,
-        NameWithDigitsError.buildMessage()
-      );
-    });
-
-    it("throws an error if name is null", async () => {
-      await expectToThrowErrorForMissingFields(
-        ["name"],
-        "notNull Violation: User.name cannot be null"
-      );
-    });
-
-    it("throws an error if surname is null", async () => {
-      await expectToThrowErrorForMissingFields(
-        ["surname"],
-        "notNull Violation: User.surname cannot be null"
-      );
-    });
-
-    it("throws an error if email format is invalid", async () => {
-      const email = "asdqwe.com";
-      const user = new User({
-        email: email,
-        password: "somethingVerySecret123",
-        name: "name",
-        surname: "surname"
-      });
-
-      await expect(user.validate()).rejects.toThrowErrorWithMessage(
-        ValidationError,
-        InvalidEmailError.buildMessage(email)
-      );
-    });
-
-    it("throws an error if the user has no password and no dni", async () => {
-      await expectToThrowErrorForMissingFields(["password", "dni"], MissingDniError.buildMessage());
-    });
+  it("throws an error if no name is provided", async () => {
+    await expectToThrowErrorForMissingAttribute("name");
   });
 
-  describe("Before create", () => {
-    it("throws error if password is invalid in before creation hook", async () => {
-      const user = new User({
-        email: "asd@qwe.com",
-        password: "somethingWithoutDigits",
-        name: "name",
-        surname: "surname"
-      });
-      expect(() => User.beforeCreateHook(user)).toThrow(PasswordWithoutDigitsError);
-    });
-
-    it("hashes password before creation", async () => {
-      const unhashedPassword = "somethingWithDigits99";
-      const user = new User({
-        email: "asd@qwe.com",
-        password: unhashedPassword,
-        name: "name",
-        surname: "surname"
-      });
-      User.beforeCreateHook(user);
-      expect(user.password).not.toEqual(unhashedPassword);
-    });
+  it("throws an error if no surname is provided", async () => {
+    await expectToThrowErrorForMissingAttribute("surname");
   });
 
-  describe("After create", () => {
-    it("tests valid password match after creation", async () => {
-      const unhashedPassword = "somethingWithDigits99";
-
-      const user = new User({
-        email: "asd@qwe.com",
-        password: unhashedPassword,
-        name: "name",
-        surname: "surname"
-      });
-      User.beforeCreateHook(user);
-
-      expect(await user.passwordMatches(unhashedPassword)).toBe(true);
-    });
+  it("throws an error if no email is provided", async () => {
+    await expectToThrowErrorForMissingAttribute("email");
   });
 
-  it("tests invalid password match", async () => {
-    const user = new User({
-      email: "asd@qwe.com",
-      password: "somethingWithDigits99",
-      name: "name",
-      surname: "surname"
-    });
+  it("throws an error if email format is invalid", async () => {
+    const email = "asdqwe.com";
+    const user = new UserSequelizeModel({ ...userAttributes, email });
+    await expect(user.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      InvalidEmailError.buildMessage(email)
+    );
+  });
 
-    expect(await user.passwordMatches("somethingElse")).toBe(false);
+  it("throws an error if the user has no password and no dni", async () => {
+    const attributes = omit(userAttributes, ["password", "dni"]);
+    const user = new UserSequelizeModel(attributes);
+    await expect(user.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      MissingDniError.buildMessage()
+    );
   });
 });

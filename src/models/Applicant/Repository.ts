@@ -8,9 +8,10 @@ import { ApplicantCapabilityRepository } from "../ApplicantCapability";
 import { ApplicantKnowledgeSectionRepository } from "./ApplicantKnowledgeSection";
 import { ApplicantExperienceSectionRepository } from "./ApplicantExperienceSection";
 import { ApplicantLinkRepository } from "./Link";
-import { UserRepository } from "../User";
+import { User, UserRepository } from "../User";
 import { Applicant } from "..";
 import { PaginationQuery } from "../PaginationQuery";
+import { FiubaCredentials } from "$models/User/Credentials";
 
 export const ApplicantRepository = {
   save: (applicant: Applicant, transaction?: Transaction) => applicant.save({ transaction }),
@@ -19,12 +20,15 @@ export const ApplicantRepository = {
     description,
     careers: applicantCareers = [],
     capabilities = [],
-    user
+    user: { name, surname, email, password, dni }
   }: ISaveApplicant) =>
     Database.transaction(async transaction => {
-      const { uuid: userUuid } = await UserRepository.createFiubaUser(user, transaction);
+      const credentials = new FiubaCredentials(dni);
+      const user = new User({ name, surname, email, credentials });
+      await user.credentials.authenticate(password);
+      await UserRepository.save(user, transaction);
       const applicant = await Applicant.create(
-        { padron, description, userUuid: userUuid },
+        { padron, description, userUuid: user.uuid! },
         { transaction }
       );
       await ApplicantCareersRepository.bulkCreate(applicantCareers, applicant, transaction);
@@ -42,6 +46,13 @@ export const ApplicantRepository = {
 
     return applicant;
   },
+  findByUserUuidIfExists: async (userUuid: string) => Applicant.findOne({ where: { userUuid } }),
+  findByUserUuid: async (userUuid: string) => {
+    const applicant = await ApplicantRepository.findByUserUuidIfExists(userUuid);
+    if (!applicant) throw new ApplicantNotFound(userUuid);
+
+    return applicant;
+  },
   findByPadron: async (padron: number) => {
     const applicant = await Applicant.findOne({ where: { padron } });
     if (!applicant) throw new ApplicantNotFound(padron);
@@ -49,7 +60,7 @@ export const ApplicantRepository = {
     return applicant;
   },
   update: ({
-    user: userAttributes = {},
+    user: { name, surname, email } = {},
     description,
     uuid,
     knowledgeSections = [],
@@ -60,9 +71,12 @@ export const ApplicantRepository = {
   }: IApplicantEditable) =>
     Database.transaction(async transaction => {
       const applicant = await ApplicantRepository.findByUuid(uuid);
-      const user = await applicant.getUser();
       await applicant.set({ description });
-      await UserRepository.update(user, userAttributes, transaction);
+      const user = await UserRepository.findByUuid(applicant.userUuid);
+      if (name) user.name = name;
+      if (surname) user.surname = surname;
+      if (email) user.email = email;
+      await UserRepository.save(user, transaction);
       await new ApplicantKnowledgeSectionRepository().update({
         sections: knowledgeSections,
         applicant,

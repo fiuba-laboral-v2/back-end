@@ -1,4 +1,5 @@
-import { UserRepository } from "$models/User";
+import { UserRepository, User } from "$models/User";
+import { CompanyUserRawCredentials } from "$models/User/Credentials";
 import { IUserGeneratorAttributes } from "$generators/interfaces";
 
 export const UserGenerator = {
@@ -7,14 +8,15 @@ export const UserGenerator = {
     UserGenerator.index += 1;
     return UserGenerator.index;
   },
-  instance: ({ password, dni }: IUserGeneratorAttributes = {}) => {
+  instance: async ({ password }: IUserGeneratorAttributes = {}) => {
     const index = UserGenerator.getIndex();
-    return UserRepository.create({
+    const user = new User({
       email: `userTestClient${index}@mail.com`,
-      password: password || "ASDqfdsfsdfwe234",
-      dni,
       name: "userName",
-      surname: "userSurname"
+      surname: "userSurname",
+      credentials: new CompanyUserRawCredentials({ password: password || "ASDqfdsfsdfwe234" })
     });
+    await UserRepository.save(user);
+    return user;
   }
 };

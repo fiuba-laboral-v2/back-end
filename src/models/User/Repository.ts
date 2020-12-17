@@ -1,40 +1,52 @@
-import { ICreateFiubaUser, IUser, IUserEditable } from "./Interface";
-import { FiubaUserNotFoundError, UserNotFoundError } from "./Errors";
+import { UserNotFoundError } from "./Errors";
 import { Transaction } from "sequelize/types";
-import { FiubaUsersService } from "$services";
-import { User } from "$models";
+import { UserSequelizeModel } from "$models";
+import { CompanyUserRepository } from "$models/CompanyUser";
+import { User } from "./User";
+import { UserMapper } from "./Mapper";
 
 export const UserRepository = {
-  create: (attributes: IUser, transaction?: Transaction) =>
-    User.create(attributes, { transaction }),
-  createFiubaUser: async (
-    { dni, password, ...attributes }: ICreateFiubaUser,
-    transaction?: Transaction
-  ) => {
-    const isFiubaUser = await FiubaUsersService.authenticate({ dni, password });
-    if (!isFiubaUser) throw new FiubaUserNotFoundError(dni);
-    return User.create({ dni, ...attributes }, { transaction });
+  save: async (user: User, transaction?: Transaction) => {
+    const sequelizeModel = UserMapper.toPersistenceModel(user);
+    await sequelizeModel.save({ transaction });
+    user.setUuid(sequelizeModel.uuid);
+  },
+  findCompanyUserByEmail: async (email: string) => {
+    const sequelizeModel = await UserSequelizeModel.findOne({ where: { email, dni: null } });
+    if (!sequelizeModel) throw new UserNotFoundError({ email });
+
+    return UserMapper.toDomainModel(sequelizeModel);
   },
   findByEmail: async (email: string) => {
-    const user = await User.findOne({ where: { email } });
-    if (!user) throw new UserNotFoundError({ email });
+    const sequelizeModel = await UserSequelizeModel.findOne({ where: { email } });
+    if (!sequelizeModel) throw new UserNotFoundError({ email });
 
-    return user;
+    return UserMapper.toDomainModel(sequelizeModel);
   },
   findByDni: async (dni: string) => {
-    const user = await User.findOne({ where: { dni } });
-    if (!user) throw new UserNotFoundError({ dni });
+    const sequelizeModel = await UserSequelizeModel.findOne({ where: { dni } });
+    if (!sequelizeModel) throw new UserNotFoundError({ dni });
 
-    return user;
+    return UserMapper.toDomainModel(sequelizeModel);
   },
   findByUuid: async (uuid: string) => {
-    const user = await User.findByPk(uuid);
-    if (!user) throw new UserNotFoundError({ uuid });
+    const sequelizeModel = await UserSequelizeModel.findByPk(uuid);
+    if (!sequelizeModel) throw new UserNotFoundError({ uuid });
 
-    return user;
+    return UserMapper.toDomainModel(sequelizeModel);
   },
-  findByUuids: (uuids: string[]) => User.findAll({ where: { uuid: uuids } }),
-  update: (user: User, newAttributes: IUserEditable, transaction?: Transaction) =>
-    user.update(newAttributes, { transaction }),
-  truncate: () => User.truncate({ cascade: true })
+  findByUuids: async (uuids: string[]) => {
+    const sequelizeModels = await UserSequelizeModel.findAll({ where: { uuid: uuids } });
+    return sequelizeModels.map(UserMapper.toDomainModel);
+  },
+  findByCompanyUuid: async (companyUuid: string) => {
+    const companyUsers = await CompanyUserRepository.findByCompanyUuid(companyUuid);
+    const userUuids = companyUsers.map(companyUser => companyUser.userUuid);
+    return UserRepository.findByUuids(userUuids);
+  },
+  findAll: async () => {
+    const sequelizeModels = await UserSequelizeModel.findAll();
+    return sequelizeModels.map(UserMapper.toDomainModel);
+  },
+  truncate: () => UserSequelizeModel.truncate({ cascade: true })
 };

@@ -5,6 +5,7 @@ import { Admin } from "$models";
 import { GraphQLSecretary } from "./GraphQLSecretary";
 import { GraphQLUser } from "$src/graphql/User/Types/GraphQLUser";
 import { GraphQLString } from "graphql/type/scalars";
+import { UserRepository } from "$models/User";
 
 export const GraphQLAdmin = new GraphQLObjectType<Admin>({
   name: "Admin",
@@ -24,7 +25,7 @@ export const GraphQLAdmin = new GraphQLObjectType<Admin>({
     },
     user: {
       type: GraphQLUser,
-      resolve: admin => admin.getUser()
+      resolve: admin => UserRepository.findByUuid(admin.userUuid)
     }
   })
 });

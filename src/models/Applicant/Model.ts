@@ -8,15 +8,7 @@ import {
   Model,
   Table
 } from "sequelize-typescript";
-import {
-  ENUM,
-  HasManyGetAssociationsMixin,
-  HasOneGetAssociationMixin,
-  INTEGER,
-  TEXT,
-  UUID,
-  UUIDV4
-} from "sequelize";
+import { ENUM, HasManyGetAssociationsMixin, INTEGER, TEXT, UUID, UUIDV4 } from "sequelize";
 import { validateIntegerInRange } from "validations-fiuba-laboral-v2";
 import {
   ApplicantApprovalEvent,
@@ -28,7 +20,7 @@ import {
   JobApplication,
   ApplicantKnowledgeSection,
   ApplicantExperienceSection,
-  User
+  UserSequelizeModel
 } from "$models";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Applicant";
@@ -58,7 +50,7 @@ export class Applicant extends Model<Applicant> {
   })
   public description: string;
 
-  @ForeignKey(() => User)
+  @ForeignKey(() => UserSequelizeModel)
   @Column({
     allowNull: false,
     type: UUID
@@ -73,8 +65,8 @@ export class Applicant extends Model<Applicant> {
   })
   public approvalStatus: ApprovalStatus;
 
-  @BelongsTo(() => User, "userUuid")
-  public user: User;
+  @BelongsTo(() => UserSequelizeModel, "userUuid")
+  public user: UserSequelizeModel;
 
   @HasMany(() => ApplicantKnowledgeSection)
   public knowledgeSections: ApplicantKnowledgeSection[];
@@ -101,14 +93,12 @@ export class Applicant extends Model<Applicant> {
   public approvalEvents: ApplicantApprovalEvent;
 
   public getCareers: HasManyGetAssociationsMixin<Career>;
-  public getUser: HasOneGetAssociationMixin<User>;
   public getCapabilities: HasManyGetAssociationsMixin<Capability>;
   public getApplicantCareers: HasManyGetAssociationsMixin<ApplicantCareer>;
   public getKnowledgeSections: HasManyGetAssociationsMixin<ApplicantKnowledgeSection>;
   public getExperienceSections: HasManyGetAssociationsMixin<ApplicantExperienceSection>;
   public getLinks: HasManyGetAssociationsMixin<ApplicantLink>;
   public getJobApplications: HasManyGetAssociationsMixin<JobApplication>;
-  public getApprovalEvents: HasManyGetAssociationsMixin<ApplicantApprovalEvent>;
 
   public async getType() {
     const applicantCareers = await this.getApplicantCareers();

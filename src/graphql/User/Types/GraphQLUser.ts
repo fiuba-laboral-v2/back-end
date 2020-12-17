@@ -1,9 +1,13 @@
 import { GraphQLObjectType } from "graphql";
 import { ID, nonNull, String } from "$graphql/fieldTypes";
-import { User } from "$models";
+import { User } from "$models/User";
+import { FiubaCredentials } from "$models/User/Credentials";
 import { GraphQLAdmin } from "$graphql/Admin/Types/GraphQLAdmin";
 import { GraphQLApplicant } from "$graphql/Applicant/Types/GraphQLApplicant";
 import { GraphQLCompany } from "$graphql/Company/Types/GraphQLCompany";
+import { AdminRepository } from "$models/Admin";
+import { ApplicantRepository } from "$models/Applicant";
+import { CompanyRepository } from "$models/Company";
 
 export const GraphQLUser = new GraphQLObjectType<User>({
   name: "User",
@@ -15,7 +19,11 @@ export const GraphQLUser = new GraphQLObjectType<User>({
       type: nonNull(String)
     },
     dni: {
-      type: String
+      type: String,
+      resolve: user => {
+        if (user.credentials instanceof FiubaCredentials) return user.credentials.dni;
+        return;
+      }
     },
     name: {
       type: nonNull(String)
@@ -25,15 +33,15 @@ export const GraphQLUser = new GraphQLObjectType<User>({
     },
     admin: {
       type: GraphQLAdmin,
-      resolve: user => user.getAdmin()
+      resolve: user => AdminRepository.findByUserUuidIfExists(user.uuid!)
     },
     applicant: {
       type: GraphQLApplicant,
-      resolve: user => user.getApplicant()
+      resolve: user => ApplicantRepository.findByUserUuidIfExists(user.uuid!)
     },
     company: {
       type: GraphQLCompany,
-      resolve: user => user.getCompany()
+      resolve: async user => CompanyRepository.findByUserUuidIfExists(user.uuid!)
     }
   })
 });

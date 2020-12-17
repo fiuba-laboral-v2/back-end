@@ -1,277 +1,300 @@
-import { UniqueConstraintError, ValidationError } from "sequelize";
-import { UserRepository } from "$models/User/Repository";
-import { FiubaUserNotFoundError, UserNotFoundError } from "$models/User";
-import { UUID } from "$models/UUID";
-import { FiubaUsersService } from "$services";
-import { InvalidEmptyUsernameError } from "$services/FiubaUsers";
-import { UUID_REGEX } from "../index";
 import {
-  InvalidEmailError,
-  PasswordWithoutDigitsError,
-  PasswordWithoutUppercaseError
-} from "validations-fiuba-laboral-v2";
+  FiubaCredentials,
+  CompanyUserRawCredentials,
+  CompanyUserHashedCredentials
+} from "$models/User/Credentials";
+import { UserRepository } from "$models/User";
+import { ICredentials, User, UserNotFoundError } from "$models/User";
+import { UniqueConstraintError } from "sequelize";
+import { UUID } from "$models/UUID";
+
+import { EmailGenerator } from "$generators/Email";
 import { DniGenerator } from "$generators/DNI";
-import { UserGenerator } from "$generators/User";
+import { UUID_REGEX } from "$test/models";
+import arrayContaining = jasmine.arrayContaining;
 
 describe("UserRepository", () => {
-  beforeEach(() => UserRepository.truncate());
+  beforeAll(() => UserRepository.truncate());
 
-  describe("create", () => {
-    it("creates a user", async () => {
-      const userAttributes = {
-        email: "asd@qwe.com",
-        password: "AValidPassword123",
-        name: "Sebastian",
-        surname: "Blanco"
-      };
-      const user = await UserRepository.create(userAttributes);
+  const userAttributes = () => ({
+    name: "name",
+    surname: "surname",
+    email: EmailGenerator.generate()
+  });
 
-      expect(user).toEqual(
-        expect.objectContaining({
-          uuid: expect.stringMatching(UUID_REGEX),
-          email: userAttributes.email,
-          name: userAttributes.name,
-          surname: userAttributes.surname
-        })
+  describe("save", () => {
+    const expectUserToBeSaved = async (user: User) => {
+      await UserRepository.save(user);
+      const { credentials, ...attributes } = await UserRepository.findByUuid(user.uuid!);
+      expect(user).toBeObjectContaining(attributes);
+      expect(user.credentials).toBeObjectContaining(credentials);
+    };
+
+    const expectToGenerateUuidAfterItIsSaved = async (user: User) => {
+      expect(user.uuid).toBeUndefined();
+      await UserRepository.save(user);
+      expect(user.uuid).toEqual(expect.stringMatching(UUID_REGEX));
+    };
+
+    const expectToThrowErrorOnUniqueUuidConstraint = async (user: User) => {
+      const uuid = UUID.generate();
+      jest.spyOn(UUID, "generate").mockImplementation(() => uuid);
+      await UserRepository.save(user);
+      expect(user.uuid).toEqual(uuid);
+      const credentials = new CompanyUserRawCredentials({ password: "fdmgkfHGH4353" });
+      const anotherUser = new User({ ...userAttributes(), credentials });
+      await expect(UserRepository.save(anotherUser)).rejects.toThrowErrorWithMessage(
+        UniqueConstraintError,
+        "Validation error"
       );
-    });
+    };
 
-    it("creates a user with no password", async () => {
-      const user = await UserRepository.create({
-        email: "asd@qwe.com",
-        dni: DniGenerator.generate(),
-        name: "Sebastian",
-        surname: "Blanco"
-      });
-      expect(user.password).toBeNull();
-    });
-
-    it("throws an error if password is invalid", async () => {
-      await expect(
-        UserRepository.create({
-          email: "asd@qwe.com",
-          password: "an invalid password",
-          name: "Sebastian",
-          surname: "blanco"
-        })
-      ).rejects.toThrowErrorWithMessage(
-        PasswordWithoutUppercaseError,
-        "La contraseña debe contener letras mayúsculas"
+    const expectToThrowErrorOnUniqueEmailConstraint = async (user: User) => {
+      const email = user.email;
+      await UserRepository.save(user);
+      const credentials = new CompanyUserRawCredentials({ password: "fdmgkfHGH4353" });
+      const anotherUser = new User({ ...userAttributes(), email, credentials });
+      await expect(UserRepository.save(anotherUser)).rejects.toThrowErrorWithMessage(
+        UniqueConstraintError,
+        "Validation error"
       );
-    });
+    };
 
-    it("throws error if email has invalid format", async () => {
-      await expect(
-        UserRepository.create({
-          email: "asd@qwecom",
-          password: "AValidPassword123",
-          name: "Sebastian",
-          surname: "blanco"
-        })
-      ).rejects.toThrowErrorWithMessage(
-        ValidationError,
-        InvalidEmailError.buildMessage("asd@qwecom")
-      );
-    });
+    describe("User with CompanyUserRawCredentials", () => {
+      const credentials = new CompanyUserRawCredentials({ password: "fdmgkfHGH4353" });
 
-    it("throws an error when creating an user with an existing email", async () => {
-      const email = "asd@qwe.com";
-      await UserRepository.create({
-        email: email,
-        password: "somethingVerySecret123",
-        name: "name",
-        surname: "surname"
-      });
-      await expect(
-        UserRepository.create({
-          email: email,
-          password: "somethingVerySecret123",
-          name: "name",
-          surname: "surname"
-        })
-      ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
-    });
-
-    it("throws an error when creating an user with an existing dni", async () => {
-      const dni = "39207888";
-      await UserRepository.create({
-        email: "robert_johnson@gmail.com",
-        password: "somethingVerySecret123",
-        name: "Robert",
-        dni,
-        surname: "Johnson"
-      });
-      await expect(
-        UserRepository.create({
-          email: "eddie_boyd@gmail.com",
-          password: "somethingVerySecret123",
-          name: "Eddie",
-          dni,
-          surname: "Boyd"
-        })
-      ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
-    });
-
-    it("throws an error if the password has no digits", async () => {
-      await expect(
-        UserRepository.create({
-          email: "asd@qwe.com",
-          password: "somethingWithoutDigits",
-          name: "name",
-          surname: "surname"
-        })
-      ).rejects.toThrowErrorWithMessage(
-        PasswordWithoutDigitsError,
-        "La contraseña debe contener numeros"
-      );
-    });
-
-    describe("createFiubaUser", () => {
-      it("creates a valid Fiuba user", async () => {
-        const attributes = {
-          email: "email@gmail.com",
-          dni: DniGenerator.generate(),
-          password: "somethingVerySecret123",
-          name: "name",
-          surname: "surname"
-        };
-        const user = await UserRepository.createFiubaUser(attributes);
-        expect(user).toEqual(
-          expect.objectContaining({
-            uuid: expect.stringMatching(UUID_REGEX),
-            ...attributes,
-            password: null
-          })
-        );
+      it("saves the user in the database", async () => {
+        const user = new User({ ...userAttributes(), credentials });
+        await expectUserToBeSaved(user);
       });
 
-      it("throws an error if the FiubaService authentication returns false", async () => {
-        const fiubaUsersServiceMock = jest.spyOn(FiubaUsersService, "authenticate");
-        fiubaUsersServiceMock.mockResolvedValueOnce(Promise.resolve(false));
-        const dni = "39207888";
-        await expect(
-          UserRepository.createFiubaUser({
-            email: "email@gmail.com",
-            dni,
-            password: "somethingVerySecret123",
-            name: "name",
-            surname: "surname"
-          })
-        ).rejects.toThrowErrorWithMessage(
-          FiubaUserNotFoundError,
-          FiubaUserNotFoundError.buildMessage(dni)
-        );
+      it("generates an uuid after it is saved", async () => {
+        const user = new User({ ...userAttributes(), credentials });
+        await expectToGenerateUuidAfterItIsSaved(user);
       });
 
-      it("throws an error if dni is empty", async () => {
-        await expect(
-          UserRepository.createFiubaUser({
-            dni: "",
-            email: "email@gmail.com",
-            password: "somethingVerySecret123",
-            name: "name",
-            surname: "surname"
-          })
-        ).rejects.toThrowErrorWithMessage(
-          InvalidEmptyUsernameError,
-          InvalidEmptyUsernameError.buildMessage()
+      it("throws an error if the another user with the same uuid already exist", async () => {
+        const user = new User({ ...userAttributes(), credentials });
+        await expectToThrowErrorOnUniqueUuidConstraint(user);
+      });
+
+      it("throws an error if the another user with the same email already exist", async () => {
+        const user = new User({ ...userAttributes(), credentials });
+        await expectToThrowErrorOnUniqueEmailConstraint(user);
+      });
+    });
+
+    describe("User with CompanyUserHashedCredentials", () => {
+      const hashedPassword = "$2b$10$KrYD1NqSyMabjPoZu2UZS.ZI5/5CN5cjQ/5FQhGCbsyhuUClkdU/q";
+      const credentials = new CompanyUserHashedCredentials({ password: hashedPassword });
+
+      it("saves the user in the database", async () => {
+        const user = new User({ ...userAttributes(), credentials });
+        await expectUserToBeSaved(user);
+      });
+
+      it("generates an uuid after it is saved", async () => {
+        const user = new User({ ...userAttributes(), credentials });
+        await expectToGenerateUuidAfterItIsSaved(user);
+      });
+
+      it("throws an error if the another user with the same uuid already exist", async () => {
+        const user = new User({ ...userAttributes(), credentials });
+        await expectToThrowErrorOnUniqueUuidConstraint(user);
+      });
+
+      it("throws an error if the another user with the same email already exist", async () => {
+        const user = new User({ ...userAttributes(), credentials });
+        await expectToThrowErrorOnUniqueEmailConstraint(user);
+      });
+    });
+
+    describe("User with FiubaCredentials", () => {
+      it("saves the user in the database", async () => {
+        const credentials = new FiubaCredentials(DniGenerator.generate());
+        const user = new User({ ...userAttributes(), credentials });
+        await expectUserToBeSaved(user);
+      });
+
+      it("generates an uuid after it is saved", async () => {
+        const credentials = new FiubaCredentials(DniGenerator.generate());
+        const user = new User({ ...userAttributes(), credentials });
+        await expectToGenerateUuidAfterItIsSaved(user);
+      });
+
+      it("throws an error if the another user with the same uuid already exist", async () => {
+        const credentials = new FiubaCredentials(DniGenerator.generate());
+        const user = new User({ ...userAttributes(), credentials });
+        await expectToThrowErrorOnUniqueUuidConstraint(user);
+      });
+
+      it("throws an error if the another user with the same email already exist", async () => {
+        const credentials = new FiubaCredentials(DniGenerator.generate());
+        const user = new User({ ...userAttributes(), credentials });
+        await expectToThrowErrorOnUniqueEmailConstraint(user);
+      });
+
+      it("throws an error if the another user with the same dni already exist", async () => {
+        const credentials = new FiubaCredentials(DniGenerator.generate());
+        const user = new User({ ...userAttributes(), credentials });
+        await UserRepository.save(user);
+        const anotherUser = new User({ ...userAttributes(), credentials });
+        await expect(UserRepository.save(anotherUser)).rejects.toThrowErrorWithMessage(
+          UniqueConstraintError,
+          "Validation error"
         );
       });
     });
   });
 
-  describe("findByEmail", () => {
-    it("finds a user by email", async () => {
-      await UserGenerator.instance();
-      const user = await UserGenerator.instance();
-      const foundUser = await UserRepository.findByEmail(user.email);
+  describe("findByUuid", () => {
+    const expectToFindUserByUuid = async (credentials: ICredentials) => {
+      const user = new User({ ...userAttributes(), credentials });
+      await UserRepository.save(user);
+      const persistedUser = await UserRepository.findByUuid(user.uuid!);
+      expect(persistedUser).toEqual(user);
+    };
 
-      expect(foundUser.email).toEqual(user.email);
-      expect(foundUser.password).toEqual(user.password);
+    it("finds a user with FiubaCredentials by uuid", async () => {
+      const credentials = new FiubaCredentials(DniGenerator.generate());
+      await expectToFindUserByUuid(credentials);
     });
 
-    it("returns error when it does not find a user with the given email", async () => {
-      await UserGenerator.instance();
-      await UserGenerator.instance();
-      const nonExistentEmail = "yyy@yyy.com";
-      await expect(UserRepository.findByEmail(nonExistentEmail)).rejects.toThrowErrorWithMessage(
+    it("finds a user with CompanyUserRawCredentials by uuid", async () => {
+      const credentials = new CompanyUserRawCredentials({ password: "fdmgkfHGH4353" });
+      await expectToFindUserByUuid(credentials);
+    });
+
+    it("finds a user with CompanyUserHashedCredentials by uuid", async () => {
+      const hashedPassword = "$2b$10$KrYD1NqSyMabjPoZu2UZS.ZI5/5CN5cjQ/5FQhGCbsyhuUClkdU/q";
+      const credentials = new CompanyUserHashedCredentials({ password: hashedPassword });
+      await expectToFindUserByUuid(credentials);
+    });
+
+    it("throws an error if the given uuid does not belong to a persisted user", async () => {
+      const uuid = UUID.generate();
+      await expect(UserRepository.findByUuid(uuid)).rejects.toThrowErrorWithMessage(
         UserNotFoundError,
-        UserNotFoundError.buildMessage({ email: nonExistentEmail })
+        UserNotFoundError.buildMessage({ uuid })
+      );
+    });
+  });
+
+  describe("findCompanyUserByEmail", () => {
+    it("finds a user with CompanyUserCredentials by email", async () => {
+      const credentials = new CompanyUserRawCredentials({ password: "fdmgkfHGH4353" });
+      const user = new User({ ...userAttributes(), credentials });
+      await UserRepository.save(user);
+      const persistedUser = await UserRepository.findCompanyUserByEmail(user.email);
+      expect(persistedUser).toEqual(user);
+    });
+
+    it("throws an error if the email belongs to a user with FiubaCredentials", async () => {
+      const credentials = new FiubaCredentials(DniGenerator.generate());
+      const user = new User({ ...userAttributes(), credentials });
+      await UserRepository.save(user);
+      const email = user.email;
+      await expect(UserRepository.findCompanyUserByEmail(email)).rejects.toThrowErrorWithMessage(
+        UserNotFoundError,
+        UserNotFoundError.buildMessage({ email })
+      );
+    });
+
+    it("throws an error if the given email does not belong to a persisted user", async () => {
+      const email = "notPersisted@gmail.com.ar";
+      await expect(UserRepository.findCompanyUserByEmail(email)).rejects.toThrowErrorWithMessage(
+        UserNotFoundError,
+        UserNotFoundError.buildMessage({ email })
+      );
+    });
+  });
+
+  describe("findByEmail", () => {
+    const expectToFindUserByEmail = async (credentials: ICredentials) => {
+      const user = new User({ ...userAttributes(), credentials });
+      await UserRepository.save(user);
+      const persistedUser = await UserRepository.findByEmail(user.email);
+      expect(persistedUser).toEqual(user);
+    };
+
+    it("finds a user with FiubaCredentials by email", async () => {
+      const credentials = new FiubaCredentials(DniGenerator.generate());
+      await expectToFindUserByEmail(credentials);
+    });
+
+    it("finds a user with CompanyUserRawCredentials by email", async () => {
+      const credentials = new CompanyUserRawCredentials({ password: "fdmgkfHGH4353" });
+      await expectToFindUserByEmail(credentials);
+    });
+
+    it("finds a user with CompanyUserHashedCredentials by email", async () => {
+      const hashedPassword = "$2b$10$KrYD1NqSyMabjPoZu2UZS.ZI5/5CN5cjQ/5FQhGCbsyhuUClkdU/q";
+      const credentials = new CompanyUserHashedCredentials({ password: hashedPassword });
+      await expectToFindUserByEmail(credentials);
+    });
+
+    it("throws an error if the given email does not belong to a persisted user", async () => {
+      const email = "notPersisted@gmail.com.ar";
+      await expect(UserRepository.findByEmail(email)).rejects.toThrowErrorWithMessage(
+        UserNotFoundError,
+        UserNotFoundError.buildMessage({ email })
+      );
+    });
+  });
+
+  describe("findByDni", () => {
+    it("finds a user with FiubaCredentials by dni", async () => {
+      const credentials = new FiubaCredentials(DniGenerator.generate());
+      const user = new User({ ...userAttributes(), credentials });
+      await UserRepository.save(user);
+      const persistedUser = await UserRepository.findByDni(credentials.dni);
+      expect(persistedUser).toEqual(user);
+    });
+
+    it("throws an error if the given dni does not belong to a persisted user", async () => {
+      const dni = "123";
+      await expect(UserRepository.findByDni(dni)).rejects.toThrowErrorWithMessage(
+        UserNotFoundError,
+        UserNotFoundError.buildMessage({ dni })
       );
     });
   });
 
   describe("findByUuids", () => {
-    it("finds users by the given uuids", async () => {
-      const uuids = [
-        await UserGenerator.instance(),
-        await UserGenerator.instance(),
-        await UserGenerator.instance()
-      ].map(({ uuid }) => uuid);
+    it("finds a users by uuids", async () => {
+      const fiubaUser = new User({
+        ...userAttributes(),
+        credentials: new FiubaCredentials(DniGenerator.generate())
+      });
+      const companyUser = new User({
+        ...userAttributes(),
+        credentials: new CompanyUserHashedCredentials({
+          password: "$2b$10$KrYD1NqSyMabjPoZu2UZS.ZI5/5CN5cjQ/5FQhGCbsyhuUClkdU/q"
+        })
+      });
 
+      await UserRepository.save(fiubaUser);
+      await UserRepository.save(companyUser);
+      const uuids = [fiubaUser.uuid!, companyUser.uuid!];
       const users = await UserRepository.findByUuids(uuids);
-      expect(users).toHaveLength(uuids.length);
-      expect(users.map(({ uuid }) => uuid)).toEqual(expect.arrayContaining(uuids));
+      expect(users).toEqual(arrayContaining([fiubaUser, companyUser]));
     });
 
-    it("returns an empty array if the given uuids do not belong to a persisted user", async () => {
-      const uuids = [UUID.generate(), UUID.generate(), UUID.generate(), UUID.generate()];
-
+    it("returns an empty array if the given uuids are not persisted", async () => {
+      const uuids = [UUID.generate(), UUID.generate()];
       const users = await UserRepository.findByUuids(uuids);
       expect(users).toEqual([]);
     });
-
-    it("finds only the users with an uuid persisted", async () => {
-      const persistedUuids = [await UserGenerator.instance()].map(({ uuid }) => uuid);
-      const nonPersistedUuids = [UUID.generate()];
-
-      const users = await UserRepository.findByUuids([...persistedUuids, ...nonPersistedUuids]);
-      expect(users).toHaveLength(persistedUuids.length);
-      expect(users.map(({ uuid }) => uuid)).toEqual(expect.arrayContaining(persistedUuids));
-    });
   });
 
-  describe("findByDni", () => {
-    it("finds a user by dni", async () => {
-      const dni = "1234567";
-      await UserGenerator.instance();
-      const user = await UserGenerator.instance({ dni });
-      const foundUser = await UserRepository.findByDni(user.dni);
-
-      expect(foundUser.dni).toEqual(dni);
-      expect(foundUser.email).toEqual(user.email);
-      expect(foundUser.password).toEqual(user.password);
-    });
-
-    it("returns error when it does not find a user with the given dni", async () => {
-      await UserGenerator.instance();
-      await UserGenerator.instance();
-      const nonExistentDni = "1234567";
-      await expect(UserRepository.findByDni(nonExistentDni)).rejects.toThrowErrorWithMessage(
-        UserNotFoundError,
-        UserNotFoundError.buildMessage({ dni: nonExistentDni })
-      );
-    });
-  });
-
-  describe("findByUuid", () => {
-    it("returns user by uuid", async () => {
-      await UserGenerator.instance();
-      const secondUser = await UserGenerator.instance();
-      await UserGenerator.instance();
-      const user = await UserRepository.findByUuid(secondUser.uuid);
-      expect(user.toJSON()).toEqual(secondUser.toJSON());
-    });
-
-    it("throws an error if the user with the given uuid is not found", async () => {
-      await UserGenerator.instance();
-      await UserGenerator.instance();
-      await UserGenerator.instance();
-      const nonExistentUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
-      await expect(UserRepository.findByUuid(nonExistentUuid)).rejects.toThrowErrorWithMessage(
-        UserNotFoundError,
-        UserNotFoundError.buildMessage({ uuid: nonExistentUuid })
-      );
+  describe("truncate", () => {
+    it("returns an empty array if the table is truncated", async () => {
+      const credentials = new FiubaCredentials(DniGenerator.generate());
+      const user = new User({ ...userAttributes(), credentials });
+      await UserRepository.save(user);
+      expect((await UserRepository.findAll()).length).toBeGreaterThan(0);
+      await UserRepository.truncate();
+      expect(await UserRepository.findAll()).toHaveLength(0);
     });
   });
 });

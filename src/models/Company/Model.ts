@@ -10,7 +10,7 @@ import {
   UpdatedAt
 } from "sequelize-typescript";
 import { ENUM, HasManyGetAssociationsMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
-import { CompanyPhoneNumber, CompanyPhoto, CompanyUser, Offer, User } from "..";
+import { CompanyPhoneNumber, CompanyPhoto, CompanyUser, Offer, UserSequelizeModel } from "..";
 import { CompanyApprovalEvent } from "./CompanyApprovalEvent/Model";
 import { ApprovalStatus, approvalStatuses } from "../ApprovalStatus";
 import {
@@ -86,8 +86,8 @@ export class Company extends Model<Company> {
   @HasMany(() => Offer)
   public offers: Offer[];
 
-  @BelongsToMany(() => User, () => CompanyUser)
-  public users: User[];
+  @BelongsToMany(() => UserSequelizeModel, () => CompanyUser)
+  public users: UserSequelizeModel[];
 
   @HasMany(() => CompanyApprovalEvent)
   public approvalEvents: CompanyApprovalEvent;
@@ -95,6 +95,5 @@ export class Company extends Model<Company> {
   public getPhoneNumbers: HasManyGetAssociationsMixin<CompanyPhoneNumber>;
   public getPhotos: HasManyGetAssociationsMixin<CompanyPhoto>;
   public getOffers: HasManyGetAssociationsMixin<Offer>;
-  public getUsers: HasManyGetAssociationsMixin<User>;
-  public getApprovalEvents: HasManyGetAssociationsMixin<CompanyApprovalEvent>;
+  public getUsers: HasManyGetAssociationsMixin<UserSequelizeModel>;
 }

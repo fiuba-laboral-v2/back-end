@@ -1,6 +1,7 @@
 import { ICompanyTestClientAttributes } from "$generators/interfaces";
 import { createApolloTestClient } from "../createApolloTestClient";
 import { CompanyRepository } from "$models/Company";
+import { UserRepository } from "$models/User";
 import { CompanyGenerator } from "$generators/Company";
 
 export const companyTestClient = async ({
@@ -13,7 +14,7 @@ export const companyTestClient = async ({
     photos,
     user: userAttributes
   });
-  const [user] = await company.getUsers();
+  const [user] = await UserRepository.findByCompanyUuid(company.uuid);
   const companyContext = { company: { uuid: company.uuid } };
   const apolloClient = createApolloTestClient(user, expressContext, companyContext);
   if (status) {

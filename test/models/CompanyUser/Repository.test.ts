@@ -47,17 +47,6 @@ describe("CompanyUserRepository", () => {
     );
   });
 
-  it("generates a valid association", async () => {
-    const company = new Company(companyAttributes);
-    await CompanyRepository.save(company);
-    const user = await UserGenerator.instance();
-    const companyUser = new CompanyUser({ companyUuid: company.uuid, userUuid: user.uuid });
-    await CompanyUserRepository.save(companyUser);
-
-    expect((await user.getCompany())?.uuid).toEqual(companyUser.companyUuid);
-    expect((await company.getUsers()).map(({ uuid }) => uuid)).toEqual([companyUser.userUuid]);
-  });
-
   describe("findByCompany", () => {
     it("finds all companyUsers from a given company", async () => {
       const company = new Company(companyAttributes);

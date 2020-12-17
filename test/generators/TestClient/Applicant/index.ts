@@ -1,3 +1,4 @@
+import { UserRepository } from "$models/User";
 import { IApplicantTestClientAttributes } from "$generators/interfaces";
 import { ApplicantRepository } from "$models/Applicant";
 import { createApolloTestClient } from "$generators/TestClient/createApolloTestClient";
@@ -9,7 +10,7 @@ export const applicantTestClient = async ({
   ...applicantAttributes
 }: IApplicantTestClientAttributes) => {
   const applicant = await ApplicantGenerator.instance.withMinimumData(applicantAttributes);
-  const user = await applicant.getUser();
+  const user = await UserRepository.findByUuid(applicant.userUuid);
   const applicantContext = { applicant: { uuid: applicant.uuid } };
   const apolloClient = createApolloTestClient(user, expressContext, applicantContext);
   if (status) {

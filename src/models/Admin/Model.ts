@@ -7,14 +7,14 @@ import {
   Table,
   UpdatedAt
 } from "sequelize-typescript";
-import { ENUM, HasOneGetAssociationMixin, UUID } from "sequelize";
-import { User } from "..";
+import { ENUM, UUID } from "sequelize";
+import { UserSequelizeModel } from "..";
 import { Secretary, SecretaryEnumValues } from "./Interface";
 import { isSecretary } from "../SequelizeModelValidators";
 
 @Table({ tableName: "Admins", timestamps: true })
 export class Admin extends Model<Admin> {
-  @ForeignKey(() => User)
+  @ForeignKey(() => UserSequelizeModel)
   @Column({
     primaryKey: true,
     allowNull: false,
@@ -39,10 +39,8 @@ export class Admin extends Model<Admin> {
   @Column
   public updatedAt: Date;
 
-  @BelongsTo(() => User, "userUuid")
-  public user: User;
-
-  public getUser: HasOneGetAssociationMixin<User>;
+  @BelongsTo(() => UserSequelizeModel, "userUuid")
+  public user: UserSequelizeModel;
 
   public isFromExtensionSecretary() {
     return this.secretary === Secretary.extension;

@@ -5,8 +5,7 @@ import { CompanyRepository } from "$models/Company";
 import { Secretary } from "$models/Admin";
 import { CurrentUserBuilder } from "$models/CurrentUser";
 
-import { BadCredentialsError } from "$graphql/User/Errors";
-import { UserNotFoundError } from "$models/User/Errors";
+import { UserNotFoundError, BadCredentialsError } from "$models/User/Errors";
 
 import { ApplicantGenerator } from "$generators/Applicant";
 import { AdminGenerator } from "$generators/Admin";
@@ -14,6 +13,7 @@ import { CompanyGenerator } from "$generators/Company";
 import { DniGenerator } from "$generators/DNI";
 import { FiubaUsersService } from "$services";
 import { userTokenAssertions } from "../userTokenAssertions";
+import { FiubaCredentials } from "$models/User/Credentials";
 
 const FIUBA_LOGIN = gql`
   mutation($dni: String!, $password: String!) {
@@ -30,14 +30,14 @@ describe("fiubaLogin", () => {
   it("creates the cookie for an applicant user", async () => {
     const password = "AValidPassword1";
     const applicant = await ApplicantGenerator.instance.withMinimumData({ password });
-    const user = await applicant.getUser();
+    const user = await UserRepository.findByUuid(applicant.userUuid);
     await userTokenAssertions.expectMutationToSetCookie({
       mutation: {
         documentNode: FIUBA_LOGIN,
-        variables: { dni: user.dni, password }
+        variables: { dni: (user.credentials as FiubaCredentials).dni, password }
       },
       jwtTokenContents: CurrentUserBuilder.build({
-        uuid: user.uuid,
+        uuid: user.uuid!,
         email: user.email,
         applicant: { uuid: applicant.uuid }
       })
@@ -47,14 +47,14 @@ describe("fiubaLogin", () => {
   it("creates a token for an admin", async () => {
     const password = "AValidPassword1";
     const admin = await AdminGenerator.instance({ secretary: Secretary.extension, password });
-    const user = await admin.getUser();
+    const user = await UserRepository.findByUuid(admin.userUuid);
     await userTokenAssertions.expectMutationToSetCookie({
       mutation: {
         documentNode: FIUBA_LOGIN,
-        variables: { dni: user.dni, password }
+        variables: { dni: (user.credentials as FiubaCredentials).dni, password }
       },
       jwtTokenContents: CurrentUserBuilder.build({
-        uuid: user.uuid,
+        uuid: user.uuid!,
         email: user.email,
         admin: {
           userUuid: admin.userUuid
@@ -67,10 +67,10 @@ describe("fiubaLogin", () => {
     const password = "AValidPassword1";
     const applicant = await ApplicantGenerator.instance.withMinimumData({ password });
     jest.spyOn(FiubaUsersService, "authenticate").mockImplementationOnce(async () => false);
-    const user = await applicant.getUser();
+    const user = await UserRepository.findByUuid(applicant.userUuid);
     const { errors } = await client.loggedOut().mutate({
       mutation: FIUBA_LOGIN,
-      variables: { dni: user.dni, password }
+      variables: { dni: (user.credentials as FiubaCredentials).dni, password }
     });
     expect(errors).toEqualGraphQLErrorType(BadCredentialsError.name);
   });

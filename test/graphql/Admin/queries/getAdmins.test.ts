@@ -69,7 +69,7 @@ describe("getAdmins", () => {
       allSortedAdmins = await Promise.all(
         [adminExtraGraduados, adminExtraExtension, adminExtension, adminGraduados].map(
           async admin => {
-            const user = await admin.getUser();
+            const user = await UserRepository.findByUuid(admin.userUuid);
             return {
               user: {
                 email: user.email,

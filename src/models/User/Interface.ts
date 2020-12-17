@@ -7,6 +7,11 @@ export interface IUser {
   password?: string;
 }
 
+export interface ICreateCompanyUser extends IUser {
+  dni?: undefined;
+  password: string;
+}
+
 export interface ICreateFiubaUser extends IUser {
   dni: string;
   password: string;
@@ -17,4 +22,8 @@ export interface IUserEditable {
   email?: string;
   name?: string;
   surname?: string;
+}
+
+export interface ICredentials {
+  authenticate: (password: string) => Promise<void>;
 }

@@ -3,8 +3,6 @@ import { UserRepository } from "$models/User";
 import { JWT } from "$src/JWT";
 import { Context } from "$graphql/Context";
 import { CookieConfig } from "$config";
-import { BadCredentialsError } from "$graphql/User/Errors";
-import { FiubaUsersService } from "$services";
 
 export const fiubaLogin = {
   type: Boolean,
@@ -18,8 +16,7 @@ export const fiubaLogin = {
   },
   resolve: async (_: undefined, { dni, password }: ILogin, { res: expressResponse }: Context) => {
     const user = await UserRepository.findByDni(dni);
-    const isValid = await FiubaUsersService.authenticate({ dni: user.dni, password });
-    if (!isValid) throw new BadCredentialsError();
+    await user.credentials.authenticate(password);
 
     const token = await JWT.createToken(user);
     expressResponse.cookie(CookieConfig.cookieName, token, CookieConfig.cookieOptions);

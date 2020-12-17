@@ -1,13 +1,15 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 
-import { UserRepository } from "$models/User";
+import { UserRepository, User } from "$models/User";
+import { FiubaCredentials } from "$models/User/Credentials";
 import { CareerRepository } from "$models/Career";
 import { Career } from "$models";
 
 import { ApplicantGenerator } from "$generators/Applicant";
 import { CareerGenerator } from "$generators/Career";
 import { UUID_REGEX } from "$test/models";
+import { DniGenerator } from "$generators/DNI";
 
 const SAVE_APPLICANT_WITH_COMPLETE_DATA = gql`
   mutation SaveApplicant(
@@ -152,7 +154,9 @@ describe("saveApplicant", () => {
 
   it("returns an error if the user exists", async () => {
     const applicantData = ApplicantGenerator.data.minimum();
-    await UserRepository.create(applicantData.user);
+    const fiubaCredentials = new FiubaCredentials(DniGenerator.generate());
+    const user = new User({ ...applicantData.user, credentials: fiubaCredentials });
+    await UserRepository.save(user);
     const { errors } = await client.loggedOut().mutate({
       mutation: SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA,
       variables: applicantData

@@ -20,7 +20,7 @@ export { Offer } from "./Offer/Model";
 export { OfferSection } from "./Offer/OfferSection/Model";
 export { OfferCareer } from "./Offer/OfferCareer/Model";
 export { OfferApprovalEvent } from "./Offer/OfferApprovalEvent/Model";
-export { User } from "./User/Model";
+export { UserSequelizeModel } from "./User/Model";
 export { CompanyUser } from "./CompanyUser/Model";
 export { CompanyNotificationSequelizeModel } from "./CompanyNotification/Model";
 export { SecretarySettings } from "./SecretarySettings/Model";

@@ -81,7 +81,7 @@ describe("getJobApplications", () => {
       const applicant = await jobApplication.getApplicant();
       const offer = await jobApplication.getOffer();
       const company = await offer.getCompany();
-      const user = await applicant.getUser();
+      const user = await UserRepository.findByUuid(applicant.userUuid);
       expect(data!.getJobApplications.shouldFetchMore).toEqual(false);
       expect(data!.getJobApplications.results).toHaveLength(3);
       expect(data!.getJobApplications.results[0]).toEqual({
