@@ -135,9 +135,4 @@ describe("UserSequelizeModel", () => {
       MissingDniError.buildMessage()
     );
   });
-
-  it("tests invalid password match", async () => {
-    const user = new UserSequelizeModel(userAttributes);
-    expect(await user.passwordMatches("somethingElse")).toBe(false);
-  });
 });
