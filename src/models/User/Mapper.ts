@@ -1,8 +1,8 @@
 import { User } from "./User";
 import { UserSequelizeModel } from "./Model";
 import {
+  CompanyUserCredentials,
   CompanyUserHashedCredentials,
-  CompanyUserRawCredentials,
   FiubaCredentials
 } from "./Credentials";
 import { ICredentials } from "$models/User/Interface";
@@ -14,10 +14,7 @@ export const UserMapper = {
     if (credentials instanceof FiubaCredentials) {
       additionalAttributes = { dni: credentials.dni };
     }
-    if (credentials instanceof CompanyUserRawCredentials) {
-      additionalAttributes = { password: credentials.password };
-    }
-    if (credentials instanceof CompanyUserHashedCredentials) {
+    if (credentials instanceof CompanyUserCredentials) {
       additionalAttributes = { password: credentials.password };
     }
     return new UserSequelizeModel({ ...commonAttributes, ...additionalAttributes });
