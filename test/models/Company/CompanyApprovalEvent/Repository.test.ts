@@ -27,29 +27,42 @@ describe("CompanyApprovalEventRepository", () => {
   const expectValidCreation = async (status: ApprovalStatus) => {
     const { uuid: companyUuid } = company;
     const { userUuid } = admin;
-    const event = new CompanyApprovalEvent({ userUuid, companyUuid, status });
+    const attributes = { userUuid, companyUuid, status };
+    const event = new CompanyApprovalEvent(attributes);
     await CompanyApprovalEventRepository.save(event);
     const persistedEvent = await CompanyApprovalEventRepository.findByUuid(event.uuid);
     expect(persistedEvent).toBeObjectContaining({
       uuid: event.uuid,
-      userUuid,
-      companyUuid,
-      status,
+      ...attributes,
+      moderatorMessage: null,
       createdAt: expect.any(Date),
       updatedAt: expect.any(Date)
     });
   };
 
-  it("creates a valid CompanyApprovalEvent with approved status", async () => {
+  it("persists a valid CompanyApprovalEvent with approved status", async () => {
     await expectValidCreation(ApprovalStatus.approved);
   });
 
-  it("creates a valid CompanyApprovalEvent with rejected status", async () => {
+  it("persists a valid CompanyApprovalEvent with rejected status", async () => {
     await expectValidCreation(ApprovalStatus.rejected);
   });
 
-  it("creates a valid CompanyApprovalEvent with pending status", async () => {
+  it("persists a valid CompanyApprovalEvent with pending status", async () => {
     await expectValidCreation(ApprovalStatus.pending);
+  });
+
+  it("persists an event with a moderatorMessage", async () => {
+    const moderatorMessage = "message";
+    const event = new CompanyApprovalEvent({
+      userUuid: admin.userUuid,
+      companyUuid: company.uuid,
+      status: ApprovalStatus.rejected,
+      moderatorMessage
+    });
+    await CompanyApprovalEventRepository.save(event);
+    const persistedEvent = await CompanyApprovalEventRepository.findByUuid(event.uuid);
+    expect(persistedEvent.moderatorMessage).toEqual(moderatorMessage);
   });
 
   it("throws an error if userUuid does not belong to an admin", async () => {

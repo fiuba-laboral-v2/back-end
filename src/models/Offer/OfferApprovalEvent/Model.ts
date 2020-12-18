@@ -1,13 +1,5 @@
-import {
-  BelongsTo,
-  Column,
-  CreatedAt,
-  ForeignKey,
-  Model,
-  Table,
-  UpdatedAt
-} from "sequelize-typescript";
-import { ENUM, UUID, UUIDV4 } from "sequelize";
+import { Column, CreatedAt, ForeignKey, Model, Table, UpdatedAt } from "sequelize-typescript";
+import { ENUM, TEXT, UUID, UUIDV4 } from "sequelize";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
 import { Admin, Offer } from "$models";
 import { isApprovalStatus } from "$models/SequelizeModelValidators";
@@ -18,12 +10,15 @@ export class OfferApprovalEvent extends Model<OfferApprovalEvent> {
   public uuid: string;
 
   @ForeignKey(() => Admin)
-  @Column({ allowNull: false, references: { model: "Admins", key: "uuid" }, type: UUID })
+  @Column({ allowNull: false, type: UUID })
   public adminUserUuid: string;
 
   @ForeignKey(() => Offer)
-  @Column({ allowNull: false, references: { model: "Offers", key: "uuid" }, type: UUID })
+  @Column({ allowNull: false, type: UUID })
   public offerUuid: string;
+
+  @Column({ allowNull: true, type: TEXT })
+  public moderatorMessage?: string;
 
   @Column({
     allowNull: false,
@@ -39,10 +34,4 @@ export class OfferApprovalEvent extends Model<OfferApprovalEvent> {
   @UpdatedAt
   @Column
   public updatedAt: Date;
-
-  @BelongsTo(() => Admin, "adminUserUuid")
-  public admin: Admin;
-
-  @BelongsTo(() => Offer, "offerUuid")
-  public offer: Offer;
 }

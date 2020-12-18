@@ -1,48 +1,61 @@
 import { OfferApprovalEvent } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ValidationError } from "sequelize";
-import { UUID_REGEX } from "../../index";
+import { UUID } from "$models/UUID";
+import { UUID_REGEX } from "$test/models";
 
 describe("OfferApprovalEvent", () => {
-  it("creates a valid OfferApprovalEvent", async () => {
-    const offerApprovalEventAttributes = {
-      adminUserUuid: "cfe18465-9454-48b6-80bc-375411650d99",
-      offerUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
-      status: ApprovalStatus.approved
-    };
-    const offerApprovalEvent = new OfferApprovalEvent(offerApprovalEventAttributes);
+  const mandatoryAttributes = {
+    offerUuid: UUID.generate(),
+    adminUserUuid: UUID.generate(),
+    status: ApprovalStatus.approved
+  };
+
+  it("creates an approved event", async () => {
+    const attributes = { ...mandatoryAttributes, status: ApprovalStatus.approved };
+    const offerApprovalEvent = new OfferApprovalEvent(attributes);
     await expect(offerApprovalEvent.validate()).resolves.not.toThrow();
-    expect(offerApprovalEvent).toEqual(
-      expect.objectContaining({
-        uuid: expect.stringMatching(UUID_REGEX),
-        ...offerApprovalEventAttributes
-      })
-    );
+    expect(offerApprovalEvent).toBeObjectContaining({
+      uuid: expect.stringMatching(UUID_REGEX),
+      ...attributes
+    });
   });
 
-  it("creates a rejected OfferApprovalEvent", async () => {
-    const offerApprovalEvent = new OfferApprovalEvent({
-      adminUserUuid: "cfe18465-9454-48b6-80bc-375411650d99",
-      offerUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
-      status: ApprovalStatus.rejected
-    });
+  it("creates a rejected event", async () => {
+    const attributes = { ...mandatoryAttributes, status: ApprovalStatus.rejected };
+    const offerApprovalEvent = new OfferApprovalEvent(attributes);
     await expect(offerApprovalEvent.validate()).resolves.not.toThrow();
-    await expect(offerApprovalEvent.status).toEqual(ApprovalStatus.rejected);
+    expect(offerApprovalEvent).toBeObjectContaining({
+      uuid: expect.stringMatching(UUID_REGEX),
+      ...attributes
+    });
   });
 
-  it("creates a pending OfferApprovalEvent", async () => {
-    const offerApprovalEvent = new OfferApprovalEvent({
-      adminUserUuid: "cfe18465-9454-48b6-80bc-375411650d99",
-      offerUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
-      status: ApprovalStatus.pending
-    });
+  it("creates a pending event", async () => {
+    const attributes = { ...mandatoryAttributes, status: ApprovalStatus.pending };
+    const offerApprovalEvent = new OfferApprovalEvent(attributes);
     await expect(offerApprovalEvent.validate()).resolves.not.toThrow();
-    await expect(offerApprovalEvent.status).toEqual(ApprovalStatus.pending);
+    expect(offerApprovalEvent).toBeObjectContaining({
+      uuid: expect.stringMatching(UUID_REGEX),
+      ...attributes
+    });
+  });
+
+  it("creates an event with a moderatorMessage", async () => {
+    const moderatorMessage = "message";
+    const attributes = { ...mandatoryAttributes, moderatorMessage };
+    const offerApprovalEvent = new OfferApprovalEvent(attributes);
+    await expect(offerApprovalEvent.validate()).resolves.not.toThrow();
+    expect(offerApprovalEvent).toBeObjectContaining({
+      uuid: expect.stringMatching(UUID_REGEX),
+      ...attributes,
+      moderatorMessage
+    });
   });
 
   it("throws and error if no adminUserUuid id provided", async () => {
     const event = new OfferApprovalEvent({
-      offerUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27",
+      offerUuid: UUID.generate(),
       status: ApprovalStatus.approved
     });
     await expect(event.validate()).rejects.toThrowErrorWithMessage(
@@ -53,7 +66,7 @@ describe("OfferApprovalEvent", () => {
 
   it("throws and error if no offerUuid id provided", async () => {
     const event = new OfferApprovalEvent({
-      adminUserUuid: "cfe18465-9454-48b6-80bc-375411650d99",
+      adminUserUuid: UUID.generate(),
       status: ApprovalStatus.approved
     });
     await expect(event.validate()).rejects.toThrowErrorWithMessage(
@@ -64,8 +77,8 @@ describe("OfferApprovalEvent", () => {
 
   it("throws and error if no status id provided", async () => {
     const event = new OfferApprovalEvent({
-      adminUserUuid: "cfe18465-9454-48b6-80bc-375411650d99",
-      offerUuid: "290d5ff7-592b-4874-a43d-4dfc948a0f27"
+      adminUserUuid: UUID.generate(),
+      offerUuid: UUID.generate()
     });
     await expect(event.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,

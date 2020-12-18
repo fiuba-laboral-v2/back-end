@@ -1,39 +1,45 @@
-import { JobApplicationApprovalEventRepository } from "$models/JobApplication/JobApplicationsApprovalEvent";
 import { JobApplicationsApprovalEventNotFoundError } from "$models/JobApplication/JobApplicationsApprovalEvent";
+import { Admin, JobApplicationApprovalEvent, JobApplication } from "$models";
+import { isApprovalStatus } from "$models/SequelizeModelValidators";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { ValidationError, ForeignKeyConstraintError } from "sequelize";
+import { UUID } from "$models/UUID";
+
+import { JobApplicationApprovalEventRepository } from "$models/JobApplication/JobApplicationsApprovalEvent";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
+import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { UserRepository } from "$models/User";
 import { OfferRepository } from "$models/Offer";
 import { ApplicantRepository } from "$models/Applicant";
 import { AdminRepository } from "$models/Admin";
-import { Admin, JobApplicationApprovalEvent } from "$models";
-import { isApprovalStatus } from "$models/SequelizeModelValidators";
+
 import { JobApplicationGenerator } from "$generators/JobApplication";
+import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { AdminGenerator } from "$generators/Admin";
-import { ApprovalStatus } from "$models/ApprovalStatus";
-import { ValidationError, ForeignKeyConstraintError } from "sequelize";
-import { UUID } from "$models/UUID";
+
 import { UUID_REGEX } from "$test/models";
 
 describe("JobApplicationApprovalEventRepository", () => {
   let admin: Admin;
+  let jobApplication: JobApplication;
 
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     await CareerRepository.truncate();
+    await SecretarySettingsRepository.truncate();
+
+    await SecretarySettingsGenerator.createDefaultSettings();
+    jobApplication = await JobApplicationGenerator.instance.withMinimumData();
     admin = await AdminGenerator.extension();
   });
 
-  const expectToCreateEventWithStatus = async (
+  const expectToPersistAnEventWithStatus = async (
     status: ApprovalStatus,
     jobApplicationUuid: string
   ) => {
-    const attributes = {
-      jobApplicationUuid,
-      adminUserUuid: admin.userUuid,
-      status
-    };
+    const attributes = { jobApplicationUuid, adminUserUuid: admin.userUuid, status };
     const event = new JobApplicationApprovalEvent(attributes);
     await JobApplicationApprovalEventRepository.save(event);
     const savedEvent = await JobApplicationApprovalEventRepository.findByUuid(event.uuid);
@@ -46,7 +52,7 @@ describe("JobApplicationApprovalEventRepository", () => {
   };
 
   const expectToThrowErrorOnForeignKeyFor = async (attribute: string) => {
-    const { uuid: jobApplicationUuid } = await JobApplicationGenerator.instance.withMinimumData();
+    const { uuid: jobApplicationUuid } = jobApplication;
     const attributes = {
       jobApplicationUuid,
       adminUserUuid: admin.userUuid,
@@ -54,8 +60,8 @@ describe("JobApplicationApprovalEventRepository", () => {
     };
     attributes[attribute] = UUID.generate();
     const event = new JobApplicationApprovalEvent(attributes);
-    const constrain = `JobApplicationApprovalEvent_${attribute}_fkey`;
-    const model = "JobApplicationApprovalEvent";
+    const constrain = `JobApplicationApprovalEvents_${attribute}_fkey`;
+    const model = "JobApplicationApprovalEvents";
     await expect(JobApplicationApprovalEventRepository.save(event)).rejects.toThrowErrorWithMessage(
       ForeignKeyConstraintError,
       `insert or update on table "${model}" violates foreign key constraint "${constrain}"`
@@ -67,62 +73,39 @@ describe("JobApplicationApprovalEventRepository", () => {
     const event = new JobApplicationApprovalEvent({
       jobApplicationUuid,
       adminUserUuid: admin.userUuid,
-      status: ApprovalStatus.pending
+      status: ApprovalStatus.pending,
+      moderatorMessage: "message"
     });
-    return JobApplicationApprovalEventRepository.save(event);
+    await JobApplicationApprovalEventRepository.save(event);
+    return event;
   };
 
   describe("save", () => {
     it("saves an event with a pending status", async () => {
-      const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
-      await expectToCreateEventWithStatus(ApprovalStatus.pending, uuid);
+      const { uuid } = jobApplication;
+      await expectToPersistAnEventWithStatus(ApprovalStatus.pending, uuid);
     });
 
     it("saves an event with an approved status", async () => {
       const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
-      await expectToCreateEventWithStatus(ApprovalStatus.approved, uuid);
+      await expectToPersistAnEventWithStatus(ApprovalStatus.approved, uuid);
     });
 
     it("saves an event with a rejected status", async () => {
       const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
-      await expectToCreateEventWithStatus(ApprovalStatus.rejected, uuid);
+      await expectToPersistAnEventWithStatus(ApprovalStatus.rejected, uuid);
     });
 
-    it("logs events for the same applicantUuid and offerUuid", async () => {
-      const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
-      await expectToCreateEventWithStatus(ApprovalStatus.pending, uuid);
-      await expectToCreateEventWithStatus(ApprovalStatus.approved, uuid);
-      await expectToCreateEventWithStatus(ApprovalStatus.rejected, uuid);
-    });
-
-    it("saves an event with a jobApplication association", async () => {
-      const { uuid: jobApplicationUuid } = await JobApplicationGenerator.instance.withMinimumData();
-      const event = new JobApplicationApprovalEvent({
-        jobApplicationUuid,
-        adminUserUuid: admin.userUuid,
-        status: ApprovalStatus.pending
-      });
-      await JobApplicationApprovalEventRepository.save(event);
-      const jobApplication = await event.getJobApplication();
-      expect(jobApplication.uuid).toEqual(jobApplicationUuid);
-    });
-
-    it("saves an event with an admin association", async () => {
-      const { uuid: jobApplicationUuid } = await JobApplicationGenerator.instance.withMinimumData();
-      const event = new JobApplicationApprovalEvent({
-        jobApplicationUuid,
-        adminUserUuid: admin.userUuid,
-        status: ApprovalStatus.pending
-      });
-      await JobApplicationApprovalEventRepository.save(event);
-      const { userUuid } = await event.getAdmin();
-      expect(userUuid).toEqual(admin.userUuid);
+    it("logs events for the same jobApplication", async () => {
+      const { uuid } = jobApplication;
+      await expectToPersistAnEventWithStatus(ApprovalStatus.pending, uuid);
+      await expectToPersistAnEventWithStatus(ApprovalStatus.approved, uuid);
+      await expectToPersistAnEventWithStatus(ApprovalStatus.rejected, uuid);
     });
 
     it("throws an error if the status is not an ApprovalStatus enum value", async () => {
-      const { uuid: jobApplicationUuid } = await JobApplicationGenerator.instance.withMinimumData();
       const event = new JobApplicationApprovalEvent({
-        jobApplicationUuid,
+        jobApplicationUuid: jobApplication.uuid,
         adminUserUuid: admin.userUuid,
         status: "undefinedStatus" as ApprovalStatus
       });
@@ -157,17 +140,6 @@ describe("JobApplicationApprovalEventRepository", () => {
         JobApplicationsApprovalEventNotFoundError,
         JobApplicationsApprovalEventNotFoundError.buildMessage(nonPersistedEventUuid)
       );
-    });
-  });
-
-  describe("findAll", () => {
-    it("finds all events", async () => {
-      await JobApplicationApprovalEventRepository.truncate();
-      await createJobApplicationApprovalEvent();
-      await createJobApplicationApprovalEvent();
-      await createJobApplicationApprovalEvent();
-      await createJobApplicationApprovalEvent();
-      expect(await JobApplicationApprovalEventRepository.findAll()).toHaveLength(4);
     });
   });
 

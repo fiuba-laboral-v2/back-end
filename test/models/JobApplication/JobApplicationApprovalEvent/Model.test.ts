@@ -1,98 +1,79 @@
 import { ValidationError } from "sequelize";
 import { JobApplicationApprovalEvent } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { UUID } from "$models/UUID";
 import { UUID_REGEX } from "$test/models";
 import { isApprovalStatus, isUuid } from "$models/SequelizeModelValidators";
 
 describe("JobApplicationApprovalEvent", () => {
-  const expectToCreateAValidEventWithStatus = async (status: ApprovalStatus) => {
-    const jobApplicationApprovalEvent = new JobApplicationApprovalEvent({
-      jobApplicationUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
-      adminUserUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
-      status
-    });
-    await expect(jobApplicationApprovalEvent.validate()).resolves.not.toThrow();
-  };
-
-  const expectToCreateAnEventWithTheGivenAttributes = async (status: ApprovalStatus) => {
-    const attributes = {
-      jobApplicationUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
-      adminUserUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
-      status
-    };
-    const jobApplicationApprovalEvent = new JobApplicationApprovalEvent(attributes);
-    expect(jobApplicationApprovalEvent).toBeObjectContaining(attributes);
+  const mandatoryAttributes = {
+    jobApplicationUuid: UUID.generate(),
+    adminUserUuid: UUID.generate(),
+    status: ApprovalStatus.pending
   };
 
   const expectToThrowErrorOnMissingAttribute = async (attribute: string) => {
     const attributes = {
-      jobApplicationUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
-      adminUserUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
+      jobApplicationUuid: UUID.generate(),
+      adminUserUuid: UUID.generate(),
       status: ApprovalStatus.pending
     };
     delete attributes[attribute];
-    const jobApplicationApprovalEvent = new JobApplicationApprovalEvent(attributes);
-    await expect(jobApplicationApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
+    const event = new JobApplicationApprovalEvent(attributes);
+    await expect(event.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       `notNull Violation: JobApplicationApprovalEvent.${attribute} cannot be null`
     );
   };
 
   const expectToThrowAnErrorOnInvalidUuid = async (attribute: string) => {
-    const attributes = {
-      jobApplicationUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
-      adminUserUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
-      status: ApprovalStatus.pending
-    };
-    attributes[attribute] = "invalidUuid";
-    const jobApplicationApprovalEvent = new JobApplicationApprovalEvent(attributes);
-    await expect(jobApplicationApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
+    const attributes = { ...mandatoryAttributes, [attribute]: "invalidUuid" };
+    const event = new JobApplicationApprovalEvent(attributes);
+    await expect(event.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       isUuid.validate.isUUID.msg
     );
   };
 
-  it("creates a valid JobApplicationApprovalEvent with pending status", async () => {
-    await expectToCreateAValidEventWithStatus(ApprovalStatus.pending);
+  it("creates a valid event with pending status", async () => {
+    const status = ApprovalStatus.pending;
+    const attributes = { ...mandatoryAttributes, status };
+    const event = new JobApplicationApprovalEvent(attributes);
+    await expect(event.validate()).resolves.not.toThrow();
+    expect(event).toBeObjectContaining(attributes);
   });
 
-  it("creates a valid JobApplicationApprovalEvent with approved status", async () => {
-    await expectToCreateAValidEventWithStatus(ApprovalStatus.approved);
+  it("creates a valid event with approved status", async () => {
+    const status = ApprovalStatus.approved;
+    const attributes = { ...mandatoryAttributes, status };
+    const event = new JobApplicationApprovalEvent(attributes);
+    await expect(event.validate()).resolves.not.toThrow();
+    expect(event).toBeObjectContaining(attributes);
   });
 
-  it("creates a valid JobApplicationApprovalEvent with rejected status", async () => {
-    await expectToCreateAValidEventWithStatus(ApprovalStatus.rejected);
-  });
-
-  it("creates an event with the given attributes and pending status", async () => {
-    await expectToCreateAnEventWithTheGivenAttributes(ApprovalStatus.pending);
-  });
-
-  it("creates an event with the given attributes and approved status", async () => {
-    await expectToCreateAnEventWithTheGivenAttributes(ApprovalStatus.approved);
-  });
-
-  it("creates an event with the given attributes and rejected status", async () => {
-    await expectToCreateAnEventWithTheGivenAttributes(ApprovalStatus.rejected);
+  it("creates a valid event with rejected status", async () => {
+    const status = ApprovalStatus.rejected;
+    const attributes = { ...mandatoryAttributes, status };
+    const event = new JobApplicationApprovalEvent(attributes);
+    await expect(event.validate()).resolves.not.toThrow();
+    expect(event).toBeObjectContaining(attributes);
   });
 
   it("creates an event with undefined timestamps", async () => {
-    const jobApplicationApprovalEvent = new JobApplicationApprovalEvent({
-      jobApplicationUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
-      adminUserUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
-      status: ApprovalStatus.pending
-    });
-    expect(jobApplicationApprovalEvent.createdAt).toBeUndefined();
-    expect(jobApplicationApprovalEvent.updatedAt).toBeUndefined();
+    const event = new JobApplicationApprovalEvent(mandatoryAttributes);
+    expect(event.createdAt).toBeUndefined();
+    expect(event.updatedAt).toBeUndefined();
   });
 
   it("creates an event with a generated uuid", async () => {
-    const jobApplicationApprovalEvent = new JobApplicationApprovalEvent({
-      jobApplicationUuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da",
-      adminUserUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
-      status: ApprovalStatus.pending
-    });
-    expect(jobApplicationApprovalEvent.uuid).toEqual(expect.stringMatching(UUID_REGEX));
+    const event = new JobApplicationApprovalEvent(mandatoryAttributes);
+    expect(event.uuid).toEqual(expect.stringMatching(UUID_REGEX));
+  });
+
+  it("creates an event with a moderatorMessage uuid", async () => {
+    const moderatorMessage = "moderatorMessage";
+    const event = new JobApplicationApprovalEvent({ ...mandatoryAttributes, moderatorMessage });
+    expect(event.moderatorMessage).toEqual(moderatorMessage);
   });
 
   it("throws an error if no jobApplicationUuid is provided", async () => {
@@ -116,12 +97,9 @@ describe("JobApplicationApprovalEvent", () => {
   });
 
   it("throws an error if status has invalid format", async () => {
-    const jobApplicationApprovalEvent = new JobApplicationApprovalEvent({
-      jobApplicationUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
-      adminUserUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
-      status: "undefinedStatus"
-    });
-    await expect(jobApplicationApprovalEvent.validate()).rejects.toThrowErrorWithMessage(
+    const status = "undefinedStatus";
+    const event = new JobApplicationApprovalEvent({ ...mandatoryAttributes, status });
+    await expect(event.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       isApprovalStatus.validate.isIn.msg
     );

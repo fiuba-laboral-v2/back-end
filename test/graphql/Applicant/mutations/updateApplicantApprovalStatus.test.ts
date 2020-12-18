@@ -78,7 +78,8 @@ describe("updateApplicantApprovalStatus", () => {
       expect.objectContaining({
         adminUserUuid: admin.userUuid,
         applicantUuid: applicant.uuid,
-        status: newStatus
+        status: newStatus,
+        ...(newStatus === ApprovalStatus.rejected && { moderatorMessage })
       })
     ]);
   };

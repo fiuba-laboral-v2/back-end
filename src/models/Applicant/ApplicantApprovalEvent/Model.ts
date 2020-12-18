@@ -1,5 +1,5 @@
 import { Column, CreatedAt, ForeignKey, Model, Table, UpdatedAt } from "sequelize-typescript";
-import { ENUM, UUID, UUIDV4 } from "sequelize";
+import { ENUM, TEXT, UUID, UUIDV4 } from "sequelize";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
 import { Admin, Applicant } from "$models";
 import { isApprovalStatus, isUuid } from "$models/SequelizeModelValidators";
@@ -16,6 +16,9 @@ export class ApplicantApprovalEvent extends Model<ApplicantApprovalEvent> {
   @ForeignKey(() => Applicant)
   @Column({ allowNull: false, type: UUID, ...isUuid })
   public applicantUuid: string;
+
+  @Column({ allowNull: true, type: TEXT })
+  public moderatorMessage?: string;
 
   @Column({
     allowNull: false,

@@ -43,7 +43,12 @@ export const updateOfferApprovalStatus = {
 
     offer.updateStatus(admin, status);
     offer.updateExpirationDate(admin, offerDurationInDays);
-    const event = new OfferApprovalEvent({ adminUserUuid, offerUuid: offer.uuid, status });
+    const event = new OfferApprovalEvent({
+      adminUserUuid,
+      offerUuid: offer.uuid,
+      status,
+      moderatorMessage
+    });
     const notifications = OfferNotificationFactory.create(offer, admin, moderatorMessage);
 
     await Database.transaction(async transaction => {

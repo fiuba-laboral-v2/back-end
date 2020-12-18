@@ -41,7 +41,7 @@ export const updateCompanyApprovalStatus = {
     const admin = await AdminRepository.findByUserUuid(userUuid);
     const company = await CompanyRepository.findByUuid(companyUuid);
     company.set({ approvalStatus: status });
-    const event = new CompanyApprovalEvent({ userUuid, companyUuid, status });
+    const event = new CompanyApprovalEvent({ userUuid, companyUuid, status, moderatorMessage });
     const notifications = CompanyProfileNotificationFactory.create(
       company,
       admin,
