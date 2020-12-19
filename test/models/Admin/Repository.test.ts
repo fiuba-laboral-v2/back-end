@@ -1,11 +1,10 @@
 import { UniqueConstraintError, ForeignKeyConstraintError } from "sequelize";
 import { AdminNotFoundError } from "$models/Admin/Errors";
 
-import { UserRepository, BadCredentialsError } from "$models/User";
+import { UserRepository } from "$models/User";
 import { AdminRepository, Secretary } from "$models/Admin";
 import { Admin } from "$models";
 import { UUID } from "$models/UUID";
-import { FiubaUsersService } from "$services";
 
 import { UserGenerator } from "$generators/User";
 import { AdminGenerator } from "$generators/Admin";
@@ -56,28 +55,6 @@ describe("AdminRepository", () => {
         UniqueConstraintError,
         "Validation error"
       );
-    });
-  });
-
-  describe("create", () => {
-    it("throws an error if the fiuba service rejects authentication attempt", async () => {
-      jest.spyOn(FiubaUsersService, "authenticate").mockImplementation(async () => false);
-      const adminAttributes = AdminGenerator.data(Secretary.graduados);
-      await expect(AdminRepository.create(adminAttributes)).rejects.toThrowErrorWithMessage(
-        BadCredentialsError,
-        BadCredentialsError.buildMessage()
-      );
-    });
-
-    it("throws error if admin already exists and rollback transaction", async () => {
-      const adminAttributes = AdminGenerator.data(Secretary.extension);
-      await AdminRepository.create(adminAttributes);
-      const numberOfAdmins = (await AdminRepository.findLatest()).results;
-      await expect(AdminRepository.create(adminAttributes)).rejects.toThrowErrorWithMessage(
-        UniqueConstraintError,
-        "Validation error"
-      );
-      expect((await AdminRepository.findLatest()).results).toEqual(numberOfAdmins);
     });
   });
 
