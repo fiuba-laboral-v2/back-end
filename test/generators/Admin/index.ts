@@ -1,6 +1,8 @@
+import { Admin } from "$models";
 import { AdminRepository, Secretary } from "$models/Admin";
 import { withCompleteData } from "./withCompleteData";
 import { IAdminGeneratorAttributes, IUserGeneratorAttributes } from "$generators/interfaces";
+import { UserGenerator } from "$generators/User";
 
 export const AdminGenerator = {
   index: 0,
@@ -8,14 +10,12 @@ export const AdminGenerator = {
     AdminGenerator.index += 1;
     return AdminGenerator.index;
   },
-  instance: ({ secretary, ...variables }: IAdminGeneratorAttributes) =>
-    AdminRepository.create(
-      withCompleteData({
-        index: AdminGenerator.getIndex(),
-        secretary,
-        ...variables
-      })
-    ),
+  instance: async ({ secretary, dni }: IAdminGeneratorAttributes) => {
+    const user = await UserGenerator.fiubaUser({ dni });
+    const admin = new Admin({ userUuid: user.uuid, secretary });
+    await AdminRepository.save(admin);
+    return admin;
+  },
   extension: (variables?: IUserGeneratorAttributes) =>
     AdminGenerator.instance({ secretary: Secretary.extension, ...variables }),
   graduados: (variables?: IUserGeneratorAttributes) =>

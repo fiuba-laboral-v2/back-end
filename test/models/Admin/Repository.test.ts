@@ -161,26 +161,21 @@ describe("AdminRepository", () => {
 
   describe("findByUserUuid", () => {
     it("returns an admin of extension by userUuid", async () => {
-      const extensionAdminAttributes = AdminGenerator.data(Secretary.extension);
-      const { userUuid: userExtensionUuid } = await AdminRepository.create(
-        extensionAdminAttributes
-      );
-
-      const extensionAdmin = await AdminRepository.findByUserUuid(userExtensionUuid);
-      expect(extensionAdmin.userUuid).toEqual(userExtensionUuid);
+      const extensionAdmin = await AdminGenerator.extension();
+      const admin = await AdminRepository.findByUserUuid(extensionAdmin.userUuid);
+      expect(admin.userUuid).toEqual(extensionAdmin.userUuid);
+      expect(admin.secretary).toEqual(Secretary.extension);
     });
 
     it("returns an admin of graduados by userUuid", async () => {
-      const graduadosAdminAttributes = AdminGenerator.data(Secretary.graduados);
-      const { userUuid: userGraduadosUuid } = await AdminRepository.create(
-        graduadosAdminAttributes
-      );
-      const graduadosAdmin = await AdminRepository.findByUserUuid(userGraduadosUuid);
-      expect(graduadosAdmin.userUuid).toEqual(userGraduadosUuid);
+      const extensionAdmin = await AdminGenerator.graduados();
+      const admin = await AdminRepository.findByUserUuid(extensionAdmin.userUuid);
+      expect(admin.userUuid).toEqual(extensionAdmin.userUuid);
+      expect(admin.secretary).toEqual(Secretary.graduados);
     });
 
     it("throws an error if the admin does not exist", async () => {
-      const nonExistentUserUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
+      const nonExistentUserUuid = UUID.generate();
       await expect(
         AdminRepository.findByUserUuid(nonExistentUserUuid)
       ).rejects.toThrowErrorWithMessage(
@@ -192,9 +187,9 @@ describe("AdminRepository", () => {
 
   describe("cascade", () => {
     it("deletes all admins if users tables is truncated", async () => {
-      await AdminRepository.create(AdminGenerator.data(Secretary.extension));
-      await AdminRepository.create(AdminGenerator.data(Secretary.extension));
-      await AdminRepository.create(AdminGenerator.data(Secretary.extension));
+      await AdminGenerator.extension();
+      await AdminGenerator.graduados();
+      await AdminGenerator.extension();
       expect((await AdminRepository.findLatest()).results.length).toBeGreaterThan(0);
       await UserRepository.truncate();
       expect((await AdminRepository.findLatest()).results).toHaveLength(0);
