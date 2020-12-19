@@ -42,7 +42,7 @@ describe("ApplicantCareersRepository", () => {
       );
     });
 
-    it("throws an error if the applicantCareer does not exists", async () => {
+    it("throws an error if the applicantCareer does not exist", async () => {
       const { uuid: applicantUuid } = await ApplicantGenerator.instance.withMinimumData();
       const { code: careerCode } = await CareerGenerator.instance();
       await expect(

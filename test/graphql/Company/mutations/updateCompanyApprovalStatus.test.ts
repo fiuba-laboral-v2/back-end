@@ -190,7 +190,7 @@ describe("updateCompanyApprovalStatus", () => {
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
-  it("throws an error if the company does not exists", async () => {
+  it("throws an error if the company does not exist", async () => {
     const { apolloClient } = await TestClientGenerator.admin();
     const dataToUpdate = { uuid: UUID.generate(), approvalStatus: ApprovalStatus.approved };
     const { errors } = await performMutation(apolloClient, dataToUpdate);

@@ -169,7 +169,7 @@ describe("expireOffer", () => {
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
-  it("returns an error if the offer does not exists", async () => {
+  it("returns an error if the offer does not exist", async () => {
     const admin = await AdminGenerator.extension();
     const { apolloClient } = await TestClientGenerator.company({
       status: { admin, approvalStatus: ApprovalStatus.approved }

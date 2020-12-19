@@ -452,7 +452,7 @@ describe("OfferRepository", () => {
       expect(results.map(result => result.uuid)).toEqual([offerUuid2, offerUuid1]);
     });
 
-    it("throws an error if offer does not exists", async () => {
+    it("throws an error if offer does not exist", async () => {
       await expect(
         OfferRepository.findByUuid("4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da")
       ).rejects.toThrow(OfferNotFoundError);

@@ -178,7 +178,7 @@ describe("updateApplicantApprovalStatus", () => {
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });
 
-    it("returns an error if the applicant does not exists", async () => {
+    it("returns an error if the applicant does not exist", async () => {
       const nonExistentApplicantUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
       const { apolloClient } = await TestClientGenerator.admin();
       const { errors } = await performMutation(apolloClient, {
