@@ -10,7 +10,6 @@ import { ApplicantRepository } from "$models/Applicant";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
-import { AdminRepository, Secretary } from "$models/Admin";
 
 import { ApplicantGenerator } from "$generators/Applicant";
 import { AdminGenerator } from "$generators/Admin";
@@ -34,8 +33,8 @@ describe("ApprovedProfileApplicantNotificationEmailSender", () => {
   });
 
   it("sends an email to an applicant user that a the profile its been approved", async () => {
-    const adminAttributes = AdminGenerator.data(Secretary.graduados);
-    const admin = await AdminRepository.create(adminAttributes);
+    const admin = await AdminGenerator.graduados();
+    const adminUser = await UserRepository.findByUuid(admin.userUuid);
     const settings = await SecretarySettingsRepository.findBySecretary(admin.secretary);
     const applicantAttributes = ApplicantGenerator.data.minimum();
     const applicant = await ApplicantRepository.create(applicantAttributes);
@@ -52,7 +51,7 @@ describe("ApprovedProfileApplicantNotificationEmailSender", () => {
         {
           receiverEmails: [applicantAttributes.user.email],
           sender: {
-            name: `${adminAttributes.user.name} ${adminAttributes.user.surname}`,
+            name: `${adminUser.name} ${adminUser.surname}`,
             email: settings.email
           },
           subject: "Perfil aprobado",
