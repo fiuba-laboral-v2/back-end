@@ -11,7 +11,6 @@ import { OfferGenerator } from "$generators/Offer";
 import { TestClientGenerator } from "$generators/TestClient";
 import { UnauthorizedError } from "$graphql/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { AdminGenerator } from "$generators/Admin";
 import { range } from "lodash";
 import { Offer } from "$models";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
@@ -192,10 +191,7 @@ describe("getOffers", () => {
 
   it("returns an error when the user is a rejected applicant", async () => {
     const { apolloClient } = await TestClientGenerator.applicant({
-      status: {
-        approvalStatus: ApprovalStatus.rejected,
-        admin: await AdminGenerator.extension()
-      }
+      status: ApprovalStatus.rejected
     });
     const { errors } = await apolloClient.query({ query: GET_OFFERS });
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);

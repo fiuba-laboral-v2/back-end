@@ -16,7 +16,6 @@ import {
   ApprovedProfileApplicantNotification,
   RejectedProfileApplicantNotification
 } from "$models/ApplicantNotification";
-import { Admin } from "$models";
 
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
@@ -24,7 +23,6 @@ import { CareerRepository } from "$models/Career";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
 import { ApplicantNotificationGenerator } from "$generators/ApplicantNotification";
-import { AdminGenerator } from "$generators/Admin";
 import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { TestClientGenerator } from "$generators/TestClient";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
@@ -78,15 +76,12 @@ const GET_APPLICANT_NOTIFICATIONS = gql`
 `;
 
 describe("getApplicantNotifications", () => {
-  let admin: Admin;
-
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await SecretarySettingsRepository.truncate();
 
-    admin = await AdminGenerator.graduados();
     await SecretarySettingsGenerator.createDefaultSettings();
   });
 
@@ -101,10 +96,10 @@ describe("getApplicantNotifications", () => {
   };
 
   const createCompanyTestClient = (approvalStatus: ApprovalStatus) =>
-    TestClientGenerator.company({ status: { approvalStatus, admin } });
+    TestClientGenerator.company({ status: approvalStatus });
 
   const createApplicantTestClient = (approvalStatus: ApprovalStatus) =>
-    TestClientGenerator.applicant({ status: { approvalStatus, admin } });
+    TestClientGenerator.applicant({ status: approvalStatus });
 
   const getFields = (notification: ApplicantNotification) => {
     const notificationClassName = notification.constructor.name;

@@ -7,7 +7,6 @@ import { CompanyGenerator } from "$generators/Company";
 
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { AdminGenerator } from "$generators/Admin";
 import { Secretary } from "$models/Admin";
 import { mockItemsPerPage } from "$test/mocks/config/PaginationConfig";
 
@@ -37,12 +36,8 @@ describe("getCompanies", () => {
   });
 
   it("returns all companies if an Applicant makes the request", async () => {
-    const { apolloClient } = await TestClientGenerator.applicant({
-      status: {
-        approvalStatus: ApprovalStatus.approved,
-        admin: await AdminGenerator.extension()
-      }
-    });
+    const status = ApprovalStatus.approved;
+    const { apolloClient } = await TestClientGenerator.applicant({ status });
     const response = await apolloClient.query({ query: GET_COMPANIES });
 
     expect(response.errors).toBeUndefined();
@@ -129,12 +124,8 @@ describe("getCompanies", () => {
     });
 
     it("returns an error if the user is a rejected applicant", async () => {
-      const { apolloClient } = await TestClientGenerator.applicant({
-        status: {
-          approvalStatus: ApprovalStatus.rejected,
-          admin: await AdminGenerator.extension()
-        }
-      });
+      const status = ApprovalStatus.rejected;
+      const { apolloClient } = await TestClientGenerator.applicant({ status });
       const { errors } = await apolloClient.query({ query: GET_COMPANIES });
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });

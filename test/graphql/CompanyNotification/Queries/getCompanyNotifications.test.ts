@@ -7,7 +7,6 @@ import { GraphQLJobApplication } from "$graphql/JobApplication/Types/GraphQLJobA
 import { GraphQLOffer } from "$graphql/Offer/Types/GraphQLOffer";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
-import { Admin } from "$models";
 import { UserRepository } from "$models/User";
 import { AdminRepository } from "$models/Admin";
 import { CompanyRepository } from "$models/Company";
@@ -26,7 +25,6 @@ import {
 } from "$models/CompanyNotification";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
-import { AdminGenerator } from "$generators/Admin";
 import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyNotificationGenerator } from "$generators/CompanyNotification";
@@ -105,15 +103,12 @@ const GET_COMPANY_NOTIFICATIONS = gql`
 `;
 
 describe("getCompanyNotifications", () => {
-  let admin: Admin;
-
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await SecretarySettingsRepository.truncate();
 
-    admin = await AdminGenerator.graduados();
     await SecretarySettingsGenerator.createDefaultSettings();
   });
 
@@ -131,10 +126,10 @@ describe("getCompanyNotifications", () => {
   };
 
   const createCompanyTestClient = (approvalStatus: ApprovalStatus) =>
-    TestClientGenerator.company({ status: { approvalStatus, admin } });
+    TestClientGenerator.company({ status: approvalStatus });
 
   const createApplicantTestClient = (approvalStatus: ApprovalStatus) =>
-    TestClientGenerator.applicant({ status: { approvalStatus, admin } });
+    TestClientGenerator.applicant({ status: approvalStatus });
 
   const getFields = (notification: CompanyNotification) => {
     const notificationClassName = notification.constructor.name;

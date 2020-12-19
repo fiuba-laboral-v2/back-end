@@ -1,3 +1,4 @@
-export { adminTypes } from "./Types";
-export { adminQueries } from "./Queries";
-export { adminPermissions } from "./Permissions";
+export * from "./Types";
+export * from "./Queries";
+export * from "./Mutations";
+export * from "./Permissions";

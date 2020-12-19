@@ -15,13 +15,7 @@ import { isSecretary } from "../SequelizeModelValidators";
 @Table({ tableName: "Admins", timestamps: true })
 export class Admin extends Model<Admin> {
   @ForeignKey(() => UserSequelizeModel)
-  @Column({
-    primaryKey: true,
-    allowNull: false,
-    references: { model: "Users", key: "uuid" },
-    onDelete: "CASCADE",
-    type: UUID
-  })
+  @Column({ primaryKey: true, allowNull: false, type: UUID })
   public userUuid: string;
 
   @Column({

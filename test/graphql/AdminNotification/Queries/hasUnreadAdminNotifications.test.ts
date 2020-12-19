@@ -34,10 +34,10 @@ describe("hasUnreadAdminNotifications", () => {
   beforeEach(() => AdminNotificationRepository.truncate());
 
   const createCompanyTestClient = (approvalStatus: ApprovalStatus) =>
-    TestClientGenerator.company({ status: { approvalStatus, admin: graduadosAdmin } });
+    TestClientGenerator.company({ status: approvalStatus });
 
   const createApplicantTestClient = (approvalStatus: ApprovalStatus) =>
-    TestClientGenerator.applicant({ status: { approvalStatus, admin: graduadosAdmin } });
+    TestClientGenerator.applicant({ status: approvalStatus });
 
   const performQuery = (apolloClient: TestClient) =>
     apolloClient.query({ query: HAS_UNREAD_ADMIN_NOTIFICATIONS });

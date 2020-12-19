@@ -10,7 +10,6 @@ import { ApplicantRepository } from "$models/Applicant";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { OfferRepository } from "$models/Offer";
-import { AdminRepository, Secretary } from "$models/Admin";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
 import { CompanyGenerator } from "$generators/Company";
@@ -39,8 +38,8 @@ describe("ApprovedJobApplicationApplicantNotificationEmailSender", () => {
   it("sends an email to an applicant user that a jobApplication has been approved", async () => {
     const companyAttributes = CompanyGenerator.data.completeData();
     const company = await CompanyRepository.create(companyAttributes);
-    const adminAttributes = AdminGenerator.data(Secretary.graduados);
-    const admin = await AdminRepository.create(adminAttributes);
+    const admin = await AdminGenerator.graduados();
+    const adminUser = await UserRepository.findByUuid(admin.userUuid);
     const settings = await SecretarySettingsRepository.findBySecretary(admin.secretary);
     const applicantAttributes = ApplicantGenerator.data.minimum();
     const applicant = await ApplicantRepository.create(applicantAttributes);
@@ -60,7 +59,7 @@ describe("ApprovedJobApplicationApplicantNotificationEmailSender", () => {
         {
           receiverEmails: [applicantAttributes.user.email],
           sender: {
-            name: `${adminAttributes.user.name} ${adminAttributes.user.surname}`,
+            name: `${adminUser.name} ${adminUser.surname}`,
             email: settings.email
           },
           subject: "Postulación a oferta de trabajo aprobada",

@@ -7,7 +7,6 @@ import { omit } from "lodash";
 import { UUID_REGEX } from "$test/models";
 import { CareerGenerator } from "$generators/Career";
 import { OfferGenerator } from "$generators/Offer";
-import { AdminGenerator } from "$generators/Admin";
 import { TestClientGenerator } from "$generators/TestClient";
 
 import { CareerRepository } from "$models/Career";
@@ -15,7 +14,7 @@ import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { IOfferAttributes } from "$models/Offer";
-import { Admin, Career, Company } from "$models";
+import { Career, Company } from "$models";
 
 import { OfferWithNoCareersError } from "$graphql/Offer/Errors";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
@@ -80,7 +79,6 @@ const CREATE_OFFER = gql`
 `;
 
 describe("createOffer", () => {
-  let admin: Admin;
   let firstCareer: Career;
   let secondCareer: Career;
 
@@ -88,14 +86,13 @@ describe("createOffer", () => {
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await UserRepository.truncate();
-    admin = await AdminGenerator.extension();
 
     firstCareer = await CareerGenerator.instance();
     secondCareer = await CareerGenerator.instance();
   });
 
   const createCompanyTestClient = (approvalStatus: ApprovalStatus) =>
-    TestClientGenerator.company({ status: { admin, approvalStatus } });
+    TestClientGenerator.company({ status: approvalStatus });
 
   describe("when the input values are valid", () => {
     it("creates a new offer with only obligatory data", async () => {

@@ -3,7 +3,6 @@ import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { OfferRepository } from "$models/Offer";
 import { JobApplicationRepository } from "$models/JobApplication";
-import { AdminRepository, Secretary } from "$models/Admin";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
 import { NewJobApplicationCompanyNotificationEmailSender } from "$services/EmailSender";
@@ -27,8 +26,8 @@ describe("NewJobApplicationCompanyNotificationEmailSender", () => {
   it("sends an email to all company users that a new application has arrived", async () => {
     const companyAttributes = CompanyGenerator.data.completeData();
     const company = await CompanyRepository.create(companyAttributes);
-    const adminAttributes = AdminGenerator.data(Secretary.graduados);
-    const admin = await AdminRepository.create(adminAttributes);
+    const admin = await AdminGenerator.graduados();
+    const adminUser = await UserRepository.findByUuid(admin.userUuid);
     const settings = await SecretarySettingsRepository.findBySecretary(admin.secretary);
     const notification = await CompanyNotificationGenerator.instance.newJobApplication({
       company,
@@ -48,7 +47,7 @@ describe("NewJobApplicationCompanyNotificationEmailSender", () => {
         {
           receiverEmails: [companyAttributes.user.email],
           sender: {
-            name: `${adminAttributes.user.name} ${adminAttributes.user.surname}`,
+            name: `${adminUser.name} ${adminUser.surname}`,
             email: settings.email
           },
           subject: "Nueva postulación a tu oferta laboral",

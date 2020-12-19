@@ -10,7 +10,6 @@ import { CompanyGenerator } from "$generators/Company";
 import { CompanyNotificationGenerator } from "$generators/CompanyNotification";
 import { AdminGenerator } from "$generators/Admin";
 import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
-import { AdminRepository, Secretary } from "$models/Admin";
 
 describe("RejectedOfferCompanyNotificationEmailSender", () => {
   const generator = CompanyNotificationGenerator.instance.rejectedOffer;
@@ -27,8 +26,8 @@ describe("RejectedOfferCompanyNotificationEmailSender", () => {
   it("sends an email to all company users that an offer has been approved", async () => {
     const companyAttributes = CompanyGenerator.data.completeData();
     const company = await CompanyRepository.create(companyAttributes);
-    const adminAttributes = AdminGenerator.data(Secretary.graduados);
-    const admin = await AdminRepository.create(adminAttributes);
+    const admin = await AdminGenerator.graduados();
+    const adminUser = await UserRepository.findByUuid(admin.userUuid);
     const settings = await SecretarySettingsRepository.findBySecretary(admin.secretary);
     const notification = await generator({ company, admin });
     const offer = await OfferRepository.findByUuid(notification.offerUuid);
@@ -42,7 +41,7 @@ describe("RejectedOfferCompanyNotificationEmailSender", () => {
         {
           receiverEmails: [companyAttributes.user.email],
           sender: {
-            name: `${adminAttributes.user.name} ${adminAttributes.user.surname}`,
+            name: `${adminUser.name} ${adminUser.surname}`,
             email: settings.email
           },
           subject: "Oferta laboral rechazada",

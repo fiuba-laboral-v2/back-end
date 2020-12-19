@@ -47,10 +47,7 @@ describe("getApprovedOffers", () => {
 
   const approvedApplicantTestClient = async (careers: IApplicantCareer[]) => {
     const { apolloClient } = await TestClientGenerator.applicant({
-      status: {
-        approvalStatus: ApprovalStatus.approved,
-        admin: await AdminGenerator.extension()
-      },
+      status: ApprovalStatus.approved,
       careers
     });
     return apolloClient;
@@ -417,10 +414,7 @@ describe("getApprovedOffers", () => {
 
   it("returns an error when the user is a rejected applicant", async () => {
     const { apolloClient } = await TestClientGenerator.applicant({
-      status: {
-        approvalStatus: ApprovalStatus.rejected,
-        admin: await AdminGenerator.extension()
-      }
+      status: ApprovalStatus.rejected
     });
     const { errors } = await apolloClient.query({ query: GET_APPROVED_OFFERS });
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
