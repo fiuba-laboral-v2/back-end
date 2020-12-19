@@ -209,6 +209,32 @@ describe("UserRepository", () => {
     });
   });
 
+  describe("findFiubaUserByDni", () => {
+    it("finds a user with FiubaCredentials by dni", async () => {
+      const credentials = new FiubaCredentials(DniGenerator.generate());
+      const user = new User({ ...userAttributes(), credentials });
+      await UserRepository.save(user);
+      const persistedUser = await UserRepository.findFiubaUserByDni(credentials.dni);
+      expect(persistedUser).toEqual(user);
+    });
+
+    it("throws an error if given dni is null", async () => {
+      const dni = null as any;
+      await expect(UserRepository.findFiubaUserByDni(dni)).rejects.toThrowErrorWithMessage(
+        UserNotFoundError,
+        UserNotFoundError.buildMessage({ dni })
+      );
+    });
+
+    it("throws an error if the dni email does not belong to a persisted user", async () => {
+      const dni = DniGenerator.generate();
+      await expect(UserRepository.findFiubaUserByDni(dni)).rejects.toThrowErrorWithMessage(
+        UserNotFoundError,
+        UserNotFoundError.buildMessage({ dni })
+      );
+    });
+  });
+
   describe("findByEmail", () => {
     const expectToFindUserByEmail = async (credentials: ICredentials) => {
       const user = new User({ ...userAttributes(), credentials });
