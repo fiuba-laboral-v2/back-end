@@ -10,9 +10,7 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 
 import { CareerGenerator } from "$generators/Career";
 import { TestClientGenerator } from "$generators/TestClient";
-import { AdminGenerator } from "$generators/Admin";
 import { ApplicantGenerator } from "$generators/Applicant";
-import { Admin } from "$models";
 import { mockItemsPerPage } from "$test/mocks/config/PaginationConfig";
 
 const GET_APPLICANTS = gql`
@@ -61,13 +59,10 @@ const GET_APPLICANTS = gql`
 `;
 
 describe("getApplicants", () => {
-  let admin: Admin;
-
   beforeAll(async () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
     await CompanyRepository.truncate();
-    admin = await AdminGenerator.extension();
   });
 
   describe("when no applicant exists", () => {
@@ -86,7 +81,7 @@ describe("getApplicants", () => {
       const applicantCareer = { careerCode: newCareer.code, isGraduate: true };
       const { user, applicant, apolloClient } = await TestClientGenerator.applicant({
         careers: [applicantCareer],
-        status: { approvalStatus: ApprovalStatus.approved, admin }
+        status: ApprovalStatus.approved
       });
 
       const { data, errors } = await apolloClient.query({ query: GET_APPLICANTS });
@@ -138,7 +133,7 @@ describe("getApplicants", () => {
       const { applicant: firstApplicant, apolloClient } = await TestClientGenerator.applicant({
         careers: [applicantCareerData],
         capabilities: ["Go"],
-        status: { approvalStatus: ApprovalStatus.approved, admin }
+        status: ApprovalStatus.approved
       });
       const secondApplicant = await ApplicantGenerator.instance.withMinimumData({
         careers: [applicantCareerData],
@@ -210,7 +205,7 @@ describe("getApplicants", () => {
 
     it("returns an error if current user is rejected applicant", async () => {
       const { apolloClient } = await TestClientGenerator.applicant({
-        status: { approvalStatus: ApprovalStatus.rejected, admin }
+        status: ApprovalStatus.rejected
       });
       const { errors } = await apolloClient.query({ query: GET_APPLICANTS });
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);

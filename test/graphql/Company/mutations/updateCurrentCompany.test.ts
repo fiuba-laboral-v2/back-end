@@ -5,7 +5,6 @@ import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
-import { Admin } from "$models";
 
 import { EmailService } from "$services/Email";
 import { CompanyRepository } from "$models/Company";
@@ -14,7 +13,6 @@ import { UserRepository } from "$models/User";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
 import { TestClientGenerator } from "$generators/TestClient";
-import { AdminGenerator } from "$generators/Admin";
 import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { UUID_REGEX } from "$test/models";
 
@@ -50,15 +48,12 @@ const UPDATE_CURRENT_COMPANY = gql`
 `;
 
 describe("updateCurrentCompany", () => {
-  let admin: Admin;
-
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     await SecretarySettingsRepository.truncate();
 
     await SecretarySettingsGenerator.createDefaultSettings();
-    admin = await AdminGenerator.graduados();
   });
 
   beforeEach(() => {
@@ -72,10 +67,10 @@ describe("updateCurrentCompany", () => {
     });
 
   const createCompanyTestClient = (approvalStatus: ApprovalStatus) =>
-    TestClientGenerator.company({ status: { approvalStatus, admin } });
+    TestClientGenerator.company({ status: approvalStatus });
 
   const createApplicantTestClient = (approvalStatus: ApprovalStatus) =>
-    TestClientGenerator.applicant({ status: { approvalStatus, admin } });
+    TestClientGenerator.applicant({ status: approvalStatus });
 
   it("update all company attributes", async () => {
     const { apolloClient } = await createCompanyTestClient(ApprovalStatus.pending);

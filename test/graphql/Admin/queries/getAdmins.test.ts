@@ -122,7 +122,7 @@ describe("getAdmins", () => {
 
     it("returns an error if current user is an applicant", async () => {
       const { apolloClient } = await TestClientGenerator.applicant({
-        status: { admin: adminExtension, approvalStatus: ApprovalStatus.approved }
+        status: ApprovalStatus.approved
       });
       const { errors } = await apolloClient.query({ query: GET_ADMINS });
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
@@ -130,7 +130,7 @@ describe("getAdmins", () => {
 
     it("returns an error if current user is from company", async () => {
       const { apolloClient } = await TestClientGenerator.company({
-        status: { admin: adminExtension, approvalStatus: ApprovalStatus.approved }
+        status: ApprovalStatus.approved
       });
       const { errors } = await apolloClient.query({ query: GET_ADMINS });
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);

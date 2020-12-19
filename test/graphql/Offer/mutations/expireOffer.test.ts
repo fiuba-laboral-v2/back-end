@@ -11,7 +11,6 @@ import { IForAllTargets, OfferGenerator } from "$test/generators/Offer";
 
 import { ApplicantType } from "$models/Applicant";
 import moment from "moment";
-import { AdminGenerator } from "$test/generators/Admin";
 import { client } from "$test/graphql/ApolloTestClient";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { UUID } from "$models/UUID";
@@ -42,9 +41,9 @@ describe("expireOffer", () => {
     await SecretarySettingsRepository.truncate();
 
     await SecretarySettingsGenerator.createDefaultSettings();
-    const admin = await AdminGenerator.extension();
+
     ({ apolloClient: companyApolloClient, company } = await TestClientGenerator.company({
-      status: { admin, approvalStatus: ApprovalStatus.approved }
+      status: ApprovalStatus.approved
     }));
     offers = await OfferGenerator.instance.forAllTargets({
       status: ApprovalStatus.approved,
@@ -110,9 +109,8 @@ describe("expireOffer", () => {
   });
 
   it("returns an error if the current user is an approved applicant", async () => {
-    const admin = await AdminGenerator.extension();
     const { apolloClient } = await TestClientGenerator.applicant({
-      status: { admin, approvalStatus: ApprovalStatus.approved }
+      status: ApprovalStatus.approved
     });
     const { errors } = await performMutation(apolloClient, {
       uuid: offers[ApplicantType.both].uuid
@@ -121,9 +119,8 @@ describe("expireOffer", () => {
   });
 
   it("returns an error if the current user is a rejected applicant", async () => {
-    const admin = await AdminGenerator.extension();
     const { apolloClient } = await TestClientGenerator.applicant({
-      status: { admin, approvalStatus: ApprovalStatus.rejected }
+      status: ApprovalStatus.rejected
     });
     const { errors } = await performMutation(apolloClient, {
       uuid: offers[ApplicantType.both].uuid
@@ -140,10 +137,7 @@ describe("expireOffer", () => {
   });
 
   it("returns an error if the current user is from a rejected company", async () => {
-    const admin = await AdminGenerator.extension();
-    const { apolloClient } = await TestClientGenerator.company({
-      status: { admin, approvalStatus: ApprovalStatus.rejected }
-    });
+    const { apolloClient } = await TestClientGenerator.company({ status: ApprovalStatus.rejected });
     const { errors } = await performMutation(apolloClient, {
       uuid: offers[ApplicantType.both].uuid
     });
@@ -151,10 +145,7 @@ describe("expireOffer", () => {
   });
 
   it("returns an error if the current user is from a rejected company", async () => {
-    const admin = await AdminGenerator.extension();
-    const { apolloClient } = await TestClientGenerator.company({
-      status: { admin, approvalStatus: ApprovalStatus.rejected }
-    });
+    const { apolloClient } = await TestClientGenerator.company({ status: ApprovalStatus.rejected });
     const { errors } = await performMutation(apolloClient, {
       uuid: offers[ApplicantType.both].uuid
     });
@@ -170,10 +161,7 @@ describe("expireOffer", () => {
   });
 
   it("returns an error if the offer does not exists", async () => {
-    const admin = await AdminGenerator.extension();
-    const { apolloClient } = await TestClientGenerator.company({
-      status: { admin, approvalStatus: ApprovalStatus.approved }
-    });
+    const { apolloClient } = await TestClientGenerator.company({ status: ApprovalStatus.approved });
     const { errors } = await performMutation(apolloClient, {
       uuid: UUID.generate()
     });

@@ -18,8 +18,7 @@ export const companyTestClient = async ({
   const companyContext = { company: { uuid: company.uuid } };
   const apolloClient = createApolloTestClient(user, expressContext, companyContext);
   if (status) {
-    const { approvalStatus } = status;
-    company.set({ approvalStatus });
+    company.set({ approvalStatus: status });
     await CompanyRepository.save(company);
   }
   return { apolloClient, user, company };

@@ -14,8 +14,7 @@ export const applicantTestClient = async ({
   const applicantContext = { applicant: { uuid: applicant.uuid } };
   const apolloClient = createApolloTestClient(user, expressContext, applicantContext);
   if (status) {
-    const { approvalStatus } = status;
-    applicant.set({ approvalStatus });
+    applicant.set({ approvalStatus: status });
     await ApplicantRepository.save(applicant);
   }
   return { apolloClient, user, applicant };

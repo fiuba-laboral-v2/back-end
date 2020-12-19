@@ -13,13 +13,11 @@ import {
   AdminNotificationRepository,
   UpdatedCompanyProfileAdminNotification
 } from "$models/AdminNotification";
-import { Admin } from "$models";
 
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 
 import { AdminNotificationGenerator } from "$generators/AdminNotification";
-import { AdminGenerator } from "$generators/Admin";
 import { TestClientGenerator } from "$generators/TestClient";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 
@@ -44,13 +42,9 @@ const GET_ADMIN_NOTIFICATIONS = gql`
 `;
 
 describe("getAdminNotifications", () => {
-  let graduadosAdmin: Admin;
-
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
-
-    graduadosAdmin = await AdminGenerator.graduados();
   });
 
   beforeEach(() => AdminNotificationRepository.truncate());
@@ -66,10 +60,10 @@ describe("getAdminNotifications", () => {
   };
 
   const createCompanyTestClient = (approvalStatus: ApprovalStatus) =>
-    TestClientGenerator.company({ status: { approvalStatus, admin: graduadosAdmin } });
+    TestClientGenerator.company({ status: approvalStatus });
 
   const createApplicantTestClient = (approvalStatus: ApprovalStatus) =>
-    TestClientGenerator.applicant({ status: { approvalStatus, admin: graduadosAdmin } });
+    TestClientGenerator.applicant({ status: approvalStatus });
 
   const getFields = (notification: AdminNotification) => {
     const notificationClassName = notification.constructor.name;

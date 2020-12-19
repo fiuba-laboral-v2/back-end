@@ -12,7 +12,6 @@ import { CompanyRepository } from "$models/Company";
 import { ApplicantRepository } from "$models/Applicant";
 import { UserRepository } from "$models/User";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { AdminGenerator } from "$test/generators/Admin";
 
 const GET_SECRETARY_OFFER_DURATION = gql`
   query getSecretaryOfferDuration($secretary: Secretary!) {
@@ -33,12 +32,8 @@ describe("getSecretaryOfferDuration", () => {
     await SecretarySettingsRepository.truncate();
     await SecretarySettingsGenerator.createDefaultSettings();
 
-    const admin = await AdminGenerator.extension();
     ({ apolloClient: companyApolloClient } = await TestClientGenerator.company({
-      status: {
-        admin,
-        approvalStatus: ApprovalStatus.approved
-      }
+      status: ApprovalStatus.approved
     }));
   });
 

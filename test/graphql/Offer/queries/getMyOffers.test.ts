@@ -4,7 +4,7 @@ import { client } from "../../ApolloTestClient";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { Admin, Offer } from "$models";
+import { Offer } from "$models";
 import { CareerRepository } from "$models/Career";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
@@ -13,7 +13,6 @@ import { OfferRepository } from "$models/Offer";
 import { CareerGenerator } from "$generators/Career";
 import { CompanyGenerator } from "$generators/Company";
 import { OfferGenerator } from "$generators/Offer";
-import { AdminGenerator } from "$generators/Admin";
 import { TestClientGenerator } from "$generators/TestClient";
 import { range } from "lodash";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
@@ -30,13 +29,10 @@ const GET_MY_OFFERS = gql`
 `;
 
 describe("getMyOffers", () => {
-  let admin: Admin;
-
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await UserRepository.truncate();
-    admin = await AdminGenerator.extension();
   });
 
   describe("when offers exist", () => {
@@ -64,12 +60,7 @@ describe("getMyOffers", () => {
     };
 
     beforeAll(async () => {
-      const companyClient = await TestClientGenerator.company({
-        status: {
-          admin,
-          approvalStatus: ApprovalStatus.approved
-        }
-      });
+      const companyClient = await TestClientGenerator.company({ status: ApprovalStatus.approved });
       apolloClient = companyClient.apolloClient;
       company = companyClient.company;
     });
@@ -140,10 +131,7 @@ describe("getMyOffers", () => {
     it("returns no offers when no offers were created", async () => {
       await OfferRepository.truncate();
       const { apolloClient } = await TestClientGenerator.company({
-        status: {
-          admin,
-          approvalStatus: ApprovalStatus.approved
-        }
+        status: ApprovalStatus.approved
       });
       const { data, errors } = await apolloClient.query({
         query: GET_MY_OFFERS
@@ -174,10 +162,7 @@ describe("getMyOffers", () => {
 
     it("returns an error if company has pending status", async () => {
       const { apolloClient } = await TestClientGenerator.company({
-        status: {
-          admin,
-          approvalStatus: ApprovalStatus.pending
-        }
+        status: ApprovalStatus.pending
       });
       const { errors } = await apolloClient.query({ query: GET_MY_OFFERS });
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
@@ -185,10 +170,7 @@ describe("getMyOffers", () => {
 
     it("returns an error if company has rejected status", async () => {
       const { apolloClient } = await TestClientGenerator.company({
-        status: {
-          admin,
-          approvalStatus: ApprovalStatus.rejected
-        }
+        status: ApprovalStatus.rejected
       });
       const { errors } = await apolloClient.query({ query: GET_MY_OFFERS });
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
