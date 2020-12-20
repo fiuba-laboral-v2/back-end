@@ -1,7 +1,7 @@
 import { QueryInterface } from "sequelize";
 
 const tableName = "JobApplications";
-const indexName = "job_applications_updated_at_uuid";
+const indexName = "job_applications_pagination_index";
 
 export = {
   up: (queryInterface: any) =>

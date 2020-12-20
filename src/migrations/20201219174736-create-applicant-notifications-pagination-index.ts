@@ -1,7 +1,7 @@
 import { QueryInterface } from "sequelize";
 
 const tableName = "ApplicantNotifications";
-const indexName = "applicant_notifications_notified_applicant_uuid_is_new_created_at_uuid";
+const indexName = "applicant_notifications_pagination_index";
 
 export = {
   up: (queryInterface: any) =>
