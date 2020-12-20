@@ -118,6 +118,19 @@ export const defaultTranslations = {
     student: "Alumnos",
     both: "Alumnos y graduados"
   },
+  secretarySelector: {
+    title: "Secretaría"
+  },
+  admins: {
+    addAdminButtonLabel: "Agregar administrador"
+  },
+  adminSignUp: {
+    badCredentialsError: "Las credenciales de FIUBA no son válidas",
+    adminAlreadyExistsError: "El administrador ya existe",
+    userEmailAlreadyExistsError: "Un usuario con ese email ya existe",
+    title: "Agregar administrador",
+    submit: "Guardar"
+  },
   mainInformationFormSection: {
     offerTitle: "Título",
     description: "Resumen",

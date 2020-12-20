@@ -114,6 +114,23 @@ describe("saveAdmin", () => {
     );
   });
 
+  it("returns an error if the admin already exists", async () => {
+    const secretary = Secretary.graduados;
+    const { apolloClient, admin } = await TestClientGenerator.admin({ secretary });
+    const user = await UserRepository.findByUuid(admin.userUuid);
+    const { errors } = await performQuery(apolloClient, {
+      secretary: admin.secretary,
+      user: {
+        name: user.name,
+        surname: user.surname,
+        email: user.email,
+        dni: (user.credentials as FiubaCredentials).dni,
+        password: "mySecret"
+      }
+    });
+    expect(errors).toEqualGraphQLErrorType("AdminAlreadyExistsError");
+  });
+
   it("returns an error if the fiuba credentials are invalid", async () => {
     jest.spyOn(FiubaUsersService, "authenticate").mockImplementation(async () => false);
     const secretary = Secretary.graduados;
