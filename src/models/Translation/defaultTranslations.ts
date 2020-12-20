@@ -130,6 +130,9 @@ export const defaultTranslations = {
     title: "Agregar administrador",
     submit: "Guardar"
   },
+  adminFeaturesFormSection: {
+    title: "Características"
+  },
   mainInformationFormSection: {
     offerTitle: "Título",
     description: "Resumen",
