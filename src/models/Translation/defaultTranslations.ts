@@ -127,6 +127,10 @@ export const defaultTranslations = {
     cancel: "Cancelar",
     submit: "Guardar"
   },
+  saveAdminForm: {
+    badCredentialsError: "Las credenciales de FIUBA no son válidas",
+    adminAlreadyExistsError: "El administrador ya existe"
+  },
   mainInformationFormSection: {
     offerTitle: "Título",
     description: "Resumen",
