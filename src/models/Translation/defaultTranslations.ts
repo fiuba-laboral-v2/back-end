@@ -121,6 +121,12 @@ export const defaultTranslations = {
   secretarySelector: {
     title: "Secretaría"
   },
+  admins: {
+    addAdminButtonLabel: "Agregar administrador",
+    title: "Agregar administrador",
+    cancel: "Cancelar",
+    submit: "Guardar"
+  },
   mainInformationFormSection: {
     offerTitle: "Título",
     description: "Resumen",
