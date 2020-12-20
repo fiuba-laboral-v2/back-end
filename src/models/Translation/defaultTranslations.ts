@@ -118,6 +118,9 @@ export const defaultTranslations = {
     student: "Alumnos",
     both: "Alumnos y graduados"
   },
+  secretarySelector: {
+    title: "Secretaría"
+  },
   mainInformationFormSection: {
     offerTitle: "Título",
     description: "Resumen",
