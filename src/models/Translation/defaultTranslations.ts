@@ -122,14 +122,13 @@ export const defaultTranslations = {
     title: "Secretaría"
   },
   admins: {
-    addAdminButtonLabel: "Agregar administrador",
-    title: "Agregar administrador",
-    cancel: "Cancelar",
-    submit: "Guardar"
+    addAdminButtonLabel: "Agregar administrador"
   },
-  saveAdminForm: {
+  adminSignUp: {
     badCredentialsError: "Las credenciales de FIUBA no son válidas",
-    adminAlreadyExistsError: "El administrador ya existe"
+    adminAlreadyExistsError: "El administrador ya existe",
+    title: "Agregar administrador",
+    submit: "Guardar"
   },
   mainInformationFormSection: {
     offerTitle: "Título",
