@@ -189,6 +189,10 @@ export const defaultTranslations = {
     businessName: "Razón social",
     cuit: "CUIT"
   },
+  addCompanyUser: {
+    title: "Agregar usuario",
+    submit: "Guardar"
+  },
   companySignUp: {
     title: "Crear tu cuenta",
     submit: "Guardar"
