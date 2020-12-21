@@ -414,6 +414,12 @@ export const defaultTranslations = {
     approvalStatus: "Estado",
     updatedAt: "Última actualización"
   },
+  companyUserListHeader: {
+    name: "Nombre",
+    surname: "Apellido",
+    email: "Email",
+    createdAt: "Fecha de registro"
+  },
   targetApplicantType: {
     graduate: "Graduados",
     student: "Alumnos",
