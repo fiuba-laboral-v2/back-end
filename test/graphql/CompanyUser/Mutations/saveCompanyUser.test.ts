@@ -83,7 +83,7 @@ describe("saveCompanyUser", () => {
     expect(errors).toEqualGraphQLErrorType("PasswordWithoutDigitsError");
   });
 
-  it("returns an error if password has less than ten digits", async () => {
+  it("returns an error if the password has less than ten digits", async () => {
     const { apolloClient } = await TestClientGenerator.company({
       status: ApprovalStatus.approved
     });
