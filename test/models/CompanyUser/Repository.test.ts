@@ -6,8 +6,11 @@ import { ForeignKeyConstraintError } from "sequelize";
 import { UUID } from "$models/UUID";
 
 import { CompanyGenerator } from "$generators/Company";
+import { CompanyUserGenerator } from "$generators/CompanyUser";
 import { UserGenerator } from "$generators/User";
+import { CuitGenerator } from "$generators/Cuit";
 import { UUID_REGEX } from "$test/models";
+import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 
 describe("CompanyUserRepository", () => {
   const companyAttributes = {
@@ -16,7 +19,7 @@ describe("CompanyUserRepository", () => {
     businessName: "businessName"
   };
 
-  beforeEach(() => Promise.all([CompanyRepository.truncate(), UserRepository.truncate()]));
+  beforeAll(() => Promise.all([CompanyRepository.truncate(), UserRepository.truncate()]));
 
   it("persists a company user in the database", async () => {
     const company = await CompanyGenerator.instance.withMinimumData();
@@ -90,6 +93,63 @@ describe("CompanyUserRepository", () => {
       const company = new Company(companyAttributes);
       const companyUsers = await CompanyUserRepository.findByCompanyUuid(company.uuid);
       expect(companyUsers).toEqual([]);
+    });
+  });
+
+  describe("findLatestByCompany", () => {
+    const { findLatestByCompany } = CompanyUserRepository;
+    const size = 20;
+    let companyUsers: CompanyUser[] = [];
+    let companyUuid: string;
+
+    beforeAll(async () => {
+      await CompanyUserRepository.truncate();
+
+      const company = new Company({
+        cuit: CuitGenerator.generate(),
+        companyName: "devartis",
+        businessName: "el zorro"
+      });
+      await CompanyRepository.save(company);
+      companyUuid = company.uuid;
+      companyUsers = await CompanyUserGenerator.range({ company, size });
+    });
+
+    it("finds all companyUsers", async () => {
+      const result = await CompanyUserRepository.findLatestByCompany({ companyUuid });
+      expect(result.results).toHaveLength(size);
+      expect(result.shouldFetchMore).toBe(false);
+    });
+
+    it("finds the first three companyUsers", async () => {
+      const itemsPerPage = 3;
+      mockItemsPerPage(itemsPerPage);
+      const updatedBeforeThan = {
+        dateTime: companyUsers[0].createdAt!,
+        uuid: companyUsers[0].uuid!
+      };
+      const result = await findLatestByCompany({ updatedBeforeThan, companyUuid });
+      expect(result.results).toHaveLength(itemsPerPage);
+      expect(result.results.map(({ uuid }) => uuid)).toEqual(
+        companyUsers.slice(1, itemsPerPage + 1).map(({ uuid }) => uuid)
+      );
+      expect(result.shouldFetchMore).toBe(true);
+    });
+
+    it("finds the last half of remaining notifications", async () => {
+      const itemsPerPage = size / 2;
+      mockItemsPerPage(itemsPerPage);
+      const updatedBeforeThan = {
+        dateTime: companyUsers[itemsPerPage - 1].createdAt!,
+        uuid: companyUsers[itemsPerPage - 1].uuid!
+      };
+      const result = await findLatestByCompany({ updatedBeforeThan, companyUuid });
+      const { shouldFetchMore, results } = result;
+      expect(results).toHaveLength(itemsPerPage);
+      expect(results.map(({ uuid }) => uuid)).toEqual(
+        companyUsers.slice(itemsPerPage, size + 1).map(({ uuid }) => uuid)
+      );
+      expect(shouldFetchMore).toBe(false);
     });
   });
 });

@@ -149,7 +149,7 @@ describe("AdminNotificationRepository", () => {
       await AdminNotificationGenerator.instance.range({ admin: graduadosAdmin, size: 2 });
     });
 
-    it("finds all notifications by applicant", async () => {
+    it("finds all notifications by secretary", async () => {
       const secretary = extensionAdmin.secretary;
       const result = await findLatestBySecretary({ secretary });
       const { shouldFetchMore, results } = result;
