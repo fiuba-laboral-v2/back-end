@@ -7,6 +7,7 @@ import { UUID } from "$models/UUID";
 
 import { CompanyGenerator } from "$generators/Company";
 import { UserGenerator } from "$generators/User";
+import { UUID_REGEX } from "$test/models";
 
 describe("CompanyUserRepository", () => {
   const companyAttributes = {
@@ -17,16 +18,32 @@ describe("CompanyUserRepository", () => {
 
   beforeEach(() => Promise.all([CompanyRepository.truncate(), UserRepository.truncate()]));
 
-  it("successfully creates when both references are valid", async () => {
-    const company = new Company(companyAttributes);
-    await CompanyRepository.save(company);
+  it("persists a company user in the database", async () => {
+    const company = await CompanyGenerator.instance.withMinimumData();
     const user = await UserGenerator.instance();
-    const companyUser = new CompanyUser({ companyUuid: company.uuid, userUuid: user.uuid });
+    const attributes = { companyUuid: company.uuid, userUuid: user.uuid };
+    const companyUser = new CompanyUser(attributes);
     await CompanyUserRepository.save(companyUser);
-    expect(companyUser).toBeObjectContaining({
-      companyUuid: company.uuid,
-      userUuid: user.uuid
-    });
+    expect(companyUser).toBeObjectContaining(attributes);
+  });
+
+  it("sets its uuid after persisting the company user", async () => {
+    const company = await CompanyGenerator.instance.withMinimumData();
+    const user = await UserGenerator.instance();
+    const attributes = { companyUuid: company.uuid, userUuid: user.uuid };
+    const companyUser = new CompanyUser(attributes);
+    await CompanyUserRepository.save(companyUser);
+    expect(companyUser.uuid).toEqual(expect.stringMatching(UUID_REGEX));
+  });
+
+  it("sets its timestamps after persisting the company user", async () => {
+    const company = await CompanyGenerator.instance.withMinimumData();
+    const user = await UserGenerator.instance();
+    const attributes = { companyUuid: company.uuid, userUuid: user.uuid };
+    const companyUser = new CompanyUser(attributes);
+    await CompanyUserRepository.save(companyUser);
+    expect(companyUser.createdAt).toEqual(expect.any(Date));
+    expect(companyUser.updatedAt).toEqual(expect.any(Date));
   });
 
   it("needs to reference a persisted company", async () => {

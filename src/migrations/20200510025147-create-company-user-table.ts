@@ -6,6 +6,11 @@ export = {
       await queryInterface.createTable(
         "CompanyUsers",
         {
+          uuid: {
+            allowNull: false,
+            primaryKey: true,
+            type: UUID
+          },
           companyUuid: {
             allowNull: false,
             references: { model: "Companies", key: "uuid" },
@@ -30,7 +35,7 @@ export = {
         { transaction }
       );
       await queryInterface.addConstraint("CompanyUsers", ["companyUuid", "userUuid"], {
-        type: "primary key",
+        type: "unique",
         name: "CompanyUsers_companyUuid_userUuid_key",
         transaction
       });
