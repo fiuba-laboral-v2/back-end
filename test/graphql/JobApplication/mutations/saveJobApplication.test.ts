@@ -19,6 +19,8 @@ import { CareerGenerator } from "$generators/Career";
 import { UUID } from "$models/UUID";
 import { UUID_REGEX } from "$test/models";
 import { ApplicantType } from "$models/Applicant";
+import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
+import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
 const SAVE_JOB_APPLICATION = gql`
   mutation saveJobApplication($offerUuid: String!) {
@@ -43,6 +45,8 @@ describe("saveJobApplication", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
+    await SecretarySettingsRepository.truncate();
+    await SecretarySettingsGenerator.createDefaultSettings();
     firstCareer = await CareerGenerator.instance();
     secondCareer = await CareerGenerator.instance();
 
