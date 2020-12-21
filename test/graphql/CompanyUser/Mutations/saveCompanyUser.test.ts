@@ -47,7 +47,7 @@ describe("saveCompanyUser", () => {
     user: UserGenerator.data.companyUser({ email, password })
   });
 
-  it("creates a company user for the company of the current company user", async () => {
+  it("adds a company user to current user's company", async () => {
     const { apolloClient, company } = await TestClientGenerator.company({
       status: ApprovalStatus.approved
     });
