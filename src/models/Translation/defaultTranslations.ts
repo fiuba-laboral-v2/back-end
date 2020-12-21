@@ -121,6 +121,9 @@ export const defaultTranslations = {
   secretarySelector: {
     title: "Secretaría"
   },
+  companyUsers: {
+    addAdminButtonLabel: "Agregar usuario"
+  },
   admins: {
     addAdminButtonLabel: "Agregar administrador"
   },
