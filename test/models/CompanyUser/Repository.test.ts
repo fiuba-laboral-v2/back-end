@@ -136,7 +136,7 @@ describe("CompanyUserRepository", () => {
       expect(result.shouldFetchMore).toBe(true);
     });
 
-    it("finds the last half of remaining notifications", async () => {
+    it("finds the last half of remaining companyUsers", async () => {
       const itemsPerPage = size / 2;
       mockItemsPerPage(itemsPerPage);
       const updatedBeforeThan = {

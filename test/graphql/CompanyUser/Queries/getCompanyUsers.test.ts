@@ -31,7 +31,7 @@ const GET_COMPANY_USERS = gql`
   }
 `;
 
-describe("getCompanyNotifications", () => {
+describe("getCompanyUsers", () => {
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
@@ -72,7 +72,7 @@ describe("getCompanyNotifications", () => {
     expect(data!.getCompanyUsers.results.map(({ uuid }) => uuid)).toEqual(companyUserUuids);
   });
 
-  it("returns the next three notifications", async () => {
+  it("returns the next three companyUsers", async () => {
     const size = 6;
     const itemsPerPage = size / 2;
     mockItemsPerPage(itemsPerPage);
