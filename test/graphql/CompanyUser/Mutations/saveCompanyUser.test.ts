@@ -20,6 +20,7 @@ import { CompanyUserRepository } from "$models/CompanyUser";
 const SAVE_COMPANY_USER = gql`
   mutation SaveCompanyUser($user: UserInput!) {
     saveCompanyUser(user: $user) {
+      uuid
       companyUuid
       userUuid
       user {
@@ -55,6 +56,7 @@ describe("saveCompanyUser", () => {
     const { errors, data } = await performQuery(apolloClient, variables);
     expect(errors).toBeUndefined();
     expect(data!.saveCompanyUser).toEqual({
+      uuid: expect.stringMatching(UUID_REGEX),
       companyUuid: company.uuid,
       userUuid: expect.stringMatching(UUID_REGEX),
       user: {
