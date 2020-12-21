@@ -1,5 +1,5 @@
 import { UniqueConstraintError, ValidationError } from "sequelize";
-import { InvalidCuitError, PhoneNumberWithLettersError } from "validations-fiuba-laboral-v2";
+import { InvalidCuitError } from "validations-fiuba-laboral-v2";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Company } from "$models";
 import { CompanyNotFoundError } from "$models/Company/Errors";
@@ -120,58 +120,6 @@ describe("CompanyRepository", () => {
       CompanyNotFoundError,
       CompanyNotFoundError.buildMessage(uuid)
     );
-  });
-
-  describe("create", () => {
-    it("creates a new company", async () => {
-      const companyCompleteData = CompanyGenerator.data.completeData();
-      const company = await CompanyRepository.create(companyCompleteData);
-      expect(company).toEqual(
-        expect.objectContaining({
-          cuit: companyCompleteData.cuit,
-          companyName: companyCompleteData.companyName,
-          businessName: companyCompleteData.businessName,
-          slogan: companyCompleteData.slogan,
-          description: companyCompleteData.description,
-          logo: companyCompleteData.logo,
-          website: companyCompleteData.website,
-          email: companyCompleteData.email
-        })
-      );
-      expect(await company.getPhoneNumbers()).toHaveLength(
-        companyCompleteData.phoneNumbers!.length
-      );
-      expect(await company.getPhotos()).toHaveLength(companyCompleteData.photos!.length);
-    });
-
-    it("throws an error if phoneNumbers are invalid", async () => {
-      const companyCompleteData = CompanyGenerator.data.completeData();
-      await expect(
-        CompanyRepository.create({
-          ...companyCompleteData,
-          phoneNumbers: ["InvalidPhoneNumber1", "InvalidPhoneNumber2"]
-        })
-      ).rejects.toThrowBulkRecordErrorIncluding([
-        {
-          errorClass: ValidationError,
-          message: PhoneNumberWithLettersError.buildMessage()
-        },
-        {
-          errorClass: ValidationError,
-          message: PhoneNumberWithLettersError.buildMessage()
-        }
-      ]);
-    });
-
-    it("throws an error if phoneNumbers are duplicated", async () => {
-      const companyCompleteData = CompanyGenerator.data.completeData();
-      await expect(
-        CompanyRepository.create({
-          ...companyCompleteData,
-          phoneNumbers: ["1159821066", "1159821066"]
-        })
-      ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
-    });
   });
 
   describe("findByUserUuidIfExists", () => {
