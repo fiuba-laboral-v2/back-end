@@ -121,6 +121,9 @@ export const defaultTranslations = {
   secretarySelector: {
     title: "Secretaría"
   },
+  companyUsers: {
+    addAdminButtonLabel: "Agregar usuario"
+  },
   admins: {
     addAdminButtonLabel: "Agregar administrador"
   },
@@ -188,6 +191,10 @@ export const defaultTranslations = {
     description: "Descripción",
     businessName: "Razón social",
     cuit: "CUIT"
+  },
+  addCompanyUser: {
+    title: "Agregar usuario",
+    submit: "Guardar"
   },
   companySignUp: {
     title: "Crear tu cuenta",
