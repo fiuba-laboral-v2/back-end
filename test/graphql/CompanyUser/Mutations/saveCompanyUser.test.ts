@@ -74,7 +74,7 @@ describe("saveCompanyUser", () => {
     expect(errors).toEqualGraphQLErrorType("UserEmailAlreadyExistsError");
   });
 
-  it("returns an error if password does not hace digits", async () => {
+  it("returns an error if the password does not have digits", async () => {
     const { apolloClient } = await TestClientGenerator.company({
       status: ApprovalStatus.approved
     });
