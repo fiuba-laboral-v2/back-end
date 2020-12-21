@@ -5,16 +5,15 @@ import {
   SeparateApprovalAdminTaskTypes,
   SharedApprovalAdminTaskTypes
 } from "$models/AdminTask/Model";
-import intersection from "lodash/intersection";
 
 export const StatusWhereClause = {
-  build: ({ statuses, adminTaskTypes, secretary }: IStatusWhereClauseProps) => {
+  build: ({ statuses, secretary, tableName, modelName }: IStatusWhereClauseProps) => {
     const conditions: string[] = [];
     const columns: string[] = [];
-    if (intersection(adminTaskTypes, SharedApprovalAdminTaskTypes).length > 0) {
+    if (SharedApprovalAdminTaskTypes.includes(modelName)) {
       columns.push("approvalStatus");
     }
-    if (intersection(adminTaskTypes, SeparateApprovalAdminTaskTypes).length > 0) {
+    if (SeparateApprovalAdminTaskTypes.includes(modelName)) {
       columns.push(
         secretary === Secretary.graduados ? "graduadosApprovalStatus" : "extensionApprovalStatus"
       );
@@ -22,7 +21,7 @@ export const StatusWhereClause = {
 
     for (const column of columns) {
       for (const status of statuses) {
-        conditions.push(`"AdminTask"."${column}" = '${status}'`);
+        conditions.push(`"${tableName}"."${column}" = '${status}'`);
       }
     }
     return `(${conditions.join(" OR ")})`;
@@ -32,5 +31,6 @@ export const StatusWhereClause = {
 interface IStatusWhereClauseProps {
   statuses: ApprovalStatus[];
   secretary: Secretary;
-  adminTaskTypes: AdminTaskType[];
+  tableName: string;
+  modelName: AdminTaskType;
 }

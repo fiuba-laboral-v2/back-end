@@ -1,13 +1,29 @@
 import { ApplicantTypeWhereClause } from "$models/AdminTask/WhereClauseBuilder/ApplicantType";
 import { Secretary } from "$models/Admin";
 import { AdminTaskType } from "$models/AdminTask";
-import { ApplicantCareer, Applicant } from "$models";
+import { ApplicantCareer, Applicant, Offer, JobApplication, Company } from "$models";
 
 describe("ApplicantTypeWhereClause", () => {
-  it("returns an empty clause if no Applicant is in adminTaskTypes", async () => {
+  it("returns an empty clause if model is Offer", async () => {
     const whereClause = ApplicantTypeWhereClause.build({
       secretary: Secretary.graduados,
-      adminTaskTypes: [AdminTaskType.Offer, AdminTaskType.JobApplication, AdminTaskType.Company]
+      modelName: Offer.name as AdminTaskType
+    });
+    expect(whereClause).toBeUndefined();
+  });
+
+  it("returns an empty clause if model is JobApplication", async () => {
+    const whereClause = ApplicantTypeWhereClause.build({
+      secretary: Secretary.graduados,
+      modelName: JobApplication.name as AdminTaskType
+    });
+    expect(whereClause).toBeUndefined();
+  });
+
+  it("returns an empty clause if model is Company", async () => {
+    const whereClause = ApplicantTypeWhereClause.build({
+      secretary: Secretary.graduados,
+      modelName: Company.name as AdminTaskType
     });
     expect(whereClause).toBeUndefined();
   });
@@ -15,15 +31,14 @@ describe("ApplicantTypeWhereClause", () => {
   it("builds where clause for graduates", async () => {
     const whereClause = ApplicantTypeWhereClause.build({
       secretary: Secretary.graduados,
-      adminTaskTypes: Object.keys(AdminTaskType) as AdminTaskType[]
+      modelName: Applicant.name as AdminTaskType
     });
     expect(whereClause).toEqualIgnoringSpacing(`
       (
-        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
-        OR EXISTS(
+        EXISTS(
           SELECT *
           FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
+          WHERE "applicantUuid" = "Applicants"."uuid" AND "isGraduate" = true
         )
       )
     `);
@@ -32,15 +47,14 @@ describe("ApplicantTypeWhereClause", () => {
   it("builds where clause for students", async () => {
     const whereClause = ApplicantTypeWhereClause.build({
       secretary: Secretary.extension,
-      adminTaskTypes: Object.keys(AdminTaskType) as AdminTaskType[]
+      modelName: Applicant.name as AdminTaskType
     });
     expect(whereClause).toEqualIgnoringSpacing(`
       (
-        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
-        OR NOT EXISTS(
+        NOT EXISTS(
           SELECT *
           FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
+          WHERE "applicantUuid" = "Applicants"."uuid" AND "isGraduate" = true
         )
       )
     `);

@@ -4,8 +4,8 @@ import { ApplicantType } from "$models/Applicant";
 import { Offer } from "$models";
 
 export const OfferTargetWhereClause = {
-  build: ({ secretary, adminTaskTypes }: IStatusWhereClauseProps) => {
-    if (!adminTaskTypes.includes(AdminTaskType.Offer)) return;
+  build: ({ secretary, modelName }: IStatusWhereClauseProps) => {
+    if (modelName !== AdminTaskType.Offer) return;
 
     let targetApplicantType: ApplicantType;
     if (secretary === Secretary.graduados) {
@@ -16,9 +16,8 @@ export const OfferTargetWhereClause = {
 
     return `
       (
-        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-        OR "AdminTask"."targetApplicantType" = '${targetApplicantType}'
-        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
+        "${Offer.tableName}"."targetApplicantType" = '${ApplicantType.both}'
+        OR "${Offer.tableName}"."targetApplicantType" = '${targetApplicantType}'
       )
     `;
   }
@@ -26,5 +25,5 @@ export const OfferTargetWhereClause = {
 
 interface IStatusWhereClauseProps {
   secretary: Secretary;
-  adminTaskTypes: AdminTaskType[];
+  modelName: AdminTaskType;
 }

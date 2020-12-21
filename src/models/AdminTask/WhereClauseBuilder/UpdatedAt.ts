@@ -1,17 +1,22 @@
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 
 export const UpdatedAtWhereClause = {
-  build: (updatedBeforeThan?: IPaginatedInput) => {
+  build: ({ updatedBeforeThan, tableName }: IUpdatedAtWhereClauseProps) => {
     if (!updatedBeforeThan) return;
     const updatedAtString = updatedBeforeThan.dateTime.toISOString();
     return `
       (
-        ("AdminTask"."updatedAt" < '${updatedAtString}')
+        ("${tableName}"."updatedAt" < '${updatedAtString}')
         OR (
-          "AdminTask"."updatedAt" = '${updatedAtString}'
-          AND "AdminTask"."uuid" < '${updatedBeforeThan.uuid}'
+          "${tableName}"."updatedAt" = '${updatedAtString}'
+          AND "${tableName}"."uuid" < '${updatedBeforeThan.uuid}'
         )
       )
     `;
   }
 };
+
+interface IUpdatedAtWhereClauseProps {
+  updatedBeforeThan?: IPaginatedInput;
+  tableName: string;
+}

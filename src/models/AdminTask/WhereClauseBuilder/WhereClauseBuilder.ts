@@ -9,13 +9,13 @@ import { JobApplicationTargetWhereClause } from "./JobApplicationTarget";
 import { UpdatedAtWhereClause } from "./UpdatedAt";
 
 export const WhereClauseBuilder = {
-  build: ({ statuses, secretary, adminTaskTypes, updatedBeforeThan }: IWhereClauseBuilder) =>
+  build: ({ statuses, secretary, updatedBeforeThan, modelName, tableName }: IWhereClauseBuilder) =>
     [
-      StatusWhereClause.build({ statuses, secretary, adminTaskTypes }),
-      OfferTargetWhereClause.build({ secretary, adminTaskTypes }),
-      ApplicantTypeWhereClause.build({ secretary, adminTaskTypes }),
-      JobApplicationTargetWhereClause.build({ secretary, adminTaskTypes }),
-      UpdatedAtWhereClause.build(updatedBeforeThan)
+      StatusWhereClause.build({ statuses, secretary, modelName, tableName }),
+      OfferTargetWhereClause.build({ secretary, modelName }),
+      ApplicantTypeWhereClause.build({ secretary, modelName }),
+      JobApplicationTargetWhereClause.build({ secretary, modelName }),
+      UpdatedAtWhereClause.build({ updatedBeforeThan, tableName })
     ]
       .filter(clause => clause)
       .join(" AND ")
@@ -24,6 +24,7 @@ export const WhereClauseBuilder = {
 interface IWhereClauseBuilder {
   statuses: ApprovalStatus[];
   secretary: Secretary;
-  adminTaskTypes: AdminTaskType[];
   updatedBeforeThan?: IPaginatedInput;
+  modelName: AdminTaskType;
+  tableName: string;
 }

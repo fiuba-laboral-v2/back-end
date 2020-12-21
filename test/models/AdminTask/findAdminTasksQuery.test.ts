@@ -5,7 +5,7 @@ import { AdminTaskTypesIsEmptyError, StatusesIsEmptyError } from "$models/AdminT
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
-import { Applicant, ApplicantCareer, JobApplication } from "$models";
+import { Applicant, ApplicantCareer, JobApplication, Offer, Company } from "$models";
 
 describe("findAdminTasksQuery", () => {
   it("throws an error if no adminTaskTypes are provided", async () => {
@@ -104,41 +104,75 @@ describe("findAdminTasksQuery", () => {
         COALESCE (Offers."title") AS "title",
         COALESCE (Offers."extensionApprovalStatus") AS "extensionApprovalStatus",
         COALESCE (Offers."graduadosApprovalStatus") AS "graduadosApprovalStatus",
+        COALESCE (Offers."targetApplicantType") AS "targetApplicantType",
         COALESCE (Offers."hoursPerDay") AS "hoursPerDay",
         COALESCE (Offers."isInternship") AS "isInternship",
         COALESCE (Offers."minimumSalary") AS "minimumSalary",
         COALESCE (Offers."maximumSalary") AS "maximumSalary",
-        COALESCE (Offers."studentsExpirationDateTime") AS "studentsExpirationDateTime",
         COALESCE (Offers."graduatesExpirationDateTime") AS "graduatesExpirationDateTime",
-        COALESCE (Offers."targetApplicantType") AS "targetApplicantType",
-        COALESCE (JobApplications."applicantUuid") AS "applicantUuid",
-        COALESCE (JobApplications."offerUuid") AS "offerUuid"
+        COALESCE (Offers."studentsExpirationDateTime") AS "studentsExpirationDateTime",
+        COALESCE (JobApplications."offerUuid") AS "offerUuid",
+        COALESCE (JobApplications."applicantUuid") AS "applicantUuid"
         FROM (
           (
-            SELECT *, 'Applicants' AS "tableNameColumn" FROM "Applicants"
+            SELECT *, 'Applicants' AS "tableNameColumn"
+            FROM "Applicants"
+            WHERE ${WhereClauseBuilder.build({
+              statuses,
+              secretary,
+              updatedBeforeThan,
+              modelName: Applicant.name as AdminTaskType,
+              tableName: Applicant.tableName
+            })}
+            ORDER BY "Applicants"."updatedAt" DESC, "Applicants"."uuid" DESC
+            LIMIT ${limit}
           ) AS Applicants
           FULL OUTER JOIN
           (
-            SELECT *, 'Companies' AS "tableNameColumn" FROM "Companies"
+            SELECT *, 'Companies' AS "tableNameColumn"
+            FROM "Companies"
+            WHERE ${WhereClauseBuilder.build({
+              statuses,
+              secretary,
+              updatedBeforeThan,
+              modelName: Company.name as AdminTaskType,
+              tableName: Company.tableName
+            })}
+            ORDER BY "Companies"."updatedAt" DESC, "Companies"."uuid" DESC
+            LIMIT ${limit}
           ) AS Companies
           ON FALSE FULL OUTER JOIN
           (
-            SELECT *, 'Offers' AS "tableNameColumn" FROM "Offers"
+            SELECT *, 'Offers' AS "tableNameColumn"
+            FROM "Offers"
+            WHERE ${WhereClauseBuilder.build({
+              statuses,
+              secretary,
+              updatedBeforeThan,
+              modelName: Offer.name as AdminTaskType,
+              tableName: Offer.tableName
+            })}
+            ORDER BY "Offers"."updatedAt" DESC, "Offers"."uuid" DESC
+            LIMIT ${limit}
           ) AS Offers
           ON FALSE FULL OUTER JOIN
           (
-            SELECT *, 'JobApplications' AS "tableNameColumn" FROM "JobApplications"
+            SELECT *, 'JobApplications' AS "tableNameColumn"
+            FROM "JobApplications"
+            WHERE ${WhereClauseBuilder.build({
+              statuses,
+              secretary,
+              updatedBeforeThan,
+              modelName: JobApplication.name as AdminTaskType,
+              tableName: JobApplication.tableName
+            })}
+            ORDER BY "JobApplications"."updatedAt" DESC, "JobApplications"."uuid" DESC
+            LIMIT ${limit}
           ) AS JobApplications
           ON FALSE
         )
       )
       SELECT * FROM "AdminTask"
-      WHERE ${WhereClauseBuilder.build({
-        statuses,
-        secretary,
-        updatedBeforeThan,
-        adminTaskTypes
-      })}
       ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
       LIMIT ${limit}
     `;
@@ -217,23 +251,28 @@ describe("findAdminTasksQuery", () => {
       WITH "AdminTask" AS
         (
           SELECT
+            COALESCE(Companies."tableNameColumn") AS "tableNameColumn",
             COALESCE(Companies."uuid") AS "uuid",
             COALESCE(Companies."cuit") AS "cuit",
             COALESCE(Companies."companyName") AS "companyName",
-            COALESCE (Companies."businessName") AS "businessName",
+            COALESCE(Companies."businessName") AS "businessName",
             COALESCE(Companies."slogan") AS "slogan",
             COALESCE(Companies."description") AS "description",
             COALESCE(Companies."logo") AS "logo",
             COALESCE(Companies."website") AS "website",
             COALESCE(Companies."email") AS "email",
-            COALESCE(Companies."approvalStatus") AS "approvalStatus",
             COALESCE(Companies."createdAt") AS "createdAt",
             COALESCE(Companies."updatedAt") AS "updatedAt",
-            COALESCE(Companies."tableNameColumn") AS "tableNameColumn"
-          FROM (SELECT *, 'Companies' AS "tableNameColumn" FROM "Companies") AS Companies
+            COALESCE(Companies."approvalStatus") AS "approvalStatus"
+          FROM (
+            SELECT *, 'Companies' AS "tableNameColumn"
+            FROM "Companies"
+            WHERE ("Companies"."approvalStatus" = '${status}')
+            ORDER BY "Companies"."updatedAt" DESC, "Companies"."uuid" DESC
+            LIMIT ${limit}
+          ) AS Companies
         )
       SELECT * FROM "AdminTask"
-      WHERE ("AdminTask"."approvalStatus" = '${status}')
       ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
       LIMIT ${limit}
     `;
@@ -267,28 +306,30 @@ describe("findAdminTasksQuery", () => {
       WITH "AdminTask" AS
         (
           SELECT
+            COALESCE(Applicants."tableNameColumn") AS "tableNameColumn",
             COALESCE(Applicants."uuid") AS "uuid",
+            COALESCE(Applicants."padron") AS "padron",
             COALESCE(Applicants."description") AS "description",
+            COALESCE(Applicants."userUuid") AS "userUuid",
             COALESCE(Applicants."approvalStatus") AS "approvalStatus",
             COALESCE(Applicants."createdAt") AS "createdAt",
-            COALESCE(Applicants."updatedAt") AS "updatedAt",
-            COALESCE(Applicants."tableNameColumn") AS "tableNameColumn",
-            COALESCE(Applicants."padron") AS "padron",
-            COALESCE(Applicants."userUuid") AS "userUuid"
-          FROM (SELECT *, 'Applicants' AS "tableNameColumn" FROM "Applicants") AS Applicants
+            COALESCE(Applicants."updatedAt") AS "updatedAt"
+          FROM (
+            SELECT *, 'Applicants' AS "tableNameColumn"
+            FROM "Applicants"
+            WHERE ("Applicants"."approvalStatus" = '${status}') AND
+              (
+                EXISTS(
+                  SELECT *
+                  FROM "${ApplicantCareer.tableName}"
+                  WHERE "applicantUuid" = "Applicants"."uuid" AND "isGraduate" = true
+                )
+              )
+            ORDER BY "Applicants"."updatedAt" DESC, "Applicants"."uuid" DESC
+            LIMIT ${limit}
+          ) AS Applicants
         )
       SELECT * FROM "AdminTask"
-      WHERE
-        ("AdminTask"."approvalStatus" = '${status}')
-        AND
-        (
-            "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
-            OR EXISTS(
-              SELECT *
-              FROM "${ApplicantCareer.tableName}"
-              WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
-            )
-        )
       ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
       LIMIT ${limit}
     `;
@@ -329,23 +370,29 @@ describe("findAdminTasksQuery", () => {
           COALESCE ( Offers."description" ) AS "description",
           COALESCE ( Offers."extensionApprovalStatus" ) AS "extensionApprovalStatus",
           COALESCE ( Offers."graduadosApprovalStatus" ) AS "graduadosApprovalStatus",
+          COALESCE ( Offers."targetApplicantType" ) AS "targetApplicantType",
           COALESCE ( Offers."hoursPerDay" ) AS "hoursPerDay",
           COALESCE ( Offers."isInternship" ) AS "isInternship",
           COALESCE ( Offers."minimumSalary" ) AS "minimumSalary",
           COALESCE ( Offers."maximumSalary" ) AS "maximumSalary",
-          COALESCE (Offers."studentsExpirationDateTime") AS "studentsExpirationDateTime",
-          COALESCE (Offers."graduatesExpirationDateTime") AS "graduatesExpirationDateTime",
-          COALESCE ( Offers."targetApplicantType" ) AS "targetApplicantType",
+          COALESCE ( Offers."graduatesExpirationDateTime") AS "graduatesExpirationDateTime",
+          COALESCE ( Offers."studentsExpirationDateTime") AS "studentsExpirationDateTime",
           COALESCE ( Offers."createdAt" ) AS "createdAt",
           COALESCE ( Offers."updatedAt" ) AS "updatedAt"
-        FROM (SELECT *, 'Offers' AS "tableNameColumn" FROM "Offers" ) AS Offers
+        FROM (
+          SELECT *, 'Offers' AS "tableNameColumn"
+          FROM "Offers"
+          WHERE ${WhereClauseBuilder.build({
+            statuses: [status],
+            secretary,
+            tableName: Offer.tableName,
+            modelName: Offer.name as AdminTaskType
+          })}
+          ORDER BY "Offers"."updatedAt" DESC, "Offers"."uuid" DESC
+          LIMIT ${limit}
+        ) AS Offers
       )
       SELECT * FROM "AdminTask"
-      WHERE ${WhereClauseBuilder.build({
-        statuses: [status],
-        secretary,
-        adminTaskTypes: [AdminTaskType.Offer]
-      })}
       ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
       LIMIT ${limit}
     `;
@@ -393,28 +440,27 @@ describe("findAdminTasksQuery", () => {
       WITH "AdminTask" AS (
         SELECT  COALESCE (JobApplications."tableNameColumn") AS "tableNameColumn",
           COALESCE (JobApplications."uuid") AS "uuid",
-          COALESCE (JobApplications."applicantUuid") AS "applicantUuid",
           COALESCE (JobApplications."offerUuid") AS "offerUuid",
+          COALESCE (JobApplications."applicantUuid") AS "applicantUuid",
           COALESCE (JobApplications."approvalStatus") AS "approvalStatus",
           COALESCE (JobApplications."createdAt") AS "createdAt",
           COALESCE (JobApplications."updatedAt") AS "updatedAt"
         FROM (
-            SELECT *, 'JobApplications' AS "tableNameColumn" FROM "JobApplications"
+          SELECT *, 'JobApplications' AS "tableNameColumn"
+          FROM "JobApplications"
+          WHERE ("JobApplications"."approvalStatus" = '${status}')
+            AND (
+              ${secretary === Secretary.graduados ? "" : "NOT"} EXISTS(
+                SELECT *
+                FROM "${ApplicantCareer.tableName}"
+                WHERE "applicantUuid" = "JobApplications"."applicantUuid" AND "isGraduate" = true
+            )
+          )
+          ORDER BY "JobApplications"."updatedAt" DESC, "JobApplications"."uuid" DESC
+          LIMIT ${limit}
         ) AS JobApplications
       )
       SELECT * FROM "AdminTask"
-      WHERE (
-        "AdminTask"."approvalStatus" = '${status}'
-        AND
-        (
-          "AdminTask"."tableNameColumn" != '${JobApplication.tableName}'
-          OR ${secretary === Secretary.graduados ? "" : "NOT"} EXISTS(
-            SELECT *
-            FROM "${ApplicantCareer.tableName}"
-            WHERE "applicantUuid" = "AdminTask"."applicantUuid" AND "isGraduate" = true
-        )
-      )
-      )
       ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
       LIMIT ${limit}
     `;
