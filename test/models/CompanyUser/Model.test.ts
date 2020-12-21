@@ -51,11 +51,11 @@ describe("CompanyUser", () => {
     );
   });
 
-  it("throws an error if no role is provided", async () => {
-    const companyUser = new CompanyUser(omit(mandatoryAttributes, "role"));
-    await expect(companyUser.validate()).rejects.toThrowErrorWithMessage(
-      ValidationError,
-      "notNull Violation: CompanyUser.role cannot be null"
-    );
-  });
+  // it("throws an error if no role is provided", async () => {
+  //   const companyUser = new CompanyUser(omit(mandatoryAttributes, "role"));
+  //   await expect(companyUser.validate()).rejects.toThrowErrorWithMessage(
+  //     ValidationError,
+  //     "notNull Violation: CompanyUser.role cannot be null"
+  //   );
+  // });
 });

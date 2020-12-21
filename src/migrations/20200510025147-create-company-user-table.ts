@@ -1,4 +1,4 @@
-import { DATE, QueryInterface, UUID } from "sequelize";
+import { QueryInterface, DATE, UUID, STRING } from "sequelize";
 
 const TABLE_NAME = "CompanyUsers";
 
@@ -24,6 +24,10 @@ export = {
             references: { model: "Users", key: "uuid" },
             onDelete: "CASCADE",
             type: UUID
+          },
+          role: {
+            allowNull: false,
+            type: STRING
           },
           createdAt: {
             allowNull: false,

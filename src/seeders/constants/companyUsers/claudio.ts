@@ -15,6 +15,7 @@ export const claudio = {
     uuid: uuids.claudio.user,
     companyUuid: uuids.companies.devartis.uuid,
     userUuid: uuids.claudio.user,
+    role: "Socio",
     createdAt: new Date(),
     updatedAt: new Date()
   }
