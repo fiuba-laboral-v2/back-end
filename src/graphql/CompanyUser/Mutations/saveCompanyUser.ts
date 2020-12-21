@@ -1,5 +1,5 @@
 import { nonNull } from "$graphql/fieldTypes";
-import { GraphQLUserCreateInput } from "$graphql/User/Types/GraphQLUserCreateInput";
+import { GraphQLCompanyUserCreateInput } from "$graphql/User/Types/GraphQLCompanyUserCreateInput";
 import { GraphQLCompanyUser } from "../Types/GraphQLCompanyUser";
 import { IApolloServerContext } from "$graphql/Context";
 
@@ -12,7 +12,7 @@ export const saveCompanyUser = {
   type: GraphQLCompanyUser,
   args: {
     user: {
-      type: nonNull(GraphQLUserCreateInput)
+      type: nonNull(GraphQLCompanyUserCreateInput)
     }
   },
   resolve: async (
@@ -21,13 +21,13 @@ export const saveCompanyUser = {
     { currentUser }: IApolloServerContext
   ) => {
     const { companyUuid } = currentUser.getCompanyRole();
-    const { name, surname, email, password } = userAttributes;
+    const { name, surname, email, password, role } = userAttributes;
     const credentials = new CompanyUserRawCredentials({ password });
     const user = new User({ name, surname, email, credentials });
 
     return Database.transaction(async transaction => {
       await UserRepository.save(user, transaction);
-      const companyUser = new CompanyUser({ companyUuid, userUuid: user.uuid });
+      const companyUser = new CompanyUser({ companyUuid, userUuid: user.uuid, role });
       await CompanyUserRepository.save(companyUser, transaction);
       return companyUser;
     });

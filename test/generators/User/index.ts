@@ -40,11 +40,12 @@ export const UserGenerator = {
       dni: dni || DniGenerator.generate(),
       password: "mySecretFiubaPass"
     }),
-    companyUser: ({ email, password }: IUserGeneratorAttributes = {}) => ({
+    companyUser: ({ email, password, role }: IUserGeneratorAttributes = {}) => ({
       name: "name",
       surname: "surname",
       email: email || EmailGenerator.generate(),
-      password: password || "SecurePassword1010"
+      password: password || "SecurePassword1010",
+      role: role || "role"
     })
   }
 };

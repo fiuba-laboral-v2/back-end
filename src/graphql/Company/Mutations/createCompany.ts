@@ -1,9 +1,10 @@
-import { GraphQLUserCreateInput } from "$graphql/User/Types/GraphQLUserCreateInput";
+import { GraphQLCompanyUserCreateInput } from "$graphql/User/Types/GraphQLCompanyUserCreateInput";
 import { List, nonNull, String } from "$graphql/fieldTypes";
 import { GraphQLCompany } from "../Types/GraphQLCompany";
+
 import { Database } from "$config";
-import { CompanyRepository, ICompany } from "$models/Company";
-import { CompanyUserRawCredentials, User, UserRepository } from "$models/User";
+import { CompanyRepository } from "$models/Company";
+import { CompanyUserRawCredentials, ICreateCompanyUser, User, UserRepository } from "$models/User";
 import { Company, CompanyUser } from "$models";
 import { CompanyUserRepository } from "$models/CompanyUser";
 import { CompanyPhotoRepository } from "$models/CompanyPhoto";
@@ -43,21 +44,21 @@ export const createCompany = {
       type: List(String)
     },
     user: {
-      type: nonNull(GraphQLUserCreateInput)
+      type: nonNull(GraphQLCompanyUserCreateInput)
     }
   },
   resolve: async (
     _: undefined,
-    { phoneNumbers, photos, user: userAttributes, ...companyAttributes }: ICompany
+    { phoneNumbers, photos, user: userAttributes, ...companyAttributes }: ICreateCompany
   ) => {
-    const { password, email, surname, name } = userAttributes;
+    const { password, email, surname, name, role } = userAttributes;
     const credentials = new CompanyUserRawCredentials({ password });
     const user = new User({ name, surname, email, credentials });
     const company = new Company(companyAttributes);
     return Database.transaction(async transaction => {
       await UserRepository.save(user, transaction);
       await CompanyRepository.save(company, transaction);
-      const companyUser = new CompanyUser({ companyUuid: company.uuid, userUuid: user.uuid });
+      const companyUser = new CompanyUser({ companyUuid: company.uuid, userUuid: user.uuid, role });
       await CompanyUserRepository.save(companyUser, transaction);
       await CompanyPhotoRepository.bulkCreate(photos, company, transaction);
       await CompanyPhoneNumberRepository.bulkCreate(phoneNumbers, company, transaction);
@@ -65,3 +66,17 @@ export const createCompany = {
     });
   }
 };
+
+export interface ICreateCompany {
+  cuit: string;
+  companyName: string;
+  businessName: string;
+  slogan?: string;
+  description?: string;
+  logo?: string;
+  website?: string;
+  email?: string;
+  phoneNumbers?: string[];
+  photos?: string[];
+  user: ICreateCompanyUser;
+}

@@ -18,7 +18,7 @@ import { UUID_REGEX } from "$test/models";
 import { CompanyUserRepository } from "$models/CompanyUser";
 
 const SAVE_COMPANY_USER = gql`
-  mutation SaveCompanyUser($user: UserInput!) {
+  mutation SaveCompanyUser($user: CompanyUserCreateInput!) {
     saveCompanyUser(user: $user) {
       uuid
       companyUuid
@@ -61,7 +61,7 @@ describe("saveCompanyUser", () => {
       userUuid: expect.stringMatching(UUID_REGEX),
       user: {
         uuid: expect.stringMatching(UUID_REGEX),
-        ...omit(variables.user, "password"),
+        ...omit(variables.user, ["password", "role"]),
         dni: null
       }
     });

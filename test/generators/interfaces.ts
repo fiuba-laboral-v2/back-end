@@ -8,7 +8,7 @@ export interface IAdminGeneratorAttributes extends IUserGeneratorAttributes {
 }
 
 export interface ICompanyGeneratorAttributes {
-  user?: { password?: string };
+  user?: { password?: string; role?: string };
   photos?: string[];
 }
 
@@ -22,6 +22,7 @@ export interface IUserGeneratorAttributes {
   email?: string;
   password?: string;
   dni?: string;
+  role?: string;
 }
 
 export interface ITestClientAttributes {

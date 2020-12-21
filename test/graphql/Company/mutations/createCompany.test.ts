@@ -1,13 +1,14 @@
 import { gql } from "apollo-server";
 import { client } from "$test/graphql/ApolloTestClient";
-import { CompanyRepository, ICompany } from "$models/Company";
+import { ICreateCompany } from "$graphql/Company/Mutations/createCompany";
+import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { CompanyGenerator } from "$generators/Company";
 
 const SAVE_COMPANY = gql`
   mutation(
-    $user: UserInput!
+    $user: CompanyUserCreateInput!
     $cuit: String!
     $companyName: String!
     $businessName: String!
@@ -53,11 +54,8 @@ describe("createCompany", () => {
     await CompanyRepository.truncate();
   });
 
-  const performMutation = (companyData: ICompany) =>
-    client.loggedOut().mutate({
-      mutation: SAVE_COMPANY,
-      variables: companyData
-    });
+  const performMutation = (companyData: ICreateCompany) =>
+    client.loggedOut().mutate({ mutation: SAVE_COMPANY, variables: companyData });
 
   it("creates company", async () => {
     const { user, ...companyData } = CompanyGenerator.data.completeData();
