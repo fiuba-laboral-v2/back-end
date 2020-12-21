@@ -1,11 +1,11 @@
 import { gql } from "apollo-server";
-import { client } from "../../ApolloTestClient";
-import { CompanyRepository } from "$models/Company";
+import { client } from "$test/graphql/ApolloTestClient";
+import { CompanyRepository, ICompany } from "$models/Company";
 import { UserRepository } from "$models/User";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { CompanyGenerator } from "$generators/Company";
 
-const SAVE_COMPANY_WITH_COMPLETE_DATA = gql`
+const SAVE_COMPANY = gql`
   mutation(
     $user: UserInput!
     $cuit: String!
@@ -47,72 +47,52 @@ const SAVE_COMPANY_WITH_COMPLETE_DATA = gql`
   }
 `;
 
-const SAVE_COMPANY_WITH_MINIMUM_DATA = gql`
-  mutation($cuit: String!, $companyName: String!, $businessName: String!, $user: UserInput!) {
-    createCompany(
-      cuit: $cuit
-      companyName: $companyName
-      businessName: $businessName
-      user: $user
-    ) {
-      cuit
-      companyName
-      businessName
-    }
-  }
-`;
-
 describe("createCompany", () => {
   beforeAll(async () => {
-    await CompanyRepository.truncate();
     await UserRepository.truncate();
+    await CompanyRepository.truncate();
   });
 
-  describe("When the creation succeeds", () => {
-    it("create company", async () => {
-      const { user, ...companyData } = CompanyGenerator.data.completeData();
-      const response = await client.loggedOut().mutate({
-        mutation: SAVE_COMPANY_WITH_COMPLETE_DATA,
-        variables: { user, ...companyData }
-      });
-      expect(response.errors).toBeUndefined();
-      expect(response.data).toEqual({
-        createCompany: {
-          ...companyData,
-          approvalStatus: ApprovalStatus.pending,
-          phoneNumbers: expect.arrayContaining(companyData.phoneNumbers!)
-        }
-      });
+  const performMutation = (companyData: ICompany) =>
+    client.loggedOut().mutate({
+      mutation: SAVE_COMPANY,
+      variables: companyData
     });
 
-    it("creates company with only obligatory data", async () => {
-      const { user, cuit, businessName, companyName } = CompanyGenerator.data.completeData();
-      const response = await client.loggedOut().mutate({
-        mutation: SAVE_COMPANY_WITH_MINIMUM_DATA,
-        variables: { user, cuit, businessName, companyName }
-      });
-      expect(response.errors).toBeUndefined();
-      expect(response.data).not.toBeUndefined();
-      expect(response.data).toEqual({ createCompany: { cuit, companyName, businessName } });
+  it("creates company", async () => {
+    const { user, ...companyData } = CompanyGenerator.data.completeData();
+    const response = await performMutation({ user, ...companyData });
+    expect(response.errors).toBeUndefined();
+    expect(response.data!.createCompany).toEqual({
+      ...companyData,
+      approvalStatus: ApprovalStatus.pending,
+      phoneNumbers: expect.arrayContaining(companyData.phoneNumbers!)
     });
   });
 
-  describe("when the creation errors", () => {
-    it("throws an error if the company with its cuit already exist", async () => {
-      const companyData = CompanyGenerator.data.completeData();
-      const cuit = companyData.cuit;
-      await client.loggedOut().mutate({
-        mutation: SAVE_COMPANY_WITH_MINIMUM_DATA,
-        variables: companyData
-      });
-      const { errors } = await client.loggedOut().mutate({
-        mutation: SAVE_COMPANY_WITH_MINIMUM_DATA,
-        variables: {
-          ...CompanyGenerator.data.completeData(),
-          cuit
-        }
-      });
-      expect(errors).toEqualGraphQLErrorType("CompanyCuitAlreadyExistsError");
+  it("throws an error if phoneNumbers are invalid", async () => {
+    const attributes = CompanyGenerator.data.completeData();
+    const { errors } = await performMutation({
+      ...attributes,
+      phoneNumbers: ["InvalidPhoneNumber1", "InvalidPhoneNumber2"]
     });
+    expect(errors).toEqualGraphQLErrorType("SubError");
+  });
+
+  it("throws an error if phoneNumbers are duplicated", async () => {
+    const attributes = CompanyGenerator.data.completeData();
+    const { errors } = await performMutation({
+      ...attributes,
+      phoneNumbers: ["1159821066", "1159821066"]
+    });
+    expect(errors).toEqualGraphQLErrorType("DuplicatedPhoneNumberAlreadyExistsError");
+  });
+
+  it("throws an error if the company with its cuit already exist", async () => {
+    const companyData = CompanyGenerator.data.completeData();
+    const cuit = companyData.cuit;
+    await performMutation(companyData);
+    const { errors } = await performMutation({ ...CompanyGenerator.data.completeData(), cuit });
+    expect(errors).toEqualGraphQLErrorType("CompanyCuitAlreadyExistsError");
   });
 });

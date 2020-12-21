@@ -1,7 +1,13 @@
-import { List, nonNull, String } from "$graphql/fieldTypes";
-import { CompanyRepository, ICompany } from "$models/Company";
-import { GraphQLCompany } from "../Types/GraphQLCompany";
 import { GraphQLUserCreateInput } from "$graphql/User/Types/GraphQLUserCreateInput";
+import { List, nonNull, String } from "$graphql/fieldTypes";
+import { GraphQLCompany } from "../Types/GraphQLCompany";
+import { Database } from "$config";
+import { CompanyRepository, ICompany } from "$models/Company";
+import { CompanyUserRawCredentials, User, UserRepository } from "$models/User";
+import { Company, CompanyUser } from "$models";
+import { CompanyUserRepository } from "$models/CompanyUser";
+import { CompanyPhotoRepository } from "$models/CompanyPhoto";
+import { CompanyPhoneNumberRepository } from "$models/CompanyPhoneNumber";
 
 export const createCompany = {
   type: GraphQLCompany,
@@ -40,5 +46,22 @@ export const createCompany = {
       type: nonNull(GraphQLUserCreateInput)
     }
   },
-  resolve: (_: undefined, args: ICompany) => CompanyRepository.create(args)
+  resolve: async (
+    _: undefined,
+    { phoneNumbers, photos, user: userAttributes, ...companyAttributes }: ICompany
+  ) => {
+    const { password, email, surname, name } = userAttributes;
+    const credentials = new CompanyUserRawCredentials({ password });
+    const user = new User({ name, surname, email, credentials });
+    const company = new Company(companyAttributes);
+    return Database.transaction(async transaction => {
+      await UserRepository.save(user, transaction);
+      await CompanyRepository.save(company, transaction);
+      const companyUser = new CompanyUser({ companyUuid: company.uuid, userUuid: user.uuid });
+      await CompanyUserRepository.save(companyUser, transaction);
+      await CompanyPhotoRepository.bulkCreate(photos, company, transaction);
+      await CompanyPhoneNumberRepository.bulkCreate(phoneNumbers, company, transaction);
+      return company;
+    });
+  }
 };
