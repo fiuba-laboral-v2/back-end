@@ -1,17 +1,26 @@
-import { AllowNull, Column, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript";
+import { CreatedAt, UpdatedAt, Column, ForeignKey, PrimaryKey, Table } from "sequelize-typescript";
 import { Company, UserSequelizeModel } from "$models";
+import { UUID } from "sequelize";
+import { isUuid } from "$models/SequelizeModelValidators";
+import { SequelizeModel } from "$models/SequelizeModel";
 
-@Table
-export class CompanyUser extends Model<CompanyUser> {
+@Table({ tableName: "CompanyUsers", timestamps: true })
+export class CompanyUser extends SequelizeModel<CompanyUser> {
   @ForeignKey(() => Company)
-  @AllowNull(false)
   @PrimaryKey
-  @Column
+  @Column({ allowNull: false, type: UUID, ...isUuid })
   public companyUuid: string;
 
   @ForeignKey(() => UserSequelizeModel)
-  @AllowNull(false)
   @PrimaryKey
-  @Column
+  @Column({ allowNull: false, type: UUID, ...isUuid })
   public userUuid: string;
+
+  @CreatedAt
+  @Column
+  public createdAt: Date;
+
+  @UpdatedAt
+  @Column
+  public updatedAt: Date;
 }
