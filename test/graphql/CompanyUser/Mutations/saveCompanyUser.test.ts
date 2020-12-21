@@ -110,7 +110,7 @@ describe("saveCompanyUser", () => {
     expect(errors).toEqualGraphQLErrorType("PasswordWithoutUppercaseError");
   });
 
-  it("returns an error if password does not have a lower case character", async () => {
+  it("returns an error if the password does not have a lower case character", async () => {
     const { apolloClient } = await TestClientGenerator.company({
       status: ApprovalStatus.approved
     });
