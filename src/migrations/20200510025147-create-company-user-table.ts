@@ -38,7 +38,7 @@ export = {
       );
       await queryInterface.addConstraint(TABLE_NAME, ["companyUuid", "userUuid"], {
         type: "unique",
-        name: "CompanyUsers_companyUuid_userUuid_key",
+        name: "CompanyUsers_companyUuid_userUuid_unique",
         transaction
       });
     }),
