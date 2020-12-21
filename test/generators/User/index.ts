@@ -2,6 +2,7 @@ import { UserRepository, User } from "$models/User";
 import { FiubaCredentials, CompanyUserRawCredentials } from "$models/User/Credentials";
 import { IUserGeneratorAttributes } from "$generators/interfaces";
 import { DniGenerator } from "$generators/DNI";
+import { EmailGenerator } from "$generators/Email";
 
 export const UserGenerator = {
   index: 0,
@@ -30,5 +31,14 @@ export const UserGenerator = {
     });
     await UserRepository.save(user);
     return user;
+  },
+  data: {
+    fiubaUser: ({ dni }: IUserGeneratorAttributes = {}) => ({
+      name: "name",
+      surname: "surname",
+      email: EmailGenerator.generate(),
+      dni: dni || DniGenerator.generate(),
+      password: "mySecretFiubaPass"
+    })
   }
 };

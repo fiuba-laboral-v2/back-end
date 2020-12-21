@@ -10,17 +10,17 @@ import {
   UserRepository
 } from "$models/User";
 import { CareerRepository } from "$models/Career";
+import { AdminRepository, Secretary } from "$models/Admin";
 import { CompanyRepository } from "$models/Company";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist/createTestClient";
-import { EmailGenerator } from "$generators/Email";
-import { DniGenerator } from "$generators/DNI";
+
+import { UserGenerator } from "$generators/User";
 import { TestClientGenerator } from "$generators/TestClient";
-import { AdminRepository, Secretary } from "$models/Admin";
+import { ApplicantGenerator } from "$generators/Applicant";
 import { UUID_REGEX } from "$test/models";
 import { omit } from "lodash";
-import { ApplicantGenerator } from "$generators/Applicant";
 
 const SAVE_ADMIN = gql`
   mutation SaveAdmin($user: UserInput!, $secretary: Secretary!) {
@@ -46,13 +46,7 @@ describe("saveAdmin", () => {
   });
 
   const generateVariables = (secretary: Secretary) => ({
-    user: {
-      name: "name",
-      surname: "surname",
-      email: EmailGenerator.generate(),
-      dni: DniGenerator.generate(),
-      password: "mySecretFiubaPass"
-    },
+    user: UserGenerator.data.fiubaUser(),
     secretary
   });
 
