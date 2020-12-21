@@ -1,4 +1,4 @@
-import { ISaveAdmin } from "$models/Admin";
+import { ISaveAdmin } from "$graphql/Admin/Mutations/saveAdmin";
 import { Secretary } from "$models/Admin/Interface";
 import { IUserGeneratorAttributes } from "$generators/interfaces";
 import { DniGenerator } from "$generators/DNI";

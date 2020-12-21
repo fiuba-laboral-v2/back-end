@@ -10,10 +10,8 @@ import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { Admin } from "$models";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
-import { AdminGenerator } from "$generators/Admin";
 import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyNotificationGenerator } from "$generators/CompanyNotification";
@@ -25,23 +23,20 @@ const HAS_UNREAD_COMPANY_NOTIFICATIONS = gql`
 `;
 
 describe("hasUnreadCompanyNotifications", () => {
-  let admin: Admin;
-
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await SecretarySettingsRepository.truncate();
 
-    admin = await AdminGenerator.graduados();
     await SecretarySettingsGenerator.createDefaultSettings();
   });
 
   const createCompanyTestClient = (approvalStatus: ApprovalStatus) =>
-    TestClientGenerator.company({ status: { approvalStatus, admin } });
+    TestClientGenerator.company({ status: approvalStatus });
 
   const createApplicantTestClient = (approvalStatus: ApprovalStatus) =>
-    TestClientGenerator.applicant({ status: { approvalStatus, admin } });
+    TestClientGenerator.applicant({ status: approvalStatus });
 
   const performQuery = (apolloClient: TestClient) =>
     apolloClient.query({ query: HAS_UNREAD_COMPANY_NOTIFICATIONS });

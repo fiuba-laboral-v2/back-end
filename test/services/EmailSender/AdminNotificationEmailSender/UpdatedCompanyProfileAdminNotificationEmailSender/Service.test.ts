@@ -9,7 +9,7 @@ import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
-import { AdminRepository, Secretary } from "$models/Admin";
+import { Secretary } from "$models/Admin";
 import { SecretarySettings } from "$models";
 
 import { CompanyGenerator } from "$generators/Company";
@@ -36,8 +36,7 @@ describe("UpdatedCompanyProfileAdminNotificationEmailSender", () => {
   });
 
   it("sends an email to an applicant user that a the profile its been approved", async () => {
-    const adminAttributes = AdminGenerator.data(secretarySettings.secretary);
-    const admin = await AdminRepository.create(adminAttributes);
+    const admin = await AdminGenerator.instance({ secretary: secretarySettings.secretary });
     const company = await CompanyGenerator.instance.withMinimumData();
     const notification = new UpdatedCompanyProfileAdminNotification({
       secretary: admin.secretary,

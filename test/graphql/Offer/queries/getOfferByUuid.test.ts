@@ -8,7 +8,6 @@ import { UserRepository } from "$models/User";
 import { OfferNotFoundError } from "$models/Offer/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Applicant";
-import { Secretary } from "$models/Admin";
 import { Offer } from "$models";
 import { OfferNotVisibleByCurrentUserError } from "$graphql/Offer/Queries/Errors";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
@@ -18,7 +17,6 @@ import { OfferGenerator } from "$generators/Offer";
 import { CareerGenerator } from "$generators/Career";
 import { CompanyGenerator } from "$generators/Company";
 import { TestClientGenerator } from "$generators/TestClient";
-import { AdminGenerator } from "$generators/Admin";
 import { UUID } from "$models/UUID";
 import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
@@ -72,7 +70,6 @@ const GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION = gql`
 describe("getOfferByUuid", () => {
   let companyUuid: string;
   let applicantCareers: object;
-  let admins: object;
 
   beforeAll(async () => {
     await CompanyRepository.truncate();
@@ -82,11 +79,6 @@ describe("getOfferByUuid", () => {
     await SecretarySettingsGenerator.createDefaultSettings();
 
     companyUuid = (await CompanyGenerator.instance.withCompleteData()).uuid;
-
-    admins = {
-      [Secretary.extension]: await AdminGenerator.extension(),
-      [Secretary.graduados]: await AdminGenerator.graduados()
-    };
 
     const firstCareer = await CareerGenerator.instance();
     const secondCareer = await CareerGenerator.instance();
@@ -122,27 +114,14 @@ describe("getOfferByUuid", () => {
   });
 
   const approvedApplicantTestClient = async (applicantType: ApplicantType) => {
-    let secretary = Secretary.graduados;
-    if (applicantType === ApplicantType.both) secretary = Secretary.graduados;
-    if (applicantType === ApplicantType.graduate) secretary = Secretary.graduados;
-    if (applicantType === ApplicantType.student) secretary = Secretary.extension;
-
     return TestClientGenerator.applicant({
       careers: applicantCareers[applicantType],
-      status: {
-        approvalStatus: ApprovalStatus.approved,
-        admin: admins[secretary]
-      }
+      status: ApprovalStatus.approved
     });
   };
 
   const companyTestClient = async (approvalStatus: ApprovalStatus) => {
-    return TestClientGenerator.company({
-      status: {
-        approvalStatus,
-        admin: await AdminGenerator.extension()
-      }
-    });
+    return TestClientGenerator.company({ status: approvalStatus });
   };
 
   const getOffer = async (apolloClient: ApolloServerTestClient, offer: Offer) => {
@@ -367,10 +346,7 @@ describe("getOfferByUuid", () => {
 
     it("returns error if current user a rejected applicant", async () => {
       const { apolloClient } = await TestClientGenerator.applicant({
-        status: {
-          approvalStatus: ApprovalStatus.rejected,
-          admin: admins[Secretary.graduados]
-        }
+        status: ApprovalStatus.rejected
       });
       const { errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID,
@@ -382,10 +358,7 @@ describe("getOfferByUuid", () => {
 
     it("returns error if current user a pending applicant", async () => {
       const { apolloClient } = await TestClientGenerator.applicant({
-        status: {
-          approvalStatus: ApprovalStatus.pending,
-          admin: admins[Secretary.graduados]
-        }
+        status: ApprovalStatus.pending
       });
       const { errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID,

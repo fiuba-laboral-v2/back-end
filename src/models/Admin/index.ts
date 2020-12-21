@@ -1,2 +1,2 @@
-export { AdminRepository } from "./Repository";
-export { ISaveAdmin, SecretaryEnumValues, Secretary } from "./Interface";
+export * from "./Repository";
+export * from "./Interface";

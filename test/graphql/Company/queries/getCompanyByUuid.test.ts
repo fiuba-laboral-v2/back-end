@@ -4,7 +4,6 @@ import { UserRepository } from "$models/User";
 import { client } from "../../ApolloTestClient";
 import { TestClientGenerator } from "$generators/TestClient";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
-import { AdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { UUID } from "$models/UUID";
@@ -79,10 +78,7 @@ describe("getCompanyByUuid", () => {
 
   it("returns error if the Company does not exist", async () => {
     const { apolloClient } = await TestClientGenerator.applicant({
-      status: {
-        approvalStatus: ApprovalStatus.approved,
-        admin: await AdminGenerator.extension()
-      }
+      status: ApprovalStatus.approved
     });
     const notExistentUuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
     const { errors } = await apolloClient.query({
@@ -133,10 +129,7 @@ describe("getCompanyByUuid", () => {
 
   it("returns an error if user is a rejected applicant", async () => {
     const { apolloClient } = await TestClientGenerator.applicant({
-      status: {
-        approvalStatus: ApprovalStatus.rejected,
-        admin: await AdminGenerator.extension()
-      }
+      status: ApprovalStatus.rejected
     });
     const { errors } = await apolloClient.query({
       query: query,

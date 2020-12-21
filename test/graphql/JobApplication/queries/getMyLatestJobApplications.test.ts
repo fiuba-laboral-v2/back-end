@@ -3,7 +3,7 @@ import { client } from "$test/graphql/ApolloTestClient";
 import { ApolloServerTestClient } from "apollo-server-testing";
 
 import { UserRepository } from "$models/User";
-import { Admin, Company, JobApplication } from "$models";
+import { Company, JobApplication } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
@@ -12,7 +12,6 @@ import { JobApplicationRepository } from "$models/JobApplication";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 import { OfferGenerator } from "$generators/Offer";
-import { AdminGenerator } from "$generators/Admin";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyGenerator } from "$generators/Company";
@@ -46,22 +45,14 @@ const GET_MY_LATEST_JOB_APPLICATIONS = gql`
 `;
 
 describe("getMyLatestJobApplications", () => {
-  let admin: Admin;
-
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
-    admin = await AdminGenerator.extension();
   });
 
   const createCompanyTestClient = (approvalStatus: ApprovalStatus) =>
-    TestClientGenerator.company({
-      status: {
-        admin,
-        approvalStatus
-      }
-    });
+    TestClientGenerator.company({ status: approvalStatus });
 
   const performQuery = (apolloClient: ApolloServerTestClient) =>
     apolloClient.query({ query: GET_MY_LATEST_JOB_APPLICATIONS });

@@ -6,14 +6,13 @@ import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { OfferNotTargetedForApplicantError } from "$models/JobApplication";
-import { Admin, Applicant, Career, Company, Offer } from "$models";
+import { Applicant, Career, Company, Offer } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
 import { OfferNotFoundError } from "$models/Offer/Errors";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 import { IForAllTargetsAndStatuses, OfferGenerator } from "$generators/Offer";
-import { AdminGenerator } from "$generators/Admin";
 import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyGenerator } from "$generators/Company";
 import { CareerGenerator } from "$generators/Career";
@@ -35,8 +34,6 @@ describe("saveJobApplication", () => {
   let company: Company;
   let firstCareer: Career;
   let secondCareer: Career;
-  let extensionAdmin: Admin;
-  let graduadosAdmin: Admin;
   let offers: IForAllTargetsAndStatuses;
   let studentClient: { apolloClient: ApolloClient; applicant: Applicant };
   let graduateClient: { apolloClient: ApolloClient; applicant: Applicant };
@@ -49,18 +46,12 @@ describe("saveJobApplication", () => {
     firstCareer = await CareerGenerator.instance();
     secondCareer = await CareerGenerator.instance();
 
-    extensionAdmin = await AdminGenerator.extension();
-    graduadosAdmin = await AdminGenerator.graduados();
-
     company = await CompanyGenerator.instance.withCompleteData();
     const companyUuid = company.uuid;
     offers = await OfferGenerator.instance.forAllTargetsAndStatuses({ companyUuid });
 
     studentClient = await TestClientGenerator.applicant({
-      status: {
-        approvalStatus: ApprovalStatus.approved,
-        admin: extensionAdmin
-      },
+      status: ApprovalStatus.approved,
       careers: [
         {
           careerCode: firstCareer.code,
@@ -72,10 +63,7 @@ describe("saveJobApplication", () => {
     });
 
     graduateClient = await TestClientGenerator.applicant({
-      status: {
-        approvalStatus: ApprovalStatus.approved,
-        admin: graduadosAdmin
-      },
+      status: ApprovalStatus.approved,
       careers: [
         {
           careerCode: firstCareer.code,
@@ -85,10 +73,7 @@ describe("saveJobApplication", () => {
     });
 
     studentAndGraduateClient = await TestClientGenerator.applicant({
-      status: {
-        approvalStatus: ApprovalStatus.approved,
-        admin: graduadosAdmin
-      },
+      status: ApprovalStatus.approved,
       careers: [
         {
           careerCode: firstCareer.code,
@@ -328,10 +313,7 @@ describe("saveJobApplication", () => {
 
     it("returns an error if current user is a rejected applicant", async () => {
       const { apolloClient } = await TestClientGenerator.applicant({
-        status: {
-          approvalStatus: ApprovalStatus.rejected,
-          admin: await AdminGenerator.extension()
-        }
+        status: ApprovalStatus.rejected
       });
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
@@ -342,10 +324,7 @@ describe("saveJobApplication", () => {
 
     it("returns an error if the application already exist", async () => {
       const { apolloClient } = await TestClientGenerator.applicant({
-        status: {
-          approvalStatus: ApprovalStatus.approved,
-          admin: await AdminGenerator.extension()
-        },
+        status: ApprovalStatus.approved,
         careers: [
           {
             careerCode: secondCareer.code,
@@ -373,10 +352,7 @@ describe("saveJobApplication", () => {
 
     it("returns an error if the offer does not exist", async () => {
       const { apolloClient } = await TestClientGenerator.applicant({
-        status: {
-          approvalStatus: ApprovalStatus.approved,
-          admin: await AdminGenerator.extension()
-        }
+        status: ApprovalStatus.approved
       });
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,

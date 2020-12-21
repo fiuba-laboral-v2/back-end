@@ -8,12 +8,11 @@ import { UserRepository } from "$models/User";
 import { OfferNotFoundError, OfferRepository } from "$models/Offer";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Applicant";
-import { Admin, Career, Company } from "$models";
+import { Career, Company } from "$models";
 
 import { OfferGenerator } from "$generators/Offer";
 import { CompanyGenerator } from "$generators/Company";
 import { CareerGenerator } from "$generators/Career";
-import { AdminGenerator } from "$generators/Admin";
 import { TestClientGenerator } from "$generators/TestClient";
 
 import { UUID } from "$models/UUID";
@@ -71,7 +70,6 @@ const EDIT_OFFER = gql`
 `;
 
 describe("editOffer", () => {
-  let admin: Admin;
   let firstCareer: Career;
   let secondCareer: Career;
 
@@ -79,15 +77,12 @@ describe("editOffer", () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     await CareerRepository.truncate();
-    admin = await AdminGenerator.extension();
     firstCareer = await CareerGenerator.instance();
     secondCareer = await CareerGenerator.instance();
   });
 
   const createCompanyTestClient = async (approvalStatus: ApprovalStatus) =>
-    TestClientGenerator.company({
-      status: { admin, approvalStatus }
-    });
+    TestClientGenerator.company({ status: approvalStatus });
 
   const expectToUpdateAttribute = async (attribute: string, newValue: any) => {
     const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);

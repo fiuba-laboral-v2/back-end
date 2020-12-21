@@ -17,6 +17,12 @@ export const UserRepository = {
 
     return UserMapper.toDomainModel(sequelizeModel);
   },
+  findFiubaUserByDni: async (dni: string) => {
+    const sequelizeModel = await UserSequelizeModel.findOne({ where: { dni, password: null } });
+    if (!sequelizeModel) throw new UserNotFoundError({ dni });
+
+    return UserMapper.toDomainModel(sequelizeModel);
+  },
   findByEmail: async (email: string) => {
     const sequelizeModel = await UserSequelizeModel.findOne({ where: { email } });
     if (!sequelizeModel) throw new UserNotFoundError({ email });
