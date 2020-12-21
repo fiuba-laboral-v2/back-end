@@ -128,7 +128,7 @@ describe("saveCompanyUser", () => {
     expect(errors).toEqualGraphQLErrorType("PasswordWithSpacesError");
   });
 
-  it("returns an error the companyUser persistence fails", async () => {
+  it("returns an error if the companyUser persistence fails", async () => {
     const { apolloClient, user, company } = await TestClientGenerator.company({
       status: ApprovalStatus.approved
     });
