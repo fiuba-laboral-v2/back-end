@@ -10,6 +10,7 @@ import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 
+import { IUserGeneratorAttributes } from "$generators/interfaces";
 import { UserGenerator } from "$generators/User";
 import { TestClientGenerator } from "$generators/TestClient";
 import { omit } from "lodash";
@@ -42,8 +43,8 @@ describe("saveCompanyUser", () => {
   const performQuery = (apolloClient: TestClient, variables: ISaveCompanyUser) =>
     apolloClient.query({ query: SAVE_COMPANY_USER, variables });
 
-  const generateVariables = (email?: string) => ({
-    user: UserGenerator.data.companyUser({ email })
+  const generateVariables = ({ email, password }: IUserGeneratorAttributes = {}) => ({
+    user: UserGenerator.data.companyUser({ email, password })
   });
 
   it("creates a company user for the company of the current company user", async () => {
@@ -68,9 +69,63 @@ describe("saveCompanyUser", () => {
     const { apolloClient, user } = await TestClientGenerator.company({
       status: ApprovalStatus.approved
     });
-    const variables = generateVariables(user.email);
+    const variables = generateVariables({ email: user.email });
     const { errors } = await performQuery(apolloClient, variables);
     expect(errors).toEqualGraphQLErrorType("UserEmailAlreadyExistsError");
+  });
+
+  it("returns an error if password does not hace digits", async () => {
+    const { apolloClient } = await TestClientGenerator.company({
+      status: ApprovalStatus.approved
+    });
+    const variables = generateVariables({ password: "PasswordWithNoDigits" });
+    const { errors } = await performQuery(apolloClient, variables);
+    expect(errors).toEqualGraphQLErrorType("PasswordWithoutDigitsError");
+  });
+
+  it("returns an error if password has less than ten digits", async () => {
+    const { apolloClient } = await TestClientGenerator.company({
+      status: ApprovalStatus.approved
+    });
+    const variables = generateVariables({ password: "short" });
+    const { errors } = await performQuery(apolloClient, variables);
+    expect(errors).toEqualGraphQLErrorType("ShortPasswordError");
+  });
+
+  it("returns an error if password has more than a hundred digits", async () => {
+    const { apolloClient } = await TestClientGenerator.company({
+      status: ApprovalStatus.approved
+    });
+    const variables = generateVariables({ password: "long".repeat(100) });
+    const { errors } = await performQuery(apolloClient, variables);
+    expect(errors).toEqualGraphQLErrorType("LongPasswordError");
+  });
+
+  it("returns an error if password does not have an upper case character", async () => {
+    const { apolloClient } = await TestClientGenerator.company({
+      status: ApprovalStatus.approved
+    });
+    const variables = generateVariables({ password: "does_not_have_upper_case" });
+    const { errors } = await performQuery(apolloClient, variables);
+    expect(errors).toEqualGraphQLErrorType("PasswordWithoutUppercaseError");
+  });
+
+  it("returns an error if password does not have a lower case character", async () => {
+    const { apolloClient } = await TestClientGenerator.company({
+      status: ApprovalStatus.approved
+    });
+    const variables = generateVariables({ password: "DOES_NOT_HAVE_LOWER_CASE" });
+    const { errors } = await performQuery(apolloClient, variables);
+    expect(errors).toEqualGraphQLErrorType("PasswordWithoutLowercaseError");
+  });
+
+  it("returns an error if password has spaces", async () => {
+    const { apolloClient } = await TestClientGenerator.company({
+      status: ApprovalStatus.approved
+    });
+    const variables = generateVariables({ password: "password With Spaces 1" });
+    const { errors } = await performQuery(apolloClient, variables);
+    expect(errors).toEqualGraphQLErrorType("PasswordWithSpacesError");
   });
 
   it("returns an error the companyUser persistence fails", async () => {
