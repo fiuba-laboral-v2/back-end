@@ -19,6 +19,7 @@ export interface IApplicantGeneratorAttributes {
 }
 
 export interface IUserGeneratorAttributes {
+  email?: string;
   password?: string;
   dni?: string;
 }

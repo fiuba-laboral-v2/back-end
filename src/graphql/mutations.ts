@@ -8,6 +8,7 @@ import { careerMutations } from "./Career";
 import { userMutations } from "./User";
 import { secretarySettingsMutations } from "./SecretarySettings";
 import { adminMutations } from "./Admin";
+import { companyUserMutations } from "./CompanyUser";
 
 export const mutations = () =>
   merge(
@@ -19,5 +20,6 @@ export const mutations = () =>
     emailMutations,
     jobApplicationMutations,
     secretarySettingsMutations,
-    adminMutations
+    adminMutations,
+    companyUserMutations
   );
