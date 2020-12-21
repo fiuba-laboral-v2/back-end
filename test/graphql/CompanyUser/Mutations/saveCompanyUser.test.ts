@@ -23,6 +23,7 @@ const SAVE_COMPANY_USER = gql`
       uuid
       companyUuid
       userUuid
+      role
       user {
         uuid
         email
@@ -59,6 +60,7 @@ describe("saveCompanyUser", () => {
       uuid: expect.stringMatching(UUID_REGEX),
       companyUuid: company.uuid,
       userUuid: expect.stringMatching(UUID_REGEX),
+      role: variables.user.role,
       user: {
         uuid: expect.stringMatching(UUID_REGEX),
         ...omit(variables.user, ["password", "role"]),
