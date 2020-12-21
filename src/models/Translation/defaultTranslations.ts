@@ -252,6 +252,7 @@ export const defaultTranslations = {
   },
   navBar: {
     admins: "Administradores",
+    users: "Usuarios",
     applicants: "Postulantes",
     companies: "Empresas",
     jobOffers: "Ofertas de trabajo",
