@@ -10,8 +10,8 @@ import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 
+import { UserGenerator } from "$generators/User";
 import { TestClientGenerator } from "$generators/TestClient";
-import { EmailGenerator } from "$generators/Email";
 import { omit } from "lodash";
 import { UUID_REGEX } from "$test/models";
 import { CompanyUserRepository } from "$models/CompanyUser";
@@ -43,12 +43,7 @@ describe("saveCompanyUser", () => {
     apolloClient.query({ query: SAVE_COMPANY_USER, variables });
 
   const generateVariables = (email?: string) => ({
-    user: {
-      name: "name",
-      surname: "surname",
-      email: email || EmailGenerator.generate(),
-      password: "SecurePassword1010"
-    }
+    user: UserGenerator.data.companyUser({ email })
   });
 
   it("creates a company user for the company of the current company user", async () => {
