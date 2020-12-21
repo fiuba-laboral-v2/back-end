@@ -119,7 +119,7 @@ describe("saveCompanyUser", () => {
     expect(errors).toEqualGraphQLErrorType("PasswordWithoutLowercaseError");
   });
 
-  it("returns an error if password has spaces", async () => {
+  it("returns an error if the password has spaces", async () => {
     const { apolloClient } = await TestClientGenerator.company({
       status: ApprovalStatus.approved
     });
