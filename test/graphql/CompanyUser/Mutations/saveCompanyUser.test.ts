@@ -65,7 +65,7 @@ describe("saveCompanyUser", () => {
     });
   });
 
-  it("returns an error if the companyUser with the given email already exists", async () => {
+  it("returns an error if companyUser with the given email already exists", async () => {
     const { apolloClient, user } = await TestClientGenerator.company({
       status: ApprovalStatus.approved
     });
