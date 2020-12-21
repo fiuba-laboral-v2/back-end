@@ -92,7 +92,7 @@ describe("saveCompanyUser", () => {
     expect(errors).toEqualGraphQLErrorType("ShortPasswordError");
   });
 
-  it("returns an error if password has more than a hundred digits", async () => {
+  it("returns an error if the password has more than a hundred digits", async () => {
     const { apolloClient } = await TestClientGenerator.company({
       status: ApprovalStatus.approved
     });
