@@ -40,12 +40,12 @@ export = {
       });
       await queryInterface.addConstraint("Users", ["email"], {
         type: "unique",
-        name: "Users_email_key",
+        name: "Users_email_unique",
         transaction
       });
       await queryInterface.addConstraint("Users", ["dni"], {
         type: "unique",
-        name: "Users_dni_key",
+        name: "Users_dni_unique",
         transaction
       });
     });

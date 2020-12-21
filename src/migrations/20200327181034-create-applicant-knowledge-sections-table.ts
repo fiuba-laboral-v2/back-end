@@ -1,10 +1,10 @@
-import { DATE, UUID, QueryInterface, TEXT, INTEGER } from "sequelize";
+import { DATE, UUID, TEXT, INTEGER, QueryInterface } from "sequelize";
 
 export = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.sequelize.transaction(async transaction => {
       await queryInterface.createTable(
-        "ApplicantExperienceSections",
+        "ApplicantKnowledgeSections",
         {
           uuid: {
             allowNull: false,
@@ -43,15 +43,15 @@ export = {
       );
 
       await queryInterface.addConstraint(
-        "ApplicantExperienceSections",
+        "ApplicantKnowledgeSections",
         ["applicantUuid", "displayOrder"],
         {
           type: "unique",
-          name: "ApplicantExperienceSections_applicantUuid_displayOrder_key",
+          name: "ApplicantKnowledgeSections_applicantUuid_displayOrder_unique",
           transaction
         }
       );
     });
   },
-  down: (queryInterface: QueryInterface) => queryInterface.dropTable("ApplicantExperienceSections")
+  down: (queryInterface: QueryInterface) => queryInterface.dropTable("ApplicantKnowledgeSections")
 };

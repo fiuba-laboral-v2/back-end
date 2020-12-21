@@ -1,14 +1,15 @@
 import { QueryInterface } from "sequelize";
 
-const tableName = "JobApplications";
-const indexName = "job_applications_admin_tasks_index";
+const tableName = "Offers";
+const indexName = "offers_admin_and_company_index";
 
 export = {
   up: (queryInterface: any) =>
     queryInterface.addIndex(tableName, {
       name: indexName,
       fields: [
-        { name: "approvalStatus", order: "DESC" },
+        { name: "extensionApprovalStatus", order: "DESC" },
+        { name: "graduadosApprovalStatus", order: "DESC" },
         { name: "updatedAt", order: "DESC" },
         { name: "uuid", order: "DESC" }
       ]

@@ -7,12 +7,12 @@ class UniqueConstraintError extends Error {
 }
 
 const constraintTranslator = {
-  Users_email_key: "UserEmailAlreadyExistsError",
-  Companies_cuit_key: "CompanyCuitAlreadyExistsError",
-  JobApplications_applicantUuid_offerUuid_key: "JobApplicationAlreadyExistsError",
+  Users_email_unique: "UserEmailAlreadyExistsError",
+  Companies_cuit_unique: "CompanyCuitAlreadyExistsError",
+  JobApplications_applicantUuid_offerUuid_unique: "JobApplicationAlreadyExistsError",
   Careers_code_key: "CareerAlreadyExistsError",
   ApplicantCareers_careerCode_applicantUuid_key: "CareerAlreadyExistsError",
-  ApplicantsLinks_applicantUuid_url_key: "LinkAlreadyExistsError",
+  ApplicantsLinks_applicantUuid_url_unique: "LinkAlreadyExistsError",
   Admins_userUuid_key: "AdminAlreadyExistsError"
 };
 

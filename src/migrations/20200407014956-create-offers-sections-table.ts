@@ -44,7 +44,7 @@ export = {
 
       await queryInterface.addConstraint("OffersSections", ["offerUuid", "displayOrder"], {
         type: "unique",
-        name: "OffersSections_offerUuid_displayOrder_key",
+        name: "OffersSections_offerUuid_displayOrder_unique",
         transaction
       });
     });

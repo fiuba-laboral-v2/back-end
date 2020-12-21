@@ -29,7 +29,7 @@ export = {
       );
       await queryInterface.addConstraint("CompanyPhoneNumbers", ["phoneNumber", "companyUuid"], {
         type: "primary key",
-        name: "companyUuid_phoneNumber_companyUuid_key",
+        name: "CompanyPhoneNumbers_phoneNumber_companyUuid_key",
         transaction
       });
     });

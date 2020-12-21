@@ -38,7 +38,7 @@ export = {
       });
       await queryInterface.addConstraint("ApplicantsLinks", ["applicantUuid", "url"], {
         type: "unique",
-        name: "ApplicantsLinks_applicantUuid_url_key",
+        name: "ApplicantsLinks_applicantUuid_url_unique",
         transaction
       });
     });
