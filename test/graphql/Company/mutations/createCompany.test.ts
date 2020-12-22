@@ -91,6 +91,6 @@ describe("createCompany", () => {
     const cuit = companyData.cuit;
     await performMutation(companyData);
     const { errors } = await performMutation({ ...CompanyGenerator.data.completeData(), cuit });
-    expect(errors).toEqualGraphQLErrorType("CompanyCuitAlreadyExistsError");
+    expect(errors).toEqualGraphQLErrorType("DuplicatePhoneNumberError");
   });
 });
