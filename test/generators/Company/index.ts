@@ -25,7 +25,7 @@ const createCompany = async (variables?: ICompanyGeneratorAttributes) => {
   const companyUser = new CompanyUser({
     companyUuid: company.uuid,
     userUuid: user.uuid,
-    role: "role"
+    position: "position"
   });
   await CompanyUserRepository.save(companyUser);
   return company;

@@ -21,13 +21,13 @@ export const saveCompanyUser = {
     { currentUser }: IApolloServerContext
   ) => {
     const { companyUuid } = currentUser.getCompanyRole();
-    const { name, surname, email, password, role } = userAttributes;
+    const { name, surname, email, password, position } = userAttributes;
     const credentials = new CompanyUserRawCredentials({ password });
     const user = new User({ name, surname, email, credentials });
 
     return Database.transaction(async transaction => {
       await UserRepository.save(user, transaction);
-      const companyUser = new CompanyUser({ companyUuid, userUuid: user.uuid, role });
+      const companyUser = new CompanyUser({ companyUuid, userUuid: user.uuid, position });
       await CompanyUserRepository.save(companyUser, transaction);
       return companyUser;
     });

@@ -7,7 +7,7 @@ describe("CompanyUser", () => {
   const mandatoryAttributes = {
     companyUuid: UUID.generate(),
     userUuid: UUID.generate(),
-    role: "RR.HH"
+    position: "RR.HH"
   };
 
   it("creates a valid companyUser", async () => {
@@ -26,12 +26,12 @@ describe("CompanyUser", () => {
     expect(companyUser.updatedAt).toBeUndefined();
   });
 
-  it("throws an error if no companyUuid, no userUuid and no role are provided", async () => {
+  it("throws an error if no companyUuid, no userUuid and no position are provided", async () => {
     const companyUser = new CompanyUser();
     await expect(companyUser.validate()).rejects.toThrowErrorWithMessage(ValidationError, [
       "notNull Violation: CompanyUser.companyUuid cannot be null",
       "notNull Violation: CompanyUser.userUuid cannot be null",
-      "notNull Violation: CompanyUser.role cannot be null"
+      "notNull Violation: CompanyUser.position cannot be null"
     ]);
   });
 
@@ -51,11 +51,11 @@ describe("CompanyUser", () => {
     );
   });
 
-  it("throws an error if no role is provided", async () => {
-    const companyUser = new CompanyUser(omit(mandatoryAttributes, "role"));
+  it("throws an error if no position is provided", async () => {
+    const companyUser = new CompanyUser(omit(mandatoryAttributes, "position"));
     await expect(companyUser.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
-      "notNull Violation: CompanyUser.role cannot be null"
+      "notNull Violation: CompanyUser.position cannot be null"
     );
   });
 });

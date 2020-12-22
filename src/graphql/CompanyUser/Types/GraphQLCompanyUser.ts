@@ -23,7 +23,7 @@ export const GraphQLCompanyUser = new GraphQLObjectType<CompanyUser>({
     createdAt: {
       type: nonNull(GraphQLDateTime)
     },
-    role: {
+    position: {
       type: nonNull(String)
     },
     user: {

@@ -16,7 +16,7 @@ export const GraphQLCompanyUserCreateInput = new GraphQLInputObjectType({
     password: {
       type: nonNull(String)
     },
-    role: {
+    position: {
       type: nonNull(String)
     }
   })

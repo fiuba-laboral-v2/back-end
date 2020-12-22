@@ -11,7 +11,7 @@ export const withMinimumData = ({ index, user }: IWithMinimumData) => ({
     password: user?.password || "ASDqfdsfsdfwe234",
     name: "companyUserName",
     surname: "companyUserSurname",
-    role: user?.role || "role"
+    position: user?.position || "position"
   }
 });
 

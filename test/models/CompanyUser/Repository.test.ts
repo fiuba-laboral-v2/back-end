@@ -24,7 +24,7 @@ describe("CompanyUserRepository", () => {
   it("persists a company user in the database", async () => {
     const company = await CompanyGenerator.instance.withMinimumData();
     const user = await UserGenerator.instance();
-    const attributes = { companyUuid: company.uuid, userUuid: user.uuid, role: "role" };
+    const attributes = { companyUuid: company.uuid, userUuid: user.uuid, position: "RRHH" };
     const companyUser = new CompanyUser(attributes);
     await CompanyUserRepository.save(companyUser);
     expect(companyUser).toBeObjectContaining(attributes);
@@ -33,7 +33,7 @@ describe("CompanyUserRepository", () => {
   it("sets its uuid after persisting the company user", async () => {
     const company = await CompanyGenerator.instance.withMinimumData();
     const user = await UserGenerator.instance();
-    const attributes = { companyUuid: company.uuid, userUuid: user.uuid, role: "role" };
+    const attributes = { companyUuid: company.uuid, userUuid: user.uuid, position: "RRHH" };
     const companyUser = new CompanyUser(attributes);
     await CompanyUserRepository.save(companyUser);
     expect(companyUser.uuid).toEqual(expect.stringMatching(UUID_REGEX));
@@ -42,7 +42,7 @@ describe("CompanyUserRepository", () => {
   it("sets its timestamps after persisting the company user", async () => {
     const company = await CompanyGenerator.instance.withMinimumData();
     const user = await UserGenerator.instance();
-    const attributes = { companyUuid: company.uuid, userUuid: user.uuid, role: "role" };
+    const attributes = { companyUuid: company.uuid, userUuid: user.uuid, position: "RRHH" };
     const companyUser = new CompanyUser(attributes);
     await CompanyUserRepository.save(companyUser);
     expect(companyUser.createdAt).toEqual(expect.any(Date));
@@ -51,7 +51,7 @@ describe("CompanyUserRepository", () => {
 
   it("needs to reference a persisted company", async () => {
     const user = await UserGenerator.instance();
-    const attributes = { companyUuid: UUID.generate(), userUuid: user.uuid, role: "role" };
+    const attributes = { companyUuid: UUID.generate(), userUuid: user.uuid, position: "RRHH" };
     const companyUser = new CompanyUser(attributes);
     await expect(CompanyUserRepository.save(companyUser)).rejects.toThrowErrorWithMessage(
       ForeignKeyConstraintError,
@@ -61,7 +61,7 @@ describe("CompanyUserRepository", () => {
 
   it("needs to reference a persisted user", async () => {
     const company = await CompanyGenerator.instance.withMinimumData();
-    const attributes = { userUuid: UUID.generate(), companyUuid: company.uuid, role: "role" };
+    const attributes = { userUuid: UUID.generate(), companyUuid: company.uuid, position: "RRHH" };
     const companyUser = new CompanyUser(attributes);
     await expect(CompanyUserRepository.save(companyUser)).rejects.toThrowErrorWithMessage(
       ForeignKeyConstraintError,
@@ -79,12 +79,12 @@ describe("CompanyUserRepository", () => {
       const firstCompanyUser = new CompanyUser({
         companyUuid,
         userUuid: firstUser.uuid,
-        role: "RR.HH"
+        position: "RR.HH"
       });
       const secondCompanyUser = new CompanyUser({
         companyUuid,
         userUuid: secondUser.uuid,
-        role: "CEO"
+        position: "CEO"
       });
       await CompanyUserRepository.save(firstCompanyUser);
       await CompanyUserRepository.save(secondCompanyUser);

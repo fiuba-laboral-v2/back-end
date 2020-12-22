@@ -25,7 +25,7 @@ export = {
             onDelete: "CASCADE",
             type: UUID
           },
-          role: {
+          position: {
             allowNull: false,
             type: STRING
           },

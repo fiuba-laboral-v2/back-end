@@ -51,14 +51,18 @@ export const createCompany = {
     _: undefined,
     { phoneNumbers, photos, user: userAttributes, ...companyAttributes }: ICreateCompany
   ) => {
-    const { password, email, surname, name, role } = userAttributes;
+    const { password, email, surname, name, position } = userAttributes;
     const credentials = new CompanyUserRawCredentials({ password });
     const user = new User({ name, surname, email, credentials });
     const company = new Company(companyAttributes);
     return Database.transaction(async transaction => {
       await UserRepository.save(user, transaction);
       await CompanyRepository.save(company, transaction);
-      const companyUser = new CompanyUser({ companyUuid: company.uuid, userUuid: user.uuid, role });
+      const companyUser = new CompanyUser({
+        companyUuid: company.uuid,
+        userUuid: user.uuid,
+        position
+      });
       await CompanyUserRepository.save(companyUser, transaction);
       await CompanyPhotoRepository.bulkCreate(photos, company, transaction);
       await CompanyPhoneNumberRepository.bulkCreate(phoneNumbers, company, transaction);
