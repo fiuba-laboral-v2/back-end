@@ -617,6 +617,7 @@ export const defaultTranslations = {
   adminSettings: {
     title: "Configuración",
     submit: "Guardar",
+    updateSuccess: "Configuración actualizada",
     secretarySettingsTitle: "Configuración de la secretaría",
     offerDurationInDays: "Días hasta la expiración de una oferta",
     email: "Email de la secretaría",
