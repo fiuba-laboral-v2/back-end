@@ -10,6 +10,7 @@ export interface IUser {
 export interface ICreateCompanyUser extends IUser {
   dni?: undefined;
   password: string;
+  position: string;
 }
 
 export interface ICreateFiubaUser extends IUser {

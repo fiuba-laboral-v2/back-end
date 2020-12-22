@@ -36,8 +36,7 @@ describe("ApprovedJobApplicationApplicantNotificationEmailSender", () => {
   });
 
   it("sends an email to an applicant user that a jobApplication has been approved", async () => {
-    const companyAttributes = CompanyGenerator.data.completeData();
-    const company = await CompanyRepository.create(companyAttributes);
+    const company = await CompanyGenerator.instance.withMinimumData();
     const admin = await AdminGenerator.graduados();
     const adminUser = await UserRepository.findByUuid(admin.userUuid);
     const settings = await SecretarySettingsRepository.findBySecretary(admin.secretary);

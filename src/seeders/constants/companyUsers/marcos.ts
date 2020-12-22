@@ -15,6 +15,7 @@ export const marcos = {
     uuid: uuids.marcos.user,
     companyUuid: uuids.companies.mercadoLibre.uuid,
     userUuid: uuids.marcos.user,
+    position: "CEO",
     createdAt: new Date(),
     updatedAt: new Date()
   }

@@ -1,6 +1,6 @@
 import { CreatedAt, UpdatedAt, Column, ForeignKey, PrimaryKey, Table } from "sequelize-typescript";
 import { Company, UserSequelizeModel } from "$models";
-import { UUID } from "sequelize";
+import { UUID, STRING } from "sequelize";
 import { isUuid } from "$models/SequelizeModelValidators";
 import { SequelizeModel } from "$models/SequelizeModel";
 
@@ -15,6 +15,9 @@ export class CompanyUser extends SequelizeModel<CompanyUser> {
   @PrimaryKey
   @Column({ allowNull: false, type: UUID, ...isUuid })
   public userUuid: string;
+
+  @Column({ allowNull: false, type: STRING })
+  public position: string;
 
   @CreatedAt
   @Column

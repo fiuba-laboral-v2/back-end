@@ -1,14 +1,35 @@
 import { withMinimumData } from "./withMinimumData";
 import { completeData } from "./completeData";
+import { UserRepository, User, CompanyUserRawCredentials } from "$models/User";
 import { CompanyRepository } from "$models/Company";
-import { Admin } from "$models";
+import { CompanyUserRepository } from "$models/CompanyUser";
+import { Admin, Company, CompanyUser } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ICompanyGeneratorAttributes } from "$generators/interfaces";
+import { CompanyPhotoRepository } from "$models/CompanyPhoto";
 
 interface IUpdatedWithStatus {
   admin: Admin;
   status: ApprovalStatus;
 }
+
+const createCompany = async (variables?: ICompanyGeneratorAttributes) => {
+  const index = CompanyGenerator.getIndex();
+  const { user: userAttributes, ...companyData } = withMinimumData({ index, ...variables });
+  const { email, name, surname, password } = userAttributes;
+  const credentials = new CompanyUserRawCredentials({ password });
+  const user = new User({ name, surname, email, credentials });
+  const company = new Company(companyData);
+  await CompanyRepository.save(company);
+  await UserRepository.save(user);
+  const companyUser = new CompanyUser({
+    companyUuid: company.uuid,
+    userUuid: user.uuid,
+    position: "position"
+  });
+  await CompanyUserRepository.save(companyUser);
+  return company;
+};
 
 export const CompanyGenerator = {
   index: 0,
@@ -17,26 +38,14 @@ export const CompanyGenerator = {
     return CompanyGenerator.index;
   },
   instance: {
-    withMinimumData: (variables?: ICompanyGeneratorAttributes) =>
-      CompanyRepository.create(
-        withMinimumData({
-          index: CompanyGenerator.getIndex(),
-          ...variables
-        })
-      ),
-    withCompleteData: (variables?: ICompanyGeneratorAttributes) =>
-      CompanyRepository.create(
-        completeData({
-          index: CompanyGenerator.getIndex(),
-          ...variables
-        })
-      ),
+    withMinimumData: async (variables?: ICompanyGeneratorAttributes) => createCompany(variables),
+    withCompleteData: async (variables?: ICompanyGeneratorAttributes) => {
+      const company = await createCompany({ user: variables?.user });
+      await CompanyPhotoRepository.bulkCreate(variables?.photos, company);
+      return company;
+    },
     updatedWithStatus: async (variables?: IUpdatedWithStatus) => {
-      const company = await CompanyRepository.create(
-        withMinimumData({
-          index: CompanyGenerator.getIndex()
-        })
-      );
+      const company = await CompanyGenerator.instance.withMinimumData();
       if (!variables) return company;
       const { status } = variables;
       company.set({ approvalStatus: status });
