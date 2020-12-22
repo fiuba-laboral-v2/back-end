@@ -201,7 +201,8 @@ export const defaultTranslations = {
   },
   editCompanyUserPassword: {
     title: "Modificar contraseña",
-    submit: "Guardar"
+    submit: "Guardar",
+    badCredentialsError: "Credenciales inválidas"
   },
   companySignUp: {
     title: "Crear tu cuenta",
