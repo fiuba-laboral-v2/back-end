@@ -172,7 +172,7 @@ export const defaultTranslations = {
   companyUserDataFormSection: {
     title: "Datos del usuario",
     email: "Email",
-    role: "Rol",
+    position: "Posición en la empresa",
     emailClarification: "Para notificaciones y login",
     name: "Nombre",
     surname: "Apellido",
@@ -430,7 +430,7 @@ export const defaultTranslations = {
     name: "Nombre",
     surname: "Apellido",
     email: "Email",
-    role: "Rol",
+    position: "Posición en la empresa",
     createdAt: "Fecha de registro"
   },
   targetApplicantType: {
