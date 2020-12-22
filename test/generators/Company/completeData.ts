@@ -1,8 +1,8 @@
 import { withMinimumData } from "./withMinimumData";
 import { ICompanyGeneratorAttributes } from "$generators/interfaces";
-import { ICompany } from "$models/Company";
+import { ICreateCompany } from "$graphql/Company/Mutations/createCompany";
 
-export const completeData = ({ index, photos, user }: IWithCompleteData): ICompany => ({
+export const completeData = ({ index, photos, user }: IWithCompleteData): ICreateCompany => ({
   ...withMinimumData({ index, user }),
   slogan: "Lo mejor está llegando",
   description: "description",

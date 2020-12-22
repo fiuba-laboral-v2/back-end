@@ -10,7 +10,8 @@ export const withMinimumData = ({ index, user }: IWithMinimumData) => ({
     email: `company${index}@mail.com`,
     password: user?.password || "ASDqfdsfsdfwe234",
     name: "companyUserName",
-    surname: "companyUserSurname"
+    surname: "companyUserSurname",
+    position: user?.position || "position"
   }
 });
 

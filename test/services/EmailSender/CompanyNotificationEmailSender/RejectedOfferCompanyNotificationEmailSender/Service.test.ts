@@ -24,8 +24,8 @@ describe("RejectedOfferCompanyNotificationEmailSender", () => {
   });
 
   it("sends an email to all company users that an offer has been approved", async () => {
-    const companyAttributes = CompanyGenerator.data.completeData();
-    const company = await CompanyRepository.create(companyAttributes);
+    const company = await CompanyGenerator.instance.withMinimumData();
+    const [companyUser] = await UserRepository.findByCompanyUuid(company.uuid);
     const admin = await AdminGenerator.graduados();
     const adminUser = await UserRepository.findByUuid(admin.userUuid);
     const settings = await SecretarySettingsRepository.findBySecretary(admin.secretary);
@@ -39,7 +39,7 @@ describe("RejectedOfferCompanyNotificationEmailSender", () => {
     expect(emailSendMock.mock.calls).toEqual([
       [
         {
-          receiverEmails: [companyAttributes.user.email],
+          receiverEmails: [companyUser.email],
           sender: {
             name: `${adminUser.name} ${adminUser.surname}`,
             email: settings.email

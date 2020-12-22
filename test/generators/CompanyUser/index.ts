@@ -9,7 +9,7 @@ export const CompanyUserGenerator = {
   instance: async ({ company }: { company?: Company }) => {
     const companyUuid = company?.uuid || (await CompanyGenerator.instance.withMinimumData()).uuid;
     const user = await UserGenerator.instance();
-    const companyUser = new CompanyUser({ userUuid: user.uuid, companyUuid });
+    const companyUser = new CompanyUser({ userUuid: user.uuid, companyUuid, position: "RRHH" });
     await CompanyUserRepository.save(companyUser);
     return companyUser;
   },
