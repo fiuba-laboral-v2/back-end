@@ -3,6 +3,7 @@ import { UserRepository } from "$models/User";
 import { Company, CompanyUser } from "$models";
 import { CompanyUserRepository } from "$models/CompanyUser/Repository";
 import { ForeignKeyConstraintError } from "sequelize";
+import { CompanyUserNotFoundError } from "$models/CompanyUser";
 import { UUID } from "$models/UUID";
 
 import { CompanyGenerator } from "$generators/Company";
@@ -67,6 +68,28 @@ describe("CompanyUserRepository", () => {
       ForeignKeyConstraintError,
       'violates foreign key constraint "CompanyUsers_userUuid_fkey"'
     );
+  });
+
+  describe("findByUserUuid", () => {
+    let company: Company;
+
+    beforeAll(async () => {
+      company = await CompanyGenerator.instance.withMinimumData();
+    });
+
+    it("finds a companyUser by the userUuid", async () => {
+      const companyUser = await CompanyUserGenerator.instance({ company });
+      const persistedCompanyUser = await CompanyUserRepository.findByUserUuid(companyUser.userUuid);
+      expect(persistedCompanyUser.uuid).toEqual(companyUser.uuid);
+    });
+
+    it("throws an error if the given userUuid does not belong to a persisted companyUser", async () => {
+      const userUuid = UUID.generate();
+      await expect(CompanyUserRepository.findByUserUuid(userUuid)).rejects.toThrowErrorWithMessage(
+        CompanyUserNotFoundError,
+        CompanyUserNotFoundError.buildMessage()
+      );
+    });
   });
 
   describe("findByCompany", () => {
