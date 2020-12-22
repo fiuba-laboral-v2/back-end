@@ -1,6 +1,6 @@
 import { QueryInterface, INTEGER, STRING } from "sequelize";
 
-const TABLE_NAME = "AdminSettings";
+const TABLE_NAME = "SecretarySettings";
 
 export = {
   up: (queryInterface: QueryInterface) =>

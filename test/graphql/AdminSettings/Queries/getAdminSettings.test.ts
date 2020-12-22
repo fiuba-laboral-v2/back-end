@@ -15,7 +15,7 @@ import { UserRepository } from "$models/User";
 const GET_ADMIN_SETTINGS = gql`
   query {
     getAdminSettings {
-      secretary
+      email
       offerDurationInDays
     }
   }
@@ -46,12 +46,12 @@ describe("getAdminSettings", () => {
       query: GET_ADMIN_SETTINGS
     });
 
-    const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
+    const { email, offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
       Secretary.graduados
     );
     expect(errors).toBeUndefined();
     expect(data!.getAdminSettings).toEqual({
-      secretary: Secretary.graduados,
+      email,
       offerDurationInDays
     });
   });
@@ -61,12 +61,12 @@ describe("getAdminSettings", () => {
       query: GET_ADMIN_SETTINGS
     });
 
-    const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
+    const { email, offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
       Secretary.extension
     );
     expect(errors).toBeUndefined();
     expect(data!.getAdminSettings).toEqual({
-      secretary: Secretary.extension,
+      email,
       offerDurationInDays
     });
   });

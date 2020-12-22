@@ -1,11 +1,8 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
-
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
-
 import { TestClientGenerator } from "$generators/TestClient";
 import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
-
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { AdminRepository, Secretary } from "$models/Admin";
 import { CompanyRepository } from "$models/Company";
@@ -15,9 +12,7 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 
 const GET_SECRETARY_OFFER_DURATION = gql`
   query getSecretaryOfferDuration($secretary: Secretary!) {
-    getSecretaryOfferDuration(secretary: $secretary) {
-      offerDurationInDays
-    }
+    getSecretaryOfferDuration(secretary: $secretary)
   }
 `;
 
@@ -48,7 +43,7 @@ describe("getSecretaryOfferDuration", () => {
     });
 
     expect(errors).toBeUndefined();
-    expect(data!.getSecretaryOfferDuration).toEqual({ offerDurationInDays });
+    expect(data!.getSecretaryOfferDuration).toEqual(offerDurationInDays);
   });
 
   it("returns the offerDuration of extension secretary", async () => {
@@ -61,7 +56,7 @@ describe("getSecretaryOfferDuration", () => {
     });
 
     expect(errors).toBeUndefined();
-    expect(data!.getSecretaryOfferDuration).toEqual({ offerDurationInDays });
+    expect(data!.getSecretaryOfferDuration).toEqual(offerDurationInDays);
   });
 
   describe("Errors", () => {

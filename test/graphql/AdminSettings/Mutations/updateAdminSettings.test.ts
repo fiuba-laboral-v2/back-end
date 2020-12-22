@@ -1,11 +1,8 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
-
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
-
 import { TestClientGenerator } from "$generators/TestClient";
 import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
-
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { AdminRepository, Secretary } from "$models/Admin";
 import { CompanyRepository } from "$models/Company";
@@ -13,9 +10,9 @@ import { ApplicantRepository } from "$models/Applicant";
 import { UserRepository } from "$models/User";
 
 const UPDATE_ADMIN_SETTINGS = gql`
-  mutation updateAdminSettings($offerDurationInDays: Int!) {
-    updateAdminSettings(offerDurationInDays: $offerDurationInDays) {
-      secretary
+  mutation updateAdminSettings($offerDurationInDays: Int!, $email: String!) {
+    updateAdminSettings(offerDurationInDays: $offerDurationInDays, email: $email) {
+      email
       offerDurationInDays
     }
   }
@@ -43,83 +40,99 @@ describe("updateAdminSettings", () => {
 
   describe("when the current user is an admin from graduados", () => {
     it("updates the secretary settings of graduados", async () => {
-      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
+      const newOfferDurationInDays = 2;
+      const newEmail = "bla@ble.bli";
+
+      const { offerDurationInDays, email } = await SecretarySettingsRepository.findBySecretary(
         Secretary.graduados
       );
 
+      expect(offerDurationInDays).not.toEqual(newOfferDurationInDays);
+      expect(email).not.toEqual(newEmail);
+
       const { data, errors } = await graduadosApolloClient.mutate({
         mutation: UPDATE_ADMIN_SETTINGS,
-        variables: { offerDurationInDays: 2 }
+        variables: { offerDurationInDays: newOfferDurationInDays, email: newEmail }
       });
 
-      const {
-        offerDurationInDays: updatedOfferDuration
-      } = await SecretarySettingsRepository.findBySecretary(Secretary.graduados);
       expect(errors).toBeUndefined();
       expect(data!.updateAdminSettings).toEqual({
-        secretary: Secretary.graduados,
-        offerDurationInDays: updatedOfferDuration
+        email: newEmail,
+        offerDurationInDays: newOfferDurationInDays
       });
-      expect(offerDurationInDays).toEqual(15);
+
+      expect(
+        await SecretarySettingsRepository.findBySecretary(Secretary.graduados)
+      ).toBeObjectContaining({ offerDurationInDays: newOfferDurationInDays, email: newEmail });
     });
 
     it("doesn't update the secretary settings of extension", async () => {
-      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
+      const { offerDurationInDays, email } = await SecretarySettingsRepository.findBySecretary(
         Secretary.extension
       );
 
       const { errors } = await graduadosApolloClient.mutate({
         mutation: UPDATE_ADMIN_SETTINGS,
-        variables: { offerDurationInDays: 2 }
+        variables: { offerDurationInDays: 2, email: "foo@bar.baz" }
       });
 
       const {
-        offerDurationInDays: updatedOfferDuration
+        offerDurationInDays: updatedOfferDuration,
+        email: updatedEmail
       } = await SecretarySettingsRepository.findBySecretary(Secretary.extension);
 
       expect(errors).toBeUndefined();
       expect(offerDurationInDays).toEqual(updatedOfferDuration);
+      expect(email).toEqual(updatedEmail);
     });
   });
 
   describe("when the current user is an admin from extension", () => {
     it("updates the secretary settings of extension", async () => {
-      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
+      const newOfferDurationInDays = 2;
+      const newEmail = "bla@ble.bli";
+
+      const { offerDurationInDays, email } = await SecretarySettingsRepository.findBySecretary(
         Secretary.extension
       );
 
+      expect(offerDurationInDays).not.toEqual(newOfferDurationInDays);
+      expect(email).not.toEqual(newEmail);
+
       const { data, errors } = await extensionApolloClient.mutate({
         mutation: UPDATE_ADMIN_SETTINGS,
-        variables: { offerDurationInDays: 4 }
+        variables: { offerDurationInDays: newOfferDurationInDays, email: newEmail }
       });
 
-      const {
-        offerDurationInDays: updatedOfferDuration
-      } = await SecretarySettingsRepository.findBySecretary(Secretary.extension);
       expect(errors).toBeUndefined();
       expect(data!.updateAdminSettings).toEqual({
-        secretary: Secretary.extension,
-        offerDurationInDays: updatedOfferDuration
+        email: newEmail,
+        offerDurationInDays: newOfferDurationInDays
       });
-      expect(offerDurationInDays).toEqual(15);
+
+      expect(
+        await SecretarySettingsRepository.findBySecretary(Secretary.extension)
+      ).toBeObjectContaining({ offerDurationInDays: newOfferDurationInDays, email: newEmail });
     });
 
     it("doesn't update the secretary settings of graduados", async () => {
-      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
+      const { offerDurationInDays, email } = await SecretarySettingsRepository.findBySecretary(
         Secretary.graduados
       );
 
       const { errors } = await extensionApolloClient.mutate({
         mutation: UPDATE_ADMIN_SETTINGS,
-        variables: { offerDurationInDays: 4 }
+        variables: { offerDurationInDays: 2, email: "foo@bar.baz" }
       });
 
       const {
-        offerDurationInDays: updatedOfferDuration
+        offerDurationInDays: updatedOfferDuration,
+        email: updatedEmail
       } = await SecretarySettingsRepository.findBySecretary(Secretary.graduados);
 
       expect(errors).toBeUndefined();
       expect(offerDurationInDays).toEqual(updatedOfferDuration);
+      expect(email).toEqual(updatedEmail);
     });
   });
 
@@ -128,7 +141,7 @@ describe("updateAdminSettings", () => {
       const apolloClient = client.loggedOut();
       const { errors } = await apolloClient.mutate({
         mutation: UPDATE_ADMIN_SETTINGS,
-        variables: { offerDurationInDays: 2 }
+        variables: { offerDurationInDays: 2, email: "foo@bar.baz" }
       });
 
       expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
@@ -138,7 +151,7 @@ describe("updateAdminSettings", () => {
       const { apolloClient } = await TestClientGenerator.user();
       const { errors } = await apolloClient.mutate({
         mutation: UPDATE_ADMIN_SETTINGS,
-        variables: { offerDurationInDays: 2 }
+        variables: { offerDurationInDays: 2, email: "foo@bar.baz" }
       });
 
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
@@ -148,7 +161,7 @@ describe("updateAdminSettings", () => {
       const { apolloClient } = await TestClientGenerator.company();
       const { errors } = await apolloClient.mutate({
         mutation: UPDATE_ADMIN_SETTINGS,
-        variables: { offerDurationInDays: 2 }
+        variables: { offerDurationInDays: 2, email: "foo@bar.baz" }
       });
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });
@@ -157,7 +170,7 @@ describe("updateAdminSettings", () => {
       const { apolloClient } = await TestClientGenerator.applicant();
       const { errors } = await apolloClient.mutate({
         mutation: UPDATE_ADMIN_SETTINGS,
-        variables: { offerDurationInDays: 2 }
+        variables: { offerDurationInDays: 2, email: "foo@bar.baz" }
       });
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });

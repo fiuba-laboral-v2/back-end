@@ -1,17 +1,16 @@
 import { GraphQLObjectType } from "graphql";
 import { nonNull } from "$graphql/fieldTypes";
-import { SecretarySettings } from "$models";
-import { GraphQLSecretary } from "$src/graphql/Admin/Types/GraphQLSecretary";
-import { GraphQLInt } from "graphql/type/scalars";
+import { GraphQLInt, GraphQLString } from "graphql/type/scalars";
+import { AdminSettings } from "$models/AdminSettings";
 
-export const GraphQLAdminSettings = new GraphQLObjectType<SecretarySettings>({
+export const GraphQLAdminSettings = new GraphQLObjectType<AdminSettings>({
   name: "AdminSettings",
   fields: () => ({
-    secretary: {
-      type: nonNull(GraphQLSecretary)
-    },
     offerDurationInDays: {
       type: nonNull(GraphQLInt)
+    },
+    email: {
+      type: nonNull(GraphQLString)
     }
   })
 });

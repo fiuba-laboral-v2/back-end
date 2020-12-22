@@ -1,19 +1,20 @@
-import { GraphQLAdminSettings } from "../Types/GraphQLAdminSettings";
 import { GraphQLSecretary } from "$src/graphql/Admin/Types/GraphQLSecretary";
 import { nonNull } from "$graphql/fieldTypes";
-
 import { Secretary } from "$src/models/Admin";
 import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
+import { GraphQLInt } from "graphql/type/scalars";
 
 const getSecretaryOfferDuration = {
-  type: GraphQLAdminSettings,
+  type: GraphQLInt,
   args: {
     secretary: {
       type: nonNull(GraphQLSecretary)
     }
   },
-  resolve: (_: undefined, { secretary }: { secretary: Secretary }) =>
-    SecretarySettingsRepository.findBySecretary(secretary)
+  resolve: async (_: undefined, { secretary }: { secretary: Secretary }) => {
+    const settings = await SecretarySettingsRepository.findBySecretary(secretary);
+    return settings.offerDurationInDays;
+  }
 };
 
 export { getSecretaryOfferDuration };
