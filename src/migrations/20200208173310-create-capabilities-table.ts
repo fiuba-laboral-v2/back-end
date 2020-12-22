@@ -31,7 +31,7 @@ export = {
       );
       await queryInterface.addConstraint("Capabilities", ["description"], {
         type: "unique",
-        name: "Capabilities_description_key",
+        name: "Capabilities_description_unique",
         transaction
       });
     });

@@ -246,19 +246,19 @@ describe("getOfferByUuid", () => {
     await expectToReturnError(apolloClient, offer, OfferNotVisibleByCurrentUserError);
   });
 
-  it("returns error if the offer does not exists for a current applicant", async () => {
+  it("returns error if the offer does not exist for a current applicant", async () => {
     const offer = new Offer({ uuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da" });
     const { apolloClient } = await approvedApplicantTestClient(ApplicantType.graduate);
     await expectToReturnError(apolloClient, offer, OfferNotFoundError);
   });
 
-  it("returns error if the offer does not exists for a current admin", async () => {
+  it("returns error if the offer does not exist for a current admin", async () => {
     const offer = new Offer({ uuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da" });
     const { apolloClient } = await TestClientGenerator.admin();
     await expectToReturnError(apolloClient, offer, OfferNotFoundError);
   });
 
-  it("returns error if the offer does not exists for a current company user", async () => {
+  it("returns error if the offer does not exist for a current company user", async () => {
     const offer = new Offer({ uuid: "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da" });
     const { apolloClient } = await companyTestClient(ApprovalStatus.approved);
     await expectToReturnError(apolloClient, offer, OfferNotFoundError);

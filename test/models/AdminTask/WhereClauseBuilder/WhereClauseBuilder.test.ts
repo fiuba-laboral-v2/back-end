@@ -2,7 +2,7 @@ import { WhereClauseBuilder } from "$models/AdminTask/WhereClauseBuilder";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
 import { ApplicantType } from "$models/Applicant";
-import { Applicant, ApplicantCareer, JobApplication, Offer } from "$models";
+import { Applicant, ApplicantCareer, JobApplication, Offer, Company } from "$models";
 import { AdminTaskType } from "$models/AdminTask";
 
 describe("WhereClauseBuilder", () => {
@@ -10,17 +10,17 @@ describe("WhereClauseBuilder", () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.pending],
       secretary: Secretary.graduados,
-      adminTaskTypes: [AdminTaskType.Offer]
+      modelName: Offer.name as AdminTaskType,
+      tableName: Offer.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
       (
-        "AdminTask"."graduadosApprovalStatus" = '${ApprovalStatus.pending}'
+        "Offers"."graduadosApprovalStatus" = '${ApprovalStatus.pending}'
       )
       AND
       (
-        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-        OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
-        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
+        "Offers"."targetApplicantType" = '${ApplicantType.both}' 
+        OR "Offers"."targetApplicantType" = '${ApplicantType.graduate}'
       )
     `);
   });
@@ -29,17 +29,17 @@ describe("WhereClauseBuilder", () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.approved],
       secretary: Secretary.graduados,
-      adminTaskTypes: [AdminTaskType.Offer]
+      modelName: Offer.name as AdminTaskType,
+      tableName: Offer.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
       (
-        "AdminTask"."graduadosApprovalStatus" = '${ApprovalStatus.approved}'
+        "Offers"."graduadosApprovalStatus" = '${ApprovalStatus.approved}'
       )
       AND
       (
-        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-        OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
-        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
+        "Offers"."targetApplicantType" = '${ApplicantType.both}' 
+        OR "Offers"."targetApplicantType" = '${ApplicantType.graduate}'
       )
     `);
   });
@@ -48,17 +48,17 @@ describe("WhereClauseBuilder", () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.rejected],
       secretary: Secretary.graduados,
-      adminTaskTypes: [AdminTaskType.Offer]
+      modelName: Offer.name as AdminTaskType,
+      tableName: Offer.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
       (
-        "AdminTask"."graduadosApprovalStatus" = '${ApprovalStatus.rejected}'
+        "Offers"."graduadosApprovalStatus" = '${ApprovalStatus.rejected}'
       )
       AND
       (
-        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-        OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
-        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
+        "Offers"."targetApplicantType" = '${ApplicantType.both}' 
+        OR "Offers"."targetApplicantType" = '${ApplicantType.graduate}'
       )
     `);
   });
@@ -67,17 +67,17 @@ describe("WhereClauseBuilder", () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.pending],
       secretary: Secretary.extension,
-      adminTaskTypes: [AdminTaskType.Offer]
+      modelName: Offer.name as AdminTaskType,
+      tableName: Offer.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
       (
-        "AdminTask"."extensionApprovalStatus" = '${ApprovalStatus.pending}'
+        "Offers"."extensionApprovalStatus" = '${ApprovalStatus.pending}'
       )
       AND
       (
-        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-        OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
-        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
+        "Offers"."targetApplicantType" = '${ApplicantType.both}' 
+        OR "Offers"."targetApplicantType" = '${ApplicantType.student}'
       )
     `);
   });
@@ -86,17 +86,17 @@ describe("WhereClauseBuilder", () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.approved],
       secretary: Secretary.extension,
-      adminTaskTypes: [AdminTaskType.Offer]
+      modelName: Offer.name as AdminTaskType,
+      tableName: Offer.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
       (
-        "AdminTask"."extensionApprovalStatus" = '${ApprovalStatus.approved}'
+        "Offers"."extensionApprovalStatus" = '${ApprovalStatus.approved}'
       )
       AND
       (
-        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-        OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
-        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
+        "Offers"."targetApplicantType" = '${ApplicantType.both}' 
+        OR "Offers"."targetApplicantType" = '${ApplicantType.student}'
       )
     `);
   });
@@ -105,461 +105,243 @@ describe("WhereClauseBuilder", () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.rejected],
       secretary: Secretary.extension,
-      adminTaskTypes: [AdminTaskType.Offer]
+      modelName: Offer.name as AdminTaskType,
+      tableName: Offer.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
       (
-        "AdminTask"."extensionApprovalStatus" = '${ApprovalStatus.rejected}'
+        "Offers"."extensionApprovalStatus" = '${ApprovalStatus.rejected}'
       )
       AND
       (
-        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-        OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
-        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
+        "Offers"."targetApplicantType" = '${ApplicantType.both}' 
+        OR "Offers"."targetApplicantType" = '${ApplicantType.student}'
       )
     `);
   });
 
-  it("builds where clause for all pending targeted to graduates", async () => {
+  it("builds where clause for pending Applicants for a graduados admin", async () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.pending],
       secretary: Secretary.graduados,
-      adminTaskTypes: Object.keys(AdminTaskType) as AdminTaskType[]
+      modelName: Applicant.name as AdminTaskType,
+      tableName: Applicant.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
       (
-        "AdminTask"."approvalStatus" = '${ApprovalStatus.pending}'
-        OR "AdminTask"."graduadosApprovalStatus" = '${ApprovalStatus.pending}'
+        "Applicants"."approvalStatus" = '${ApprovalStatus.pending}'
       )
       AND
       (
-        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-        OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
-        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
-      )
-      AND
-      (
-        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
-        OR EXISTS(
+        EXISTS(
           SELECT *
           FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
-        )
-      )
-      AND
-      (
-        "AdminTask"."tableNameColumn" != '${JobApplication.tableName}'
-        OR EXISTS(
-          SELECT *
-          FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."applicantUuid" AND "isGraduate" = true
+          WHERE "applicantUuid" = "Applicants"."uuid" AND "isGraduate" = true
         )
       )
     `);
   });
 
-  it("builds where clause for all approved targeted to graduates", async () => {
-    const whereClause = WhereClauseBuilder.build({
-      statuses: [ApprovalStatus.approved],
-      secretary: Secretary.graduados,
-      adminTaskTypes: Object.keys(AdminTaskType) as AdminTaskType[]
-    });
-    expect(whereClause).toEqualIgnoringSpacing(`
-      (
-        "AdminTask"."approvalStatus" = '${ApprovalStatus.approved}'
-        OR "AdminTask"."graduadosApprovalStatus" = '${ApprovalStatus.approved}'
-      )
-      AND
-      (
-        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-        OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
-        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
-      )
-      AND
-      (
-        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
-        OR EXISTS(
-          SELECT *
-          FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
-        )
-      )
-      AND
-      (
-        "AdminTask"."tableNameColumn" != '${JobApplication.tableName}'
-        OR EXISTS(
-          SELECT *
-          FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."applicantUuid" AND "isGraduate" = true
-        )
-      )
-    `);
-  });
-
-  it("builds where clause for all rejected targeted to graduates", async () => {
+  it("builds where clause for rejected Companies for a graduados admin", async () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.rejected],
       secretary: Secretary.graduados,
-      adminTaskTypes: Object.keys(AdminTaskType) as AdminTaskType[]
+      modelName: Company.name as AdminTaskType,
+      tableName: Company.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
       (
-        "AdminTask"."approvalStatus" = '${ApprovalStatus.rejected}'
-        OR "AdminTask"."graduadosApprovalStatus" = '${ApprovalStatus.rejected}'
-      )
-      AND
-      (
-        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-        OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
-        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
-      )
-      AND
-      (
-        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
-        OR EXISTS(
-          SELECT *
-          FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
-        )
-      )
-      AND
-      (
-        "AdminTask"."tableNameColumn" != '${JobApplication.tableName}'
-        OR EXISTS(
-          SELECT *
-          FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."applicantUuid" AND "isGraduate" = true
-        )
+        "Companies"."approvalStatus" = '${ApprovalStatus.rejected}'
       )
     `);
   });
 
-  it("builds where clause for all pending targeted to students", async () => {
+  it("builds where clause for pending Companies for an extension admin", async () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.pending],
       secretary: Secretary.extension,
-      adminTaskTypes: Object.keys(AdminTaskType) as AdminTaskType[]
+      modelName: Company.name as AdminTaskType,
+      tableName: Company.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
       (
-        "AdminTask"."approvalStatus" = '${ApprovalStatus.pending}'
-        OR "AdminTask"."extensionApprovalStatus" = '${ApprovalStatus.pending}'
-      )
-      AND
-      (
-        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-        OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
-        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
-      )
-      AND
-      (
-        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
-        OR NOT EXISTS(
-          SELECT *
-          FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
-        )
-      )
-      AND
-      (
-        "AdminTask"."tableNameColumn" != '${JobApplication.tableName}'
-        OR NOT EXISTS(
-          SELECT *
-          FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."applicantUuid" AND "isGraduate" = true
-        )
+        "Companies"."approvalStatus" = '${ApprovalStatus.pending}'
       )
     `);
   });
 
-  it("builds where clause for all approved targeted to students", async () => {
+  it("builds where clause for approved JobApplications for a graduados admin", async () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.approved],
       secretary: Secretary.extension,
-      adminTaskTypes: Object.keys(AdminTaskType) as AdminTaskType[]
+      modelName: JobApplication.name as AdminTaskType,
+      tableName: JobApplication.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
       (
-        "AdminTask"."approvalStatus" = '${ApprovalStatus.approved}'
-        OR "AdminTask"."extensionApprovalStatus" = '${ApprovalStatus.approved}'
+        "JobApplications"."approvalStatus" = '${ApprovalStatus.approved}'
       )
       AND
       (
-        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-        OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
-        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
-      )
-      AND
-      (
-        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
-        OR NOT EXISTS(
+        NOT EXISTS(
           SELECT *
           FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
-        )
-      )
-      AND
-      (
-        "AdminTask"."tableNameColumn" != '${JobApplication.tableName}'
-        OR NOT EXISTS(
-          SELECT *
-          FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."applicantUuid" AND "isGraduate" = true
+          WHERE "applicantUuid" = "JobApplications"."applicantUuid" AND "isGraduate" = true
         )
       )
     `);
   });
 
-  it("builds where clause for all rejected targeted to students", async () => {
+  it("builds where clause for rejected Applicants for an extension admin", async () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.rejected],
       secretary: Secretary.extension,
-      adminTaskTypes: Object.keys(AdminTaskType) as AdminTaskType[]
+      modelName: Applicant.name as AdminTaskType,
+      tableName: Applicant.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
       (
-        "AdminTask"."approvalStatus" = '${ApprovalStatus.rejected}'
-        OR "AdminTask"."extensionApprovalStatus" = '${ApprovalStatus.rejected}'
+        "Applicants"."approvalStatus" = '${ApprovalStatus.rejected}'
       )
       AND
       (
-        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-        OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
-        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
-      )
-      AND
-      (
-        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
-        OR NOT EXISTS(
+        NOT EXISTS(
           SELECT *
           FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
-        )
-      )
-      AND
-      (
-        "AdminTask"."tableNameColumn" != '${JobApplication.tableName}'
-        OR NOT EXISTS(
-          SELECT *
-          FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."applicantUuid" AND "isGraduate" = true
+          WHERE "applicantUuid" = "Applicants"."uuid" AND "isGraduate" = true
         )
       )
     `);
   });
 
-  it("builds where clause for approved but not targeted tasks", async () => {
+  it("builds where clause for approved Companies", async () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.approved],
       secretary: Secretary.graduados,
-      adminTaskTypes: [AdminTaskType.Company]
+      modelName: Company.name as AdminTaskType,
+      tableName: Company.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
       (
-        "AdminTask"."approvalStatus" = '${ApprovalStatus.approved}'
+        "Companies"."approvalStatus" = '${ApprovalStatus.approved}'
       )
     `);
   });
 
-  it("builds all status where clause for shared status tasks for extension secretary", async () => {
+  it("builds where clause for all status JobApplications for an extension admin", async () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
       secretary: Secretary.extension,
-      adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company, AdminTaskType.JobApplication]
+      modelName: JobApplication.name as AdminTaskType,
+      tableName: JobApplication.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
       (
-        "AdminTask"."approvalStatus" = '${ApprovalStatus.pending}'
-        OR "AdminTask"."approvalStatus" = '${ApprovalStatus.approved}'
-        OR "AdminTask"."approvalStatus" = '${ApprovalStatus.rejected}'
+        "JobApplications"."approvalStatus" = '${ApprovalStatus.pending}'
+        OR "JobApplications"."approvalStatus" = '${ApprovalStatus.approved}'
+        OR "JobApplications"."approvalStatus" = '${ApprovalStatus.rejected}'
       )
       AND
       (
-        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
-        OR NOT EXISTS(
+        NOT EXISTS(
           SELECT *
           FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
-        )
-      )
-      AND
-      (
-        "AdminTask"."tableNameColumn" != '${JobApplication.tableName}'
-        OR NOT EXISTS(
-          SELECT *
-          FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."applicantUuid" AND "isGraduate" = true
+          WHERE "applicantUuid" = "JobApplications"."applicantUuid" AND "isGraduate" = true
         )
       )
     `);
   });
 
-  it("builds all status where clause for shared status tasks for graduados secretary", async () => {
+  it("builds where clause for all status Applicants for a graduados admin", async () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
       secretary: Secretary.graduados,
-      adminTaskTypes: [AdminTaskType.Applicant, AdminTaskType.Company, AdminTaskType.JobApplication]
+      modelName: Applicant.name as AdminTaskType,
+      tableName: Applicant.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
       (
-        "AdminTask"."approvalStatus" = '${ApprovalStatus.pending}'
-        OR "AdminTask"."approvalStatus" = '${ApprovalStatus.approved}'
-        OR "AdminTask"."approvalStatus" = '${ApprovalStatus.rejected}'
+        "Applicants"."approvalStatus" = '${ApprovalStatus.pending}'
+        OR "Applicants"."approvalStatus" = '${ApprovalStatus.approved}'
+        OR "Applicants"."approvalStatus" = '${ApprovalStatus.rejected}'
       )
       AND
       (
-        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
-        OR EXISTS(
+        EXISTS(
           SELECT *
           FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
-        )
-      )
-      AND
-      (
-        "AdminTask"."tableNameColumn" != '${JobApplication.tableName}'
-        OR EXISTS(
-          SELECT *
-          FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."applicantUuid" AND "isGraduate" = true
+          WHERE "applicantUuid" = "Applicants"."uuid" AND "isGraduate" = true
         )
       )
     `);
   });
 
-  it("builds all status where clause for graduados secretary", async () => {
+  it("builds where clause for all status Companies for a graduados admin", async () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
       secretary: Secretary.graduados,
-      adminTaskTypes: Object.keys(AdminTaskType) as AdminTaskType[]
+      modelName: Company.name as AdminTaskType,
+      tableName: Company.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
       (
-        "AdminTask"."approvalStatus" = '${ApprovalStatus.pending}'
-        OR "AdminTask"."approvalStatus" = '${ApprovalStatus.approved}'
-        OR "AdminTask"."approvalStatus" = '${ApprovalStatus.rejected}'
-        OR "AdminTask"."graduadosApprovalStatus" = '${ApprovalStatus.pending}'
-        OR "AdminTask"."graduadosApprovalStatus" = '${ApprovalStatus.approved}'
-        OR "AdminTask"."graduadosApprovalStatus" = '${ApprovalStatus.rejected}'
-      )
-      AND
-      (
-        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-        OR "AdminTask"."targetApplicantType" = '${ApplicantType.graduate}'
-        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
-      )
-      AND
-      (
-        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
-        OR EXISTS(
-          SELECT *
-          FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
-        )
-      )
-      AND
-      (
-        "AdminTask"."tableNameColumn" != '${JobApplication.tableName}'
-        OR EXISTS(
-          SELECT *
-          FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."applicantUuid" AND "isGraduate" = true
-        )
+        "Companies"."approvalStatus" = '${ApprovalStatus.pending}'
+        OR "Companies"."approvalStatus" = '${ApprovalStatus.approved}'
+        OR "Companies"."approvalStatus" = '${ApprovalStatus.rejected}'
       )
     `);
   });
 
-  it("builds all status where clause for extension secretary", async () => {
+  it("builds where clause for all status Offers for a graduados admin", async () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
       secretary: Secretary.extension,
-      adminTaskTypes: Object.keys(AdminTaskType) as AdminTaskType[]
+      modelName: Offer.name as AdminTaskType,
+      tableName: Offer.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
       (
-        "AdminTask"."approvalStatus" = '${ApprovalStatus.pending}'
-        OR "AdminTask"."approvalStatus" = '${ApprovalStatus.approved}'
-        OR "AdminTask"."approvalStatus" = '${ApprovalStatus.rejected}'
-        OR "AdminTask"."extensionApprovalStatus" = '${ApprovalStatus.pending}'
-        OR "AdminTask"."extensionApprovalStatus" = '${ApprovalStatus.approved}'
-        OR "AdminTask"."extensionApprovalStatus" = '${ApprovalStatus.rejected}'
+        "Offers"."extensionApprovalStatus" = '${ApprovalStatus.pending}'
+        OR "Offers"."extensionApprovalStatus" = '${ApprovalStatus.approved}'
+        OR "Offers"."extensionApprovalStatus" = '${ApprovalStatus.rejected}'
       )
       AND
       (
-        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-        OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
-        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
-      )
-      AND
-      (
-        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
-        OR NOT EXISTS(
-          SELECT *
-          FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
-        )
-      )
-      AND
-      (
-        "AdminTask"."tableNameColumn" != '${JobApplication.tableName}'
-        OR NOT EXISTS(
-          SELECT *
-          FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."applicantUuid" AND "isGraduate" = true
-        )
+        "Offers"."targetApplicantType" = '${ApplicantType.both}' 
+        OR "Offers"."targetApplicantType" = '${ApplicantType.student}'
       )
     `);
   });
 
-  it("builds updatedAt where clause", async () => {
+  it("builds updatedAt where clause for Offers", async () => {
     const updatedAt = new Date();
     const uuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
       secretary: Secretary.extension,
-      adminTaskTypes: Object.keys(AdminTaskType) as AdminTaskType[],
+      modelName: Offer.name as AdminTaskType,
+      tableName: Offer.tableName,
       updatedBeforeThan: { uuid, dateTime: updatedAt }
     });
 
     expect(whereClause).toEqualIgnoringSpacing(`
       (
-        "AdminTask"."approvalStatus" = '${ApprovalStatus.pending}'
-        OR "AdminTask"."approvalStatus" = '${ApprovalStatus.approved}'
-        OR "AdminTask"."approvalStatus" = '${ApprovalStatus.rejected}'
-        OR "AdminTask"."extensionApprovalStatus" = '${ApprovalStatus.pending}'
-        OR "AdminTask"."extensionApprovalStatus" = '${ApprovalStatus.approved}'
-        OR "AdminTask"."extensionApprovalStatus" = '${ApprovalStatus.rejected}'
+        "Offers"."extensionApprovalStatus" = '${ApprovalStatus.pending}'
+        OR "Offers"."extensionApprovalStatus" = '${ApprovalStatus.approved}'
+        OR "Offers"."extensionApprovalStatus" = '${ApprovalStatus.rejected}'
       )
       AND
       (
-        "AdminTask"."targetApplicantType" = '${ApplicantType.both}' 
-        OR "AdminTask"."targetApplicantType" = '${ApplicantType.student}'
-        OR "AdminTask"."tableNameColumn" != '${Offer.tableName}'
+        "Offers"."targetApplicantType" = '${ApplicantType.both}' 
+        OR "Offers"."targetApplicantType" = '${ApplicantType.student}'
       )
       AND
       (
-        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
-        OR NOT EXISTS(
-          SELECT *
-          FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
-        )
-      )
-      AND
-      (
-        "AdminTask"."tableNameColumn" != '${JobApplication.tableName}'
-        OR NOT EXISTS(
-          SELECT *
-          FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."applicantUuid" AND "isGraduate" = true
-        )
-      )
-      AND (
         (
-          "AdminTask"."updatedAt" < '${updatedAt.toISOString()}'
+          "Offers"."updatedAt" < '${updatedAt.toISOString()}'
         ) OR (
-          "AdminTask"."updatedAt" = '${updatedAt.toISOString()}'
-          AND "AdminTask"."uuid" < '${uuid}'
+          "Offers"."updatedAt" = '${updatedAt.toISOString()}'
+          AND "Offers"."uuid" < '${uuid}'
         )
       )
     `);

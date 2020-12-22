@@ -50,7 +50,7 @@ describe("CareerRepository", () => {
       expect(expectedCareers.map(c => c.code)).toEqual([firstCareer.code]);
     });
 
-    it("throws an error if the career does not exists", async () => {
+    it("throws an error if the career does not exist", async () => {
       await CareerRepository.create(CareerGenerator.data());
       await CareerRepository.create(CareerGenerator.data());
       await expect(
@@ -79,7 +79,7 @@ describe("CareerRepository", () => {
   });
 
   describe("findByCodes", () => {
-    it("throws an error if one of the careers does not exists", async () => {
+    it("throws an error if one of the careers does not exist", async () => {
       const firstCareer = await CareerRepository.create(CareerGenerator.data());
       const secondCareer = await CareerRepository.create(CareerGenerator.data());
       await CareerRepository.create(CareerGenerator.data());
@@ -93,7 +93,7 @@ describe("CareerRepository", () => {
       );
     });
 
-    it("throws an error if all of the careers does not exists", async () => {
+    it("throws an error if all of the careers does not exist", async () => {
       await CareerRepository.create(CareerGenerator.data());
       await CareerRepository.create(CareerGenerator.data());
       await CareerRepository.create(CareerGenerator.data());

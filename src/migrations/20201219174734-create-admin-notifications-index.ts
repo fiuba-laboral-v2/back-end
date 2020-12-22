@@ -1,15 +1,17 @@
 import { QueryInterface } from "sequelize";
 
-const tableName = "Offers";
-const indexName = "offers_uuid_updated_at";
+const tableName = "AdminNotifications";
+const indexName = "admin_notifications_index";
 
 export = {
   up: (queryInterface: any) =>
     queryInterface.addIndex(tableName, {
       name: indexName,
       fields: [
-        { name: "uuid", order: "DESC" },
-        { name: "updatedAt", order: "DESC" }
+        { name: "secretary", order: "DESC" },
+        { name: "isNew", order: "DESC" },
+        { name: "createdAt", order: "DESC" },
+        { name: "uuid", order: "DESC" }
       ]
     }),
   down: (queryInterface: QueryInterface) => queryInterface.removeIndex(tableName, indexName)

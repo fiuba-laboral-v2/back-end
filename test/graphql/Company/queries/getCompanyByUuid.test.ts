@@ -76,7 +76,7 @@ describe("getCompanyByUuid", () => {
     });
   });
 
-  it("returns error if the Company does not exists", async () => {
+  it("returns error if the Company does not exist", async () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: ApprovalStatus.approved
     });

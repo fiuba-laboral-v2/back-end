@@ -51,12 +51,12 @@ export = {
       );
       await queryInterface.addConstraint("Companies", ["cuit"], {
         type: "unique",
-        name: "Companies_cuit_key",
+        name: "Companies_cuit_unique",
         transaction
       });
       await queryInterface.addConstraint("Companies", ["businessName"], {
         type: "unique",
-        name: "Companies_businessName_key",
+        name: "Companies_businessName_unique",
         transaction
       });
     });

@@ -2,7 +2,7 @@ import { ADMIN_TASK_MODELS, AdminTaskModelsType, AdminTaskType, TABLE_NAME_COLUM
 import { IAdminTasksFilter } from "./Interfaces";
 import { AdminTaskTypesIsEmptyError, StatusesIsEmptyError } from "./Errors";
 import { groupTableNamesByColumn } from "./groupTableNamesByColumn";
-import { WhereClauseBuilder } from "./WhereClauseBuilder";
+import { WhereClauseBuilder } from "$models/AdminTask/WhereClauseBuilder";
 
 const getRowsToSelect = (adminTaskModelsTypes: AdminTaskModelsType[]) => {
   const tablesByColumn: object = groupTableNamesByColumn(adminTaskModelsTypes);
@@ -16,11 +16,27 @@ const getRowsToSelect = (adminTaskModelsTypes: AdminTaskModelsType[]) => {
     .join(",");
 };
 
-const getFullOuterJoin = (adminTaskModelsTypes: AdminTaskModelsType[]) => {
+const getFullOuterJoin = ({
+  adminTaskModelsTypes,
+  limit,
+  secretary,
+  statuses,
+  updatedBeforeThan
+}: IGetFullOuterJoin) => {
   let selectStatements = adminTaskModelsTypes.map(model => {
     const tableName = model.tableName;
     return `(
-      SELECT *, '${tableName}' AS "${TABLE_NAME_COLUMN}" FROM "${tableName}"
+      SELECT *, '${tableName}' AS "${TABLE_NAME_COLUMN}"
+      FROM "${tableName}"
+      WHERE ${WhereClauseBuilder.build({
+        statuses,
+        secretary,
+        updatedBeforeThan,
+        tableName,
+        modelName: model.name as AdminTaskType
+      })}
+      ORDER BY "${tableName}"."updatedAt" DESC, "${tableName}"."uuid" DESC
+      LIMIT ${limit}
     ) AS ${tableName}`;
   });
   selectStatements = selectStatements.map((selectStatement, index) => {
@@ -36,33 +52,39 @@ const getAdminTaskModels = (adminTaskTypes: AdminTaskType[]) => {
   return ADMIN_TASK_MODELS.filter(model => modelNames.includes(model.name));
 };
 
-const findAdminTasksByTypeQuery = (adminTaskTypes: AdminTaskType[]) => {
+const findAdminTasksByTypeQuery = ({ adminTaskTypes, ...props }: IAdminTasksFilterWithLimit) => {
   const adminTaskModelsTypes = getAdminTaskModels(adminTaskTypes);
   return `
     SELECT ${getRowsToSelect(adminTaskModelsTypes)}
-    FROM ${getFullOuterJoin(adminTaskModelsTypes)}
+    FROM ${getFullOuterJoin({ adminTaskModelsTypes, ...props })}
   `;
 };
 
 export const findAdminTasksQuery = ({
   adminTaskTypes,
   statuses,
-  updatedBeforeThan,
   limit,
-  secretary
-}: IAdminTasksFilter & { limit: number }) => {
+  ...props
+}: IAdminTasksFilterWithLimit) => {
   if (adminTaskTypes.length === 0) throw new AdminTaskTypesIsEmptyError();
   if (statuses.length === 0) throw new StatusesIsEmptyError();
   return `
-    WITH "AdminTask" AS (${findAdminTasksByTypeQuery(adminTaskTypes)})
-    SELECT * FROM "AdminTask"
-    WHERE ${WhereClauseBuilder.build({
+    WITH "AdminTask" AS (${findAdminTasksByTypeQuery({
+      adminTaskTypes,
       statuses,
-      secretary,
-      updatedBeforeThan,
-      adminTaskTypes
-    })}
+      limit,
+      ...props
+    })})
+    SELECT * FROM "AdminTask"
     ORDER BY "AdminTask"."updatedAt" DESC, "AdminTask"."uuid" DESC
     LIMIT ${limit}
   `;
 };
+
+interface IAdminTasksFilterWithLimit extends IAdminTasksFilter {
+  limit: number;
+}
+
+interface IGetFullOuterJoin extends Omit<IAdminTasksFilterWithLimit, "adminTaskTypes"> {
+  adminTaskModelsTypes: AdminTaskModelsType[];
+}

@@ -1,18 +1,24 @@
 import { UpdatedAtWhereClause } from "$models/AdminTask/WhereClauseBuilder/UpdatedAt";
+import { Company, Offer, JobApplication, Applicant } from "$models";
 
 describe("UpdatedAtWhereClause", () => {
   it("builds updatedAt where clause", async () => {
     const updatedAt = new Date();
     const uuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
-    const whereClause = UpdatedAtWhereClause.build({ uuid, dateTime: updatedAt });
-    expect(whereClause).toEqualIgnoringSpacing(`
+    [Company, Offer, JobApplication, Applicant].forEach(model => {
+      const whereClause = UpdatedAtWhereClause.build({
+        updatedBeforeThan: { uuid, dateTime: updatedAt },
+        tableName: model.tableName
+      });
+      expect(whereClause).toEqualIgnoringSpacing(`
       (
-        ("AdminTask"."updatedAt" < '${updatedAt.toISOString()}')
+        ("${model.tableName}"."updatedAt" < '${updatedAt.toISOString()}')
         OR (
-          "AdminTask"."updatedAt" = '${updatedAt.toISOString()}'
-          AND "AdminTask"."uuid" < '${uuid}'
+          "${model.tableName}"."updatedAt" = '${updatedAt.toISOString()}'
+          AND "${model.tableName}"."uuid" < '${uuid}'
         )
       )
     `);
+    });
   });
 });

@@ -1,18 +1,17 @@
 import { Secretary } from "$models/Admin";
-import { Applicant, ApplicantCareer } from "$models";
+import { ApplicantCareer, Applicant } from "$models";
 import { AdminTaskType } from "$models/AdminTask/Model";
 
 export const ApplicantTypeWhereClause = {
-  build: ({ secretary, adminTaskTypes }: IApplicantTypeWhereClauseProps) => {
-    if (!adminTaskTypes.includes(AdminTaskType.Applicant)) return;
+  build: ({ secretary, modelName }: IApplicantTypeWhereClauseProps) => {
+    if (modelName !== AdminTaskType.Applicant) return;
 
     return `
       (
-        "AdminTask"."tableNameColumn" != '${Applicant.tableName}'
-        OR ${secretary === Secretary.graduados ? "" : "NOT"} EXISTS(
+        ${secretary === Secretary.graduados ? "" : "NOT"} EXISTS(
           SELECT *
           FROM "${ApplicantCareer.tableName}"
-          WHERE "applicantUuid" = "AdminTask"."uuid" AND "isGraduate" = true
+          WHERE "applicantUuid" = "${Applicant.tableName}"."uuid" AND "isGraduate" = true
         )
       )
     `;
@@ -21,5 +20,5 @@ export const ApplicantTypeWhereClause = {
 
 interface IApplicantTypeWhereClauseProps {
   secretary: Secretary;
-  adminTaskTypes: AdminTaskType[];
+  modelName: AdminTaskType;
 }

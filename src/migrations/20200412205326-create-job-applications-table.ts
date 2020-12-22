@@ -41,7 +41,7 @@ export = {
       );
       await queryInterface.addConstraint("JobApplications", ["applicantUuid", "offerUuid"], {
         type: "unique",
-        name: "JobApplications_applicantUuid_offerUuid_key",
+        name: "JobApplications_applicantUuid_offerUuid_unique",
         transaction
       });
     });

@@ -73,7 +73,7 @@ describe("getJobApplicationByUuid", () => {
     });
   });
 
-  it("returns an error if the jobApplication does not exists", async () => {
+  it("returns an error if the jobApplication does not exist", async () => {
     const { apolloClient } = await TestClientGenerator.admin();
     const { errors } = await apolloClient.query({
       query: GET_JOB_APPLICATION_BY_UUID,

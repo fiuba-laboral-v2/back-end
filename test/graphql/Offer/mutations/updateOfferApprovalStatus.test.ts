@@ -345,7 +345,7 @@ describe("updateOfferApprovalStatus", () => {
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
-  it("returns an error if the offer does not exists", async () => {
+  it("returns an error if the offer does not exist", async () => {
     const { apolloClient } = await TestClientGenerator.admin({ secretary: Secretary.extension });
     const { errors } = await performMutation(apolloClient, {
       uuid: UUID.generate(),
