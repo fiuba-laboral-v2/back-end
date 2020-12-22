@@ -172,6 +172,7 @@ export const defaultTranslations = {
   companyUserDataFormSection: {
     title: "Datos del usuario",
     email: "Email",
+    role: "Rol",
     emailClarification: "Para notificaciones y login",
     name: "Nombre",
     surname: "Apellido",
