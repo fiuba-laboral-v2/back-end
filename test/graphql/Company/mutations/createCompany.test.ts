@@ -83,7 +83,7 @@ describe("createCompany", () => {
       ...attributes,
       phoneNumbers: ["1159821066", "1159821066"]
     });
-    expect(errors).toEqualGraphQLErrorType("DuplicatedPhoneNumberAlreadyExistsError");
+    expect(errors).toEqualGraphQLErrorType("DuplicatePhoneNumberError");
   });
 
   it("throws an error if the company with its cuit already exist", async () => {
