@@ -4,148 +4,117 @@ import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist
 
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { ISaveCompanyUser } from "$graphql/CompanyUser/Mutations/saveCompanyUser";
+import { IUpdatePassword } from "$graphql/CompanyUser/Mutations/updatePassword";
 
-import { UserRepository } from "$models/User";
+import { BadCredentialsError, UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 
-import { IUserGeneratorAttributes } from "$generators/interfaces";
-import { UserGenerator } from "$generators/User";
 import { TestClientGenerator } from "$generators/TestClient";
-import { omit } from "lodash";
-import { UUID_REGEX } from "$test/models";
-import { CompanyUserRepository } from "$models/CompanyUser";
 
-const SAVE_COMPANY_USER = gql`
-  mutation SaveCompanyUser($user: CompanyUserCreateInput!) {
-    saveCompanyUser(user: $user) {
+const UPDATE_PASSWORD = gql`
+  mutation UpdatePassword($oldPassword: String!, $newPassword: String!) {
+    updatePassword(oldPassword: $oldPassword, newPassword: $newPassword) {
       uuid
-      companyUuid
       userUuid
-      position
-      user {
-        uuid
-        email
-        dni
-        name
-        surname
-      }
     }
   }
 `;
 
-describe("saveCompanyUser", () => {
+describe("updatePassword", () => {
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
   });
 
-  const performQuery = (apolloClient: TestClient, variables: ISaveCompanyUser) =>
-    apolloClient.mutate({ mutation: SAVE_COMPANY_USER, variables });
+  const performQuery = (apolloClient: TestClient, variables: IUpdatePassword) =>
+    apolloClient.mutate({ mutation: UPDATE_PASSWORD, variables });
 
-  const generateVariables = ({ email, password }: IUserGeneratorAttributes = {}) => ({
-    user: UserGenerator.data.companyUser({ email, password })
+  const generateVariables = (variables?: Partial<IUpdatePassword>) => ({
+    oldPassword: variables?.oldPassword || "SecurePassword1010",
+    newPassword: variables?.newPassword || "AValidPassword000"
   });
 
-  it("adds a company user to current user's company", async () => {
-    const { apolloClient, company } = await TestClientGenerator.company({
-      status: ApprovalStatus.approved
-    });
+  it("updates the companyUser password", async () => {
     const variables = generateVariables();
+    const { apolloClient, user } = await TestClientGenerator.company({
+      status: ApprovalStatus.approved,
+      user: { password: variables.oldPassword }
+    });
     const { errors, data } = await performQuery(apolloClient, variables);
     expect(errors).toBeUndefined();
-    expect(data!.saveCompanyUser).toEqual({
-      uuid: expect.stringMatching(UUID_REGEX),
-      companyUuid: company.uuid,
-      userUuid: expect.stringMatching(UUID_REGEX),
-      position: variables.user.position,
-      user: {
-        uuid: expect.stringMatching(UUID_REGEX),
-        ...omit(variables.user, ["password", "position"]),
-        dni: null
-      }
-    });
+    expect(data!.updatePassword.userUuid).toEqual(user.uuid);
   });
 
-  it("returns an error if companyUser with the given email already exists", async () => {
-    const { apolloClient, user } = await TestClientGenerator.company({
-      status: ApprovalStatus.approved
+  it("returns an error if the old password does not match", async () => {
+    const variables = generateVariables();
+    const { apolloClient } = await TestClientGenerator.company({
+      status: ApprovalStatus.approved,
+      user: { password: "MySecurePassword002200" }
     });
-    const variables = generateVariables({ email: user.email });
     const { errors } = await performQuery(apolloClient, variables);
-    expect(errors).toEqualGraphQLErrorType("UserEmailAlreadyExistsError");
+    expect(errors).toEqualGraphQLErrorType(BadCredentialsError.name);
   });
 
   it("returns an error if the password does not have digits", async () => {
+    const variables = generateVariables({ newPassword: "PasswordWithNoDigits" });
     const { apolloClient } = await TestClientGenerator.company({
-      status: ApprovalStatus.approved
+      status: ApprovalStatus.approved,
+      user: { password: variables.oldPassword }
     });
-    const variables = generateVariables({ password: "PasswordWithNoDigits" });
     const { errors } = await performQuery(apolloClient, variables);
     expect(errors).toEqualGraphQLErrorType("PasswordWithoutDigitsError");
   });
 
   it("returns an error if the password has less than ten digits", async () => {
+    const variables = generateVariables({ newPassword: "ShortPasswordError" });
     const { apolloClient } = await TestClientGenerator.company({
-      status: ApprovalStatus.approved
+      status: ApprovalStatus.approved,
+      user: { password: variables.oldPassword }
     });
-    const variables = generateVariables({ password: "short" });
     const { errors } = await performQuery(apolloClient, variables);
-    expect(errors).toEqualGraphQLErrorType("ShortPasswordError");
+    expect(errors).toEqualGraphQLErrorType("PasswordWithoutDigitsError");
   });
 
   it("returns an error if the password has more than a hundred digits", async () => {
+    const variables = generateVariables({ newPassword: "long".repeat(100) });
     const { apolloClient } = await TestClientGenerator.company({
-      status: ApprovalStatus.approved
+      status: ApprovalStatus.approved,
+      user: { password: variables.oldPassword }
     });
-    const variables = generateVariables({ password: "long".repeat(100) });
     const { errors } = await performQuery(apolloClient, variables);
     expect(errors).toEqualGraphQLErrorType("LongPasswordError");
   });
 
   it("returns an error if the password does not have an upper case character", async () => {
+    const variables = generateVariables({ newPassword: "does_not_have_upper_case" });
     const { apolloClient } = await TestClientGenerator.company({
-      status: ApprovalStatus.approved
+      status: ApprovalStatus.approved,
+      user: { password: variables.oldPassword }
     });
-    const variables = generateVariables({ password: "does_not_have_upper_case" });
     const { errors } = await performQuery(apolloClient, variables);
     expect(errors).toEqualGraphQLErrorType("PasswordWithoutUppercaseError");
   });
 
   it("returns an error if the password does not have a lower case character", async () => {
+    const variables = generateVariables({ newPassword: "DOES_NOT_HAVE_LOWER_CASE" });
     const { apolloClient } = await TestClientGenerator.company({
-      status: ApprovalStatus.approved
+      status: ApprovalStatus.approved,
+      user: { password: variables.oldPassword }
     });
-    const variables = generateVariables({ password: "DOES_NOT_HAVE_LOWER_CASE" });
     const { errors } = await performQuery(apolloClient, variables);
     expect(errors).toEqualGraphQLErrorType("PasswordWithoutLowercaseError");
   });
 
   it("returns an error if the password has spaces", async () => {
+    const variables = generateVariables({ newPassword: "password With Spaces 1" });
     const { apolloClient } = await TestClientGenerator.company({
-      status: ApprovalStatus.approved
+      status: ApprovalStatus.approved,
+      user: { password: variables.oldPassword }
     });
-    const variables = generateVariables({ password: "password With Spaces 1" });
     const { errors } = await performQuery(apolloClient, variables);
     expect(errors).toEqualGraphQLErrorType("PasswordWithSpacesError");
-  });
-
-  it("returns an error if the companyUser persistence fails", async () => {
-    const { apolloClient, user, company } = await TestClientGenerator.company({
-      status: ApprovalStatus.approved
-    });
-    jest.spyOn(CompanyUserRepository, "save").mockImplementation(() => {
-      throw new Error();
-    });
-    const { errors } = await performQuery(apolloClient, generateVariables());
-    expect(errors).toEqualGraphQLErrorType("Error");
-    const companyUsers = await CompanyUserRepository.findByCompanyUuid(company.uuid);
-    const [companyUser] = companyUsers;
-
-    expect(companyUsers).toHaveLength(1);
-    expect(companyUser.userUuid).toEqual(user.uuid);
   });
 
   it("returns an error if there is no current user", async () => {
