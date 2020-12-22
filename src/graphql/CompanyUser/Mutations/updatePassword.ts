@@ -23,7 +23,7 @@ export const updatePassword = {
     await user.credentials.authenticate(oldPassword);
     user.credentials = new CompanyUserRawCredentials({ password: newPassword });
     await UserRepository.save(user);
-    return CompanyUserRepository.findByUserUuidIfExists(currentUser.uuid);
+    return CompanyUserRepository.findByUserUuid(currentUser.uuid);
   }
 };
 
