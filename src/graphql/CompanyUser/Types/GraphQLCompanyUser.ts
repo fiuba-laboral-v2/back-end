@@ -8,6 +8,9 @@ import { UserRepository } from "$models/User";
 export const GraphQLCompanyUser = new GraphQLObjectType<CompanyUser>({
   name: "CompanyUser",
   fields: () => ({
+    uuid: {
+      type: nonNull(ID)
+    },
     userUuid: {
       type: nonNull(ID)
     },

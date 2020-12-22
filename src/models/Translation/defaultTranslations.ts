@@ -56,7 +56,9 @@ export const defaultTranslations = {
   applicantProfileDetail: {
     edit: "Editar",
     padron: "Padron",
-    capabilities: "Aptitudes"
+    capabilities: "Aptitudes",
+    experienceSectionsTitle: "Experiencia laboral",
+    knowledgeSectionsTitle: "Otros conocimientos"
   },
   applicantProfileTitle: {
     title: "Mi Perfil",
@@ -120,6 +122,9 @@ export const defaultTranslations = {
   },
   secretarySelector: {
     title: "Secretaría"
+  },
+  companyUsers: {
+    addAdminButtonLabel: "Agregar usuario"
   },
   admins: {
     addAdminButtonLabel: "Agregar administrador"
@@ -189,6 +194,10 @@ export const defaultTranslations = {
     businessName: "Razón social",
     cuit: "CUIT"
   },
+  addCompanyUser: {
+    title: "Agregar usuario",
+    submit: "Guardar"
+  },
   companySignUp: {
     title: "Crear tu cuenta",
     submit: "Guardar"
@@ -252,6 +261,7 @@ export const defaultTranslations = {
   },
   navBar: {
     admins: "Administradores",
+    users: "Usuarios",
     applicants: "Postulantes",
     companies: "Empresas",
     jobOffers: "Ofertas de trabajo",
@@ -339,6 +349,9 @@ export const defaultTranslations = {
   adminCompanyListMainTitle: {
     title: "Empresas"
   },
+  companyUsersListMainTitle: {
+    title: "Usuarios"
+  },
   adminOfferListMainTitle: {
     title: "Ofertas laborales"
   },
@@ -413,6 +426,12 @@ export const defaultTranslations = {
     padron: "Padrón",
     approvalStatus: "Estado",
     updatedAt: "Última actualización"
+  },
+  companyUserListHeader: {
+    name: "Nombre",
+    surname: "Apellido",
+    email: "Email",
+    createdAt: "Fecha de registro"
   },
   targetApplicantType: {
     graduate: "Graduados",

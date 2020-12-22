@@ -13,6 +13,7 @@ import { secretarySettingsQueries } from "./SecretarySettings";
 import { companyNotificationQueries } from "./CompanyNotification";
 import { applicantNotificationQueries } from "./ApplicantNotification";
 import { adminNotificationQueries } from "./AdminNotification";
+import { companyUserQueries } from "./CompanyUser";
 
 export const queries = () =>
   merge(
@@ -29,5 +30,6 @@ export const queries = () =>
     secretarySettingsQueries,
     companyNotificationQueries,
     applicantNotificationQueries,
-    adminNotificationQueries
+    adminNotificationQueries,
+    companyUserQueries
   );
