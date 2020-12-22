@@ -1,4 +1,4 @@
-import { GraphQLSecretarySettings } from "../Types/GraphQLSecretarySettings";
+import { GraphQLAdminSettings } from "../Types/GraphQLAdminSettings";
 import { GraphQLSecretary } from "$src/graphql/Admin/Types/GraphQLSecretary";
 import { nonNull } from "$graphql/fieldTypes";
 
@@ -6,7 +6,7 @@ import { Secretary } from "$src/models/Admin";
 import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
 
 const getSecretaryOfferDuration = {
-  type: GraphQLSecretarySettings,
+  type: GraphQLAdminSettings,
   args: {
     secretary: {
       type: nonNull(GraphQLSecretary)

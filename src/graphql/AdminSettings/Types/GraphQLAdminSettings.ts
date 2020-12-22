@@ -4,8 +4,8 @@ import { SecretarySettings } from "$models";
 import { GraphQLSecretary } from "$src/graphql/Admin/Types/GraphQLSecretary";
 import { GraphQLInt } from "graphql/type/scalars";
 
-export const GraphQLSecretarySettings = new GraphQLObjectType<SecretarySettings>({
-  name: "SecretarySettings",
+export const GraphQLAdminSettings = new GraphQLObjectType<SecretarySettings>({
+  name: "AdminSettings",
   fields: () => ({
     secretary: {
       type: nonNull(GraphQLSecretary)

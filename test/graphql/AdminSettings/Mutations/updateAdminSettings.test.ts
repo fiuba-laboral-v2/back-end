@@ -12,16 +12,16 @@ import { CompanyRepository } from "$models/Company";
 import { ApplicantRepository } from "$models/Applicant";
 import { UserRepository } from "$models/User";
 
-const UPDATE_MY_SECRETARY_SETTINGS = gql`
-  mutation updateMySecretarySettings($offerDurationInDays: Int!) {
-    updateMySecretarySettings(offerDurationInDays: $offerDurationInDays) {
+const UPDATE_ADMIN_SETTINGS = gql`
+  mutation updateAdminSettings($offerDurationInDays: Int!) {
+    updateAdminSettings(offerDurationInDays: $offerDurationInDays) {
       secretary
       offerDurationInDays
     }
   }
 `;
 
-describe("updateMySecretarySettings", () => {
+describe("updateAdminSettings", () => {
   let graduadosApolloClient;
   let extensionApolloClient;
 
@@ -48,7 +48,7 @@ describe("updateMySecretarySettings", () => {
       );
 
       const { data, errors } = await graduadosApolloClient.mutate({
-        mutation: UPDATE_MY_SECRETARY_SETTINGS,
+        mutation: UPDATE_ADMIN_SETTINGS,
         variables: { offerDurationInDays: 2 }
       });
 
@@ -56,7 +56,7 @@ describe("updateMySecretarySettings", () => {
         offerDurationInDays: updatedOfferDuration
       } = await SecretarySettingsRepository.findBySecretary(Secretary.graduados);
       expect(errors).toBeUndefined();
-      expect(data!.updateMySecretarySettings).toEqual({
+      expect(data!.updateAdminSettings).toEqual({
         secretary: Secretary.graduados,
         offerDurationInDays: updatedOfferDuration
       });
@@ -69,7 +69,7 @@ describe("updateMySecretarySettings", () => {
       );
 
       const { errors } = await graduadosApolloClient.mutate({
-        mutation: UPDATE_MY_SECRETARY_SETTINGS,
+        mutation: UPDATE_ADMIN_SETTINGS,
         variables: { offerDurationInDays: 2 }
       });
 
@@ -89,7 +89,7 @@ describe("updateMySecretarySettings", () => {
       );
 
       const { data, errors } = await extensionApolloClient.mutate({
-        mutation: UPDATE_MY_SECRETARY_SETTINGS,
+        mutation: UPDATE_ADMIN_SETTINGS,
         variables: { offerDurationInDays: 4 }
       });
 
@@ -97,7 +97,7 @@ describe("updateMySecretarySettings", () => {
         offerDurationInDays: updatedOfferDuration
       } = await SecretarySettingsRepository.findBySecretary(Secretary.extension);
       expect(errors).toBeUndefined();
-      expect(data!.updateMySecretarySettings).toEqual({
+      expect(data!.updateAdminSettings).toEqual({
         secretary: Secretary.extension,
         offerDurationInDays: updatedOfferDuration
       });
@@ -110,7 +110,7 @@ describe("updateMySecretarySettings", () => {
       );
 
       const { errors } = await extensionApolloClient.mutate({
-        mutation: UPDATE_MY_SECRETARY_SETTINGS,
+        mutation: UPDATE_ADMIN_SETTINGS,
         variables: { offerDurationInDays: 4 }
       });
 
@@ -127,7 +127,7 @@ describe("updateMySecretarySettings", () => {
     it("returns an error if there is no current user", async () => {
       const apolloClient = client.loggedOut();
       const { errors } = await apolloClient.mutate({
-        mutation: UPDATE_MY_SECRETARY_SETTINGS,
+        mutation: UPDATE_ADMIN_SETTINGS,
         variables: { offerDurationInDays: 2 }
       });
 
@@ -137,7 +137,7 @@ describe("updateMySecretarySettings", () => {
     it("returns an error if current user is not an admin", async () => {
       const { apolloClient } = await TestClientGenerator.user();
       const { errors } = await apolloClient.mutate({
-        mutation: UPDATE_MY_SECRETARY_SETTINGS,
+        mutation: UPDATE_ADMIN_SETTINGS,
         variables: { offerDurationInDays: 2 }
       });
 
@@ -147,7 +147,7 @@ describe("updateMySecretarySettings", () => {
     it("returns an error when the user is from a company", async () => {
       const { apolloClient } = await TestClientGenerator.company();
       const { errors } = await apolloClient.mutate({
-        mutation: UPDATE_MY_SECRETARY_SETTINGS,
+        mutation: UPDATE_ADMIN_SETTINGS,
         variables: { offerDurationInDays: 2 }
       });
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
@@ -156,7 +156,7 @@ describe("updateMySecretarySettings", () => {
     it("returns an error when the user is an applicant", async () => {
       const { apolloClient } = await TestClientGenerator.applicant();
       const { errors } = await apolloClient.mutate({
-        mutation: UPDATE_MY_SECRETARY_SETTINGS,
+        mutation: UPDATE_ADMIN_SETTINGS,
         variables: { offerDurationInDays: 2 }
       });
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
