@@ -16,7 +16,7 @@ export class CompanyUser extends SequelizeModel<CompanyUser> {
   @Column({ allowNull: false, type: UUID, ...isUuid })
   public userUuid: string;
 
-  @Column({ allowNull: false, type: STRING, defaultValue: "role" })
+  @Column({ allowNull: false, type: STRING })
   public role: string;
 
   @CreatedAt
