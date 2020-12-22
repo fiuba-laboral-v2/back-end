@@ -199,6 +199,10 @@ export const defaultTranslations = {
     title: "Agregar usuario",
     submit: "Guardar"
   },
+  editCompanyUserPassword: {
+    title: "Modificar contraseña",
+    submit: "Guardar"
+  },
   companySignUp: {
     title: "Crear tu cuenta",
     submit: "Guardar"
