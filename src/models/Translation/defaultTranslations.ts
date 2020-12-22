@@ -429,6 +429,7 @@ export const defaultTranslations = {
     name: "Nombre",
     surname: "Apellido",
     email: "Email",
+    role: "Rol",
     createdAt: "Fecha de registro"
   },
   targetApplicantType: {
