@@ -13,7 +13,7 @@ export const javaJunior = {
     description,
     isInternship: false,
     hoursPerDay: 6,
-    extensionApprovalStatus: ApprovalStatus.pending,
+    extensionApprovalStatus: ApprovalStatus.approved,
     graduadosApprovalStatus: ApprovalStatus.pending,
     minimumSalary: 52500,
     maximumSalary: 70000,
