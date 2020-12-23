@@ -284,6 +284,7 @@ export const defaultTranslations = {
     edit: "Editar",
     expire: "Expirar",
     apply: "Postularme",
+    republish: "Volver a publicar",
     applySuccess: "Postulación exitosa!",
     alreadyApplied: "Ya te postulaste"
   },
