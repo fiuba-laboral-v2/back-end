@@ -13,7 +13,7 @@ export const javaSenior = {
     isInternship: false,
     hoursPerDay: 8,
     extensionApprovalStatus: ApprovalStatus.pending,
-    graduadosApprovalStatus: ApprovalStatus.pending,
+    graduadosApprovalStatus: ApprovalStatus.approved,
     minimumSalary: 80000,
     maximumSalary: 120000,
     createdAt: new Date(),
