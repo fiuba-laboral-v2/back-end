@@ -2,7 +2,7 @@ import { uuids } from "../../../uuids";
 import { ApplicantType } from "../../../../../models/Applicant/Interface";
 import { ApprovalStatus } from "../../../../../models/ApprovalStatus";
 import { description } from "../description";
-import { DateTimeManager } from "$libs/DateTimeManager";
+import { DateTimeManager } from "../../../../../libs/DateTimeManager";
 
 export const javaSenior = {
   offer: {

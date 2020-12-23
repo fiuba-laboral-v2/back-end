@@ -3,7 +3,7 @@ import { sections } from "../../sections";
 import { description } from "../description";
 import { ApplicantType } from "../../../../../models/Applicant/Interface";
 import { ApprovalStatus } from "../../../../../models/ApprovalStatus";
-import { DateTimeManager } from "$libs/DateTimeManager";
+import { DateTimeManager } from "../../../../../libs/DateTimeManager";
 
 export const javaSemiSenior = {
   offer: {
