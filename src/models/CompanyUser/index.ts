@@ -1,1 +1,2 @@
-export { CompanyUserRepository } from "./Repository";
+export * from "./Repository";
+export * from "./Errors";

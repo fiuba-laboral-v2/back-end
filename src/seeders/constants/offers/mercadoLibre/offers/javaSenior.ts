@@ -2,6 +2,7 @@ import { uuids } from "../../../uuids";
 import { ApplicantType } from "../../../../../models/Applicant/Interface";
 import { ApprovalStatus } from "../../../../../models/ApprovalStatus";
 import { description } from "../description";
+import { DateTimeManager } from "../../../../../libs/DateTimeManager";
 
 export const javaSenior = {
   offer: {
@@ -13,7 +14,8 @@ export const javaSenior = {
     isInternship: false,
     hoursPerDay: 8,
     extensionApprovalStatus: ApprovalStatus.pending,
-    graduadosApprovalStatus: ApprovalStatus.pending,
+    graduadosApprovalStatus: ApprovalStatus.approved,
+    graduatesExpirationDateTime: DateTimeManager.daysFromNow(15).toDate(),
     minimumSalary: 80000,
     maximumSalary: 120000,
     createdAt: new Date(),

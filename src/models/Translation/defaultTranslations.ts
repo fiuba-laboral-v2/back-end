@@ -126,6 +126,9 @@ export const defaultTranslations = {
   companyUsers: {
     addAdminButtonLabel: "Agregar usuario"
   },
+  companyUserActions: {
+    passwordTooltipMessage: "Cambiar contraseña"
+  },
   admins: {
     addAdminButtonLabel: "Agregar administrador"
   },
@@ -198,6 +201,14 @@ export const defaultTranslations = {
   addCompanyUser: {
     title: "Agregar usuario",
     submit: "Guardar"
+  },
+  editCompanyUserPassword: {
+    title: "Cambiar contraseña",
+    submit: "Guardar",
+    badCredentialsError: "Credenciales inválidas",
+    password: "Contraseña actual",
+    newPassword: "Nueva contraseña",
+    newPasswordConfirm: "Confirmar nueva contraseña"
   },
   companySignUp: {
     title: "Crear tu cuenta",
