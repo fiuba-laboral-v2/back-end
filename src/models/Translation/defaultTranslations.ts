@@ -203,7 +203,7 @@ export const defaultTranslations = {
     submit: "Guardar"
   },
   editCompanyUserPassword: {
-    title: "Modificar contraseña",
+    title: "Cambiar contraseña",
     submit: "Guardar",
     badCredentialsError: "Credenciales inválidas",
     password: "Contraseña actual",
