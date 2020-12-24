@@ -19,10 +19,7 @@ import { userTokenAssertions } from "$test/graphql/User/userTokenAssertions";
 
 const UPDATE_MY_FORGOTTEN_PASSWORD = gql`
   mutation UpdateMyForgottenPassword($token: String!, $newPassword: String!) {
-    updateMyForgottenPassword(token: $token, newPassword: $newPassword) {
-      uuid
-      userUuid
-    }
+    updateMyForgottenPassword(token: $token, newPassword: $newPassword)
   }
 `;
 

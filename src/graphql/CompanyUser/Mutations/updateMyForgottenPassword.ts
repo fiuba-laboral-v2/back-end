@@ -1,5 +1,4 @@
-import { nonNull, String } from "$graphql/fieldTypes";
-import { GraphQLCompanyUser } from "../Types/GraphQLCompanyUser";
+import { nonNull, String, Int } from "$graphql/fieldTypes";
 import { CompanyUserRawCredentials, UserRepository } from "$models/User";
 import { CompanyUserRepository } from "$models/CompanyUser";
 import { JWT } from "$src/JWT";
@@ -8,7 +7,7 @@ import { Context } from "$graphql/Context";
 import { CookieConfig } from "$config";
 
 export const updateMyForgottenPassword = {
-  type: GraphQLCompanyUser,
+  type: Int,
   args: {
     token: {
       type: nonNull(String)
@@ -29,10 +28,9 @@ export const updateMyForgottenPassword = {
     const currentUser = JWT.decodeToken(token);
     if (!currentUser) throw new UnauthorizedError();
     const user = await UserRepository.findByUuid(currentUser.uuid);
-    const companyUser = await CompanyUserRepository.findByUserUuid(currentUser.uuid);
+    await CompanyUserRepository.findByUserUuid(currentUser.uuid);
     user.credentials = new CompanyUserRawCredentials({ password: newPassword });
     await UserRepository.save(user);
-    return companyUser;
   }
 };
 
