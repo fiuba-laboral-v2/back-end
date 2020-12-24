@@ -40,11 +40,11 @@ describe("updateMyForgottenPassword", () => {
   const performQuery = (apolloClient: TestClient, variables: IUpdateMyForgottenPassword) =>
     apolloClient.mutate({ mutation: UPDATE_MY_FORGOTTEN_PASSWORD, variables });
 
-  const generateVariables = async (variables: IGenerateVariables) => {
-    const token = await JWT.createToken(variables.user, variables.expiresIn);
+  const generateVariables = async ({ user, expiresIn, newPassword }: IGenerateVariables) => {
+    const token = await JWT.createToken(user, expiresIn);
     return {
       token: token,
-      newPassword: variables?.newPassword || "AValidPassword000"
+      newPassword: newPassword || "AValidPassword000"
     };
   };
 
