@@ -299,18 +299,26 @@ export const defaultTranslations = {
   },
   offerDetailConfirmDialogs: {
     confirmRepublishTitle: "Estas por volver a publicar esta oferta",
-    confirmRepublishConfirm: "Aceptar",
-    confirmRepublishDescription: "La misma volverá a ser visible",
+    confirmRepublishConfirm: "Confirmar",
+    confirmRepublishDescription: "La oferta va a pasar al siguiente estado:",
     confirmRepublishCancel: "Cancelar",
     confirmExpireTitle: "Estas por expirar esta oferta",
-    confirmExpireConfirm: "Expirar",
-    confirmExpireDescription: "La oferta dejará de ser visible",
+    confirmExpireConfirm: "Confirmar",
+    confirmExpireDescription: "La oferta va a pasar al siguiente estado:",
     confirmExpireCancel: "Cancelar"
   },
   offerDetailActions: {
     edit: "Editar",
     expire: "Expirar",
     republish: "Volver a publicar"
+  },
+  offerRepublishFutureStateMessage: {
+    forStudents: "Alumnos: visible hasta",
+    forGraduates: "Graduados: visible hasta"
+  },
+  offerExpireFutureStateMessage: {
+    forStudents: "Expirar para alumnos",
+    forGraduates: "Expirar para graduados"
   },
   MyOffers: {
     title: "Mis Ofertas"
