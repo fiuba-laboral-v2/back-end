@@ -18,7 +18,7 @@ export const fiubaLogin = {
     const user = await UserRepository.findByDni(dni);
     await user.credentials.authenticate(password);
 
-    const token = await JWT.createToken(user);
+    const token = await JWT.createToken(user, "login");
     expressResponse.cookie(CookieConfig.cookieName, token, CookieConfig.cookieOptions);
   }
 };

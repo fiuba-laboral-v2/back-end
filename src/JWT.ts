@@ -6,11 +6,11 @@ import { CurrentUser, CurrentUserBuilder, ICurrentUserTokenData } from "./models
 import { sign, verify } from "jsonwebtoken";
 import { Application } from "express";
 import jwt from "express-jwt";
-import { JWTConfig } from "./config";
+import { JWTConfig, JWTTokenType } from "./config";
 import { Logger } from "./libs/Logger";
 
 export const JWT = {
-  createToken: async (user: User) => {
+  createToken: async (user: User, tokenType: JWTTokenType) => {
     const admin = await AdminRepository.findByUserUuidIfExists(user.uuid!);
     const applicant = await ApplicantRepository.findByUserUuidIfExists(user.uuid!);
     const companyUser = await CompanyUserRepository.findByUserUuidIfExists(user.uuid!);
@@ -23,8 +23,9 @@ export const JWT = {
         company: { uuid: companyUser.companyUuid }
       })
     };
-
-    return sign(payload, JWTConfig.secret, { expiresIn: JWTConfig.expiresIn });
+    return sign(payload, JWTConfig.secret, {
+      expiresIn: JWTConfig.expirationTime(tokenType)
+    });
   },
   decodeToken: (token: string): CurrentUser | undefined => {
     try {
@@ -42,6 +43,5 @@ export const JWT = {
         algorithms: JWTConfig.algorithms
       })
     );
-  },
-  extractTokenPayload: (token: string): CurrentUser | undefined => JWT.decodeToken(token)
+  }
 };
