@@ -284,6 +284,7 @@ export const defaultTranslations = {
     myProfile: "Mi perfil",
     myCompanyProfile: "Mi empresa",
     notifications: "Notificaciones",
+    settings: "Configuración",
     myOffers: "Mis Ofertas",
     pendingProfile: "Su perfil esta pendiente de aprobación",
     rejectedProfile: "Su perfil ha sido rechazado"
@@ -636,5 +637,16 @@ export const defaultTranslations = {
   emailSignature: {
     graduados: "Bolsa de Trabajo FIUBA.",
     extension: "Bolsa de Trabajo FIUBA."
+  },
+  adminSettings: {
+    title: "Configuración",
+    submit: "Guardar",
+    updateSuccess: "Configuración actualizada",
+    secretarySettingsTitle: "Configuración de la secretaría",
+    offerDurationInDays: "Días hasta la expiración de una oferta",
+    email: "Email de la secretaría",
+    emailHelper: "Para contacto de alumnos, graduados y empresas",
+    infoMessage:
+      'El email de la secretaría se va a dar a los usuarios como vía de contacto, y se van a enviar los emails automáticos a su nombre. Cualquier dirección que termine con "@fi.uba.ar" es válida. Procurar que la dirección no corresponda a un individuo sino a la secretaría.'
   }
 };

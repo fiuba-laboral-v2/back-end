@@ -11,7 +11,7 @@ import { companyPermissions } from "./Company";
 import { userPermissions } from "./User";
 import { adminTaskPermissions } from "./AdminTask";
 import { adminPermissions } from "./Admin";
-import { secretarySettingsPermissions } from "./SecretarySettings";
+import { adminSettingsPermissions } from "./AdminSettings";
 import { companyNotificationPermissions } from "./CompanyNotification";
 import { applicantNotificationPermissions } from "./ApplicantNotification";
 import { adminNotificationPermissions } from "./AdminNotification";
@@ -27,7 +27,7 @@ const permissions = merge(
   userPermissions,
   adminTaskPermissions,
   adminPermissions,
-  secretarySettingsPermissions,
+  adminSettingsPermissions,
   companyNotificationPermissions,
   applicantNotificationPermissions,
   adminNotificationPermissions,

@@ -1,11 +1,11 @@
 import { isFromApprovedCompany, isAdmin } from "$graphql/Rules";
 
-export const secretarySettingsPermissions = {
+export const adminSettingsPermissions = {
   Mutation: {
-    updateMySecretarySettings: isAdmin
+    updateAdminSettings: isAdmin
   },
   Query: {
-    getMySecretarySettings: isAdmin,
+    getAdminSettings: isAdmin,
     getSecretaryOfferDuration: isFromApprovedCompany
   }
 };

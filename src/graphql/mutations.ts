@@ -6,7 +6,7 @@ import { emailMutations } from "./Email";
 import { jobApplicationMutations } from "./JobApplication";
 import { careerMutations } from "./Career";
 import { userMutations } from "./User";
-import { secretarySettingsMutations } from "./SecretarySettings";
+import { adminSettingsMutations } from "./AdminSettings";
 import { adminMutations } from "./Admin";
 import { companyUserMutations } from "./CompanyUser";
 
@@ -19,7 +19,7 @@ export const mutations = () =>
     offerMutations,
     emailMutations,
     jobApplicationMutations,
-    secretarySettingsMutations,
+    adminSettingsMutations,
     adminMutations,
     companyUserMutations
   );

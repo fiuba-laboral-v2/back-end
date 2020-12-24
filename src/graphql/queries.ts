@@ -7,9 +7,9 @@ import { applicantQueries } from "./Applicant";
 import { careerQueries } from "./Career";
 import { userQueries } from "./User";
 import { capabilityQueries } from "./Capability";
-import { adminTaskQueries } from "./AdminTask/Queries";
+import { adminTaskQueries } from "$graphql/AdminTask";
 import { adminQueries } from "./Admin";
-import { secretarySettingsQueries } from "./SecretarySettings";
+import { adminSettingsQueries } from "./AdminSettings";
 import { companyNotificationQueries } from "./CompanyNotification";
 import { applicantNotificationQueries } from "./ApplicantNotification";
 import { adminNotificationQueries } from "./AdminNotification";
@@ -27,7 +27,7 @@ export const queries = () =>
     capabilityQueries,
     adminTaskQueries,
     adminQueries,
-    secretarySettingsQueries,
+    adminSettingsQueries,
     companyNotificationQueries,
     applicantNotificationQueries,
     adminNotificationQueries,
