@@ -9,7 +9,7 @@ import { capabilityTypes } from "./Capability";
 import { translationTypes } from "./Translation";
 import { approvalStatusTypes } from "./ApprovalStatus";
 import { adminTaskTypes } from "./AdminTask/Types";
-import { secretarySettingsTypes } from "./SecretarySettings/Types";
+import { adminSettingsTypes } from "./AdminSettings/Types";
 import { companyNotificationTypes } from "./CompanyNotification";
 import { applicantNotificationTypes } from "./ApplicantNotification";
 import { adminNotificationTypes } from "./AdminNotification";
@@ -27,7 +27,7 @@ export const types = [
   ...translationTypes,
   ...approvalStatusTypes,
   ...adminTaskTypes,
-  ...secretarySettingsTypes,
+  ...adminSettingsTypes,
   ...companyNotificationTypes,
   ...applicantNotificationTypes,
   ...adminNotificationTypes,
