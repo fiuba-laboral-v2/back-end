@@ -627,6 +627,15 @@ export const defaultTranslations = {
     subject: "Perfil de empresa actualizado",
     body: "El perfil de la empresa '<%= companyName %>' (<%= companyLink %>) ha sido actualizado."
   },
+  passwordRecoveryEmail: {
+    subject: "Recuperación de contraseña",
+    body:
+      "Usted ha solicitado la recuperación de su contraseña." +
+      "\n" +
+      "Haga click en el siguiente link para realizar el cambio." +
+      "\n" +
+      "<%= passwordRecoveryLink %>"
+  },
   emailSignature: {
     graduados: "Bolsa de Trabajo FIUBA.",
     extension: "Bolsa de Trabajo FIUBA."
