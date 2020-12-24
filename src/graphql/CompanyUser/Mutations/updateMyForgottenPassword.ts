@@ -4,7 +4,8 @@ import { CompanyUserRawCredentials, UserRepository } from "$models/User";
 import { CompanyUserRepository } from "$models/CompanyUser";
 import { JWT } from "$src/JWT";
 import { UnauthorizedError } from "$graphql/Errors";
-import { IApolloServerContext } from "$graphql/Context";
+import { Context } from "$graphql/Context";
+import { CookieConfig } from "$config";
 
 export const updateMyForgottenPassword = {
   type: GraphQLCompanyUser,
@@ -19,9 +20,12 @@ export const updateMyForgottenPassword = {
   resolve: async (
     _: undefined,
     { token, newPassword }: IUpdateMyForgottenPassword,
-    { currentUser: context }: IApolloServerContext
+    { res: expressResponse, currentUser: context }: Context
   ) => {
-    if (context) throw new UnauthorizedError();
+    if (context) {
+      expressResponse.cookie(CookieConfig.cookieName, "", CookieConfig.cookieOptions);
+      throw new UnauthorizedError();
+    }
     const currentUser = JWT.decodeToken(token);
     if (!currentUser) throw new UnauthorizedError();
     const user = await UserRepository.findByUuid(currentUser.uuid);

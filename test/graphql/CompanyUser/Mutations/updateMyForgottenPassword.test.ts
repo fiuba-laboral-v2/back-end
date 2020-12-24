@@ -7,6 +7,7 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { IUpdateMyForgottenPassword } from "$graphql/CompanyUser/Mutations/updateMyForgottenPassword";
 
 import { Secretary } from "$models/Admin";
+import { JWTConfig } from "$config";
 import { JWT } from "$src/JWT";
 import { FiubaCredentials, User, UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
@@ -14,7 +15,7 @@ import { CareerRepository } from "$models/Career";
 
 import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyUserNotFoundError } from "$models/CompanyUser";
-import { JWTConfig } from "$config";
+import { userTokenAssertions } from "$test/graphql/User/userTokenAssertions";
 
 const UPDATE_MY_FORGOTTEN_PASSWORD = gql`
   mutation UpdateMyForgottenPassword($token: String!, $newPassword: String!) {
@@ -140,66 +141,90 @@ describe("updateMyForgottenPassword", () => {
   });
 
   it("returns an error if there is a current user from a approved company", async () => {
+    const expressContext = userTokenAssertions.createExpressContext();
     const { apolloClient, user } = await TestClientGenerator.company({
-      status: ApprovalStatus.approved
+      status: ApprovalStatus.approved,
+      expressContext
     });
     const { errors } = await performQuery(apolloClient, await generateVariables({ user }));
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+    userTokenAssertions.expectCookieToBeRemoved(expressContext);
   });
 
   it("returns an error if there is a current user from a pending company", async () => {
+    const expressContext = userTokenAssertions.createExpressContext();
     const { apolloClient, user } = await TestClientGenerator.company({
-      status: ApprovalStatus.pending
+      status: ApprovalStatus.pending,
+      expressContext
     });
     const { errors } = await performQuery(apolloClient, await generateVariables({ user }));
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+    userTokenAssertions.expectCookieToBeRemoved(expressContext);
   });
 
   it("returns an error if there is a current user from a rejected company", async () => {
+    const expressContext = userTokenAssertions.createExpressContext();
     const { apolloClient, user } = await TestClientGenerator.company({
-      status: ApprovalStatus.rejected
+      status: ApprovalStatus.rejected,
+      expressContext
     });
     const { errors } = await performQuery(apolloClient, await generateVariables({ user }));
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+    userTokenAssertions.expectCookieToBeRemoved(expressContext);
   });
 
   it("returns an error if there is an approved applicant current user", async () => {
+    const expressContext = userTokenAssertions.createExpressContext();
     const { apolloClient, user } = await TestClientGenerator.applicant({
-      status: ApprovalStatus.approved
+      status: ApprovalStatus.approved,
+      expressContext
     });
     const { errors } = await performQuery(apolloClient, await generateVariables({ user }));
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+    userTokenAssertions.expectCookieToBeRemoved(expressContext);
   });
 
   it("returns an error if there is a rejected applicant current user", async () => {
+    const expressContext = userTokenAssertions.createExpressContext();
     const { apolloClient, user } = await TestClientGenerator.applicant({
-      status: ApprovalStatus.rejected
+      status: ApprovalStatus.rejected,
+      expressContext
     });
     const { errors } = await performQuery(apolloClient, await generateVariables({ user }));
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+    userTokenAssertions.expectCookieToBeRemoved(expressContext);
   });
 
   it("returns an error if there is a pending applicant current user", async () => {
+    const expressContext = userTokenAssertions.createExpressContext();
     const { apolloClient, user } = await TestClientGenerator.applicant({
-      status: ApprovalStatus.pending
+      status: ApprovalStatus.pending,
+      expressContext
     });
     const { errors } = await performQuery(apolloClient, await generateVariables({ user }));
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+    userTokenAssertions.expectCookieToBeRemoved(expressContext);
   });
 
   it("returns an error if there is an extension admin current user", async () => {
+    const expressContext = userTokenAssertions.createExpressContext();
     const { apolloClient, user } = await TestClientGenerator.admin({
-      secretary: Secretary.extension
+      secretary: Secretary.extension,
+      expressContext
     });
     const { errors } = await performQuery(apolloClient, await generateVariables({ user }));
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+    userTokenAssertions.expectCookieToBeRemoved(expressContext);
   });
 
   it("returns an error if there is a graduados admin current user", async () => {
+    const expressContext = userTokenAssertions.createExpressContext();
     const { apolloClient, user } = await TestClientGenerator.admin({
-      secretary: Secretary.graduados
+      secretary: Secretary.graduados,
+      expressContext
     });
     const { errors } = await performQuery(apolloClient, await generateVariables({ user }));
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+    userTokenAssertions.expectCookieToBeRemoved(expressContext);
   });
 });
