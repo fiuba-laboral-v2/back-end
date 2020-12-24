@@ -292,12 +292,24 @@ export const defaultTranslations = {
     careersTitle: "Carreras"
   },
   offerDetail: {
-    edit: "Editar",
-    expire: "Expirar",
     apply: "Postularme",
-    republish: "Volver a publicar",
     applySuccess: "Postulación exitosa!",
     alreadyApplied: "Ya te postulaste"
+  },
+  offerDetailConfirmDialogs: {
+    confirmRepublishTitle: "Estas por volver a publicar esta oferta",
+    confirmRepublishConfirm: "Aceptar",
+    confirmRepublishDescription: "La misma volverá a ser visible",
+    confirmRepublishCancel: "Cancelar",
+    confirmExpireTitle: "Estas por expirar esta oferta",
+    confirmExpireConfirm: "Expirar",
+    confirmExpireDescription: "La oferta dejará de ser visible",
+    confirmExpireCancel: "Cancelar"
+  },
+  offerDetailActions: {
+    edit: "Editar",
+    expire: "Expirar",
+    republish: "Volver a publicar"
   },
   MyOffers: {
     title: "Mis Ofertas"
