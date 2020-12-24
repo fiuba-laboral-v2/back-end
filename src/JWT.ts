@@ -24,7 +24,7 @@ export const JWT = {
       })
     };
     return sign(payload, JWTConfig.secret, {
-      expiresIn: JWTConfig.expirationTimeInSeconds(tokenType)
+      expiresIn: JWTConfig.expirationTime(tokenType)
     });
   },
   decodeToken: (token: string): CurrentUser | undefined => {

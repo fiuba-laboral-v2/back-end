@@ -5,7 +5,7 @@ const TOKEN_EXPIRATION_DAYS = 2;
 const TOKEN_EXPIRATION_DAYS_AS_STRING = `${TOKEN_EXPIRATION_DAYS}d`;
 export const TOKEN_EXPIRATION_MILLISECONDS = TOKEN_EXPIRATION_DAYS * 24 * 60 * 60 * 1000;
 export type JWTTokenType = "login" | "recoverPassword";
-const expirationTimeInSeconds = (type: JWTTokenType) => {
+const expirationTime = (type: JWTTokenType) => {
   switch (type) {
     case "login":
       return TOKEN_EXPIRATION_DAYS_AS_STRING;
@@ -16,25 +16,25 @@ const expirationTimeInSeconds = (type: JWTTokenType) => {
 
 export const JWTConfig: IJWTConfig = {
   production: {
-    expirationTimeInSeconds,
+    expirationTime,
     credentialsRequired: false,
     algorithms: ["RS256"],
     secret: Environment.JWTSecret() || "Environment.JWT_SECRET"
   },
   staging: {
-    expirationTimeInSeconds,
+    expirationTime,
     credentialsRequired: false,
     algorithms: ["RS256"],
     secret: Environment.JWTSecret() || "Environment.JWT_SECRET"
   },
   development: {
-    expirationTimeInSeconds,
+    expirationTime,
     credentialsRequired: false,
     algorithms: ["RS256"],
     secret: Environment.JWTSecret() || "Environment.JWT_SECRET"
   },
   test: {
-    expirationTimeInSeconds,
+    expirationTime,
     credentialsRequired: false,
     algorithms: ["RS256"],
     secret: Environment.JWTSecret() || "Environment.JWT_SECRET"
@@ -42,7 +42,7 @@ export const JWTConfig: IJWTConfig = {
 }[Environment.NODE_ENV()];
 
 interface IJWTConfig {
-  expirationTimeInSeconds: (tokenType: JWTTokenType) => string;
+  expirationTime: (tokenType: JWTTokenType) => string;
   credentialsRequired: boolean;
   algorithms: Algorithm[];
   secret: string;

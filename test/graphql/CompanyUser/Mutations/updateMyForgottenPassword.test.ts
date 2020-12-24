@@ -107,7 +107,7 @@ describe("updateMyForgottenPassword", () => {
   });
 
   it("returns an error if the token expires", async () => {
-    jest.spyOn(JWTConfig, "expirationTimeInSeconds").mockImplementation(() => "0d");
+    jest.spyOn(JWTConfig, "expirationTime").mockImplementation(() => "0d");
     const { user } = await TestClientGenerator.company();
     const apolloClient = client.loggedOut();
     const variables = await generateVariables({ user });
