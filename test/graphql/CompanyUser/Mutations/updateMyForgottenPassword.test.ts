@@ -137,7 +137,7 @@ describe("updateMyForgottenPassword", () => {
     expect(persistedUser.credentials).toBeInstanceOf(FiubaCredentials);
   });
 
-  it("returns an error if there is a current user from a approved company", async () => {
+  it("returns an error if an approved company user is already logged in", async () => {
     const expressContext = userTokenAssertions.createExpressContext();
     const { apolloClient, user } = await TestClientGenerator.company({
       status: ApprovalStatus.approved,
@@ -148,7 +148,7 @@ describe("updateMyForgottenPassword", () => {
     userTokenAssertions.expectCookieToBeRemoved(expressContext);
   });
 
-  it("returns an error if there is a current user from a pending company", async () => {
+  it("returns an error if a pending company user is already logged in", async () => {
     const expressContext = userTokenAssertions.createExpressContext();
     const { apolloClient, user } = await TestClientGenerator.company({
       status: ApprovalStatus.pending,
@@ -159,7 +159,7 @@ describe("updateMyForgottenPassword", () => {
     userTokenAssertions.expectCookieToBeRemoved(expressContext);
   });
 
-  it("returns an error if there is a current user from a rejected company", async () => {
+  it("returns an error if a rejected company user is already logged in", async () => {
     const expressContext = userTokenAssertions.createExpressContext();
     const { apolloClient, user } = await TestClientGenerator.company({
       status: ApprovalStatus.rejected,
@@ -170,7 +170,7 @@ describe("updateMyForgottenPassword", () => {
     userTokenAssertions.expectCookieToBeRemoved(expressContext);
   });
 
-  it("returns an error if there is an approved applicant current user", async () => {
+  it("returns an error if an approved applicant user is already logged in", async () => {
     const expressContext = userTokenAssertions.createExpressContext();
     const { apolloClient, user } = await TestClientGenerator.applicant({
       status: ApprovalStatus.approved,
@@ -181,7 +181,7 @@ describe("updateMyForgottenPassword", () => {
     userTokenAssertions.expectCookieToBeRemoved(expressContext);
   });
 
-  it("returns an error if there is a rejected applicant current user", async () => {
+  it("returns an error if a rejected applicant user is already logged in", async () => {
     const expressContext = userTokenAssertions.createExpressContext();
     const { apolloClient, user } = await TestClientGenerator.applicant({
       status: ApprovalStatus.rejected,
@@ -192,7 +192,7 @@ describe("updateMyForgottenPassword", () => {
     userTokenAssertions.expectCookieToBeRemoved(expressContext);
   });
 
-  it("returns an error if there is a pending applicant current user", async () => {
+  it("returns an error if a pending applicant user is already logged in", async () => {
     const expressContext = userTokenAssertions.createExpressContext();
     const { apolloClient, user } = await TestClientGenerator.applicant({
       status: ApprovalStatus.pending,
@@ -203,7 +203,7 @@ describe("updateMyForgottenPassword", () => {
     userTokenAssertions.expectCookieToBeRemoved(expressContext);
   });
 
-  it("returns an error if there is an extension admin current user", async () => {
+  it("returns an error if an extension admin user is already logged in", async () => {
     const expressContext = userTokenAssertions.createExpressContext();
     const { apolloClient, user } = await TestClientGenerator.admin({
       secretary: Secretary.extension,
@@ -214,7 +214,7 @@ describe("updateMyForgottenPassword", () => {
     userTokenAssertions.expectCookieToBeRemoved(expressContext);
   });
 
-  it("returns an error if there is a graduados admin current user", async () => {
+  it("returns an error if a graduados admin user is already logged in", async () => {
     const expressContext = userTokenAssertions.createExpressContext();
     const { apolloClient, user } = await TestClientGenerator.admin({
       secretary: Secretary.graduados,
