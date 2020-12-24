@@ -4,7 +4,6 @@ import { GraphQLAdminSettings } from "../Types/GraphQLAdminSettings";
 import { GraphQLInt, GraphQLString } from "graphql/type/scalars";
 import { AdminRepository } from "$models/Admin";
 import { SecretarySettingsRepository } from "$models/SecretarySettings/Repository";
-import { AdminSettings } from "$models/AdminSettings";
 
 export const updateAdminSettings = {
   type: GraphQLAdminSettings,
@@ -26,7 +25,7 @@ export const updateAdminSettings = {
 
     const secretarySettings = await SecretarySettingsRepository.findBySecretary(admin.secretary);
     secretarySettings.set(variables);
-    return new AdminSettings(await SecretarySettingsRepository.save(secretarySettings));
+    return await SecretarySettingsRepository.save(secretarySettings);
   }
 };
 

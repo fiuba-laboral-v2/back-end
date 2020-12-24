@@ -24,4 +24,3 @@ export { UserSequelizeModel } from "./User/Model";
 export { CompanyUser } from "./CompanyUser/Model";
 export { CompanyNotificationSequelizeModel } from "./CompanyNotification/Model";
 export { SecretarySettings } from "./SecretarySettings/Model";
-export { AdminSettings } from "./AdminSettings/Model";
