@@ -10,7 +10,7 @@ import { JWTConfig } from "./config";
 import { Logger } from "./libs/Logger";
 
 export const JWT = {
-  createToken: async (user: User) => {
+  createToken: async (user: User, expiresIn?: string) => {
     const admin = await AdminRepository.findByUserUuidIfExists(user.uuid!);
     const applicant = await ApplicantRepository.findByUserUuidIfExists(user.uuid!);
     const companyUser = await CompanyUserRepository.findByUserUuidIfExists(user.uuid!);
@@ -24,7 +24,7 @@ export const JWT = {
       })
     };
 
-    return sign(payload, JWTConfig.secret, { expiresIn: JWTConfig.expiresIn });
+    return sign(payload, JWTConfig.secret, { expiresIn: expiresIn || JWTConfig.expiresIn });
   },
   decodeToken: (token: string): CurrentUser | undefined => {
     try {
@@ -42,6 +42,5 @@ export const JWT = {
         algorithms: JWTConfig.algorithms
       })
     );
-  },
-  extractTokenPayload: (token: string): CurrentUser | undefined => JWT.decodeToken(token)
+  }
 };

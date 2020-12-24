@@ -14,7 +14,7 @@ export const ApolloServer = new Server({
   context: (expressContext: ExpressContext) => {
     expressContext.res.header({ "Access-Control-Allow-Origin": FrontendConfig.baseUrl });
     const token = expressContext.req.cookies[CookieConfig.cookieName] || "";
-    const currentUser = token && JWT.extractTokenPayload(token);
+    const currentUser = token && JWT.decodeToken(token);
     const apolloServerContext: Context = {
       ...(currentUser && { currentUser: currentUser }),
       ...expressContext
