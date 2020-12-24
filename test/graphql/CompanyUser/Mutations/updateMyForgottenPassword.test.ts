@@ -14,6 +14,7 @@ import { CareerRepository } from "$models/Career";
 
 import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyUserNotFoundError } from "$models/CompanyUser";
+import { JWTConfig } from "$config";
 
 const UPDATE_MY_FORGOTTEN_PASSWORD = gql`
   mutation UpdateMyForgottenPassword($token: String!, $newPassword: String!) {
@@ -26,7 +27,6 @@ const UPDATE_MY_FORGOTTEN_PASSWORD = gql`
 
 interface IGenerateVariables {
   newPassword?: string;
-  expiresIn?: string;
   user: User;
 }
 
@@ -40,8 +40,8 @@ describe("updateMyForgottenPassword", () => {
   const performQuery = (apolloClient: TestClient, variables: IUpdateMyForgottenPassword) =>
     apolloClient.mutate({ mutation: UPDATE_MY_FORGOTTEN_PASSWORD, variables });
 
-  const generateVariables = async ({ user, expiresIn, newPassword }: IGenerateVariables) => {
-    const token = await JWT.createToken(user, expiresIn);
+  const generateVariables = async ({ user, newPassword }: IGenerateVariables) => {
+    const token = await JWT.createToken(user, "recoverPassword");
     return {
       token: token,
       newPassword: newPassword || "AValidPassword000"
@@ -109,9 +109,10 @@ describe("updateMyForgottenPassword", () => {
   });
 
   it("returns an error if the token expires", async () => {
+    jest.spyOn(JWTConfig, "expirationTimeInSeconds").mockImplementation(() => "0d");
     const { user } = await TestClientGenerator.company();
     const apolloClient = client.loggedOut();
-    const variables = await generateVariables({ user, expiresIn: "0d" });
+    const variables = await generateVariables({ user });
     const { errors } = await performQuery(apolloClient, variables);
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });

@@ -17,7 +17,7 @@ export const companyLogin = {
   resolve: async (_: undefined, { email, password }: ILogin, { res: expressResponse }: Context) => {
     const user = await UserRepository.findCompanyUserByEmail(email);
     await user.credentials.authenticate(password);
-    const token = await JWT.createToken(user);
+    const token = await JWT.createToken(user, "login");
     expressResponse.cookie(CookieConfig.cookieName, token, CookieConfig.cookieOptions);
   }
 };
