@@ -216,6 +216,12 @@ export const defaultTranslations = {
     newPassword: "Nueva contraseña",
     newPasswordConfirm: "Confirmar nueva contraseña"
   },
+  passwordRecovery: {
+    title: "Solicitud de recuperación de contraseña",
+    emailHelperText: "Se enviará un mail con un link para cambiar tu contraseña",
+    submit: "Guardar",
+    email: "Email"
+  },
   companySignUp: {
     title: "Crear tu cuenta",
     submit: "Guardar"
@@ -627,6 +633,15 @@ export const defaultTranslations = {
   updatedCompanyProfileAdminNotificationEmail: {
     subject: "Perfil de empresa actualizado",
     body: "El perfil de la empresa '<%= companyName %>' (<%= companyLink %>) ha sido actualizado."
+  },
+  passwordRecoveryEmail: {
+    subject: "Recuperación de contraseña",
+    body:
+      "Usted ha solicitado la recuperación de su contraseña." +
+      "\n" +
+      "Haga click en el siguiente link para realizar el cambio." +
+      "\n" +
+      "<%= passwordRecoveryLink %>"
   },
   emailSignature: {
     graduados: "Bolsa de Trabajo FIUBA.",
