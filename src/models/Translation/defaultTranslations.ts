@@ -399,7 +399,8 @@ export const defaultTranslations = {
     cuit: "CUIT:"
   },
   adminApplicantDetails: {
-    padron: "Padrón:"
+    padron: "Padrón:",
+    dni: "DNI:"
   },
   adminActions: {
     approve: "Aprobar",
