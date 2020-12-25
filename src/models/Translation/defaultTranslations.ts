@@ -216,6 +216,11 @@ export const defaultTranslations = {
     newPassword: "Nueva contraseña",
     newPasswordConfirm: "Confirmar nueva contraseña"
   },
+  passwordRecovery: {
+    title: "Solicitud de recuperación de contraseña",
+    submit: "Guardar",
+    email: "Email"
+  },
   companySignUp: {
     title: "Crear tu cuenta",
     submit: "Guardar"
