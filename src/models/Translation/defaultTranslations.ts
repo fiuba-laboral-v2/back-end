@@ -408,6 +408,9 @@ export const defaultTranslations = {
     padron: "Padrón:",
     dni: "DNI:"
   },
+  openDetailIcon: {
+    seeDetailTooltipMessage: "Ver detalle"
+  },
   adminActions: {
     approve: "Aprobar",
     reject: "Rechazar",
