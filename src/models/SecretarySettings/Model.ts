@@ -21,4 +21,7 @@ export class SecretarySettings extends Model<SecretarySettings> {
   @Is("email", validateEmail)
   @Column({ type: STRING, allowNull: false })
   public email: string;
+
+  @Column({ type: STRING, allowNull: false })
+  public emailSignature: string;
 }

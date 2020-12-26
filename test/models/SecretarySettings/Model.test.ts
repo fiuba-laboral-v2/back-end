@@ -9,7 +9,8 @@ describe("SecretarySettings", () => {
     const secretarySettingsAttributes = {
       secretary: Secretary.extension,
       offerDurationInDays: 15,
-      email: "extension@fi.uba.ar"
+      email: "extension@fi.uba.ar",
+      emailSignature: "FIUBA desea feliz navidad"
     };
     const secretarySettings = new SecretarySettings(secretarySettingsAttributes);
     await expect(secretarySettings.validate()).resolves.not.toThrow();
@@ -20,11 +21,24 @@ describe("SecretarySettings", () => {
     const secretarySettingsAttributes = {
       secretary: Secretary.graduados,
       offerDurationInDays: 1,
-      email: "graduados@fi.uba.ar"
+      email: "graduados@fi.uba.ar",
+      emailSignature: "FIUBA desea feliz año nuevo"
     };
     const secretarySettings = new SecretarySettings(secretarySettingsAttributes);
     await expect(secretarySettings.validate()).resolves.not.toThrow();
     expect(secretarySettings).toBeObjectContaining(secretarySettingsAttributes);
+  });
+
+  it("throws an error if no emailSignature is provided", async () => {
+    const secretarySettings = new SecretarySettings({
+      secretary: Secretary.graduados,
+      offerDurationInDays: 8,
+      email: "graduados@fi.uba.ar"
+    });
+    await expect(secretarySettings.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      "notNull Violation: SecretarySettings.emailSignature cannot be null"
+    );
   });
 
   it("throws an error if no secretary is provided", async () => {
