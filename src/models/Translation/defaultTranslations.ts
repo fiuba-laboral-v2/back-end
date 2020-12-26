@@ -411,6 +411,9 @@ export const defaultTranslations = {
   openDetailIcon: {
     seeDetailTooltipMessage: "Ver detalle"
   },
+  adminCompanyDetail: {
+    seeUsersButton: "Ver usuarios"
+  },
   adminActions: {
     approve: "Aprobar",
     reject: "Rechazar",
