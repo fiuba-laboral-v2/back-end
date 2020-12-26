@@ -12,7 +12,5 @@ export const setupDatabase = () => {
     await SecretarySettingsGenerator.createDefaultSettings();
     await SharedSettingsGenerator.createDefaultSettings();
   });
-  afterAll(() => {
-    Database.close();
-  });
+  afterAll(() => Database.close());
 };
