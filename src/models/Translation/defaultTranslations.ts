@@ -405,7 +405,11 @@ export const defaultTranslations = {
     cuit: "CUIT:"
   },
   adminApplicantDetails: {
-    padron: "Padrón:"
+    padron: "Padrón:",
+    dni: "DNI:"
+  },
+  openDetailIcon: {
+    seeDetailTooltipMessage: "Ver detalle"
   },
   adminActions: {
     approve: "Aprobar",
