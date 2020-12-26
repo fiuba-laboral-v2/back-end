@@ -45,7 +45,7 @@ export const updateAdminSettings = {
     const secretarySettings = await SecretarySettingsRepository.findBySecretary(admin.secretary);
     secretarySettings.set({ offerDurationInDays, email, emailSignature });
     SecretarySettingsRepository.save(secretarySettings);
-    const sharedSettings = await SharedSettingsRepository.find();
+    const sharedSettings = await SharedSettingsRepository.fetch();
     sharedSettings.set({
       companySignUpAcceptanceCriteria,
       companyEditableAcceptanceCriteria,

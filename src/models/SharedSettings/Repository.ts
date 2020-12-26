@@ -5,7 +5,7 @@ import { SharedSettings } from "./Model";
 export const SharedSettingsRepository = {
   save: (secretarySettings: SharedSettings, transaction?: Transaction) =>
     secretarySettings.save({ transaction }),
-  find: async () => {
+  fetch: async () => {
     const secretarySettings = await SharedSettings.findOne();
     if (!secretarySettings) throw new SharedSettingsNotFoundError();
     return secretarySettings;

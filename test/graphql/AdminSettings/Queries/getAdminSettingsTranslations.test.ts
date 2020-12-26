@@ -18,7 +18,7 @@ describe("getAdminSettingsTranslations", () => {
   const editOfferAcceptanceCriteria = "edit offer acceptance criteria";
 
   beforeAll(async () => {
-    const sharedSettings = await SharedSettingsRepository.find();
+    const sharedSettings = await SharedSettingsRepository.fetch();
     sharedSettings.companySignUpAcceptanceCriteria = companySignUpAcceptanceCriteria;
     sharedSettings.companyEditableAcceptanceCriteria = companyEditableAcceptanceCriteria;
     sharedSettings.editOfferAcceptanceCriteria = editOfferAcceptanceCriteria;

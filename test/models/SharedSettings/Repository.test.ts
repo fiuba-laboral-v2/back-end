@@ -12,7 +12,7 @@ describe("SharedSettingsRepository", () => {
       editOfferAcceptanceCriteria: "editOfferCriteria"
     });
     await SharedSettingsRepository.save(sharedSettings);
-    const savedSecretarySettings = await SharedSettingsRepository.find();
+    const savedSecretarySettings = await SharedSettingsRepository.fetch();
 
     expect(savedSecretarySettings).toBeObjectContaining({
       companySignUpAcceptanceCriteria: "signUpCriteria",
@@ -23,7 +23,7 @@ describe("SharedSettingsRepository", () => {
 
   it("throws an error if there are no settings", async () => {
     await SharedSettingsRepository.truncate();
-    await expect(SharedSettingsRepository.find()).rejects.toThrowErrorWithMessage(
+    await expect(SharedSettingsRepository.fetch()).rejects.toThrowErrorWithMessage(
       SharedSettingsNotFoundError,
       "SharedSettings not present. Please check if the table was populated using the seeders"
     );

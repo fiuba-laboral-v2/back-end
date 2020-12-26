@@ -638,7 +638,7 @@ export const defaultTranslations = {
     offerDurationInDays: "Días hasta la expiración de una oferta",
     email: "Email de la secretaría",
     emailHelper: "Para contacto de alumnos, graduados y empresas",
-    emailSignature: "Firma de los email",
+    emailSignature: "Firma de los emails",
     emailSignatureHelper:
       "Se va a agregar al final de todos los emails que resulten de la acción de un admin de tu secretaría.\nPor ejemplo, la aprobación de una empresa.",
     infoMessage:

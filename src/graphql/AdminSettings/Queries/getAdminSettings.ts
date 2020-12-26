@@ -10,7 +10,7 @@ export const getAdminSettings = {
     const adminUserUuid = currentUser.getAdminRole().adminUserUuid;
     const admin = await AdminRepository.findByUserUuid(adminUserUuid);
     const secretarySettings = await SecretarySettingsRepository.findBySecretary(admin.secretary);
-    const sharedSettings = await SharedSettingsRepository.find();
+    const sharedSettings = await SharedSettingsRepository.fetch();
     return {
       offerDurationInDays: secretarySettings.offerDurationInDays,
       email: secretarySettings.email,

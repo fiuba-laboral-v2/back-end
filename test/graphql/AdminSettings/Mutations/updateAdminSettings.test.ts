@@ -77,7 +77,7 @@ describe("updateAdminSettings", () => {
         companySignUpAcceptanceCriteria,
         companyEditableAcceptanceCriteria,
         editOfferAcceptanceCriteria
-      } = await SharedSettingsRepository.find();
+      } = await SharedSettingsRepository.fetch();
 
       expect(offerDurationInDays).not.toEqual(newOfferDurationInDays);
       expect(email).not.toEqual(newEmail);
@@ -115,7 +115,7 @@ describe("updateAdminSettings", () => {
         email: newEmail,
         emailSignature: newEmailSignature
       });
-      expect(await SharedSettingsRepository.find()).toBeObjectContaining({
+      expect(await SharedSettingsRepository.fetch()).toBeObjectContaining({
         companySignUpAcceptanceCriteria: newCompanySignUpAcceptanceCriteria,
         companyEditableAcceptanceCriteria: newCompanyEditableAcceptanceCriteria,
         editOfferAcceptanceCriteria: newEditOfferAcceptanceCriteria
@@ -132,7 +132,7 @@ describe("updateAdminSettings", () => {
         companySignUpAcceptanceCriteria,
         companyEditableAcceptanceCriteria,
         editOfferAcceptanceCriteria
-      } = await SharedSettingsRepository.find();
+      } = await SharedSettingsRepository.fetch();
 
       const { errors } = await graduadosApolloClient.mutate({
         mutation: UPDATE_ADMIN_SETTINGS,
@@ -155,7 +155,7 @@ describe("updateAdminSettings", () => {
         companySignUpAcceptanceCriteria: updatedCompanySignUpAcceptanceCriteria,
         companyEditableAcceptanceCriteria: updatedCompanyEditableAcceptanceCriteria,
         editOfferAcceptanceCriteria: updatedEditOfferAcceptanceCriteria
-      } = await SharedSettingsRepository.find();
+      } = await SharedSettingsRepository.fetch();
 
       expect(errors).toBeUndefined();
       expect(offerDurationInDays).toEqual(updatedOfferDuration);
@@ -187,7 +187,7 @@ describe("updateAdminSettings", () => {
         companySignUpAcceptanceCriteria,
         companyEditableAcceptanceCriteria,
         editOfferAcceptanceCriteria
-      } = await SharedSettingsRepository.find();
+      } = await SharedSettingsRepository.fetch();
 
       expect(offerDurationInDays).not.toEqual(newOfferDurationInDays);
       expect(email).not.toEqual(newEmail);
@@ -225,7 +225,7 @@ describe("updateAdminSettings", () => {
         email: newEmail,
         emailSignature: newEmailSignature
       });
-      expect(await SharedSettingsRepository.find()).toBeObjectContaining({
+      expect(await SharedSettingsRepository.fetch()).toBeObjectContaining({
         companySignUpAcceptanceCriteria: newCompanySignUpAcceptanceCriteria,
         companyEditableAcceptanceCriteria: newCompanyEditableAcceptanceCriteria,
         editOfferAcceptanceCriteria: newEditOfferAcceptanceCriteria
@@ -242,7 +242,7 @@ describe("updateAdminSettings", () => {
         companySignUpAcceptanceCriteria,
         companyEditableAcceptanceCriteria,
         editOfferAcceptanceCriteria
-      } = await SharedSettingsRepository.find();
+      } = await SharedSettingsRepository.fetch();
 
       const { errors } = await extensionApolloClient.mutate({
         mutation: UPDATE_ADMIN_SETTINGS,
@@ -265,7 +265,7 @@ describe("updateAdminSettings", () => {
         companySignUpAcceptanceCriteria: updatedCompanySignUpAcceptanceCriteria,
         companyEditableAcceptanceCriteria: updatedCompanyEditableAcceptanceCriteria,
         editOfferAcceptanceCriteria: updatedEditOfferAcceptanceCriteria
-      } = await SharedSettingsRepository.find();
+      } = await SharedSettingsRepository.fetch();
 
       expect(errors).toBeUndefined();
       expect(offerDurationInDays).toEqual(updatedOfferDuration);

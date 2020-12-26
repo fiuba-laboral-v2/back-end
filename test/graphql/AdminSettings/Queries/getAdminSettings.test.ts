@@ -53,7 +53,7 @@ describe("getAdminSettings", () => {
       companySignUpAcceptanceCriteria,
       companyEditableAcceptanceCriteria,
       editOfferAcceptanceCriteria
-    } = await SharedSettingsRepository.find();
+    } = await SharedSettingsRepository.fetch();
 
     expect(errors).toBeUndefined();
     expect(data!.getAdminSettings).toEqual({
@@ -80,7 +80,7 @@ describe("getAdminSettings", () => {
       companySignUpAcceptanceCriteria,
       companyEditableAcceptanceCriteria,
       editOfferAcceptanceCriteria
-    } = await SharedSettingsRepository.find();
+    } = await SharedSettingsRepository.fetch();
 
     expect(errors).toBeUndefined();
     expect(data!.getAdminSettings).toEqual({
