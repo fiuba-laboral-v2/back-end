@@ -1,19 +1,14 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist/createTestClient";
-
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
-
 import { EmailService } from "$services/Email";
 import { CompanyRepository } from "$models/Company";
 import { AdminNotificationRepository } from "$models/AdminNotification";
 import { UserRepository } from "$models/User";
-import { SecretarySettingsRepository } from "$models/SecretarySettings";
-
 import { TestClientGenerator } from "$generators/TestClient";
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { UUID_REGEX } from "$test/models";
 
 const UPDATE_CURRENT_COMPANY = gql`
@@ -51,9 +46,6 @@ describe("updateCurrentCompany", () => {
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
-    await SecretarySettingsRepository.truncate();
-
-    await SecretarySettingsGenerator.createDefaultSettings();
   });
 
   beforeEach(() => {

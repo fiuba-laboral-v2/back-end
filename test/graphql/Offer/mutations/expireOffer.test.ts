@@ -1,22 +1,17 @@
 import { gql } from "apollo-server";
 import { ApolloServerTestClient as TestClient } from "apollo-server-testing";
-
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Offer } from "$models";
-
 import { TestClientGenerator } from "$generators/TestClient";
 import { IForAllTargets, OfferGenerator } from "$test/generators/Offer";
-
 import { ApplicantType } from "$models/Applicant";
 import moment from "moment";
 import { client } from "$test/graphql/ApolloTestClient";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { UUID } from "$models/UUID";
 import { OfferNotFoundError, OfferRepository } from "$models/Offer";
-import { SecretarySettingsGenerator } from "$test/generators/SecretarySettings";
-import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
 const EXPIRE_OFFER = gql`
   mutation($uuid: ID!) {
@@ -38,9 +33,6 @@ describe("expireOffer", () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     await OfferRepository.truncate();
-    await SecretarySettingsRepository.truncate();
-
-    await SecretarySettingsGenerator.createDefaultSettings();
 
     ({ apolloClient: companyApolloClient, company } = await TestClientGenerator.company({
       status: ApprovalStatus.approved

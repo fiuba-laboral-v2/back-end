@@ -5,6 +5,7 @@ import { Sender } from "$services/EmailSender/Sender";
 import { UserRepository } from "$models/User";
 import { TranslationRepository } from "$models/Translation";
 import { template } from "lodash";
+import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
 const getReceiverEmails = async (companyUuid: string) => {
   const companyUsers = await CompanyUserRepository.findByCompanyUuid(companyUuid);
@@ -19,7 +20,7 @@ export const CompanyNotificationEmailSender = {
     emailTranslationGroup: string
   ) => {
     const { subject, body } = TranslationRepository.translate(emailTranslationGroup);
-    const signature = await TranslationRepository.findSignatureByAdmin(notification.moderatorUuid);
+    const settings = await SecretarySettingsRepository.findByAdminUuid(notification.moderatorUuid);
     const receiverEmails = await getReceiverEmails(notification.notifiedCompanyUuid);
     const sender = await Sender.findByAdmin(notification.moderatorUuid);
 
@@ -27,7 +28,7 @@ export const CompanyNotificationEmailSender = {
       receiverEmails,
       sender,
       subject,
-      body: template(body)(bodyTemplate(signature))
+      body: template(body)(bodyTemplate(settings.emailSignature))
     });
   }
 };

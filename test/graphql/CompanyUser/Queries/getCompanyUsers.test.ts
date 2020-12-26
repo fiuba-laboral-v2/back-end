@@ -1,18 +1,13 @@
 import { gql } from "apollo-server";
 import { client } from "$test/graphql/ApolloTestClient";
 import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist/createTestClient";
-
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
-
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
-import { SecretarySettingsRepository } from "$models/SecretarySettings";
-
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyUserGenerator } from "$generators/CompanyUser";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
@@ -36,9 +31,6 @@ describe("getCompanyUsers", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
-    await SecretarySettingsRepository.truncate();
-
-    await SecretarySettingsGenerator.createDefaultSettings();
   });
 
   const performQuery = (apolloClient: TestClient, updatedBeforeThan?: IPaginatedInput) => {

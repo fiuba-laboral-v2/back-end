@@ -12,14 +12,11 @@ import { Career, Offer } from "$models";
 import { IApplicantCareer } from "$models/Applicant/ApplicantCareer";
 import { IOfferCareer } from "$models/Offer/OfferCareer";
 import { UnauthorizedError } from "$graphql/Errors";
-
 import { CareerGenerator } from "$generators/Career";
 import { CompanyGenerator } from "$generators/Company";
 import { OfferGenerator } from "$generators/Offer";
 import { TestClientGenerator } from "$generators/TestClient";
 import { AdminGenerator } from "$generators/Admin";
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
-
 import { range } from "lodash";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import moment from "moment";
@@ -73,9 +70,6 @@ describe("getApprovedOffers", () => {
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await UserRepository.truncate();
-    await SecretarySettingsRepository.truncate();
-
-    await SecretarySettingsGenerator.createDefaultSettings();
     firstCareer = await CareerGenerator.instance();
     secondCareer = await CareerGenerator.instance();
 

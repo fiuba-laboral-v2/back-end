@@ -642,10 +642,6 @@ export const defaultTranslations = {
       "\n" +
       "<%= passwordRecoveryLink %>"
   },
-  emailSignature: {
-    graduados: "Bolsa de Trabajo FIUBA.",
-    extension: "Bolsa de Trabajo FIUBA."
-  },
   adminSettings: {
     title: "Configuración",
     submit: "Guardar",

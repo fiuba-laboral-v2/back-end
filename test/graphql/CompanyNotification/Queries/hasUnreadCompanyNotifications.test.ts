@@ -1,18 +1,13 @@
 import { gql } from "apollo-server";
 import { client } from "$test/graphql/ApolloTestClient";
 import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist/createTestClient";
-
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CompanyNotificationRepository } from "$models/CompanyNotification";
 import { CareerRepository } from "$models/Career";
-import { SecretarySettingsRepository } from "$models/SecretarySettings";
-
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
-
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyNotificationGenerator } from "$generators/CompanyNotification";
 
@@ -27,9 +22,6 @@ describe("hasUnreadCompanyNotifications", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
-    await SecretarySettingsRepository.truncate();
-
-    await SecretarySettingsGenerator.createDefaultSettings();
   });
 
   const createCompanyTestClient = (approvalStatus: ApprovalStatus) =>

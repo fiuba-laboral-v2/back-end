@@ -4,7 +4,6 @@ import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { OfferRepository } from "$models/Offer";
-import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { ApplicantNotificationRepository } from "$models/ApplicantNotification";
 import { CompanyNotificationRepository } from "$models/CompanyNotification";
@@ -13,10 +12,8 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { EmailService } from "$services/Email";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { MissingModeratorMessageError } from "$models/Notification";
-
 import { TestClientGenerator } from "$generators/TestClient";
 import { JobApplicationGenerator } from "$generators/JobApplication";
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { UUID_REGEX } from "$test/models";
 
 const UPDATE_JOB_APPLICATION_APPROVAL_STATUS = gql`
@@ -44,9 +41,6 @@ describe("updateJobApplicationApprovalStatus", () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     await CareerRepository.truncate();
-    await SecretarySettingsRepository.truncate();
-
-    await SecretarySettingsGenerator.createDefaultSettings();
   });
 
   beforeEach(() => {

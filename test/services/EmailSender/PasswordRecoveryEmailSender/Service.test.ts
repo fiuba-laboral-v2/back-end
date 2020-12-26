@@ -1,13 +1,10 @@
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
-import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { EmailService } from "$services/Email";
 import { PasswordRecoveryEmailSender } from "$services/EmailSender";
 import jsonWebToken from "jsonwebtoken";
-
 import { CompanyGenerator } from "$generators/Company";
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 
 describe("PasswordRecoveryEmailSender", () => {
   const emailSendMock = jest.fn();
@@ -17,9 +14,6 @@ describe("PasswordRecoveryEmailSender", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
-    await SecretarySettingsRepository.truncate();
-
-    await SecretarySettingsGenerator.createDefaultSettings();
   });
 
   beforeEach(() => {

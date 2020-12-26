@@ -16,14 +16,11 @@ import {
   ApprovedProfileApplicantNotification,
   RejectedProfileApplicantNotification
 } from "$models/ApplicantNotification";
-
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
-
 import { ApplicantNotificationGenerator } from "$generators/ApplicantNotification";
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { TestClientGenerator } from "$generators/TestClient";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 
@@ -80,9 +77,6 @@ describe("getApplicantNotifications", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
-    await SecretarySettingsRepository.truncate();
-
-    await SecretarySettingsGenerator.createDefaultSettings();
   });
 
   const performQuery = (apolloClient: TestClient, updatedBeforeThan?: IPaginatedInput) => {

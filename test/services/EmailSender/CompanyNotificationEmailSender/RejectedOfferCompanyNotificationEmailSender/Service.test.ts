@@ -5,11 +5,9 @@ import { OfferRepository } from "$models/Offer";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { EmailService } from "$services/Email";
 import { RejectedOfferCompanyNotificationEmailSender } from "$services/EmailSender";
-
 import { CompanyGenerator } from "$generators/Company";
 import { CompanyNotificationGenerator } from "$generators/CompanyNotification";
 import { AdminGenerator } from "$generators/Admin";
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 
 describe("RejectedOfferCompanyNotificationEmailSender", () => {
   const generator = CompanyNotificationGenerator.instance.rejectedOffer;
@@ -18,15 +16,12 @@ describe("RejectedOfferCompanyNotificationEmailSender", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
-    await SecretarySettingsRepository.truncate();
-
-    await SecretarySettingsGenerator.createDefaultSettings();
   });
 
   it("sends an email to all company users that an offer has been approved", async () => {
     const company = await CompanyGenerator.instance.withMinimumData();
     const [companyUser] = await UserRepository.findByCompanyUuid(company.uuid);
-    const admin = await AdminGenerator.graduados();
+    const admin = await AdminGenerator.extension();
     const adminUser = await UserRepository.findByUuid(admin.userUuid);
     const settings = await SecretarySettingsRepository.findBySecretary(admin.secretary);
     const notification = await generator({ company, admin });
@@ -50,7 +45,7 @@ describe("RejectedOfferCompanyNotificationEmailSender", () => {
             "\n" +
             `Motivo de rechazo: "${notification.moderatorMessage}"` +
             "\n\n" +
-            "Bolsa de Trabajo FIUBA."
+            "Extensión email signature"
         }
       ]
     ]);

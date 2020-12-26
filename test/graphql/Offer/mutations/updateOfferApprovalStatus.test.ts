@@ -1,7 +1,6 @@
 import { gql } from "apollo-server";
 import { ApolloServerTestClient as TestClient } from "apollo-server-testing";
 import { client } from "$test/graphql/ApolloTestClient";
-
 import { EmailService } from "$services/Email";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
@@ -17,15 +16,11 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Offer } from "$models";
 import { DateTimeManager } from "$libs/DateTimeManager";
 import { MissingModeratorMessageError } from "$models/Notification";
-
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { AdminCannotModerateOfferError, OfferNotFoundError } from "$models/Offer/Errors";
-
 import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyGenerator } from "$generators/Company";
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { IForAllTargets, OfferGenerator } from "$test/generators/Offer";
-
 import { UUID } from "$models/UUID";
 import { ApplicantType } from "$models/Applicant";
 import { UUID_REGEX } from "$test/models";
@@ -57,9 +52,6 @@ describe("updateOfferApprovalStatus", () => {
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
-    await SecretarySettingsRepository.truncate();
-
-    await SecretarySettingsGenerator.createDefaultSettings();
     const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
     offers = await OfferGenerator.instance.forAllTargets({
       status: ApprovalStatus.pending,

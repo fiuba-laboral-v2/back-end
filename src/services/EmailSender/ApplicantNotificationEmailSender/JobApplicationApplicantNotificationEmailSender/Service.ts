@@ -5,13 +5,13 @@ import {
 import { EmailService } from "$services/Email";
 import { Sender } from "$services/EmailSender/Sender";
 import { FrontEndLinksBuilder } from "$services/EmailSender/FrontEndLinksBuilder";
-
 import { ApplicantRepository } from "$models/Applicant";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { OfferRepository } from "$models/Offer";
 import { UserRepository } from "$models/User";
 import { TranslationRepository } from "$models/Translation";
 import { template } from "lodash";
+import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
 type JobApplicationApplicantNotification =
   | RejectedJobApplicationApplicantNotification
@@ -31,7 +31,7 @@ export const JobApplicationApplicantNotificationEmailSender = {
     );
     const offer = await OfferRepository.findByUuid(offerUuid);
     const { subject, body } = TranslationRepository.translate(emailTranslationGroup);
-    const signature = await TranslationRepository.findSignatureByAdmin(notification.moderatorUuid);
+    const settings = await SecretarySettingsRepository.findByAdminUuid(notification.moderatorUuid);
     const sender = await Sender.findByAdmin(notification.moderatorUuid);
 
     return EmailService.send({
@@ -42,7 +42,7 @@ export const JobApplicationApplicantNotificationEmailSender = {
         offerTitle: offer.title,
         offerLink: FrontEndLinksBuilder.applicant.offerLink(offer.uuid),
         ...getRejectionReason(notification),
-        signature
+        signature: settings.emailSignature
       })
     });
   }

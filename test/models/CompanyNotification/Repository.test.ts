@@ -20,14 +20,11 @@ import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { OfferRepository } from "$models/Offer";
-import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { Admin, Company, JobApplication, Offer } from "$models";
 import {
   CompanyNotificationNotFoundError,
   CompanyNotificationsNotUpdatedError
 } from "$models/CompanyNotification/Errors";
-
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { AdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
 import { JobApplicationGenerator } from "$generators/JobApplication";
@@ -47,9 +44,6 @@ describe("CompanyNotificationRepository", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
-    await SecretarySettingsRepository.truncate();
-
-    await SecretarySettingsGenerator.createDefaultSettings();
     extensionAdmin = await AdminGenerator.extension();
     company = await CompanyGenerator.instance.withMinimumData();
     offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
