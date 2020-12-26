@@ -13,22 +13,16 @@ export const updateAdminSettings = {
     },
     email: {
       type: nonNull(GraphQLString)
+    },
+    emailSignature: {
+      type: nonNull(GraphQLString)
     }
   },
-  resolve: async (
-    _: undefined,
-    variables: IMutationVariables,
-    { currentUser }: IApolloServerContext
-  ) => {
+  resolve: async (_: undefined, variables: object, { currentUser }: IApolloServerContext) => {
     const adminUserUuid = currentUser.getAdminRole().adminUserUuid;
     const admin = await AdminRepository.findByUserUuid(adminUserUuid);
-
     const secretarySettings = await SecretarySettingsRepository.findBySecretary(admin.secretary);
     secretarySettings.set(variables);
-    return await SecretarySettingsRepository.save(secretarySettings);
+    return SecretarySettingsRepository.save(secretarySettings);
   }
 };
-
-interface IMutationVariables {
-  offerDurationInDays: number;
-}

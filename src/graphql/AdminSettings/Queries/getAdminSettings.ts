@@ -8,6 +8,6 @@ export const getAdminSettings = {
   resolve: async (_: undefined, __: undefined, { currentUser }: IApolloServerContext) => {
     const adminUserUuid = currentUser.getAdminRole().adminUserUuid;
     const admin = await AdminRepository.findByUserUuid(adminUserUuid);
-    return await SecretarySettingsRepository.findBySecretary(admin.secretary);
+    return SecretarySettingsRepository.findBySecretary(admin.secretary);
   }
 };

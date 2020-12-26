@@ -11,6 +11,9 @@ export const GraphQLAdminSettings = new GraphQLObjectType<SecretarySettings>({
     },
     email: {
       type: nonNull(GraphQLString)
+    },
+    emailSignature: {
+      type: nonNull(GraphQLString)
     }
   })
 });
