@@ -377,6 +377,9 @@ export const defaultTranslations = {
   companyUsersListMainTitle: {
     title: "Usuarios"
   },
+  adminCompanyUsersListMainTitle: {
+    title: "Usuarios de"
+  },
   adminOfferListMainTitle: {
     title: "Ofertas laborales"
   },
