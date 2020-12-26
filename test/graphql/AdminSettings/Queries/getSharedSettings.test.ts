@@ -2,9 +2,9 @@ import { gql } from "apollo-server";
 import { SharedSettingsRepository } from "$models/SharedSettings";
 import { client } from "$test/graphql/ApolloTestClient";
 
-const GET_ADMIN_SETTINGS_TRANSLATIONS = gql`
+const GET_SHARED_SETTINGS = gql`
   query {
-    getAdminSettingsTranslations {
+    getSharedSettings {
       companySignUpAcceptanceCriteria
       companyEditableAcceptanceCriteria
       editOfferAcceptanceCriteria
@@ -12,7 +12,7 @@ const GET_ADMIN_SETTINGS_TRANSLATIONS = gql`
   }
 `;
 
-describe("getAdminSettingsTranslations", () => {
+describe("getSharedSettings", () => {
   const companySignUpAcceptanceCriteria = "sign up acceptance criteria";
   const companyEditableAcceptanceCriteria = "company editable acceptance criteria";
   const editOfferAcceptanceCriteria = "edit offer acceptance criteria";
@@ -26,11 +26,9 @@ describe("getAdminSettingsTranslations", () => {
   });
 
   it("gets admin settings for all permissions", async () => {
-    const { data, errors } = await client
-      .loggedOut()
-      .query({ query: GET_ADMIN_SETTINGS_TRANSLATIONS });
+    const { data, errors } = await client.loggedOut().query({ query: GET_SHARED_SETTINGS });
     expect(errors).toBeUndefined();
-    expect(data!.getAdminSettingsTranslations).toEqual({
+    expect(data!.getSharedSettings).toEqual({
       companySignUpAcceptanceCriteria,
       companyEditableAcceptanceCriteria,
       editOfferAcceptanceCriteria

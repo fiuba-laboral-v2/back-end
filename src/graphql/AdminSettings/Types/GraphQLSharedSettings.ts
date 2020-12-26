@@ -3,8 +3,8 @@ import { nonNull } from "$graphql/fieldTypes";
 import { GraphQLString } from "graphql/type/scalars";
 import { SharedSettings } from "$models";
 
-export const GraphQLAdminSettingsTranslations = new GraphQLObjectType<SharedSettings>({
-  name: "AdminSettingsTranslations",
+export const GraphQLSharedSettings = new GraphQLObjectType<SharedSettings>({
+  name: "SharedSettings",
   fields: () => ({
     companySignUpAcceptanceCriteria: {
       type: nonNull(GraphQLString)

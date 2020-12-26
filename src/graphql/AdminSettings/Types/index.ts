@@ -1,4 +1,4 @@
 import { GraphQLAdminSettings } from "./GraphQLAdminSettings";
-import { GraphQLAdminSettingsTranslations } from "$graphql/AdminSettings/Types/GraphQLAdminSettingsTranslations";
+import { GraphQLSharedSettings } from "$graphql/AdminSettings/Types/GraphQLSharedSettings";
 
-export const adminSettingsTypes = [GraphQLAdminSettings, GraphQLAdminSettingsTranslations];
+export const adminSettingsTypes = [GraphQLAdminSettings, GraphQLSharedSettings];

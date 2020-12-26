@@ -1,9 +1,9 @@
 import { getAdminSettings } from "./getAdminSettings";
-import { getAdminSettingsTranslations } from "./getAdminSettingsTranslations";
+import { getSharedSettings } from "./getSharedSettings";
 import { getSecretaryOfferDuration } from "./getSecretaryOfferDuration";
 
 export const adminSettingsQueries = {
   getAdminSettings,
-  getAdminSettingsTranslations,
+  getSharedSettings,
   getSecretaryOfferDuration
 };
