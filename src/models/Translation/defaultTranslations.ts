@@ -377,6 +377,9 @@ export const defaultTranslations = {
   companyUsersListMainTitle: {
     title: "Usuarios"
   },
+  adminCompanyUsersListMainTitle: {
+    title: "Usuarios de"
+  },
   adminOfferListMainTitle: {
     title: "Ofertas laborales"
   },
@@ -410,6 +413,9 @@ export const defaultTranslations = {
   },
   openDetailIcon: {
     seeDetailTooltipMessage: "Ver detalle"
+  },
+  adminCompanyDetail: {
+    seeUsersButton: "Ver usuarios"
   },
   adminActions: {
     approve: "Aprobar",
