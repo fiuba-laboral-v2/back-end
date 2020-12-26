@@ -1,7 +1,5 @@
 import { gql } from "apollo-server";
-import { SharedSettings } from "$models";
 import { SharedSettingsRepository } from "$models/SharedSettings";
-import { UUID } from "$models/UUID";
 import { client } from "$test/graphql/ApolloTestClient";
 
 const GET_ADMIN_SETTINGS_TRANSLATIONS = gql`
@@ -20,16 +18,12 @@ describe("getAdminSettingsTranslations", () => {
   const editOfferAcceptanceCriteria = "edit offer acceptance criteria";
 
   beforeAll(async () => {
-    await SharedSettingsRepository.save(
-      new SharedSettings({
-        uuid: UUID.generate(),
-        companySignUpAcceptanceCriteria,
-        companyEditableAcceptanceCriteria,
-        editOfferAcceptanceCriteria
-      })
-    );
+    const sharedSettings = await SharedSettingsRepository.find();
+    sharedSettings.companySignUpAcceptanceCriteria = companySignUpAcceptanceCriteria;
+    sharedSettings.companyEditableAcceptanceCriteria = companyEditableAcceptanceCriteria;
+    sharedSettings.editOfferAcceptanceCriteria = editOfferAcceptanceCriteria;
+    await SharedSettingsRepository.save(sharedSettings);
   });
-  afterAll(() => SharedSettings.truncate());
 
   it("gets admin settings for all permissions", async () => {
     const { data, errors } = await client

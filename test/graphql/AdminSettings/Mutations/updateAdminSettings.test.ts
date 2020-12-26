@@ -9,8 +9,6 @@ import { ApplicantRepository } from "$models/Applicant";
 import { UserRepository } from "$models/User";
 import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { SharedSettingsRepository } from "$models/SharedSettings";
-import { SharedSettings } from "$models";
-import { UUID } from "$models/UUID";
 
 const UPDATE_ADMIN_SETTINGS = gql`
   mutation updateAdminSettings(
@@ -48,14 +46,6 @@ describe("updateAdminSettings", () => {
     await CompanyRepository.truncate();
     await AdminRepository.truncate();
     await ApplicantRepository.truncate();
-    await SharedSettingsRepository.save(
-      new SharedSettings({
-        uuid: UUID.generate(),
-        companySignUpAcceptanceCriteria: "sign up criteria",
-        companyEditableAcceptanceCriteria: "company editable criteria",
-        editOfferAcceptanceCriteria: "edit offer criteria"
-      })
-    );
     ({ apolloClient: graduadosApolloClient } = await TestClientGenerator.admin({
       secretary: Secretary.graduados
     }));
@@ -67,7 +57,6 @@ describe("updateAdminSettings", () => {
   afterAll(async () => {
     await SecretarySettingsRepository.truncate();
     await SecretarySettingsGenerator.createDefaultSettings();
-    await SharedSettings.truncate();
   });
 
   describe("when the current user is an admin from graduados", () => {

@@ -51,7 +51,7 @@ export const updateAdminSettings = {
       companyEditableAcceptanceCriteria,
       editOfferAcceptanceCriteria
     });
-    SharedSettingsRepository.save(sharedSettings);
+    await SharedSettingsRepository.save(sharedSettings);
     return {
       offerDurationInDays: secretarySettings.offerDurationInDays,
       email: secretarySettings.email,

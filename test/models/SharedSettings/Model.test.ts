@@ -1,23 +1,20 @@
 import { ValidationError } from "sequelize";
 import { SharedSettings } from "$models";
-import { UUID } from "$models/UUID";
 
 describe("SharedSettings", () => {
   it("creates valid settings", async () => {
-    const secretarySettingsAttributes = {
-      uuid: UUID.generate(),
+    const sharedSettingsAttributes = {
       companySignUpAcceptanceCriteria: "signUp",
       companyEditableAcceptanceCriteria: "editCompany",
       editOfferAcceptanceCriteria: "editOffer"
     };
-    const secretarySettings = new SharedSettings(secretarySettingsAttributes);
+    const secretarySettings = new SharedSettings(sharedSettingsAttributes);
     await expect(secretarySettings.validate()).resolves.not.toThrow();
-    expect(secretarySettings).toBeObjectContaining(secretarySettingsAttributes);
+    expect(secretarySettings).toBeObjectContaining(sharedSettingsAttributes);
   });
 
   it("throws an error if no companySignUpAcceptanceCriteria is provided", async () => {
     const secretarySettings = new SharedSettings({
-      uuid: UUID.generate(),
       companyEditableAcceptanceCriteria: "editCompany",
       editOfferAcceptanceCriteria: "editOffer"
     });
@@ -29,7 +26,6 @@ describe("SharedSettings", () => {
 
   it("throws an error if no companyEditableAcceptanceCriteria is provided", async () => {
     const secretarySettings = new SharedSettings({
-      uuid: UUID.generate(),
       companySignUpAcceptanceCriteria: "signUp",
       editOfferAcceptanceCriteria: "editOffer"
     });
@@ -41,7 +37,6 @@ describe("SharedSettings", () => {
 
   it("throws an error if no editOfferAcceptanceCriteria is provided", async () => {
     const secretarySettings = new SharedSettings({
-      uuid: UUID.generate(),
       companySignUpAcceptanceCriteria: "signUp",
       companyEditableAcceptanceCriteria: "editCompany"
     });

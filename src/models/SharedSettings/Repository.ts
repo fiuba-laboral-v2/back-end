@@ -9,5 +9,6 @@ export const SharedSettingsRepository = {
     const secretarySettings = await SharedSettings.findOne();
     if (!secretarySettings) throw new SharedSettingsNotFoundError();
     return secretarySettings;
-  }
+  },
+  truncate: () => SharedSettings.truncate()
 };
