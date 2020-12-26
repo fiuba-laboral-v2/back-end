@@ -494,18 +494,6 @@ export const defaultTranslations = {
   list: {
     fetchMore: "Ver más"
   },
-  companySignUpAcceptanceCriteria: {
-    text: "Esta empresa estará pendiente de aprobación por personal de FIUBA"
-  },
-  companyEditableAcceptanceCriteria: {
-    text: "Esta empresa estará pendiente de aprobación por personal de FIUBA"
-  },
-  editOfferAcceptanceCriteria: {
-    text: "Esta oferta estará pendiente de aprobación por personal de FIUBA"
-  },
-  createOfferAcceptanceCriteria: {
-    text: "Esta oferta estará pendiente de aprobación por personal de FIUBA"
-  },
   multipleSearchSelector: {
     helperText: "Presionar Enter para agregar"
   },
@@ -654,6 +642,12 @@ export const defaultTranslations = {
     emailSignatureHelper:
       "Se va a agregar al final de todos los emails que resulten de la acción de un admin de tu secretaría.\nPor ejemplo, la aprobación de una empresa.",
     infoMessage:
-      'El email de la secretaría se va a dar a los usuarios como vía de contacto, y se van a enviar los emails automáticos a su nombre. Cualquier dirección que termine con "@fi.uba.ar" es válida. Procurar que la dirección no corresponda a un individuo sino a la secretaría.'
+      'El email de la secretaría se va a dar a los usuarios como vía de contacto, y se van a enviar los emails automáticos a su nombre. Cualquier dirección que termine con "@fi.uba.ar" es válida. Procurar que la dirección no corresponda a un individuo sino a la secretaría.',
+    sharedSettingsTitle: "Textos de ayuda",
+    sharedSettingsSubtitle:
+      "Los textos de ayuda se muestran junto al formulario para comunicar sobre qué se espera en un perfil de empresa o en una oferta para ser aprobadas. Son compartidos por las dos secretarías.",
+    companySignUpAcceptanceCriteria: "Registro de empresa",
+    companyEditableAcceptanceCriteria: "Edición de empresa",
+    editOfferAcceptanceCriteria: "Edición o creación de oferta"
   }
 };

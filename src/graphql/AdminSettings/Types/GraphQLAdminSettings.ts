@@ -1,9 +1,9 @@
 import { GraphQLObjectType } from "graphql";
 import { nonNull } from "$graphql/fieldTypes";
 import { GraphQLInt, GraphQLString } from "graphql/type/scalars";
-import { SecretarySettings } from "$models";
+import { SecretarySettings, SharedSettings } from "$models";
 
-export const GraphQLAdminSettings = new GraphQLObjectType<SecretarySettings>({
+export const GraphQLAdminSettings = new GraphQLObjectType<SecretarySettings & SharedSettings>({
   name: "AdminSettings",
   fields: () => ({
     offerDurationInDays: {
@@ -13,6 +13,15 @@ export const GraphQLAdminSettings = new GraphQLObjectType<SecretarySettings>({
       type: nonNull(GraphQLString)
     },
     emailSignature: {
+      type: nonNull(GraphQLString)
+    },
+    companySignUpAcceptanceCriteria: {
+      type: nonNull(GraphQLString)
+    },
+    companyEditableAcceptanceCriteria: {
+      type: nonNull(GraphQLString)
+    },
+    editOfferAcceptanceCriteria: {
       type: nonNull(GraphQLString)
     }
   })
