@@ -33,6 +33,12 @@ describe("WhereClauseBuilder", () => {
       AND
       (
         "Offers"."graduatesExpirationDateTime" > '${date}'
+        OR
+        (
+          "Offers"."graduatesExpirationDateTime" IS NULL
+          AND
+          "Offers"."graduadosApprovalStatus" = 'pending'
+        )
       ) 
     `);
   });
@@ -56,6 +62,12 @@ describe("WhereClauseBuilder", () => {
       AND
       (
         "Offers"."graduatesExpirationDateTime" > '${date}'
+        OR
+        (
+          "Offers"."graduatesExpirationDateTime" IS NULL
+          AND
+          "Offers"."graduadosApprovalStatus" = 'pending'
+        )
       ) 
     `);
   });
@@ -79,6 +91,12 @@ describe("WhereClauseBuilder", () => {
       AND
       (
         "Offers"."graduatesExpirationDateTime" > '${date}'
+        OR
+        (
+          "Offers"."graduatesExpirationDateTime" IS NULL
+          AND
+          "Offers"."graduadosApprovalStatus" = 'pending'
+        )
       ) 
     `);
   });
@@ -102,6 +120,12 @@ describe("WhereClauseBuilder", () => {
       AND
       (
         "Offers"."studentsExpirationDateTime" > '${date}'
+        OR
+        (
+          "Offers"."studentsExpirationDateTime" IS NULL
+          AND
+          "Offers"."extensionApprovalStatus" = 'pending'
+        )
       ) 
     `);
   });
@@ -126,6 +150,12 @@ describe("WhereClauseBuilder", () => {
       (
 
         "Offers"."studentsExpirationDateTime" > '${date}'
+        OR
+        (
+          "Offers"."studentsExpirationDateTime" IS NULL
+          AND
+          "Offers"."extensionApprovalStatus" = 'pending'
+        )
       ) 
     `);
   });
@@ -149,6 +179,12 @@ describe("WhereClauseBuilder", () => {
       AND
       (
         "Offers"."studentsExpirationDateTime" > '${date}'
+        OR
+        (
+          "Offers"."studentsExpirationDateTime" IS NULL
+          AND
+          "Offers"."extensionApprovalStatus" = 'pending'
+        )
       ) 
     `);
   });
@@ -345,7 +381,13 @@ describe("WhereClauseBuilder", () => {
       )
       AND
       (
-        "Offers"."studentsExpirationDateTime" > '${date}' 
+        "Offers"."studentsExpirationDateTime" > '${date}'
+        OR
+        (
+          "Offers"."studentsExpirationDateTime" IS NULL
+          AND
+          "Offers"."extensionApprovalStatus" = 'pending'
+        )
       )
     `);
   });
@@ -374,7 +416,13 @@ describe("WhereClauseBuilder", () => {
       )
       AND
       (
-        "Offers"."studentsExpirationDateTime" > '${date}' 
+        "Offers"."studentsExpirationDateTime" > '${date}'
+        OR
+        (
+          "Offers"."studentsExpirationDateTime" IS NULL
+          AND
+          "Offers"."extensionApprovalStatus" = 'pending'
+        )
       )
       AND
       (
