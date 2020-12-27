@@ -97,7 +97,7 @@ describe("Offer", () => {
     await expect(offer.validate()).resolves.not.toThrow();
   });
 
-  it("creates a valid offer with studentsExpirationDateTime and graduatesExpirationDateTime undefined when omitted", async () => {
+  it("creates a valid offer with no studentsExpirationDateTime and graduatesExpirationDateTime", async () => {
     const offer = new Offer(
       omit(offerAttributes, ["studentsExpirationDateTime", "graduatesExpirationDateTime"])
     );
@@ -106,71 +106,97 @@ describe("Offer", () => {
     expect(offer.graduatesExpirationDateTime).toBeUndefined();
   });
 
-  it("has a function to know if the graduatesExpirationDateTime has expired", async () => {
-    const offer = new Offer(offerAttributes);
+  it("returns true if the approved offer has expired for graduados", async () => {
     const expiredOffer = new Offer({
       ...offerAttributes,
-      graduatesExpirationDateTime: DateTimeManager.yesterday()
+      graduadosApprovalStatus: ApprovalStatus.approved,
+      graduatesExpirationDateTime: DateTimeManager.yesterday(),
+      targetApplicantType: ApplicantType.graduate
     });
-
-    expect(offer.isExpiredForGraduates()).toBe(false);
     expect(expiredOffer.isExpiredForGraduates()).toBe(true);
   });
 
-  it("has a function to know if the studentsExpirationDateTime has expired", async () => {
-    const offer = new Offer(offerAttributes);
+  it("returns true if the approved offer has expired for students", async () => {
     const expiredOffer = new Offer({
       ...offerAttributes,
-      studentsExpirationDateTime: DateTimeManager.yesterday()
+      extensionApprovalStatus: ApprovalStatus.approved,
+      studentsExpirationDateTime: DateTimeManager.yesterday(),
+      targetApplicantType: ApplicantType.student
     });
-
-    expect(offer.isExpiredForStudents()).toBe(false);
     expect(expiredOffer.isExpiredForStudents()).toBe(true);
   });
 
-  it("has a function to expire studentsExpirationDateTime", async () => {
-    const offer = new Offer(offerAttributes);
+  it("returns true if the approved offer has expired for both", async () => {
+    const expiredOffer = new Offer({
+      ...offerAttributes,
+      extensionApprovalStatus: ApprovalStatus.approved,
+      graduadosApprovalStatus: ApprovalStatus.approved,
+      studentsExpirationDateTime: DateTimeManager.yesterday(),
+      graduatesExpirationDateTime: DateTimeManager.yesterday(),
+      targetApplicantType: ApplicantType.both
+    });
+    expect(expiredOffer.isExpiredForGraduates()).toBe(true);
+    expect(expiredOffer.isExpiredForStudents()).toBe(true);
+  });
+
+  it("does not count as expired if the offer is rejected for students", async () => {
+    const expiredOffer = new Offer({
+      ...offerAttributes,
+      extensionApprovalStatus: ApprovalStatus.approved,
+      targetApplicantType: ApplicantType.student
+    });
+    expect(expiredOffer.isExpiredForStudents()).toBe(false);
+  });
+
+  it("does not count as expired if the offer is pending for students", async () => {
+    const expiredOffer = new Offer({
+      ...offerAttributes,
+      extensionApprovalStatus: ApprovalStatus.pending,
+      targetApplicantType: ApplicantType.student
+    });
+    expect(expiredOffer.isExpiredForStudents()).toBe(false);
+  });
+
+  it("does not count as expired if the offer is rejected for graduates", async () => {
+    const expiredOffer = new Offer({
+      ...offerAttributes,
+      graduadosApprovalStatus: ApprovalStatus.rejected,
+      targetApplicantType: ApplicantType.graduate
+    });
+    expect(expiredOffer.isExpiredForStudents()).toBe(false);
+  });
+
+  it("does not count as expired if the offer is pending for graduates", async () => {
+    const expiredOffer = new Offer({
+      ...offerAttributes,
+      graduadosApprovalStatus: ApprovalStatus.rejected,
+      targetApplicantType: ApplicantType.graduate
+    });
+    expect(expiredOffer.isExpiredForStudents()).toBe(false);
+  });
+
+  it("expires an approved offer for students", async () => {
+    const offer = new Offer({
+      ...offerAttributes,
+      extensionApprovalStatus: ApprovalStatus.approved,
+      targetApplicantType: ApplicantType.student
+    });
 
     expect(offer.isExpiredForStudents()).toBe(false);
-    offer.expireForStudents();
+    offer.expire();
     expect(offer.isExpiredForStudents()).toBe(true);
   });
 
-  it("has a function to expire graduatesExpirationDateTime", async () => {
-    const offer = new Offer(offerAttributes);
+  it("expires an approved offer for graduates", async () => {
+    const offer = new Offer({
+      ...offerAttributes,
+      graduadosApprovalStatus: ApprovalStatus.approved,
+      targetApplicantType: ApplicantType.graduate
+    });
 
     expect(offer.isExpiredForGraduates()).toBe(false);
-    offer.expireForGraduates();
+    offer.expire();
     expect(offer.isExpiredForGraduates()).toBe(true);
-  });
-
-  it("has a function to expire the current Applicant Type expiration date", async () => {
-    const offerForBoth = new Offer({ ...offerAttributes, targetApplicantType: ApplicantType.both });
-    const offerForStudents = new Offer(
-      omit(
-        { ...offerAttributes, targetApplicantType: ApplicantType.student },
-        "graduatesExpirationDateTime"
-      )
-    );
-    const offerForGraduates = new Offer(
-      omit(
-        { ...offerAttributes, targetApplicantType: ApplicantType.graduate },
-        "studentsExpirationDateTime"
-      )
-    );
-
-    offerForBoth.expire();
-    offerForStudents.expire();
-    offerForGraduates.expire();
-
-    expect(offerForBoth.isExpiredForGraduates()).toBe(true);
-    expect(offerForBoth.isExpiredForStudents()).toBe(true);
-
-    expect(offerForStudents.isExpiredForGraduates()).toBe(false);
-    expect(offerForStudents.isExpiredForStudents()).toBe(true);
-
-    expect(offerForGraduates.isExpiredForGraduates()).toBe(true);
-    expect(offerForGraduates.isExpiredForStudents()).toBe(false);
   });
 
   describe("getStatus", () => {
