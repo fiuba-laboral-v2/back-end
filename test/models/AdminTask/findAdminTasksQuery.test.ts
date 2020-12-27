@@ -6,6 +6,7 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { Applicant, ApplicantCareer, JobApplication, Offer, Company } from "$models";
+import MockDate from "mockdate";
 
 describe("findAdminTasksQuery", () => {
   it("throws an error if no adminTaskTypes are provided", async () => {
@@ -34,6 +35,11 @@ describe("findAdminTasksQuery", () => {
   });
 
   describe("all adminTasks", () => {
+    beforeEach(() => {
+      MockDate.reset();
+      MockDate.set(new Date());
+    });
+
     const expectToReturnSQLQueryOfAllAdminTasksWithStatus = (
       status: ApprovalStatus | ApprovalStatus[],
       secretary: Secretary,
@@ -350,6 +356,11 @@ describe("findAdminTasksQuery", () => {
   });
 
   describe("query only for offers", () => {
+    beforeEach(() => {
+      MockDate.reset();
+      MockDate.set(new Date());
+    });
+
     const expectToReturnSQLQueryOfOfferWithStatus = (
       status: ApprovalStatus,
       secretary: Secretary
