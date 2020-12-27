@@ -40,8 +40,6 @@ describe("OfferExpirationDateWhereClause", () => {
     });
     expect(whereClause).toEqualIgnoringSpacing(`
       (
-        "Offers"."studentsExpirationDateTime" IS NOT NULL
-        AND
         "Offers"."studentsExpirationDateTime" > '${date}' 
       )
     `);
@@ -56,8 +54,6 @@ describe("OfferExpirationDateWhereClause", () => {
     });
     expect(whereClause).toEqualIgnoringSpacing(`
       (
-        "Offers"."graduatesExpirationDateTime" IS NOT NULL
-        AND
         "Offers"."graduatesExpirationDateTime" > '${date}'
       )
     `);
