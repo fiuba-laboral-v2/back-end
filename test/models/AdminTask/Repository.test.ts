@@ -199,6 +199,18 @@ describe("AdminTaskRepository", () => {
     );
   });
 
+  it("filters the expired offers", async () => {
+    const result = await AdminTaskRepository.find({
+      adminTaskTypes: [AdminTaskType.Offer],
+      statuses: [ApprovalStatus.approved],
+      secretary: setup.admins.graduados.secretary
+    });
+
+    const resultUuids = result.results.map(({ uuid }) => uuid);
+    expect(resultUuids).not.toContain(setup.offers.approvedAndExpiredForBoth.uuid);
+    expect(result.shouldFetchMore).toEqual(false);
+  });
+
   it("returns only rejected offers targeted for students", async () => {
     await expectToFindAdminTasksWithStatuses(
       [setup.offers.rejectedForStudents, setup.offers.rejectedForBoth],

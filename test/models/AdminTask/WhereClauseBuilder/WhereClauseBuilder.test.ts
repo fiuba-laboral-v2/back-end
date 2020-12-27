@@ -4,8 +4,16 @@ import { Secretary } from "$models/Admin";
 import { ApplicantType } from "$models/Applicant";
 import { Applicant, ApplicantCareer, JobApplication, Offer, Company } from "$models";
 import { AdminTaskType } from "$models/AdminTask";
+import MockDate from "mockdate";
 
 describe("WhereClauseBuilder", () => {
+  const date = `2020-12-04T16:57:07.333Z`;
+
+  beforeEach(() => {
+    MockDate.reset();
+    MockDate.set(new Date(date));
+  });
+
   it("builds where clause for pending offers targeted to graduates", async () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.pending],
@@ -22,6 +30,20 @@ describe("WhereClauseBuilder", () => {
         "Offers"."targetApplicantType" = '${ApplicantType.both}' 
         OR "Offers"."targetApplicantType" = '${ApplicantType.graduate}'
       )
+      AND
+      (
+        "Offers"."graduatesExpirationDateTime" > '${date}'
+        OR
+        (
+          "Offers"."graduatesExpirationDateTime" IS NULL
+          AND
+          (
+            "Offers"."graduadosApprovalStatus" = 'pending'
+            OR
+            "Offers"."graduadosApprovalStatus" = 'rejected'
+          )
+        )
+      ) 
     `);
   });
 
@@ -41,6 +63,20 @@ describe("WhereClauseBuilder", () => {
         "Offers"."targetApplicantType" = '${ApplicantType.both}' 
         OR "Offers"."targetApplicantType" = '${ApplicantType.graduate}'
       )
+      AND
+      (
+        "Offers"."graduatesExpirationDateTime" > '${date}'
+        OR
+        (
+          "Offers"."graduatesExpirationDateTime" IS NULL
+          AND
+          (
+            "Offers"."graduadosApprovalStatus" = 'pending'
+            OR
+            "Offers"."graduadosApprovalStatus" = 'rejected'
+          )
+        )
+      ) 
     `);
   });
 
@@ -60,6 +96,20 @@ describe("WhereClauseBuilder", () => {
         "Offers"."targetApplicantType" = '${ApplicantType.both}' 
         OR "Offers"."targetApplicantType" = '${ApplicantType.graduate}'
       )
+      AND
+      (
+        "Offers"."graduatesExpirationDateTime" > '${date}'
+        OR
+        (
+          "Offers"."graduatesExpirationDateTime" IS NULL
+          AND
+          (
+            "Offers"."graduadosApprovalStatus" = 'pending'
+            OR
+            "Offers"."graduadosApprovalStatus" = 'rejected'
+          )
+        )
+      ) 
     `);
   });
 
@@ -79,6 +129,20 @@ describe("WhereClauseBuilder", () => {
         "Offers"."targetApplicantType" = '${ApplicantType.both}' 
         OR "Offers"."targetApplicantType" = '${ApplicantType.student}'
       )
+      AND
+      (
+        "Offers"."studentsExpirationDateTime" > '${date}'
+        OR
+        (
+          "Offers"."studentsExpirationDateTime" IS NULL
+          AND
+          (
+            "Offers"."extensionApprovalStatus" = 'pending'
+            OR
+            "Offers"."extensionApprovalStatus" = 'rejected'
+          )
+        )
+      ) 
     `);
   });
 
@@ -98,6 +162,21 @@ describe("WhereClauseBuilder", () => {
         "Offers"."targetApplicantType" = '${ApplicantType.both}' 
         OR "Offers"."targetApplicantType" = '${ApplicantType.student}'
       )
+      AND
+      (
+
+        "Offers"."studentsExpirationDateTime" > '${date}'
+        OR
+        (
+          "Offers"."studentsExpirationDateTime" IS NULL
+          AND
+          (
+            "Offers"."extensionApprovalStatus" = 'pending'
+            OR
+            "Offers"."extensionApprovalStatus" = 'rejected'
+          )
+        )
+      ) 
     `);
   });
 
@@ -117,6 +196,20 @@ describe("WhereClauseBuilder", () => {
         "Offers"."targetApplicantType" = '${ApplicantType.both}' 
         OR "Offers"."targetApplicantType" = '${ApplicantType.student}'
       )
+      AND
+      (
+        "Offers"."studentsExpirationDateTime" > '${date}'
+        OR
+        (
+          "Offers"."studentsExpirationDateTime" IS NULL
+          AND
+          (
+            "Offers"."extensionApprovalStatus" = 'pending'
+            OR
+            "Offers"."extensionApprovalStatus" = 'rejected'
+          )
+        )
+      ) 
     `);
   });
 
@@ -310,6 +403,20 @@ describe("WhereClauseBuilder", () => {
         "Offers"."targetApplicantType" = '${ApplicantType.both}' 
         OR "Offers"."targetApplicantType" = '${ApplicantType.student}'
       )
+      AND
+      (
+        "Offers"."studentsExpirationDateTime" > '${date}'
+        OR
+        (
+          "Offers"."studentsExpirationDateTime" IS NULL
+          AND
+          (
+            "Offers"."extensionApprovalStatus" = 'pending'
+            OR
+            "Offers"."extensionApprovalStatus" = 'rejected'
+          )
+        )
+      )
     `);
   });
 
@@ -334,6 +441,20 @@ describe("WhereClauseBuilder", () => {
       (
         "Offers"."targetApplicantType" = '${ApplicantType.both}' 
         OR "Offers"."targetApplicantType" = '${ApplicantType.student}'
+      )
+      AND
+      (
+        "Offers"."studentsExpirationDateTime" > '${date}'
+        OR
+        (
+          "Offers"."studentsExpirationDateTime" IS NULL
+          AND
+          (
+            "Offers"."extensionApprovalStatus" = 'pending'
+            OR
+            "Offers"."extensionApprovalStatus" = 'rejected'
+          )
+        )
       )
       AND
       (
