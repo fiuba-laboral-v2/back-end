@@ -172,9 +172,9 @@ export class Offer extends Model<Offer> {
     return this.graduadosApprovalStatus;
   }
 
-  public updateStatus({ secretary }: Admin, newStatus: ApprovalStatus) {
-    if (secretary === Secretary.extension) return this.updateExtensionApprovalStatus(newStatus);
-    this.updateGraduadosApprovalStatus(newStatus);
+  public updateStatus(admin: Admin, newStatus: ApprovalStatus) {
+    if (admin.isFromExtensionSecretary()) return this.updateExtensionApprovalStatus(newStatus);
+    if (admin.isFromGraduadosSecretary()) return this.updateGraduadosApprovalStatus(newStatus);
   }
 
   private expireForStudents = () => {
