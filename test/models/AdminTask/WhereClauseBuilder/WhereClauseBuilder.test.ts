@@ -4,8 +4,16 @@ import { Secretary } from "$models/Admin";
 import { ApplicantType } from "$models/Applicant";
 import { Applicant, ApplicantCareer, JobApplication, Offer, Company } from "$models";
 import { AdminTaskType } from "$models/AdminTask";
+import MockDate from "mockdate";
 
 describe("WhereClauseBuilder", () => {
+  const date = `2020-12-04T16:57:07.333Z`;
+
+  beforeEach(() => {
+    MockDate.reset();
+    MockDate.set(new Date(date));
+  });
+
   it("builds where clause for pending offers targeted to graduates", async () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.pending],
@@ -22,6 +30,10 @@ describe("WhereClauseBuilder", () => {
         "Offers"."targetApplicantType" = '${ApplicantType.both}' 
         OR "Offers"."targetApplicantType" = '${ApplicantType.graduate}'
       )
+      AND
+      (
+        "Offers"."graduatesExpirationDateTime" > '${date}'
+      ) 
     `);
   });
 
@@ -41,6 +53,10 @@ describe("WhereClauseBuilder", () => {
         "Offers"."targetApplicantType" = '${ApplicantType.both}' 
         OR "Offers"."targetApplicantType" = '${ApplicantType.graduate}'
       )
+      AND
+      (
+        "Offers"."graduatesExpirationDateTime" > '${date}'
+      ) 
     `);
   });
 
@@ -60,6 +76,10 @@ describe("WhereClauseBuilder", () => {
         "Offers"."targetApplicantType" = '${ApplicantType.both}' 
         OR "Offers"."targetApplicantType" = '${ApplicantType.graduate}'
       )
+      AND
+      (
+        "Offers"."graduatesExpirationDateTime" > '${date}'
+      ) 
     `);
   });
 
@@ -79,6 +99,10 @@ describe("WhereClauseBuilder", () => {
         "Offers"."targetApplicantType" = '${ApplicantType.both}' 
         OR "Offers"."targetApplicantType" = '${ApplicantType.student}'
       )
+      AND
+      (
+        "Offers"."studentsExpirationDateTime" > '${date}'
+      ) 
     `);
   });
 
@@ -98,6 +122,11 @@ describe("WhereClauseBuilder", () => {
         "Offers"."targetApplicantType" = '${ApplicantType.both}' 
         OR "Offers"."targetApplicantType" = '${ApplicantType.student}'
       )
+      AND
+      (
+
+        "Offers"."studentsExpirationDateTime" > '${date}'
+      ) 
     `);
   });
 
@@ -117,6 +146,10 @@ describe("WhereClauseBuilder", () => {
         "Offers"."targetApplicantType" = '${ApplicantType.both}' 
         OR "Offers"."targetApplicantType" = '${ApplicantType.student}'
       )
+      AND
+      (
+        "Offers"."studentsExpirationDateTime" > '${date}'
+      ) 
     `);
   });
 
@@ -310,6 +343,10 @@ describe("WhereClauseBuilder", () => {
         "Offers"."targetApplicantType" = '${ApplicantType.both}' 
         OR "Offers"."targetApplicantType" = '${ApplicantType.student}'
       )
+      AND
+      (
+        "Offers"."studentsExpirationDateTime" > '${date}' 
+      )
     `);
   });
 
@@ -334,6 +371,10 @@ describe("WhereClauseBuilder", () => {
       (
         "Offers"."targetApplicantType" = '${ApplicantType.both}' 
         OR "Offers"."targetApplicantType" = '${ApplicantType.student}'
+      )
+      AND
+      (
+        "Offers"."studentsExpirationDateTime" > '${date}' 
       )
       AND
       (
