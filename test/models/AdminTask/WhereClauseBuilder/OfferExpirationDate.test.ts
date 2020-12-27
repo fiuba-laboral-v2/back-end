@@ -45,7 +45,11 @@ describe("OfferExpirationDateWhereClause", () => {
         (
           "Offers"."studentsExpirationDateTime" IS NULL
           AND
-          "Offers"."extensionApprovalStatus" = 'pending'
+          (
+            "Offers"."extensionApprovalStatus" = 'pending'
+            OR
+            "Offers"."extensionApprovalStatus" = 'rejected'
+          )
         )
       )
     `);
@@ -65,7 +69,11 @@ describe("OfferExpirationDateWhereClause", () => {
         (
           "Offers"."graduatesExpirationDateTime" IS NULL
           AND
-          "Offers"."graduadosApprovalStatus" = 'pending'
+          (
+            "Offers"."graduadosApprovalStatus" = 'pending'
+            OR
+            "Offers"."graduadosApprovalStatus" = 'rejected'
+          )
         )
       )
     `);

@@ -24,7 +24,11 @@ export const OfferExpirationDateWhereClause = {
         ( 
           "${Offer.tableName}"."${expirationDateProperty}" IS NULL
           AND
-          "${Offer.tableName}"."${approvalStatusProperty}" = '${ApprovalStatus.pending}'
+          (
+            "${Offer.tableName}"."${approvalStatusProperty}" = '${ApprovalStatus.pending}'
+            OR
+            "${Offer.tableName}"."${approvalStatusProperty}" = '${ApprovalStatus.rejected}'
+          )
         )
       )
     `;
