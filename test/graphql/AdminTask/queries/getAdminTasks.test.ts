@@ -3,7 +3,12 @@ import { ApolloServerTestClient } from "apollo-server-testing";
 
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
-import { AdminTask, AdminTaskType, IAdminTasksFilter } from "$models/AdminTask";
+import {
+  AdminTask,
+  AdminTaskRepository,
+  AdminTaskType,
+  IAdminTasksFilter
+} from "$models/AdminTask";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { UserRepository } from "$models/User";
 import { UnauthorizedError } from "$graphql/Errors";
@@ -178,6 +183,18 @@ describe("getAdminTasks", () => {
       [ApprovalStatus.approved],
       setup.admins.graduados.secretary
     );
+  });
+
+  it("filters the expired offers", async () => {
+    const result = await AdminTaskRepository.find({
+      adminTaskTypes: [AdminTaskType.Offer],
+      statuses: [ApprovalStatus.approved],
+      secretary: setup.admins.graduados.secretary
+    });
+
+    const resultUuids = result.results.map(({ uuid }) => uuid);
+    expect(resultUuids).not.toContain(setup.offers.approvedAndExpiredForBoth.uuid);
+    expect(result.shouldFetchMore).toEqual(false);
   });
 
   it("returns only rejected offers targeted for students", async () => {
