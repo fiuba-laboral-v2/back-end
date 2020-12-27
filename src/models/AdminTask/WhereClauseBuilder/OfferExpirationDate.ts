@@ -14,7 +14,11 @@ export const OfferExpirationDateWhereClause = {
     }
 
     return `
-      ("${Offer.tableName}"."${expirationDateProperty}" < '${new Date().toISOString()}')
+      (
+        "${Offer.tableName}"."${expirationDateProperty}" IS NOT NULL
+        AND
+        "${Offer.tableName}"."${expirationDateProperty}" > '${new Date().toISOString()}'
+      )
     `;
   }
 };
