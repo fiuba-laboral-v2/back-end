@@ -7,8 +7,10 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Applicant";
 import { OfferRepository } from "$models/Offer";
 import { Secretary } from "$models/Admin";
+import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
 export class OfferTestSetup {
+  public approvedAndExpiredForBoth: Offer;
   public approvedForStudents: Offer;
   public approvedForGraduates: Offer;
   public approvedForBoth: Offer;
@@ -28,6 +30,10 @@ export class OfferTestSetup {
   }
 
   public async execute() {
+    const {
+      offerDurationInDays: extensionOfferDurationInDays
+    } = await SecretarySettingsRepository.findBySecretary(this.admins.extension.secretary);
+
     this.rejectedForStudents = await OfferGenerator.instance.updatedWithStatus({
       admin: this.admins.extension,
       companyUuid: this.companies.approved.uuid,
@@ -66,6 +72,13 @@ export class OfferTestSetup {
       targetApplicantType: ApplicantType.graduate
     });
 
+    this.approvedAndExpiredForBoth = await OfferGenerator.instance.forStudentsAndGraduates({
+      status: ApprovalStatus.approved,
+      companyUuid: this.companies.approved.uuid
+    });
+    this.approvedAndExpiredForBoth.expire();
+    await OfferRepository.save(this.approvedAndExpiredForBoth);
+
     this.approvedForBoth = await OfferGenerator.instance.updatedWithStatus({
       admin: this.admins.graduados,
       companyUuid: this.companies.approved.uuid,
@@ -74,6 +87,7 @@ export class OfferTestSetup {
     });
 
     this.approvedForBoth.updateStatus(this.admins.extension, ApprovalStatus.approved);
+    this.approvedForBoth.updateExpirationDate(this.admins.extension, extensionOfferDurationInDays);
     await OfferRepository.save(this.approvedForBoth);
 
     this.pendingForStudents = await OfferGenerator.instance.updatedWithStatus({
