@@ -1,13 +1,10 @@
 import { AdminPermissions } from "$models/Permissions";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
-import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { Admin } from "$models";
-
 import { OfferGenerator } from "$generators/Offer";
 import { CompanyGenerator } from "$generators/Company";
 import { AdminGenerator } from "$generators/Admin";
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 
 describe("AdminPermissions", () => {
   let extensionAdmin: Admin;
@@ -16,9 +13,7 @@ describe("AdminPermissions", () => {
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
-    await SecretarySettingsRepository.truncate();
 
-    await SecretarySettingsGenerator.createDefaultSettings();
     extensionAdmin = await AdminGenerator.extension();
     graduadosAdmin = await AdminGenerator.graduados();
   });

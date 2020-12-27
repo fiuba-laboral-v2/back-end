@@ -4,20 +4,15 @@ import { isApprovalStatus } from "$models/SequelizeModelValidators";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ValidationError, ForeignKeyConstraintError } from "sequelize";
 import { UUID } from "$models/UUID";
-
 import { JobApplicationApprovalEventRepository } from "$models/JobApplication/JobApplicationsApprovalEvent";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
-import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { UserRepository } from "$models/User";
 import { OfferRepository } from "$models/Offer";
 import { ApplicantRepository } from "$models/Applicant";
 import { AdminRepository } from "$models/Admin";
-
 import { JobApplicationGenerator } from "$generators/JobApplication";
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { AdminGenerator } from "$generators/Admin";
-
 import { UUID_REGEX } from "$test/models";
 
 describe("JobApplicationApprovalEventRepository", () => {
@@ -28,9 +23,7 @@ describe("JobApplicationApprovalEventRepository", () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     await CareerRepository.truncate();
-    await SecretarySettingsRepository.truncate();
 
-    await SecretarySettingsGenerator.createDefaultSettings();
     jobApplication = await JobApplicationGenerator.instance.withMinimumData();
     admin = await AdminGenerator.extension();
   });

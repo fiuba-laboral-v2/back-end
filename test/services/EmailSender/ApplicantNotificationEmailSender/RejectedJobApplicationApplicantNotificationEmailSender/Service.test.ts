@@ -4,19 +4,16 @@ import {
 } from "$models/ApplicantNotification";
 import { EmailService } from "$services/Email";
 import { RejectedJobApplicationApplicantNotificationEmailSender } from "$services/EmailSender";
-
 import { UserRepository } from "$models/User";
 import { ApplicantRepository } from "$models/Applicant";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { OfferRepository } from "$models/Offer";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
-
 import { CompanyGenerator } from "$generators/Company";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { JobApplicationGenerator } from "$generators/JobApplication";
 import { AdminGenerator } from "$generators/Admin";
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 
 describe("RejectedJobApplicationApplicantNotificationEmailSender", () => {
   const emailSendMock = jest.fn();
@@ -25,9 +22,6 @@ describe("RejectedJobApplicationApplicantNotificationEmailSender", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
-    await SecretarySettingsRepository.truncate();
-
-    await SecretarySettingsGenerator.createDefaultSettings();
   });
 
   beforeEach(() => {
@@ -70,7 +64,7 @@ describe("RejectedJobApplicationApplicantNotificationEmailSender", () => {
             "\n" +
             "Para mas detalles se puede responder a este email." +
             "\n\n" +
-            "Bolsa de Trabajo FIUBA."
+            "Graduados email signature"
         }
       ]
     ]);

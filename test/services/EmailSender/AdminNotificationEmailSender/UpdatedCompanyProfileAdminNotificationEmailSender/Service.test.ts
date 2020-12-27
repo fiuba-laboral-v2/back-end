@@ -4,17 +4,14 @@ import {
 } from "$models/AdminNotification";
 import { EmailService } from "$services/Email";
 import { UpdatedCompanyProfileAdminNotificationEmailSender } from "$services/EmailSender";
-
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
-import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { Secretary } from "$models/Admin";
 import { SecretarySettings } from "$models";
-
 import { CompanyGenerator } from "$generators/Company";
 import { AdminGenerator } from "$generators/Admin";
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
+import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
 describe("UpdatedCompanyProfileAdminNotificationEmailSender", () => {
   const emailSendMock = jest.fn();
@@ -24,10 +21,8 @@ describe("UpdatedCompanyProfileAdminNotificationEmailSender", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
-    await SecretarySettingsRepository.truncate();
 
-    const allSettings = await SecretarySettingsGenerator.createDefaultSettings();
-    secretarySettings = allSettings.find(settings => settings.secretary === Secretary.graduados)!;
+    secretarySettings = await SecretarySettingsRepository.findBySecretary(Secretary.graduados);
   });
 
   beforeEach(() => {

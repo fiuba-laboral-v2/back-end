@@ -4,16 +4,13 @@ import {
 } from "$models/ApplicantNotification";
 import { EmailService } from "$services/Email";
 import { ApprovedProfileApplicantNotificationEmailSender } from "$services/EmailSender";
-
 import { UserRepository } from "$models/User";
 import { ApplicantRepository } from "$models/Applicant";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
-
 import { ApplicantGenerator } from "$generators/Applicant";
 import { AdminGenerator } from "$generators/Admin";
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 
 describe("ApprovedProfileApplicantNotificationEmailSender", () => {
   const emailSendMock = jest.fn();
@@ -22,9 +19,6 @@ describe("ApprovedProfileApplicantNotificationEmailSender", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
-    await SecretarySettingsRepository.truncate();
-
-    await SecretarySettingsGenerator.createDefaultSettings();
   });
 
   beforeEach(() => {
@@ -58,7 +52,7 @@ describe("ApprovedProfileApplicantNotificationEmailSender", () => {
           body:
             "Tu perfil ha sido aprobado: (baseUrl/subDomain/postulante/perfil)." +
             "\n\n" +
-            "Bolsa de Trabajo FIUBA."
+            "Graduados email signature"
         }
       ]
     ]);

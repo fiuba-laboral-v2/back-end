@@ -1,22 +1,23 @@
 import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
-
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
-
 import { TestClientGenerator } from "$generators/TestClient";
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
-
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { AdminRepository, Secretary } from "$models/Admin";
 import { CompanyRepository } from "$models/Company";
 import { ApplicantRepository } from "$models/Applicant";
 import { UserRepository } from "$models/User";
+import { SharedSettingsRepository } from "$models/SharedSettings";
 
 const GET_ADMIN_SETTINGS = gql`
   query {
     getAdminSettings {
       email
       offerDurationInDays
+      emailSignature
+      companySignUpAcceptanceCriteria
+      companyEditableAcceptanceCriteria
+      editOfferAcceptanceCriteria
     }
   }
 `;
@@ -30,9 +31,6 @@ describe("getAdminSettings", () => {
     await CompanyRepository.truncate();
     await AdminRepository.truncate();
     await ApplicantRepository.truncate();
-    await SecretarySettingsRepository.truncate();
-    await SecretarySettingsGenerator.createDefaultSettings();
-
     ({ apolloClient: graduadosApolloClient } = await TestClientGenerator.admin({
       secretary: Secretary.graduados
     }));
@@ -46,13 +44,25 @@ describe("getAdminSettings", () => {
       query: GET_ADMIN_SETTINGS
     });
 
-    const { email, offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
-      Secretary.graduados
-    );
+    const {
+      email,
+      offerDurationInDays,
+      emailSignature
+    } = await SecretarySettingsRepository.findBySecretary(Secretary.graduados);
+    const {
+      companySignUpAcceptanceCriteria,
+      companyEditableAcceptanceCriteria,
+      editOfferAcceptanceCriteria
+    } = await SharedSettingsRepository.fetch();
+
     expect(errors).toBeUndefined();
     expect(data!.getAdminSettings).toEqual({
       email,
-      offerDurationInDays
+      offerDurationInDays,
+      emailSignature,
+      companySignUpAcceptanceCriteria,
+      companyEditableAcceptanceCriteria,
+      editOfferAcceptanceCriteria
     });
   });
 
@@ -61,13 +71,25 @@ describe("getAdminSettings", () => {
       query: GET_ADMIN_SETTINGS
     });
 
-    const { email, offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
-      Secretary.extension
-    );
+    const {
+      email,
+      offerDurationInDays,
+      emailSignature
+    } = await SecretarySettingsRepository.findBySecretary(Secretary.extension);
+    const {
+      companySignUpAcceptanceCriteria,
+      companyEditableAcceptanceCriteria,
+      editOfferAcceptanceCriteria
+    } = await SharedSettingsRepository.fetch();
+
     expect(errors).toBeUndefined();
     expect(data!.getAdminSettings).toEqual({
       email,
-      offerDurationInDays
+      offerDurationInDays,
+      emailSignature,
+      companySignUpAcceptanceCriteria,
+      companyEditableAcceptanceCriteria,
+      editOfferAcceptanceCriteria
     });
   });
 

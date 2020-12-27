@@ -1,24 +1,24 @@
-import { QueryInterface, INTEGER, STRING } from "sequelize";
+import { QueryInterface, STRING, UUID } from "sequelize";
 
-const TABLE_NAME = "SecretarySettings";
+const TABLE_NAME = "SharedSettings";
 
 export = {
   up: (queryInterface: QueryInterface) =>
     queryInterface.createTable(TABLE_NAME, {
-      secretary: {
+      uuid: {
         allowNull: false,
         primaryKey: true,
-        type: "secretary"
+        type: UUID
       },
-      offerDurationInDays: {
-        allowNull: false,
-        type: INTEGER
-      },
-      email: {
+      companySignUpAcceptanceCriteria: {
         allowNull: false,
         type: STRING
       },
-      emailSignature: {
+      companyEditableAcceptanceCriteria: {
+        allowNull: false,
+        type: STRING
+      },
+      editOfferAcceptanceCriteria: {
         allowNull: false,
         type: STRING
       }

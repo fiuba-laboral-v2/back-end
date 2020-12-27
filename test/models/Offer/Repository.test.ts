@@ -7,7 +7,6 @@ import { UserRepository } from "$models/User";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { OfferNotFoundError } from "$models/Offer/Errors";
 import { Admin, Career, Company, Offer, OfferCareer, OfferSection } from "$models";
-
 import { CompanyGenerator } from "$generators/Company";
 import { OfferGenerator } from "$generators/Offer";
 import { CareerGenerator } from "$generators/Career";
@@ -16,9 +15,6 @@ import { omit, range } from "lodash";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import MockDate from "mockdate";
 import moment from "moment";
-
-import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
-import { SecretarySettingsGenerator } from "$test/generators/SecretarySettings";
 
 describe("OfferRepository", () => {
   let graduadosAdmin: Admin;
@@ -32,13 +28,12 @@ describe("OfferRepository", () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     await OfferRepository.truncate();
-    await SecretarySettingsRepository.truncate();
+
     graduadosAdmin = await AdminGenerator.graduados();
     extensionAdmin = await AdminGenerator.extension();
     firstCareer = await CareerGenerator.instance();
     secondCareer = await CareerGenerator.instance();
     thirdCareer = await CareerGenerator.instance();
-    await SecretarySettingsGenerator.createDefaultSettings();
   });
 
   const sectionData = {
