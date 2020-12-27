@@ -13,7 +13,7 @@ import { InternshipsCannotHaveMaximumSalaryError } from "$models/Offer/Errors/In
 import { InternshipsMustTargetStudentsError } from "$models/Offer/Errors/InternshipsMustTargetStudentsError";
 
 describe("Offer", () => {
-  const offerAttributes = {
+  const mandatoryAttributes = {
     companyUuid: UUID.generate(),
     title: "title",
     description: "description",
@@ -21,31 +21,29 @@ describe("Offer", () => {
     hoursPerDay: 8,
     minimumSalary: 52500,
     maximumSalary: 70000,
-    graduatesExpirationDateTime: DateTimeManager.daysFromNow(7),
-    studentsExpirationDateTime: DateTimeManager.daysFromNow(7),
     targetApplicantType: ApplicantType.both
   };
 
-  const offerWithoutProperty = (property: string) => omit(offerAttributes, property);
+  const offerWithoutProperty = (property: string) => omit(mandatoryAttributes, property);
 
   const createsAValidOfferWithTarget = async (targetApplicantType: ApplicantType) => {
-    const offer = new Offer({ ...offerAttributes, targetApplicantType });
+    const offer = new Offer({ ...mandatoryAttributes, targetApplicantType });
     await expect(offer.validate()).resolves.not.toThrow();
   };
 
   it("creates a valid non-internship with maximum salary", async () => {
-    const offer = new Offer(offerAttributes);
+    const offer = new Offer(mandatoryAttributes);
     await expect(offer.validate()).resolves.not.toThrow();
   });
 
   it("creates a valid non-internship without maximum salary", async () => {
-    const offer = new Offer({ ...offerAttributes, maximumSalary: null });
+    const offer = new Offer({ ...mandatoryAttributes, maximumSalary: null });
     await expect(offer.validate()).resolves.not.toThrow();
   });
 
   it("creates a valid internship", async () => {
     const offer = new Offer({
-      ...offerAttributes,
+      ...mandatoryAttributes,
       isInternship: true,
       maximumSalary: null,
       targetApplicantType: ApplicantType.student
@@ -54,13 +52,9 @@ describe("Offer", () => {
   });
 
   it("creates a valid offer with its given attributes", async () => {
-    const offer = new Offer(offerAttributes);
+    const offer = new Offer(mandatoryAttributes);
     await expect(offer.validate()).resolves.not.toThrow();
-    expect(offer).toBeObjectContaining({
-      ...offerAttributes,
-      graduatesExpirationDateTime: offerAttributes.graduatesExpirationDateTime.toDate(),
-      studentsExpirationDateTime: offerAttributes.studentsExpirationDateTime.toDate()
-    });
+    expect(offer).toBeObjectContaining(mandatoryAttributes);
   });
 
   it("creates a valid offer with a targetApplicantType for graduate", async () => {
@@ -76,133 +70,134 @@ describe("Offer", () => {
   });
 
   it("creates a valid offer with default extensionApprovalStatus", async () => {
-    const offer = new Offer(offerAttributes);
+    const offer = new Offer(mandatoryAttributes);
     await expect(offer.validate()).resolves.not.toThrow();
     expect(offer.extensionApprovalStatus).toEqual(ApprovalStatus.pending);
   });
 
   it("creates a valid offer with default graduadosApprovalStatus", async () => {
-    const offer = new Offer(offerAttributes);
+    const offer = new Offer(mandatoryAttributes);
     await expect(offer.validate()).resolves.not.toThrow();
     expect(offer.graduadosApprovalStatus).toEqual(ApprovalStatus.pending);
   });
 
   it("creates a valid offer without graduatesExpirationDateTime", async () => {
-    const offer = new Offer(omit(offerAttributes, ["graduatesExpirationDateTime"]));
+    const offer = new Offer(omit(mandatoryAttributes, ["graduatesExpirationDateTime"]));
     await expect(offer.validate()).resolves.not.toThrow();
   });
 
   it("creates a valid offer without studentsExpirationDateTime", async () => {
-    const offer = new Offer(omit(offerAttributes, ["studentsExpirationDateTime"]));
+    const offer = new Offer(omit(mandatoryAttributes, ["studentsExpirationDateTime"]));
     await expect(offer.validate()).resolves.not.toThrow();
   });
 
   it("creates a valid offer with no studentsExpirationDateTime and graduatesExpirationDateTime", async () => {
-    const offer = new Offer(
-      omit(offerAttributes, ["studentsExpirationDateTime", "graduatesExpirationDateTime"])
-    );
-
+    const offer = new Offer(mandatoryAttributes);
     expect(offer.studentsExpirationDateTime).toBeUndefined();
     expect(offer.graduatesExpirationDateTime).toBeUndefined();
   });
 
-  it("returns true if the approved offer has expired for graduados", async () => {
-    const expiredOffer = new Offer({
-      ...offerAttributes,
-      graduadosApprovalStatus: ApprovalStatus.approved,
-      graduatesExpirationDateTime: DateTimeManager.yesterday(),
-      targetApplicantType: ApplicantType.graduate
-    });
-    expect(expiredOffer.isExpiredForGraduates()).toBe(true);
-  });
-
-  it("returns true if the approved offer has expired for students", async () => {
-    const expiredOffer = new Offer({
-      ...offerAttributes,
-      extensionApprovalStatus: ApprovalStatus.approved,
-      studentsExpirationDateTime: DateTimeManager.yesterday(),
-      targetApplicantType: ApplicantType.student
-    });
-    expect(expiredOffer.isExpiredForStudents()).toBe(true);
-  });
-
-  it("returns true if the approved offer has expired for both", async () => {
-    const expiredOffer = new Offer({
-      ...offerAttributes,
-      extensionApprovalStatus: ApprovalStatus.approved,
-      graduadosApprovalStatus: ApprovalStatus.approved,
-      studentsExpirationDateTime: DateTimeManager.yesterday(),
-      graduatesExpirationDateTime: DateTimeManager.yesterday(),
-      targetApplicantType: ApplicantType.both
-    });
-    expect(expiredOffer.isExpiredForGraduates()).toBe(true);
-    expect(expiredOffer.isExpiredForStudents()).toBe(true);
-  });
-
-  it("does not count as expired if the offer is rejected for students", async () => {
-    const expiredOffer = new Offer({
-      ...offerAttributes,
-      extensionApprovalStatus: ApprovalStatus.approved,
-      targetApplicantType: ApplicantType.student
-    });
-    expect(expiredOffer.isExpiredForStudents()).toBe(false);
-  });
-
-  it("does not count as expired if the offer is pending for students", async () => {
-    const expiredOffer = new Offer({
-      ...offerAttributes,
-      extensionApprovalStatus: ApprovalStatus.pending,
-      targetApplicantType: ApplicantType.student
-    });
-    expect(expiredOffer.isExpiredForStudents()).toBe(false);
-  });
-
-  it("does not count as expired if the offer is rejected for graduates", async () => {
-    const expiredOffer = new Offer({
-      ...offerAttributes,
-      graduadosApprovalStatus: ApprovalStatus.rejected,
-      targetApplicantType: ApplicantType.graduate
-    });
-    expect(expiredOffer.isExpiredForStudents()).toBe(false);
-  });
-
-  it("does not count as expired if the offer is pending for graduates", async () => {
-    const expiredOffer = new Offer({
-      ...offerAttributes,
-      graduadosApprovalStatus: ApprovalStatus.rejected,
-      targetApplicantType: ApplicantType.graduate
-    });
-    expect(expiredOffer.isExpiredForStudents()).toBe(false);
-  });
-
-  it("expires an approved offer for students", async () => {
-    const offer = new Offer({
-      ...offerAttributes,
-      extensionApprovalStatus: ApprovalStatus.approved,
-      targetApplicantType: ApplicantType.student
+  describe("expire", () => {
+    it("returns true if the approved offer has expired for graduados", async () => {
+      const expiredOffer = new Offer({
+        ...mandatoryAttributes,
+        graduadosApprovalStatus: ApprovalStatus.approved,
+        graduatesExpirationDateTime: DateTimeManager.yesterday(),
+        targetApplicantType: ApplicantType.graduate
+      });
+      expect(expiredOffer.isExpiredForGraduates()).toBe(true);
     });
 
-    expect(offer.isExpiredForStudents()).toBe(false);
-    offer.expire();
-    expect(offer.isExpiredForStudents()).toBe(true);
-  });
-
-  it("expires an approved offer for graduates", async () => {
-    const offer = new Offer({
-      ...offerAttributes,
-      graduadosApprovalStatus: ApprovalStatus.approved,
-      targetApplicantType: ApplicantType.graduate
+    it("returns true if the approved offer has expired for students", async () => {
+      const expiredOffer = new Offer({
+        ...mandatoryAttributes,
+        extensionApprovalStatus: ApprovalStatus.approved,
+        studentsExpirationDateTime: DateTimeManager.yesterday(),
+        targetApplicantType: ApplicantType.student
+      });
+      expect(expiredOffer.isExpiredForStudents()).toBe(true);
     });
 
-    expect(offer.isExpiredForGraduates()).toBe(false);
-    offer.expire();
-    expect(offer.isExpiredForGraduates()).toBe(true);
+    it("returns true if the approved offer has expired for both", async () => {
+      const expiredOffer = new Offer({
+        ...mandatoryAttributes,
+        extensionApprovalStatus: ApprovalStatus.approved,
+        graduadosApprovalStatus: ApprovalStatus.approved,
+        studentsExpirationDateTime: DateTimeManager.yesterday(),
+        graduatesExpirationDateTime: DateTimeManager.yesterday(),
+        targetApplicantType: ApplicantType.both
+      });
+      expect(expiredOffer.isExpiredForGraduates()).toBe(true);
+      expect(expiredOffer.isExpiredForStudents()).toBe(true);
+    });
+
+    it("does not count as expired if the offer is rejected for students", async () => {
+      const expiredOffer = new Offer({
+        ...mandatoryAttributes,
+        extensionApprovalStatus: ApprovalStatus.approved,
+        targetApplicantType: ApplicantType.student
+      });
+      expect(expiredOffer.isExpiredForStudents()).toBe(false);
+    });
+
+    it("does not count as expired if the offer is pending for students", async () => {
+      const expiredOffer = new Offer({
+        ...mandatoryAttributes,
+        extensionApprovalStatus: ApprovalStatus.pending,
+        targetApplicantType: ApplicantType.student
+      });
+      expect(expiredOffer.isExpiredForStudents()).toBe(false);
+    });
+
+    it("does not count as expired if the offer is rejected for graduates", async () => {
+      const expiredOffer = new Offer({
+        ...mandatoryAttributes,
+        graduadosApprovalStatus: ApprovalStatus.rejected,
+        targetApplicantType: ApplicantType.graduate
+      });
+      expect(expiredOffer.isExpiredForStudents()).toBe(false);
+    });
+
+    it("does not count as expired if the offer is pending for graduates", async () => {
+      const expiredOffer = new Offer({
+        ...mandatoryAttributes,
+        graduadosApprovalStatus: ApprovalStatus.rejected,
+        targetApplicantType: ApplicantType.graduate
+      });
+      expect(expiredOffer.isExpiredForStudents()).toBe(false);
+    });
+
+    it("expires an approved offer for students", async () => {
+      const offer = new Offer({
+        ...mandatoryAttributes,
+        extensionApprovalStatus: ApprovalStatus.approved,
+        targetApplicantType: ApplicantType.student,
+        studentsExpirationDateTime: DateTimeManager.daysFromNow(15)
+      });
+
+      expect(offer.isExpiredForStudents()).toBe(false);
+      offer.expire();
+      expect(offer.isExpiredForStudents()).toBe(true);
+    });
+
+    it("expires an approved offer for graduates", async () => {
+      const offer = new Offer({
+        ...mandatoryAttributes,
+        graduadosApprovalStatus: ApprovalStatus.approved,
+        targetApplicantType: ApplicantType.graduate,
+        graduatesExpirationDateTime: DateTimeManager.daysFromNow(15)
+      });
+
+      expect(offer.isExpiredForGraduates()).toBe(false);
+      offer.expire();
+      expect(offer.isExpiredForGraduates()).toBe(true);
+    });
   });
 
   describe("getStatus", () => {
     it("returns the status that the extension admin cares", async () => {
       const offer = new Offer({
-        ...offerAttributes,
+        ...mandatoryAttributes,
         extensionApprovalStatus: ApprovalStatus.approved,
         graduadosApprovalStatus: ApprovalStatus.rejected
       });
@@ -211,7 +206,7 @@ describe("Offer", () => {
 
     it("returns the status that the extension admin cares", async () => {
       const offer = new Offer({
-        ...offerAttributes,
+        ...mandatoryAttributes,
         extensionApprovalStatus: ApprovalStatus.approved,
         graduadosApprovalStatus: ApprovalStatus.rejected
       });
@@ -229,14 +224,14 @@ describe("Offer", () => {
     });
 
     it("update extension status", async () => {
-      const offer = new Offer(offerAttributes);
+      const offer = new Offer(mandatoryAttributes);
       expect(offer.extensionApprovalStatus).toEqual(ApprovalStatus.pending);
       offer.updateStatus(extensionAdmin, ApprovalStatus.approved);
       expect(offer.extensionApprovalStatus).toEqual(ApprovalStatus.approved);
     });
 
     it("update graduados status", async () => {
-      const offer = new Offer(offerAttributes);
+      const offer = new Offer(mandatoryAttributes);
       expect(offer.graduadosApprovalStatus).toEqual(ApprovalStatus.pending);
       offer.updateStatus(graduadosAdmin, ApprovalStatus.approved);
       expect(offer.graduadosApprovalStatus).toEqual(ApprovalStatus.approved);
@@ -340,7 +335,7 @@ describe("Offer", () => {
   });
 
   it("throws an error if offer has negative hoursPerDay", async () => {
-    const offer = new Offer({ ...offerAttributes, hoursPerDay: -23 });
+    const offer = new Offer({ ...mandatoryAttributes, hoursPerDay: -23 });
     await expect(offer.validate()).rejects.toThrow(NumberIsTooSmallError.buildMessage(0, false));
   });
 
@@ -350,18 +345,18 @@ describe("Offer", () => {
   });
 
   it("throws an error if offer has negative minimumSalary", async () => {
-    const offer = new Offer({ ...offerAttributes, minimumSalary: -23 });
+    const offer = new Offer({ ...mandatoryAttributes, minimumSalary: -23 });
     await expect(offer.validate()).rejects.toThrow(NumberIsTooSmallError.buildMessage(0, false));
   });
 
   it("throws an error if offer has negative maximumSalary", async () => {
-    const offer = new Offer({ ...offerAttributes, maximumSalary: -23 });
+    const offer = new Offer({ ...mandatoryAttributes, maximumSalary: -23 });
     await expect(offer.validate()).rejects.toThrow(NumberIsTooSmallError.buildMessage(0, false));
   });
 
   it("throws an error if minimumSalary if bigger than maximumSalary", async () => {
     const offer = new Offer({
-      ...offerAttributes,
+      ...mandatoryAttributes,
       minimumSalary: 100,
       maximumSalary: 50
     });
@@ -370,7 +365,7 @@ describe("Offer", () => {
 
   it("throws an error if it's an internship that targets graduates", async () => {
     const offer = new Offer({
-      ...offerAttributes,
+      ...mandatoryAttributes,
       isInternship: true,
       maximumSalary: null,
       targetApplicantType: ApplicantType.graduate
@@ -382,7 +377,7 @@ describe("Offer", () => {
 
   it("throws an error if it's an internship that targets both", async () => {
     const offer = new Offer({
-      ...offerAttributes,
+      ...mandatoryAttributes,
       isInternship: true,
       maximumSalary: null,
       targetApplicantType: ApplicantType.both
@@ -394,7 +389,7 @@ describe("Offer", () => {
 
   it("throws an error if it's an internship with a maximum salary", async () => {
     const offer = new Offer({
-      ...offerAttributes,
+      ...mandatoryAttributes,
       isInternship: true,
       maximumSalary: 123,
       targetApplicantType: ApplicantType.student
@@ -406,7 +401,7 @@ describe("Offer", () => {
 
   it("throws an error if graduadosApprovalStatus isn't a ApprovalStatus enum value", async () => {
     const offer = new Offer({
-      ...offerAttributes,
+      ...mandatoryAttributes,
       graduadosApprovalStatus: "pepito"
     });
     await expect(offer.validate()).rejects.toThrowErrorWithMessage(
@@ -417,7 +412,7 @@ describe("Offer", () => {
 
   it("throws an error if targetApplicantType isn not a ApplicantType enum value", async () => {
     const offer = new Offer({
-      ...offerAttributes,
+      ...mandatoryAttributes,
       targetApplicantType: "undefinedTargetApplicantType"
     });
     await expect(offer.validate()).rejects.toThrowErrorWithMessage(

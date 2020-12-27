@@ -126,14 +126,6 @@ export class Offer extends Model<Offer> {
   public getSections: HasManyGetAssociationsMixin<OfferSection>;
   public getCareers: HasManyGetAssociationsMixin<Career>;
 
-  public expireForStudents = () => {
-    this.studentsExpirationDateTime = DateTimeManager.yesterday();
-  };
-
-  public expireForGraduates = () => {
-    this.graduatesExpirationDateTime = DateTimeManager.yesterday();
-  };
-
   public expire() {
     if (this.isTargetedForGraduates()) this.expireForGraduates();
     if (this.isTargetedForStudents()) this.expireForStudents();
@@ -180,12 +172,18 @@ export class Offer extends Model<Offer> {
     return this.graduadosApprovalStatus;
   }
 
-  public updateStatus(admin: Admin, newStatus: ApprovalStatus) {
-    if (admin.secretary === Secretary.extension) {
-      return this.updateExtensionApprovalStatus(newStatus);
-    }
+  public updateStatus({ secretary }: Admin, newStatus: ApprovalStatus) {
+    if (secretary === Secretary.extension) return this.updateExtensionApprovalStatus(newStatus);
     this.updateGraduadosApprovalStatus(newStatus);
   }
+
+  private expireForStudents = () => {
+    this.studentsExpirationDateTime = DateTimeManager.yesterday();
+  };
+
+  private expireForGraduates = () => {
+    this.graduatesExpirationDateTime = DateTimeManager.yesterday();
+  };
 
   private updateExtensionApprovalStatus(newStatus: ApprovalStatus) {
     this.extensionApprovalStatus = newStatus;
