@@ -16,19 +16,19 @@ describe("OfferTargetApplicantPermission", () => {
 
     beforeAll(() => (offer = createOfferWith(ApplicantType.student)));
 
-    it("returns true if the offer is for students and the applicant is a student", async () => {
+    it("returns true if the offer is for students and the applicant is a student", () => {
       const permissions = new OfferTargetApplicantPermission(offer, ApplicantType.student);
-      expect(await permissions.apply()).toBe(true);
+      expect(permissions.apply()).toBe(true);
     });
 
-    it("returns true if the offer is for students and the applicant is both", async () => {
+    it("returns true if the offer is for students and the applicant is both", () => {
       const permissions = new OfferTargetApplicantPermission(offer, ApplicantType.both);
-      expect(await permissions.apply()).toBe(true);
+      expect(permissions.apply()).toBe(true);
     });
 
-    it("returns false if the offer is for students and the applicant is a graduate", async () => {
+    it("returns false if the offer is for students and the applicant is a graduate", () => {
       const permissions = new OfferTargetApplicantPermission(offer, ApplicantType.graduate);
-      expect(await permissions.apply()).toBe(false);
+      expect(permissions.apply()).toBe(false);
     });
   });
 
@@ -37,19 +37,19 @@ describe("OfferTargetApplicantPermission", () => {
 
     beforeAll(() => (offer = createOfferWith(ApplicantType.graduate)));
 
-    it("returns true if the offer is for graduates and the applicant is a graduate", async () => {
+    it("returns true if the offer is for graduates and the applicant is a graduate", () => {
       const permissions = new OfferTargetApplicantPermission(offer, ApplicantType.graduate);
-      expect(await permissions.apply()).toBe(true);
+      expect(permissions.apply()).toBe(true);
     });
 
-    it("returns true if the offer is for graduates and the applicant is both", async () => {
+    it("returns true if the offer is for graduates and the applicant is both", () => {
       const permissions = new OfferTargetApplicantPermission(offer, ApplicantType.both);
-      expect(await permissions.apply()).toBe(true);
+      expect(permissions.apply()).toBe(true);
     });
 
-    it("returns false if the offer is for graduates and the applicant is a student", async () => {
+    it("returns false if the offer is for graduates and the applicant is a student", () => {
       const permissions = new OfferTargetApplicantPermission(offer, ApplicantType.student);
-      expect(await permissions.apply()).toBe(false);
+      expect(permissions.apply()).toBe(false);
     });
   });
 
@@ -58,19 +58,19 @@ describe("OfferTargetApplicantPermission", () => {
 
     beforeAll(() => (offer = createOfferWith(ApplicantType.both)));
 
-    it("returns true if the offer is for both and the applicant is a student", async () => {
+    it("returns true if the offer is for both and the applicant is a student", () => {
       const permissions = new OfferTargetApplicantPermission(offer, ApplicantType.student);
-      expect(await permissions.apply()).toBe(true);
+      expect(permissions.apply()).toBe(true);
     });
 
-    it("returns true if the offer is for both and the applicant is a graduate", async () => {
+    it("returns true if the offer is for both and the applicant is a graduate", () => {
       const permissions = new OfferTargetApplicantPermission(offer, ApplicantType.graduate);
-      expect(await permissions.apply()).toBe(true);
+      expect(permissions.apply()).toBe(true);
     });
 
-    it("returns true if the offer is for both and the applicant is both", async () => {
+    it("returns true if the offer is for both and the applicant is both", () => {
       const permissions = new OfferTargetApplicantPermission(offer, ApplicantType.both);
-      expect(await permissions.apply()).toBe(true);
+      expect(permissions.apply()).toBe(true);
     });
   });
 });

@@ -10,7 +10,7 @@ export class OfferTargetApplicantPermission {
     this.applicantType = applicantType;
   }
 
-  public async apply() {
+  public apply() {
     const targetApplicantType = this.offer.targetApplicantType;
     if (this.applicantType === targetApplicantType) return true;
     return this.applicantType === ApplicantType.both || targetApplicantType === ApplicantType.both;
