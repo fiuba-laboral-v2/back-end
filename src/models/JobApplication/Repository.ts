@@ -10,14 +10,21 @@ export const JobApplicationRepository = {
     jobApplication.save({ transaction }),
   apply: async ({ uuid: applicantUuid }: Applicant, { uuid: offerUuid }: Offer) =>
     JobApplication.create({ offerUuid, applicantUuid }),
-  hasApplied: async (applicant: Applicant, offer: Offer) => {
+  findByApplicantAndOffer: async (applicant: Applicant, offer: Offer) => {
     const jobApplication = await JobApplication.findOne({
-      where: {
-        offerUuid: offer.uuid,
-        applicantUuid: applicant.uuid
-      }
+      where: { offerUuid: offer.uuid, applicantUuid: applicant.uuid }
     });
-    return jobApplication != null;
+    if (!jobApplication) throw new JobApplicationNotFoundError();
+    return jobApplication;
+  },
+  hasApplied: async (applicant: Applicant, offer: Offer) => {
+    try {
+      await JobApplicationRepository.findByApplicantAndOffer(applicant, offer);
+      return true;
+    } catch (error) {
+      if (error instanceof JobApplicationNotFoundError) return false;
+      throw error;
+    }
   },
   findByUuid: async (uuid: string) => {
     const jobApplication = await JobApplication.findByPk(uuid);

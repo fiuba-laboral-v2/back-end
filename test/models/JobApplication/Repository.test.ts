@@ -194,6 +194,31 @@ describe("JobApplicationRepository", () => {
     });
   });
 
+  describe("findByApplicantAndOffer", () => {
+    it("returns a jobApplication for an applicant that applied for an offer", async () => {
+      const applicant = await ApplicantGenerator.instance.graduate();
+      const offer = offers[ApplicantType.both];
+      await JobApplicationRepository.apply(applicant, offer);
+      const jobApplication = await JobApplicationRepository.findByApplicantAndOffer(
+        applicant,
+        offer
+      );
+      expect(jobApplication.offerUuid).toEqual(offer.uuid);
+      expect(jobApplication.applicantUuid).toEqual(applicant.uuid);
+    });
+
+    it("returns false if applicant has not applied to the offer", async () => {
+      const applicant = await ApplicantGenerator.instance.graduate();
+      const offer = offers[ApplicantType.both];
+      await expect(
+        JobApplicationRepository.findByApplicantAndOffer(applicant, offer)
+      ).rejects.toThrowErrorWithMessage(
+        JobApplicationNotFoundError,
+        JobApplicationNotFoundError.buildMessage()
+      );
+    });
+  });
+
   describe("hasApplied", () => {
     it("returns true if applicant applied for offer", async () => {
       const applicant = await ApplicantGenerator.instance.graduate();
