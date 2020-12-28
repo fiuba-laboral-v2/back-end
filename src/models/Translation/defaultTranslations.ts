@@ -299,24 +299,26 @@ export const defaultTranslations = {
   },
   offerDetailRepublishActions: {
     buttonText: "Volver a publicar",
-    confirmDialogTitle: "Estas por volver a publicar esta oferta",
-    confirmDialogConfirm: "Volver a publicar",
+    confirmDialogTitle: "Volver a publicar oferta",
+    confirmDialogConfirm: "Confirmar",
     confirmDialogCancel: "Cancelar"
   },
   offerDetailExpireActions: {
     buttonText: "Expirar",
-    confirmDialogTitle: "Estas por expirar esta oferta",
-    confirmDialogConfirm: "Expirar",
+    confirmDialogTitle: "Expirar oferta",
+    confirmDialogConfirm: "Confirmar",
     confirmDialogCancel: "Cancelar"
   },
   offerDetailEdit: {
     edit: "Editar"
   },
   offerRepublishFutureStateMessage: {
+    title: "Nuevo estado:",
     forStudents: "Alumnos: visible hasta",
     forGraduates: "Graduados: visible hasta"
   },
   offerExpireFutureStateMessage: {
+    title: "Nuevo estado:",
     forStudents: "Expirar para alumnos",
     forGraduates: "Expirar para graduados"
   },
