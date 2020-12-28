@@ -1,16 +1,14 @@
 import { ExpiredOfferApplicantPermission } from "$models/Permissions/ApplicantPermissions/ExpiredOfferApplicantPermission";
 import { ApplicantType } from "$models/Applicant";
-import { Admin, Applicant, Offer } from "$models";
+import { Admin, Offer } from "$models";
 import { UUID } from "$models/UUID";
 import { OfferGenerator } from "$generators/Offer";
-import { JobApplicationRepository } from "$models/JobApplication";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
 describe("ExpiredOfferApplicantPermission", () => {
   let extensionAdmin: Admin;
   let graduadosAdmin: Admin;
-  let applicant: Applicant;
 
   const createOfferWith = (targetApplicantType: ApplicantType) => {
     const companyUuid = UUID.generate();
@@ -23,14 +21,9 @@ describe("ExpiredOfferApplicantPermission", () => {
     });
   };
 
-  const mockHasApplied = (hasApplied: boolean) =>
-    jest.spyOn(JobApplicationRepository, "hasApplied").mockImplementation(async () => hasApplied);
-
   beforeAll(() => {
     extensionAdmin = new Admin({ userUuid: UUID.generate(), secretary: Secretary.extension });
     graduadosAdmin = new Admin({ userUuid: UUID.generate(), secretary: Secretary.graduados });
-
-    applicant = new Applicant({ userUuid: UUID.generate(), padron: 1 });
   });
 
   describe("Student", () => {
@@ -39,32 +32,14 @@ describe("ExpiredOfferApplicantPermission", () => {
 
     beforeAll(() => (offer = createOfferWith(applicantType)));
 
-    it("returns true if the offer is expired and the applicant has applied", async () => {
-      mockHasApplied(true);
-      offer.expire();
-      const permission = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
-      expect(await permission.apply()).toBe(true);
-    });
-
     it("returns true if the offer is not expired", async () => {
       offer.updateStatus(extensionAdmin, ApprovalStatus.approved, 15);
-      const permission = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
+      const permission = new ExpiredOfferApplicantPermission(offer, applicantType);
       expect(await permission.apply()).toBe(true);
-    });
-
-    it("returns false if the offer is expired and the applicant has not applied", async () => {
-      mockHasApplied(false);
-      offer.expire();
-      const permission = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
-      expect(await permission.apply()).toBe(false);
     });
 
     it("returns false if the applicant is a graduate", async () => {
-      const permission = new ExpiredOfferApplicantPermission(
-        applicant,
-        offer,
-        ApplicantType.graduate
-      );
+      const permission = new ExpiredOfferApplicantPermission(offer, ApplicantType.graduate);
       expect(await permission.apply()).toBe(false);
     });
   });
@@ -75,32 +50,14 @@ describe("ExpiredOfferApplicantPermission", () => {
 
     beforeAll(() => (offer = createOfferWith(applicantType)));
 
-    it("returns true if the offer is expired and the applicant has applied", async () => {
-      mockHasApplied(true);
-      offer.expire();
-      const permission = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
-      expect(await permission.apply()).toBe(true);
-    });
-
     it("returns true if the offer is not expired", async () => {
       offer.updateStatus(graduadosAdmin, ApprovalStatus.approved, 15);
-      const permission = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
+      const permission = new ExpiredOfferApplicantPermission(offer, applicantType);
       expect(await permission.apply()).toBe(true);
-    });
-
-    it("returns false if the offer is expired and the applicant has not applied", async () => {
-      mockHasApplied(false);
-      offer.expire();
-      const permission = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
-      expect(await permission.apply()).toBe(false);
     });
 
     it("returns false if the applicant is a student", async () => {
-      const permission = new ExpiredOfferApplicantPermission(
-        applicant,
-        offer,
-        ApplicantType.student
-      );
+      const permission = new ExpiredOfferApplicantPermission(offer, ApplicantType.student);
       expect(await permission.apply()).toBe(false);
     });
   });
@@ -111,25 +68,11 @@ describe("ExpiredOfferApplicantPermission", () => {
 
     beforeAll(() => (offer = createOfferWith(applicantType)));
 
-    it("returns true if the offer is expired and the applicant has applied", async () => {
-      mockHasApplied(true);
-      offer.expire();
-      const permission = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
-      expect(await permission.apply()).toBe(true);
-    });
-
     it("returns true if the offer is not expired", async () => {
       offer.updateStatus(extensionAdmin, ApprovalStatus.approved, 15);
       offer.updateStatus(graduadosAdmin, ApprovalStatus.approved, 15);
-      const permission = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
+      const permission = new ExpiredOfferApplicantPermission(offer, applicantType);
       expect(await permission.apply()).toBe(true);
-    });
-
-    it("returns false if the offer is expired and the applicant has not applied", async () => {
-      mockHasApplied(false);
-      offer.expire();
-      const permission = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
-      expect(await permission.apply()).toBe(false);
     });
   });
 });

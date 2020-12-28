@@ -1,6 +1,7 @@
 import { JobApplicationRepository } from "$models/JobApplication";
 import { Applicant, Offer } from "$models";
 import { IApplicantPermission } from "./Interfaces";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export class HasAppliedToOfferApplicantPermission implements IApplicantPermission {
   private readonly applicant: Applicant;
@@ -11,7 +12,13 @@ export class HasAppliedToOfferApplicantPermission implements IApplicantPermissio
     this.offer = offer;
   }
 
-  public apply() {
-    return JobApplicationRepository.hasApplied(this.applicant, this.offer);
+  public async apply() {
+    const { findByApplicantAndOffer } = JobApplicationRepository;
+    try {
+      const jobApplication = await findByApplicantAndOffer(this.applicant, this.offer);
+      return jobApplication.approvalStatus !== ApprovalStatus.rejected;
+    } catch (error) {
+      return false;
+    }
   }
 }
