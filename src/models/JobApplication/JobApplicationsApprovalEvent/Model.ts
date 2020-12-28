@@ -2,6 +2,7 @@ import { Column, CreatedAt, ForeignKey, Model, Table, UpdatedAt } from "sequeliz
 import { ENUM, UUID, UUIDV4, TEXT } from "sequelize";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
 import { Admin, JobApplication } from "$models";
+import { Nullable } from "$models/SequelizeModel";
 import { isApprovalStatus, isUuid } from "$models/SequelizeModelValidators";
 
 @Table({ tableName: "JobApplicationApprovalEvents", timestamps: true })
@@ -18,7 +19,7 @@ export class JobApplicationApprovalEvent extends Model<JobApplicationApprovalEve
   public adminUserUuid: string;
 
   @Column({ allowNull: true, type: TEXT })
-  public moderatorMessage?: string;
+  public moderatorMessage: Nullable<string>;
 
   @Column({
     allowNull: false,

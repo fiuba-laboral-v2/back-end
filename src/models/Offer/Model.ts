@@ -118,7 +118,7 @@ export class Offer extends Model<Offer> {
     validateIntegerInRange({ min: { value: 0, include: false } })(salary);
   })
   @Column({ allowNull: true, type: INTEGER })
-  public maximumSalary?: number;
+  public maximumSalary?: Nullable<number>;
 
   @Column({ allowNull: true, type: DATE })
   public graduatesExpirationDateTime: Nullable<Date>;

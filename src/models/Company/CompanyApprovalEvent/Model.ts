@@ -2,6 +2,7 @@ import { Column, CreatedAt, ForeignKey, Model, Table, UpdatedAt } from "sequeliz
 import { ENUM, TEXT, UUID, UUIDV4 } from "sequelize";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
 import { Admin, Company } from "$models";
+import { Nullable } from "$models/SequelizeModel";
 
 @Table({ tableName: "CompanyApprovalEvents", timestamps: true })
 export class CompanyApprovalEvent extends Model<CompanyApprovalEvent> {
@@ -17,7 +18,7 @@ export class CompanyApprovalEvent extends Model<CompanyApprovalEvent> {
   public companyUuid: string;
 
   @Column({ allowNull: true, type: TEXT })
-  public moderatorMessage?: string;
+  public moderatorMessage?: Nullable<string>;
 
   @Column({ allowNull: false, type: ENUM<string>({ values: approvalStatuses }) })
   public status: ApprovalStatus;

@@ -1,6 +1,7 @@
 import { Column, CreatedAt, ForeignKey, Model, Table, UpdatedAt } from "sequelize-typescript";
 import { ENUM, TEXT, UUID, UUIDV4 } from "sequelize";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
+import { Nullable } from "$models/SequelizeModel";
 import { Admin, Offer } from "$models";
 import { isApprovalStatus } from "$models/SequelizeModelValidators";
 
@@ -18,7 +19,7 @@ export class OfferApprovalEvent extends Model<OfferApprovalEvent> {
   public offerUuid: string;
 
   @Column({ allowNull: true, type: TEXT })
-  public moderatorMessage?: string;
+  public moderatorMessage: Nullable<string>;
 
   @Column({
     allowNull: false,
