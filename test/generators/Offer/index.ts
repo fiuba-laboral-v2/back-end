@@ -57,11 +57,10 @@ export const OfferGenerator = {
       status,
       studentsExpirationDateTime,
       graduatesExpirationDateTime,
-      targetApplicantType,
       ...variables
     }: IOfferInput & IUpdatedWithStatus) => {
       const offer = await OfferRepository.create(
-        withOneSection({ index: OfferGenerator.getIndex(), targetApplicantType, ...variables })
+        withOneSection({ index: OfferGenerator.getIndex(), ...variables })
       );
       const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
         admin.secretary
