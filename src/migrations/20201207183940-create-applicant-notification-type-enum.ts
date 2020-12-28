@@ -8,6 +8,7 @@ export = {
       CREATE TYPE ${TYPE_NAME} AS ENUM (
         'approvedJobApplication',
         'rejectedJobApplication',
+        'pendingJobApplication',
         'approvedProfile',
         'rejectedProfile'
       );
