@@ -141,7 +141,7 @@ describe("Offer", () => {
     it("does not count as expired if the offer is rejected for students", async () => {
       const expiredOffer = new Offer({
         ...mandatoryAttributes,
-        extensionApprovalStatus: ApprovalStatus.approved,
+        extensionApprovalStatus: ApprovalStatus.rejected,
         targetApplicantType: ApplicantType.student
       });
       expect(expiredOffer.isExpiredForStudents()).toBe(false);
@@ -279,7 +279,7 @@ describe("Offer", () => {
     it("updates expiration date when approving an offer for graduados", async () => {
       const status = ApprovalStatus.approved;
       approvedOfferForGraduados.updateStatus(graduadosAdmin, status, offerDurationInDays);
-      const expirationDateTime = approvedOfferForGraduados.graduatesExpirationDateTime.toISOString();
+      const expirationDateTime = approvedOfferForGraduados.graduatesExpirationDateTime?.toISOString();
       expect(expirationDateTime).toEqual(expirationDate.toISOString());
     });
 
@@ -298,7 +298,7 @@ describe("Offer", () => {
     it("updates the expiration date when approving an offer for extension", async () => {
       const status = ApprovalStatus.approved;
       approvedOfferForExtension.updateStatus(extensionAdmin, status, offerDurationInDays);
-      const expirationDateTime = approvedOfferForExtension.studentsExpirationDateTime.toISOString();
+      const expirationDateTime = approvedOfferForExtension.studentsExpirationDateTime?.toISOString();
       expect(expirationDateTime).toEqual(expirationDate.toISOString());
     });
 

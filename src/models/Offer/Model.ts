@@ -120,10 +120,10 @@ export class Offer extends Model<Offer> {
   public maximumSalary?: number;
 
   @Column({ allowNull: true, type: DATE })
-  public graduatesExpirationDateTime: Date;
+  public graduatesExpirationDateTime: Date | null;
 
   @Column({ allowNull: true, type: DATE })
-  public studentsExpirationDateTime: Date;
+  public studentsExpirationDateTime: Date | null;
 
   @HasMany(() => OfferSection)
   public sections: OfferSection[];
@@ -150,6 +150,7 @@ export class Offer extends Model<Offer> {
     const status = this.getStatus(Secretary.extension);
     if (status === ApprovalStatus.rejected) return false;
     if (status === ApprovalStatus.pending) return false;
+    if (!this.studentsExpirationDateTime) throw new ApprovedOfferWithNoExpirationTimeError();
 
     return this.studentsExpirationDateTime < new Date();
   };
@@ -158,6 +159,7 @@ export class Offer extends Model<Offer> {
     const status = this.getStatus(Secretary.graduados);
     if (status === ApprovalStatus.rejected) return false;
     if (status === ApprovalStatus.pending) return false;
+    if (!this.graduatesExpirationDateTime) throw new ApprovedOfferWithNoExpirationTimeError();
 
     return this.graduatesExpirationDateTime < new Date();
   };
@@ -190,7 +192,7 @@ export class Offer extends Model<Offer> {
     if (newStatus === ApprovalStatus.approved) {
       this.studentsExpirationDateTime = expirationDate;
     } else {
-      this.studentsExpirationDateTime = null as any;
+      this.studentsExpirationDateTime = null;
     }
   }
 
@@ -199,7 +201,7 @@ export class Offer extends Model<Offer> {
     if (newStatus === ApprovalStatus.approved) {
       this.graduatesExpirationDateTime = expirationDate;
     } else {
-      this.graduatesExpirationDateTime = null as any;
+      this.graduatesExpirationDateTime = null;
     }
   }
 
