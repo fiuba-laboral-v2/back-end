@@ -312,12 +312,14 @@ export const defaultTranslations = {
   offerDetailRepublishActions: {
     buttonText: "Volver a publicar",
     confirmDialogTitle: "Volver a publicar oferta",
+    confirmDialogDescription: "Nuevo estado:",
     confirmDialogConfirm: "Confirmar",
     confirmDialogCancel: "Cancelar"
   },
   offerDetailExpireActions: {
     buttonText: "Expirar",
     confirmDialogTitle: "Expirar oferta",
+    confirmDialogDescription: "Nuevo estado:",
     confirmDialogConfirm: "Confirmar",
     confirmDialogCancel: "Cancelar"
   },
