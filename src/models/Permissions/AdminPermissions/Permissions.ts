@@ -1,6 +1,7 @@
 import { Offer } from "$models";
 import { IPermissions, IPermission } from "../Interfaces";
 import { OfferTargetAdminPermission } from "./OfferTargetAdminPermission";
+import { ApprovedCompanyForOfferAdminPermission } from "./ApprovedCompanyForOfferAdminPermission";
 import { AdminRepository } from "$models/Admin";
 
 export class AdminPermissions implements IPermissions {
@@ -16,7 +17,10 @@ export class AdminPermissions implements IPermissions {
 
   public async canModerateOffer(offer: Offer) {
     const admin = await AdminRepository.findByUserUuid(this.adminUserUuid);
-    const permissions: IPermission[] = [new OfferTargetAdminPermission(offer, admin)];
+    const permissions: IPermission[] = [
+      new OfferTargetAdminPermission(offer, admin),
+      new ApprovedCompanyForOfferAdminPermission(offer)
+    ];
     const results = await Promise.all(permissions.map(permission => permission.apply()));
     return results.every(result => result);
   }

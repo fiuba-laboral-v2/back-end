@@ -13,7 +13,7 @@ import {
 } from "$models/CompanyNotification";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { Offer } from "$models";
+import { Company, Offer } from "$models";
 import { DateTimeManager } from "$libs/DateTimeManager";
 import { MissingModeratorMessageError } from "$models/Notification";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
@@ -48,20 +48,23 @@ const UPDATE_OFFER_APPROVAL_STATUS = gql`
 describe("updateOfferApprovalStatus", () => {
   const moderatorMessage = "message";
   let offers: IForAllTargets;
+  let company: Company;
 
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
-    const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
+    company = await CompanyGenerator.instance.withMinimumData();
     offers = await OfferGenerator.instance.forAllTargets({
       status: ApprovalStatus.pending,
-      companyUuid
+      companyUuid: company.uuid
     });
   });
 
   beforeEach(async () => {
     await OfferApprovalEventRepository.truncate();
     jest.spyOn(EmailService, "send").mockImplementation(jest.fn());
+    company.set({ approvalStatus: ApprovalStatus.approved });
+    await CompanyRepository.save(company);
   });
 
   const performMutation = (apolloClient: TestClient, dataToUpdate: object) =>
@@ -306,6 +309,28 @@ describe("updateOfferApprovalStatus", () => {
     const { apolloClient } = await TestClientGenerator.admin({ secretary: Secretary.graduados });
     const { errors } = await performMutation(apolloClient, {
       uuid: offers[ApplicantType.student].uuid,
+      approvalStatus: ApprovalStatus.approved
+    });
+    expect(errors).toEqualGraphQLErrorType(AdminCannotModerateOfferError.name);
+  });
+
+  it("returns an error if the company's offer is rejected", async () => {
+    company.set({ approvalStatus: ApprovalStatus.rejected });
+    await CompanyRepository.save(company);
+    const { apolloClient } = await TestClientGenerator.admin({ secretary: Secretary.graduados });
+    const { errors } = await performMutation(apolloClient, {
+      uuid: offers[ApplicantType.both].uuid,
+      approvalStatus: ApprovalStatus.approved
+    });
+    expect(errors).toEqualGraphQLErrorType(AdminCannotModerateOfferError.name);
+  });
+
+  it("returns an error if the company's offer is pending", async () => {
+    company.set({ approvalStatus: ApprovalStatus.pending });
+    await CompanyRepository.save(company);
+    const { apolloClient } = await TestClientGenerator.admin({ secretary: Secretary.graduados });
+    const { errors } = await performMutation(apolloClient, {
+      uuid: offers[ApplicantType.both].uuid,
       approvalStatus: ApprovalStatus.approved
     });
     expect(errors).toEqualGraphQLErrorType(AdminCannotModerateOfferError.name);
