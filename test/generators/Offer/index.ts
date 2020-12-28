@@ -61,8 +61,7 @@ export const OfferGenerator = {
       const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
         admin.secretary
       );
-      offer.updateStatus(admin, status);
-      offer.updateExpirationDate(admin, offerDurationInDays);
+      offer.updateStatus(admin, status, offerDurationInDays);
       return OfferRepository.save(offer);
     },
     forStudents: async ({ status, ...variables }: IOfferInput & { status?: ApprovalStatus }) => {
@@ -99,8 +98,7 @@ export const OfferGenerator = {
       const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
         graduadosAdmin.secretary
       );
-      offer.updateStatus(graduadosAdmin, status || ApprovalStatus.approved);
-      offer.updateExpirationDate(graduadosAdmin, offerDurationInDays);
+      offer.updateStatus(graduadosAdmin, status || ApprovalStatus.approved, offerDurationInDays);
       return OfferRepository.save(offer);
     },
     forAllTargets: async (

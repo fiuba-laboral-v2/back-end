@@ -34,6 +34,10 @@ export class OfferTestSetup {
       offerDurationInDays: extensionOfferDurationInDays
     } = await SecretarySettingsRepository.findBySecretary(this.admins.extension.secretary);
 
+    const {
+      offerDurationInDays: graduadosOfferDurationInDays
+    } = await SecretarySettingsRepository.findBySecretary(this.admins.graduados.secretary);
+
     this.rejectedForStudents = await OfferGenerator.instance.updatedWithStatus({
       admin: this.admins.extension,
       companyUuid: this.companies.approved.uuid,
@@ -55,7 +59,11 @@ export class OfferTestSetup {
       targetApplicantType: ApplicantType.both
     });
 
-    this.rejectedForBoth.updateStatus(this.admins.extension, ApprovalStatus.rejected);
+    this.rejectedForBoth.updateStatus(
+      this.admins.extension,
+      ApprovalStatus.rejected,
+      extensionOfferDurationInDays
+    );
     this.rejectedForBoth = await OfferRepository.save(this.rejectedForBoth);
 
     this.approvedForStudents = await OfferGenerator.instance.updatedWithStatus({
@@ -86,8 +94,11 @@ export class OfferTestSetup {
       targetApplicantType: ApplicantType.both
     });
 
-    this.approvedForBoth.updateStatus(this.admins.extension, ApprovalStatus.approved);
-    this.approvedForBoth.updateExpirationDate(this.admins.extension, extensionOfferDurationInDays);
+    this.approvedForBoth.updateStatus(
+      this.admins.extension,
+      ApprovalStatus.approved,
+      extensionOfferDurationInDays
+    );
     await OfferRepository.save(this.approvedForBoth);
 
     this.pendingForStudents = await OfferGenerator.instance.updatedWithStatus({
@@ -111,7 +122,11 @@ export class OfferTestSetup {
       targetApplicantType: ApplicantType.both
     });
 
-    this.pendingForBoth.updateStatus(this.admins.graduados, ApprovalStatus.pending);
+    this.pendingForBoth.updateStatus(
+      this.admins.graduados,
+      ApprovalStatus.pending,
+      graduadosOfferDurationInDays
+    );
     this.pendingForBoth = await OfferRepository.save(this.pendingForBoth);
 
     this.tasks = [

@@ -22,9 +22,9 @@ export const UserMapper = {
   toDomainModel: (sequelizeModel: UserSequelizeModel) => {
     let credentials: ICredentials;
     if (sequelizeModel.isFiubaUser()) {
-      credentials = new FiubaCredentials(sequelizeModel.dni);
+      credentials = new FiubaCredentials(sequelizeModel.dni!);
     } else {
-      credentials = new CompanyUserHashedCredentials({ password: sequelizeModel.password });
+      credentials = new CompanyUserHashedCredentials({ password: sequelizeModel.password! });
     }
     return new User({
       uuid: sequelizeModel.uuid,

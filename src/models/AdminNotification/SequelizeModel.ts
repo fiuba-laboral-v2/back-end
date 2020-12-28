@@ -4,6 +4,7 @@ import { Company } from "$models";
 import { AdminNotificationType, adminNotificationTypeEnumValues } from "./Interfaces";
 import { isUuid, isAdminNotificationType, isSecretary } from "$models/SequelizeModelValidators";
 import { Secretary, SecretaryEnumValues } from "$models/Admin";
+import { Nullable } from "$models/SequelizeModel";
 import { SequelizeModel } from "$models/SequelizeModel";
 
 @Table({ tableName: "AdminNotifications", timestamps: true, updatedAt: false })
@@ -19,7 +20,7 @@ export class AdminNotificationSequelizeModel extends SequelizeModel<
 
   @ForeignKey(() => Company)
   @Column({ allowNull: true, type: UUID, ...isUuid })
-  public companyUuid: string;
+  public companyUuid: Nullable<string>;
 
   @Column({
     allowNull: false,

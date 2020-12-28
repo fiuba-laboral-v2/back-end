@@ -1,8 +1,9 @@
 import { UUID } from "$models/UUID";
+import { Nullable } from "$models/SequelizeModel";
 import { InvalidAttributeFormatError } from "$models/Errors";
 
 export abstract class Notification {
-  public uuid?: string;
+  public uuid: Nullable<string>;
   public isNew: boolean;
   public createdAt?: Date;
 
@@ -12,7 +13,7 @@ export abstract class Notification {
     this.setCreatedAt(attributes.createdAt);
   }
 
-  public setUuid(uuid?: string) {
+  public setUuid(uuid: Nullable<string>) {
     if (uuid && !UUID.validate(uuid)) throw new InvalidAttributeFormatError("uuid");
     this.uuid = uuid;
   }
@@ -27,7 +28,7 @@ export abstract class Notification {
 }
 
 export interface INotificationAttributes {
-  uuid?: string;
+  uuid?: Nullable<string>;
   isNew?: boolean;
   createdAt?: Date;
 }

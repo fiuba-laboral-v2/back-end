@@ -26,6 +26,7 @@ import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Applicant";
 import { isApprovalStatus } from "$models/SequelizeModelValidators";
 import { ApplicantWithNoCareersError } from "./Errors";
+import { Nullable } from "$models/SequelizeModel";
 
 @Table({ tableName: "Applicants" })
 export class Applicant extends Model<Applicant> {
@@ -48,7 +49,7 @@ export class Applicant extends Model<Applicant> {
     allowNull: true,
     type: TEXT
   })
-  public description: string;
+  public description: Nullable<string>;
 
   @ForeignKey(() => UserSequelizeModel)
   @Column({

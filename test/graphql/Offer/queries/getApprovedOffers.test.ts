@@ -106,10 +106,7 @@ describe("getApprovedOffers", () => {
     );
     offerForBothAndApprovedByGraduadosAndExtension.updateStatus(
       adminExtension,
-      ApprovalStatus.approved
-    );
-    offerForBothAndApprovedByGraduadosAndExtension.updateExpirationDate(
-      adminExtension,
+      ApprovalStatus.approved,
       offerDurationInDays
     );
     await OfferRepository.save(offerForBothAndApprovedByGraduadosAndExtension);

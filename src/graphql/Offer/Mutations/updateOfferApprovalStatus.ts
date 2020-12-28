@@ -41,8 +41,7 @@ export const updateOfferApprovalStatus = {
       admin.secretary
     );
 
-    offer.updateStatus(admin, status);
-    offer.updateExpirationDate(admin, offerDurationInDays);
+    offer.updateStatus(admin, status, offerDurationInDays);
     const event = new OfferApprovalEvent({
       adminUserUuid,
       offerUuid: offer.uuid,

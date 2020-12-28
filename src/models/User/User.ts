@@ -1,11 +1,12 @@
 import { InvalidAttributeFormatError, AttributeNotDefinedError } from "$models/Errors";
 import { ICredentials } from "./Interface";
+import { Nullable } from "$models/SequelizeModel";
 import { UUID } from "$models/UUID";
 import { isNil } from "lodash";
 import { validateEmail, validateName } from "validations-fiuba-laboral-v2";
 
 export class User {
-  public uuid?: string;
+  public uuid: Nullable<string>;
   public name: string;
   public surname: string;
   public email: string;
@@ -19,7 +20,7 @@ export class User {
     this.setCredentials(attributes.credentials);
   }
 
-  public setUuid(uuid?: string) {
+  public setUuid(uuid: Nullable<string>) {
     if (uuid && !UUID.validate(uuid)) throw new InvalidAttributeFormatError("uuid");
     this.uuid = uuid;
   }
@@ -50,7 +51,7 @@ export class User {
 }
 
 export interface IUserAttributes {
-  uuid?: string;
+  uuid?: Nullable<string>;
   name: string;
   surname: string;
   email: string;
