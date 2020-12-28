@@ -9,6 +9,7 @@ import { ApplicantGenerator } from "$generators/Applicant";
 import { Applicant } from "$models";
 import { ApplicantType } from "$models/Applicant";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { JobApplicationRepository } from "$models/JobApplication";
 
 describe("ApplicantPermissions", () => {
   let offers: IForAllTargetsAndStatuses;
@@ -23,6 +24,9 @@ describe("ApplicantPermissions", () => {
   });
 
   describe("canSeeOffer", () => {
+    const mockHasApplied = (hasApplied: boolean) =>
+      jest.spyOn(JobApplicationRepository, "hasApplied").mockImplementation(async () => hasApplied);
+
     it("returns true if the offer is approved for students and the applicant is a student", async () => {
       const offer = offers[ApplicantType.student][ApprovalStatus.approved];
       const applicant = await ApplicantGenerator.instance.student();
@@ -154,6 +158,24 @@ describe("ApplicantPermissions", () => {
       const applicant = await ApplicantGenerator.instance.studentAndGraduate();
       const permissions = new ApplicantPermissions(applicant.uuid);
       expect(await permissions.canSeeOffer(offer)).toBe(false);
+    });
+
+    it("returns false if the offer is expired and the applicant has not applied", async () => {
+      mockHasApplied(false);
+      const offer = offers[ApplicantType.graduate][ApprovalStatus.approved];
+      offer.expire();
+      const applicant = await ApplicantGenerator.instance.graduate();
+      const permissions = new ApplicantPermissions(applicant.uuid);
+      expect(await permissions.canSeeOffer(offer)).toBe(false);
+    });
+
+    it("returns true if the offer is expired and the applicant has applied", async () => {
+      mockHasApplied(true);
+      const offer = offers[ApplicantType.graduate][ApprovalStatus.approved];
+      offer.expire();
+      const applicant = await ApplicantGenerator.instance.graduate();
+      const permissions = new ApplicantPermissions(applicant.uuid);
+      expect(await permissions.canSeeOffer(offer)).toBe(true);
     });
   });
 

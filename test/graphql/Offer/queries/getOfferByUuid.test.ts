@@ -17,6 +17,7 @@ import { CareerGenerator } from "$generators/Career";
 import { CompanyGenerator } from "$generators/Company";
 import { TestClientGenerator } from "$generators/TestClient";
 import { UUID } from "$models/UUID";
+import { OfferRepository } from "$models/Offer";
 
 const GET_OFFER_BY_UUID = gql`
   query($uuid: ID!) {
@@ -229,6 +230,13 @@ describe("getOfferByUuid", () => {
     await expectToGetOffer(apolloClient, offer);
   });
 
+  it("returns offer that has expired but the applicant has applied", async () => {
+    const offer = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
+    const { apolloClient, applicant } = await approvedApplicantTestClient(ApplicantType.graduate);
+    await JobApplicationRepository.apply(applicant, offer);
+    await expectToGetOffer(apolloClient, offer);
+  });
+
   it("returns error if the offer is targeted to students for a graduate applicant", async () => {
     const offer = await OfferGenerator.instance.forStudents({ companyUuid });
     const { apolloClient } = await approvedApplicantTestClient(ApplicantType.graduate);
@@ -238,6 +246,14 @@ describe("getOfferByUuid", () => {
   it("returns error if the offer is targeted to graduates for a student applicant", async () => {
     const offer = await OfferGenerator.instance.forGraduates({ companyUuid });
     const { apolloClient } = await approvedApplicantTestClient(ApplicantType.student);
+    await expectToReturnError(apolloClient, offer, OfferNotVisibleByCurrentUserError);
+  });
+
+  it("returns error if the offer has expired and the applicant has not applied", async () => {
+    const offer = await OfferGenerator.instance.forGraduates({ companyUuid });
+    const { apolloClient } = await approvedApplicantTestClient(ApplicantType.graduate);
+    offer.expire();
+    await OfferRepository.save(offer);
     await expectToReturnError(apolloClient, offer, OfferNotVisibleByCurrentUserError);
   });
 
