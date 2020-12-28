@@ -187,10 +187,12 @@ export class Offer extends Model<Offer> {
   }
 
   private expireForStudents = () => {
+    if (this.extensionApprovalStatus !== ApprovalStatus.approved) return;
     this.studentsExpirationDateTime = DateTimeManager.yesterday();
   };
 
   private expireForGraduates = () => {
+    if (this.graduadosApprovalStatus !== ApprovalStatus.approved) return;
     this.graduatesExpirationDateTime = DateTimeManager.yesterday();
   };
 
