@@ -331,8 +331,8 @@ export const defaultTranslations = {
   },
   offerExpireFutureStateMessage: {
     title: "Nuevo estado:",
-    forStudents: "Expirar para alumnos",
-    forGraduates: "Expirar para graduados"
+    forStudents: "Alumnos: expirada",
+    forGraduates: "Graduados: expirada"
   },
   MyOffers: {
     title: "Mis Ofertas"
