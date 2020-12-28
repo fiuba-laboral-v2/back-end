@@ -143,8 +143,8 @@ export class Offer extends Model<Offer> {
   public getCareers: HasManyGetAssociationsMixin<Career>;
 
   public expire() {
-    if (this.isTargetedForGraduates()) this.expireForGraduates();
-    if (this.isTargetedForStudents()) this.expireForStudents();
+    if (this.canExpireForGraduates()) this.expireForGraduates();
+    if (this.canExpireForStudents()) this.expireForStudents();
   }
 
   public isExpiredFor(type: ApplicantType) {
@@ -241,5 +241,27 @@ export class Offer extends Model<Offer> {
     if (isRejected && this[expirationTimeProperty]) {
       throw new RejectedOfferWithExpirationTimeError();
     }
+  }
+
+  private isApprovedForStudents() {
+    return this.extensionApprovalStatus === ApprovalStatus.approved;
+  }
+
+  private isApprovedForGraduates() {
+    return this.graduadosApprovalStatus === ApprovalStatus.approved;
+  }
+
+  private canExpireForStudents() {
+    return (
+      this.isTargetedForStudents() && this.isApprovedForStudents() && !this.isExpiredForStudents()
+    );
+  }
+
+  private canExpireForGraduates() {
+    return (
+      this.isTargetedForGraduates() &&
+      this.isApprovedForGraduates() &&
+      !this.isExpiredForGraduates()
+    );
   }
 }
