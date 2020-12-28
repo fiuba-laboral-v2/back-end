@@ -28,9 +28,9 @@ import { ApplicantType, targetApplicantTypeEnumValues } from "$models/Applicant"
 import { isNil } from "lodash";
 import { DateTimeManager } from "$libs/DateTimeManager";
 import {
+  ApprovedOfferWithNoExpirationTimeError,
   InternshipsCannotHaveMaximumSalaryError,
   InternshipsMustTargetStudentsError,
-  ApprovedOfferWithNoExpirationTimeError,
   PendingOfferWithExpirationTimeError,
   RejectedOfferWithExpirationTimeError
 } from "./Errors";
@@ -146,26 +146,6 @@ export class Offer extends Model<Offer> {
     if (this.isTargetedForStudents()) this.expireForStudents();
   }
 
-  public updateExpirationDate(admin: Admin, offerDurationInDays: number) {
-    const isApproved = chooseStatus => chooseStatus === ApprovalStatus.approved;
-    const status = this.getStatus(admin.secretary);
-    const expirationDate = DateTimeManager.daysFromNow(offerDurationInDays);
-    if (admin.isFromGraduadosSecretary()) {
-      if (isApproved(status)) {
-        this.graduatesExpirationDateTime = expirationDate.toDate();
-      } else {
-        this.graduatesExpirationDateTime = null as any;
-      }
-    }
-    if (admin.isFromExtensionSecretary()) {
-      if (isApproved(status)) {
-        this.studentsExpirationDateTime = expirationDate.toDate();
-      } else {
-        this.studentsExpirationDateTime = null as any;
-      }
-    }
-  }
-
   public isExpiredForStudents = () => {
     const status = this.getStatus(Secretary.extension);
     if (status === ApprovalStatus.rejected) return false;
@@ -187,9 +167,14 @@ export class Offer extends Model<Offer> {
     return this.graduadosApprovalStatus;
   }
 
-  public updateStatus(admin: Admin, newStatus: ApprovalStatus) {
-    if (admin.isFromExtensionSecretary()) return this.updateExtensionApprovalStatus(newStatus);
-    if (admin.isFromGraduadosSecretary()) return this.updateGraduadosApprovalStatus(newStatus);
+  public updateStatus(admin: Admin, newStatus: ApprovalStatus, offerDurationInDays: number) {
+    const expirationDate = DateTimeManager.daysFromNow(offerDurationInDays).toDate();
+    if (admin.isFromExtensionSecretary()) {
+      return this.updateExtensionApprovalStatus(newStatus, expirationDate);
+    }
+    if (admin.isFromGraduadosSecretary()) {
+      return this.updateGraduadosApprovalStatus(newStatus, expirationDate);
+    }
   }
 
   private expireForStudents = () => {
@@ -200,12 +185,22 @@ export class Offer extends Model<Offer> {
     this.graduatesExpirationDateTime = DateTimeManager.yesterday();
   };
 
-  private updateExtensionApprovalStatus(newStatus: ApprovalStatus) {
+  private updateExtensionApprovalStatus(newStatus: ApprovalStatus, expirationDate: Date) {
     this.extensionApprovalStatus = newStatus;
+    if (newStatus === ApprovalStatus.approved) {
+      this.studentsExpirationDateTime = expirationDate;
+    } else {
+      this.studentsExpirationDateTime = null as any;
+    }
   }
 
-  private updateGraduadosApprovalStatus(newStatus: ApprovalStatus) {
+  private updateGraduadosApprovalStatus(newStatus: ApprovalStatus, expirationDate: Date) {
     this.graduadosApprovalStatus = newStatus;
+    if (newStatus === ApprovalStatus.approved) {
+      this.graduatesExpirationDateTime = expirationDate;
+    } else {
+      this.graduatesExpirationDateTime = null as any;
+    }
   }
 
   private isTargetedForStudents = () => {

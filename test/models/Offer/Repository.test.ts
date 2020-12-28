@@ -6,7 +6,7 @@ import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { OfferNotFoundError } from "$models/Offer/Errors";
-import { Admin, Career, Company, Offer, OfferCareer, OfferSection } from "$models";
+import { Career, Company, Offer, OfferCareer, OfferSection } from "$models";
 import { CompanyGenerator } from "$generators/Company";
 import { OfferGenerator } from "$generators/Offer";
 import { CareerGenerator } from "$generators/Career";
@@ -17,8 +17,6 @@ import MockDate from "mockdate";
 import moment from "moment";
 
 describe("OfferRepository", () => {
-  let graduadosAdmin: Admin;
-  let extensionAdmin: Admin;
   let firstCareer: Career;
   let secondCareer: Career;
   let thirdCareer: Career;
@@ -29,8 +27,6 @@ describe("OfferRepository", () => {
     await UserRepository.truncate();
     await OfferRepository.truncate();
 
-    graduadosAdmin = await AdminGenerator.graduados();
-    extensionAdmin = await AdminGenerator.extension();
     firstCareer = await CareerGenerator.instance();
     secondCareer = await CareerGenerator.instance();
     thirdCareer = await CareerGenerator.instance();
@@ -310,21 +306,6 @@ describe("OfferRepository", () => {
 
     it("updates targetApplicantType to both graduate and student", async () => {
       await expectToUpdateTargetApplicantTypeTo(ApplicantType.both);
-    });
-
-    it("moves both approval statuses back to pending", async () => {
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const attributes = OfferGenerator.data.withObligatoryData({ companyUuid });
-      const offer = await OfferRepository.create(attributes);
-      offer.updateStatus(extensionAdmin, ApprovalStatus.approved);
-      offer.updateStatus(graduadosAdmin, ApprovalStatus.approved);
-      await OfferRepository.save(offer);
-      offer.set({
-        extensionApprovalStatus: ApprovalStatus.pending,
-        graduadosApprovalStatus: ApprovalStatus.pending
-      });
-      await expectToUpdateAttribute("extensionApprovalStatus", ApprovalStatus.pending);
-      await expectToUpdateAttribute("graduadosApprovalStatus", ApprovalStatus.pending);
     });
 
     it("throws an error if the offer does not belong to a company", async () => {

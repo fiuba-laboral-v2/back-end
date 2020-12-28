@@ -222,30 +222,6 @@ describe("Offer", () => {
   });
 
   describe("updateStatus", () => {
-    let extensionAdmin: Admin;
-    let graduadosAdmin: Admin;
-
-    beforeAll(() => {
-      extensionAdmin = new Admin({ userUuid: UUID.generate(), secretary: Secretary.extension });
-      graduadosAdmin = new Admin({ userUuid: UUID.generate(), secretary: Secretary.graduados });
-    });
-
-    it("update extension status", async () => {
-      const offer = new Offer(mandatoryAttributes);
-      expect(offer.extensionApprovalStatus).toEqual(ApprovalStatus.pending);
-      offer.updateStatus(extensionAdmin, ApprovalStatus.approved);
-      expect(offer.extensionApprovalStatus).toEqual(ApprovalStatus.approved);
-    });
-
-    it("update graduados status", async () => {
-      const offer = new Offer(mandatoryAttributes);
-      expect(offer.graduadosApprovalStatus).toEqual(ApprovalStatus.pending);
-      offer.updateStatus(graduadosAdmin, ApprovalStatus.approved);
-      expect(offer.graduadosApprovalStatus).toEqual(ApprovalStatus.approved);
-    });
-  });
-
-  describe("updateExpirationDate", () => {
     const createOfferWith = (admin: Admin, status: ApprovalStatus) => {
       const companyUuid = UUID.generate();
       const statusAttribute =
@@ -262,7 +238,6 @@ describe("Offer", () => {
 
     let extensionAdmin: Admin;
     let graduadosAdmin: Admin;
-
     let approvedOfferForGraduados: Offer;
     let rejectedOfferForGraduados: Offer;
     let pendingOfferForGraduados: Offer;
@@ -274,7 +249,6 @@ describe("Offer", () => {
     beforeAll(() => {
       extensionAdmin = new Admin({ userUuid: UUID.generate(), secretary: Secretary.extension });
       graduadosAdmin = new Admin({ userUuid: UUID.generate(), secretary: Secretary.graduados });
-
       approvedOfferForGraduados = createOfferWith(graduadosAdmin, ApprovalStatus.approved);
       rejectedOfferForGraduados = createOfferWith(graduadosAdmin, ApprovalStatus.rejected);
       pendingOfferForGraduados = createOfferWith(graduadosAdmin, ApprovalStatus.pending);
@@ -288,35 +262,55 @@ describe("Offer", () => {
       jest.spyOn(DateTimeManager, "daysFromNow").mockImplementation(() => expirationDate);
     });
 
-    it("updates expiration date for an approved offer for graduados", async () => {
-      approvedOfferForGraduados.updateExpirationDate(graduadosAdmin, offerDurationInDays);
+    it("update extension status", async () => {
+      const offer = new Offer(mandatoryAttributes);
+      expect(offer.extensionApprovalStatus).toEqual(ApprovalStatus.pending);
+      offer.updateStatus(extensionAdmin, ApprovalStatus.approved, offerDurationInDays);
+      expect(offer.extensionApprovalStatus).toEqual(ApprovalStatus.approved);
+    });
+
+    it("update graduados status", async () => {
+      const offer = new Offer(mandatoryAttributes);
+      expect(offer.graduadosApprovalStatus).toEqual(ApprovalStatus.pending);
+      offer.updateStatus(graduadosAdmin, ApprovalStatus.approved, offerDurationInDays);
+      expect(offer.graduadosApprovalStatus).toEqual(ApprovalStatus.approved);
+    });
+
+    it("updates expiration date when approving an offer for graduados", async () => {
+      const status = ApprovalStatus.approved;
+      approvedOfferForGraduados.updateStatus(graduadosAdmin, status, offerDurationInDays);
       const expirationDateTime = approvedOfferForGraduados.graduatesExpirationDateTime.toISOString();
       expect(expirationDateTime).toEqual(expirationDate.toISOString());
     });
 
-    it("updates expiration date for a rejected offer for graduados", async () => {
-      rejectedOfferForGraduados.updateExpirationDate(graduadosAdmin, offerDurationInDays);
+    it("sets to null the expiration date when rejecting an offer for graduados", async () => {
+      const status = ApprovalStatus.rejected;
+      rejectedOfferForGraduados.updateStatus(graduadosAdmin, status, offerDurationInDays);
       expect(rejectedOfferForGraduados.graduatesExpirationDateTime).toBeNull();
     });
 
-    it("updates expiration date for a pending offer for graduados", async () => {
-      pendingOfferForGraduados.updateExpirationDate(graduadosAdmin, offerDurationInDays);
+    it("sets to null the expiration date when moving to pending an offer for graduados", async () => {
+      const status = ApprovalStatus.pending;
+      pendingOfferForGraduados.updateStatus(graduadosAdmin, status, offerDurationInDays);
       expect(pendingOfferForGraduados.graduatesExpirationDateTime).toBeNull();
     });
 
-    it("updates expiration date for an approved offer for extension", async () => {
-      approvedOfferForExtension.updateExpirationDate(extensionAdmin, offerDurationInDays);
+    it("updates the expiration date when approving an offer for extension", async () => {
+      const status = ApprovalStatus.approved;
+      approvedOfferForExtension.updateStatus(extensionAdmin, status, offerDurationInDays);
       const expirationDateTime = approvedOfferForExtension.studentsExpirationDateTime.toISOString();
       expect(expirationDateTime).toEqual(expirationDate.toISOString());
     });
 
-    it("updates expiration date for a rejected offer for extension", async () => {
-      rejectedOfferForExtension.updateExpirationDate(extensionAdmin, offerDurationInDays);
+    it("sets to null the expiration date when rejecting an offer for extension", async () => {
+      const status = ApprovalStatus.rejected;
+      rejectedOfferForExtension.updateStatus(extensionAdmin, status, offerDurationInDays);
       expect(rejectedOfferForExtension.studentsExpirationDateTime).toBeNull();
     });
 
-    it("updates expiration date for a pending offer for extension", async () => {
-      pendingOfferForExtension.updateExpirationDate(extensionAdmin, offerDurationInDays);
+    it("sets to null the expiration date when moving to pending an offer for extension", async () => {
+      const status = ApprovalStatus.pending;
+      pendingOfferForExtension.updateStatus(extensionAdmin, status, offerDurationInDays);
       expect(pendingOfferForExtension.studentsExpirationDateTime).toBeNull();
     });
   });
