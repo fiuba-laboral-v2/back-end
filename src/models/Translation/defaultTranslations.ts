@@ -557,6 +557,9 @@ export const defaultTranslations = {
     approvedApplicantTitle: "Postulación aprobada",
     rejectedApplicantTitle: "Postulación rechazada"
   },
+  pendingJobApplicationApplicantNotification: {
+    title: "Postulación pendiente de aprobación"
+  },
   approvedJobApplicationApplicantNotification: {
     title: "Postulación aprobada"
   },
