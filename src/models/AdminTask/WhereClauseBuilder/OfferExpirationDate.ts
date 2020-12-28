@@ -19,16 +19,11 @@ export const OfferExpirationDateWhereClause = {
 
     return `
       (
-        "${Offer.tableName}"."${expirationDateProperty}" > '${new Date().toISOString()}'
-        OR
-        ( 
-          "${Offer.tableName}"."${expirationDateProperty}" IS NULL
+        NOT 
+        (
+          "${Offer.tableName}"."${expirationDateProperty}" < '${new Date().toISOString()}'
           AND
-          (
-            "${Offer.tableName}"."${approvalStatusProperty}" = '${ApprovalStatus.pending}'
-            OR
-            "${Offer.tableName}"."${approvalStatusProperty}" = '${ApprovalStatus.rejected}'
-          )
+          "${Offer.tableName}"."${approvalStatusProperty}" = '${ApprovalStatus.approved}'
         )
       )
     `;
