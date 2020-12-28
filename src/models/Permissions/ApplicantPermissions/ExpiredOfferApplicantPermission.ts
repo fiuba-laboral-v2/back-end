@@ -17,7 +17,7 @@ export class ExpiredOfferApplicantPermission implements IApplicantPermission {
     this.hasAppliedToOfferPermission = new HasAppliedToOfferApplicantPermission(applicant, offer);
   }
 
-  public async apply() {
+  public apply() {
     if (!this.offerTargetPermission.apply()) return false;
     const isExpired = this.offer.isExpiredFor(this.applicantType);
     if (isExpired) return this.hasAppliedToOfferPermission.apply();
