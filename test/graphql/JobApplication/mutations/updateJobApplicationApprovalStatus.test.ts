@@ -174,12 +174,21 @@ describe("updateJobApplicationApprovalStatus", () => {
       ]);
     });
 
-    it("does not create a notification for an applicant if the jobApplication is pending", async () => {
-      await ApplicantNotificationRepository.truncate();
-      const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
-      await updateJobApplicationWithStatus(jobApplication.uuid, ApprovalStatus.pending);
-      const notifications = await ApplicantNotificationRepository.findAll();
-      expect(notifications).toEqual([]);
+    it("creates a notification for an applicant if the jobApplication is pending", async () => {
+      const repository = ApplicantNotificationRepository;
+      const { uuid, applicantUuid } = await JobApplicationGenerator.instance.withMinimumData();
+      const { admin } = await updateJobApplicationWithStatus(uuid, ApprovalStatus.pending);
+      const { results } = await repository.findLatestByApplicant({ applicantUuid });
+      expect(results).toEqual([
+        {
+          uuid: expect.stringMatching(UUID_REGEX),
+          moderatorUuid: admin.userUuid,
+          notifiedApplicantUuid: applicantUuid,
+          isNew: true,
+          jobApplicationUuid: uuid,
+          createdAt: expect.any(Date)
+        }
+      ]);
     });
 
     it("creates a notification for a company if the jobApplication is approved", async () => {
