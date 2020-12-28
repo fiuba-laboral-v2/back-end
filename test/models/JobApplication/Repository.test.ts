@@ -207,7 +207,7 @@ describe("JobApplicationRepository", () => {
       expect(jobApplication.applicantUuid).toEqual(applicant.uuid);
     });
 
-    it("returns false if applicant has not applied to the offer", async () => {
+    it("throws an error if the jobApplication is not persisted", async () => {
       const applicant = await ApplicantGenerator.instance.graduate();
       const offer = offers[ApplicantType.both];
       await expect(
