@@ -147,6 +147,12 @@ export class Offer extends Model<Offer> {
     if (this.isTargetedForStudents()) this.expireForStudents();
   }
 
+  public isExpiredFor(type: ApplicantType) {
+    if (type === ApplicantType.graduate) return this.isExpiredForGraduates();
+    if (type === ApplicantType.student) return this.isExpiredForStudents();
+    return this.isExpiredForGraduates() || this.isExpiredForStudents();
+  }
+
   public isExpiredForStudents = () => {
     const status = this.getStatus(Secretary.extension);
     if (status === ApprovalStatus.rejected) return false;
