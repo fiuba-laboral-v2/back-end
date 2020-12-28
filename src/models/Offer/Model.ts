@@ -20,6 +20,7 @@ import {
   UUIDV4
 } from "sequelize";
 import { Admin, Career, Company, OfferApprovalEvent, OfferCareer, OfferSection } from "$models";
+import { Nullable } from "$models/SequelizeModel";
 import { Secretary } from "$models/Admin";
 import { validateIntegerInRange, validateSalaryRange } from "validations-fiuba-laboral-v2";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
@@ -120,10 +121,10 @@ export class Offer extends Model<Offer> {
   public maximumSalary?: number;
 
   @Column({ allowNull: true, type: DATE })
-  public graduatesExpirationDateTime: Date | null;
+  public graduatesExpirationDateTime: Nullable<Date>;
 
   @Column({ allowNull: true, type: DATE })
-  public studentsExpirationDateTime: Date | null;
+  public studentsExpirationDateTime: Nullable<Date>;
 
   @HasMany(() => OfferSection)
   public sections: OfferSection[];
