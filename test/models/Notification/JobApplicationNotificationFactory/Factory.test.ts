@@ -5,7 +5,8 @@ import {
 import { NewJobApplicationCompanyNotification } from "$models/CompanyNotification";
 import {
   ApprovedJobApplicationApplicantNotification,
-  RejectedJobApplicationApplicantNotification
+  RejectedJobApplicationApplicantNotification,
+  PendingJobApplicationApplicantNotification
 } from "$models/ApplicantNotification";
 import { OfferRepository } from "$models/Offer";
 import { Admin, Company, JobApplication, Offer } from "$models";
@@ -118,10 +119,28 @@ describe("JobApplicationNotificationFactory", () => {
   });
 
   describe("Pending JobApplication", () => {
-    it("returns an empty array if the jobApplication is pending", async () => {
+    it("returns an array with a PendingJobApplicationApplicantNotification", async () => {
       jobApplication.set({ approvalStatus: ApprovalStatus.pending });
       const notifications = await factory.create(jobApplication, admin);
-      expect(notifications).toEqual([]);
+      expect(notifications).toHaveLength(1);
+      const [notification] = notifications;
+      expect(notification).toBeInstanceOf(PendingJobApplicationApplicantNotification);
+    });
+
+    it("returns an array with a the correct attributes", async () => {
+      jobApplication.set({ approvalStatus: ApprovalStatus.pending });
+      const notifications = await factory.create(jobApplication, admin);
+
+      expect(notifications).toEqual([
+        {
+          uuid: undefined,
+          moderatorUuid: admin.userUuid,
+          notifiedApplicantUuid: jobApplication.applicantUuid,
+          jobApplicationUuid: jobApplication.uuid,
+          isNew: true,
+          createdAt: undefined
+        }
+      ]);
     });
   });
 });

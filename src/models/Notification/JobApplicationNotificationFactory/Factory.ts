@@ -4,7 +4,8 @@ import { MissingModeratorMessageError } from "..";
 import { NewJobApplicationCompanyNotification } from "$models/CompanyNotification";
 import {
   ApprovedJobApplicationApplicantNotification,
-  RejectedJobApplicationApplicantNotification
+  RejectedJobApplicationApplicantNotification,
+  PendingJobApplicationApplicantNotification
 } from "$models/ApplicantNotification";
 import { Notification } from "$models/Notification";
 import { OfferRepository } from "$models/Offer";
@@ -40,6 +41,12 @@ export const JobApplicationNotificationFactory = {
         })
       ];
     }
-    return [];
+    return [
+      new PendingJobApplicationApplicantNotification({
+        moderatorUuid: admin.userUuid,
+        notifiedApplicantUuid: jobApplication.applicantUuid,
+        jobApplicationUuid: jobApplication.uuid
+      })
+    ];
   }
 };
