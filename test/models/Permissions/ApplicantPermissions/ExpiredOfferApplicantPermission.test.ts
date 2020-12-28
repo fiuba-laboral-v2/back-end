@@ -42,30 +42,30 @@ describe("ExpiredOfferApplicantPermission", () => {
     it("returns true if the offer is expired and the applicant has applied", async () => {
       mockHasApplied(true);
       offer.expire();
-      const permissions = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
-      expect(await permissions.apply()).toBe(true);
+      const permission = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
+      expect(await permission.apply()).toBe(true);
     });
 
     it("returns true if the offer is not expired", async () => {
       offer.updateStatus(extensionAdmin, ApprovalStatus.approved, 15);
-      const permissions = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
-      expect(await permissions.apply()).toBe(true);
+      const permission = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
+      expect(await permission.apply()).toBe(true);
     });
 
     it("returns false if the offer is expired and the applicant has not applied", async () => {
       mockHasApplied(false);
       offer.expire();
-      const permissions = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
-      expect(await permissions.apply()).toBe(false);
+      const permission = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
+      expect(await permission.apply()).toBe(false);
     });
 
     it("returns false if the applicant is a graduate", async () => {
-      const permissions = new ExpiredOfferApplicantPermission(
+      const permission = new ExpiredOfferApplicantPermission(
         applicant,
         offer,
         ApplicantType.graduate
       );
-      expect(await permissions.apply()).toBe(false);
+      expect(await permission.apply()).toBe(false);
     });
   });
 
@@ -78,30 +78,30 @@ describe("ExpiredOfferApplicantPermission", () => {
     it("returns true if the offer is expired and the applicant has applied", async () => {
       mockHasApplied(true);
       offer.expire();
-      const permissions = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
-      expect(await permissions.apply()).toBe(true);
+      const permission = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
+      expect(await permission.apply()).toBe(true);
     });
 
     it("returns true if the offer is not expired", async () => {
       offer.updateStatus(graduadosAdmin, ApprovalStatus.approved, 15);
-      const permissions = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
-      expect(await permissions.apply()).toBe(true);
+      const permission = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
+      expect(await permission.apply()).toBe(true);
     });
 
     it("returns false if the offer is expired and the applicant has not applied", async () => {
       mockHasApplied(false);
       offer.expire();
-      const permissions = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
-      expect(await permissions.apply()).toBe(false);
+      const permission = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
+      expect(await permission.apply()).toBe(false);
     });
 
     it("returns false if the applicant is a student", async () => {
-      const permissions = new ExpiredOfferApplicantPermission(
+      const permission = new ExpiredOfferApplicantPermission(
         applicant,
         offer,
         ApplicantType.student
       );
-      expect(await permissions.apply()).toBe(false);
+      expect(await permission.apply()).toBe(false);
     });
   });
 
@@ -114,22 +114,22 @@ describe("ExpiredOfferApplicantPermission", () => {
     it("returns true if the offer is expired and the applicant has applied", async () => {
       mockHasApplied(true);
       offer.expire();
-      const permissions = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
-      expect(await permissions.apply()).toBe(true);
+      const permission = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
+      expect(await permission.apply()).toBe(true);
     });
 
     it("returns true if the offer is not expired", async () => {
       offer.updateStatus(extensionAdmin, ApprovalStatus.approved, 15);
       offer.updateStatus(graduadosAdmin, ApprovalStatus.approved, 15);
-      const permissions = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
-      expect(await permissions.apply()).toBe(true);
+      const permission = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
+      expect(await permission.apply()).toBe(true);
     });
 
     it("returns false if the offer is expired and the applicant has not applied", async () => {
       mockHasApplied(false);
       offer.expire();
-      const permissions = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
-      expect(await permissions.apply()).toBe(false);
+      const permission = new ExpiredOfferApplicantPermission(applicant, offer, applicantType);
+      expect(await permission.apply()).toBe(false);
     });
   });
 });

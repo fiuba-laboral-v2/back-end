@@ -18,13 +18,13 @@ describe("HasAppliedToOfferApplicantPermission", () => {
 
   it("returns true if the applicant has applied to the offer", async () => {
     mockHasApplied(true);
-    const permissions = new HasAppliedToOfferApplicantPermission(applicant, offer);
-    expect(await permissions.apply()).toBe(true);
+    const permission = new HasAppliedToOfferApplicantPermission(applicant, offer);
+    expect(await permission.apply()).toBe(true);
   });
 
   it("returns false if the applicant has not applied to the offer", async () => {
     mockHasApplied(false);
-    const permissions = new HasAppliedToOfferApplicantPermission(applicant, offer);
-    expect(await permissions.apply()).toBe(false);
+    const permission = new HasAppliedToOfferApplicantPermission(applicant, offer);
+    expect(await permission.apply()).toBe(false);
   });
 });

@@ -24,20 +24,20 @@ describe("OfferApprovalStatusApplicantPermission", () => {
 
     it("returns true if the offer is approved for students", () => {
       const offer = createOfferWith(applicantType, ApprovalStatus.approved);
-      const permissions = new OfferApprovalStatusApplicantPermission(offer, applicantType);
-      expect(permissions.apply()).toBe(true);
+      const permission = new OfferApprovalStatusApplicantPermission(offer, applicantType);
+      expect(permission.apply()).toBe(true);
     });
 
     it("returns false if the offer is rejected for students", () => {
       const offer = createOfferWith(applicantType, ApprovalStatus.rejected);
-      const permissions = new OfferApprovalStatusApplicantPermission(offer, applicantType);
-      expect(permissions.apply()).toBe(false);
+      const permission = new OfferApprovalStatusApplicantPermission(offer, applicantType);
+      expect(permission.apply()).toBe(false);
     });
 
     it("returns false if the offer is pending for students", () => {
       const offer = createOfferWith(applicantType, ApprovalStatus.pending);
-      const permissions = new OfferApprovalStatusApplicantPermission(offer, applicantType);
-      expect(permissions.apply()).toBe(false);
+      const permission = new OfferApprovalStatusApplicantPermission(offer, applicantType);
+      expect(permission.apply()).toBe(false);
     });
   });
 
@@ -46,20 +46,20 @@ describe("OfferApprovalStatusApplicantPermission", () => {
 
     it("returns true if the offer is approved for graduates", () => {
       const offer = createOfferWith(applicantType, ApprovalStatus.approved);
-      const permissions = new OfferApprovalStatusApplicantPermission(offer, applicantType);
-      expect(permissions.apply()).toBe(true);
+      const permission = new OfferApprovalStatusApplicantPermission(offer, applicantType);
+      expect(permission.apply()).toBe(true);
     });
 
     it("returns false if the offer is rejected for graduates", () => {
       const offer = createOfferWith(applicantType, ApprovalStatus.rejected);
-      const permissions = new OfferApprovalStatusApplicantPermission(offer, applicantType);
-      expect(permissions.apply()).toBe(false);
+      const permission = new OfferApprovalStatusApplicantPermission(offer, applicantType);
+      expect(permission.apply()).toBe(false);
     });
 
     it("returns false if the offer is pending for graduates", () => {
       const offer = createOfferWith(applicantType, ApprovalStatus.pending);
-      const permissions = new OfferApprovalStatusApplicantPermission(offer, applicantType);
-      expect(permissions.apply()).toBe(false);
+      const permission = new OfferApprovalStatusApplicantPermission(offer, applicantType);
+      expect(permission.apply()).toBe(false);
     });
   });
 
@@ -77,48 +77,48 @@ describe("OfferApprovalStatusApplicantPermission", () => {
       const offer = createOfferWith(applicantType, ApprovalStatus.approved);
       offer.updateStatus(graduadosAdmin, ApprovalStatus.approved, 15);
       offer.updateStatus(extensionAdmin, ApprovalStatus.rejected, 15);
-      const permissions = new OfferApprovalStatusApplicantPermission(offer, applicantType);
-      expect(permissions.apply()).toBe(true);
+      const permission = new OfferApprovalStatusApplicantPermission(offer, applicantType);
+      expect(permission.apply()).toBe(true);
     });
 
     it("returns true if the offer is approved for graduates and pending for students", () => {
       const offer = createOfferWith(applicantType, ApprovalStatus.approved);
       offer.updateStatus(graduadosAdmin, ApprovalStatus.approved, 15);
       offer.updateStatus(extensionAdmin, ApprovalStatus.pending, 15);
-      const permissions = new OfferApprovalStatusApplicantPermission(offer, applicantType);
-      expect(permissions.apply()).toBe(true);
+      const permission = new OfferApprovalStatusApplicantPermission(offer, applicantType);
+      expect(permission.apply()).toBe(true);
     });
 
     it("returns true if the offer is rejected for graduates and approved for students", () => {
       const offer = createOfferWith(applicantType, ApprovalStatus.approved);
       offer.updateStatus(graduadosAdmin, ApprovalStatus.rejected, 15);
       offer.updateStatus(extensionAdmin, ApprovalStatus.approved, 15);
-      const permissions = new OfferApprovalStatusApplicantPermission(offer, applicantType);
-      expect(permissions.apply()).toBe(true);
+      const permission = new OfferApprovalStatusApplicantPermission(offer, applicantType);
+      expect(permission.apply()).toBe(true);
     });
 
     it("returns true if the offer is pending for graduates and approved for students", () => {
       const offer = createOfferWith(applicantType, ApprovalStatus.approved);
       offer.updateStatus(graduadosAdmin, ApprovalStatus.pending, 15);
       offer.updateStatus(extensionAdmin, ApprovalStatus.approved, 15);
-      const permissions = new OfferApprovalStatusApplicantPermission(offer, applicantType);
-      expect(permissions.apply()).toBe(true);
+      const permission = new OfferApprovalStatusApplicantPermission(offer, applicantType);
+      expect(permission.apply()).toBe(true);
     });
 
     it("returns false if the offer is pending for both", () => {
       const offer = createOfferWith(applicantType, ApprovalStatus.approved);
       offer.updateStatus(graduadosAdmin, ApprovalStatus.pending, 15);
       offer.updateStatus(extensionAdmin, ApprovalStatus.pending, 15);
-      const permissions = new OfferApprovalStatusApplicantPermission(offer, applicantType);
-      expect(permissions.apply()).toBe(false);
+      const permission = new OfferApprovalStatusApplicantPermission(offer, applicantType);
+      expect(permission.apply()).toBe(false);
     });
 
     it("returns false if the offer is rejected for both", () => {
       const offer = createOfferWith(applicantType, ApprovalStatus.approved);
       offer.updateStatus(graduadosAdmin, ApprovalStatus.rejected, 15);
       offer.updateStatus(extensionAdmin, ApprovalStatus.rejected, 15);
-      const permissions = new OfferApprovalStatusApplicantPermission(offer, applicantType);
-      expect(permissions.apply()).toBe(false);
+      const permission = new OfferApprovalStatusApplicantPermission(offer, applicantType);
+      expect(permission.apply()).toBe(false);
     });
   });
 });
