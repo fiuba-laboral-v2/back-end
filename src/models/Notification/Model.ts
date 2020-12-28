@@ -3,7 +3,7 @@ import { Nullable } from "$models/SequelizeModel";
 import { InvalidAttributeFormatError } from "$models/Errors";
 
 export abstract class Notification {
-  public uuid?: Nullable<string>;
+  public uuid: Nullable<string>;
   public isNew: boolean;
   public createdAt?: Date;
 

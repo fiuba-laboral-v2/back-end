@@ -14,7 +14,7 @@ export class CompanyNotificationSequelizeModel extends SequelizeModel<
   public moderatorUuid: string;
 
   @Column({ allowNull: true, type: TEXT })
-  public moderatorMessage?: Nullable<string>;
+  public moderatorMessage: Nullable<string>;
 
   @Column({
     allowNull: false,
@@ -32,11 +32,11 @@ export class CompanyNotificationSequelizeModel extends SequelizeModel<
 
   @ForeignKey(() => JobApplication)
   @Column({ allowNull: true, type: UUID, ...isUuid })
-  public jobApplicationUuid?: Nullable<string>;
+  public jobApplicationUuid: Nullable<string>;
 
   @ForeignKey(() => Offer)
   @Column({ allowNull: true, type: UUID, ...isUuid })
-  public offerUuid?: Nullable<string>;
+  public offerUuid: Nullable<string>;
 
   @CreatedAt
   @Column

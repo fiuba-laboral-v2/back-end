@@ -6,7 +6,7 @@ import { isNil } from "lodash";
 import { validateEmail, validateName } from "validations-fiuba-laboral-v2";
 
 export class User {
-  public uuid?: Nullable<string>;
+  public uuid: Nullable<string>;
   public name: string;
   public surname: string;
   public email: string;

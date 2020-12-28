@@ -18,7 +18,7 @@ export class CompanyApprovalEvent extends Model<CompanyApprovalEvent> {
   public companyUuid: string;
 
   @Column({ allowNull: true, type: TEXT })
-  public moderatorMessage?: Nullable<string>;
+  public moderatorMessage: Nullable<string>;
 
   @Column({ allowNull: false, type: ENUM<string>({ values: approvalStatuses }) })
   public status: ApprovalStatus;
