@@ -150,7 +150,7 @@ export class Offer extends Model<Offer> {
   public isExpiredFor(type: ApplicantType) {
     if (type === ApplicantType.graduate) return this.isExpiredForGraduates();
     if (type === ApplicantType.student) return this.isExpiredForStudents();
-    return this.isExpiredForGraduates() || this.isExpiredForStudents();
+    return this.isExpiredForGraduates() && this.isExpiredForStudents();
   }
 
   public isExpiredForStudents = () => {
