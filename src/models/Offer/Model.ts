@@ -147,6 +147,12 @@ export class Offer extends Model<Offer> {
     if (this.isTargetedForStudents()) this.expireForStudents();
   }
 
+  public isExpiredFor(type: ApplicantType) {
+    if (type === ApplicantType.graduate) return this.isExpiredForGraduates();
+    if (type === ApplicantType.student) return this.isExpiredForStudents();
+    return this.isExpiredForGraduates() && this.isExpiredForStudents();
+  }
+
   public isExpiredForStudents = () => {
     const status = this.getStatus(Secretary.extension);
     if (status === ApprovalStatus.rejected) return false;
@@ -181,10 +187,12 @@ export class Offer extends Model<Offer> {
   }
 
   private expireForStudents = () => {
+    if (this.extensionApprovalStatus !== ApprovalStatus.approved) return;
     this.studentsExpirationDateTime = DateTimeManager.yesterday();
   };
 
   private expireForGraduates = () => {
+    if (this.graduadosApprovalStatus !== ApprovalStatus.approved) return;
     this.graduatesExpirationDateTime = DateTimeManager.yesterday();
   };
 

@@ -1,8 +1,10 @@
 import { Offer } from "$models";
-import { ApplicantRepository, ApplicantType } from "$models/Applicant";
+import { ApplicantRepository } from "$models/Applicant";
 import { IPermission } from "../Interface";
-import { ApprovalStatus } from "$models/ApprovalStatus";
-import { some } from "lodash";
+import { IApplicantPermission } from "./Interfaces";
+import { OfferApprovalStatusApplicantPermission } from "./OfferApprovalStatusApplicantPermission";
+import { OfferTargetApplicantPermission } from "./OfferTargetApplicantPermission";
+import { ExpiredOfferApplicantPermission } from "./ExpiredOfferApplicantPermission";
 
 export class ApplicantPermissions implements IPermission {
   private readonly applicantUuid: string;
@@ -14,26 +16,16 @@ export class ApplicantPermissions implements IPermission {
   public async canSeeOffer(offer: Offer) {
     const applicant = await ApplicantRepository.findByUuid(this.applicantUuid);
     const applicantType = await applicant.getType();
-    if (!this.applicantTypeMatches(applicantType, offer.targetApplicantType)) return false;
-
-    const statusColumns = this.getOfferStatusColumns(applicantType);
-    return some(statusColumns, columnName => offer[columnName] === ApprovalStatus.approved);
+    const permissions: IApplicantPermission[] = [
+      new OfferTargetApplicantPermission(offer, applicantType),
+      new OfferApprovalStatusApplicantPermission(offer, applicantType),
+      new ExpiredOfferApplicantPermission(applicant, offer, applicantType)
+    ];
+    const results = await Promise.all(permissions.map(permission => permission.apply()));
+    return results.every(result => result);
   }
 
   public async canModerateOffer(_: Offer) {
     return Promise.resolve(false);
-  }
-
-  private getOfferStatusColumns(applicantType: ApplicantType) {
-    return {
-      [ApplicantType.student]: ["extensionApprovalStatus"],
-      [ApplicantType.graduate]: ["graduadosApprovalStatus"],
-      [ApplicantType.both]: ["graduadosApprovalStatus", "extensionApprovalStatus"]
-    }[applicantType];
-  }
-
-  private applicantTypeMatches(type: ApplicantType, anotherType: ApplicantType) {
-    if (type === anotherType) return true;
-    return type === ApplicantType.both || anotherType === ApplicantType.both;
   }
 }
