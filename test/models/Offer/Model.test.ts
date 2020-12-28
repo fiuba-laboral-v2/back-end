@@ -1,16 +1,23 @@
+import {
+  InternshipsCannotHaveMaximumSalaryError,
+  InternshipsMustTargetStudentsError,
+  ApprovedOfferWithNoExpirationTimeError,
+  PendingOfferWithExpirationTimeError,
+  RejectedOfferWithExpirationTimeError
+} from "$models/Offer/Errors";
 import { NumberIsTooSmallError, SalaryRangeError } from "validations-fiuba-laboral-v2";
 import { ValidationError } from "sequelize";
+
 import { Admin, Offer } from "$models";
 import { ApplicantType } from "$models/Applicant";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { isApprovalStatus, isTargetApplicantType } from "$models/SequelizeModelValidators";
-import { omit } from "lodash";
 import { Secretary } from "$models/Admin";
 import { UUID } from "$models/UUID";
-import { OfferGenerator } from "$generators/Offer";
 import { DateTimeManager } from "$libs/DateTimeManager";
-import { InternshipsCannotHaveMaximumSalaryError } from "$models/Offer/Errors/InternshipsCannotHaveMaximumSalaryError";
-import { InternshipsMustTargetStudentsError } from "$models/Offer/Errors/InternshipsMustTargetStudentsError";
+
+import { OfferGenerator } from "$generators/Offer";
+import { omit } from "lodash";
 
 describe("Offer", () => {
   const mandatoryAttributes = {
@@ -311,6 +318,136 @@ describe("Offer", () => {
     it("updates expiration date for a pending offer for extension", async () => {
       pendingOfferForExtension.updateExpirationDate(extensionAdmin, offerDurationInDays);
       expect(pendingOfferForExtension.studentsExpirationDateTime).toBeNull();
+    });
+  });
+
+  describe("validateGraduatesExpirationDates", () => {
+    it("does not throw an error if an approved offer have an expiration time", async () => {
+      const offer = new Offer({
+        ...mandatoryAttributes,
+        graduatesExpirationDateTime: DateTimeManager.daysFromNow(19),
+        graduadosApprovalStatus: ApprovalStatus.approved
+      });
+      await expect(offer.validate()).resolves.not.toThrowError();
+    });
+
+    it("does not throw an error if a pending offer does not have an expiration time", async () => {
+      const offer = new Offer({
+        ...mandatoryAttributes,
+        graduatesExpirationDateTime: null,
+        graduadosApprovalStatus: ApprovalStatus.pending
+      });
+      await expect(offer.validate()).resolves.not.toThrowError();
+    });
+
+    it("does not throw an error if a rejected offer does not have an expiration time", async () => {
+      const offer = new Offer({
+        ...mandatoryAttributes,
+        graduatesExpirationDateTime: null,
+        graduadosApprovalStatus: ApprovalStatus.rejected
+      });
+      await expect(offer.validate()).resolves.not.toThrowError();
+    });
+
+    it("throws an error if an approved offer does not have an expiration time", async () => {
+      const offer = new Offer({
+        ...mandatoryAttributes,
+        graduatesExpirationDateTime: null,
+        graduadosApprovalStatus: ApprovalStatus.approved
+      });
+      await expect(offer.validate()).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        ApprovedOfferWithNoExpirationTimeError.buildMessage()
+      );
+    });
+
+    it("throws an error if a pending offer have an expiration time", async () => {
+      const offer = new Offer({
+        ...mandatoryAttributes,
+        graduatesExpirationDateTime: DateTimeManager.yesterday(),
+        graduadosApprovalStatus: ApprovalStatus.pending
+      });
+      await expect(offer.validate()).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        PendingOfferWithExpirationTimeError.buildMessage()
+      );
+    });
+
+    it("throws an error if a rejected offer have an expiration time", async () => {
+      const offer = new Offer({
+        ...mandatoryAttributes,
+        graduatesExpirationDateTime: DateTimeManager.yesterday(),
+        graduadosApprovalStatus: ApprovalStatus.rejected
+      });
+      await expect(offer.validate()).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        RejectedOfferWithExpirationTimeError.buildMessage()
+      );
+    });
+  });
+
+  describe("validateStudentsExpirationDates", () => {
+    it("does not throw an error if an approved offer have an expiration time", async () => {
+      const offer = new Offer({
+        ...mandatoryAttributes,
+        studentsExpirationDateTime: DateTimeManager.daysFromNow(19),
+        extensionApprovalStatus: ApprovalStatus.approved
+      });
+      await expect(offer.validate()).resolves.not.toThrowError();
+    });
+
+    it("does not throw an error if a pending offer does not have an expiration time", async () => {
+      const offer = new Offer({
+        ...mandatoryAttributes,
+        studentsExpirationDateTime: null,
+        extensionApprovalStatus: ApprovalStatus.pending
+      });
+      await expect(offer.validate()).resolves.not.toThrowError();
+    });
+
+    it("does not throw an error if a rejected offer does not have an expiration time", async () => {
+      const offer = new Offer({
+        ...mandatoryAttributes,
+        studentsExpirationDateTime: null,
+        extensionApprovalStatus: ApprovalStatus.rejected
+      });
+      await expect(offer.validate()).resolves.not.toThrowError();
+    });
+
+    it("throws an error if an approved offer does not have an expiration time", async () => {
+      const offer = new Offer({
+        ...mandatoryAttributes,
+        studentsExpirationDateTime: null,
+        extensionApprovalStatus: ApprovalStatus.approved
+      });
+      await expect(offer.validate()).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        ApprovedOfferWithNoExpirationTimeError.buildMessage()
+      );
+    });
+
+    it("throws an error if a pending offer have an expiration time", async () => {
+      const offer = new Offer({
+        ...mandatoryAttributes,
+        studentsExpirationDateTime: DateTimeManager.yesterday(),
+        extensionApprovalStatus: ApprovalStatus.pending
+      });
+      await expect(offer.validate()).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        PendingOfferWithExpirationTimeError.buildMessage()
+      );
+    });
+
+    it("throws an error if a rejected offer have an expiration time", async () => {
+      const offer = new Offer({
+        ...mandatoryAttributes,
+        studentsExpirationDateTime: DateTimeManager.yesterday(),
+        extensionApprovalStatus: ApprovalStatus.rejected
+      });
+      await expect(offer.validate()).rejects.toThrowErrorWithMessage(
+        ValidationError,
+        RejectedOfferWithExpirationTimeError.buildMessage()
+      );
     });
   });
 

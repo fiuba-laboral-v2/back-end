@@ -27,8 +27,13 @@ import { isApprovalStatus, isTargetApplicantType } from "$models/SequelizeModelV
 import { ApplicantType, targetApplicantTypeEnumValues } from "$models/Applicant";
 import { isNil } from "lodash";
 import { DateTimeManager } from "$libs/DateTimeManager";
-import { InternshipsCannotHaveMaximumSalaryError } from "./Errors/InternshipsCannotHaveMaximumSalaryError";
-import { InternshipsMustTargetStudentsError } from "./Errors/InternshipsMustTargetStudentsError";
+import {
+  InternshipsCannotHaveMaximumSalaryError,
+  InternshipsMustTargetStudentsError,
+  ApprovedOfferWithNoExpirationTimeError,
+  PendingOfferWithExpirationTimeError,
+  RejectedOfferWithExpirationTimeError
+} from "./Errors";
 
 @Table({
   tableName: "Offers",
@@ -43,6 +48,16 @@ import { InternshipsMustTargetStudentsError } from "./Errors/InternshipsMustTarg
       if (this.targetApplicantType !== ApplicantType.student) {
         throw new InternshipsMustTargetStudentsError();
       }
+    },
+    validateGraduatesExpirationDates(this: Offer) {
+      if (!this.isTargetedForGraduates()) return;
+      const status = this.getStatus(Secretary.graduados);
+      this.validateExpirationTime(status, "graduatesExpirationDateTime");
+    },
+    validateStudentsExpirationDates(this: Offer) {
+      if (!this.isTargetedForStudents()) return;
+      const status = this.getStatus(Secretary.extension);
+      this.validateExpirationTime(status, "studentsExpirationDateTime");
     }
   }
 })
@@ -206,4 +221,19 @@ export class Offer extends Model<Offer> {
       this.targetApplicantType === ApplicantType.both
     );
   };
+
+  private validateExpirationTime(status: ApprovalStatus, expirationTimeProperty: string) {
+    const isApproved = status === ApprovalStatus.approved;
+    const isPending = status === ApprovalStatus.pending;
+    const isRejected = status === ApprovalStatus.rejected;
+    if (isApproved && !this[expirationTimeProperty]) {
+      throw new ApprovedOfferWithNoExpirationTimeError();
+    }
+    if (isPending && this[expirationTimeProperty]) {
+      throw new PendingOfferWithExpirationTimeError();
+    }
+    if (isRejected && this[expirationTimeProperty]) {
+      throw new RejectedOfferWithExpirationTimeError();
+    }
+  }
 }
