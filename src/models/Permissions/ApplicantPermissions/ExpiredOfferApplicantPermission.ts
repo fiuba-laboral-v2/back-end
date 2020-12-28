@@ -2,8 +2,9 @@ import { ApplicantType } from "$models/Applicant";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { Applicant, Offer } from "$models";
 import { OfferTargetApplicantPermission } from "./OfferTargetApplicantPermission";
+import { IApplicantPermission } from "./Interfaces";
 
-export class ExpiredOfferApplicantPermission {
+export class ExpiredOfferApplicantPermission implements IApplicantPermission {
   private readonly applicant: Applicant;
   private readonly offer: Offer;
   private readonly applicantType: ApplicantType;
