@@ -14,7 +14,8 @@ import {
   ApprovedJobApplicationApplicantNotification,
   RejectedJobApplicationApplicantNotification,
   ApprovedProfileApplicantNotification,
-  RejectedProfileApplicantNotification
+  RejectedProfileApplicantNotification,
+  PendingJobApplicationApplicantNotification
 } from "$models/ApplicantNotification";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
@@ -28,6 +29,17 @@ const GET_APPLICANT_NOTIFICATIONS = gql`
   query GetApplicantNotifications($updatedBeforeThan: PaginatedInput) {
     getApplicantNotifications(updatedBeforeThan: $updatedBeforeThan) {
       results {
+        ... on PendingJobApplicationApplicantNotification {
+          __typename
+          uuid
+          adminEmail
+          isNew
+          createdAt
+          jobApplication {
+            __typename
+            uuid
+          }
+        }
         ... on ApprovedJobApplicationApplicantNotification {
           __typename
           uuid
@@ -98,6 +110,15 @@ describe("getApplicantNotifications", () => {
   const getFields = (notification: ApplicantNotification) => {
     const notificationClassName = notification.constructor.name;
     switch (notificationClassName) {
+      case PendingJobApplicationApplicantNotification.name:
+        const pendingJobApplicationNotification = notification as PendingJobApplicationApplicantNotification;
+        return {
+          __typename: "PendingJobApplicationApplicantNotification",
+          jobApplication: {
+            __typename: GraphQLJobApplication.name,
+            uuid: pendingJobApplicationNotification.jobApplicationUuid
+          }
+        };
       case ApprovedJobApplicationApplicantNotification.name:
         const approvedJobApplicationNotification = notification as ApprovedJobApplicationApplicantNotification;
         return {
