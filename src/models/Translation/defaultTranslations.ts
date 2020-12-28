@@ -624,6 +624,13 @@ export const defaultTranslations = {
       "\n\n" +
       "<%= signature %>"
   },
+  pendingJobApplicationApplicantNotificationEmail: {
+    subject: "Postulación a oferta de trabajo pendiente de aprobación",
+    body:
+      "Tu postulación a la oferta de trabajo: <%= offerTitle %> (<%= offerLink %>) está pendiente de aprobación." +
+      "\n\n" +
+      "<%= signature %>"
+  },
   rejectedJobApplicationApplicantNotificationEmail: {
     subject: "Postulación a oferta de trabajo rechazada",
     body:
