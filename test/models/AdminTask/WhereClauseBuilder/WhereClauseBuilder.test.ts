@@ -32,16 +32,11 @@ describe("WhereClauseBuilder", () => {
       )
       AND
       (
-        "Offers"."graduatesExpirationDateTime" > '${date}'
-        OR
+        NOT
         (
-          "Offers"."graduatesExpirationDateTime" IS NULL
+          "Offers"."graduatesExpirationDateTime" < '${date}'
           AND
-          (
-            "Offers"."graduadosApprovalStatus" = 'pending'
-            OR
-            "Offers"."graduadosApprovalStatus" = 'rejected'
-          )
+          "Offers"."graduadosApprovalStatus" = 'approved'
         )
       ) 
     `);
@@ -65,16 +60,11 @@ describe("WhereClauseBuilder", () => {
       )
       AND
       (
-        "Offers"."graduatesExpirationDateTime" > '${date}'
-        OR
+        NOT
         (
-          "Offers"."graduatesExpirationDateTime" IS NULL
+          "Offers"."graduatesExpirationDateTime" < '${date}'
           AND
-          (
-            "Offers"."graduadosApprovalStatus" = 'pending'
-            OR
-            "Offers"."graduadosApprovalStatus" = 'rejected'
-          )
+          "Offers"."graduadosApprovalStatus" = 'approved'
         )
       ) 
     `);
@@ -98,16 +88,11 @@ describe("WhereClauseBuilder", () => {
       )
       AND
       (
-        "Offers"."graduatesExpirationDateTime" > '${date}'
-        OR
+        NOT
         (
-          "Offers"."graduatesExpirationDateTime" IS NULL
+          "Offers"."graduatesExpirationDateTime" < '${date}'
           AND
-          (
-            "Offers"."graduadosApprovalStatus" = 'pending'
-            OR
-            "Offers"."graduadosApprovalStatus" = 'rejected'
-          )
+          "Offers"."graduadosApprovalStatus" = 'approved'
         )
       ) 
     `);
@@ -131,18 +116,13 @@ describe("WhereClauseBuilder", () => {
       )
       AND
       (
-        "Offers"."studentsExpirationDateTime" > '${date}'
-        OR
+        NOT
         (
-          "Offers"."studentsExpirationDateTime" IS NULL
+          "Offers"."studentsExpirationDateTime" < '${date}'
           AND
-          (
-            "Offers"."extensionApprovalStatus" = 'pending'
-            OR
-            "Offers"."extensionApprovalStatus" = 'rejected'
-          )
+          "Offers"."extensionApprovalStatus" = 'approved'
         )
-      ) 
+      )
     `);
   });
 
@@ -164,19 +144,13 @@ describe("WhereClauseBuilder", () => {
       )
       AND
       (
-
-        "Offers"."studentsExpirationDateTime" > '${date}'
-        OR
+        NOT
         (
-          "Offers"."studentsExpirationDateTime" IS NULL
+          "Offers"."studentsExpirationDateTime" < '${date}'
           AND
-          (
-            "Offers"."extensionApprovalStatus" = 'pending'
-            OR
-            "Offers"."extensionApprovalStatus" = 'rejected'
-          )
+          "Offers"."extensionApprovalStatus" = 'approved'
         )
-      ) 
+      )
     `);
   });
 
@@ -198,18 +172,13 @@ describe("WhereClauseBuilder", () => {
       )
       AND
       (
-        "Offers"."studentsExpirationDateTime" > '${date}'
-        OR
+        NOT
         (
-          "Offers"."studentsExpirationDateTime" IS NULL
+          "Offers"."studentsExpirationDateTime" < '${date}'
           AND
-          (
-            "Offers"."extensionApprovalStatus" = 'pending'
-            OR
-            "Offers"."extensionApprovalStatus" = 'rejected'
-          )
+          "Offers"."extensionApprovalStatus" = 'approved'
         )
-      ) 
+      )
     `);
   });
 
@@ -405,16 +374,11 @@ describe("WhereClauseBuilder", () => {
       )
       AND
       (
-        "Offers"."studentsExpirationDateTime" > '${date}'
-        OR
+        NOT
         (
-          "Offers"."studentsExpirationDateTime" IS NULL
+          "Offers"."studentsExpirationDateTime" < '${date}'
           AND
-          (
-            "Offers"."extensionApprovalStatus" = 'pending'
-            OR
-            "Offers"."extensionApprovalStatus" = 'rejected'
-          )
+          "Offers"."extensionApprovalStatus" = 'approved'
         )
       )
     `);
@@ -444,16 +408,11 @@ describe("WhereClauseBuilder", () => {
       )
       AND
       (
-        "Offers"."studentsExpirationDateTime" > '${date}'
-        OR
+        NOT
         (
-          "Offers"."studentsExpirationDateTime" IS NULL
+          "Offers"."studentsExpirationDateTime" < '${date}'
           AND
-          (
-            "Offers"."extensionApprovalStatus" = 'pending'
-            OR
-            "Offers"."extensionApprovalStatus" = 'rejected'
-          )
+          "Offers"."extensionApprovalStatus" = 'approved'
         )
       )
       AND
