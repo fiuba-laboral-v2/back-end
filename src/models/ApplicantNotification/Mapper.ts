@@ -7,6 +7,8 @@ import {
   IApprovedProfileAttributes,
   RejectedProfileApplicantNotification,
   IRejectedProfileAttributes,
+  PendingJobApplicationApplicantNotification,
+  IPendingJobApplicationAttributes,
   ApplicantNotification,
   ApplicantNotificationType as Type
 } from "$models/ApplicantNotification";
@@ -19,6 +21,7 @@ export const ApplicantNotificationMapper = {
     const type = {
       [ApprovedJobApplicationApplicantNotification.name]: Type.approvedJobApplication,
       [RejectedJobApplicationApplicantNotification.name]: Type.rejectedJobApplication,
+      [PendingJobApplicationApplicantNotification.name]: Type.pendingJobApplication,
       [ApprovedProfileApplicantNotification.name]: Type.approvedProfile,
       [RejectedProfileApplicantNotification.name]: Type.rejectedProfile
     }[notificationClassName];
@@ -36,6 +39,10 @@ export const ApplicantNotificationMapper = {
       case Type.rejectedJobApplication:
         return new RejectedJobApplicationApplicantNotification(
           attributes as IRejectedJobApplicationAttributes
+        );
+      case Type.pendingJobApplication:
+        return new PendingJobApplicationApplicantNotification(
+          attributes as IPendingJobApplicationAttributes
         );
       case Type.approvedProfile:
         return new ApprovedProfileApplicantNotification(attributes as IApprovedProfileAttributes);
