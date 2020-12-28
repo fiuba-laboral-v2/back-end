@@ -1,7 +1,6 @@
 import { ID, nonNull } from "$graphql/fieldTypes";
 import { OfferRepository } from "$models/Offer";
 import { GraphQLOffer } from "../Types/GraphQLOffer";
-import { Secretary } from "$models/Admin";
 import { IApolloServerContext } from "$graphql/Context";
 import { OfferNotVisibleByCurrentUserError } from "../Queries/Errors";
 
@@ -26,5 +25,4 @@ export const expireOffer = {
 
 interface IExpireOffer {
   uuid: string;
-  secretaries: Secretary[];
 }

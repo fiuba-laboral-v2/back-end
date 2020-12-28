@@ -6,7 +6,8 @@ export const offerPermissions = {
     createOffer: isFromApprovedCompany,
     updateOfferApprovalStatus: isAdmin,
     editOffer: isFromApprovedCompany,
-    expireOffer: isFromApprovedCompany
+    expireOffer: isFromApprovedCompany,
+    republishOffer: isFromApprovedCompany
   },
   Query: {
     getMyOffers: isFromApprovedCompany,

@@ -16,6 +16,8 @@ export interface IOfferInput {
   targetApplicantType?: ApplicantType;
   isInternship?: boolean;
   maximumSalary?: number | null;
+  graduatesExpirationDateTime?: Date;
+  studentsExpirationDateTime?: Date;
 }
 
 interface IUpdatedWithStatus {
@@ -53,15 +55,31 @@ export const OfferGenerator = {
     updatedWithStatus: async ({
       admin,
       status,
+      studentsExpirationDateTime,
+      graduatesExpirationDateTime,
+      targetApplicantType,
       ...variables
     }: IOfferInput & IUpdatedWithStatus) => {
       const offer = await OfferRepository.create(
-        withOneSection({ index: OfferGenerator.getIndex(), ...variables })
+        withOneSection({ index: OfferGenerator.getIndex(), targetApplicantType, ...variables })
       );
       const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
         admin.secretary
       );
       offer.updateStatus(admin, status, offerDurationInDays);
+      if (studentsExpirationDateTime || graduatesExpirationDateTime) {
+        offer.set({
+          ...(!!studentsExpirationDateTime && {
+            extensionApprovalStatus: ApprovalStatus.approved,
+            studentsExpirationDateTime
+          }),
+          ...(!!graduatesExpirationDateTime && {
+            graduadosApprovalStatus: ApprovalStatus.approved,
+            graduatesExpirationDateTime
+          })
+        });
+      }
+
       return OfferRepository.save(offer);
     },
     forStudents: async ({ status, ...variables }: IOfferInput & { status?: ApprovalStatus }) => {
@@ -84,6 +102,8 @@ export const OfferGenerator = {
     },
     forStudentsAndGraduates: async ({
       status,
+      studentsExpirationDateTime,
+      graduatesExpirationDateTime,
       ...variables
     }: IOfferInput & { status?: ApprovalStatus }) => {
       const extensionAdmin = await AdminGenerator.extension();
@@ -99,6 +119,19 @@ export const OfferGenerator = {
         graduadosAdmin.secretary
       );
       offer.updateStatus(graduadosAdmin, status || ApprovalStatus.approved, offerDurationInDays);
+
+      if (studentsExpirationDateTime || graduatesExpirationDateTime) {
+        offer.set({
+          ...(!!studentsExpirationDateTime && {
+            extensionApprovalStatus: ApprovalStatus.approved,
+            studentsExpirationDateTime
+          }),
+          ...(!!graduatesExpirationDateTime && {
+            graduadosApprovalStatus: ApprovalStatus.approved,
+            graduatesExpirationDateTime
+          })
+        });
+      }
       return OfferRepository.save(offer);
     },
     forAllTargets: async (
