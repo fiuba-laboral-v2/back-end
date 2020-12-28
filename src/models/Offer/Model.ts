@@ -20,6 +20,7 @@ import {
   UUIDV4
 } from "sequelize";
 import { Admin, Career, Company, OfferApprovalEvent, OfferCareer, OfferSection } from "$models";
+import { Nullable } from "$models/SequelizeModel";
 import { Secretary } from "$models/Admin";
 import { validateIntegerInRange, validateSalaryRange } from "validations-fiuba-laboral-v2";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
@@ -27,8 +28,13 @@ import { isApprovalStatus, isTargetApplicantType } from "$models/SequelizeModelV
 import { ApplicantType, targetApplicantTypeEnumValues } from "$models/Applicant";
 import { isNil } from "lodash";
 import { DateTimeManager } from "$libs/DateTimeManager";
-import { InternshipsCannotHaveMaximumSalaryError } from "./Errors/InternshipsCannotHaveMaximumSalaryError";
-import { InternshipsMustTargetStudentsError } from "./Errors/InternshipsMustTargetStudentsError";
+import {
+  ApprovedOfferWithNoExpirationTimeError,
+  InternshipsCannotHaveMaximumSalaryError,
+  InternshipsMustTargetStudentsError,
+  PendingOfferWithExpirationTimeError,
+  RejectedOfferWithExpirationTimeError
+} from "./Errors";
 
 @Table({
   tableName: "Offers",
@@ -43,6 +49,16 @@ import { InternshipsMustTargetStudentsError } from "./Errors/InternshipsMustTarg
       if (this.targetApplicantType !== ApplicantType.student) {
         throw new InternshipsMustTargetStudentsError();
       }
+    },
+    validateGraduatesExpirationDates(this: Offer) {
+      if (!this.isTargetedForGraduates()) return;
+      const status = this.getStatus(Secretary.graduados);
+      this.validateExpirationTime(status, "graduatesExpirationDateTime");
+    },
+    validateStudentsExpirationDates(this: Offer) {
+      if (!this.isTargetedForStudents()) return;
+      const status = this.getStatus(Secretary.extension);
+      this.validateExpirationTime(status, "studentsExpirationDateTime");
     }
   }
 })
@@ -102,13 +118,13 @@ export class Offer extends Model<Offer> {
     validateIntegerInRange({ min: { value: 0, include: false } })(salary);
   })
   @Column({ allowNull: true, type: INTEGER })
-  public maximumSalary?: number;
+  public maximumSalary: Nullable<number>;
 
   @Column({ allowNull: true, type: DATE })
-  public graduatesExpirationDateTime: Date;
+  public graduatesExpirationDateTime: Nullable<Date>;
 
   @Column({ allowNull: true, type: DATE })
-  public studentsExpirationDateTime: Date;
+  public studentsExpirationDateTime: Nullable<Date>;
 
   @HasMany(() => OfferSection)
   public sections: OfferSection[];
@@ -125,48 +141,27 @@ export class Offer extends Model<Offer> {
   public getCompany: HasOneGetAssociationMixin<Company>;
   public getSections: HasManyGetAssociationsMixin<OfferSection>;
   public getCareers: HasManyGetAssociationsMixin<Career>;
-  public getApprovalEvents: HasManyGetAssociationsMixin<OfferApprovalEvent>;
-
-  public expireForStudents = () => {
-    this.studentsExpirationDateTime = DateTimeManager.yesterday();
-  };
-
-  public expireForGraduates = () => {
-    this.graduatesExpirationDateTime = DateTimeManager.yesterday();
-  };
 
   public expire() {
     if (this.isTargetedForGraduates()) this.expireForGraduates();
     if (this.isTargetedForStudents()) this.expireForStudents();
   }
 
-  public updateExpirationDate(admin: Admin, offerDurationInDays: number) {
-    const isApproved = chooseStatus => chooseStatus === ApprovalStatus.approved;
-    const status = this.getStatus(admin.secretary);
-    const expirationDate = DateTimeManager.daysFromNow(offerDurationInDays);
-    if (admin.isFromGraduadosSecretary()) {
-      if (isApproved(status)) {
-        this.graduatesExpirationDateTime = expirationDate.toDate();
-      } else {
-        this.graduatesExpirationDateTime = null as any;
-      }
-    }
-    if (admin.isFromExtensionSecretary()) {
-      if (isApproved(status)) {
-        this.studentsExpirationDateTime = expirationDate.toDate();
-      } else {
-        this.studentsExpirationDateTime = null as any;
-      }
-    }
-  }
-
   public isExpiredForStudents = () => {
-    if (!this.studentsExpirationDateTime) return false;
+    const status = this.getStatus(Secretary.extension);
+    if (status === ApprovalStatus.rejected) return false;
+    if (status === ApprovalStatus.pending) return false;
+    if (!this.studentsExpirationDateTime) throw new ApprovedOfferWithNoExpirationTimeError();
+
     return this.studentsExpirationDateTime < new Date();
   };
 
   public isExpiredForGraduates = () => {
-    if (!this.graduatesExpirationDateTime) return false;
+    const status = this.getStatus(Secretary.graduados);
+    if (status === ApprovalStatus.rejected) return false;
+    if (status === ApprovalStatus.pending) return false;
+    if (!this.graduatesExpirationDateTime) throw new ApprovedOfferWithNoExpirationTimeError();
+
     return this.graduatesExpirationDateTime < new Date();
   };
 
@@ -175,19 +170,40 @@ export class Offer extends Model<Offer> {
     return this.graduadosApprovalStatus;
   }
 
-  public updateStatus(admin: Admin, newStatus: ApprovalStatus) {
-    if (admin.secretary === Secretary.extension) {
-      return this.updateExtensionApprovalStatus(newStatus);
+  public updateStatus(admin: Admin, newStatus: ApprovalStatus, offerDurationInDays: number) {
+    const expirationDate = DateTimeManager.daysFromNow(offerDurationInDays).toDate();
+    if (admin.isFromExtensionSecretary()) {
+      return this.updateExtensionApprovalStatus(newStatus, expirationDate);
     }
-    this.updateGraduadosApprovalStatus(newStatus);
+    if (admin.isFromGraduadosSecretary()) {
+      return this.updateGraduadosApprovalStatus(newStatus, expirationDate);
+    }
   }
 
-  private updateExtensionApprovalStatus(newStatus: ApprovalStatus) {
+  private expireForStudents = () => {
+    this.studentsExpirationDateTime = DateTimeManager.yesterday();
+  };
+
+  private expireForGraduates = () => {
+    this.graduatesExpirationDateTime = DateTimeManager.yesterday();
+  };
+
+  private updateExtensionApprovalStatus(newStatus: ApprovalStatus, expirationDate: Date) {
     this.extensionApprovalStatus = newStatus;
+    if (newStatus === ApprovalStatus.approved) {
+      this.studentsExpirationDateTime = expirationDate;
+    } else {
+      this.studentsExpirationDateTime = null;
+    }
   }
 
-  private updateGraduadosApprovalStatus(newStatus: ApprovalStatus) {
+  private updateGraduadosApprovalStatus(newStatus: ApprovalStatus, expirationDate: Date) {
     this.graduadosApprovalStatus = newStatus;
+    if (newStatus === ApprovalStatus.approved) {
+      this.graduatesExpirationDateTime = expirationDate;
+    } else {
+      this.graduatesExpirationDateTime = null;
+    }
   }
 
   private isTargetedForStudents = () => {
@@ -203,4 +219,19 @@ export class Offer extends Model<Offer> {
       this.targetApplicantType === ApplicantType.both
     );
   };
+
+  private validateExpirationTime(status: ApprovalStatus, expirationTimeProperty: string) {
+    const isApproved = status === ApprovalStatus.approved;
+    const isPending = status === ApprovalStatus.pending;
+    const isRejected = status === ApprovalStatus.rejected;
+    if (isApproved && !this[expirationTimeProperty]) {
+      throw new ApprovedOfferWithNoExpirationTimeError();
+    }
+    if (isPending && this[expirationTimeProperty]) {
+      throw new PendingOfferWithExpirationTimeError();
+    }
+    if (isRejected && this[expirationTimeProperty]) {
+      throw new RejectedOfferWithExpirationTimeError();
+    }
+  }
 }

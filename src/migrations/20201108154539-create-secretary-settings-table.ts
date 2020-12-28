@@ -17,6 +17,10 @@ export = {
       email: {
         allowNull: false,
         type: STRING
+      },
+      emailSignature: {
+        allowNull: false,
+        type: STRING
       }
     }),
   down: (queryInterface: QueryInterface) => queryInterface.dropTable(TABLE_NAME)

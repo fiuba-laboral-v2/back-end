@@ -1,17 +1,14 @@
 import { ApolloError, gql } from "apollo-server";
 import { ApolloServerTestClient as ApolloClient } from "apollo-server-testing";
 import { client } from "$test/graphql/ApolloTestClient";
-
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { OfferNotTargetedForApplicantError } from "$models/JobApplication";
 import { Applicant, Career, Company, Offer } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-
 import { OfferNotFoundError } from "$models/Offer/Errors";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
-
 import { IForAllTargetsAndStatuses, OfferGenerator } from "$generators/Offer";
 import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyGenerator } from "$generators/Company";
@@ -19,8 +16,6 @@ import { CareerGenerator } from "$generators/Career";
 import { UUID } from "$models/UUID";
 import { UUID_REGEX } from "$test/models";
 import { ApplicantType } from "$models/Applicant";
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
-import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
 const SAVE_JOB_APPLICATION = gql`
   mutation saveJobApplication($offerUuid: String!) {
@@ -45,8 +40,6 @@ describe("saveJobApplication", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
-    await SecretarySettingsRepository.truncate();
-    await SecretarySettingsGenerator.createDefaultSettings();
     firstCareer = await CareerGenerator.instance();
     secondCareer = await CareerGenerator.instance();
 

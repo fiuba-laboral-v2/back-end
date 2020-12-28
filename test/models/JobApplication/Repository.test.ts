@@ -6,20 +6,15 @@ import { ApplicantType } from "$models/Applicant";
 import { JobApplicationNotFoundError, JobApplicationRepository } from "$models/JobApplication";
 import { Applicant, Company, JobApplication, Offer } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-
 import { UserRepository } from "$models/User";
 import { isApprovalStatus } from "$models/SequelizeModelValidators";
-
 import { JobApplicationGenerator } from "$generators/JobApplication";
 import { CompanyGenerator } from "$generators/Company";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { IForAllTargets, OfferGenerator } from "$generators/Offer";
-
 import { range } from "lodash";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import { UUID } from "$models/UUID";
-import { SecretarySettingsGenerator } from "$test/generators/SecretarySettings";
-import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
 
 describe("JobApplicationRepository", () => {
   let student: Applicant;
@@ -31,8 +26,6 @@ describe("JobApplicationRepository", () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     await CareerRepository.truncate();
-    await SecretarySettingsRepository.truncate();
-    await SecretarySettingsGenerator.createDefaultSettings();
 
     const company = await CompanyGenerator.instance.withMinimumData();
     offers = await OfferGenerator.instance.forAllTargets({ companyUuid: company.uuid });

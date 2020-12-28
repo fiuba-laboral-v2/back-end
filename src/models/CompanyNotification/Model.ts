@@ -3,7 +3,7 @@ import { BOOLEAN, TEXT, UUID, ENUM } from "sequelize";
 import { Admin, JobApplication, Company, Offer } from "$models";
 import { CompanyNotificationType, companyNotificationTypeEnumValues } from "./Interfaces";
 import { isUuid, isCompanyNotificationType } from "$models/SequelizeModelValidators";
-import { SequelizeModel } from "$models/SequelizeModel";
+import { SequelizeModel, Nullable } from "$models/SequelizeModel";
 
 @Table({ tableName: "CompanyNotifications", timestamps: true, updatedAt: false })
 export class CompanyNotificationSequelizeModel extends SequelizeModel<
@@ -14,7 +14,7 @@ export class CompanyNotificationSequelizeModel extends SequelizeModel<
   public moderatorUuid: string;
 
   @Column({ allowNull: true, type: TEXT })
-  public moderatorMessage?: string;
+  public moderatorMessage: Nullable<string>;
 
   @Column({
     allowNull: false,
@@ -28,15 +28,15 @@ export class CompanyNotificationSequelizeModel extends SequelizeModel<
   public notifiedCompanyUuid: string;
 
   @Column({ allowNull: true, type: BOOLEAN, defaultValue: true })
-  public isNew: boolean;
+  public isNew: Nullable<boolean>;
 
   @ForeignKey(() => JobApplication)
   @Column({ allowNull: true, type: UUID, ...isUuid })
-  public jobApplicationUuid?: string;
+  public jobApplicationUuid: Nullable<string>;
 
   @ForeignKey(() => Offer)
   @Column({ allowNull: true, type: UUID, ...isUuid })
-  public offerUuid?: string;
+  public offerUuid: Nullable<string>;
 
   @CreatedAt
   @Column

@@ -2,7 +2,6 @@ import { gql } from "apollo-server";
 import { client } from "../../ApolloTestClient";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { TestClientGenerator } from "$generators/TestClient";
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { AdminRepository, Secretary } from "$models/Admin";
 import { CompanyRepository } from "$models/Company";
@@ -24,8 +23,6 @@ describe("getSecretaryOfferDuration", () => {
     await CompanyRepository.truncate();
     await AdminRepository.truncate();
     await ApplicantRepository.truncate();
-    await SecretarySettingsRepository.truncate();
-    await SecretarySettingsGenerator.createDefaultSettings();
 
     ({ apolloClient: companyApolloClient } = await TestClientGenerator.company({
       status: ApprovalStatus.approved

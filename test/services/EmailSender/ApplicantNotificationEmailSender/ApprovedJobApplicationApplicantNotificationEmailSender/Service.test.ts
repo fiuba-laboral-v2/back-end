@@ -4,19 +4,16 @@ import {
 } from "$models/ApplicantNotification";
 import { EmailService } from "$services/Email";
 import { ApprovedJobApplicationApplicantNotificationEmailSender } from "$services/EmailSender";
-
 import { UserRepository } from "$models/User";
 import { ApplicantRepository } from "$models/Applicant";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { OfferRepository } from "$models/Offer";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
-
 import { CompanyGenerator } from "$generators/Company";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { JobApplicationGenerator } from "$generators/JobApplication";
 import { AdminGenerator } from "$generators/Admin";
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 
 describe("ApprovedJobApplicationApplicantNotificationEmailSender", () => {
   const emailSendMock = jest.fn();
@@ -25,9 +22,6 @@ describe("ApprovedJobApplicationApplicantNotificationEmailSender", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
-    await SecretarySettingsRepository.truncate();
-
-    await SecretarySettingsGenerator.createDefaultSettings();
   });
 
   beforeEach(() => {
@@ -65,7 +59,7 @@ describe("ApprovedJobApplicationApplicantNotificationEmailSender", () => {
           body:
             `Tu postulación a la oferta de trabajo: ${offer.title} (baseUrl/subDomain/postulante/ofertas/${offer.uuid}) ha sido aprobada. Se envió una notificación a la empresa.` +
             "\n\n" +
-            `Bolsa de Trabajo FIUBA.`
+            `Graduados email signature`
         }
       ]
     ]);

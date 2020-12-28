@@ -4,7 +4,6 @@ import { CareerRepository } from "$models/Career";
 import { AdminTask, AdminTaskRepository, AdminTaskType } from "$models/AdminTask";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Company } from "$models";
-
 import { AdminTaskTestSetup } from "$setup/AdminTask";
 import { CompanyGenerator } from "$generators/Company";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
@@ -12,8 +11,6 @@ import { Secretary } from "$models/Admin";
 import MockDate from "mockdate";
 import { range, uniq } from "lodash";
 import { OfferRepository } from "$models/Offer";
-import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
-import { SecretarySettingsGenerator } from "$test/generators/SecretarySettings";
 
 describe("AdminTaskRepository", () => {
   let setup: AdminTaskTestSetup;
@@ -23,8 +20,6 @@ describe("AdminTaskRepository", () => {
     await CompanyRepository.truncate();
     await OfferRepository.truncate();
     await CareerRepository.truncate();
-    await SecretarySettingsRepository.truncate();
-    await SecretarySettingsGenerator.createDefaultSettings();
     setup = new AdminTaskTestSetup({ graphqlSetup: false });
     await setup.execute();
   });
@@ -202,6 +197,18 @@ describe("AdminTaskRepository", () => {
       [ApprovalStatus.approved],
       setup.admins.graduados.secretary
     );
+  });
+
+  it("filters the expired offers", async () => {
+    const result = await AdminTaskRepository.find({
+      adminTaskTypes: [AdminTaskType.Offer],
+      statuses: [ApprovalStatus.approved],
+      secretary: setup.admins.graduados.secretary
+    });
+
+    const resultUuids = result.results.map(({ uuid }) => uuid);
+    expect(resultUuids).not.toContain(setup.offers.approvedAndExpiredForBoth.uuid);
+    expect(result.shouldFetchMore).toEqual(false);
   });
 
   it("returns only rejected offers targeted for students", async () => {

@@ -1,13 +1,9 @@
 import { gql } from "apollo-server";
 import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist/createTestClient";
-
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
-import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { ApplicantNotificationRepository } from "$models/ApplicantNotification";
-
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { ApplicantNotificationGenerator } from "$generators/ApplicantNotification";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { TestClientGenerator } from "$generators/TestClient";
@@ -26,9 +22,6 @@ describe("hasUnreadApplicantNotifications", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
-    await SecretarySettingsRepository.truncate();
-
-    await SecretarySettingsGenerator.createDefaultSettings();
   });
 
   const createCompanyTestClient = (approvalStatus: ApprovalStatus) =>

@@ -1,6 +1,7 @@
 import { Table, Column, ForeignKey, CreatedAt } from "sequelize-typescript";
 import { BOOLEAN, TEXT, UUID, ENUM } from "sequelize";
 import { Admin, JobApplication, Applicant } from "$models";
+import { Nullable } from "$models/SequelizeModel";
 import { ApplicantNotificationType, applicantNotificationTypeEnumValues } from "./Interfaces";
 import { isUuid, isApplicantNotificationType } from "$models/SequelizeModelValidators";
 import { SequelizeModel } from "$models/SequelizeModel";
@@ -14,7 +15,7 @@ export class ApplicantNotificationSequelizeModel extends SequelizeModel<
   public moderatorUuid: string;
 
   @Column({ allowNull: true, type: TEXT })
-  public moderatorMessage?: string;
+  public moderatorMessage: Nullable<string>;
 
   @Column({
     allowNull: false,
@@ -28,11 +29,11 @@ export class ApplicantNotificationSequelizeModel extends SequelizeModel<
   public notifiedApplicantUuid: string;
 
   @Column({ allowNull: true, type: BOOLEAN, defaultValue: true })
-  public isNew: boolean;
+  public isNew: Nullable<boolean>;
 
   @ForeignKey(() => JobApplication)
   @Column({ allowNull: true, type: UUID, ...isUuid })
-  public jobApplicationUuid?: string;
+  public jobApplicationUuid: Nullable<string>;
 
   @CreatedAt
   @Column

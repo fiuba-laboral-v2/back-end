@@ -17,15 +17,11 @@ import {
   ApplicantNotificationRepository,
   ApplicantNotification
 } from "$models/ApplicantNotification";
-
 import { UserRepository } from "$models/User";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { ApplicantRepository } from "$models/Applicant";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
-import { SecretarySettingsRepository } from "$models/SecretarySettings";
-
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 import { AdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
 import { ApplicantGenerator } from "$generators/Applicant";
@@ -46,10 +42,8 @@ describe("ApplicantNotificationRepository", () => {
     await UserRepository.truncate();
     await ApplicantRepository.truncate();
     await CareerRepository.truncate();
-    await SecretarySettingsRepository.truncate();
     await CompanyRepository.truncate();
 
-    await SecretarySettingsGenerator.createDefaultSettings();
     extensionAdmin = await AdminGenerator.extension();
     applicant = await ApplicantGenerator.instance.withMinimumData();
     company = await CompanyGenerator.instance.withMinimumData();

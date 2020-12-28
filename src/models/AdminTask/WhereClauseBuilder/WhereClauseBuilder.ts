@@ -4,6 +4,7 @@ import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput
 import { AdminTaskType } from "$models/AdminTask/Model";
 import { StatusWhereClause } from "./Status";
 import { OfferTargetWhereClause } from "./OfferTarget";
+import { OfferExpirationDateWhereClause } from "./OfferExpirationDate";
 import { ApplicantTypeWhereClause } from "./ApplicantType";
 import { JobApplicationTargetWhereClause } from "./JobApplicationTarget";
 import { UpdatedAtWhereClause } from "./UpdatedAt";
@@ -13,6 +14,7 @@ export const WhereClauseBuilder = {
     [
       StatusWhereClause.build({ statuses, secretary, modelName, tableName }),
       OfferTargetWhereClause.build({ secretary, modelName }),
+      OfferExpirationDateWhereClause.build({ secretary, modelName }),
       ApplicantTypeWhereClause.build({ secretary, modelName }),
       JobApplicationTargetWhereClause.build({ secretary, modelName }),
       UpdatedAtWhereClause.build({ updatedBeforeThan, tableName })

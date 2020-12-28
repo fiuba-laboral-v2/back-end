@@ -4,23 +4,17 @@ import { CareerRepository } from "$models/Career";
 import { OfferRepository } from "$models/Offer";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
-
 import { NewJobApplicationCompanyNotificationEmailSender } from "$services/EmailSender";
 import { EmailService } from "$services/Email";
-
 import { CompanyGenerator } from "$generators/Company";
 import { CompanyNotificationGenerator } from "$generators/CompanyNotification";
 import { AdminGenerator } from "$generators/Admin";
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 
 describe("NewJobApplicationCompanyNotificationEmailSender", () => {
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
-    await SecretarySettingsRepository.truncate();
-
-    await SecretarySettingsGenerator.createDefaultSettings();
   });
 
   it("sends an email to all company users that a new application has arrived", async () => {
@@ -56,7 +50,7 @@ describe("NewJobApplicationCompanyNotificationEmailSender", () => {
             "\n" +
             `Postulante: applicantName applicantSurname (baseUrl/subDomain/empresa/postulantes/${applicantUuid}).` +
             "\n\n" +
-            "Bolsa de Trabajo FIUBA."
+            "Graduados email signature"
         }
       ]
     ]);

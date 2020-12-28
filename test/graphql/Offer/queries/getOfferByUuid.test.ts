@@ -11,15 +11,12 @@ import { ApplicantType } from "$models/Applicant";
 import { Offer } from "$models";
 import { OfferNotVisibleByCurrentUserError } from "$graphql/Offer/Queries/Errors";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
-
 import { Constructable } from "$test/types/Constructable";
 import { OfferGenerator } from "$generators/Offer";
 import { CareerGenerator } from "$generators/Career";
 import { CompanyGenerator } from "$generators/Company";
 import { TestClientGenerator } from "$generators/TestClient";
 import { UUID } from "$models/UUID";
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
-import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
 const GET_OFFER_BY_UUID = gql`
   query($uuid: ID!) {
@@ -75,8 +72,6 @@ describe("getOfferByUuid", () => {
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
     await UserRepository.truncate();
-    await SecretarySettingsRepository.truncate();
-    await SecretarySettingsGenerator.createDefaultSettings();
 
     companyUuid = (await CompanyGenerator.instance.withCompleteData()).uuid;
 

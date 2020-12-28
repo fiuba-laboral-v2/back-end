@@ -13,7 +13,8 @@ describe("SecretarySettingsRepository", () => {
     const secretarySettings = new SecretarySettings({
       secretary,
       offerDurationInDays: 15,
-      email: "graduados@fi.uba.ar"
+      email: "graduados@fi.uba.ar",
+      emailSignature: "graduados signature!"
     });
     await SecretarySettingsRepository.save(secretarySettings);
     const savedSecretarySettings = await SecretarySettingsRepository.findBySecretary(secretary);
@@ -29,7 +30,8 @@ describe("SecretarySettingsRepository", () => {
     const attributes = {
       secretary,
       offerDurationInDays: 15,
-      email: "graduados@fi.uba.ar"
+      email: "extensssion@fi.uba.ar",
+      emailSignature: "extension signature!"
     };
     const secretarySettings = new SecretarySettings(attributes);
     const existentSecretarySettings = new SecretarySettings(attributes);
@@ -40,7 +42,7 @@ describe("SecretarySettingsRepository", () => {
     ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
   });
 
-  it("throws an error if the secretary doesn't exists", async () => {
+  it("throws an error if the secretary doesn't exist", async () => {
     const secretary = "cachito" as Secretary;
     await expect(SecretarySettingsRepository.findBySecretary(secretary)).rejects.toThrow(
       `invalid input value for enum secretary: "cachito"`
@@ -64,7 +66,8 @@ describe("SecretarySettingsRepository", () => {
       new SecretarySettings({
         secretary: Secretary.graduados,
         offerDurationInDays: 15,
-        email: "graduados@fi.uba.ar"
+        email: "graduados@fi.uba.ar",
+        emailSignature: "graduados signature!"
       })
     );
     expect(await SecretarySettings.findAll()).toHaveLength(1);

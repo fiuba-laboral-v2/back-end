@@ -1,17 +1,13 @@
 import { RejectedProfileCompanyNotification } from "$models/CompanyNotification";
-
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { CompanyNotificationRepository } from "$models/CompanyNotification";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
-
 import { EmailService } from "$services/Email";
 import { RejectedProfileCompanyNotificationEmailSender } from "$services/EmailSender";
-
 import { CompanyGenerator } from "$generators/Company";
 import { AdminGenerator } from "$generators/Admin";
-import { SecretarySettingsGenerator } from "$generators/SecretarySettings";
 
 describe("RejectedProfileCompanyNotificationEmailSender", () => {
   const emailSendMock = jest.fn();
@@ -20,9 +16,6 @@ describe("RejectedProfileCompanyNotificationEmailSender", () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
     await CareerRepository.truncate();
-    await SecretarySettingsRepository.truncate();
-
-    await SecretarySettingsGenerator.createDefaultSettings();
   });
 
   beforeEach(() => {
@@ -58,7 +51,7 @@ describe("RejectedProfileCompanyNotificationEmailSender", () => {
             "\n" +
             `Motivo de rechazo: "${notification.moderatorMessage}"` +
             "\n\n" +
-            "Bolsa de Trabajo FIUBA."
+            "Graduados email signature"
         }
       ]
     ]);

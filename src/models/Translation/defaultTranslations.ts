@@ -210,6 +210,18 @@ export const defaultTranslations = {
     newPassword: "Nueva contraseña",
     newPasswordConfirm: "Confirmar nueva contraseña"
   },
+  editMyForgottenPassword: {
+    title: "Recuperación de contraseña",
+    submit: "Guardar",
+    newPassword: "Nueva contraseña",
+    newPasswordConfirm: "Confirmar nueva contraseña"
+  },
+  passwordRecovery: {
+    title: "Solicitud de recuperación de contraseña",
+    emailHelperText: "Se enviará un mail con un link para cambiar tu contraseña",
+    submit: "Guardar",
+    email: "Email"
+  },
   companySignUp: {
     title: "Crear tu cuenta",
     submit: "Guardar"
@@ -388,8 +400,11 @@ export const defaultTranslations = {
   companyUsersListMainTitle: {
     title: "Usuarios"
   },
+  adminCompanyUsersListMainTitle: {
+    title: "Usuarios de"
+  },
   adminOfferListMainTitle: {
-    title: "Ofertas laborales"
+    title: "Ofertas de trabajo"
   },
   adminAdminListMainTitle: {
     title: "Administradores"
@@ -416,7 +431,14 @@ export const defaultTranslations = {
     cuit: "CUIT:"
   },
   adminApplicantDetails: {
-    padron: "Padrón:"
+    padron: "Padrón:",
+    dni: "DNI:"
+  },
+  openDetailIcon: {
+    seeDetailTooltipMessage: "Ver detalle"
+  },
+  adminCompanyDetail: {
+    seeUsersButton: "Ver usuarios"
   },
   adminActions: {
     approve: "Aprobar",
@@ -504,18 +526,6 @@ export const defaultTranslations = {
   },
   list: {
     fetchMore: "Ver más"
-  },
-  companySignUpAcceptanceCriteria: {
-    text: "Esta empresa estará pendiente de aprobación por personal de FIUBA"
-  },
-  companyEditableAcceptanceCriteria: {
-    text: "Esta empresa estará pendiente de aprobación por personal de FIUBA"
-  },
-  editOfferAcceptanceCriteria: {
-    text: "Esta oferta estará pendiente de aprobación por personal de FIUBA"
-  },
-  createOfferAcceptanceCriteria: {
-    text: "Esta oferta estará pendiente de aprobación por personal de FIUBA"
   },
   multipleSearchSelector: {
     helperText: "Presionar Enter para agregar"
@@ -644,9 +654,14 @@ export const defaultTranslations = {
     subject: "Perfil de empresa actualizado",
     body: "El perfil de la empresa '<%= companyName %>' (<%= companyLink %>) ha sido actualizado."
   },
-  emailSignature: {
-    graduados: "Bolsa de Trabajo FIUBA.",
-    extension: "Bolsa de Trabajo FIUBA."
+  passwordRecoveryEmail: {
+    subject: "Recuperación de contraseña",
+    body:
+      "Usted ha solicitado la recuperación de su contraseña." +
+      "\n" +
+      "Haga click en el siguiente link para realizar el cambio." +
+      "\n" +
+      "<%= passwordRecoveryLink %>"
   },
   adminSettings: {
     title: "Configuración",
@@ -656,7 +671,16 @@ export const defaultTranslations = {
     offerDurationInDays: "Días hasta la expiración de una oferta",
     email: "Email de la secretaría",
     emailHelper: "Para contacto de alumnos, graduados y empresas",
+    emailSignature: "Firma de los emails",
+    emailSignatureHelper:
+      "Se va a agregar al final de todos los emails que resulten de la acción de un admin de tu secretaría.\nPor ejemplo, la aprobación de una empresa.",
     infoMessage:
-      'El email de la secretaría se va a dar a los usuarios como vía de contacto, y se van a enviar los emails automáticos a su nombre. Cualquier dirección que termine con "@fi.uba.ar" es válida. Procurar que la dirección no corresponda a un individuo sino a la secretaría.'
+      'El email de la secretaría se va a dar a los usuarios como vía de contacto, y se van a enviar los emails automáticos a su nombre. Cualquier dirección que termine con "@fi.uba.ar" es válida. Procurar que la dirección no corresponda a un individuo sino a la secretaría.',
+    sharedSettingsTitle: "Textos de ayuda",
+    sharedSettingsSubtitle:
+      "Los textos de ayuda se muestran junto al formulario para comunicar sobre qué se espera en un perfil de empresa o en una oferta para ser aprobadas. Son compartidos por las dos secretarías.",
+    companySignUpAcceptanceCriteria: "Registro de empresa",
+    companyEditableAcceptanceCriteria: "Edición de empresa",
+    editOfferAcceptanceCriteria: "Edición o creación de oferta"
   }
 };

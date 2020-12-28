@@ -4,7 +4,8 @@ const endpoints = {
   company: {
     offer: (uuid: string) => `empresa/ofertas/${uuid}`,
     applicant: (uuid: string) => `empresa/postulantes/${uuid}`,
-    profile: () => "empresa/perfil"
+    profile: () => "empresa/perfil",
+    editMyForgottenPassword: (token: string) => `empresa/contrasena/recuperar/?token=${token}`
   },
   applicant: {
     profile: () => "postulante/perfil",
@@ -48,6 +49,7 @@ interface IFrontendConfig {
       offer: (uuid: string) => string;
       applicant: (uuid: string) => string;
       profile: () => string;
+      editMyForgottenPassword: (token: string) => string;
     };
     applicant: {
       profile: () => string;

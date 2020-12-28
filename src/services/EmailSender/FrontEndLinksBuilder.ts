@@ -11,7 +11,9 @@ export const FrontEndLinksBuilder = {
       `${buildBaseUrl()}/${FrontendConfig.endpoints.company.offer(uuid)}`,
     applicantLink: (uuid: string) =>
       `${buildBaseUrl()}/${FrontendConfig.endpoints.company.applicant(uuid)}`,
-    profileLink: () => `${buildBaseUrl()}/${FrontendConfig.endpoints.company.profile()}`
+    profileLink: () => `${buildBaseUrl()}/${FrontendConfig.endpoints.company.profile()}`,
+    editMyForgottenPassword: (token: string) =>
+      `${buildBaseUrl()}/${FrontendConfig.endpoints.company.editMyForgottenPassword(token)}`
   },
   applicant: {
     profileLink: () => `${buildBaseUrl()}/${FrontendConfig.endpoints.applicant.profile()}`,
