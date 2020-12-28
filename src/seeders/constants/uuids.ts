@@ -13,6 +13,7 @@ export const uuids = {
     javaSemiSenior: UUID.generate(),
     javaSemiSeniorExpired: UUID.generate(),
     javaSemiSeniorApproved: UUID.generate(),
+    pythonSemiSeniorExpiredForOne: UUID.generate(),
     javaSenior: UUID.generate(),
     javaJunior: UUID.generate(),
     rubySenior: UUID.generate(),
