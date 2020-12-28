@@ -1,9 +1,9 @@
 import { Offer } from "$models";
-import { IPermission } from "../Interface";
+import { IPermissions } from "../Interfaces";
 import { AdminRepository, Secretary } from "$models/Admin";
 import { ApplicantType } from "$models/Applicant";
 
-export class AdminPermissions implements IPermission {
+export class AdminPermissions implements IPermissions {
   private readonly adminUserUuid: string;
 
   constructor(adminUserUuid: string) {

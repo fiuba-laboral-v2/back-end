@@ -1,5 +1,5 @@
-import { IPermission } from "$models/Permissions";
+import { IPermissions } from "$models/Permissions";
 
 export interface IRole {
-  getPermissions: () => IPermission;
+  getPermissions: () => IPermissions;
 }

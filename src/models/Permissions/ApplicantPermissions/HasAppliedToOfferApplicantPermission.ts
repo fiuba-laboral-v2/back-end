@@ -1,9 +1,9 @@
 import { JobApplicationRepository } from "$models/JobApplication";
 import { Applicant, Offer } from "$models";
-import { IApplicantPermission } from "./Interfaces";
+import { IPermission } from "../Interfaces";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
-export class HasAppliedToOfferApplicantPermission implements IApplicantPermission {
+export class HasAppliedToOfferApplicantPermission implements IPermission {
   private readonly applicant: Applicant;
   private readonly offer: Offer;
 

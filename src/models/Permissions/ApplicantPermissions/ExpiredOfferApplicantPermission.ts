@@ -1,9 +1,9 @@
 import { ApplicantType } from "$models/Applicant";
 import { Offer } from "$models";
 import { OfferTargetApplicantPermission } from "./OfferTargetApplicantPermission";
-import { IApplicantPermission } from "./Interfaces";
+import { IPermission } from "../Interfaces";
 
-export class ExpiredOfferApplicantPermission implements IApplicantPermission {
+export class ExpiredOfferApplicantPermission implements IPermission {
   private readonly offer: Offer;
   private readonly applicantType: ApplicantType;
   private readonly offerTargetPermission: OfferTargetApplicantPermission;
