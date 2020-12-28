@@ -6,6 +6,7 @@ import { OfferGenerator } from "$generators/Offer";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { DateTimeManager } from "$libs/DateTimeManager";
 
 describe("ExpiredOfferApplicantPermission", () => {
   let extensionAdmin: Admin;
@@ -19,7 +20,9 @@ describe("ExpiredOfferApplicantPermission", () => {
       ...attributes,
       targetApplicantType,
       extensionApprovalStatus: ApprovalStatus.approved,
-      graduadosApprovalStatus: ApprovalStatus.approved
+      graduadosApprovalStatus: ApprovalStatus.approved,
+      studentsExpirationDateTime: DateTimeManager.daysFromNow(15).toDate(),
+      graduatesExpirationDateTime: DateTimeManager.daysFromNow(15).toDate()
     });
   };
 
