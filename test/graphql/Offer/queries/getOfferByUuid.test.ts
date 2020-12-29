@@ -230,10 +230,19 @@ describe("getOfferByUuid", () => {
     await expectToGetOffer(apolloClient, offer);
   });
 
-  it("returns offer that has expired but the applicant has applied", async () => {
+  it("returns offer that has expired but the applicant has a pending application", async () => {
     const offer = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
     const { apolloClient, applicant } = await approvedApplicantTestClient(ApplicantType.graduate);
     await JobApplicationRepository.apply(applicant, offer);
+    await expectToGetOffer(apolloClient, offer);
+  });
+
+  it("returns offer that has expired but the applicant has an approved application", async () => {
+    const offer = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
+    const { apolloClient, applicant } = await approvedApplicantTestClient(ApplicantType.graduate);
+    const jobApplication = await JobApplicationRepository.apply(applicant, offer);
+    jobApplication.set({ approvalStatus: ApprovalStatus.approved });
+    await JobApplicationRepository.save(jobApplication);
     await expectToGetOffer(apolloClient, offer);
   });
 
@@ -249,9 +258,20 @@ describe("getOfferByUuid", () => {
     await expectToReturnError(apolloClient, offer, OfferNotVisibleByCurrentUserError);
   });
 
-  it("returns error if the offer has expired and the applicant has not applied", async () => {
+  it("returns error if the offer has expired", async () => {
     const offer = await OfferGenerator.instance.forGraduates({ companyUuid });
     const { apolloClient } = await approvedApplicantTestClient(ApplicantType.graduate);
+    offer.expire();
+    await OfferRepository.save(offer);
+    await expectToReturnError(apolloClient, offer, OfferNotVisibleByCurrentUserError);
+  });
+
+  it("returns error if offer that has expired but the applicant has a rejected application", async () => {
+    const offer = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
+    const { apolloClient, applicant } = await approvedApplicantTestClient(ApplicantType.graduate);
+    const jobApplication = await JobApplicationRepository.apply(applicant, offer);
+    jobApplication.set({ approvalStatus: ApprovalStatus.rejected });
+    await JobApplicationRepository.save(jobApplication);
     offer.expire();
     await OfferRepository.save(offer);
     await expectToReturnError(apolloClient, offer, OfferNotVisibleByCurrentUserError);

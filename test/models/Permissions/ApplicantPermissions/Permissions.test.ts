@@ -24,9 +24,6 @@ describe("ApplicantPermissions", () => {
   });
 
   describe("canSeeOffer", () => {
-    const mockHasApplied = (hasApplied: boolean) =>
-      jest.spyOn(JobApplicationRepository, "hasApplied").mockImplementation(async () => hasApplied);
-
     it("returns true if the offer is approved for students and the applicant is a student", async () => {
       const offer = offers[ApplicantType.student][ApprovalStatus.approved];
       const applicant = await ApplicantGenerator.instance.student();
@@ -153,7 +150,7 @@ describe("ApplicantPermissions", () => {
       expect(await permissions.canSeeOffer(offer)).toBe(false);
     });
 
-    it("returns false if the offer is rejected for graduates and the applicant is both", async () => {
+    it("returns false if the offer has rejected for graduates and the applicant is both", async () => {
       const offer = offers[ApplicantType.graduate][ApprovalStatus.rejected];
       const applicant = await ApplicantGenerator.instance.studentAndGraduate();
       const permissions = new ApplicantPermissions(applicant.uuid);
@@ -161,7 +158,6 @@ describe("ApplicantPermissions", () => {
     });
 
     it("returns false if the offer is expired and the applicant has not applied", async () => {
-      mockHasApplied(false);
       const offer = offers[ApplicantType.graduate][ApprovalStatus.approved];
       offer.expire();
       const applicant = await ApplicantGenerator.instance.graduate();
@@ -169,11 +165,46 @@ describe("ApplicantPermissions", () => {
       expect(await permissions.canSeeOffer(offer)).toBe(false);
     });
 
-    it("returns true if the offer is expired and the applicant has applied", async () => {
-      mockHasApplied(true);
+    it("returns true if the offer has expired because the applicant has an approved application", async () => {
       const offer = offers[ApplicantType.graduate][ApprovalStatus.approved];
-      offer.expire();
       const applicant = await ApplicantGenerator.instance.graduate();
+      const jobApplication = await JobApplicationRepository.apply(applicant, offer);
+      jobApplication.set({ approvalStatus: ApprovalStatus.approved });
+      await JobApplicationRepository.save(jobApplication);
+      offer.expire();
+      const permissions = new ApplicantPermissions(applicant.uuid);
+      expect(await permissions.canSeeOffer(offer)).toBe(true);
+    });
+
+    it("returns true if the offer has expired because the applicant has a pending application", async () => {
+      const offer = offers[ApplicantType.graduate][ApprovalStatus.approved];
+      const applicant = await ApplicantGenerator.instance.graduate();
+      const jobApplication = await JobApplicationRepository.apply(applicant, offer);
+      jobApplication.set({ approvalStatus: ApprovalStatus.pending });
+      await JobApplicationRepository.save(jobApplication);
+      offer.expire();
+      const permissions = new ApplicantPermissions(applicant.uuid);
+      expect(await permissions.canSeeOffer(offer)).toBe(true);
+    });
+
+    it("returns true if the offer is rejected because the applicant has an approved application", async () => {
+      const offer = offers[ApplicantType.graduate][ApprovalStatus.rejected];
+      const applicant = await ApplicantGenerator.instance.graduate();
+      const jobApplication = await JobApplicationRepository.apply(applicant, offer);
+      jobApplication.set({ approvalStatus: ApprovalStatus.approved });
+      await JobApplicationRepository.save(jobApplication);
+      offer.expire();
+      const permissions = new ApplicantPermissions(applicant.uuid);
+      expect(await permissions.canSeeOffer(offer)).toBe(true);
+    });
+
+    it("returns true if the offer is pending because the applicant has an approved application", async () => {
+      const offer = offers[ApplicantType.graduate][ApprovalStatus.pending];
+      const applicant = await ApplicantGenerator.instance.graduate();
+      const jobApplication = await JobApplicationRepository.apply(applicant, offer);
+      jobApplication.set({ approvalStatus: ApprovalStatus.approved });
+      await JobApplicationRepository.save(jobApplication);
+      offer.expire();
       const permissions = new ApplicantPermissions(applicant.uuid);
       expect(await permissions.canSeeOffer(offer)).toBe(true);
     });
