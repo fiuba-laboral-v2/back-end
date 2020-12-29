@@ -2,7 +2,7 @@ import { PendingJobApplicationApplicantNotification } from "$models/ApplicantNot
 import { JobApplicationApplicantNotificationEmailSender } from "../JobApplicationApplicantNotificationEmailSender";
 
 export const PendingJobApplicationApplicantNotificationEmailSender = {
-  send: async (notification: PendingJobApplicationApplicantNotification) =>
+  send: (notification: PendingJobApplicationApplicantNotification) =>
     JobApplicationApplicantNotificationEmailSender.send({
       notification,
       emailTranslationGroup: "pendingJobApplicationApplicantNotificationEmail"
