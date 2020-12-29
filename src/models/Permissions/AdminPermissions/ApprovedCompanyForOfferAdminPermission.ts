@@ -1,17 +1,15 @@
-import { Offer } from "$models";
-import { CompanyRepository } from "$models/Company";
+import { Company } from "$models";
 import { IPermission } from "../Interfaces";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export class ApprovedCompanyForOfferAdminPermission implements IPermission {
-  private readonly offer: Offer;
+  private readonly company: Company;
 
-  constructor(offer: Offer) {
-    this.offer = offer;
+  constructor(company: Company) {
+    this.company = company;
   }
 
   public async apply() {
-    const company = await CompanyRepository.findByUuid(this.offer.companyUuid);
-    return company.approvalStatus === ApprovalStatus.approved;
+    return this.company.approvalStatus === ApprovalStatus.approved;
   }
 }
