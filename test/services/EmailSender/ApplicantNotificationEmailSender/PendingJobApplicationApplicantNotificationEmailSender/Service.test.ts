@@ -57,7 +57,7 @@ describe("PendingJobApplicationApplicantNotificationEmailSender", () => {
           },
           subject: "Postulación a oferta de trabajo pendiente de aprobación",
           body:
-            `Tu postulación a la oferta de trabajo: ${offer.title} (baseUrl/subDomain/postulante/ofertas/${offer.uuid}) está pendiente de aprobación.` +
+            `Tu postulación a la oferta de trabajo: ${offer.title} (baseUrl/subDomain/postulante/ofertas/${offer.uuid}) será revisada por el personal de la FIUBA.` +
             "\n\n" +
             `Graduados email signature`
         }

@@ -630,7 +630,7 @@ export const defaultTranslations = {
   pendingJobApplicationApplicantNotificationEmail: {
     subject: "Postulación a oferta de trabajo pendiente de aprobación",
     body:
-      "Tu postulación a la oferta de trabajo: <%= offerTitle %> (<%= offerLink %>) está pendiente de aprobación." +
+      "Tu postulación a la oferta de trabajo: <%= offerTitle %> (<%= offerLink %>) será revisada por el personal de la FIUBA." +
       "\n\n" +
       "<%= signature %>"
   },
