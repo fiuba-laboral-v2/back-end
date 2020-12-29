@@ -182,6 +182,262 @@ describe("Offer", () => {
     });
   });
 
+  describe("republish", () => {
+    const graduadosOfferDurationInDays = 15;
+    const studentsOfferDurationInDays = 15;
+
+    describe("when the targetApplicantType is student", () => {
+      const createOfferTargetingStudents = (
+        extensionApprovalStatus: ApprovalStatus,
+        studentsExpirationDateTime?: Date
+      ) => {
+        return new Offer({
+          ...mandatoryAttributes,
+          extensionApprovalStatus,
+          targetApplicantType: ApplicantType.student,
+          ...(!!studentsExpirationDateTime && { studentsExpirationDateTime })
+        });
+      };
+
+      it("republishes the offer when it's expired", async () => {
+        const offer = createOfferTargetingStudents(
+          ApprovalStatus.approved,
+          DateTimeManager.yesterday()
+        );
+
+        expect(offer.isExpiredForStudents()).toBe(true);
+        offer.republish(graduadosOfferDurationInDays, studentsOfferDurationInDays);
+        expect(offer.isExpiredForStudents()).toBe(false);
+        await expect(offer.validate()).resolves.not.toThrow();
+      });
+
+      it("doesn't change the graduatesExpirationDateTime", async () => {
+        const offer = createOfferTargetingStudents(
+          ApprovalStatus.approved,
+          DateTimeManager.yesterday()
+        );
+
+        expect(offer.isExpiredForGraduates()).toBe(false);
+        offer.republish(graduadosOfferDurationInDays, studentsOfferDurationInDays);
+        expect(offer.isExpiredForGraduates()).toBe(false);
+        await expect(offer.validate()).resolves.not.toThrow();
+      });
+
+      it("doesn't change the studentsExpirationDateTime if the offer is pending", async () => {
+        const offer = createOfferTargetingStudents(ApprovalStatus.pending);
+
+        expect(offer.isExpiredForStudents()).toBe(false);
+        offer.republish(graduadosOfferDurationInDays, studentsOfferDurationInDays);
+        expect(offer.isExpiredForStudents()).toBe(false);
+        await expect(offer.validate()).resolves.not.toThrow();
+      });
+
+      it("doesn't change the studentsExpirationDateTime if the offer is rejected", async () => {
+        const offer = createOfferTargetingStudents(ApprovalStatus.rejected);
+
+        expect(offer.isExpiredForStudents()).toBe(false);
+        offer.republish(graduadosOfferDurationInDays, studentsOfferDurationInDays);
+        expect(offer.isExpiredForStudents()).toBe(false);
+        await expect(offer.validate()).resolves.not.toThrow();
+      });
+    });
+
+    describe("when the targetApplicantType is graduate", () => {
+      const createOfferTargetingGraduates = (
+        graduadosApprovalStatus: ApprovalStatus,
+        graduatesExpirationDateTime?: Date
+      ) => {
+        return new Offer({
+          ...mandatoryAttributes,
+          graduadosApprovalStatus,
+          targetApplicantType: ApplicantType.graduate,
+          ...(!!graduatesExpirationDateTime && { graduatesExpirationDateTime })
+        });
+      };
+
+      it("republishes the offer when it's expired", async () => {
+        const offer = createOfferTargetingGraduates(
+          ApprovalStatus.approved,
+          DateTimeManager.yesterday()
+        );
+
+        expect(offer.isExpiredForGraduates()).toBe(true);
+        offer.republish(graduadosOfferDurationInDays, studentsOfferDurationInDays);
+        expect(offer.isExpiredForGraduates()).toBe(false);
+        await expect(offer.validate()).resolves.not.toThrow();
+      });
+
+      it("doesn't change the studentsExpirationDateTime", async () => {
+        const offer = createOfferTargetingGraduates(
+          ApprovalStatus.approved,
+          DateTimeManager.yesterday()
+        );
+
+        expect(offer.isExpiredForStudents()).toBe(false);
+        offer.republish(graduadosOfferDurationInDays, studentsOfferDurationInDays);
+        expect(offer.isExpiredForStudents()).toBe(false);
+        await expect(offer.validate()).resolves.not.toThrow();
+      });
+
+      it("doesn't change the graduatesExpirationDateTime if the offer is pending", async () => {
+        const offer = createOfferTargetingGraduates(ApprovalStatus.pending);
+        expect(offer.isExpiredForGraduates()).toBe(false);
+        offer.republish(graduadosOfferDurationInDays, studentsOfferDurationInDays);
+        expect(offer.isExpiredForGraduates()).toBe(false);
+        await expect(offer.validate()).resolves.not.toThrow();
+      });
+
+      it("doesn't change the graduatesExpirationDateTime if the offer is rejected", async () => {
+        const offer = createOfferTargetingGraduates(ApprovalStatus.rejected);
+
+        expect(offer.isExpiredForGraduates()).toBe(false);
+        offer.republish(graduadosOfferDurationInDays, studentsOfferDurationInDays);
+        expect(offer.isExpiredForGraduates()).toBe(false);
+        await expect(offer.validate()).resolves.not.toThrow();
+      });
+    });
+
+    describe("when the targetApplicantType is both", () => {
+      it("republishes the offer for students and graduados when both have expired", async () => {
+        const offer = new Offer({
+          ...mandatoryAttributes,
+          graduadosApprovalStatus: ApprovalStatus.approved,
+          extensionApprovalStatus: ApprovalStatus.approved,
+          targetApplicantType: ApplicantType.both,
+          graduatesExpirationDateTime: DateTimeManager.yesterday(),
+          studentsExpirationDateTime: DateTimeManager.yesterday()
+        });
+
+        expect(offer.isExpiredForGraduates()).toBe(true);
+        expect(offer.isExpiredForStudents()).toBe(true);
+        offer.republish(graduadosOfferDurationInDays, studentsOfferDurationInDays);
+        expect(offer.isExpiredForGraduates()).toBe(false);
+        expect(offer.isExpiredForStudents()).toBe(false);
+        await expect(offer.validate()).resolves.not.toThrow();
+      });
+
+      describe("when only the offer for students have expired", () => {
+        it("republishes only the offer for students", async () => {
+          const offer = new Offer({
+            ...mandatoryAttributes,
+            graduadosApprovalStatus: ApprovalStatus.approved,
+            extensionApprovalStatus: ApprovalStatus.approved,
+            targetApplicantType: ApplicantType.both,
+            graduatesExpirationDateTime: DateTimeManager.daysFromNow(15).toDate(),
+            studentsExpirationDateTime: DateTimeManager.yesterday()
+          });
+
+          expect(offer.isExpiredForGraduates()).toBe(false);
+          expect(offer.isExpiredForStudents()).toBe(true);
+          offer.republish(graduadosOfferDurationInDays, studentsOfferDurationInDays);
+          expect(offer.isExpiredForGraduates()).toBe(false);
+          expect(offer.isExpiredForStudents()).toBe(false);
+          expect(offer.studentsExpirationDateTime).toBeDefined();
+          expect(offer.graduatesExpirationDateTime).toBeDefined();
+          await expect(offer.validate()).resolves.not.toThrow();
+        });
+
+        it("republishes only the offer for students when graduadosApprovalStatus is pending", async () => {
+          const offer = new Offer({
+            ...mandatoryAttributes,
+            graduadosApprovalStatus: ApprovalStatus.pending,
+            extensionApprovalStatus: ApprovalStatus.approved,
+            targetApplicantType: ApplicantType.both,
+            studentsExpirationDateTime: DateTimeManager.yesterday()
+          });
+
+          expect(offer.isExpiredForGraduates()).toBe(false);
+          expect(offer.isExpiredForStudents()).toBe(true);
+          offer.republish(graduadosOfferDurationInDays, studentsOfferDurationInDays);
+          expect(offer.isExpiredForGraduates()).toBe(false);
+          expect(offer.isExpiredForStudents()).toBe(false);
+          expect(offer.studentsExpirationDateTime).toBeDefined();
+          expect(offer.graduatesExpirationDateTime).toBeUndefined();
+          await expect(offer.validate()).resolves.not.toThrow();
+        });
+
+        it("republishes only the offer for students when graduadosApprovalStatus is rejected", async () => {
+          const offer = new Offer({
+            ...mandatoryAttributes,
+            graduadosApprovalStatus: ApprovalStatus.rejected,
+            extensionApprovalStatus: ApprovalStatus.approved,
+            targetApplicantType: ApplicantType.both,
+            studentsExpirationDateTime: DateTimeManager.yesterday()
+          });
+
+          expect(offer.isExpiredForGraduates()).toBe(false);
+          expect(offer.isExpiredForStudents()).toBe(true);
+          offer.republish(graduadosOfferDurationInDays, studentsOfferDurationInDays);
+          expect(offer.isExpiredForGraduates()).toBe(false);
+          expect(offer.isExpiredForStudents()).toBe(false);
+          expect(offer.studentsExpirationDateTime).toBeDefined();
+          expect(offer.graduatesExpirationDateTime).toBeUndefined();
+          await expect(offer.validate()).resolves.not.toThrow();
+        });
+      });
+
+      describe("when only the offer for graduates have expired", () => {
+        it("republishes only the offer for graduates", async () => {
+          const offer = new Offer({
+            ...mandatoryAttributes,
+            graduadosApprovalStatus: ApprovalStatus.approved,
+            extensionApprovalStatus: ApprovalStatus.approved,
+            targetApplicantType: ApplicantType.both,
+            graduatesExpirationDateTime: DateTimeManager.yesterday(),
+            studentsExpirationDateTime: DateTimeManager.daysFromNow(15).toDate()
+          });
+
+          expect(offer.isExpiredForGraduates()).toBe(true);
+          expect(offer.isExpiredForStudents()).toBe(false);
+          offer.republish(graduadosOfferDurationInDays, studentsOfferDurationInDays);
+          expect(offer.isExpiredForGraduates()).toBe(false);
+          expect(offer.isExpiredForStudents()).toBe(false);
+          expect(offer.studentsExpirationDateTime).toBeDefined();
+          expect(offer.graduatesExpirationDateTime).toBeDefined();
+          await expect(offer.validate()).resolves.not.toThrow();
+        });
+
+        it("republishes only the offer for graduates when extensionApprovalStatus is pending", async () => {
+          const offer = new Offer({
+            ...mandatoryAttributes,
+            graduadosApprovalStatus: ApprovalStatus.approved,
+            extensionApprovalStatus: ApprovalStatus.pending,
+            targetApplicantType: ApplicantType.both,
+            graduatesExpirationDateTime: DateTimeManager.yesterday()
+          });
+
+          expect(offer.isExpiredForGraduates()).toBe(true);
+          expect(offer.isExpiredForStudents()).toBe(false);
+          offer.republish(graduadosOfferDurationInDays, studentsOfferDurationInDays);
+          expect(offer.isExpiredForGraduates()).toBe(false);
+          expect(offer.isExpiredForStudents()).toBe(false);
+          expect(offer.studentsExpirationDateTime).toBeUndefined();
+          expect(offer.graduatesExpirationDateTime).toBeDefined();
+          await expect(offer.validate()).resolves.not.toThrow();
+        });
+
+        it("republishes only the offer for students when extensionApprovalStatus is rejected", async () => {
+          const offer = new Offer({
+            ...mandatoryAttributes,
+            graduadosApprovalStatus: ApprovalStatus.approved,
+            extensionApprovalStatus: ApprovalStatus.rejected,
+            targetApplicantType: ApplicantType.both,
+            graduatesExpirationDateTime: DateTimeManager.yesterday()
+          });
+
+          expect(offer.isExpiredForGraduates()).toBe(true);
+          expect(offer.isExpiredForStudents()).toBe(false);
+          offer.republish(graduadosOfferDurationInDays, studentsOfferDurationInDays);
+          expect(offer.isExpiredForGraduates()).toBe(false);
+          expect(offer.isExpiredForStudents()).toBe(false);
+          expect(offer.studentsExpirationDateTime).toBeUndefined();
+          expect(offer.graduatesExpirationDateTime).toBeDefined();
+          await expect(offer.validate()).resolves.not.toThrow();
+        });
+      });
+    });
+  });
+
   describe("expire", () => {
     it("returns true if the approved offer has expired for graduados", async () => {
       const expiredOffer = new Offer({

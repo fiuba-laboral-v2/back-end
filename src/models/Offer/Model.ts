@@ -147,6 +147,15 @@ export class Offer extends Model<Offer> {
     if (this.isTargetedForStudents()) this.expireForStudents();
   }
 
+  public republish(graduadosOfferDurationInDays: number, extensionOfferDurationInDays: number) {
+    if (this.isTargetedForGraduates() && this.isExpiredForGraduates()) {
+      this.republishForGraduates(graduadosOfferDurationInDays);
+    }
+    if (this.isTargetedForStudents() && this.isExpiredForStudents()) {
+      this.republishForStudents(extensionOfferDurationInDays);
+    }
+  }
+
   public isExpiredFor(type: ApplicantType) {
     if (type === ApplicantType.graduate) return this.isExpiredForGraduates();
     if (type === ApplicantType.student) return this.isExpiredForStudents();
@@ -241,5 +250,13 @@ export class Offer extends Model<Offer> {
     if (isRejected && this[expirationTimeProperty]) {
       throw new RejectedOfferWithExpirationTimeError();
     }
+  }
+
+  private republishForGraduates(offerDurationInDays: number) {
+    this.graduatesExpirationDateTime = DateTimeManager.daysFromNow(offerDurationInDays).toDate();
+  }
+
+  private republishForStudents(offerDurationInDays: number) {
+    this.studentsExpirationDateTime = DateTimeManager.daysFromNow(offerDurationInDays).toDate();
   }
 }
