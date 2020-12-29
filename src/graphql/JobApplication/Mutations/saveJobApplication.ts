@@ -4,8 +4,8 @@ import {
   JobApplicationRepository,
   OfferNotTargetedForApplicantError
 } from "$models/JobApplication";
+import { JobApplication } from "$models";
 import { OfferRepository } from "$models/Offer";
-import { ApplicantRepository } from "$models/Applicant";
 import { IApolloServerContext } from "$graphql/Context";
 
 export const saveJobApplication = {
@@ -20,13 +20,13 @@ export const saveJobApplication = {
     { offerUuid }: { offerUuid: string },
     { currentUser }: IApolloServerContext
   ) => {
+    const { applicantUuid } = currentUser.getApplicantRole();
     const offer = await OfferRepository.findByUuid(offerUuid);
     const canSeeOffer = await currentUser.getPermissions().canSeeOffer(offer);
     if (!canSeeOffer) throw new OfferNotTargetedForApplicantError();
 
-    const applicant = await ApplicantRepository.findByUuid(
-      currentUser.getApplicantRole().applicantUuid
-    );
-    return JobApplicationRepository.apply(applicant, offer);
+    const jobApplication = new JobApplication({ offerUuid, applicantUuid });
+    await JobApplicationRepository.save(jobApplication);
+    return jobApplication;
   }
 };
