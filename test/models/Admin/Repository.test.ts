@@ -1,4 +1,4 @@
-import { UniqueConstraintError, ForeignKeyConstraintError } from "sequelize";
+import { ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
 import { AdminNotFoundError } from "$models/Admin/Errors";
 
 import { UserRepository } from "$models/User";
@@ -133,6 +133,44 @@ describe("AdminRepository", () => {
         ]);
         expect(admins.shouldFetchMore).toBe(true);
       });
+    });
+  });
+
+  describe("findFirstBySecretary", () => {
+    beforeEach(() => AdminRepository.truncate());
+
+    it("returns the first admin from graduados secretary", async () => {
+      await AdminGenerator.extension();
+      await AdminGenerator.extension();
+      const firstGraduadosAdmin = await AdminGenerator.graduados();
+      await AdminGenerator.graduados();
+      const admin = await AdminRepository.findFirstBySecretary(Secretary.graduados);
+      expect(admin.userUuid).toEqual(firstGraduadosAdmin.userUuid);
+    });
+
+    it("returns the first admin from extension secretary", async () => {
+      const firstExtensionAdmin = await AdminGenerator.extension();
+      await AdminGenerator.extension();
+      await AdminGenerator.graduados();
+      await AdminGenerator.graduados();
+      const admin = await AdminRepository.findFirstBySecretary(Secretary.extension);
+      expect(admin.userUuid).toEqual(firstExtensionAdmin.userUuid);
+    });
+
+    it("throws an error if no extension admin is persisted", async () => {
+      await AdminGenerator.graduados();
+      await AdminGenerator.graduados();
+      await expect(
+        AdminRepository.findFirstBySecretary(Secretary.extension)
+      ).rejects.toThrowErrorWithMessage(AdminNotFoundError, AdminNotFoundError.buildMessage());
+    });
+
+    it("throws an error if no graduados admin is persisted", async () => {
+      await AdminGenerator.extension();
+      await AdminGenerator.extension();
+      await expect(
+        AdminRepository.findFirstBySecretary(Secretary.graduados)
+      ).rejects.toThrowErrorWithMessage(AdminNotFoundError, AdminNotFoundError.buildMessage());
     });
   });
 
