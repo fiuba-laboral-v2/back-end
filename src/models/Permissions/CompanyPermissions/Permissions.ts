@@ -1,7 +1,7 @@
 import { Offer } from "$models";
-import { IPermission } from "../Interface";
+import { IPermissions } from "../Interfaces";
 
-export class CompanyPermissions implements IPermission {
+export class CompanyPermissions implements IPermissions {
   private readonly companyUuid: string;
 
   constructor(companyUuid: string) {

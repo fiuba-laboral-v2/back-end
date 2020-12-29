@@ -2,9 +2,9 @@ import { ApplicantType } from "$models/Applicant";
 import { Offer } from "$models";
 import { some } from "lodash";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { IApplicantPermission } from "./Interfaces";
+import { IPermission } from "../Interfaces";
 
-export class OfferApprovalStatusApplicantPermission implements IApplicantPermission {
+export class OfferApprovalStatusApplicantPermission implements IPermission {
   private readonly offer: Offer;
   private readonly applicantType: ApplicantType;
 

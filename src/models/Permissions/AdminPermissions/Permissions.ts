@@ -1,9 +1,10 @@
 import { Offer } from "$models";
-import { IPermission } from "../Interface";
-import { AdminRepository, Secretary } from "$models/Admin";
-import { ApplicantType } from "$models/Applicant";
+import { IPermissions, IPermission } from "../Interfaces";
+import { OfferTargetAdminPermission } from "./OfferTargetAdminPermission";
+import { ApprovedCompanyForOfferAdminPermission } from "./ApprovedCompanyForOfferAdminPermission";
+import { AdminRepository } from "$models/Admin";
 
-export class AdminPermissions implements IPermission {
+export class AdminPermissions implements IPermissions {
   private readonly adminUserUuid: string;
 
   constructor(adminUserUuid: string) {
@@ -15,15 +16,12 @@ export class AdminPermissions implements IPermission {
   }
 
   public async canModerateOffer(offer: Offer) {
-    const targetApplicantType = offer.targetApplicantType;
-    if (targetApplicantType === ApplicantType.both) return true;
-
-    const { secretary } = await AdminRepository.findByUserUuid(this.adminUserUuid);
-    return (
-      {
-        [Secretary.graduados]: ApplicantType.graduate,
-        [Secretary.extension]: ApplicantType.student
-      }[secretary] === targetApplicantType
-    );
+    const admin = await AdminRepository.findByUserUuid(this.adminUserUuid);
+    const permissions: IPermission[] = [
+      new OfferTargetAdminPermission(offer, admin),
+      new ApprovedCompanyForOfferAdminPermission(offer)
+    ];
+    const results = await Promise.all(permissions.map(permission => permission.apply()));
+    return results.every(result => result);
   }
 }

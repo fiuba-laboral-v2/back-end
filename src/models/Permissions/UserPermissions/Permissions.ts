@@ -1,10 +1,10 @@
 import { Offer } from "$models";
-import { IPermission } from "../Interface";
+import { IPermissions } from "../Interfaces";
 import { CurrentUser } from "$models/CurrentUser";
 import { some } from "lodash";
 
-export class UserPermissions implements IPermission {
-  private readonly permissions: IPermission[];
+export class UserPermissions implements IPermissions {
+  private readonly permissions: IPermissions[];
 
   constructor(currentUser: CurrentUser) {
     this.permissions = currentUser.roles.map(role => role.getPermissions());
@@ -18,7 +18,7 @@ export class UserPermissions implements IPermission {
     return this.hasPermission(permission => permission.canModerateOffer(offer));
   }
 
-  private async hasPermission(callback: (permission: IPermission) => Promise<boolean>) {
+  private async hasPermission(callback: (permission: IPermissions) => Promise<boolean>) {
     return some(await Promise.all(this.permissions.map(callback)));
   }
 }

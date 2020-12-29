@@ -1,10 +1,11 @@
 import { AdminPermissions } from "$models/Permissions";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
-import { Admin } from "$models";
+import { Admin, Company } from "$models";
 import { OfferGenerator } from "$generators/Offer";
 import { CompanyGenerator } from "$generators/Company";
 import { AdminGenerator } from "$generators/Admin";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
 describe("AdminPermissions", () => {
   let extensionAdmin: Admin;
@@ -36,10 +37,17 @@ describe("AdminPermissions", () => {
   });
 
   describe("canModerateOffer", () => {
+    let company: Company;
     let companyUuid: string;
 
     beforeAll(async () => {
-      companyUuid = (await CompanyGenerator.instance.withCompleteData()).uuid;
+      company = await CompanyGenerator.instance.withCompleteData();
+      companyUuid = company.uuid;
+    });
+
+    beforeEach(async () => {
+      company.set({ approvalStatus: ApprovalStatus.approved });
+      await CompanyRepository.save(company);
     });
 
     it("returns true if the offer is for students and the admin from extension", async () => {
@@ -74,6 +82,22 @@ describe("AdminPermissions", () => {
 
     it("returns false if the offer is for students and the admin from graduados", async () => {
       const permissions = new AdminPermissions(graduadosAdmin.userUuid);
+      const offer = await OfferGenerator.instance.forStudents({ companyUuid });
+      expect(await permissions.canModerateOffer(offer)).toBe(false);
+    });
+
+    it("returns false if the company's offer is rejected", async () => {
+      company.set({ approvalStatus: ApprovalStatus.rejected });
+      await CompanyRepository.save(company);
+      const permissions = new AdminPermissions(extensionAdmin.userUuid);
+      const offer = await OfferGenerator.instance.forStudents({ companyUuid });
+      expect(await permissions.canModerateOffer(offer)).toBe(false);
+    });
+
+    it("returns false if the company's offer is pending", async () => {
+      company.set({ approvalStatus: ApprovalStatus.pending });
+      await CompanyRepository.save(company);
+      const permissions = new AdminPermissions(extensionAdmin.userUuid);
       const offer = await OfferGenerator.instance.forStudents({ companyUuid });
       expect(await permissions.canModerateOffer(offer)).toBe(false);
     });
