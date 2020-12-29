@@ -3,6 +3,7 @@ import { AdminNotFoundError } from "./Errors";
 import { Admin } from "..";
 import { PaginationQuery } from "../PaginationQuery";
 import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedInput";
+import { Secretary } from "$models/Admin/Interface";
 
 export const AdminRepository = {
   save: (admin: Admin, transaction?: Transaction) => admin.save({ transaction }),
@@ -14,6 +15,12 @@ export const AdminRepository = {
     return admin;
   },
   findAll: () => Admin.findAll(),
+  findFirstBySecretary: async (secretary: Secretary) => {
+    const admin = await Admin.findOne({ where: { secretary } });
+    if (!admin) throw new AdminNotFoundError();
+
+    return admin;
+  },
   findLatest: (updatedBeforeThan?: IPaginatedInput) =>
     PaginationQuery.findLatest({
       updatedBeforeThan,

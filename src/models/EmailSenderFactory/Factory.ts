@@ -11,7 +11,8 @@ import {
   ApprovedJobApplicationApplicantNotification,
   RejectedJobApplicationApplicantNotification,
   ApprovedProfileApplicantNotification,
-  RejectedProfileApplicantNotification
+  RejectedProfileApplicantNotification,
+  PendingJobApplicationApplicantNotification
 } from "$models/ApplicantNotification";
 import {
   NewJobApplicationCompanyNotificationEmailSender,
@@ -20,6 +21,7 @@ import {
   ApprovedProfileCompanyNotificationEmailSender,
   ApprovedJobApplicationApplicantNotificationEmailSender,
   RejectedJobApplicationApplicantNotificationEmailSender,
+  PendingJobApplicationApplicantNotificationEmailSender,
   ApprovedProfileApplicantNotificationEmailSender,
   RejectedProfileApplicantNotificationEmailSender,
   RejectedProfileCompanyNotificationEmailSender,
@@ -34,6 +36,7 @@ export const EmailSenderFactory = {
       [NewJobApplicationCompanyNotification.name]: NewJobApplicationCompanyNotificationEmailSender,
       [ApprovedOfferCompanyNotification.name]: ApprovedOfferCompanyNotificationEmailSender,
       [ApprovedJobApplicationApplicantNotification.name]: ApprovedJobApplicationApplicantNotificationEmailSender,
+      [PendingJobApplicationApplicantNotification.name]: PendingJobApplicationApplicantNotificationEmailSender,
       [RejectedJobApplicationApplicantNotification.name]: RejectedJobApplicationApplicantNotificationEmailSender,
       [RejectedOfferCompanyNotification.name]: RejectedOfferCompanyNotificationEmailSender,
       [ApprovedProfileApplicantNotification.name]: ApprovedProfileApplicantNotificationEmailSender,

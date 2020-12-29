@@ -3,6 +3,7 @@ import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput
 export enum ApplicantNotificationType {
   approvedJobApplication = "approvedJobApplication",
   rejectedJobApplication = "rejectedJobApplication",
+  pendingJobApplication = "pendingJobApplication",
   approvedProfile = "approvedProfile",
   rejectedProfile = "rejectedProfile"
 }

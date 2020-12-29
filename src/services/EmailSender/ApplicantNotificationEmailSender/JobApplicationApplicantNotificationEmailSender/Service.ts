@@ -1,6 +1,7 @@
 import {
   RejectedJobApplicationApplicantNotification,
-  ApprovedJobApplicationApplicantNotification
+  ApprovedJobApplicationApplicantNotification,
+  PendingJobApplicationApplicantNotification
 } from "$models/ApplicantNotification";
 import { EmailService } from "$services/Email";
 import { Sender } from "$services/EmailSender/Sender";
@@ -15,7 +16,8 @@ import { SecretarySettingsRepository } from "$models/SecretarySettings";
 
 type JobApplicationApplicantNotification =
   | RejectedJobApplicationApplicantNotification
-  | ApprovedJobApplicationApplicantNotification;
+  | ApprovedJobApplicationApplicantNotification
+  | PendingJobApplicationApplicantNotification;
 
 const getRejectionReason = (notification: JobApplicationApplicantNotification) => {
   if (!(notification instanceof RejectedJobApplicationApplicantNotification)) return;

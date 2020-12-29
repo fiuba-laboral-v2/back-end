@@ -14,6 +14,8 @@ import {
   IApprovedProfileAttributes,
   RejectedProfileApplicantNotification,
   IRejectedProfileAttributes,
+  PendingJobApplicationApplicantNotification,
+  IPendingJobApplicationAttributes,
   ApplicantNotificationRepository,
   ApplicantNotification
 } from "$models/ApplicantNotification";
@@ -102,6 +104,58 @@ describe("ApplicantNotificationRepository", () => {
           `constraint "ApplicantNotifications_${attributeName}_fkey"`
       );
     };
+
+    describe("PendingJobApplicationApplicantNotification", () => {
+      let attributes: IPendingJobApplicationAttributes;
+
+      beforeAll(async () => {
+        attributes = { ...commonAttributes, jobApplicationUuid: jobApplication.uuid };
+      });
+
+      it("saves the notification in the database", async () => {
+        const notification = new PendingJobApplicationApplicantNotification(attributes);
+        await expectNotificationToBeSaved(notification);
+      });
+
+      it("generates an uuid after it is saved", async () => {
+        const notification = new PendingJobApplicationApplicantNotification(attributes);
+        await expectToGenerateUuidAfterItIsSaved(notification);
+      });
+
+      it("generates a createdAt timestamp after it is saved", async () => {
+        const notification = new PendingJobApplicationApplicantNotification(attributes);
+        await expectToSetACreatedAtAfterItIsSaved(notification);
+      });
+
+      it("updates isNew to false", async () => {
+        const notification = new PendingJobApplicationApplicantNotification(attributes);
+        await ApplicantNotificationRepository.save(notification);
+        expect(notification.isNew).toBe(true);
+        notification.isNew = false;
+        await ApplicantNotificationRepository.save(notification);
+        expect(notification.isNew).toBe(false);
+      });
+
+      it("throws an error if the notification already exist", async () => {
+        const notification = new PendingJobApplicationApplicantNotification(attributes);
+        await expectToThrowErrorOnUniqueConstraint(notification);
+      });
+
+      it("throws an error if the jobApplicationUuid does not belong to an existing one", async () => {
+        const notification = new PendingJobApplicationApplicantNotification(attributes);
+        await expectToThrowErrorOnForeignKeyConstraint(notification, "jobApplicationUuid");
+      });
+
+      it("throws an error if the moderatorUuid does not belong to an existing admin", async () => {
+        const notification = new PendingJobApplicationApplicantNotification(attributes);
+        await expectToThrowErrorOnForeignKeyConstraint(notification, "moderatorUuid");
+      });
+
+      it("throws an error if the notifiedApplicantUuid does not belong to an existing applicant", async () => {
+        const notification = new PendingJobApplicationApplicantNotification(attributes);
+        await expectToThrowErrorOnForeignKeyConstraint(notification, "notifiedApplicantUuid");
+      });
+    });
 
     describe("ApprovedJobApplicationApplicantNotification", () => {
       let attributes: IApprovedJobApplicationAttributes;

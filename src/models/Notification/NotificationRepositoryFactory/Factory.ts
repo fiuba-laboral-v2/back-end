@@ -13,6 +13,7 @@ import {
 import {
   ApprovedJobApplicationApplicantNotification,
   RejectedJobApplicationApplicantNotification,
+  PendingJobApplicationApplicantNotification,
   ApprovedProfileApplicantNotification,
   RejectedProfileApplicantNotification,
   ApplicantNotificationRepository
@@ -28,6 +29,7 @@ const repositoryMapper = {
   [RejectedOfferCompanyNotification.name]: CompanyNotificationRepository,
   [ApprovedProfileCompanyNotification.name]: CompanyNotificationRepository,
   [RejectedProfileCompanyNotification.name]: CompanyNotificationRepository,
+  [PendingJobApplicationApplicantNotification.name]: ApplicantNotificationRepository,
   [ApprovedJobApplicationApplicantNotification.name]: ApplicantNotificationRepository,
   [RejectedJobApplicationApplicantNotification.name]: ApplicantNotificationRepository,
   [ApprovedProfileApplicantNotification.name]: ApplicantNotificationRepository,

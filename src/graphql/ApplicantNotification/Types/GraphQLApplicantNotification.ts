@@ -1,4 +1,5 @@
 import { GraphQLUnionType } from "graphql";
+import { GraphQLPendingJobApplicationApplicantNotification } from "./GraphQLPendingJobApplicationApplicantNotification";
 import { GraphQLApprovedJobApplicationApplicantNotification } from "./GraphQLApprovedJobApplicationApplicantNotification";
 import { GraphQLRejectedJobApplicationApplicantNotification } from "./GraphQLRejectedJobApplicationApplicantNotification";
 import { GraphQLApprovedProfileApplicantNotification } from "./GraphQLApprovedProfileApplicantNotification";
@@ -6,6 +7,7 @@ import { GraphQLRejectedProfileApplicantNotification } from "./GraphQLRejectedPr
 import { UnknownNotificationError } from "$models/Notification";
 import {
   ApplicantNotification,
+  PendingJobApplicationApplicantNotification,
   ApprovedJobApplicationApplicantNotification,
   RejectedJobApplicationApplicantNotification,
   ApprovedProfileApplicantNotification,
@@ -15,6 +17,7 @@ import {
 export const GraphQLApplicantNotification = new GraphQLUnionType({
   name: "ApplicantNotification",
   types: [
+    GraphQLPendingJobApplicationApplicantNotification,
     GraphQLApprovedJobApplicationApplicantNotification,
     GraphQLRejectedJobApplicationApplicantNotification,
     GraphQLApprovedProfileApplicantNotification,
@@ -23,6 +26,8 @@ export const GraphQLApplicantNotification = new GraphQLUnionType({
   resolveType(notification: ApplicantNotification) {
     const className = notification.constructor.name;
     switch (className) {
+      case PendingJobApplicationApplicantNotification.name:
+        return GraphQLPendingJobApplicationApplicantNotification;
       case ApprovedJobApplicationApplicantNotification.name:
         return GraphQLApprovedJobApplicationApplicantNotification;
       case RejectedJobApplicationApplicantNotification.name:

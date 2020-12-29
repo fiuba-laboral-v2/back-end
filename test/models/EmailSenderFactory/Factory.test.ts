@@ -3,6 +3,7 @@ import {
   ApprovedJobApplicationApplicantNotification,
   ApprovedProfileApplicantNotification,
   RejectedJobApplicationApplicantNotification,
+  PendingJobApplicationApplicantNotification,
   RejectedProfileApplicantNotification
 } from "$models/ApplicantNotification";
 import {
@@ -20,6 +21,7 @@ import {
   ApprovedProfileCompanyNotificationEmailSender,
   NewJobApplicationCompanyNotificationEmailSender,
   RejectedJobApplicationApplicantNotificationEmailSender,
+  PendingJobApplicationApplicantNotificationEmailSender,
   RejectedOfferCompanyNotificationEmailSender,
   RejectedProfileApplicantNotificationEmailSender,
   RejectedProfileCompanyNotificationEmailSender,
@@ -47,6 +49,16 @@ describe("EmailSenderFactory", () => {
     });
     const emailSender = EmailSenderFactory.create(notification);
     expect(emailSender).toBe(ApprovedOfferCompanyNotificationEmailSender);
+  });
+
+  it("returns a PendingJobApplicationApplicantNotificationEmailSender", async () => {
+    const notification = new PendingJobApplicationApplicantNotification({
+      moderatorUuid: UUID.generate(),
+      notifiedApplicantUuid: UUID.generate(),
+      jobApplicationUuid: UUID.generate()
+    });
+    const emailSender = EmailSenderFactory.create(notification);
+    expect(emailSender).toBe(PendingJobApplicationApplicantNotificationEmailSender);
   });
 
   it("returns a ApprovedJobApplicationApplicantNotificationEmailSender", async () => {

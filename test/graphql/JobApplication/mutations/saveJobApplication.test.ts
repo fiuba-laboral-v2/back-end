@@ -16,6 +16,8 @@ import { CareerGenerator } from "$generators/Career";
 import { UUID } from "$models/UUID";
 import { UUID_REGEX } from "$test/models";
 import { ApplicantType } from "$models/Applicant";
+import { EmailService } from "$services";
+import { ApplicantNotificationRepository } from "$models/ApplicantNotification";
 
 const SAVE_JOB_APPLICATION = gql`
   mutation saveJobApplication($offerUuid: String!) {
@@ -84,6 +86,10 @@ describe("saveJobApplication", () => {
         }
       ]
     });
+  });
+
+  beforeEach(() => {
+    jest.spyOn(EmailService, "send").mockImplementation(jest.fn());
   });
 
   const performMutation = (apolloClient: ApolloClient, offer: Offer) =>
@@ -168,6 +174,36 @@ describe("saveJobApplication", () => {
       offers[ApplicantType.both][ApprovalStatus.approved],
       applicant
     );
+  });
+
+  it("creates a notification for an applicant", async () => {
+    const { applicant, apolloClient } = await TestClientGenerator.applicant({
+      status: ApprovalStatus.approved,
+      careers: [
+        {
+          careerCode: firstCareer.code,
+          isGraduate: false,
+          currentCareerYear: 4,
+          approvedSubjectCount: 33
+        }
+      ]
+    });
+    const offer = offers[ApplicantType.both][ApprovalStatus.approved];
+    const { data, errors } = await performMutation(apolloClient, offer);
+    expect(errors).toBeUndefined();
+
+    const { findLatestByApplicant } = ApplicantNotificationRepository;
+    const { results } = await findLatestByApplicant({ applicantUuid: applicant.uuid });
+    expect(results).toEqual([
+      {
+        uuid: expect.stringMatching(UUID_REGEX),
+        moderatorUuid: expect.stringMatching(UUID_REGEX),
+        notifiedApplicantUuid: applicant.uuid,
+        isNew: true,
+        jobApplicationUuid: data!.saveJobApplication.uuid,
+        createdAt: expect.any(Date)
+      }
+    ]);
   });
 
   it("returns an error if a student applies to a pending offer for students", async () => {

@@ -559,6 +559,9 @@ export const defaultTranslations = {
     approvedApplicantTitle: "Postulación aprobada",
     rejectedApplicantTitle: "Postulación rechazada"
   },
+  pendingJobApplicationApplicantNotification: {
+    title: "Postulación pendiente de aprobación"
+  },
   approvedJobApplicationApplicantNotification: {
     title: "Postulación aprobada"
   },
@@ -623,6 +626,13 @@ export const defaultTranslations = {
     subject: "Postulación a oferta de trabajo aprobada",
     body:
       "Tu postulación a la oferta de trabajo: <%= offerTitle %> (<%= offerLink %>) ha sido aprobada. Se envió una notificación a la empresa." +
+      "\n\n" +
+      "<%= signature %>"
+  },
+  pendingJobApplicationApplicantNotificationEmail: {
+    subject: "Postulación a oferta de trabajo pendiente de aprobación",
+    body:
+      "Tu postulación a la oferta de trabajo: <%= offerTitle %> (<%= offerLink %>) será revisada por el personal de la FIUBA." +
       "\n\n" +
       "<%= signature %>"
   },
