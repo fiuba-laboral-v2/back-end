@@ -11,8 +11,9 @@ import moment from "moment";
 import { client } from "$test/graphql/ApolloTestClient";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { UUID } from "$models/UUID";
-import { OfferNotFoundError, OfferRepository } from "$models/Offer";
-import { DateTimeManager } from "$libs/DateTimeManager";
+import { OfferNotFoundError } from "$models/Offer";
+import { OfferNotVisibleByCurrentUserError } from "$graphql/Offer/Queries/Errors";
+import { CareerRepository } from "$models/Career";
 
 const REPUBLISH_OFFER = gql`
   mutation($uuid: ID!) {
@@ -33,7 +34,7 @@ describe("republishOffer", () => {
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
-    await OfferRepository.truncate();
+    await CareerRepository.truncate();
 
     ({ apolloClient: companyApolloClient, company } = await TestClientGenerator.company({
       status: ApprovalStatus.approved
@@ -41,8 +42,7 @@ describe("republishOffer", () => {
     offers = await OfferGenerator.instance.forAllTargets({
       status: ApprovalStatus.approved,
       companyUuid: company.uuid,
-      graduatesExpirationDateTime: DateTimeManager.yesterday(),
-      studentsExpirationDateTime: DateTimeManager.yesterday()
+      expired: true
     });
   });
 
@@ -95,7 +95,7 @@ describe("republishOffer", () => {
     expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
   });
 
-  it("returns an error if the current user is an applicant", async () => {
+  it("returns an error if the current user is a pending applicant", async () => {
     const { apolloClient } = await TestClientGenerator.applicant();
     const { errors } = await performMutation(apolloClient, {
       uuid: offers[ApplicantType.both].uuid
@@ -123,7 +123,7 @@ describe("republishOffer", () => {
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
-  it("returns an error if the current user is from a company pending", async () => {
+  it("returns an error if the current user is from a pending company", async () => {
     const { apolloClient } = await TestClientGenerator.company();
     const { errors } = await performMutation(apolloClient, {
       uuid: offers[ApplicantType.both].uuid
@@ -139,12 +139,12 @@ describe("republishOffer", () => {
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
-  it("returns an error if the current user is from a rejected company", async () => {
-    const { apolloClient } = await TestClientGenerator.company({ status: ApprovalStatus.rejected });
+  it("returns an error if the current user is from an approved company that didn't made the offer", async () => {
+    const { apolloClient } = await TestClientGenerator.company({ status: ApprovalStatus.approved });
     const { errors } = await performMutation(apolloClient, {
       uuid: offers[ApplicantType.both].uuid
     });
-    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+    expect(errors).toEqualGraphQLErrorType(OfferNotVisibleByCurrentUserError.name);
   });
 
   it("returns an error if the current user is from an admin", async () => {

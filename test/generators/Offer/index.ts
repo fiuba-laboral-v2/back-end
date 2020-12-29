@@ -16,8 +16,6 @@ export interface IOfferInput {
   targetApplicantType?: ApplicantType;
   isInternship?: boolean;
   maximumSalary?: number | null;
-  graduatesExpirationDateTime?: Date;
-  studentsExpirationDateTime?: Date;
 }
 
 interface IUpdatedWithStatus {
@@ -55,33 +53,26 @@ export const OfferGenerator = {
     updatedWithStatus: async ({
       admin,
       status,
-      studentsExpirationDateTime,
-      graduatesExpirationDateTime,
+      targetApplicantType,
+      expired,
       ...variables
-    }: IOfferInput & IUpdatedWithStatus) => {
+    }: IOfferInput & IUpdatedWithStatus & { expired?: boolean }) => {
       const offer = await OfferRepository.create(
-        withOneSection({ index: OfferGenerator.getIndex(), ...variables })
+        withOneSection({ index: OfferGenerator.getIndex(), targetApplicantType, ...variables })
       );
       const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
         admin.secretary
       );
       offer.updateStatus(admin, status, offerDurationInDays);
-      if (studentsExpirationDateTime || graduatesExpirationDateTime) {
-        offer.set({
-          ...(!!studentsExpirationDateTime && {
-            extensionApprovalStatus: ApprovalStatus.approved,
-            studentsExpirationDateTime
-          }),
-          ...(!!graduatesExpirationDateTime && {
-            graduadosApprovalStatus: ApprovalStatus.approved,
-            graduatesExpirationDateTime
-          })
-        });
-      }
+
+      if (expired) offer.expire();
 
       return OfferRepository.save(offer);
     },
-    forStudents: async ({ status, ...variables }: IOfferInput & { status?: ApprovalStatus }) => {
+    forStudents: async ({
+      status,
+      ...variables
+    }: IOfferInput & { status?: ApprovalStatus; expired?: boolean }) => {
       const admin = await AdminGenerator.extension();
       return OfferGenerator.instance.updatedWithStatus({
         status: status || ApprovalStatus.approved,
@@ -90,7 +81,10 @@ export const OfferGenerator = {
         ...variables
       });
     },
-    forGraduates: async ({ status, ...variables }: IOfferInput & { status?: ApprovalStatus }) => {
+    forGraduates: async ({
+      status,
+      ...variables
+    }: IOfferInput & { status?: ApprovalStatus; expired?: boolean }) => {
       const admin = await AdminGenerator.graduados();
       return OfferGenerator.instance.updatedWithStatus({
         status: status || ApprovalStatus.approved,
@@ -101,10 +95,9 @@ export const OfferGenerator = {
     },
     forStudentsAndGraduates: async ({
       status,
-      studentsExpirationDateTime,
-      graduatesExpirationDateTime,
+      expired,
       ...variables
-    }: IOfferInput & { status?: ApprovalStatus }) => {
+    }: IOfferInput & { status?: ApprovalStatus; expired?: boolean }) => {
       const extensionAdmin = await AdminGenerator.extension();
       const graduadosAdmin = await AdminGenerator.graduados();
       const offer = await OfferGenerator.instance.updatedWithStatus({
@@ -114,27 +107,31 @@ export const OfferGenerator = {
         ...variables
       });
 
-      const { offerDurationInDays } = await SecretarySettingsRepository.findBySecretary(
-        graduadosAdmin.secretary
-      );
-      offer.updateStatus(graduadosAdmin, status || ApprovalStatus.approved, offerDurationInDays);
+      const {
+        offerDurationInDays: graduadosDurationInDays
+      } = await SecretarySettingsRepository.findBySecretary(graduadosAdmin.secretary);
+      const {
+        offerDurationInDays: extensionDurationInDays
+      } = await SecretarySettingsRepository.findBySecretary(extensionAdmin.secretary);
 
-      if (studentsExpirationDateTime || graduatesExpirationDateTime) {
-        offer.set({
-          ...(!!studentsExpirationDateTime && {
-            extensionApprovalStatus: ApprovalStatus.approved,
-            studentsExpirationDateTime
-          }),
-          ...(!!graduatesExpirationDateTime && {
-            graduadosApprovalStatus: ApprovalStatus.approved,
-            graduatesExpirationDateTime
-          })
-        });
-      }
+      offer.updateStatus(
+        graduadosAdmin,
+        status || ApprovalStatus.approved,
+        graduadosDurationInDays
+      );
+
+      offer.updateStatus(
+        extensionAdmin,
+        status || ApprovalStatus.approved,
+        extensionDurationInDays
+      );
+
+      if (expired) offer.expire();
+
       return OfferRepository.save(offer);
     },
     forAllTargets: async (
-      variables: IOfferInput & { status?: ApprovalStatus }
+      variables: IOfferInput & { status?: ApprovalStatus; expired?: boolean }
     ): Promise<IForAllTargets> => ({
       [ApplicantType.student]: await OfferGenerator.instance.forStudents(variables),
       [ApplicantType.graduate]: await OfferGenerator.instance.forGraduates(variables),
