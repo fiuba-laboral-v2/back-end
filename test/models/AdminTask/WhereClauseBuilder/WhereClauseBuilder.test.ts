@@ -14,11 +14,11 @@ describe("WhereClauseBuilder", () => {
     MockDate.set(new Date(date));
   });
 
-  it("builds where clause for pending offers targeted to graduates", async () => {
+  it("builds where clause for pending offers targeted to graduates", () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.pending],
       secretary: Secretary.graduados,
-      modelName: Offer.name as AdminTaskType,
+      modelName: AdminTaskType.Offer,
       tableName: Offer.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
@@ -38,25 +38,34 @@ describe("WhereClauseBuilder", () => {
           AND
           "Offers"."graduadosApprovalStatus" = 'approved'
         )
-      ) 
-    `);
+      )
+      AND
+      (
+        EXISTS (
+          SELECT *
+          FROM "Companies"
+          WHERE "Offers"."companyUuid" = "Companies"."uuid"
+          AND "Companies"."approvalStatus" = 'approved'
+        )
+      )
+   `);
   });
 
-  it("builds where clause for approved offers targeted to graduates", async () => {
+  it("builds where clause for approved offers targeted to graduates", () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.approved],
       secretary: Secretary.graduados,
-      modelName: Offer.name as AdminTaskType,
+      modelName: AdminTaskType.Offer,
       tableName: Offer.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
       (
-        "Offers"."graduadosApprovalStatus" = '${ApprovalStatus.approved}'
+        "Offers"."graduadosApprovalStatus" = 'approved'
       )
       AND
       (
-        "Offers"."targetApplicantType" = '${ApplicantType.both}' 
-        OR "Offers"."targetApplicantType" = '${ApplicantType.graduate}'
+        "Offers"."targetApplicantType" = 'both' 
+        OR "Offers"."targetApplicantType" = 'graduate'
       )
       AND
       (
@@ -67,42 +76,23 @@ describe("WhereClauseBuilder", () => {
           "Offers"."graduadosApprovalStatus" = 'approved'
         )
       ) 
-    `);
-  });
-
-  it("builds where clause for approved offers targeted to graduates", async () => {
-    const whereClause = WhereClauseBuilder.build({
-      statuses: [ApprovalStatus.rejected],
-      secretary: Secretary.graduados,
-      modelName: Offer.name as AdminTaskType,
-      tableName: Offer.tableName
-    });
-    expect(whereClause).toEqualIgnoringSpacing(`
-      (
-        "Offers"."graduadosApprovalStatus" = '${ApprovalStatus.rejected}'
-      )
       AND
       (
-        "Offers"."targetApplicantType" = '${ApplicantType.both}' 
-        OR "Offers"."targetApplicantType" = '${ApplicantType.graduate}'
-      )
-      AND
-      (
-        NOT
-        (
-          "Offers"."graduatesExpirationDateTime" < '${date}'
-          AND
-          "Offers"."graduadosApprovalStatus" = 'approved'
+        EXISTS (
+          SELECT *
+          FROM "Companies"
+          WHERE "Offers"."companyUuid" = "Companies"."uuid"
+          AND "Companies"."approvalStatus" = 'approved'
         )
-      ) 
+      )
     `);
   });
 
-  it("builds where clause for pending offers targeted to students", async () => {
+  it("builds where clause for pending offers targeted to students", () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.pending],
       secretary: Secretary.extension,
-      modelName: Offer.name as AdminTaskType,
+      modelName: AdminTaskType.Offer,
       tableName: Offer.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
@@ -123,14 +113,23 @@ describe("WhereClauseBuilder", () => {
           "Offers"."extensionApprovalStatus" = 'approved'
         )
       )
+      AND
+      (
+        EXISTS (
+          SELECT *
+          FROM "Companies"
+          WHERE "Offers"."companyUuid" = "Companies"."uuid"
+          AND "Companies"."approvalStatus" = 'approved'
+        )
+      )
     `);
   });
 
-  it("builds where clause for approved offers targeted to students", async () => {
+  it("builds where clause for approved offers targeted to students", () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.approved],
       secretary: Secretary.extension,
-      modelName: Offer.name as AdminTaskType,
+      modelName: AdminTaskType.Offer,
       tableName: Offer.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
@@ -151,14 +150,23 @@ describe("WhereClauseBuilder", () => {
           "Offers"."extensionApprovalStatus" = 'approved'
         )
       )
+      AND
+      (
+        EXISTS (
+          SELECT *
+          FROM "Companies"
+          WHERE "Offers"."companyUuid" = "Companies"."uuid"
+          AND "Companies"."approvalStatus" = 'approved'
+        )
+      )
     `);
   });
 
-  it("builds where clause for rejected offers targeted to students", async () => {
+  it("builds where clause for rejected offers targeted to students", () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.rejected],
       secretary: Secretary.extension,
-      modelName: Offer.name as AdminTaskType,
+      modelName: AdminTaskType.Offer,
       tableName: Offer.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
@@ -179,14 +187,23 @@ describe("WhereClauseBuilder", () => {
           "Offers"."extensionApprovalStatus" = 'approved'
         )
       )
+      AND
+      (
+        EXISTS (
+          SELECT *
+          FROM "Companies"
+          WHERE "Offers"."companyUuid" = "Companies"."uuid"
+          AND "Companies"."approvalStatus" = 'approved'
+        )
+      )
     `);
   });
 
-  it("builds where clause for pending Applicants for a graduados admin", async () => {
+  it("builds where clause for pending Applicants for a graduados admin", () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.pending],
       secretary: Secretary.graduados,
-      modelName: Applicant.name as AdminTaskType,
+      modelName: AdminTaskType.Applicant,
       tableName: Applicant.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
@@ -204,11 +221,11 @@ describe("WhereClauseBuilder", () => {
     `);
   });
 
-  it("builds where clause for rejected Companies for a graduados admin", async () => {
+  it("builds where clause for rejected Companies for a graduados admin", () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.rejected],
       secretary: Secretary.graduados,
-      modelName: Company.name as AdminTaskType,
+      modelName: AdminTaskType.Company,
       tableName: Company.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
@@ -218,11 +235,11 @@ describe("WhereClauseBuilder", () => {
     `);
   });
 
-  it("builds where clause for pending Companies for an extension admin", async () => {
+  it("builds where clause for pending Companies for an extension admin", () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.pending],
       secretary: Secretary.extension,
-      modelName: Company.name as AdminTaskType,
+      modelName: AdminTaskType.Company,
       tableName: Company.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
@@ -232,11 +249,11 @@ describe("WhereClauseBuilder", () => {
     `);
   });
 
-  it("builds where clause for approved JobApplications for a graduados admin", async () => {
+  it("builds where clause for approved JobApplications for a graduados admin", () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.approved],
       secretary: Secretary.extension,
-      modelName: JobApplication.name as AdminTaskType,
+      modelName: AdminTaskType.JobApplication,
       tableName: JobApplication.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
@@ -254,11 +271,11 @@ describe("WhereClauseBuilder", () => {
     `);
   });
 
-  it("builds where clause for rejected Applicants for an extension admin", async () => {
+  it("builds where clause for rejected Applicants for an extension admin", () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.rejected],
       secretary: Secretary.extension,
-      modelName: Applicant.name as AdminTaskType,
+      modelName: AdminTaskType.Applicant,
       tableName: Applicant.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
@@ -276,11 +293,11 @@ describe("WhereClauseBuilder", () => {
     `);
   });
 
-  it("builds where clause for approved Companies", async () => {
+  it("builds where clause for approved Companies", () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.approved],
       secretary: Secretary.graduados,
-      modelName: Company.name as AdminTaskType,
+      modelName: AdminTaskType.Company,
       tableName: Company.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
@@ -290,11 +307,11 @@ describe("WhereClauseBuilder", () => {
     `);
   });
 
-  it("builds where clause for all status JobApplications for an extension admin", async () => {
+  it("builds where clause for all status JobApplications for an extension admin", () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
       secretary: Secretary.extension,
-      modelName: JobApplication.name as AdminTaskType,
+      modelName: AdminTaskType.JobApplication,
       tableName: JobApplication.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
@@ -314,11 +331,11 @@ describe("WhereClauseBuilder", () => {
     `);
   });
 
-  it("builds where clause for all status Applicants for a graduados admin", async () => {
+  it("builds where clause for all status Applicants for a graduados admin", () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
       secretary: Secretary.graduados,
-      modelName: Applicant.name as AdminTaskType,
+      modelName: AdminTaskType.Applicant,
       tableName: Applicant.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
@@ -338,11 +355,11 @@ describe("WhereClauseBuilder", () => {
     `);
   });
 
-  it("builds where clause for all status Companies for a graduados admin", async () => {
+  it("builds where clause for all status Companies for a graduados admin", () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
       secretary: Secretary.graduados,
-      modelName: Company.name as AdminTaskType,
+      modelName: AdminTaskType.Company,
       tableName: Company.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
@@ -354,11 +371,11 @@ describe("WhereClauseBuilder", () => {
     `);
   });
 
-  it("builds where clause for all status Offers for a graduados admin", async () => {
+  it("builds where clause for all status Offers for a graduados admin", () => {
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
       secretary: Secretary.extension,
-      modelName: Offer.name as AdminTaskType,
+      modelName: AdminTaskType.Offer,
       tableName: Offer.tableName
     });
     expect(whereClause).toEqualIgnoringSpacing(`
@@ -381,16 +398,25 @@ describe("WhereClauseBuilder", () => {
           "Offers"."extensionApprovalStatus" = 'approved'
         )
       )
+      AND
+      (
+        EXISTS (
+          SELECT *
+          FROM "Companies"
+          WHERE "Offers"."companyUuid" = "Companies"."uuid"
+          AND "Companies"."approvalStatus" = 'approved'
+        )
+      )
     `);
   });
 
-  it("builds updatedAt where clause for Offers", async () => {
+  it("builds updatedAt where clause for Offers", () => {
     const updatedAt = new Date();
     const uuid = "4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da";
     const whereClause = WhereClauseBuilder.build({
       statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
       secretary: Secretary.extension,
-      modelName: Offer.name as AdminTaskType,
+      modelName: AdminTaskType.Offer,
       tableName: Offer.tableName,
       updatedBeforeThan: { uuid, dateTime: updatedAt }
     });
@@ -413,6 +439,15 @@ describe("WhereClauseBuilder", () => {
           "Offers"."studentsExpirationDateTime" < '${date}'
           AND
           "Offers"."extensionApprovalStatus" = 'approved'
+        )
+      )
+      AND
+      (
+        EXISTS (
+          SELECT *
+          FROM "Companies"
+          WHERE "Offers"."companyUuid" = "Companies"."uuid"
+          AND "Companies"."approvalStatus" = 'approved'
         )
       )
       AND
