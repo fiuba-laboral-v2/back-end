@@ -11,7 +11,7 @@ const constraintTranslator = {
   Companies_cuit_unique: "CompanyCuitAlreadyExistsError",
   JobApplications_applicantUuid_offerUuid_unique: "JobApplicationAlreadyExistsError",
   Careers_code_key: "CareerAlreadyExistsError",
-  ApplicantCareers_careerCode_applicantUuid_key: "CareerAlreadyExistsError",
+  ApplicantCareers_applicantUuid_careerCode_key: "CareerAlreadyExistsError",
   ApplicantsLinks_applicantUuid_url_unique: "LinkAlreadyExistsError",
   Admins_userUuid_key: "AdminAlreadyExistsError",
   CompanyPhoneNumbers_phoneNumber_companyUuid_key: "DuplicatePhoneNumberError"
