@@ -5,8 +5,8 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 export class ApprovedApplicantAdminPermission implements IPermission {
   private readonly applicant: Applicant;
 
-  constructor(company: Applicant) {
-    this.applicant = company;
+  constructor(applicant: Applicant) {
+    this.applicant = applicant;
   }
 
   public async apply() {
