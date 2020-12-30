@@ -1,17 +1,25 @@
 import { gql } from "apollo-server";
 import { client } from "$test/graphql/ApolloTestClient";
+
 import { UserRepository } from "$models/User";
+import {
+  AdminCannotModerateJobApplicationError,
+  JobApplicationRepository
+} from "$models/JobApplication";
+import { JobApplicationApprovalEventRepository } from "$models/JobApplication/JobApplicationsApprovalEvent";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { OfferRepository } from "$models/Offer";
-import { JobApplicationRepository } from "$models/JobApplication";
 import { ApplicantNotificationRepository } from "$models/ApplicantNotification";
 import { CompanyNotificationRepository } from "$models/CompanyNotification";
+import { EmailService } from "$services/Email";
+
+import { JobApplication } from "$models";
 import { Secretary } from "$models/Admin";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { EmailService } from "$services/Email";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { MissingModeratorMessageError } from "$models/Notification";
+
 import { TestClientGenerator } from "$generators/TestClient";
 import { JobApplicationGenerator } from "$generators/JobApplication";
 import { UUID_REGEX } from "$test/models";
@@ -35,21 +43,33 @@ const UPDATE_JOB_APPLICATION_APPROVAL_STATUS = gql`
 `;
 
 describe("updateJobApplicationApprovalStatus", () => {
+  let jobApplicationForGraduados: JobApplication;
+  let jobApplicationForExtension: JobApplication;
   const moderatorMessage = "moderatorMessage";
 
   beforeAll(async () => {
     await CompanyRepository.truncate();
     await UserRepository.truncate();
     await CareerRepository.truncate();
+
+    const generator = JobApplicationGenerator.instance.toBeModeratedBy;
+    jobApplicationForGraduados = await generator(Secretary.graduados);
+    jobApplicationForExtension = await generator(Secretary.extension);
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    await JobApplicationApprovalEventRepository.truncate();
     jest.spyOn(EmailService, "send").mockImplementation(jest.fn());
   });
 
+  const getJobApplication = (secretary: Secretary) => {
+    if (secretary === Secretary.graduados) return jobApplicationForGraduados;
+    return jobApplicationForExtension;
+  };
+
   const expectToLogAnEventForStatus = async (secretary: Secretary, status: ApprovalStatus) => {
     const { apolloClient, admin } = await TestClientGenerator.admin({ secretary });
-    const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
+    const { uuid } = getJobApplication(secretary);
     const { errors } = await apolloClient.mutate({
       mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
       variables: { uuid, approvalStatus: status, moderatorMessage }
@@ -69,7 +89,7 @@ describe("updateJobApplicationApprovalStatus", () => {
 
   const expectToUpdateStatus = async (secretary: Secretary, approvalStatus: ApprovalStatus) => {
     const { apolloClient } = await TestClientGenerator.admin({ secretary });
-    const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
+    const { uuid } = getJobApplication(secretary);
     const { errors, data } = await apolloClient.mutate({
       mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
       variables: { uuid, approvalStatus, moderatorMessage }
@@ -128,9 +148,15 @@ describe("updateJobApplicationApprovalStatus", () => {
   });
 
   describe("Notifications", () => {
-    const updateJobApplicationWithStatus = async (uuid: string, approvalStatus: ApprovalStatus) => {
+    beforeEach(async () => {
+      await CompanyNotificationRepository.truncate();
+      await ApplicantNotificationRepository.truncate();
+    });
+
+    const updateJobApplicationWithStatus = async (approvalStatus: ApprovalStatus) => {
       const secretary = Secretary.extension;
       const { apolloClient, admin } = await TestClientGenerator.admin({ secretary });
+      const { uuid } = getJobApplication(secretary);
       const { data, errors } = await apolloClient.mutate({
         mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
         variables: { uuid, approvalStatus, moderatorMessage }
@@ -141,8 +167,8 @@ describe("updateJobApplicationApprovalStatus", () => {
 
     it("creates a notification for an applicant if the jobApplication is approved", async () => {
       const repository = ApplicantNotificationRepository;
-      const { uuid, applicantUuid } = await JobApplicationGenerator.instance.withMinimumData();
-      const { admin } = await updateJobApplicationWithStatus(uuid, ApprovalStatus.approved);
+      const { uuid, applicantUuid } = getJobApplication(Secretary.extension);
+      const { admin } = await updateJobApplicationWithStatus(ApprovalStatus.approved);
       const { results } = await repository.findLatestByApplicant({ applicantUuid });
       expect(results).toEqual([
         {
@@ -158,8 +184,8 @@ describe("updateJobApplicationApprovalStatus", () => {
 
     it("creates a notification for an applicant if the jobApplication is rejected", async () => {
       const repository = ApplicantNotificationRepository;
-      const { uuid, applicantUuid } = await JobApplicationGenerator.instance.withMinimumData();
-      const { admin } = await updateJobApplicationWithStatus(uuid, ApprovalStatus.rejected);
+      const { uuid, applicantUuid } = getJobApplication(Secretary.extension);
+      const { admin } = await updateJobApplicationWithStatus(ApprovalStatus.rejected);
       const { results } = await repository.findLatestByApplicant({ applicantUuid });
       expect(results).toEqual([
         {
@@ -176,8 +202,8 @@ describe("updateJobApplicationApprovalStatus", () => {
 
     it("creates a notification for an applicant if the jobApplication is pending", async () => {
       const repository = ApplicantNotificationRepository;
-      const { uuid, applicantUuid } = await JobApplicationGenerator.instance.withMinimumData();
-      const { admin } = await updateJobApplicationWithStatus(uuid, ApprovalStatus.pending);
+      const { uuid, applicantUuid } = getJobApplication(Secretary.extension);
+      const { admin } = await updateJobApplicationWithStatus(ApprovalStatus.pending);
       const { results } = await repository.findLatestByApplicant({ applicantUuid });
       expect(results).toEqual([
         {
@@ -192,12 +218,9 @@ describe("updateJobApplicationApprovalStatus", () => {
     });
 
     it("creates a notification for a company if the jobApplication is approved", async () => {
-      const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      const jobApplication = getJobApplication(Secretary.extension);
       const { companyUuid } = await OfferRepository.findByUuid(jobApplication.offerUuid);
-      const { admin } = await updateJobApplicationWithStatus(
-        jobApplication.uuid,
-        ApprovalStatus.approved
-      );
+      const { admin } = await updateJobApplicationWithStatus(ApprovalStatus.approved);
       const { results, shouldFetchMore } = await CompanyNotificationRepository.findLatestByCompany({
         companyUuid
       });
@@ -215,9 +238,9 @@ describe("updateJobApplicationApprovalStatus", () => {
     });
 
     it("does not create a notification for a company if the jobApplication is rejected", async () => {
-      const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      const jobApplication = getJobApplication(Secretary.extension);
       const { companyUuid } = await OfferRepository.findByUuid(jobApplication.offerUuid);
-      await updateJobApplicationWithStatus(jobApplication.uuid, ApprovalStatus.rejected);
+      await updateJobApplicationWithStatus(ApprovalStatus.rejected);
       const { results, shouldFetchMore } = await CompanyNotificationRepository.findLatestByCompany({
         companyUuid
       });
@@ -226,9 +249,9 @@ describe("updateJobApplicationApprovalStatus", () => {
     });
 
     it("does not create a notification for a companyUser if the jobApplication is pending", async () => {
-      const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      const jobApplication = getJobApplication(Secretary.extension);
       const { companyUuid } = await OfferRepository.findByUuid(jobApplication.offerUuid);
-      await updateJobApplicationWithStatus(jobApplication.uuid, ApprovalStatus.pending);
+      await updateJobApplicationWithStatus(ApprovalStatus.pending);
       const { results, shouldFetchMore } = await CompanyNotificationRepository.findLatestByCompany({
         companyUuid
       });
@@ -237,10 +260,10 @@ describe("updateJobApplicationApprovalStatus", () => {
     });
   });
 
-  it("returns an error no moderatorMessage is provides when rejecting the jobApplication", async () => {
+  it("returns an error no moderatorMessage is provided when rejecting the jobApplication", async () => {
     const secretary = Secretary.extension;
     const { apolloClient } = await TestClientGenerator.admin({ secretary });
-    const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
+    const { uuid } = getJobApplication(secretary);
     const { errors } = await apolloClient.mutate({
       mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
       variables: { uuid, approvalStatus: ApprovalStatus.rejected }
@@ -250,13 +273,22 @@ describe("updateJobApplicationApprovalStatus", () => {
 
   it("returns an error if no user is logged in", async () => {
     const apolloClient = await client.loggedOut();
-    const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
+    const { errors } = await apolloClient.mutate({
+      mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
+      variables: { uuid: jobApplicationForGraduados.uuid, approvalStatus: ApprovalStatus.approved }
+    });
+
+    expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
+  });
+
+  it("returns an error if an extension admin wants to moderate a jobApplication for graduados", async () => {
+    const { apolloClient } = await TestClientGenerator.admin({ secretary: Secretary.extension });
+    const { uuid } = getJobApplication(Secretary.graduados);
     const { errors } = await apolloClient.mutate({
       mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
       variables: { uuid, approvalStatus: ApprovalStatus.approved }
     });
-
-    expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
+    expect(errors).toEqualGraphQLErrorType(AdminCannotModerateJobApplicationError.name);
   });
 
   it("returns an error if no uuid is provided", async () => {
@@ -270,20 +302,18 @@ describe("updateJobApplicationApprovalStatus", () => {
 
   it("returns an error if no approvalStatus is provided", async () => {
     const { apolloClient } = await TestClientGenerator.admin();
-    const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
     const { errors } = await apolloClient.mutate({
       mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
-      variables: { uuid }
+      variables: { uuid: jobApplicationForExtension.uuid }
     });
     expect(errors).not.toBeUndefined();
   });
 
   it("returns an error if the current user is an applicant", async () => {
     const { apolloClient } = await TestClientGenerator.applicant();
-    const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
     const { errors } = await apolloClient.mutate({
       mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
-      variables: { uuid, approvalStatus: ApprovalStatus.approved }
+      variables: { uuid: jobApplicationForGraduados.uuid, approvalStatus: ApprovalStatus.approved }
     });
 
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
@@ -291,10 +321,9 @@ describe("updateJobApplicationApprovalStatus", () => {
 
   it("returns an error if the current user from a company", async () => {
     const { apolloClient } = await TestClientGenerator.company();
-    const { uuid } = await JobApplicationGenerator.instance.withMinimumData();
     const { errors } = await apolloClient.mutate({
       mutation: UPDATE_JOB_APPLICATION_APPROVAL_STATUS,
-      variables: { uuid, approvalStatus: ApprovalStatus.approved }
+      variables: { uuid: jobApplicationForExtension.uuid, approvalStatus: ApprovalStatus.approved }
     });
 
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);

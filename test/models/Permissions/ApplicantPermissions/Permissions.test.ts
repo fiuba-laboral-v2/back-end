@@ -2,14 +2,15 @@ import { ApplicantPermissions } from "$models/Permissions";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
+import { JobApplicationRepository } from "$models/JobApplication";
 
 import { IForAllTargetsAndStatuses, OfferGenerator } from "$generators/Offer";
 import { CompanyGenerator } from "$generators/Company";
 import { ApplicantGenerator } from "$generators/Applicant";
+import { JobApplicationGenerator } from "$generators/JobApplication";
 import { Applicant } from "$models";
 import { ApplicantType } from "$models/Applicant";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { JobApplicationRepository } from "$models/JobApplication";
 
 describe("ApplicantPermissions", () => {
   let offers: IForAllTargetsAndStatuses;
@@ -282,6 +283,36 @@ describe("ApplicantPermissions", () => {
       expect(
         await permissions.canModerateOffer(offers[ApplicantType.both][ApprovalStatus.approved])
       ).toBe(false);
+    });
+  });
+
+  describe("canModerateJobApplication", () => {
+    let student: Applicant;
+    let graduate: Applicant;
+    let studentAndGraduate: Applicant;
+
+    beforeAll(async () => {
+      student = await ApplicantGenerator.instance.student();
+      graduate = await ApplicantGenerator.instance.graduate();
+      studentAndGraduate = await ApplicantGenerator.instance.studentAndGraduate();
+    });
+
+    it("returns false for any jobApplication for a student", async () => {
+      const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      const permissions = new ApplicantPermissions(student.uuid);
+      expect(await permissions.canModerateJobApplication(jobApplication)).toBe(false);
+    });
+
+    it("returns false for any jobApplication for a graduate", async () => {
+      const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      const permissions = new ApplicantPermissions(graduate.uuid);
+      expect(await permissions.canModerateJobApplication(jobApplication)).toBe(false);
+    });
+
+    it("returns false for any jobApplication for a student and graduate", async () => {
+      const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      const permissions = new ApplicantPermissions(studentAndGraduate.uuid);
+      expect(await permissions.canModerateJobApplication(jobApplication)).toBe(false);
     });
   });
 });

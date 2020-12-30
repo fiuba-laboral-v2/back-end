@@ -1,7 +1,10 @@
 import { Database } from "$config/Database";
 import { ID, nonNull, String } from "$graphql/fieldTypes";
 import { AdminRepository } from "$models/Admin";
-import { JobApplicationRepository } from "$models/JobApplication";
+import {
+  JobApplicationRepository,
+  AdminCannotModerateJobApplicationError
+} from "$models/JobApplication";
 import { JobApplicationApprovalEventRepository } from "$models/JobApplication/JobApplicationsApprovalEvent";
 import { JobApplicationApprovalEvent } from "$models";
 import {
@@ -35,6 +38,9 @@ export const updateJobApplicationApprovalStatus = {
     const adminUserUuid = currentUser.getAdminRole().adminUserUuid;
     const admin = await AdminRepository.findByUserUuid(adminUserUuid);
     const jobApplication = await JobApplicationRepository.findByUuid(jobApplicationUuid);
+    const permissions = currentUser.getPermissions();
+    const canModerateJobApplication = await permissions.canModerateJobApplication(jobApplication);
+    if (!canModerateJobApplication) throw new AdminCannotModerateJobApplicationError(admin);
 
     jobApplication.set({ approvalStatus: status });
     const notifications = await JobApplicationNotificationFactory.create(

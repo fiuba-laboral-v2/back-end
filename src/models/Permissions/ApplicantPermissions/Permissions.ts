@@ -1,4 +1,4 @@
-import { Offer } from "$models";
+import { JobApplication, Offer } from "$models";
 import { ApplicantRepository } from "$models/Applicant";
 import { IPermissions, IPermission } from "../Interfaces";
 import { OfferApprovalStatusApplicantPermission } from "./OfferApprovalStatusApplicantPermission";
@@ -28,6 +28,10 @@ export class ApplicantPermissions implements IPermissions {
   }
 
   public async canModerateOffer(_: Offer) {
+    return Promise.resolve(false);
+  }
+
+  public async canModerateJobApplication(_: JobApplication) {
     return Promise.resolve(false);
   }
 }
