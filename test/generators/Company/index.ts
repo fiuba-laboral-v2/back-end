@@ -3,15 +3,10 @@ import { completeData } from "./completeData";
 import { UserRepository, User, CompanyUserRawCredentials } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CompanyUserRepository } from "$models/CompanyUser";
-import { Admin, Company, CompanyUser } from "$models";
+import { Company, CompanyUser } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ICompanyGeneratorAttributes } from "$generators/interfaces";
 import { CompanyPhotoRepository } from "$models/CompanyPhoto";
-
-interface IUpdatedWithStatus {
-  admin: Admin;
-  status: ApprovalStatus;
-}
 
 const createCompany = async (variables?: ICompanyGeneratorAttributes) => {
   const index = CompanyGenerator.getIndex();
@@ -44,10 +39,9 @@ export const CompanyGenerator = {
       await CompanyPhotoRepository.bulkCreate(variables?.photos, company);
       return company;
     },
-    updatedWithStatus: async (variables?: IUpdatedWithStatus) => {
+    updatedWithStatus: async (status?: ApprovalStatus) => {
       const company = await CompanyGenerator.instance.withMinimumData();
-      if (!variables) return company;
-      const { status } = variables;
+      if (!status) return company;
       company.set({ approvalStatus: status });
       await CompanyRepository.save(company);
       return company;
