@@ -1,10 +1,12 @@
 import { QueryInterface, DATE, INTEGER, STRING, UUID, BOOLEAN } from "sequelize";
 
+const TABLE_NAME = "ApplicantCareers";
+
 export = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.sequelize.transaction(async transaction => {
       await queryInterface.createTable(
-        "ApplicantCareers",
+        TABLE_NAME,
         {
           careerCode: {
             allowNull: false,
@@ -41,14 +43,14 @@ export = {
         },
         { transaction }
       );
-      await queryInterface.addConstraint("ApplicantCareers", ["careerCode", "applicantUuid"], {
+      await queryInterface.addConstraint(TABLE_NAME, ["applicantUuid", "careerCode"], {
         type: "primary key",
-        name: "ApplicantCareers_careerCode_applicantUuid_key",
+        name: "ApplicantCareers_applicantUuid_careerCode_key",
         transaction
       });
     });
   },
   down: (queryInterface: QueryInterface) => {
-    return queryInterface.dropTable("ApplicantCareers");
+    return queryInterface.dropTable(TABLE_NAME);
   }
 };
