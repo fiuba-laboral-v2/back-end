@@ -1,13 +1,10 @@
 import { IApplicantInputData, withMinimumData } from "./withMinimumData";
 import { ApplicantRepository } from "$models/Applicant";
 import { IApplicantCareer } from "$models/Applicant/ApplicantCareer";
-import { Admin } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { AdminGenerator } from "$generators/Admin";
 import { CareerGenerator } from "$generators/Career";
 
 interface IUpdatedWithStatus {
-  admin: Admin;
   status: ApprovalStatus;
   careers?: IApplicantCareer[];
 }
@@ -27,30 +24,24 @@ export const ApplicantGenerator = {
         })
       ),
     student: async (status?: ApprovalStatus) => {
-      const admin = await AdminGenerator.extension();
       const { code: careerCode } = await CareerGenerator.instance();
       return ApplicantGenerator.instance.updatedWithStatus({
         status: status || ApprovalStatus.approved,
-        admin,
         careers: [{ careerCode, isGraduate: false, approvedSubjectCount: 40, currentCareerYear: 5 }]
       });
     },
     graduate: async (status?: ApprovalStatus) => {
-      const admin = await AdminGenerator.extension();
       const { code: careerCode } = await CareerGenerator.instance();
       return ApplicantGenerator.instance.updatedWithStatus({
         status: status || ApprovalStatus.approved,
-        admin,
         careers: [{ careerCode, isGraduate: true }]
       });
     },
     studentAndGraduate: async (status?: ApprovalStatus) => {
-      const admin = await AdminGenerator.extension();
       const firstCareer = await CareerGenerator.instance();
       const secondCareer = await CareerGenerator.instance();
       return ApplicantGenerator.instance.updatedWithStatus({
         status: status || ApprovalStatus.approved,
-        admin,
         careers: [
           {
             careerCode: firstCareer.code,
