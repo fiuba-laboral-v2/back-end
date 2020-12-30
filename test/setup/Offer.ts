@@ -20,6 +20,8 @@ export class OfferTestSetup {
   public pendingForStudents: Offer;
   public pendingForGraduates: Offer;
   public pendingForBoth: Offer;
+  public fromRejectedCompany: Offer;
+  public fromPendingCompany: Offer;
   public tasks: AdminTask[];
   public companies: CompanyTestSetup;
   public admins: AdminTestSetup;
@@ -37,6 +39,20 @@ export class OfferTestSetup {
     const {
       offerDurationInDays: graduadosOfferDurationInDays
     } = await SecretarySettingsRepository.findBySecretary(this.admins.graduados.secretary);
+
+    this.fromPendingCompany = await OfferGenerator.instance.updatedWithStatus({
+      admin: this.admins.extension,
+      companyUuid: this.companies.pending.uuid,
+      status: ApprovalStatus.approved,
+      targetApplicantType: ApplicantType.both
+    });
+
+    this.fromRejectedCompany = await OfferGenerator.instance.updatedWithStatus({
+      admin: this.admins.graduados,
+      companyUuid: this.companies.rejected.uuid,
+      status: ApprovalStatus.approved,
+      targetApplicantType: ApplicantType.both
+    });
 
     this.rejectedForStudents = await OfferGenerator.instance.updatedWithStatus({
       admin: this.admins.extension,

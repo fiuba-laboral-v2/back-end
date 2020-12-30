@@ -211,6 +211,30 @@ describe("AdminTaskRepository", () => {
     expect(result.shouldFetchMore).toEqual(false);
   });
 
+  it("filters the offers from pending company", async () => {
+    const result = await AdminTaskRepository.find({
+      adminTaskTypes: [AdminTaskType.Offer],
+      statuses: [ApprovalStatus.approved, ApprovalStatus.rejected, ApprovalStatus.pending],
+      secretary: setup.admins.extension.secretary
+    });
+
+    const resultUuids = result.results.map(({ uuid }) => uuid);
+    expect(resultUuids).not.toContain(setup.offers.fromPendingCompany.uuid);
+    expect(result.shouldFetchMore).toEqual(false);
+  });
+
+  it("filters the offers from rejected company", async () => {
+    const result = await AdminTaskRepository.find({
+      adminTaskTypes: [AdminTaskType.Offer],
+      statuses: [ApprovalStatus.approved, ApprovalStatus.rejected, ApprovalStatus.pending],
+      secretary: setup.admins.graduados.secretary
+    });
+
+    const resultUuids = result.results.map(({ uuid }) => uuid);
+    expect(resultUuids).not.toContain(setup.offers.fromRejectedCompany.uuid);
+    expect(result.shouldFetchMore).toEqual(false);
+  });
+
   it("returns only rejected offers targeted for students", async () => {
     await expectToFindAdminTasksWithStatuses(
       [setup.offers.rejectedForStudents, setup.offers.rejectedForBoth],
