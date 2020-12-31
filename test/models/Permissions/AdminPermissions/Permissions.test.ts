@@ -132,7 +132,7 @@ describe("AdminPermissions", () => {
       beforeAll(async () => {
         admin = extensionAdmin;
         student = await ApplicantGenerator.instance.student();
-        jobApplication = new JobApplication({ offerUuid: offer.uuid, applicantUuid: student.uuid });
+        jobApplication = student.applyTo(offer);
         await JobApplicationRepository.save(jobApplication);
       });
 
@@ -169,10 +169,7 @@ describe("AdminPermissions", () => {
 
       it("returns false if the applicant is a graduate", async () => {
         const graduate = await ApplicantGenerator.instance.graduate(ApprovalStatus.approved);
-        const graduateJobApplication = new JobApplication({
-          offerUuid: offer.uuid,
-          applicantUuid: graduate.uuid
-        });
+        const graduateJobApplication = graduate.applyTo(offer);
         await JobApplicationRepository.save(graduateJobApplication);
         const permissions = new AdminPermissions(admin.userUuid);
         expect(await permissions.canModerateJobApplication(graduateJobApplication)).toBe(false);
@@ -182,10 +179,7 @@ describe("AdminPermissions", () => {
         const studentAndGraduate = await ApplicantGenerator.instance.studentAndGraduate(
           ApprovalStatus.approved
         );
-        const studentAndGraduateJobApplication = new JobApplication({
-          offerUuid: offer.uuid,
-          applicantUuid: studentAndGraduate.uuid
-        });
+        const studentAndGraduateJobApplication = studentAndGraduate.applyTo(offer);
         await JobApplicationRepository.save(studentAndGraduateJobApplication);
         const permissions = new AdminPermissions(admin.userUuid);
         expect(await permissions.canModerateJobApplication(studentAndGraduateJobApplication)).toBe(
@@ -202,8 +196,7 @@ describe("AdminPermissions", () => {
       beforeAll(async () => {
         admin = graduadosAdmin;
         graduate = await ApplicantGenerator.instance.graduate(ApprovalStatus.approved);
-        const applicantUuid = graduate.uuid;
-        jobApplication = new JobApplication({ offerUuid: offer.uuid, applicantUuid });
+        jobApplication = graduate.applyTo(offer);
         await JobApplicationRepository.save(jobApplication);
       });
 
@@ -221,10 +214,7 @@ describe("AdminPermissions", () => {
         const studentAndGraduate = await ApplicantGenerator.instance.studentAndGraduate(
           ApprovalStatus.approved
         );
-        const studentAndGraduateJobApplication = new JobApplication({
-          offerUuid: offer.uuid,
-          applicantUuid: studentAndGraduate.uuid
-        });
+        const studentAndGraduateJobApplication = studentAndGraduate.applyTo(offer);
         await JobApplicationRepository.save(studentAndGraduateJobApplication);
         const permissions = new AdminPermissions(admin.userUuid);
         expect(await permissions.canModerateJobApplication(studentAndGraduateJobApplication)).toBe(

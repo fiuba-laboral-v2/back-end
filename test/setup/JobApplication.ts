@@ -123,7 +123,7 @@ export class JobApplicationTestSetup {
   }
 
   private async createJobApplication(applicant: Applicant, offer: Offer, status: ApprovalStatus) {
-    const jobApplication = await JobApplicationRepository.apply(applicant, offer);
+    const jobApplication = applicant.applyTo(offer);
     jobApplication.set({ approvalStatus: status });
     return JobApplicationRepository.save(jobApplication);
   }

@@ -4,7 +4,6 @@ import {
   JobApplicationRepository,
   OfferNotTargetedForApplicantError
 } from "$models/JobApplication";
-import { JobApplication } from "$models";
 import { ApplicantRepository, ApplicantType } from "$models/Applicant";
 import { AdminRepository } from "$models/Admin";
 import { OfferRepository } from "$models/Offer";
@@ -34,8 +33,8 @@ export const saveJobApplication = {
     const canSeeOffer = await currentUser.getPermissions().canSeeOffer(offer);
     if (!canSeeOffer) throw new OfferNotTargetedForApplicantError();
 
-    const jobApplication = new JobApplication({ offerUuid, applicantUuid });
     const applicant = await ApplicantRepository.findByUuid(applicantUuid);
+    const jobApplication = applicant.applyTo(offer);
     const type = await applicant.getType();
     let secretary = Secretary.graduados;
     if (type === ApplicantType.both) secretary = Secretary.graduados;
