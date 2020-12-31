@@ -38,25 +38,25 @@ export class JobApplicationTestSetup {
 
     this.pendingByExtension = await this.createJobApplication(
       this.applicants.approvedStudent,
-      this.offers.pendingForStudents,
+      this.offers.anotherApprovedForBoth,
       ApprovalStatus.pending
     );
 
     this.approvedByGraduados = await this.createJobApplication(
       this.applicants.approvedGraduate,
-      this.offers.rejectedForBoth,
+      this.offers.approvedForGraduates,
       ApprovalStatus.approved
     );
 
     this.rejectedByGraduados = await this.createJobApplication(
       this.applicants.approvedGraduate,
-      this.offers.rejectedForGraduates,
+      this.offers.approvedForBoth,
       ApprovalStatus.rejected
     );
 
     this.pendingByGraduados = await this.createJobApplication(
       this.applicants.approvedGraduate,
-      this.offers.pendingForGraduates,
+      this.offers.anotherApprovedForBoth,
       ApprovalStatus.pending
     );
 
