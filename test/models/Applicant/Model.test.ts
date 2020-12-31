@@ -1,10 +1,11 @@
 import { ValidationError } from "sequelize";
 import { UUID } from "$models/UUID";
-import { Applicant } from "$models";
+import { Applicant, JobApplication, Offer } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { NumberIsTooSmallError } from "validations-fiuba-laboral-v2";
 import { UUID_REGEX } from "../index";
 import { isApprovalStatus } from "$models/SequelizeModelValidators";
+import { OfferGenerator } from "$generators/Offer";
 
 describe("Applicant", () => {
   it("creates a valid applicant", async () => {
@@ -16,22 +17,28 @@ describe("Applicant", () => {
     await expect(applicant.validate()).resolves.not.toThrow();
   });
 
-  it("creates an applicant with pending approval status by default", async () => {
-    const userUuid = UUID.generate();
-    const applicant = new Applicant({
-      userUuid,
-      padron: 1,
-      description: "Batman"
+  it("creates an applicant with the correct attributes", async () => {
+    const attributes = { userUuid: UUID.generate(), padron: 1, description: "Batman" };
+    const applicant = new Applicant(attributes);
+    expect(applicant).toBeObjectContaining({
+      uuid: expect.stringMatching(UUID_REGEX),
+      ...attributes
     });
-    expect(applicant).toEqual(
-      expect.objectContaining({
-        uuid: expect.stringMatching(UUID_REGEX),
-        userUuid,
-        padron: 1,
-        description: "Batman",
-        approvalStatus: ApprovalStatus.pending
-      })
-    );
+  });
+
+  it("creates an applicant with pending approval status by default", async () => {
+    const applicant = new Applicant({ userUuid: UUID.generate(), padron: 1 });
+    expect(applicant.approvalStatus).toEqual(ApprovalStatus.pending);
+  });
+
+  it("applies to an offer", async () => {
+    const companyUuid = UUID.generate();
+    const applicant = new Applicant({ userUuid: UUID.generate(), padron: 1 });
+    const offer = new Offer(OfferGenerator.data.withObligatoryData({ companyUuid }));
+    const jobApplication = applicant.applyTo(offer);
+    expect(jobApplication).toBeInstanceOf(JobApplication);
+    expect(jobApplication.offerUuid).toEqual(offer.uuid);
+    expect(jobApplication.applicantUuid).toEqual(applicant.uuid);
   });
 
   it("throws an error if approval status is not part of the enum values", async () => {
