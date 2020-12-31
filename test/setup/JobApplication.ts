@@ -8,6 +8,12 @@ import { Secretary } from "$models/Admin";
 import { applicantVisibleBy } from "./applicantVisibleBy";
 
 export class JobApplicationTestSetup {
+  public withRejectedApplicantByExtension: JobApplication;
+  public withRejectedOfferByExtension: JobApplication;
+  public withOfferWithRejectedCompanyByExtension: JobApplication;
+  public withRejectedApplicantByGraduados: JobApplication;
+  public withRejectedOfferByGraduados: JobApplication;
+  public withOfferWithRejectedCompanyByGraduados: JobApplication;
   public approvedByExtension: JobApplication;
   public rejectedByExtension: JobApplication;
   public pendingByExtension: JobApplication;
@@ -24,6 +30,42 @@ export class JobApplicationTestSetup {
   }
 
   public async execute() {
+    this.withOfferWithRejectedCompanyByGraduados = await this.createJobApplication(
+      this.applicants.approvedStudentAndGraduate,
+      this.offers.fromRejectedCompany,
+      ApprovalStatus.approved
+    );
+
+    this.withRejectedApplicantByGraduados = await this.createJobApplication(
+      this.applicants.rejectedStudentAndGraduate,
+      this.offers.approvedForBoth,
+      ApprovalStatus.approved
+    );
+
+    this.withRejectedOfferByGraduados = await this.createJobApplication(
+      this.applicants.approvedStudentAndGraduate,
+      this.offers.rejectedForBoth,
+      ApprovalStatus.approved
+    );
+
+    this.withOfferWithRejectedCompanyByExtension = await this.createJobApplication(
+      this.applicants.approvedStudent,
+      this.offers.fromRejectedCompany,
+      ApprovalStatus.approved
+    );
+
+    this.withRejectedApplicantByExtension = await this.createJobApplication(
+      this.applicants.rejectedStudent,
+      this.offers.approvedForBoth,
+      ApprovalStatus.approved
+    );
+
+    this.withRejectedOfferByExtension = await this.createJobApplication(
+      this.applicants.approvedStudent,
+      this.offers.rejectedForBoth,
+      ApprovalStatus.approved
+    );
+
     this.approvedByExtension = await this.createJobApplication(
       this.applicants.approvedStudent,
       this.offers.approvedForBoth,
