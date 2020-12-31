@@ -268,6 +268,15 @@ describe("WhereClauseBuilder", () => {
           WHERE "applicantUuid" = "JobApplications"."applicantUuid" AND "isGraduate" = true
         )
       )
+      AND
+      (
+        EXISTS (
+          SELECT *
+          FROM "Applicants"
+          WHERE "JobApplications"."applicantUuid" = "Applicants"."uuid"
+          AND "Applicants"."approvalStatus" = 'approved'
+        )
+      )
     `);
   });
 
@@ -326,6 +335,15 @@ describe("WhereClauseBuilder", () => {
           SELECT *
           FROM "${ApplicantCareer.tableName}"
           WHERE "applicantUuid" = "JobApplications"."applicantUuid" AND "isGraduate" = true
+        )
+      )
+      AND
+      (
+        EXISTS (
+          SELECT *
+          FROM "Applicants"
+          WHERE "JobApplications"."applicantUuid" = "Applicants"."uuid"
+          AND "Applicants"."approvalStatus" = 'approved'
         )
       )
     `);
