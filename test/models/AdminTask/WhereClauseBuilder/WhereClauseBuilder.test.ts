@@ -286,6 +286,20 @@ describe("WhereClauseBuilder", () => {
           AND "Offers"."extensionApprovalStatus" = 'approved'
         )
       )
+      AND
+      (
+        EXISTS (
+          SELECT *
+          FROM "Offers"
+          WHERE "JobApplications"."offerUuid" = "Offers"."uuid"
+          AND EXISTS (
+            SELECT *
+            FROM "Companies"
+            WHERE "Offers"."companyUuid" = "Companies"."uuid"
+            AND "Companies"."approvalStatus" = 'approved'
+          )
+        )
+      )
     `);
   });
 
@@ -364,6 +378,20 @@ describe("WhereClauseBuilder", () => {
           AND "Offers"."extensionApprovalStatus" = 'approved'
         )
       )
+      AND
+      (
+        EXISTS (
+          SELECT *
+          FROM "Offers"
+          WHERE "JobApplications"."offerUuid" = "Offers"."uuid"
+          AND EXISTS (
+            SELECT *
+            FROM "Companies"
+            WHERE "Offers"."companyUuid" = "Companies"."uuid"
+            AND "Companies"."approvalStatus" = 'approved'
+          )
+        )
+      )
     `);
   });
 
@@ -404,6 +432,20 @@ describe("WhereClauseBuilder", () => {
           FROM "Offers"
           WHERE "JobApplications"."offerUuid" = "Offers"."uuid"
           AND "Offers"."graduadosApprovalStatus" = 'approved'
+        )
+      )
+      AND
+      (
+        EXISTS (
+          SELECT *
+          FROM "Offers"
+          WHERE "JobApplications"."offerUuid" = "Offers"."uuid"
+          AND EXISTS (
+            SELECT *
+            FROM "Companies"
+            WHERE "Offers"."companyUuid" = "Companies"."uuid"
+            AND "Companies"."approvalStatus" = 'approved'
+          )
         )
       )
     `);
