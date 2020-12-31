@@ -127,7 +127,7 @@ describe("findAdminTasksQuery", () => {
               statuses,
               secretary,
               updatedBeforeThan,
-              modelName: Applicant.name as AdminTaskType,
+              modelName: AdminTaskType.Applicant,
               tableName: Applicant.tableName
             })}
             ORDER BY "Applicants"."updatedAt" DESC, "Applicants"."uuid" DESC
@@ -141,7 +141,7 @@ describe("findAdminTasksQuery", () => {
               statuses,
               secretary,
               updatedBeforeThan,
-              modelName: Company.name as AdminTaskType,
+              modelName: AdminTaskType.Company,
               tableName: Company.tableName
             })}
             ORDER BY "Companies"."updatedAt" DESC, "Companies"."uuid" DESC
@@ -155,7 +155,7 @@ describe("findAdminTasksQuery", () => {
               statuses,
               secretary,
               updatedBeforeThan,
-              modelName: Offer.name as AdminTaskType,
+              modelName: AdminTaskType.Offer,
               tableName: Offer.tableName
             })}
             ORDER BY "Offers"."updatedAt" DESC, "Offers"."uuid" DESC
@@ -169,7 +169,7 @@ describe("findAdminTasksQuery", () => {
               statuses,
               secretary,
               updatedBeforeThan,
-              modelName: JobApplication.name as AdminTaskType,
+              modelName: AdminTaskType.JobApplication,
               tableName: JobApplication.tableName
             })}
             ORDER BY "JobApplications"."updatedAt" DESC, "JobApplications"."uuid" DESC
@@ -397,7 +397,7 @@ describe("findAdminTasksQuery", () => {
             statuses: [status],
             secretary,
             tableName: Offer.tableName,
-            modelName: Offer.name as AdminTaskType
+            modelName: AdminTaskType.Offer
           })}
           ORDER BY "Offers"."updatedAt" DESC, "Offers"."uuid" DESC
           LIMIT ${limit}
@@ -459,14 +459,12 @@ describe("findAdminTasksQuery", () => {
         FROM (
           SELECT *, 'JobApplications' AS "tableNameColumn"
           FROM "JobApplications"
-          WHERE ("JobApplications"."approvalStatus" = '${status}')
-            AND (
-              ${secretary === Secretary.graduados ? "" : "NOT"} EXISTS(
-                SELECT *
-                FROM "${ApplicantCareer.tableName}"
-                WHERE "applicantUuid" = "JobApplications"."applicantUuid" AND "isGraduate" = true
-            )
-          )
+          WHERE ${WhereClauseBuilder.build({
+            statuses: [status],
+            secretary,
+            tableName: JobApplication.tableName,
+            modelName: AdminTaskType.JobApplication
+          })}
           ORDER BY "JobApplications"."updatedAt" DESC, "JobApplications"."uuid" DESC
           LIMIT ${limit}
         ) AS JobApplications
