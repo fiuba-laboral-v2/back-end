@@ -46,24 +46,6 @@ describe("sendPasswordRecoveryEmail", () => {
     const apolloClient = client.loggedOut();
     const { errors } = await performQuery(apolloClient, { email: user.email });
     expect(errors).toBeUndefined();
-    expect(emailSendMock.mock.calls).toEqual([
-      [
-        {
-          receiverEmails: [user.email],
-          sender: {
-            email: "no-reply@fi.uba.ar",
-            name: "[No responder] Bolsa de Trabajo FIUBA"
-          },
-          subject: "Recuperación de contraseña",
-          body:
-            "Usted ha solicitado la recuperación de su contraseña." +
-            "\n" +
-            "Haga click en el siguiente link para realizar el cambio." +
-            "\n" +
-            `baseUrl/subDomain/empresa/contrasena/recuperar/?token=${token}`
-        }
-      ]
-    ]);
   });
 
   it("returns an error if the email belongs to an applicant", async () => {
