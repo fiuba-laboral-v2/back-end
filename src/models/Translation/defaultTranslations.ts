@@ -219,11 +219,12 @@ export const defaultTranslations = {
   passwordRecoveryExplanation: {
     title: "Solicitud de recuperación de contraseña",
     explanation:
-      "Hemos enviado un correo electrónico para restablecer la contraseña. Haga click en el enlace para restablecer la contraseña." +
+      "Se envió un enlace a tu correo electrónico para crear una nueva contraseña." +
       "\n\n" +
-      "¿No recibiste el correo electrónico?" +
+      "Si no lo recibiste, comprobar el correo no deseado o <%= retryLink %> en unos minutos." +
       "\n\n" +
-      "Compruebe su carpeta de correo no deseado o reenvíe el correo electrónico"
+      "Compruebe su carpeta de correo no deseado o reenvíe el correo electrónico",
+    retry: "reintentar"
   },
   passwordRecovery: {
     title: "Solicitud de recuperación de contraseña",
