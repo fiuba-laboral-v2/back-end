@@ -35,12 +35,6 @@ describe("JobApplicationRepository", () => {
   });
 
   describe("save", () => {
-    let company: Company;
-
-    beforeAll(async () => {
-      company = await CompanyGenerator.instance.withMinimumData();
-    });
-
     const expectApplicantToApply = async (applicant: Applicant, offer: Offer) => {
       const jobApplication = applicant.applyTo(offer);
       await JobApplicationRepository.save(jobApplication);
@@ -57,14 +51,6 @@ describe("JobApplicationRepository", () => {
       const { approvalStatus } = await JobApplicationRepository.save(jobApplication);
       expect(approvalStatus).toEqual(status);
     };
-
-    it("saves a new jobApplication in the database", async () => {
-      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
-      const jobApplication = student.applyTo(offer);
-      await JobApplicationRepository.save(jobApplication);
-      const savedJobApplication = await JobApplicationRepository.findByUuid(jobApplication.uuid);
-      expect(savedJobApplication.uuid).toEqual(jobApplication.uuid);
-    });
 
     it("allows student to apply to an offer for students", async () => {
       await expectApplicantToApply(student, offers[ApplicantType.student]);
