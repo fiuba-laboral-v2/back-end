@@ -277,6 +277,15 @@ describe("WhereClauseBuilder", () => {
           AND "Applicants"."approvalStatus" = 'approved'
         )
       )
+      AND
+      (
+        EXISTS (
+          SELECT *
+          FROM "Offers"
+          WHERE "JobApplications"."offerUuid" = "Offers"."uuid"
+          AND "Offers"."extensionApprovalStatus" = 'approved'
+        )
+      )
     `);
   });
 
@@ -344,6 +353,57 @@ describe("WhereClauseBuilder", () => {
           FROM "Applicants"
           WHERE "JobApplications"."applicantUuid" = "Applicants"."uuid"
           AND "Applicants"."approvalStatus" = 'approved'
+        )
+      )
+      AND
+      (
+        EXISTS (
+          SELECT *
+          FROM "Offers"
+          WHERE "JobApplications"."offerUuid" = "Offers"."uuid"
+          AND "Offers"."extensionApprovalStatus" = 'approved'
+        )
+      )
+    `);
+  });
+
+  it("builds where clause for all status JobApplications for an graduados admin", () => {
+    const whereClause = WhereClauseBuilder.build({
+      statuses: [ApprovalStatus.pending, ApprovalStatus.approved, ApprovalStatus.rejected],
+      secretary: Secretary.graduados,
+      modelName: AdminTaskType.JobApplication,
+      tableName: JobApplication.tableName
+    });
+    expect(whereClause).toEqualIgnoringSpacing(`
+      (
+        "JobApplications"."approvalStatus" = '${ApprovalStatus.pending}'
+        OR "JobApplications"."approvalStatus" = '${ApprovalStatus.approved}'
+        OR "JobApplications"."approvalStatus" = '${ApprovalStatus.rejected}'
+      )
+      AND
+      (
+        EXISTS(
+          SELECT *
+          FROM "${ApplicantCareer.tableName}"
+          WHERE "applicantUuid" = "JobApplications"."applicantUuid" AND "isGraduate" = true
+        )
+      )
+      AND
+      (
+        EXISTS (
+          SELECT *
+          FROM "Applicants"
+          WHERE "JobApplications"."applicantUuid" = "Applicants"."uuid"
+          AND "Applicants"."approvalStatus" = 'approved'
+        )
+      )
+      AND
+      (
+        EXISTS (
+          SELECT *
+          FROM "Offers"
+          WHERE "JobApplications"."offerUuid" = "Offers"."uuid"
+          AND "Offers"."graduadosApprovalStatus" = 'approved'
         )
       )
     `);

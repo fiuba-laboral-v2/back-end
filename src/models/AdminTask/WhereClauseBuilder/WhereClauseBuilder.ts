@@ -8,6 +8,7 @@ import { OfferExpirationDateWhereClause } from "./OfferExpirationDate";
 import { ApplicantTypeWhereClause } from "./ApplicantType";
 import { JobApplicationTargetWhereClause } from "./JobApplicationTarget";
 import { JobApplicationWithApprovedApplicantWhereClause } from "./JobApplicationWithApprovedApplicant";
+import { JobApplicationWithApprovedOfferWhereClause } from "./JobApplicationWithApprovedOffer";
 import { UpdatedAtWhereClause } from "./UpdatedAt";
 import { OfferWithApprovedCompanyWhereClause } from "./OfferWithApprovedCompany";
 
@@ -21,6 +22,7 @@ export const WhereClauseBuilder = {
       ApplicantTypeWhereClause.build({ secretary, modelName }),
       JobApplicationTargetWhereClause.build({ secretary, modelName }),
       JobApplicationWithApprovedApplicantWhereClause.build({ modelName }),
+      JobApplicationWithApprovedOfferWhereClause.build({ secretary, modelName }),
       UpdatedAtWhereClause.build({ updatedBeforeThan, tableName })
     ]
       .filter(clause => clause)
