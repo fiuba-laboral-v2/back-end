@@ -277,29 +277,6 @@ describe("WhereClauseBuilder", () => {
           AND "Applicants"."approvalStatus" = 'approved'
         )
       )
-      AND
-      (
-        EXISTS (
-          SELECT *
-          FROM "Offers"
-          WHERE "JobApplications"."offerUuid" = "Offers"."uuid"
-          AND "Offers"."extensionApprovalStatus" = 'approved'
-        )
-      )
-      AND
-      (
-        EXISTS (
-          SELECT *
-          FROM "Offers"
-          WHERE "JobApplications"."offerUuid" = "Offers"."uuid"
-          AND EXISTS (
-            SELECT *
-            FROM "Companies"
-            WHERE "Offers"."companyUuid" = "Companies"."uuid"
-            AND "Companies"."approvalStatus" = 'approved'
-          )
-        )
-      )
     `);
   });
 
@@ -369,29 +346,6 @@ describe("WhereClauseBuilder", () => {
           AND "Applicants"."approvalStatus" = 'approved'
         )
       )
-      AND
-      (
-        EXISTS (
-          SELECT *
-          FROM "Offers"
-          WHERE "JobApplications"."offerUuid" = "Offers"."uuid"
-          AND "Offers"."extensionApprovalStatus" = 'approved'
-        )
-      )
-      AND
-      (
-        EXISTS (
-          SELECT *
-          FROM "Offers"
-          WHERE "JobApplications"."offerUuid" = "Offers"."uuid"
-          AND EXISTS (
-            SELECT *
-            FROM "Companies"
-            WHERE "Offers"."companyUuid" = "Companies"."uuid"
-            AND "Companies"."approvalStatus" = 'approved'
-          )
-        )
-      )
     `);
   });
 
@@ -423,29 +377,6 @@ describe("WhereClauseBuilder", () => {
           FROM "Applicants"
           WHERE "JobApplications"."applicantUuid" = "Applicants"."uuid"
           AND "Applicants"."approvalStatus" = 'approved'
-        )
-      )
-      AND
-      (
-        EXISTS (
-          SELECT *
-          FROM "Offers"
-          WHERE "JobApplications"."offerUuid" = "Offers"."uuid"
-          AND "Offers"."graduadosApprovalStatus" = 'approved'
-        )
-      )
-      AND
-      (
-        EXISTS (
-          SELECT *
-          FROM "Offers"
-          WHERE "JobApplications"."offerUuid" = "Offers"."uuid"
-          AND EXISTS (
-            SELECT *
-            FROM "Companies"
-            WHERE "Offers"."companyUuid" = "Companies"."uuid"
-            AND "Companies"."approvalStatus" = 'approved'
-          )
         )
       )
     `);

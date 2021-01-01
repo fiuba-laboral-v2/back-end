@@ -297,31 +297,6 @@ describe("getAdminTasks", () => {
     expect(result.shouldFetchMore).toEqual(false);
   });
 
-  it("filters the jobApplications with rejected offer for extension admin", async () => {
-    const result = await AdminTaskRepository.find({
-      adminTaskTypes: [AdminTaskType.JobApplication],
-      statuses: [ApprovalStatus.approved, ApprovalStatus.rejected, ApprovalStatus.pending],
-      secretary: setup.admins.extension.secretary
-    });
-
-    const resultUuids = result.results.map(({ uuid }) => uuid);
-    expect(resultUuids).not.toContain(setup.jobApplications.withRejectedOfferByExtension.uuid);
-    expect(result.shouldFetchMore).toEqual(false);
-  });
-
-  it("filters the jobApplications with offer from a rejected company for extension admin", async () => {
-    const result = await AdminTaskRepository.find({
-      adminTaskTypes: [AdminTaskType.JobApplication],
-      statuses: [ApprovalStatus.approved, ApprovalStatus.rejected, ApprovalStatus.pending],
-      secretary: setup.admins.extension.secretary
-    });
-
-    const { withOfferWithRejectedCompanyByExtension } = setup.jobApplications;
-    const resultUuids = result.results.map(({ uuid }) => uuid);
-    expect(resultUuids).not.toContain(withOfferWithRejectedCompanyByExtension.uuid);
-    expect(result.shouldFetchMore).toEqual(false);
-  });
-
   it("filters the jobApplications with rejected applicant for graduados admin", async () => {
     const result = await AdminTaskRepository.find({
       adminTaskTypes: [AdminTaskType.JobApplication],
@@ -331,31 +306,6 @@ describe("getAdminTasks", () => {
 
     const resultUuids = result.results.map(({ uuid }) => uuid);
     expect(resultUuids).not.toContain(setup.jobApplications.withRejectedApplicantByGraduados.uuid);
-    expect(result.shouldFetchMore).toEqual(false);
-  });
-
-  it("filters the jobApplications with rejected offer for graduados admin", async () => {
-    const result = await AdminTaskRepository.find({
-      adminTaskTypes: [AdminTaskType.JobApplication],
-      statuses: [ApprovalStatus.approved, ApprovalStatus.rejected, ApprovalStatus.pending],
-      secretary: setup.admins.graduados.secretary
-    });
-
-    const resultUuids = result.results.map(({ uuid }) => uuid);
-    expect(resultUuids).not.toContain(setup.jobApplications.withRejectedOfferByGraduados.uuid);
-    expect(result.shouldFetchMore).toEqual(false);
-  });
-
-  it("filters the jobApplications with offer from a rejected company for graduados admin", async () => {
-    const result = await AdminTaskRepository.find({
-      adminTaskTypes: [AdminTaskType.JobApplication],
-      statuses: [ApprovalStatus.approved, ApprovalStatus.rejected, ApprovalStatus.pending],
-      secretary: setup.admins.graduados.secretary
-    });
-
-    const { withOfferWithRejectedCompanyByGraduados } = setup.jobApplications;
-    const resultUuids = result.results.map(({ uuid }) => uuid);
-    expect(resultUuids).not.toContain(withOfferWithRejectedCompanyByGraduados.uuid);
     expect(result.shouldFetchMore).toEqual(false);
   });
 

@@ -141,7 +141,7 @@ describe("AdminPermissions", () => {
         await ApplicantRepository.save(student);
       });
 
-      it("returns true if the student, the company and the offer are approved", async () => {
+      it("returns true if the student is approved", async () => {
         const permissions = new AdminPermissions(admin.userUuid);
         expect(await permissions.canModerateJobApplication(jobApplication)).toBe(true);
       });
@@ -153,16 +153,9 @@ describe("AdminPermissions", () => {
         expect(await permissions.canModerateJobApplication(jobApplication)).toBe(false);
       });
 
-      it("returns false if the offer is rejected", async () => {
-        offer.updateStatus(admin, ApprovalStatus.rejected, 15);
-        await OfferRepository.save(offer);
-        const permissions = new AdminPermissions(admin.userUuid);
-        expect(await permissions.canModerateJobApplication(jobApplication)).toBe(false);
-      });
-
-      it("returns false if the company is rejected", async () => {
-        company.set({ approvalStatus: ApprovalStatus.rejected });
-        await CompanyRepository.save(company);
+      it("returns false if the student is pending", async () => {
+        student.set({ approvalStatus: ApprovalStatus.pending });
+        await ApplicantRepository.save(student);
         const permissions = new AdminPermissions(admin.userUuid);
         expect(await permissions.canModerateJobApplication(jobApplication)).toBe(false);
       });
@@ -229,16 +222,9 @@ describe("AdminPermissions", () => {
         expect(await permissions.canModerateJobApplication(jobApplication)).toBe(false);
       });
 
-      it("returns false if the offer is rejected", async () => {
-        offer.updateStatus(admin, ApprovalStatus.rejected, 15);
-        await OfferRepository.save(offer);
-        const permissions = new AdminPermissions(admin.userUuid);
-        expect(await permissions.canModerateJobApplication(jobApplication)).toBe(false);
-      });
-
-      it("returns false if the company is rejected", async () => {
-        company.set({ approvalStatus: ApprovalStatus.rejected });
-        await CompanyRepository.save(company);
+      it("returns false if the graduate is pending", async () => {
+        graduate.set({ approvalStatus: ApprovalStatus.pending });
+        await ApplicantRepository.save(graduate);
         const permissions = new AdminPermissions(admin.userUuid);
         expect(await permissions.canModerateJobApplication(jobApplication)).toBe(false);
       });
