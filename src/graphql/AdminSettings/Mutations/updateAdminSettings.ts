@@ -1,7 +1,6 @@
-import { nonNull } from "$graphql/fieldTypes";
-import { IApolloServerContext } from "$graphql/Context";
+import { nonNull, Boolean, String, Int } from "$graphql/fieldTypes";
 import { GraphQLAdminSettings } from "../Types/GraphQLAdminSettings";
-import { GraphQLInt, GraphQLString } from "graphql/type/scalars";
+import { IApolloServerContext } from "$graphql/Context";
 import { AdminRepository } from "$models/Admin";
 import { SecretarySettingsRepository } from "$models/SecretarySettings/Repository";
 import { SharedSettingsRepository } from "$models/SharedSettings";
@@ -10,22 +9,25 @@ export const updateAdminSettings = {
   type: GraphQLAdminSettings,
   args: {
     offerDurationInDays: {
-      type: nonNull(GraphQLInt)
+      type: nonNull(Int)
     },
     email: {
-      type: nonNull(GraphQLString)
+      type: nonNull(String)
     },
     emailSignature: {
-      type: nonNull(GraphQLString)
+      type: nonNull(String)
+    },
+    automaticJobApplicationApproval: {
+      type: nonNull(Boolean)
     },
     companySignUpAcceptanceCriteria: {
-      type: nonNull(GraphQLString)
+      type: nonNull(String)
     },
     companyEditableAcceptanceCriteria: {
-      type: nonNull(GraphQLString)
+      type: nonNull(String)
     },
     editOfferAcceptanceCriteria: {
-      type: nonNull(GraphQLString)
+      type: nonNull(String)
     }
   },
   resolve: async (
@@ -34,6 +36,7 @@ export const updateAdminSettings = {
       offerDurationInDays,
       email,
       emailSignature,
+      automaticJobApplicationApproval,
       companySignUpAcceptanceCriteria,
       companyEditableAcceptanceCriteria,
       editOfferAcceptanceCriteria
@@ -43,30 +46,29 @@ export const updateAdminSettings = {
     const adminUserUuid = currentUser.getAdminRole().adminUserUuid;
     const admin = await AdminRepository.findByUserUuid(adminUserUuid);
     const secretarySettings = await SecretarySettingsRepository.findBySecretary(admin.secretary);
-    secretarySettings.set({ offerDurationInDays, email, emailSignature });
-    SecretarySettingsRepository.save(secretarySettings);
     const sharedSettings = await SharedSettingsRepository.fetch();
+    secretarySettings.set({
+      offerDurationInDays,
+      email,
+      emailSignature,
+      automaticJobApplicationApproval
+    });
     sharedSettings.set({
       companySignUpAcceptanceCriteria,
       companyEditableAcceptanceCriteria,
       editOfferAcceptanceCriteria
     });
+    SecretarySettingsRepository.save(secretarySettings);
     await SharedSettingsRepository.save(sharedSettings);
-    return {
-      offerDurationInDays: secretarySettings.offerDurationInDays,
-      email: secretarySettings.email,
-      emailSignature: secretarySettings.emailSignature,
-      companySignUpAcceptanceCriteria: sharedSettings.companySignUpAcceptanceCriteria,
-      companyEditableAcceptanceCriteria: sharedSettings.companyEditableAcceptanceCriteria,
-      editOfferAcceptanceCriteria: sharedSettings.editOfferAcceptanceCriteria
-    };
+    return { ...secretarySettings.toJSON(), ...sharedSettings.toJSON() };
   }
 };
 
-interface IUpdateAdminSettingsVariables {
+export interface IUpdateAdminSettingsVariables {
   offerDurationInDays: number;
   email: string;
   emailSignature: string;
+  automaticJobApplicationApproval: boolean;
   companySignUpAcceptanceCriteria: string;
   companyEditableAcceptanceCriteria: string;
   editOfferAcceptanceCriteria: string;
