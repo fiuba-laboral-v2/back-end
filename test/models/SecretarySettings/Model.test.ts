@@ -10,7 +10,8 @@ describe("SecretarySettings", () => {
       secretary: Secretary.extension,
       offerDurationInDays: 15,
       email: "extension@fi.uba.ar",
-      emailSignature: "FIUBA desea feliz navidad"
+      emailSignature: "FIUBA desea feliz navidad",
+      automaticJobApplicationApproval: true
     };
     const secretarySettings = new SecretarySettings(secretarySettingsAttributes);
     await expect(secretarySettings.validate()).resolves.not.toThrow();
@@ -22,7 +23,8 @@ describe("SecretarySettings", () => {
       secretary: Secretary.graduados,
       offerDurationInDays: 1,
       email: "graduados@fi.uba.ar",
-      emailSignature: "FIUBA desea feliz año nuevo"
+      emailSignature: "FIUBA desea feliz año nuevo",
+      automaticJobApplicationApproval: true
     };
     const secretarySettings = new SecretarySettings(secretarySettingsAttributes);
     await expect(secretarySettings.validate()).resolves.not.toThrow();
@@ -33,7 +35,8 @@ describe("SecretarySettings", () => {
     const secretarySettings = new SecretarySettings({
       secretary: Secretary.graduados,
       offerDurationInDays: 8,
-      email: "graduados@fi.uba.ar"
+      email: "graduados@fi.uba.ar",
+      automaticJobApplicationApproval: true
     });
     await expect(secretarySettings.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -44,7 +47,8 @@ describe("SecretarySettings", () => {
   it("throws an error if no secretary is provided", async () => {
     const secretarySettings = new SecretarySettings({
       offerDurationInDays: 15,
-      email: "graduados@fi.uba.ar"
+      email: "graduados@fi.uba.ar",
+      automaticJobApplicationApproval: true
     });
     await expect(secretarySettings.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -55,7 +59,8 @@ describe("SecretarySettings", () => {
   it("throws an error if no offerDurationInDays is provided", async () => {
     const secretarySettings = new SecretarySettings({
       secretary: Secretary.extension,
-      email: "extension@fi.uba.ar"
+      email: "extension@fi.uba.ar",
+      automaticJobApplicationApproval: true
     });
     await expect(secretarySettings.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
@@ -66,11 +71,25 @@ describe("SecretarySettings", () => {
   it("throws an error if no email is provided", async () => {
     const secretarySettings = new SecretarySettings({
       offerDurationInDays: 15,
-      secretary: Secretary.extension
+      secretary: Secretary.extension,
+      automaticJobApplicationApproval: true
     });
     await expect(secretarySettings.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       "notNull Violation: SecretarySettings.email cannot be null"
+    );
+  });
+
+  it("throws an error if no automaticJobApplicationApproval is provided", async () => {
+    const secretarySettings = new SecretarySettings({
+      secretary: Secretary.extension,
+      offerDurationInDays: 15,
+      email: "extension@fi.uba.ar",
+      emailSignature: "FIUBA desea feliz navidad"
+    });
+    await expect(secretarySettings.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      "notNull Violation: SecretarySettings.automaticJobApplicationApproval cannot be null"
     );
   });
 

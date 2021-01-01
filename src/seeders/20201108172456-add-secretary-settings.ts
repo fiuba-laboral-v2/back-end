@@ -5,19 +5,27 @@ const createRecord = (
   secretary: Secretary,
   offerDurationInDays: number,
   email: string,
-  emailSignature: string
+  emailSignature: string,
+  automaticJobApplicationApproval: boolean
 ) => ({
   secretary,
   offerDurationInDays,
   email,
-  emailSignature
+  emailSignature,
+  automaticJobApplicationApproval
 });
 
 export = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.bulkInsert("SecretarySettings", [
-      createRecord(Secretary.graduados, 15, "seblanco@fi.uba.ar", "Bolsa de Trabajo FIUBA"),
-      createRecord(Secretary.extension, 15, "fiubalaboralv2@gmail.com", "Bolsa de Trabajo FIUBA")
+      createRecord(Secretary.graduados, 15, "seblanco@fi.uba.ar", "Bolsa de Trabajo FIUBA", true),
+      createRecord(
+        Secretary.extension,
+        15,
+        "fiubalaboralv2@gmail.com",
+        "Bolsa de Trabajo FIUBA",
+        false
+      )
     ]);
   },
   down: (queryInterface: QueryInterface) => {

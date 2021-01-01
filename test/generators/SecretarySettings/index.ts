@@ -8,13 +8,15 @@ export const SecretarySettingsGenerator = {
         secretary: Secretary.graduados,
         offerDurationInDays: 15,
         email: "graduados@fi.uba.ar",
-        emailSignature: "Graduados email signature"
+        emailSignature: "Graduados email signature",
+        automaticJobApplicationApproval: true
       },
       {
         secretary: Secretary.extension,
         offerDurationInDays: 15,
         email: "extension@fi.uba.ar",
-        emailSignature: "Extensión email signature"
+        emailSignature: "Extensión email signature",
+        automaticJobApplicationApproval: false
       }
     ])
 };
