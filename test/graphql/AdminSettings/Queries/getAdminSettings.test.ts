@@ -15,6 +15,7 @@ const GET_ADMIN_SETTINGS = gql`
       email
       offerDurationInDays
       emailSignature
+      automaticJobApplicationApproval
       companySignUpAcceptanceCriteria
       companyEditableAcceptanceCriteria
       editOfferAcceptanceCriteria
@@ -47,7 +48,8 @@ describe("getAdminSettings", () => {
     const {
       email,
       offerDurationInDays,
-      emailSignature
+      emailSignature,
+      automaticJobApplicationApproval
     } = await SecretarySettingsRepository.findBySecretary(Secretary.graduados);
     const {
       companySignUpAcceptanceCriteria,
@@ -60,6 +62,7 @@ describe("getAdminSettings", () => {
       email,
       offerDurationInDays,
       emailSignature,
+      automaticJobApplicationApproval,
       companySignUpAcceptanceCriteria,
       companyEditableAcceptanceCriteria,
       editOfferAcceptanceCriteria
@@ -74,7 +77,8 @@ describe("getAdminSettings", () => {
     const {
       email,
       offerDurationInDays,
-      emailSignature
+      emailSignature,
+      automaticJobApplicationApproval
     } = await SecretarySettingsRepository.findBySecretary(Secretary.extension);
     const {
       companySignUpAcceptanceCriteria,
@@ -87,6 +91,7 @@ describe("getAdminSettings", () => {
       email,
       offerDurationInDays,
       emailSignature,
+      automaticJobApplicationApproval,
       companySignUpAcceptanceCriteria,
       companyEditableAcceptanceCriteria,
       editOfferAcceptanceCriteria
