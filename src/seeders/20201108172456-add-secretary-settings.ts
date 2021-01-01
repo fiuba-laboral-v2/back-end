@@ -1,34 +1,24 @@
 import { Secretary } from "../models/Admin/Interface";
 import { QueryInterface } from "sequelize";
 
-const createRecord = (
-  secretary: Secretary,
-  offerDurationInDays: number,
-  email: string,
-  emailSignature: string,
-  automaticJobApplicationApproval: boolean
-) => ({
-  secretary,
-  offerDurationInDays,
-  email,
-  emailSignature,
-  automaticJobApplicationApproval
-});
-
 export = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.bulkInsert("SecretarySettings", [
-      createRecord(Secretary.graduados, 15, "seblanco@fi.uba.ar", "Bolsa de Trabajo FIUBA", true),
-      createRecord(
-        Secretary.extension,
-        15,
-        "fiubalaboralv2@gmail.com",
-        "Bolsa de Trabajo FIUBA",
-        false
-      )
+      {
+        secretary: Secretary.graduados,
+        offerDurationInDays: 15,
+        email: "seblanco@fi.uba.ar",
+        emailSignature: "Bolsa de Trabajo FIUBA",
+        automaticJobApplicationApproval: true
+      },
+      {
+        secretary: Secretary.extension,
+        offerDurationInDays: 15,
+        email: "fiubalaboralv2@gmail.com",
+        emailSignature: "Bolsa de Trabajo FIUBA",
+        automaticJobApplicationApproval: false
+      }
     ]);
   },
-  down: (queryInterface: QueryInterface) => {
-    return queryInterface.bulkDelete("SecretarySettings", {});
-  }
+  down: (queryInterface: QueryInterface) => queryInterface.bulkDelete("SecretarySettings", {})
 };
