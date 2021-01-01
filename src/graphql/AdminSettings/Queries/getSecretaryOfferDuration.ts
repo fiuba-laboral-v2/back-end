@@ -4,7 +4,7 @@ import { Secretary } from "$src/models/Admin";
 import { SecretarySettingsRepository } from "$src/models/SecretarySettings";
 import { GraphQLInt } from "graphql/type/scalars";
 
-const getSecretaryOfferDuration = {
+export const getSecretaryOfferDuration = {
   type: GraphQLInt,
   args: {
     secretary: {
@@ -16,5 +16,3 @@ const getSecretaryOfferDuration = {
     return settings.offerDurationInDays;
   }
 };
-
-export { getSecretaryOfferDuration };
