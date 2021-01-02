@@ -19,7 +19,6 @@ describe("getTranslations", () => {
 
     expect(errors).toBeUndefined();
     expect(data!.getTranslations).toEqual({
-      edit: "Editar",
       experienceSectionsTitle: "Experiencia laboral",
       knowledgeSectionsTitle: "Otros conocimientos",
       padron: "Padron",

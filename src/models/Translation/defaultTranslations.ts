@@ -53,9 +53,11 @@ export const defaultTranslations = {
     text: "No hay empresas para los filtros seleccionados",
     button: "Ver todas"
   },
-  applicantProfileDetail: {
+  applicantProfileActions: {
     edit: "Editar",
-    editPadron: "Editar padrón",
+    editPadron: "Editar padrón"
+  },
+  applicantProfileDetail: {
     padron: "Padron",
     capabilities: "Aptitudes",
     experienceSectionsTitle: "Experiencia laboral",
