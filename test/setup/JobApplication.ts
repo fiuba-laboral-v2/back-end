@@ -8,6 +8,8 @@ import { Secretary } from "$models/Admin";
 import { applicantVisibleBy } from "./applicantVisibleBy";
 
 export class JobApplicationTestSetup {
+  public withRejectedApplicantByExtension: JobApplication;
+  public withRejectedApplicantByGraduados: JobApplication;
   public approvedByExtension: JobApplication;
   public rejectedByExtension: JobApplication;
   public pendingByExtension: JobApplication;
@@ -24,6 +26,18 @@ export class JobApplicationTestSetup {
   }
 
   public async execute() {
+    this.withRejectedApplicantByGraduados = await this.createJobApplication(
+      this.applicants.rejectedStudentAndGraduate,
+      this.offers.approvedForBoth,
+      ApprovalStatus.approved
+    );
+
+    this.withRejectedApplicantByExtension = await this.createJobApplication(
+      this.applicants.rejectedStudent,
+      this.offers.approvedForBoth,
+      ApprovalStatus.approved
+    );
+
     this.approvedByExtension = await this.createJobApplication(
       this.applicants.approvedStudent,
       this.offers.approvedForBoth,
@@ -38,25 +52,25 @@ export class JobApplicationTestSetup {
 
     this.pendingByExtension = await this.createJobApplication(
       this.applicants.approvedStudent,
-      this.offers.pendingForStudents,
+      this.offers.anotherApprovedForBoth,
       ApprovalStatus.pending
     );
 
     this.approvedByGraduados = await this.createJobApplication(
       this.applicants.approvedGraduate,
-      this.offers.rejectedForBoth,
+      this.offers.approvedForGraduates,
       ApprovalStatus.approved
     );
 
     this.rejectedByGraduados = await this.createJobApplication(
       this.applicants.approvedGraduate,
-      this.offers.rejectedForGraduates,
+      this.offers.approvedForBoth,
       ApprovalStatus.rejected
     );
 
     this.pendingByGraduados = await this.createJobApplication(
       this.applicants.approvedGraduate,
-      this.offers.pendingForGraduates,
+      this.offers.anotherApprovedForBoth,
       ApprovalStatus.pending
     );
 
@@ -81,7 +95,7 @@ export class JobApplicationTestSetup {
   }
 
   private async createJobApplication(applicant: Applicant, offer: Offer, status: ApprovalStatus) {
-    const jobApplication = await JobApplicationRepository.apply(applicant, offer);
+    const jobApplication = applicant.applyTo(offer);
     jobApplication.set({ approvalStatus: status });
     return JobApplicationRepository.save(jobApplication);
   }

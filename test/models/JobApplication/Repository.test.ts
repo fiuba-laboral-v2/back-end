@@ -14,7 +14,6 @@ import { ApplicantGenerator } from "$generators/Applicant";
 import { IForAllTargets, OfferGenerator } from "$generators/Offer";
 import { range } from "lodash";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
-import { UUID } from "$models/UUID";
 
 describe("JobApplicationRepository", () => {
   let student: Applicant;
@@ -36,11 +35,15 @@ describe("JobApplicationRepository", () => {
   });
 
   describe("save", () => {
-    let company: Company;
-
-    beforeAll(async () => {
-      company = await CompanyGenerator.instance.withMinimumData();
-    });
+    const expectApplicantToApply = async (applicant: Applicant, offer: Offer) => {
+      const jobApplication = applicant.applyTo(offer);
+      await JobApplicationRepository.save(jobApplication);
+      expect(jobApplication).toBeObjectContaining({
+        offerUuid: offer.uuid,
+        applicantUuid: applicant.uuid,
+        approvalStatus: ApprovalStatus.pending
+      });
+    };
 
     const expectSaveToUpdateStatus = async (status: ApprovalStatus) => {
       const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
@@ -49,15 +52,32 @@ describe("JobApplicationRepository", () => {
       expect(approvalStatus).toEqual(status);
     };
 
-    it("saves a new jobApplication in the database", async () => {
-      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
-      const jobApplication = new JobApplication({
-        offerUuid: offer.uuid,
-        applicantUuid: student.uuid
-      });
-      await JobApplicationRepository.save(jobApplication);
-      const savedJobApplication = await JobApplicationRepository.findByUuid(jobApplication.uuid);
-      expect(savedJobApplication.uuid).toEqual(jobApplication.uuid);
+    it("allows student to apply to an offer for students", async () => {
+      await expectApplicantToApply(student, offers[ApplicantType.student]);
+    });
+
+    it("allows student to apply to an offer for students and graduates", async () => {
+      await expectApplicantToApply(student, offers[ApplicantType.both]);
+    });
+
+    it("allows graduate to apply to an offer for graduates", async () => {
+      await expectApplicantToApply(graduate, offers[ApplicantType.graduate]);
+    });
+
+    it("allows graduate to apply to an offer for graduates and students", async () => {
+      await expectApplicantToApply(graduate, offers[ApplicantType.both]);
+    });
+
+    it("allows student and graduate to apply to an offer for graduates", async () => {
+      await expectApplicantToApply(studentAndGraduate, offers[ApplicantType.graduate]);
+    });
+
+    it("allows student and graduate to apply to an offer for students", async () => {
+      await expectApplicantToApply(studentAndGraduate, offers[ApplicantType.student]);
+    });
+
+    it("allows student and graduate to apply to an offer for students and graduates", async () => {
+      await expectApplicantToApply(studentAndGraduate, offers[ApplicantType.both]);
     });
 
     it("updates status to pending", async () => {
@@ -72,6 +92,26 @@ describe("JobApplicationRepository", () => {
       await expectSaveToUpdateStatus(ApprovalStatus.rejected);
     });
 
+    it("throws an error if given applicantUuid that does not exist", async () => {
+      const applicant = new Applicant();
+      const jobApplication = applicant.applyTo(offers[ApplicantType.student]);
+      await expect(JobApplicationRepository.save(jobApplication)).rejects.toThrowErrorWithMessage(
+        ForeignKeyConstraintError,
+        'insert or update on table "JobApplications" violates foreign key ' +
+          'constraint "JobApplications_applicantUuid_fkey"'
+      );
+    });
+
+    it("throws an error if given offerUuid that does not exist", async () => {
+      const applicant = await ApplicantGenerator.instance.withMinimumData();
+      const jobApplication = applicant.applyTo(new Offer());
+      await expect(jobApplication.save()).rejects.toThrowErrorWithMessage(
+        ForeignKeyConstraintError,
+        'insert or update on table "JobApplications" violates foreign key ' +
+          'constraint "JobApplications_offerUuid_fkey"'
+      );
+    });
+
     it("throws an error if status is invalid and does not update the jobApplication", async () => {
       const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
       jobApplication.set({ approvalStatus: "invalidStatus" as ApprovalStatus });
@@ -83,87 +123,12 @@ describe("JobApplicationRepository", () => {
       expect(approvalStatus).toEqual(ApprovalStatus.pending);
     });
 
-    it("throws an error if the jobApplication already exists", async () => {
-      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
-      const attributes = {
-        uuid: UUID.generate(),
-        offerUuid: offer.uuid,
-        applicantUuid: student.uuid
-      };
-      await JobApplicationRepository.save(new JobApplication(attributes));
-      await expect(
-        JobApplicationRepository.save(new JobApplication(attributes))
-      ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
-    });
-  });
-
-  describe("Apply", () => {
-    const expectToApply = async (applicant: Applicant, offer: Offer) => {
-      const jobApplication = await JobApplicationRepository.apply(applicant, offer);
-      expect(jobApplication).toBeObjectContaining({
-        offerUuid: offer.uuid,
-        applicantUuid: applicant.uuid,
-        approvalStatus: ApprovalStatus.pending
-      });
-    };
-
-    it("allows student to apply to an offer for students", async () => {
-      await expectToApply(student, offers[ApplicantType.student]);
-    });
-
-    it("allows student to apply to an offer for students and graduates", async () => {
-      await expectToApply(student, offers[ApplicantType.both]);
-    });
-
-    it("allows graduate to apply to an offer for graduates", async () => {
-      await expectToApply(graduate, offers[ApplicantType.graduate]);
-    });
-
-    it("allows graduate to apply to an offer for graduates and students", async () => {
-      await expectToApply(graduate, offers[ApplicantType.both]);
-    });
-
-    it("allows student and graduate to apply to an offer for graduates", async () => {
-      await expectToApply(studentAndGraduate, offers[ApplicantType.graduate]);
-    });
-
-    it("allows student and graduate to apply to an offer for students", async () => {
-      await expectToApply(studentAndGraduate, offers[ApplicantType.student]);
-    });
-
-    it("allows student and graduate to apply to an offer for students and graduates", async () => {
-      await expectToApply(studentAndGraduate, offers[ApplicantType.both]);
-    });
-
-    it("throws an error if given applicantUuid that does not exist", async () => {
-      const applicant = new Applicant();
-      await expect(
-        JobApplicationRepository.apply(applicant, offers[ApplicantType.student])
-      ).rejects.toThrowErrorWithMessage(
-        ForeignKeyConstraintError,
-        'insert or update on table "JobApplications" violates foreign key ' +
-          'constraint "JobApplications_applicantUuid_fkey"'
-      );
-    });
-
-    it("throws an error if given offerUuid that does not exist", async () => {
-      const { uuid: applicantUuid } = await ApplicantGenerator.instance.withMinimumData();
-      const jobApplication = new JobApplication({
-        offerUuid: UUID.generate(),
-        applicantUuid
-      });
-      await expect(jobApplication.save()).rejects.toThrowErrorWithMessage(
-        ForeignKeyConstraintError,
-        'insert or update on table "JobApplications" violates foreign key ' +
-          'constraint "JobApplications_offerUuid_fkey"'
-      );
-    });
-
     it("throws an error if jobApplication already exists", async () => {
       const applicant = await ApplicantGenerator.instance.studentAndGraduate();
-      await JobApplicationRepository.apply(applicant, offers[ApplicantType.graduate]);
+      const offer = offers[ApplicantType.graduate];
+      await JobApplicationRepository.save(applicant.applyTo(offer));
       await expect(
-        JobApplicationRepository.apply(applicant, offers[ApplicantType.graduate])
+        JobApplicationRepository.save(applicant.applyTo(offer))
       ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
     });
   });
@@ -171,10 +136,9 @@ describe("JobApplicationRepository", () => {
   describe("Associations", () => {
     it("gets Applicant and offer from a jobApplication", async () => {
       const applicant = await ApplicantGenerator.instance.graduate();
-      const jobApplication = await JobApplicationRepository.apply(
-        applicant,
-        offers[ApplicantType.graduate]
-      );
+      applicant.applyTo(offers[ApplicantType.graduate]);
+      const jobApplication = applicant.applyTo(offers[ApplicantType.graduate]);
+      await JobApplicationRepository.save(jobApplication);
       expect((await jobApplication.getApplicant()).toJSON()).toMatchObject(applicant.toJSON());
       expect((await jobApplication.getOffer()).toJSON()).toMatchObject(
         offers[ApplicantType.graduate].toJSON()
@@ -183,10 +147,9 @@ describe("JobApplicationRepository", () => {
 
     it("gets all applicant's jobApplications", async () => {
       const graduateApplicant = await ApplicantGenerator.instance.graduate();
-      const jobApplication = await JobApplicationRepository.apply(
-        graduateApplicant,
-        offers[ApplicantType.graduate]
-      );
+      graduateApplicant.applyTo(offers[ApplicantType.graduate]);
+      const jobApplication = graduateApplicant.applyTo(offers[ApplicantType.graduate]);
+      await JobApplicationRepository.save(jobApplication);
       const applicantsJobApplications = await graduateApplicant.getJobApplications();
       expect(applicantsJobApplications.map(aJobApplication => aJobApplication.toJSON())).toEqual([
         jobApplication.toJSON()
@@ -198,7 +161,7 @@ describe("JobApplicationRepository", () => {
     it("returns a jobApplication for an applicant that applied for an offer", async () => {
       const applicant = await ApplicantGenerator.instance.graduate();
       const offer = offers[ApplicantType.both];
-      await JobApplicationRepository.apply(applicant, offer);
+      await JobApplicationRepository.save(applicant.applyTo(offer));
       const jobApplication = await JobApplicationRepository.findByApplicantAndOffer(
         applicant,
         offer
@@ -222,7 +185,7 @@ describe("JobApplicationRepository", () => {
   describe("hasApplied", () => {
     it("returns true if applicant applied for offer", async () => {
       const applicant = await ApplicantGenerator.instance.graduate();
-      await JobApplicationRepository.apply(applicant, offers[ApplicantType.both]);
+      await JobApplicationRepository.save(applicant.applyTo(offers[ApplicantType.both]));
       const hasApplied = await JobApplicationRepository.hasApplied(
         applicant,
         offers[ApplicantType.both]
@@ -241,7 +204,7 @@ describe("JobApplicationRepository", () => {
   describe("findLatestByCompanyUuid", () => {
     const createJobApplication = async (companyUuid: string, status: ApprovalStatus) => {
       const offer = await OfferGenerator.instance.forStudents({ companyUuid });
-      const jobApplication = await JobApplicationRepository.apply(studentAndGraduate, offer);
+      const jobApplication = studentAndGraduate.applyTo(offer);
       jobApplication.set({ approvalStatus: status });
       return JobApplicationRepository.save(jobApplication);
     };
@@ -315,9 +278,9 @@ describe("JobApplicationRepository", () => {
         companyUuid: anotherCompany.uuid
       });
 
-      await JobApplicationRepository.apply(studentAndGraduate, myOffer1);
-      await JobApplicationRepository.apply(studentAndGraduate, myOffer2);
-      await JobApplicationRepository.apply(studentAndGraduate, notMyOffer);
+      await JobApplicationRepository.save(studentAndGraduate.applyTo(myOffer1));
+      await JobApplicationRepository.save(studentAndGraduate.applyTo(myOffer2));
+      await JobApplicationRepository.save(studentAndGraduate.applyTo(notMyOffer));
       const jobApplications = await JobApplicationRepository.findLatestByCompanyUuid({
         companyUuid: companyUuid
       });
@@ -391,9 +354,9 @@ describe("JobApplicationRepository", () => {
         companyUuid: anotherCompany.uuid
       });
 
-      await JobApplicationRepository.apply(studentAndGraduate, Offer1);
-      await JobApplicationRepository.apply(studentAndGraduate, Offer2);
-      await JobApplicationRepository.apply(studentAndGraduate, Offer3);
+      await JobApplicationRepository.save(studentAndGraduate.applyTo(Offer1));
+      await JobApplicationRepository.save(studentAndGraduate.applyTo(Offer2));
+      await JobApplicationRepository.save(studentAndGraduate.applyTo(Offer3));
       const jobApplications = await JobApplicationRepository.findLatest();
       expect(jobApplications.shouldFetchMore).toEqual(true);
       expect(jobApplications.results).toEqual([

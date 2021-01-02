@@ -233,14 +233,14 @@ describe("getOfferByUuid", () => {
   it("returns offer that has expired but the applicant has a pending application", async () => {
     const offer = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
     const { apolloClient, applicant } = await approvedApplicantTestClient(ApplicantType.graduate);
-    await JobApplicationRepository.apply(applicant, offer);
+    await JobApplicationRepository.save(applicant.applyTo(offer));
     await expectToGetOffer(apolloClient, offer);
   });
 
   it("returns offer that has expired but the applicant has an approved application", async () => {
     const offer = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
     const { apolloClient, applicant } = await approvedApplicantTestClient(ApplicantType.graduate);
-    const jobApplication = await JobApplicationRepository.apply(applicant, offer);
+    const jobApplication = await JobApplicationRepository.save(applicant.applyTo(offer));
     jobApplication.set({ approvalStatus: ApprovalStatus.approved });
     await JobApplicationRepository.save(jobApplication);
     await expectToGetOffer(apolloClient, offer);
@@ -269,7 +269,7 @@ describe("getOfferByUuid", () => {
   it("returns error if offer that has expired but the applicant has a rejected application", async () => {
     const offer = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
     const { apolloClient, applicant } = await approvedApplicantTestClient(ApplicantType.graduate);
-    const jobApplication = await JobApplicationRepository.apply(applicant, offer);
+    const jobApplication = await JobApplicationRepository.save(applicant.applyTo(offer));
     jobApplication.set({ approvalStatus: ApprovalStatus.rejected });
     await JobApplicationRepository.save(jobApplication);
     offer.expire();
@@ -299,7 +299,7 @@ describe("getOfferByUuid", () => {
     it("finds an offer with hasApplied in true", async () => {
       const { apolloClient, applicant } = await approvedApplicantTestClient(ApplicantType.both);
       const offer = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
-      await JobApplicationRepository.apply(applicant, offer);
+      await JobApplicationRepository.save(applicant.applyTo(offer));
       const { data, errors } = await apolloClient.query({
         query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
         variables: { uuid: offer.uuid }

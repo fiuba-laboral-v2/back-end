@@ -18,7 +18,7 @@ describe("HasAppliedToOfferApplicantPermission", () => {
   beforeAll(() => {
     applicant = new Applicant({ userUuid: UUID.generate(), padron: 1 });
     offer = new Offer(OfferGenerator.data.withObligatoryData({ companyUuid: UUID.generate() }));
-    jobApplication = new JobApplication({ offerUuid: offer.uuid, applicantUuid: applicant.uuid });
+    jobApplication = applicant.applyTo(offer);
   });
 
   it("returns true if the applicant has an approved jobApplication", async () => {

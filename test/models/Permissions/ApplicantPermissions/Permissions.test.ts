@@ -169,7 +169,7 @@ describe("ApplicantPermissions", () => {
     it("returns true if the offer has expired because the applicant has an approved application", async () => {
       const offer = offers[ApplicantType.graduate][ApprovalStatus.approved];
       const applicant = await ApplicantGenerator.instance.graduate();
-      const jobApplication = await JobApplicationRepository.apply(applicant, offer);
+      const jobApplication = applicant.applyTo(offer);
       jobApplication.set({ approvalStatus: ApprovalStatus.approved });
       await JobApplicationRepository.save(jobApplication);
       offer.expire();
@@ -180,7 +180,7 @@ describe("ApplicantPermissions", () => {
     it("returns true if the offer has expired because the applicant has a pending application", async () => {
       const offer = offers[ApplicantType.graduate][ApprovalStatus.approved];
       const applicant = await ApplicantGenerator.instance.graduate();
-      const jobApplication = await JobApplicationRepository.apply(applicant, offer);
+      const jobApplication = applicant.applyTo(offer);
       jobApplication.set({ approvalStatus: ApprovalStatus.pending });
       await JobApplicationRepository.save(jobApplication);
       offer.expire();
@@ -191,7 +191,7 @@ describe("ApplicantPermissions", () => {
     it("returns true if the offer is rejected because the applicant has an approved application", async () => {
       const offer = offers[ApplicantType.graduate][ApprovalStatus.rejected];
       const applicant = await ApplicantGenerator.instance.graduate();
-      const jobApplication = await JobApplicationRepository.apply(applicant, offer);
+      const jobApplication = applicant.applyTo(offer);
       jobApplication.set({ approvalStatus: ApprovalStatus.approved });
       await JobApplicationRepository.save(jobApplication);
       offer.expire();
@@ -202,7 +202,7 @@ describe("ApplicantPermissions", () => {
     it("returns true if the offer is pending because the applicant has an approved application", async () => {
       const offer = offers[ApplicantType.graduate][ApprovalStatus.pending];
       const applicant = await ApplicantGenerator.instance.graduate();
-      const jobApplication = await JobApplicationRepository.apply(applicant, offer);
+      const jobApplication = applicant.applyTo(offer);
       jobApplication.set({ approvalStatus: ApprovalStatus.approved });
       await JobApplicationRepository.save(jobApplication);
       offer.expire();
