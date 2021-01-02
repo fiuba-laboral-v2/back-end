@@ -7,6 +7,7 @@ import { CareerRepository } from "$models/Career";
 import { OfferNotTargetedForApplicantError } from "$models/JobApplication";
 import { Applicant, Career, Company, Offer } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
+import { IApplicantCareer } from "$models/Applicant/ApplicantCareer";
 import { OfferNotFoundError } from "$models/Offer/Errors";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { IForAllTargetsAndStatuses, OfferGenerator } from "$generators/Offer";
@@ -41,6 +42,9 @@ describe("saveJobApplication", () => {
   let studentClient: { apolloClient: ApolloClient; applicant: Applicant };
   let graduateClient: { apolloClient: ApolloClient; applicant: Applicant };
   let studentAndGraduateClient: { apolloClient: ApolloClient; applicant: Applicant };
+  let graduateCareers: IApplicantCareer[];
+  let studentCareers: IApplicantCareer[];
+  let studentAndGraduateCareers: IApplicantCareer[];
 
   beforeAll(async () => {
     await UserRepository.truncate();
@@ -53,42 +57,48 @@ describe("saveJobApplication", () => {
     const companyUuid = company.uuid;
     offers = await OfferGenerator.instance.forAllTargetsAndStatuses({ companyUuid });
 
+    studentCareers = [
+      {
+        careerCode: firstCareer.code,
+        isGraduate: false,
+        currentCareerYear: 4,
+        approvedSubjectCount: 33
+      }
+    ];
+
+    graduateCareers = [
+      {
+        careerCode: firstCareer.code,
+        isGraduate: true
+      }
+    ];
+
+    studentAndGraduateCareers = [
+      {
+        careerCode: firstCareer.code,
+        isGraduate: false,
+        currentCareerYear: 4,
+        approvedSubjectCount: 33
+      },
+      {
+        careerCode: secondCareer.code,
+        isGraduate: true
+      }
+    ];
+
     studentClient = await TestClientGenerator.applicant({
       status: ApprovalStatus.approved,
-      careers: [
-        {
-          careerCode: firstCareer.code,
-          isGraduate: false,
-          currentCareerYear: 4,
-          approvedSubjectCount: 33
-        }
-      ]
+      careers: studentCareers
     });
 
     graduateClient = await TestClientGenerator.applicant({
       status: ApprovalStatus.approved,
-      careers: [
-        {
-          careerCode: firstCareer.code,
-          isGraduate: true
-        }
-      ]
+      careers: graduateCareers
     });
 
     studentAndGraduateClient = await TestClientGenerator.applicant({
       status: ApprovalStatus.approved,
-      careers: [
-        {
-          careerCode: firstCareer.code,
-          isGraduate: false,
-          currentCareerYear: 4,
-          approvedSubjectCount: 33
-        },
-        {
-          careerCode: secondCareer.code,
-          isGraduate: true
-        }
-      ]
+      careers: studentAndGraduateCareers
     });
   });
 
@@ -184,14 +194,7 @@ describe("saveJobApplication", () => {
     it("creates a pendingJobApplication notification for a student", async () => {
       const { applicant, apolloClient } = await TestClientGenerator.applicant({
         status: ApprovalStatus.approved,
-        careers: [
-          {
-            careerCode: firstCareer.code,
-            isGraduate: false,
-            currentCareerYear: 4,
-            approvedSubjectCount: 33
-          }
-        ]
+        careers: studentCareers
       });
       const offer = offers[ApplicantType.both][ApprovalStatus.approved];
       const { data, errors } = await performMutation(apolloClient, offer);
@@ -217,12 +220,7 @@ describe("saveJobApplication", () => {
     it("creates an approvedJobApplication notification for a graduate", async () => {
       const { applicant, apolloClient } = await TestClientGenerator.applicant({
         status: ApprovalStatus.approved,
-        careers: [
-          {
-            careerCode: firstCareer.code,
-            isGraduate: true
-          }
-        ]
+        careers: graduateCareers
       });
       const offer = offers[ApplicantType.both][ApprovalStatus.approved];
       const { data, errors } = await performMutation(apolloClient, offer);
@@ -248,18 +246,7 @@ describe("saveJobApplication", () => {
     it("creates an approvedJobApplication notification for a graduate and student", async () => {
       const { applicant, apolloClient } = await TestClientGenerator.applicant({
         status: ApprovalStatus.approved,
-        careers: [
-          {
-            careerCode: firstCareer.code,
-            isGraduate: true
-          },
-          {
-            careerCode: secondCareer.code,
-            isGraduate: false,
-            currentCareerYear: 4,
-            approvedSubjectCount: 33
-          }
-        ]
+        careers: studentAndGraduateCareers
       });
       const offer = offers[ApplicantType.both][ApprovalStatus.approved];
       const { data, errors } = await performMutation(apolloClient, offer);
