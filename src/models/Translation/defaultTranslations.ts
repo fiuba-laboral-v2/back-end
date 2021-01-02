@@ -210,6 +210,13 @@ export const defaultTranslations = {
     submit: "Guardar",
     padron: "Padrón"
   },
+  editPadronConfirmDialog: {
+    confirmDialogTitle: "¿Editar padrón?",
+    confirmDialogDescription:
+      "Tu perfil tendrá que ser nuevamente aprobado para volver a ser visible",
+    confirmDialogCancel: "Cancelar",
+    confirmDialogConfirm: "Confirmar"
+  },
   editCompanyUserPassword: {
     title: "Cambiar contraseña",
     submit: "Guardar",
