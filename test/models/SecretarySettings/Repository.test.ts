@@ -10,19 +10,17 @@ describe("SecretarySettingsRepository", () => {
 
   it("saves the secretarySettings in the database", async () => {
     const secretary = Secretary.graduados;
-    const secretarySettings = new SecretarySettings({
+    const attributes = {
       secretary,
       offerDurationInDays: 15,
       email: "graduados@fi.uba.ar",
-      emailSignature: "graduados signature!"
-    });
+      emailSignature: "graduados signature!",
+      automaticJobApplicationApproval: true
+    };
+    const secretarySettings = new SecretarySettings(attributes);
     await SecretarySettingsRepository.save(secretarySettings);
     const savedSecretarySettings = await SecretarySettingsRepository.findBySecretary(secretary);
-
-    expect(savedSecretarySettings).toBeObjectContaining({
-      secretary: secretarySettings.secretary,
-      offerDurationInDays: secretarySettings.offerDurationInDays
-    });
+    expect(savedSecretarySettings).toBeObjectContaining(attributes);
   });
 
   it("throws an error if the secretarySettings has an existing secretary value", async () => {
@@ -31,7 +29,8 @@ describe("SecretarySettingsRepository", () => {
       secretary,
       offerDurationInDays: 15,
       email: "extensssion@fi.uba.ar",
-      emailSignature: "extension signature!"
+      emailSignature: "extension signature!",
+      automaticJobApplicationApproval: true
     };
     const secretarySettings = new SecretarySettings(attributes);
     const existentSecretarySettings = new SecretarySettings(attributes);
@@ -67,7 +66,8 @@ describe("SecretarySettingsRepository", () => {
         secretary: Secretary.graduados,
         offerDurationInDays: 15,
         email: "graduados@fi.uba.ar",
-        emailSignature: "graduados signature!"
+        emailSignature: "graduados signature!",
+        automaticJobApplicationApproval: true
       })
     );
     expect(await SecretarySettings.findAll()).toHaveLength(1);

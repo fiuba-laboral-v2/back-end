@@ -5,16 +5,17 @@ import {
   OfferNotTargetedForApplicantError
 } from "$models/JobApplication";
 import { ApplicantRepository, ApplicantType } from "$models/Applicant";
-import { AdminRepository } from "$models/Admin";
+import { AdminRepository, Secretary } from "$models/Admin";
 import { OfferRepository } from "$models/Offer";
 import { IApolloServerContext } from "$graphql/Context";
 import {
   JobApplicationNotificationFactory,
   NotificationRepositoryFactory
 } from "$models/Notification";
-import { Secretary } from "$models/Admin";
 import { Database } from "$config";
 import { EmailSenderFactory } from "$models/EmailSenderFactory";
+import { SecretarySettingsRepository } from "$models/SecretarySettings";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export const saveJobApplication = {
   type: GraphQLJobApplication,
@@ -40,17 +41,25 @@ export const saveJobApplication = {
     if (type === ApplicantType.both) secretary = Secretary.graduados;
     if (type === ApplicantType.student) secretary = Secretary.extension;
     if (type === ApplicantType.graduate) secretary = Secretary.graduados;
+    const secretarySettings = await SecretarySettingsRepository.findBySecretary(secretary);
     const admin = await AdminRepository.findFirstBySecretary(secretary);
-    const [notification] = await JobApplicationNotificationFactory.create(jobApplication, admin);
+    if (secretarySettings.automaticJobApplicationApproval) {
+      jobApplication.set({ approvalStatus: ApprovalStatus.approved });
+    }
+    const notifications = await JobApplicationNotificationFactory.create(jobApplication, admin);
 
     await Database.transaction(async transaction => {
       await JobApplicationRepository.save(jobApplication);
-      const repository = NotificationRepositoryFactory.getRepositoryFor(notification);
-      await repository.save(notification, transaction);
+      for (const notification of notifications) {
+        const repository = NotificationRepositoryFactory.getRepositoryFor(notification);
+        await repository.save(notification, transaction);
+      }
     });
 
-    const emailSender = EmailSenderFactory.create(notification);
-    emailSender.send(notification);
+    for (const notification of notifications) {
+      const emailSender = EmailSenderFactory.create(notification);
+      emailSender.send(notification);
+    }
 
     return jobApplication;
   }

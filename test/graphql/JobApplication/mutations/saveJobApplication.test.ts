@@ -1,23 +1,36 @@
 import { ApolloError, gql } from "apollo-server";
 import { ApolloServerTestClient as ApolloClient } from "apollo-server-testing";
 import { client } from "$test/graphql/ApolloTestClient";
+
+import {
+  ApplicantNotificationRepository,
+  ApprovedJobApplicationApplicantNotification,
+  PendingJobApplicationApplicantNotification
+} from "$models/ApplicantNotification";
+import {
+  CompanyNotificationRepository,
+  NewJobApplicationCompanyNotification
+} from "$models/CompanyNotification";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
+import { EmailService } from "$services";
+
+import { OfferNotFoundError } from "$models/Offer/Errors";
+import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { OfferNotTargetedForApplicantError } from "$models/JobApplication";
 import { Applicant, Career, Company, Offer } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { OfferNotFoundError } from "$models/Offer/Errors";
-import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
+import { IApplicantCareer } from "$models/Applicant/ApplicantCareer";
+import { UUID } from "$models/UUID";
+import { ApplicantType } from "$models/Applicant";
+
 import { IForAllTargetsAndStatuses, OfferGenerator } from "$generators/Offer";
 import { TestClientGenerator } from "$generators/TestClient";
 import { CompanyGenerator } from "$generators/Company";
 import { CareerGenerator } from "$generators/Career";
-import { UUID } from "$models/UUID";
 import { UUID_REGEX } from "$test/models";
-import { ApplicantType } from "$models/Applicant";
-import { EmailService } from "$services";
-import { ApplicantNotificationRepository } from "$models/ApplicantNotification";
+import { Constructable } from "$test/types/Constructable";
 
 const SAVE_JOB_APPLICATION = gql`
   mutation saveJobApplication($offerUuid: String!) {
@@ -37,6 +50,9 @@ describe("saveJobApplication", () => {
   let studentClient: { apolloClient: ApolloClient; applicant: Applicant };
   let graduateClient: { apolloClient: ApolloClient; applicant: Applicant };
   let studentAndGraduateClient: { apolloClient: ApolloClient; applicant: Applicant };
+  let graduateCareers: IApplicantCareer[];
+  let studentCareers: IApplicantCareer[];
+  let studentAndGraduateCareers: IApplicantCareer[];
 
   beforeAll(async () => {
     await UserRepository.truncate();
@@ -49,42 +65,48 @@ describe("saveJobApplication", () => {
     const companyUuid = company.uuid;
     offers = await OfferGenerator.instance.forAllTargetsAndStatuses({ companyUuid });
 
+    studentCareers = [
+      {
+        careerCode: firstCareer.code,
+        isGraduate: false,
+        currentCareerYear: 4,
+        approvedSubjectCount: 33
+      }
+    ];
+
+    graduateCareers = [
+      {
+        careerCode: firstCareer.code,
+        isGraduate: true
+      }
+    ];
+
+    studentAndGraduateCareers = [
+      {
+        careerCode: firstCareer.code,
+        isGraduate: false,
+        currentCareerYear: 4,
+        approvedSubjectCount: 33
+      },
+      {
+        careerCode: secondCareer.code,
+        isGraduate: true
+      }
+    ];
+
     studentClient = await TestClientGenerator.applicant({
       status: ApprovalStatus.approved,
-      careers: [
-        {
-          careerCode: firstCareer.code,
-          isGraduate: false,
-          currentCareerYear: 4,
-          approvedSubjectCount: 33
-        }
-      ]
+      careers: studentCareers
     });
 
     graduateClient = await TestClientGenerator.applicant({
       status: ApprovalStatus.approved,
-      careers: [
-        {
-          careerCode: firstCareer.code,
-          isGraduate: true
-        }
-      ]
+      careers: graduateCareers
     });
 
     studentAndGraduateClient = await TestClientGenerator.applicant({
       status: ApprovalStatus.approved,
-      careers: [
-        {
-          careerCode: firstCareer.code,
-          isGraduate: false,
-          currentCareerYear: 4,
-          approvedSubjectCount: 33
-        },
-        {
-          careerCode: secondCareer.code,
-          isGraduate: true
-        }
-      ]
+      careers: studentAndGraduateCareers
     });
   });
 
@@ -176,34 +198,92 @@ describe("saveJobApplication", () => {
     );
   });
 
-  it("creates a notification for an applicant", async () => {
-    const { applicant, apolloClient } = await TestClientGenerator.applicant({
-      status: ApprovalStatus.approved,
-      careers: [
-        {
-          careerCode: firstCareer.code,
-          isGraduate: false,
-          currentCareerYear: 4,
-          approvedSubjectCount: 33
-        }
-      ]
-    });
-    const offer = offers[ApplicantType.both][ApprovalStatus.approved];
-    const { data, errors } = await performMutation(apolloClient, offer);
-    expect(errors).toBeUndefined();
+  describe("Notifications", () => {
+    beforeEach(() => CompanyNotificationRepository.truncate());
 
-    const { findLatestByApplicant } = ApplicantNotificationRepository;
-    const { results } = await findLatestByApplicant({ applicantUuid: applicant.uuid });
-    expect(results).toEqual([
-      {
-        uuid: expect.stringMatching(UUID_REGEX),
-        moderatorUuid: expect.stringMatching(UUID_REGEX),
-        notifiedApplicantUuid: applicant.uuid,
-        isNew: true,
-        jobApplicationUuid: data!.saveJobApplication.uuid,
-        createdAt: expect.any(Date)
-      }
-    ]);
+    const expectToLogCompanyNotification = async (careers: IApplicantCareer[]) => {
+      const { apolloClient } = await TestClientGenerator.applicant({
+        status: ApprovalStatus.approved,
+        careers
+      });
+      const offer = offers[ApplicantType.both][ApprovalStatus.approved];
+      const { data, errors } = await performMutation(apolloClient, offer);
+      expect(errors).toBeUndefined();
+
+      const { findLatestByCompany } = CompanyNotificationRepository;
+      const { results } = await findLatestByCompany({ companyUuid: offer.companyUuid });
+      const [notification] = results;
+
+      expect(notification).toBeInstanceOf(NewJobApplicationCompanyNotification);
+      expect(results).toEqual([
+        {
+          uuid: expect.stringMatching(UUID_REGEX),
+          moderatorUuid: expect.stringMatching(UUID_REGEX),
+          notifiedCompanyUuid: offer.companyUuid,
+          isNew: true,
+          jobApplicationUuid: data!.saveJobApplication.uuid,
+          createdAt: expect.any(Date)
+        }
+      ]);
+    };
+
+    const expectToLogApplicantNotification = async (
+      careers: IApplicantCareer[],
+      model: Constructable
+    ) => {
+      const { applicant, apolloClient } = await TestClientGenerator.applicant({
+        status: ApprovalStatus.approved,
+        careers
+      });
+      const offer = offers[ApplicantType.both][ApprovalStatus.approved];
+      const { data, errors } = await performMutation(apolloClient, offer);
+      expect(errors).toBeUndefined();
+
+      const { findLatestByApplicant } = ApplicantNotificationRepository;
+      const { results } = await findLatestByApplicant({ applicantUuid: applicant.uuid });
+      const [notification] = results;
+
+      expect(notification).toBeInstanceOf(model);
+      expect(results).toEqual([
+        {
+          uuid: expect.stringMatching(UUID_REGEX),
+          moderatorUuid: expect.stringMatching(UUID_REGEX),
+          notifiedApplicantUuid: applicant.uuid,
+          isNew: true,
+          jobApplicationUuid: data!.saveJobApplication.uuid,
+          createdAt: expect.any(Date)
+        }
+      ]);
+    };
+
+    it("creates a pendingJobApplication notification for a student", async () => {
+      await expectToLogApplicantNotification(
+        studentCareers,
+        PendingJobApplicationApplicantNotification
+      );
+    });
+
+    it("creates an approvedJobApplication notification for a graduate", async () => {
+      await expectToLogApplicantNotification(
+        graduateCareers,
+        ApprovedJobApplicationApplicantNotification
+      );
+    });
+
+    it("creates an approvedJobApplication notification for a graduate and student", async () => {
+      await expectToLogApplicantNotification(
+        studentAndGraduateCareers,
+        ApprovedJobApplicationApplicantNotification
+      );
+    });
+
+    it("creates a notification for a company if the applicant is a graduate", async () => {
+      await expectToLogCompanyNotification(graduateCareers);
+    });
+
+    it("creates a notification for a company if the applicant is a student and a graduate", async () => {
+      await expectToLogCompanyNotification(studentAndGraduateCareers);
+    });
   });
 
   it("returns an error if a student applies to a pending offer for students", async () => {

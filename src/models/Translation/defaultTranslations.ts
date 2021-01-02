@@ -694,6 +694,7 @@ export const defaultTranslations = {
     emailSignature: "Firma de los emails",
     emailSignatureHelper:
       "Se va a agregar al final de todos los emails que resulten de la acción de un admin de tu secretaría.\nPor ejemplo, la aprobación de una empresa.",
+    automaticJobApplicationApproval: "Aprobación automática de postulaciones",
     infoMessage:
       'El email de la secretaría se va a dar a los usuarios como vía de contacto, y se van a enviar los emails automáticos a su nombre. Cualquier dirección que termine con "@fi.uba.ar" es válida. Procurar que la dirección no corresponda a un individuo sino a la secretaría.',
     sharedSettingsTitle: "Textos de ayuda",
