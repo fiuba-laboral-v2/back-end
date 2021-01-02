@@ -4,6 +4,7 @@ import { IApolloServerContext } from "$graphql/Context";
 import { AdminRepository } from "$models/Admin";
 import { SecretarySettingsRepository } from "$models/SecretarySettings/Repository";
 import { SharedSettingsRepository } from "$models/SharedSettings";
+import { Database } from "$config";
 
 export const updateAdminSettings = {
   type: GraphQLAdminSettings,
@@ -58,8 +59,10 @@ export const updateAdminSettings = {
       companyEditableAcceptanceCriteria,
       editOfferAcceptanceCriteria
     });
-    SecretarySettingsRepository.save(secretarySettings);
-    await SharedSettingsRepository.save(sharedSettings);
+    await Database.transaction(async transaction => {
+      await SecretarySettingsRepository.save(secretarySettings, transaction);
+      await SharedSettingsRepository.save(sharedSettings, transaction);
+    });
     return { ...secretarySettings.toJSON(), ...sharedSettings.toJSON() };
   }
 };
