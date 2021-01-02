@@ -213,7 +213,7 @@ export const defaultTranslations = {
   editPadronConfirmDialog: {
     confirmDialogTitle: "¿Editar padrón?",
     confirmDialogDescription:
-      "Tu perfil tendrá que ser nuevamente aprobado para volver a ser visible",
+      "Tu perfil tendrá que ser nuevamente aprobado y deberá ser revisado por el personal de la FIUBA para poder volver a utilizar el sitio",
     confirmDialogCancel: "Cancelar",
     confirmDialogConfirm: "Confirmar"
   },
