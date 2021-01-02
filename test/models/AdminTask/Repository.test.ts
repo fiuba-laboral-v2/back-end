@@ -185,7 +185,11 @@ describe("AdminTaskRepository", () => {
 
   it("returns only approved offers targeted for students", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.offers.approvedForStudents, setup.offers.approvedForBoth],
+      [
+        setup.offers.approvedForStudents,
+        setup.offers.approvedForBoth,
+        setup.offers.anotherApprovedForBoth
+      ],
       [ApprovalStatus.approved],
       setup.admins.extension.secretary
     );
@@ -193,7 +197,11 @@ describe("AdminTaskRepository", () => {
 
   it("returns only approved offers targeted for graduates", async () => {
     await expectToFindAdminTasksWithStatuses(
-      [setup.offers.approvedForGraduates, setup.offers.approvedForBoth],
+      [
+        setup.offers.approvedForGraduates,
+        setup.offers.approvedForBoth,
+        setup.offers.anotherApprovedForBoth
+      ],
       [ApprovalStatus.approved],
       setup.admins.graduados.secretary
     );
@@ -299,6 +307,30 @@ describe("AdminTaskRepository", () => {
     );
   });
 
+  it("filters the jobApplications with rejected applicant for extension admin", async () => {
+    const result = await AdminTaskRepository.find({
+      adminTaskTypes: [AdminTaskType.JobApplication],
+      statuses: [ApprovalStatus.approved, ApprovalStatus.rejected, ApprovalStatus.pending],
+      secretary: setup.admins.extension.secretary
+    });
+
+    const resultUuids = result.results.map(({ uuid }) => uuid);
+    expect(resultUuids).not.toContain(setup.jobApplications.withRejectedApplicantByExtension.uuid);
+    expect(result.shouldFetchMore).toEqual(false);
+  });
+
+  it("filters the jobApplications with rejected applicant for graduados admin", async () => {
+    const result = await AdminTaskRepository.find({
+      adminTaskTypes: [AdminTaskType.JobApplication],
+      statuses: [ApprovalStatus.approved, ApprovalStatus.rejected, ApprovalStatus.pending],
+      secretary: setup.admins.graduados.secretary
+    });
+
+    const resultUuids = result.results.map(({ uuid }) => uuid);
+    expect(resultUuids).not.toContain(setup.jobApplications.withRejectedApplicantByGraduados.uuid);
+    expect(result.shouldFetchMore).toEqual(false);
+  });
+
   it("returns only pending graduates, studentsAndGraduates, companies and Offers", async () => {
     await expectToFindAdminTasksWithStatuses(
       [
@@ -338,6 +370,7 @@ describe("AdminTaskRepository", () => {
         setup.offers.approvedForGraduates,
         setup.offers.rejectedForGraduates,
         setup.offers.approvedForBoth,
+        setup.offers.anotherApprovedForBoth,
         setup.offers.rejectedForBoth
       ],
       [ApprovalStatus.approved, ApprovalStatus.rejected],
@@ -355,6 +388,7 @@ describe("AdminTaskRepository", () => {
         setup.offers.approvedForStudents,
         setup.offers.rejectedForStudents,
         setup.offers.approvedForBoth,
+        setup.offers.anotherApprovedForBoth,
         setup.offers.rejectedForBoth
       ],
       [ApprovalStatus.approved, ApprovalStatus.rejected],

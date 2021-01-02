@@ -60,7 +60,7 @@ describe("getMyLatestJobApplications", () => {
   const createJobApplication = async (companyUuid: string, status: ApprovalStatus) => {
     const applicant = await ApplicantGenerator.instance.student();
     const offer = await OfferGenerator.instance.forStudents({ companyUuid });
-    const jobApplication = await JobApplicationRepository.apply(applicant, offer);
+    const jobApplication = applicant.applyTo(offer);
     jobApplication.set({ approvalStatus: status });
     await JobApplicationRepository.save(jobApplication);
     return { jobApplication, offer, applicant };
@@ -161,7 +161,7 @@ describe("getMyLatestJobApplications", () => {
       const offer = await OfferGenerator.instance.forStudents({ companyUuid: company.uuid });
       for (const _ of range(15)) {
         const studentAndGraduate = await ApplicantGenerator.instance.studentAndGraduate();
-        const jobApplication = await JobApplicationRepository.apply(studentAndGraduate, offer);
+        const jobApplication = studentAndGraduate.applyTo(offer);
         jobApplication.set({ approvalStatus: ApprovalStatus.approved });
         await JobApplicationRepository.save(jobApplication);
         applicationsByDescUpdatedAt.push(jobApplication);
