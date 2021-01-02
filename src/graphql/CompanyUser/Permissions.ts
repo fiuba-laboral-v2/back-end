@@ -1,4 +1,4 @@
-import { isFromApprovedCompany, isCompanyUser } from "$graphql/Rules";
+import { isCompanyUser } from "$graphql/Rules";
 
 export const companyUserPermissions = {
   Query: {
@@ -6,6 +6,6 @@ export const companyUserPermissions = {
   },
   Mutation: {
     saveCompanyUser: isCompanyUser,
-    updatePassword: isFromApprovedCompany
+    updatePassword: isCompanyUser
   }
 };
