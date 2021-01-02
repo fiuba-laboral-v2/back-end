@@ -52,8 +52,8 @@ describe("getCompanyUsers", () => {
   const createApplicantTestClient = (approvalStatus: ApprovalStatus) =>
     TestClientGenerator.applicant({ status: approvalStatus });
 
-  it("returns all companyUsers for the current company", async () => {
-    const { apolloClient, company, user } = await createCompanyTestClient(ApprovalStatus.approved);
+  const expectToGetCompanyUsers = async (status: ApprovalStatus) => {
+    const { apolloClient, company, user } = await createCompanyTestClient(status);
     const size = 5;
     const companyUsers = await CompanyUserGenerator.range({ company, size });
     const { data, errors } = await performQuery(apolloClient);
@@ -62,6 +62,18 @@ describe("getCompanyUsers", () => {
     const firstCompanyUser = await CompanyUserRepository.findByUserUuidIfExists(user.uuid!);
     const companyUserUuids = [firstCompanyUser!.uuid, ...companyUsers.map(({ uuid }) => uuid)];
     expect(data!.getCompanyUsers.results.map(({ uuid }) => uuid)).toEqual(companyUserUuids);
+  };
+
+  it("returns all companyUsers for the current user from an approved company", async () => {
+    await expectToGetCompanyUsers(ApprovalStatus.approved);
+  });
+
+  it("returns all companyUsers for the current user from a rejected company", async () => {
+    await expectToGetCompanyUsers(ApprovalStatus.rejected);
+  });
+
+  it("returns all companyUsers for the current user from a pending company", async () => {
+    await expectToGetCompanyUsers(ApprovalStatus.pending);
   });
 
   it("returns the next three companyUsers", async () => {
@@ -87,18 +99,6 @@ describe("getCompanyUsers", () => {
     const apolloClient = client.loggedOut();
     const { errors } = await performQuery(apolloClient);
     expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
-  });
-
-  it("returns an error if the current user is from a rejected company", async () => {
-    const { apolloClient } = await createCompanyTestClient(ApprovalStatus.rejected);
-    const { errors } = await performQuery(apolloClient);
-    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
-  });
-
-  it("returns an error if the current user is from a pending company", async () => {
-    const { apolloClient } = await createCompanyTestClient(ApprovalStatus.pending);
-    const { errors } = await performQuery(apolloClient);
-    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("returns an error if the current user is a approved applicant", async () => {
