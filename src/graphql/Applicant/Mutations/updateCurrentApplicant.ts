@@ -1,4 +1,4 @@
-import { Int, List, String } from "$graphql/fieldTypes";
+import { List, String } from "$graphql/fieldTypes";
 import { GraphQLApplicant } from "../Types/GraphQLApplicant";
 import { GraphQLApplicantCareerInput } from "../Types/GraphQLApplicantCareerInput";
 import { GraphQLApplicantKnowledgeSectionInputType } from "../Types/ApplicantKnowledgeSection";
@@ -13,9 +13,6 @@ export const updateCurrentApplicant = {
   args: {
     user: {
       type: GraphQLUserUpdateInput
-    },
-    padron: {
-      type: Int
     },
     description: {
       type: String
