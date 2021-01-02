@@ -53,8 +53,11 @@ export const defaultTranslations = {
     text: "No hay empresas para los filtros seleccionados",
     button: "Ver todas"
   },
-  applicantProfileDetail: {
+  applicantProfileActions: {
     edit: "Editar",
+    editPadron: "Editar padrón"
+  },
+  applicantProfileDetail: {
     padron: "Padron",
     capabilities: "Aptitudes",
     experienceSectionsTitle: "Experiencia laboral",
@@ -201,6 +204,18 @@ export const defaultTranslations = {
   addCompanyUser: {
     title: "Agregar usuario",
     submit: "Guardar"
+  },
+  editPadron: {
+    title: "Editar padrón",
+    submit: "Guardar",
+    padron: "Padrón"
+  },
+  editPadronConfirmDialog: {
+    confirmDialogTitle: "¿Editar padrón?",
+    confirmDialogDescription:
+      "Tu perfil tendrá que ser nuevamente aprobado y deberá ser revisado por el personal de FIUBA para poder volver a utilizar el sitio",
+    confirmDialogCancel: "Cancelar",
+    confirmDialogConfirm: "Confirmar"
   },
   editCompanyUserPassword: {
     title: "Cambiar contraseña",

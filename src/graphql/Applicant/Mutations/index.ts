@@ -1,11 +1,11 @@
 import { saveApplicant } from "./saveApplicant";
 import { updateCurrentApplicant } from "./updateCurrentApplicant";
 import { updateApplicantApprovalStatus } from "./updateApplicantApprovalStatus";
+import { updatePadron } from "./updatePadron";
 
-const applicantMutations = {
+export const applicantMutations = {
   saveApplicant,
   updateCurrentApplicant,
-  updateApplicantApprovalStatus
+  updateApplicantApprovalStatus,
+  updatePadron
 };
-
-export { applicantMutations };

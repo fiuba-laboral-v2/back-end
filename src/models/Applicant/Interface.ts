@@ -20,7 +20,6 @@ export interface ISaveApplicant extends IApplicant {
 export interface IApplicantEditable {
   uuid: string;
   user?: IUserEditable;
-  padron?: number;
   description?: string;
   careers?: IApplicantCareer[];
   capabilities?: string[];
