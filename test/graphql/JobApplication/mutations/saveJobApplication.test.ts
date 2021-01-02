@@ -1,28 +1,36 @@
 import { ApolloError, gql } from "apollo-server";
 import { ApolloServerTestClient as ApolloClient } from "apollo-server-testing";
 import { client } from "$test/graphql/ApolloTestClient";
-import { UserRepository } from "$models/User";
-import { CompanyRepository } from "$models/Company";
-import { CareerRepository } from "$models/Career";
-import { OfferNotTargetedForApplicantError } from "$models/JobApplication";
-import { Applicant, Career, Company, Offer } from "$models";
-import { ApprovalStatus } from "$models/ApprovalStatus";
-import { IApplicantCareer } from "$models/Applicant/ApplicantCareer";
-import { OfferNotFoundError } from "$models/Offer/Errors";
-import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
-import { IForAllTargetsAndStatuses, OfferGenerator } from "$generators/Offer";
-import { TestClientGenerator } from "$generators/TestClient";
-import { CompanyGenerator } from "$generators/Company";
-import { CareerGenerator } from "$generators/Career";
-import { UUID } from "$models/UUID";
-import { UUID_REGEX } from "$test/models";
-import { ApplicantType } from "$models/Applicant";
-import { EmailService } from "$services";
+
 import {
   ApplicantNotificationRepository,
   ApprovedJobApplicationApplicantNotification,
   PendingJobApplicationApplicantNotification
 } from "$models/ApplicantNotification";
+import {
+  CompanyNotificationRepository,
+  NewJobApplicationCompanyNotification
+} from "$models/CompanyNotification";
+import { UserRepository } from "$models/User";
+import { CompanyRepository } from "$models/Company";
+import { CareerRepository } from "$models/Career";
+import { EmailService } from "$services";
+
+import { OfferNotFoundError } from "$models/Offer/Errors";
+import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
+import { OfferNotTargetedForApplicantError } from "$models/JobApplication";
+import { Applicant, Career, Company, Offer } from "$models";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { IApplicantCareer } from "$models/Applicant/ApplicantCareer";
+import { UUID } from "$models/UUID";
+import { ApplicantType } from "$models/Applicant";
+
+import { IForAllTargetsAndStatuses, OfferGenerator } from "$generators/Offer";
+import { TestClientGenerator } from "$generators/TestClient";
+import { CompanyGenerator } from "$generators/Company";
+import { CareerGenerator } from "$generators/Career";
+import { UUID_REGEX } from "$test/models";
+import { Constructable } from "$test/types/Constructable";
 
 const SAVE_JOB_APPLICATION = gql`
   mutation saveJobApplication($offerUuid: String!) {
@@ -191,10 +199,41 @@ describe("saveJobApplication", () => {
   });
 
   describe("Notifications", () => {
-    it("creates a pendingJobApplication notification for a student", async () => {
+    beforeEach(() => CompanyNotificationRepository.truncate());
+
+    const expectToLogCompanyNotification = async (careers: IApplicantCareer[]) => {
+      const { apolloClient } = await TestClientGenerator.applicant({
+        status: ApprovalStatus.approved,
+        careers
+      });
+      const offer = offers[ApplicantType.both][ApprovalStatus.approved];
+      const { data, errors } = await performMutation(apolloClient, offer);
+      expect(errors).toBeUndefined();
+
+      const { findLatestByCompany } = CompanyNotificationRepository;
+      const { results } = await findLatestByCompany({ companyUuid: offer.companyUuid });
+      const [notification] = results;
+
+      expect(notification).toBeInstanceOf(NewJobApplicationCompanyNotification);
+      expect(results).toEqual([
+        {
+          uuid: expect.stringMatching(UUID_REGEX),
+          moderatorUuid: expect.stringMatching(UUID_REGEX),
+          notifiedCompanyUuid: offer.companyUuid,
+          isNew: true,
+          jobApplicationUuid: data!.saveJobApplication.uuid,
+          createdAt: expect.any(Date)
+        }
+      ]);
+    };
+
+    const expectToLogApplicantNotification = async (
+      careers: IApplicantCareer[],
+      model: Constructable
+    ) => {
       const { applicant, apolloClient } = await TestClientGenerator.applicant({
         status: ApprovalStatus.approved,
-        careers: studentCareers
+        careers
       });
       const offer = offers[ApplicantType.both][ApprovalStatus.approved];
       const { data, errors } = await performMutation(apolloClient, offer);
@@ -204,7 +243,7 @@ describe("saveJobApplication", () => {
       const { results } = await findLatestByApplicant({ applicantUuid: applicant.uuid });
       const [notification] = results;
 
-      expect(notification).toBeInstanceOf(PendingJobApplicationApplicantNotification);
+      expect(notification).toBeInstanceOf(model);
       expect(results).toEqual([
         {
           uuid: expect.stringMatching(UUID_REGEX),
@@ -215,58 +254,35 @@ describe("saveJobApplication", () => {
           createdAt: expect.any(Date)
         }
       ]);
+    };
+
+    it("creates a pendingJobApplication notification for a student", async () => {
+      await expectToLogApplicantNotification(
+        studentCareers,
+        PendingJobApplicationApplicantNotification
+      );
     });
 
     it("creates an approvedJobApplication notification for a graduate", async () => {
-      const { applicant, apolloClient } = await TestClientGenerator.applicant({
-        status: ApprovalStatus.approved,
-        careers: graduateCareers
-      });
-      const offer = offers[ApplicantType.both][ApprovalStatus.approved];
-      const { data, errors } = await performMutation(apolloClient, offer);
-      expect(errors).toBeUndefined();
-
-      const { findLatestByApplicant } = ApplicantNotificationRepository;
-      const { results } = await findLatestByApplicant({ applicantUuid: applicant.uuid });
-      const [notification] = results;
-
-      expect(notification).toBeInstanceOf(ApprovedJobApplicationApplicantNotification);
-      expect(results).toEqual([
-        {
-          uuid: expect.stringMatching(UUID_REGEX),
-          moderatorUuid: expect.stringMatching(UUID_REGEX),
-          notifiedApplicantUuid: applicant.uuid,
-          isNew: true,
-          jobApplicationUuid: data!.saveJobApplication.uuid,
-          createdAt: expect.any(Date)
-        }
-      ]);
+      await expectToLogApplicantNotification(
+        graduateCareers,
+        ApprovedJobApplicationApplicantNotification
+      );
     });
 
     it("creates an approvedJobApplication notification for a graduate and student", async () => {
-      const { applicant, apolloClient } = await TestClientGenerator.applicant({
-        status: ApprovalStatus.approved,
-        careers: studentAndGraduateCareers
-      });
-      const offer = offers[ApplicantType.both][ApprovalStatus.approved];
-      const { data, errors } = await performMutation(apolloClient, offer);
-      expect(errors).toBeUndefined();
+      await expectToLogApplicantNotification(
+        studentAndGraduateCareers,
+        ApprovedJobApplicationApplicantNotification
+      );
+    });
 
-      const { findLatestByApplicant } = ApplicantNotificationRepository;
-      const { results } = await findLatestByApplicant({ applicantUuid: applicant.uuid });
-      const [notification] = results;
+    it("creates a notification for a company if the applicant is a graduate", async () => {
+      await expectToLogCompanyNotification(graduateCareers);
+    });
 
-      expect(notification).toBeInstanceOf(ApprovedJobApplicationApplicantNotification);
-      expect(results).toEqual([
-        {
-          uuid: expect.stringMatching(UUID_REGEX),
-          moderatorUuid: expect.stringMatching(UUID_REGEX),
-          notifiedApplicantUuid: applicant.uuid,
-          isNew: true,
-          jobApplicationUuid: data!.saveJobApplication.uuid,
-          createdAt: expect.any(Date)
-        }
-      ]);
+    it("creates a notification for a company if the applicant is a student and a graduate", async () => {
+      await expectToLogCompanyNotification(studentAndGraduateCareers);
     });
   });
 
