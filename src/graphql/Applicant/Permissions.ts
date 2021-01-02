@@ -9,6 +9,7 @@ export const applicantPermissions = {
   },
   Mutation: {
     updateCurrentApplicant: isApplicant,
-    updateApplicantApprovalStatus: isAdmin
+    updateApplicantApprovalStatus: isAdmin,
+    updatePadron: isApplicant
   }
 };
