@@ -49,10 +49,8 @@ describe("saveCompanyUser", () => {
     user: UserGenerator.data.companyUser({ email, password })
   });
 
-  it("adds a company user to current user's company", async () => {
-    const { apolloClient, company } = await TestClientGenerator.company({
-      status: ApprovalStatus.approved
-    });
+  const expectToSaveCompanyUser = async (status: ApprovalStatus) => {
+    const { apolloClient, company } = await TestClientGenerator.company({ status });
     const variables = generateVariables();
     const { errors, data } = await performQuery(apolloClient, variables);
     expect(errors).toBeUndefined();
@@ -67,6 +65,18 @@ describe("saveCompanyUser", () => {
         dni: null
       }
     });
+  };
+
+  it("adds a company user to current user's approved company", async () => {
+    await expectToSaveCompanyUser(ApprovalStatus.approved);
+  });
+
+  it("adds a company user to current user's rejected company", async () => {
+    await expectToSaveCompanyUser(ApprovalStatus.rejected);
+  });
+
+  it("adds a company user to current user's pending company", async () => {
+    await expectToSaveCompanyUser(ApprovalStatus.pending);
   });
 
   it("returns an error if companyUser with the given email already exists", async () => {
@@ -152,18 +162,6 @@ describe("saveCompanyUser", () => {
     const apolloClient = client.loggedOut();
     const { errors } = await performQuery(apolloClient, generateVariables());
     expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
-  });
-
-  it("returns an error if the current user is from a pending company", async () => {
-    const { apolloClient } = await TestClientGenerator.company({ status: ApprovalStatus.pending });
-    const { errors } = await performQuery(apolloClient, generateVariables());
-    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
-  });
-
-  it("returns an error if the current user is from a rejected company", async () => {
-    const { apolloClient } = await TestClientGenerator.company({ status: ApprovalStatus.rejected });
-    const { errors } = await performQuery(apolloClient, generateVariables());
-    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("returns an error if the current user is an approved applicant", async () => {

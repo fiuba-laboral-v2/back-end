@@ -11,13 +11,6 @@ export const getAdminSettings = {
     const admin = await AdminRepository.findByUserUuid(adminUserUuid);
     const secretarySettings = await SecretarySettingsRepository.findBySecretary(admin.secretary);
     const sharedSettings = await SharedSettingsRepository.fetch();
-    return {
-      offerDurationInDays: secretarySettings.offerDurationInDays,
-      email: secretarySettings.email,
-      emailSignature: secretarySettings.emailSignature,
-      companySignUpAcceptanceCriteria: sharedSettings.companySignUpAcceptanceCriteria,
-      companyEditableAcceptanceCriteria: sharedSettings.companyEditableAcceptanceCriteria,
-      editOfferAcceptanceCriteria: sharedSettings.editOfferAcceptanceCriteria
-    };
+    return { ...secretarySettings.toJSON(), ...sharedSettings.toJSON() };
   }
 };

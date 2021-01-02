@@ -36,15 +36,27 @@ describe("updatePassword", () => {
     newPassword: variables?.newPassword || "AValidPassword000"
   });
 
-  it("updates the companyUser password", async () => {
+  const expectToUpdatePassword = async (status: ApprovalStatus) => {
     const variables = generateVariables();
     const { apolloClient, user } = await TestClientGenerator.company({
-      status: ApprovalStatus.approved,
+      status,
       user: { password: variables.oldPassword }
     });
     const { errors, data } = await performQuery(apolloClient, variables);
     expect(errors).toBeUndefined();
     expect(data!.updatePassword.userUuid).toEqual(user.uuid);
+  };
+
+  it("updates the companyUser password from an approved company", async () => {
+    await expectToUpdatePassword(ApprovalStatus.approved);
+  });
+
+  it("updates the companyUser password from an rejected company", async () => {
+    await expectToUpdatePassword(ApprovalStatus.rejected);
+  });
+
+  it("updates the companyUser password from an pending company", async () => {
+    await expectToUpdatePassword(ApprovalStatus.pending);
   });
 
   it("returns an error if the old password does not match", async () => {
@@ -121,18 +133,6 @@ describe("updatePassword", () => {
     const apolloClient = client.loggedOut();
     const { errors } = await performQuery(apolloClient, generateVariables());
     expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
-  });
-
-  it("returns an error if the current user is from a pending company", async () => {
-    const { apolloClient } = await TestClientGenerator.company({ status: ApprovalStatus.pending });
-    const { errors } = await performQuery(apolloClient, generateVariables());
-    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
-  });
-
-  it("returns an error if the current user is from a rejected company", async () => {
-    const { apolloClient } = await TestClientGenerator.company({ status: ApprovalStatus.rejected });
-    const { errors } = await performQuery(apolloClient, generateVariables());
-    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("returns an error if the current user is an approved applicant", async () => {
