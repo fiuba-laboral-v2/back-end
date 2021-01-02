@@ -216,10 +216,18 @@ export const defaultTranslations = {
     newPassword: "Nueva contraseña",
     newPasswordConfirm: "Confirmar nueva contraseña"
   },
+  passwordRecoveryExplanation: {
+    title: "Solicitud de recuperación de contraseña",
+    explanation:
+      "Se envió un enlace a tu correo electrónico para crear una nueva contraseña." +
+      "\n\n" +
+      "Si no lo recibiste, comprobar el correo no deseado o reintentar en unos minutos.",
+    retry: "Volver a intentar"
+  },
   passwordRecovery: {
     title: "Solicitud de recuperación de contraseña",
     emailHelperText: "Se enviará un mail con un link para cambiar tu contraseña",
-    submit: "Guardar",
+    submit: "Enviar email",
     email: "Email"
   },
   companySignUp: {
