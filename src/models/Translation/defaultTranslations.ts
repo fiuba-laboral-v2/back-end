@@ -55,6 +55,7 @@ export const defaultTranslations = {
   },
   applicantProfileDetail: {
     edit: "Editar",
+    editPadron: "Editar padrón",
     padron: "Padron",
     capabilities: "Aptitudes",
     experienceSectionsTitle: "Experiencia laboral",
