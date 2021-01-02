@@ -22,7 +22,7 @@ export const sendPasswordRecoveryEmail = {
       throw new UnauthorizedError();
     }
     const user = await UserRepository.findCompanyUserByEmail(email);
-    await PasswordRecoveryEmailSender.send(user);
+    PasswordRecoveryEmailSender.send(user);
   }
 };
 
