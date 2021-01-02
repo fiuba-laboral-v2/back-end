@@ -25,19 +25,19 @@ export class User {
     this.uuid = uuid;
   }
 
-  private setName(name: string) {
+  public setName(name: string) {
     if (isNil(name)) throw new AttributeNotDefinedError("name");
     validateName(name);
     this.name = name;
   }
 
-  private setSurname(surname: string) {
+  public setSurname(surname: string) {
     if (isNil(surname)) throw new AttributeNotDefinedError("surname");
     validateName(surname);
     this.surname = surname;
   }
 
-  private setEmail(email: string) {
+  public setEmail(email: string) {
     const attributeName = "email";
     if (isNil(email)) throw new AttributeNotDefinedError(attributeName);
     validateEmail(email);

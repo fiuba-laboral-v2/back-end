@@ -6,6 +6,7 @@ export const companyUserPermissions = {
   },
   Mutation: {
     saveCompanyUser: isCompanyUser,
-    updatePassword: isCompanyUser
+    updatePassword: isCompanyUser,
+    updateCompanyUser: isCompanyUser
   }
 };
