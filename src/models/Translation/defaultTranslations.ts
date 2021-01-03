@@ -174,9 +174,6 @@ export const defaultTranslations = {
     confirmDialogCancel: "Cancelar",
     confirmDialogConfirm: "Confirmar"
   },
-  editableCompanyProfile: {
-    edit: "Editar"
-  },
   editMyCompanyProfile: {
     title: "Editar empresa",
     submit: "Guardar"
