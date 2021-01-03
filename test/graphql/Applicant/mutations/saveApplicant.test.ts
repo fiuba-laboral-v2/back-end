@@ -1,5 +1,5 @@
 import { gql } from "apollo-server";
-import { client } from "../../ApolloTestClient";
+import { client } from "$test/graphql/ApolloTestClient";
 
 import { UserRepository, User } from "$models/User";
 import { FiubaCredentials } from "$models/User/Credentials";

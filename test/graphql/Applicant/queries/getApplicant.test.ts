@@ -1,5 +1,5 @@
 import { gql } from "apollo-server";
-import { client } from "../../ApolloTestClient";
+import { client } from "$test/graphql/ApolloTestClient";
 
 import { CareerRepository } from "$models/Career";
 import { ApplicantNotFound } from "$models/Applicant/Errors/ApplicantNotFound";
