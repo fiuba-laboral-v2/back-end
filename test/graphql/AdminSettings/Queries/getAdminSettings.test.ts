@@ -1,5 +1,5 @@
 import { gql } from "apollo-server";
-import { client } from "../../ApolloTestClient";
+import { client } from "$test/graphql/ApolloTestClient";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { TestClientGenerator } from "$generators/TestClient";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";

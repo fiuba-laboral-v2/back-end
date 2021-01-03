@@ -57,6 +57,10 @@ export const defaultTranslations = {
     text: "No hay empresas para los filtros seleccionados",
     button: "Ver todas"
   },
+  companyProfileActions: {
+    edit: "Editar",
+    editCuitAndBusinessName: "Cambiar CUIT/Razón Social"
+  },
   applicantProfileActions: {
     edit: "Editar",
     editPadron: "Editar padrón"
@@ -175,9 +179,6 @@ export const defaultTranslations = {
     confirmDialogCancel: "Cancelar",
     confirmDialogConfirm: "Confirmar"
   },
-  editableCompanyProfile: {
-    edit: "Editar"
-  },
   editMyCompanyProfile: {
     title: "Editar empresa",
     submit: "Guardar"
@@ -213,6 +214,19 @@ export const defaultTranslations = {
   editCompanyUser: {
     title: "Editar usuario",
     submit: "Guardar"
+  },
+  editCuitAndBusinessName: {
+    title: "Editar cuit y razón social",
+    submit: "Guardar",
+    businessName: "Razón social",
+    cuit: "CUIT"
+  },
+  editCuitAndBusinessNameConfirmDialog: {
+    confirmDialogTitle: "¿Editar cuit y razón social?",
+    confirmDialogDescription:
+      "El perfil de tu empresa tendrá que ser nuevamente aprobado y deberá ser revisado por el personal de FIUBA para poder volver a utilizar el sitio",
+    confirmDialogCancel: "Cancelar",
+    confirmDialogConfirm: "Confirmar"
   },
   editPadron: {
     title: "Editar padrón",
