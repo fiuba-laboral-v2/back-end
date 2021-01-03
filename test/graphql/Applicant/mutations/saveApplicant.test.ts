@@ -1,17 +1,21 @@
 import { gql } from "apollo-server";
-import { client } from "../../ApolloTestClient";
+import { client } from "$test/graphql/ApolloTestClient";
+import { ISaveApplicant } from "$graphql/Applicant/Mutations/saveApplicant";
 
-import { UserRepository, User } from "$models/User";
+import { UserRepository, User, BadCredentialsError } from "$models/User";
 import { FiubaCredentials } from "$models/User/Credentials";
 import { CareerRepository } from "$models/Career";
 import { Career } from "$models";
+import { FiubaUsersService } from "$services";
 
 import { ApplicantGenerator } from "$generators/Applicant";
+import { AdminGenerator } from "$generators/Admin";
 import { CareerGenerator } from "$generators/Career";
 import { UUID_REGEX } from "$test/models";
 import { DniGenerator } from "$generators/DNI";
+import { omit } from "lodash";
 
-const SAVE_APPLICANT_WITH_COMPLETE_DATA = gql`
+const SAVE_APPLICANT = gql`
   mutation SaveApplicant(
     $user: UserInput!
     $padron: Int!
@@ -37,14 +41,12 @@ const SAVE_APPLICANT_WITH_COMPLETE_DATA = gql`
       padron
       description
       capabilities {
-        uuid
         description
       }
       careers {
         careerCode
         career {
           code
-          description
         }
         approvedSubjectCount
         currentCareerYear
@@ -54,113 +56,138 @@ const SAVE_APPLICANT_WITH_COMPLETE_DATA = gql`
   }
 `;
 
-const SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA = gql`
-  mutation SaveApplicant($user: UserInput!, $padron: Int!, $careers: [ApplicantCareerInput]!) {
-    saveApplicant(user: $user, padron: $padron, careers: $careers) {
-      uuid
-      user {
-        email
-      }
-      padron
-      careers {
-        careerCode
-      }
-    }
-  }
-`;
-
 describe("saveApplicant", () => {
-  let career: Career;
+  let firstCareer: Career;
+  let secondCareer: Career;
 
   beforeAll(async () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
-    career = await CareerGenerator.instance();
+    firstCareer = await CareerGenerator.instance();
+    secondCareer = await CareerGenerator.instance();
   });
 
-  describe("when the input is valid", () => {
-    it("creates a new applicant", async () => {
-      const applicantData = ApplicantGenerator.data.minimum();
-      const applicantCareerData = {
-        careerCode: career.code,
-        approvedSubjectCount: 20,
-        currentCareerYear: 3,
-        isGraduate: false
-      };
-      const { data, errors } = await client.loggedOut().mutate({
-        mutation: SAVE_APPLICANT_WITH_COMPLETE_DATA,
-        variables: {
-          ...applicantData,
-          careers: [applicantCareerData]
-        }
-      });
-      expect(errors).toBeUndefined();
-      expect(data!.saveApplicant).toEqual({
-        uuid: expect.stringMatching(UUID_REGEX),
-        user: {
-          uuid: expect.stringMatching(UUID_REGEX),
-          dni: applicantData.user.dni,
-          email: applicantData.user.email,
-          name: applicantData.user.name,
-          surname: applicantData.user.surname
-        },
-        description: applicantData.description,
-        padron: applicantData.padron,
-        capabilities: [],
-        careers: [
-          {
-            career: {
-              code: career.code,
-              description: career.description
-            },
-            ...applicantCareerData
-          }
-        ]
-      });
-    });
+  const saveApplicant = (variables: ISaveApplicant) =>
+    client.loggedOut().mutate({ mutation: SAVE_APPLICANT, variables });
 
-    it("creates applicant with only obligatory data", async () => {
-      const applicantData = ApplicantGenerator.data.minimum();
-      const applicantCareerData = {
-        careerCode: career.code,
-        isGraduate: true
-      };
-      const { data, errors } = await client.loggedOut().mutate({
-        mutation: SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA,
-        variables: { ...applicantData, careers: [applicantCareerData] }
-      });
-      expect(errors).toBeUndefined();
-      expect(data!.saveApplicant).toEqual({
+  const expectToSaveApplicant = async (variables: ISaveApplicant) => {
+    const { data, errors } = await saveApplicant(variables);
+
+    expect(errors).toBeUndefined();
+    expect(data!.saveApplicant).toBeObjectContaining({
+      uuid: expect.stringMatching(UUID_REGEX),
+      ...omit(variables, ["careers", "user", "capabilities"]),
+      user: {
         uuid: expect.stringMatching(UUID_REGEX),
-        user: { email: applicantData.user.email },
-        padron: applicantData.padron,
-        careers: [{ careerCode: applicantCareerData.careerCode }]
-      });
+        ...omit(variables.user, "password")
+      },
+      capabilities: expect.arrayContaining(
+        (variables.capabilities || []).map(description => ({ description }))
+      ),
+      careers: variables.careers.map(applicantCareer => ({
+        ...applicantCareer,
+        approvedSubjectCount: applicantCareer.approvedSubjectCount || null,
+        currentCareerYear: applicantCareer.currentCareerYear || null,
+        career: {
+          code: applicantCareer.careerCode
+        }
+      }))
+    });
+  };
+
+  it("creates a new student", async () => {
+    await expectToSaveApplicant({
+      ...ApplicantGenerator.data.minimum(),
+      careers: [
+        {
+          careerCode: firstCareer.code,
+          approvedSubjectCount: 20,
+          currentCareerYear: 3,
+          isGraduate: false
+        }
+      ]
+    });
+  });
+
+  it("creates a new graduate", async () => {
+    await expectToSaveApplicant({
+      ...ApplicantGenerator.data.minimum(),
+      careers: [
+        {
+          careerCode: firstCareer.code,
+          isGraduate: true
+        }
+      ]
+    });
+  });
+
+  it("creates a new student and graduate", async () => {
+    await expectToSaveApplicant({
+      ...ApplicantGenerator.data.minimum(),
+      careers: [
+        {
+          careerCode: firstCareer.code,
+          approvedSubjectCount: 20,
+          currentCareerYear: 3,
+          isGraduate: false
+        },
+        {
+          careerCode: secondCareer.code,
+          isGraduate: true
+        }
+      ]
+    });
+  });
+
+  it("creates an applicant that was already an admin", async () => {
+    const admin = await AdminGenerator.graduados();
+    const user = await UserRepository.findByUuid(admin.userUuid);
+    await expectToSaveApplicant({
+      ...ApplicantGenerator.data.minimum(),
+      user: {
+        name: user.name,
+        surname: user.surname,
+        email: user.email,
+        password: "mySecret",
+        dni: (user.credentials as FiubaCredentials).dni
+      },
+      careers: [
+        {
+          careerCode: firstCareer.code,
+          isGraduate: true
+        }
+      ]
+    });
+  });
+
+  it("creates an applicant with capabilities", async () => {
+    await expectToSaveApplicant({
+      ...ApplicantGenerator.data.minimum(),
+      careers: [{ careerCode: secondCareer.code, isGraduate: true }],
+      capabilities: ["Java", "Python", "clojure"]
     });
   });
 
   it("returns an error if it is not specified if the applicant is a graduate", async () => {
     const applicantData = ApplicantGenerator.data.minimum();
-
-    const { errors } = await client.loggedOut().mutate({
-      mutation: SAVE_APPLICANT_WITH_COMPLETE_DATA,
-      variables: {
-        ...applicantData,
-        careers: [{ careerCode: career.code }]
-      }
-    });
+    const variables = { ...applicantData, careers: [{ careerCode: firstCareer.code }] };
+    const { errors } = await saveApplicant(variables as ISaveApplicant);
     expect(errors).not.toBeUndefined();
   });
 
-  it("returns an error if the user exists", async () => {
+  it("returns an error if the user email exists", async () => {
     const applicantData = ApplicantGenerator.data.minimum();
     const fiubaCredentials = new FiubaCredentials(DniGenerator.generate());
     const user = new User({ ...applicantData.user, credentials: fiubaCredentials });
     await UserRepository.save(user);
-    const { errors } = await client.loggedOut().mutate({
-      mutation: SAVE_APPLICANT_WITH_ONLY_OBLIGATORY_DATA,
-      variables: applicantData
-    });
+    const { errors } = await saveApplicant(applicantData);
     expect(errors).toEqualGraphQLErrorType("UserEmailAlreadyExistsError");
+  });
+
+  it("returns an error if the Fiuba authentication fails", async () => {
+    const applicantData = ApplicantGenerator.data.minimum();
+    jest.spyOn(FiubaUsersService, "authenticate").mockImplementation(async () => false);
+    const { errors } = await saveApplicant(applicantData);
+    expect(errors).toEqualGraphQLErrorType(BadCredentialsError.name);
   });
 });

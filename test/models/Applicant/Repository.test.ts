@@ -32,62 +32,6 @@ describe("ApplicantRepository", () => {
   });
 
   describe("Create", () => {
-    describe("getType", () => {
-      it("creates a graduate", async () => {
-        const firstCareer = await CareerGenerator.instance();
-        const applicant = await ApplicantRepository.create({
-          ...ApplicantGenerator.data.minimum(),
-          careers: [{ careerCode: firstCareer.code, isGraduate: true }]
-        });
-        expect(await applicant.getType()).toEqual(ApplicantType.graduate);
-      });
-
-      it("creates a student", async () => {
-        const firstCareer = await CareerGenerator.instance();
-        const applicant = await ApplicantRepository.create({
-          ...ApplicantGenerator.data.minimum(),
-          careers: [
-            {
-              careerCode: firstCareer.code,
-              isGraduate: false,
-              approvedSubjectCount: 40,
-              currentCareerYear: 5
-            }
-          ]
-        });
-        expect(await applicant.getType()).toEqual(ApplicantType.student);
-      });
-
-      it("creates an applicant that is a student for one career and a graduate for another one", async () => {
-        const firstCareer = await CareerGenerator.instance();
-        const secondCareer = await CareerGenerator.instance();
-        const applicant = await ApplicantRepository.create({
-          ...ApplicantGenerator.data.minimum(),
-          careers: [
-            {
-              careerCode: firstCareer.code,
-              isGraduate: false,
-              approvedSubjectCount: 40,
-              currentCareerYear: 5
-            },
-            {
-              careerCode: secondCareer.code,
-              isGraduate: true
-            }
-          ]
-        });
-        expect(await applicant.getType()).toEqual(ApplicantType.both);
-      });
-
-      it("throws an error if the applicant has no careers", async () => {
-        const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
-        await expect(applicant.getType()).rejects.toThrowErrorWithMessage(
-          ApplicantWithNoCareersError,
-          ApplicantWithNoCareersError.buildMessage(applicant.uuid)
-        );
-      });
-    });
-
     it("creates a new applicant", async () => {
       const career = await CareerGenerator.instance();
       const applicantData = ApplicantGenerator.data.minimum();
@@ -209,6 +153,62 @@ describe("ApplicantRepository", () => {
       await expect(ApplicantRepository.create(applicantData)).rejects.toThrowErrorWithMessage(
         BadCredentialsError,
         BadCredentialsError.buildMessage()
+      );
+    });
+  });
+
+  describe("getType", () => {
+    it("creates a graduate", async () => {
+      const firstCareer = await CareerGenerator.instance();
+      const applicant = await ApplicantRepository.create({
+        ...ApplicantGenerator.data.minimum(),
+        careers: [{ careerCode: firstCareer.code, isGraduate: true }]
+      });
+      expect(await applicant.getType()).toEqual(ApplicantType.graduate);
+    });
+
+    it("creates a student", async () => {
+      const firstCareer = await CareerGenerator.instance();
+      const applicant = await ApplicantRepository.create({
+        ...ApplicantGenerator.data.minimum(),
+        careers: [
+          {
+            careerCode: firstCareer.code,
+            isGraduate: false,
+            approvedSubjectCount: 40,
+            currentCareerYear: 5
+          }
+        ]
+      });
+      expect(await applicant.getType()).toEqual(ApplicantType.student);
+    });
+
+    it("creates an applicant that is a student for one career and a graduate for another one", async () => {
+      const firstCareer = await CareerGenerator.instance();
+      const secondCareer = await CareerGenerator.instance();
+      const applicant = await ApplicantRepository.create({
+        ...ApplicantGenerator.data.minimum(),
+        careers: [
+          {
+            careerCode: firstCareer.code,
+            isGraduate: false,
+            approvedSubjectCount: 40,
+            currentCareerYear: 5
+          },
+          {
+            careerCode: secondCareer.code,
+            isGraduate: true
+          }
+        ]
+      });
+      expect(await applicant.getType()).toEqual(ApplicantType.both);
+    });
+
+    it("throws an error if the applicant has no careers", async () => {
+      const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
+      await expect(applicant.getType()).rejects.toThrowErrorWithMessage(
+        ApplicantWithNoCareersError,
+        ApplicantWithNoCareersError.buildMessage(applicant.uuid)
       );
     });
   });
