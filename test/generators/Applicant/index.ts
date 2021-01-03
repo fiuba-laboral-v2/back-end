@@ -1,11 +1,12 @@
 import { IApplicantInputData, withMinimumData } from "./withMinimumData";
-import { ApplicantRepository, ISaveApplicant } from "$models/Applicant";
+import { ApplicantRepository } from "$models/Applicant";
 import { ApplicantCareersRepository, IApplicantCareer } from "$models/Applicant/ApplicantCareer";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { CareerGenerator } from "$generators/Career";
 import { FiubaCredentials, User, UserRepository } from "$models/User";
 import { Applicant } from "$models";
 import { ApplicantCapabilityRepository } from "$models/ApplicantCapability";
+import { ISaveApplicant } from "$graphql/Applicant/Mutations/saveApplicant";
 
 interface IUpdatedWithStatus {
   status: ApprovalStatus;
