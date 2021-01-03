@@ -4,7 +4,7 @@ export const defaultTranslations = {
   },
   changeCurrentRoleButton: {
     enterAsAdmin: "Ingresar como Admin",
-    enterAsApplicant: "Ingresar como Applicant"
+    enterAsApplicant: "Ingresar como Postulante"
   },
   userEditFields: {
     name: "Nombre",
