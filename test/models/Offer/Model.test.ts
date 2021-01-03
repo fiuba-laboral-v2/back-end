@@ -5,7 +5,11 @@ import {
   PendingOfferWithExpirationTimeError,
   RejectedOfferWithExpirationTimeError
 } from "$models/Offer/Errors";
-import { NumberIsTooSmallError, SalaryRangeError } from "validations-fiuba-laboral-v2";
+import {
+  NumberIsTooLargeError,
+  NumberIsTooSmallError,
+  SalaryRangeError
+} from "validations-fiuba-laboral-v2";
 import { ValidationError } from "sequelize";
 
 import { Admin, Offer } from "$models";
@@ -963,6 +967,11 @@ describe("Offer", () => {
   it("throws an error if offer has negative hoursPerDay", async () => {
     const offer = new Offer({ ...mandatoryAttributes, hoursPerDay: -23 });
     await expect(offer.validate()).rejects.toThrow(NumberIsTooSmallError.buildMessage(0, false));
+  });
+
+  it("throws an error if offer has hoursPerDay bigger than 24", async () => {
+    const offer = new Offer({ ...mandatoryAttributes, hoursPerDay: 25 });
+    await expect(offer.validate()).rejects.toThrow(NumberIsTooLargeError.buildMessage(24, true));
   });
 
   it("throws an error if offer does not has a minimumSalary", async () => {

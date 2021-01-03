@@ -14,7 +14,7 @@ export const withObligatoryData = ({
   companyUuid,
   title: `title${index}`,
   description: `description${index}`,
-  hoursPerDay: index + 1,
+  hoursPerDay: 4,
   isInternship,
   minimumSalary: index + 1,
   maximumSalary: maximumSalary !== undefined ? maximumSalary || undefined : 2 * index + 1,

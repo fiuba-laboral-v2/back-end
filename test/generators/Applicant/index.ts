@@ -1,13 +1,29 @@
 import { IApplicantInputData, withMinimumData } from "./withMinimumData";
 import { ApplicantRepository } from "$models/Applicant";
-import { IApplicantCareer } from "$models/Applicant/ApplicantCareer";
+import { ApplicantCareersRepository, IApplicantCareer } from "$models/Applicant/ApplicantCareer";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { CareerGenerator } from "$generators/Career";
+import { FiubaCredentials, User, UserRepository } from "$models/User";
+import { Applicant } from "$models";
+import { ApplicantCapabilityRepository } from "$models/ApplicantCapability";
+import { ISaveApplicant } from "$graphql/Applicant/Mutations/saveApplicant";
 
 interface IUpdatedWithStatus {
   status: ApprovalStatus;
   careers?: IApplicantCareer[];
 }
+
+const createApplicant = async (attributes: ISaveApplicant) => {
+  const { dni, ...userAttributes } = attributes.user;
+  const { padron, description, careers, capabilities } = attributes;
+  const user = new User({ ...userAttributes, credentials: new FiubaCredentials(dni) });
+  await UserRepository.save(user);
+  const applicant = new Applicant({ padron, description, userUuid: user.uuid });
+  await ApplicantRepository.save(applicant);
+  await ApplicantCareersRepository.bulkCreate(careers, applicant);
+  await ApplicantCapabilityRepository.update(capabilities || [], applicant);
+  return applicant;
+};
 
 export const ApplicantGenerator = {
   index: 0,
@@ -16,13 +32,10 @@ export const ApplicantGenerator = {
     return ApplicantGenerator.index;
   },
   instance: {
-    withMinimumData: (variables?: IApplicantInputData) =>
-      ApplicantRepository.create(
-        withMinimumData({
-          index: ApplicantGenerator.getIndex(),
-          ...variables
-        })
-      ),
+    withMinimumData: async (variables?: IApplicantInputData) => {
+      const attributes = withMinimumData({ index: ApplicantGenerator.getIndex(), ...variables });
+      return createApplicant(attributes);
+    },
     student: async (status?: ApprovalStatus) => {
       const { code: careerCode } = await CareerGenerator.instance();
       return ApplicantGenerator.instance.updatedWithStatus({
@@ -54,9 +67,9 @@ export const ApplicantGenerator = {
       });
     },
     updatedWithStatus: async (variables?: IUpdatedWithStatus) => {
-      const applicant = await ApplicantRepository.create(
-        withMinimumData({ index: ApplicantGenerator.getIndex(), careers: variables?.careers })
-      );
+      const index = ApplicantGenerator.getIndex();
+      const attributes = withMinimumData({ index, careers: variables?.careers });
+      const applicant = await createApplicant(attributes);
       if (!variables) return applicant;
       applicant.set({ approvalStatus: variables.status });
       await ApplicantRepository.save(applicant);
