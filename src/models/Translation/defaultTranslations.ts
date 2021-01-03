@@ -130,7 +130,8 @@ export const defaultTranslations = {
     addAdminButtonLabel: "Agregar usuario"
   },
   companyUserActions: {
-    passwordTooltipMessage: "Cambiar contraseña"
+    passwordTooltipMessage: "Cambiar contraseña",
+    editUserTooltipMessage: "Editar usuario"
   },
   admins: {
     addAdminButtonLabel: "Agregar administrador"
