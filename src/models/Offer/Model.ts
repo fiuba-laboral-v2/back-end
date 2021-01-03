@@ -102,7 +102,10 @@ export class Offer extends Model<Offer> {
   })
   public targetApplicantType: ApplicantType;
 
-  @Is("hoursPerDay", validateIntegerInRange({ min: { value: 0, include: false } }))
+  @Is(
+    "hoursPerDay",
+    validateIntegerInRange({ min: { value: 0, include: false }, max: { value: 24, include: true } })
+  )
   @Column({ allowNull: false, type: INTEGER })
   public hoursPerDay: number;
 
