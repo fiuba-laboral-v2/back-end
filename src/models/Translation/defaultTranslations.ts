@@ -53,6 +53,10 @@ export const defaultTranslations = {
     text: "No hay empresas para los filtros seleccionados",
     button: "Ver todas"
   },
+  companyProfileActions: {
+    edit: "Editar",
+    editCuitAndBusinessName: "Cambiar CUIT/Razón Social"
+  },
   applicantProfileActions: {
     edit: "Editar",
     editPadron: "Editar padrón"
