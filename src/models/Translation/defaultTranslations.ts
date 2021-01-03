@@ -205,6 +205,19 @@ export const defaultTranslations = {
     title: "Agregar usuario",
     submit: "Guardar"
   },
+  editCuitAndBusinessName: {
+    title: "Editar cuit y razón social",
+    submit: "Guardar",
+    businessName: "Razón social",
+    cuit: "CUIT"
+  },
+  editCuitAndBusinessNameConfirmDialog: {
+    confirmDialogTitle: "¿Editar cuit y razón social?",
+    confirmDialogDescription:
+      "El perfil de tu empresa tendrá que ser nuevamente aprobado y deberá ser revisado por el personal de FIUBA para poder volver a utilizar el sitio",
+    confirmDialogCancel: "Cancelar",
+    confirmDialogConfirm: "Confirmar"
+  },
   editPadron: {
     title: "Editar padrón",
     submit: "Guardar",
