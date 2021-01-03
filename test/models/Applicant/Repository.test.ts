@@ -1,6 +1,5 @@
 import { ValidationError, UniqueConstraintError } from "sequelize";
 import { ApplicantNotFound, ApplicantWithNoCareersError } from "$models/Applicant/Errors";
-import { BadCredentialsError } from "$models/User/Errors";
 import {
   ForbiddenCurrentCareerYearError,
   MissingApprovedSubjectCountError
@@ -8,204 +7,49 @@ import {
 
 import { CareerRepository } from "$models/Career";
 import { ApplicantRepository, IApplicantEditable, ISection } from "$models/Applicant";
-import { ApplicantKnowledgeSection } from "$models";
+import { ApplicantKnowledgeSection, Career } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Applicant";
 import { ApplicantCareersRepository } from "$models/Applicant/ApplicantCareer";
-import { ApplicantKnowledgeSectionRepository } from "$models/Applicant/ApplicantKnowledgeSection";
-import { ApplicantExperienceSectionRepository } from "$models/Applicant/ApplicantExperienceSection";
 import { UserRepository } from "$models/User";
 import { CapabilityRepository } from "$models/Capability";
-import { FiubaUsersService } from "$services/FiubaUsers";
 
 import { ApplicantGenerator } from "$generators/Applicant";
 import { CareerGenerator } from "$generators/Career";
-import { UUID_REGEX } from "$test/models";
 import { get, set } from "lodash";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 
 describe("ApplicantRepository", () => {
+  let firstCareer: Career;
+  let secondCareer: Career;
+
   beforeAll(async () => {
     await UserRepository.truncate();
     await CareerRepository.truncate();
     await CapabilityRepository.truncate();
-  });
 
-  describe("Create", () => {
-    it("creates a new applicant", async () => {
-      const career = await CareerGenerator.instance();
-      const applicantData = ApplicantGenerator.data.minimum();
-      const applicantCareerData = { careerCode: career.code, isGraduate: true };
-      const applicant = await ApplicantRepository.create({
-        ...applicantData,
-        careers: [applicantCareerData],
-        capabilities: ["Python"]
-      });
-      const [applicantCareer] = await applicant.getApplicantCareers();
-
-      expect(applicant).toEqual(
-        expect.objectContaining({
-          uuid: expect.stringMatching(UUID_REGEX),
-          padron: applicantData.padron,
-          description: applicantData.description
-        })
-      );
-      expect(applicantCareer).toBeObjectContaining(applicantCareerData);
-      const capabilities = await applicant.getCapabilities();
-      const capabilityDescriptions = capabilities.map(c => c.description.toLowerCase());
-      expect(capabilityDescriptions).toEqual(["Python".toLowerCase()]);
-    });
-
-    it("creates two valid applicant in the same career", async () => {
-      const career = await CareerGenerator.instance();
-      const applicantCareer = {
-        careerCode: career.code,
-        isGraduate: true
-      };
-      await ApplicantRepository.create({
-        ...ApplicantGenerator.data.minimum(),
-        careers: [applicantCareer]
-      });
-      await expect(
-        ApplicantRepository.create({
-          ...ApplicantGenerator.data.minimum(),
-          careers: [applicantCareer]
-        })
-      ).resolves.not.toThrow(ApplicantNotFound);
-    });
-
-    it("creates an applicant without a career and without capabilities", async () => {
-      const applicantData = ApplicantGenerator.data.minimum();
-      const savedApplicant = await ApplicantRepository.create(applicantData);
-      const applicant = await ApplicantRepository.findByUuid(savedApplicant.uuid);
-      expect(await applicant.getCareers()).toHaveLength(0);
-      expect(await applicant.getCapabilities()).toHaveLength(0);
-    });
-
-    it("creates an applicant with capabilities", async () => {
-      const applicantData = ApplicantGenerator.data.minimum();
-      const applicant = await ApplicantRepository.create({
-        ...applicantData,
-        capabilities: ["Python"]
-      });
-      const [capability] = await applicant.getCapabilities();
-      expect(capability.description).toEqual("Python");
-    });
-
-    it("creates applicant with a valid knowledge section", async () => {
-      const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
-      const sectionData = { title: "title", text: "text", displayOrder: 1 };
-      await new ApplicantKnowledgeSectionRepository().update({
-        sections: [sectionData],
-        applicant
-      });
-      const [section] = await applicant.getKnowledgeSections();
-      expect(section).toBeObjectContaining(sectionData);
-    });
-
-    it("creates applicant with a valid experience section", async () => {
-      const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
-      const sectionData = { title: "title", text: "text", displayOrder: 1 };
-      await new ApplicantExperienceSectionRepository().update({
-        sections: [sectionData],
-        applicant
-      });
-      const [section] = await applicant.getExperienceSections();
-      expect(section).toBeObjectContaining(sectionData);
-    });
-
-    it("throws an error if no padron is given", async () => {
-      const applicantData = ApplicantGenerator.data.minimum();
-      delete applicantData.padron;
-      await expect(ApplicantRepository.create(applicantData)).rejects.toThrowErrorWithMessage(
-        ValidationError,
-        "notNull Violation: Applicant.padron cannot be null"
-      );
-    });
-
-    it("throws an error it is not specified if the applicant is a graduate", async () => {
-      const career = await CareerGenerator.instance();
-      const applicantData = {
-        ...ApplicantGenerator.data.minimum(),
-        careers: [
-          {
-            careerCode: career.code,
-            isGraduate: true
-          }
-        ]
-      };
-      delete applicantData.careers[0].isGraduate;
-      await expect(
-        ApplicantRepository.create(applicantData)
-      ).rejects.toThrowBulkRecordErrorIncluding([
-        {
-          errorClass: ValidationError,
-          message: "notNull Violation: ApplicantCareer.isGraduate cannot be null"
-        }
-      ]);
-    });
-
-    it("throws an error if the FiubaService authentication returns false", async () => {
-      const fiubaUsersServiceMock = jest.spyOn(FiubaUsersService, "authenticate");
-      fiubaUsersServiceMock.mockResolvedValueOnce(Promise.resolve(false));
-
-      const applicantData = ApplicantGenerator.data.minimum();
-      await expect(ApplicantRepository.create(applicantData)).rejects.toThrowErrorWithMessage(
-        BadCredentialsError,
-        BadCredentialsError.buildMessage()
-      );
-    });
+    firstCareer = await CareerGenerator.instance();
+    secondCareer = await CareerGenerator.instance();
   });
 
   describe("getType", () => {
     it("creates a graduate", async () => {
-      const firstCareer = await CareerGenerator.instance();
-      const applicant = await ApplicantRepository.create({
-        ...ApplicantGenerator.data.minimum(),
-        careers: [{ careerCode: firstCareer.code, isGraduate: true }]
-      });
+      const applicant = await ApplicantGenerator.instance.graduate();
       expect(await applicant.getType()).toEqual(ApplicantType.graduate);
     });
 
     it("creates a student", async () => {
-      const firstCareer = await CareerGenerator.instance();
-      const applicant = await ApplicantRepository.create({
-        ...ApplicantGenerator.data.minimum(),
-        careers: [
-          {
-            careerCode: firstCareer.code,
-            isGraduate: false,
-            approvedSubjectCount: 40,
-            currentCareerYear: 5
-          }
-        ]
-      });
+      const applicant = await ApplicantGenerator.instance.student();
       expect(await applicant.getType()).toEqual(ApplicantType.student);
     });
 
     it("creates an applicant that is a student for one career and a graduate for another one", async () => {
-      const firstCareer = await CareerGenerator.instance();
-      const secondCareer = await CareerGenerator.instance();
-      const applicant = await ApplicantRepository.create({
-        ...ApplicantGenerator.data.minimum(),
-        careers: [
-          {
-            careerCode: firstCareer.code,
-            isGraduate: false,
-            approvedSubjectCount: 40,
-            currentCareerYear: 5
-          },
-          {
-            careerCode: secondCareer.code,
-            isGraduate: true
-          }
-        ]
-      });
+      const applicant = await ApplicantGenerator.instance.studentAndGraduate();
       expect(await applicant.getType()).toEqual(ApplicantType.both);
     });
 
     it("throws an error if the applicant has no careers", async () => {
-      const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
+      const applicant = await ApplicantGenerator.instance.withMinimumData();
       await expect(applicant.getType()).rejects.toThrowErrorWithMessage(
         ApplicantWithNoCareersError,
         ApplicantWithNoCareersError.buildMessage(applicant.uuid)
@@ -215,57 +59,15 @@ describe("ApplicantRepository", () => {
 
   describe("Get", () => {
     it("retrieves applicant by padron", async () => {
-      const applicantData = ApplicantGenerator.data.minimum();
-      const career = await CareerGenerator.instance();
-      const applicantCareerData = { careerCode: career.code, isGraduate: true };
-      await ApplicantRepository.create({
-        ...applicantData,
-        careers: [applicantCareerData],
-        capabilities: ["Node"]
-      });
-
-      const applicant = await ApplicantRepository.findByPadron(applicantData.padron);
-
-      expect(applicant).toEqual(
-        expect.objectContaining({
-          uuid: expect.stringMatching(UUID_REGEX),
-          padron: applicantData.padron,
-          description: applicantData.description
-        })
-      );
-
-      const [applicantCareer] = await applicant.getApplicantCareers();
-      expect(applicantCareer).toBeObjectContaining(applicantCareerData);
-
-      const capabilities = await applicant.getCapabilities();
-      const capabilityDescriptions = capabilities.map(c => c.description.toLowerCase());
-      expect(capabilityDescriptions).toEqual(["Node".toLowerCase()]);
+      const applicant = await ApplicantGenerator.instance.withMinimumData();
+      const persistedApplicant = await ApplicantRepository.findByPadron(applicant.padron);
+      expect(applicant.uuid).toEqual(persistedApplicant.uuid);
     });
 
     it("retrieves applicant by uuid", async () => {
-      const applicantData = ApplicantGenerator.data.minimum();
-      const career = await CareerGenerator.instance();
-      const applicantCareerData = { careerCode: career.code, isGraduate: true };
-      const { uuid } = await ApplicantRepository.create({
-        ...applicantData,
-        careers: [applicantCareerData],
-        capabilities: ["GO"]
-      });
-      const applicant = await ApplicantRepository.findByUuid(uuid);
-
-      expect(applicant).toEqual(
-        expect.objectContaining({
-          uuid: expect.stringMatching(UUID_REGEX),
-          padron: applicantData.padron,
-          description: applicantData.description
-        })
-      );
-
-      const [applicantCareer] = await applicant.getApplicantCareers();
-      expect(applicantCareer).toBeObjectContaining(applicantCareerData);
-      const capabilities = await applicant.getCapabilities();
-      const capabilityDescriptions = capabilities.map(c => c.description.toLowerCase());
-      expect(capabilityDescriptions).toEqual(["GO".toLowerCase()]);
+      const applicant = await ApplicantGenerator.instance.withMinimumData();
+      const persistedApplicant = await ApplicantRepository.findByUuid(applicant.uuid);
+      expect(applicant.uuid).toEqual(persistedApplicant.uuid);
     });
 
     it("throws ApplicantNotFound if the applicant doesn't exists", async () => {
@@ -396,7 +198,7 @@ describe("ApplicantRepository", () => {
       );
 
     const expectToUpdateProperty = async (attributeKey: string, newValue: string) => {
-      const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
+      const { uuid } = await ApplicantGenerator.instance.withMinimumData();
       let newProps: IApplicantEditable = { uuid };
       newProps = set(newProps, attributeKey, newValue);
       const applicant = await ApplicantRepository.update(newProps);
@@ -407,11 +209,7 @@ describe("ApplicantRepository", () => {
     };
 
     it("updates all props", async () => {
-      const { code: careerCode } = await CareerGenerator.instance();
-      const { uuid } = await ApplicantRepository.create({
-        ...ApplicantGenerator.data.minimum(),
-        careers: [{ careerCode, isGraduate: true }]
-      });
+      const { uuid } = await ApplicantGenerator.instance.graduate();
       const newCareer = await CareerGenerator.instance();
       const newProps: IApplicantEditable = {
         uuid,
@@ -528,9 +326,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("updates by keeping only the new careers", async () => {
-      const applicant = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
-      const firstCareer = await CareerGenerator.instance();
-      const secondCareer = await CareerGenerator.instance();
+      const applicant = await ApplicantGenerator.instance.studentAndGraduate();
       const newProps: IApplicantEditable = {
         uuid: applicant.uuid,
         careers: [
@@ -642,7 +438,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("updates by keeping only the new links", async () => {
-      const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
+      const { uuid } = await ApplicantGenerator.instance.student();
       const linksData = [
         {
           name: "LinkedIn",
@@ -683,7 +479,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("updates by deleting all links if none is provided", async () => {
-      const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
+      const { uuid } = await ApplicantGenerator.instance.student();
       const applicant = await ApplicantRepository.update({
         uuid,
         links: [
@@ -702,10 +498,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("does not throw an error when adding an existing capability", async () => {
-      const { uuid } = await ApplicantRepository.create({
-        ...ApplicantGenerator.data.minimum(),
-        capabilities: ["GO"]
-      });
+      const { uuid } = await ApplicantGenerator.instance.withMinimumData({ capabilities: ["GO"] });
       await expect(
         ApplicantRepository.update({ uuid, capabilities: ["GO"] })
       ).resolves.not.toThrow();
@@ -713,8 +506,7 @@ describe("ApplicantRepository", () => {
 
     it("updates currentCareerYear and approvedSubjectCount of applicant careers", async () => {
       const career = await CareerGenerator.instance();
-      const { uuid } = await ApplicantRepository.create({
-        ...ApplicantGenerator.data.minimum(),
+      const applicant = await ApplicantGenerator.instance.withMinimumData({
         careers: [
           {
             careerCode: career.code,
@@ -730,13 +522,10 @@ describe("ApplicantRepository", () => {
         approvedSubjectCount: 17,
         isGraduate: false
       };
-      await ApplicantRepository.update({
-        uuid,
-        careers: [newApplicantCareerData]
-      });
+      await ApplicantRepository.update({ uuid: applicant.uuid, careers: [newApplicantCareerData] });
 
       const updatedApplicantCareer = await ApplicantCareersRepository.findByApplicantAndCareer(
-        uuid,
+        applicant.uuid,
         career.code
       );
       expect(updatedApplicantCareer).toBeObjectContaining(newApplicantCareerData);
@@ -744,8 +533,7 @@ describe("ApplicantRepository", () => {
 
     it("updates by deleting all applicant careers if none is provided", async () => {
       const career = await CareerGenerator.instance();
-      const applicant = await ApplicantRepository.create({
-        ...ApplicantGenerator.data.minimum(),
+      const applicant = await ApplicantGenerator.instance.withMinimumData({
         careers: [{ careerCode: career.code, isGraduate: true }]
       });
       const newApplicantCareerData = [{ careerCode: career.code, isGraduate: true }];
@@ -760,7 +548,7 @@ describe("ApplicantRepository", () => {
 
     describe("with wrong parameters", () => {
       it("throws an error if currentCareerYear is present for a graduated", async () => {
-        const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
+        const { uuid } = await ApplicantGenerator.instance.withMinimumData();
         const { code: careerCode } = await CareerGenerator.instance();
         const dataToUpdate = {
           uuid,
@@ -783,7 +571,7 @@ describe("ApplicantRepository", () => {
       });
 
       it("throws an error if approvedSubjectCount is missing for a non graduate", async () => {
-        const { uuid } = await ApplicantRepository.create(ApplicantGenerator.data.minimum());
+        const { uuid } = await ApplicantGenerator.instance.withMinimumData();
         const { code: careerCode } = await CareerGenerator.instance();
         const dataToUpdate = {
           uuid,

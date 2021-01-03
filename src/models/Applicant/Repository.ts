@@ -1,5 +1,5 @@
 import { Transaction } from "sequelize";
-import { IApplicantEditable, ISaveApplicant } from "./index";
+import { IApplicantEditable } from "./index";
 import { ApplicantNotFound } from "./Errors";
 import { Database } from "$config";
 import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedInput";
@@ -8,38 +8,14 @@ import { ApplicantCapabilityRepository } from "../ApplicantCapability";
 import { ApplicantKnowledgeSectionRepository } from "./ApplicantKnowledgeSection";
 import { ApplicantExperienceSectionRepository } from "./ApplicantExperienceSection";
 import { ApplicantLinkRepository } from "./Link";
-import { User, UserRepository } from "../User";
+import { UserRepository } from "../User";
 import { Applicant } from "..";
 import { PaginationQuery } from "../PaginationQuery";
-import { FiubaCredentials } from "$models/User/Credentials";
 
 export const ApplicantRepository = {
   save: (applicant: Applicant, transaction?: Transaction) => applicant.save({ transaction }),
-  create: ({
-    padron,
-    description,
-    careers: applicantCareers = [],
-    capabilities = [],
-    user: { name, surname, email, password, dni }
-  }: ISaveApplicant) =>
-    Database.transaction(async transaction => {
-      const credentials = new FiubaCredentials(dni);
-      const user = new User({ name, surname, email, credentials });
-      await user.credentials.authenticate(password);
-      await UserRepository.save(user, transaction);
-      const applicant = await Applicant.create(
-        { padron, description, userUuid: user.uuid! },
-        { transaction }
-      );
-      await ApplicantCareersRepository.bulkCreate(applicantCareers, applicant, transaction);
-      await ApplicantCapabilityRepository.update(capabilities, applicant, transaction);
-      return applicant;
-    }),
   findLatest: (updatedBeforeThan?: IPaginatedInput) =>
-    PaginationQuery.findLatest({
-      updatedBeforeThan,
-      query: options => Applicant.findAll(options)
-    }),
+    PaginationQuery.findLatest({ updatedBeforeThan, query: options => Applicant.findAll(options) }),
   findByUuid: async (uuid: string) => {
     const applicant = await Applicant.findByPk(uuid);
     if (!applicant) throw new ApplicantNotFound(uuid);
