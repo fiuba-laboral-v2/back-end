@@ -1,21 +1,6 @@
 import { TLink } from "./Link/Interface";
-import { ICreateFiubaUser, IUser, IUserEditable } from "../User";
+import { IUserEditable } from "../User";
 import { IApplicantCareer } from "./ApplicantCareer";
-
-export interface IApplicant {
-  padron: number;
-  description?: string;
-  careers: IApplicantCareer[];
-  capabilities?: string[];
-  knowledgeSections?: ISection[];
-  experienceSections?: ISection[];
-  links?: TLink[];
-  user: IUser;
-}
-
-export interface ISaveApplicant extends IApplicant {
-  user: ICreateFiubaUser;
-}
 
 export interface IApplicantEditable {
   uuid: string;

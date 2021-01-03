@@ -5,7 +5,6 @@ import {
 import { EmailService } from "$services/Email";
 import { RejectedProfileApplicantNotificationEmailSender } from "$services/EmailSender";
 import { UserRepository } from "$models/User";
-import { ApplicantRepository } from "$models/Applicant";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
@@ -30,8 +29,8 @@ describe("RejectedProfileApplicantNotificationEmailSender", () => {
     const admin = await AdminGenerator.graduados();
     const adminUser = await UserRepository.findByUuid(admin.userUuid);
     const settings = await SecretarySettingsRepository.findBySecretary(admin.secretary);
-    const applicantAttributes = ApplicantGenerator.data.minimum();
-    const applicant = await ApplicantRepository.create(applicantAttributes);
+    const applicant = await ApplicantGenerator.instance.studentAndGraduate();
+    const applicantUser = await UserRepository.findByUuid(applicant.userUuid);
     const notification = new RejectedProfileApplicantNotification({
       moderatorUuid: admin.userUuid,
       notifiedApplicantUuid: applicant.uuid,
@@ -44,7 +43,7 @@ describe("RejectedProfileApplicantNotificationEmailSender", () => {
     expect(emailSendMock.mock.calls).toEqual([
       [
         {
-          receiverEmails: [applicantAttributes.user.email],
+          receiverEmails: [applicantUser.email],
           sender: {
             name: `${adminUser.name} ${adminUser.surname}`,
             email: settings.email
