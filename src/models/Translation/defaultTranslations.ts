@@ -206,6 +206,10 @@ export const defaultTranslations = {
     title: "Agregar usuario",
     submit: "Guardar"
   },
+  editCompanyUser: {
+    title: "Editar usuario",
+    submit: "Guardar"
+  },
   editPadron: {
     title: "Editar padrón",
     submit: "Guardar",
