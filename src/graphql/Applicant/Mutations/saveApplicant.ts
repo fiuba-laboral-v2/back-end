@@ -5,7 +5,7 @@ import { GraphQLApplicantCareerInput } from "../Types/GraphQLApplicantCareerInpu
 import { ApplicantRepository, ISaveApplicant } from "$models/Applicant";
 import { GraphQLUserCreateInput } from "$graphql/User/Types/GraphQLUserCreateInput";
 
-const saveApplicant = {
+export const saveApplicant = {
   type: GraphQLApplicant,
   args: {
     padron: {
@@ -26,5 +26,3 @@ const saveApplicant = {
   },
   resolve: (_: undefined, props: ISaveApplicant) => ApplicantRepository.create(props)
 };
-
-export { saveApplicant };
