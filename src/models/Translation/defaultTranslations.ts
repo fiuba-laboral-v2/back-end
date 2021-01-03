@@ -2,6 +2,10 @@ export const defaultTranslations = {
   titleBar: {
     title: "Bolsa de trabajo FIUBA"
   },
+  changeCurrentRoleButton: {
+    enterAsAdmin: "Ingresar como Admin",
+    enterAsApplicant: "Ingresar como Applicant"
+  },
   userEditFields: {
     name: "Nombre",
     surname: "Apellido"
