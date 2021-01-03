@@ -2,7 +2,8 @@ import { isCompanyUser } from "$graphql/Rules";
 
 export const companyUserPermissions = {
   Query: {
-    getCompanyUsers: isCompanyUser
+    getCompanyUsers: isCompanyUser,
+    getMyCompanyUser: isCompanyUser
   },
   Mutation: {
     saveCompanyUser: isCompanyUser,
