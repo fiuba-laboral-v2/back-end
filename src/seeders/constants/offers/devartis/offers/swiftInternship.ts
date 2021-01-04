@@ -8,7 +8,7 @@ export const swiftInternship = {
   offer: {
     uuid: uuids.offers.swiftInternship,
     companyUuid: uuids.companies.devartis.uuid,
-    title: "Pasantía: desarrollador Swift",
+    title: "Desarrollador Swift",
     targetApplicantType: ApplicantType.student,
     description,
     isInternship: true,
