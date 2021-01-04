@@ -18,25 +18,27 @@ export class ApplicantTestSetup {
   public tasks: AdminTask[];
 
   public async execute() {
-    this.rejectedStudentAndGraduate = await ApplicantGenerator.instance.studentAndGraduate(
-      ApprovalStatus.rejected
-    );
+    const generator = ApplicantGenerator.instance;
 
-    this.approvedStudentAndGraduate = await ApplicantGenerator.instance.studentAndGraduate(
-      ApprovalStatus.approved
-    );
+    this.rejectedStudentAndGraduate = await generator.studentAndGraduate({
+      status: ApprovalStatus.rejected
+    });
 
-    this.pendingStudentAndGraduate = await ApplicantGenerator.instance.studentAndGraduate(
-      ApprovalStatus.pending
-    );
+    this.approvedStudentAndGraduate = await generator.studentAndGraduate({
+      status: ApprovalStatus.approved
+    });
 
-    this.rejectedStudent = await ApplicantGenerator.instance.student(ApprovalStatus.rejected);
-    this.approvedStudent = await ApplicantGenerator.instance.student(ApprovalStatus.approved);
-    this.pendingStudent = await ApplicantGenerator.instance.student(ApprovalStatus.pending);
+    this.pendingStudentAndGraduate = await generator.studentAndGraduate({
+      status: ApprovalStatus.pending
+    });
 
-    this.rejectedGraduate = await ApplicantGenerator.instance.graduate(ApprovalStatus.rejected);
-    this.approvedGraduate = await ApplicantGenerator.instance.graduate(ApprovalStatus.approved);
-    this.pendingGraduate = await ApplicantGenerator.instance.graduate(ApprovalStatus.pending);
+    this.rejectedStudent = await generator.student({ status: ApprovalStatus.rejected });
+    this.approvedStudent = await generator.student({ status: ApprovalStatus.approved });
+    this.pendingStudent = await generator.student({ status: ApprovalStatus.pending });
+
+    this.rejectedGraduate = await generator.graduate({ status: ApprovalStatus.rejected });
+    this.approvedGraduate = await generator.graduate({ status: ApprovalStatus.approved });
+    this.pendingGraduate = await generator.graduate({ status: ApprovalStatus.pending });
 
     this.tasks = [
       this.rejectedStudentAndGraduate,

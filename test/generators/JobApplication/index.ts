@@ -10,8 +10,10 @@ import { OfferRepository } from "$models/Offer";
 
 const getApplicantForSecretary = (secretary: Secretary) => {
   const generator = ApplicantGenerator.instance;
-  if (secretary === Secretary.graduados) return generator.graduate(ApprovalStatus.approved);
-  return generator.student(ApprovalStatus.approved);
+  if (secretary === Secretary.graduados) {
+    return generator.graduate({ status: ApprovalStatus.approved });
+  }
+  return generator.student({ status: ApprovalStatus.approved });
 };
 
 export const JobApplicationGenerator = {

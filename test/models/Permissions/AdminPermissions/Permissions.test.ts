@@ -161,7 +161,9 @@ describe("AdminPermissions", () => {
       });
 
       it("returns false if the applicant is a graduate", async () => {
-        const graduate = await ApplicantGenerator.instance.graduate(ApprovalStatus.approved);
+        const graduate = await ApplicantGenerator.instance.graduate({
+          status: ApprovalStatus.approved
+        });
         const graduateJobApplication = graduate.applyTo(offer);
         await JobApplicationRepository.save(graduateJobApplication);
         const permissions = new AdminPermissions(admin.userUuid);
@@ -169,9 +171,9 @@ describe("AdminPermissions", () => {
       });
 
       it("returns false if the applicant is a student and a graduate", async () => {
-        const studentAndGraduate = await ApplicantGenerator.instance.studentAndGraduate(
-          ApprovalStatus.approved
-        );
+        const studentAndGraduate = await ApplicantGenerator.instance.studentAndGraduate({
+          status: ApprovalStatus.approved
+        });
         const studentAndGraduateJobApplication = studentAndGraduate.applyTo(offer);
         await JobApplicationRepository.save(studentAndGraduateJobApplication);
         const permissions = new AdminPermissions(admin.userUuid);
@@ -188,7 +190,7 @@ describe("AdminPermissions", () => {
 
       beforeAll(async () => {
         admin = graduadosAdmin;
-        graduate = await ApplicantGenerator.instance.graduate(ApprovalStatus.approved);
+        graduate = await ApplicantGenerator.instance.graduate({ status: ApprovalStatus.approved });
         jobApplication = graduate.applyTo(offer);
         await JobApplicationRepository.save(jobApplication);
       });
@@ -204,9 +206,9 @@ describe("AdminPermissions", () => {
       });
 
       it("returns true if the applicant is a student and a graduate", async () => {
-        const studentAndGraduate = await ApplicantGenerator.instance.studentAndGraduate(
-          ApprovalStatus.approved
-        );
+        const studentAndGraduate = await ApplicantGenerator.instance.studentAndGraduate({
+          status: ApprovalStatus.approved
+        });
         const studentAndGraduateJobApplication = studentAndGraduate.applyTo(offer);
         await JobApplicationRepository.save(studentAndGraduateJobApplication);
         const permissions = new AdminPermissions(admin.userUuid);

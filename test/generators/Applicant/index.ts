@@ -4,13 +4,24 @@ import { ApplicantCareersRepository, IApplicantCareer } from "$models/Applicant/
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { CareerGenerator } from "$generators/Career";
 import { FiubaCredentials, User, UserRepository } from "$models/User";
-import { Applicant } from "$models";
+import { Applicant, Career } from "$models";
 import { ApplicantCapabilityRepository } from "$models/ApplicantCapability";
 import { ISaveApplicant } from "$graphql/Applicant/Mutations/saveApplicant";
 
 interface IUpdatedWithStatus {
   status: ApprovalStatus;
   careers?: IApplicantCareer[];
+}
+
+interface IApplicantWithOneCareer {
+  status?: ApprovalStatus;
+  career?: Career;
+}
+
+interface IApplicantWithTwoCareer {
+  status?: ApprovalStatus;
+  careerInProgress?: Career;
+  finishedCareer?: Career;
 }
 
 const createApplicant = async (attributes: ISaveApplicant) => {
@@ -36,23 +47,27 @@ export const ApplicantGenerator = {
       const attributes = withMinimumData({ index: ApplicantGenerator.getIndex(), ...variables });
       return createApplicant(attributes);
     },
-    student: async (status?: ApprovalStatus) => {
-      const { code: careerCode } = await CareerGenerator.instance();
+    student: async ({ status, career }: IApplicantWithOneCareer = {}) => {
+      const { code: careerCode } = career || (await CareerGenerator.instance());
       return ApplicantGenerator.instance.updatedWithStatus({
         status: status || ApprovalStatus.approved,
         careers: [{ careerCode, isGraduate: false, approvedSubjectCount: 40, currentCareerYear: 5 }]
       });
     },
-    graduate: async (status?: ApprovalStatus) => {
-      const { code: careerCode } = await CareerGenerator.instance();
+    graduate: async ({ status, career }: IApplicantWithOneCareer = {}) => {
+      const { code: careerCode } = career || (await CareerGenerator.instance());
       return ApplicantGenerator.instance.updatedWithStatus({
         status: status || ApprovalStatus.approved,
         careers: [{ careerCode, isGraduate: true }]
       });
     },
-    studentAndGraduate: async (status?: ApprovalStatus) => {
-      const firstCareer = await CareerGenerator.instance();
-      const secondCareer = await CareerGenerator.instance();
+    studentAndGraduate: async ({
+      status,
+      careerInProgress,
+      finishedCareer
+    }: IApplicantWithTwoCareer = {}) => {
+      const firstCareer = careerInProgress || (await CareerGenerator.instance());
+      const secondCareer = finishedCareer || (await CareerGenerator.instance());
       return ApplicantGenerator.instance.updatedWithStatus({
         status: status || ApprovalStatus.approved,
         careers: [

@@ -7,7 +7,7 @@ import {
 
 import { CareerRepository } from "$models/Career";
 import { ApplicantRepository, IApplicantEditable, ISection } from "$models/Applicant";
-import { ApplicantKnowledgeSection, Career } from "$models";
+import { Applicant, ApplicantKnowledgeSection, Career } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Applicant";
 import { ApplicantCareersRepository } from "$models/Applicant/ApplicantCareer";
@@ -76,9 +76,9 @@ describe("ApplicantRepository", () => {
     });
 
     describe("findLatest", () => {
-      let applicant1;
-      let applicant2;
-      let applicant3;
+      let applicant1: Applicant;
+      let applicant2: Applicant;
+      let applicant3: Applicant;
 
       const generateApplicants = async () => {
         return [
@@ -121,10 +121,10 @@ describe("ApplicantRepository", () => {
       });
 
       describe("fetchMore", () => {
-        let applicant4;
-        let applicant5;
-        let applicant6;
-        let applicant7;
+        let applicant4: Applicant;
+        let applicant5: Applicant;
+        let applicant6: Applicant;
+        let applicant7: Applicant;
 
         beforeAll(async () => {
           [applicant4, applicant5, applicant6] = await generateApplicants();
