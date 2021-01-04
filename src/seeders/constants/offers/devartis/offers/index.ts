@@ -4,15 +4,15 @@ import { rubySenior } from "./rubySenior";
 import { rubyJunior } from "./rubyJunior";
 import { rubySemiSenior } from "./rubySemiSenior";
 import { swiftInternship } from "./swiftInternship";
-import { javaSemiSeniorExpired } from "./javaSemiSeniorExpired";
-import { javaSemiSeniorApproved } from "./javaSemiSeniorApproved";
+import { juliaSemiSeniorExpired } from "./juliaSemiSeniorExpired";
+import { cobolSemiSeniorApproved } from "./cobolSemiSeniorApproved";
 import { pythonSemiSeniorExpiredForOne } from "./pythonSemiSeniorExpiredForOne";
 
 export const devartisOffers = [
   javaJunior,
   javaSemiSenior,
-  javaSemiSeniorExpired,
-  javaSemiSeniorApproved,
+  juliaSemiSeniorExpired,
+  cobolSemiSeniorApproved,
   pythonSemiSeniorExpiredForOne,
   rubySenior,
   rubyJunior,
