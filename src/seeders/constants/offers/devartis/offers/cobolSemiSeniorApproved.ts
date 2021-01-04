@@ -6,11 +6,11 @@ import { ApprovalStatus } from "../../../../../models/ApprovalStatus";
 import { DateTimeManager } from "../../../../../libs/DateTimeManager";
 import moment from "moment";
 
-export const javaSemiSeniorApproved = {
+export const cobolSemiSeniorApproved = {
   offer: {
-    uuid: uuids.offers.javaSemiSeniorApproved,
+    uuid: uuids.offers.cobolSemiSeniorApproved,
     companyUuid: uuids.companies.devartis.uuid,
-    title: "Desarrollador Java semi senior",
+    title: "Desarrollador Cobol semi senior",
     targetApplicantType: ApplicantType.both,
     description,
     isInternship: false,
@@ -24,5 +24,5 @@ export const javaSemiSeniorApproved = {
     createdAt: moment().endOf("day").subtract(16, "days").toDate(),
     updatedAt: moment().endOf("day").subtract(16, "days").toDate()
   },
-  offerSections: sections(uuids.offers.javaSemiSeniorApproved)
+  offerSections: sections(uuids.offers.cobolSemiSeniorApproved)
 };

@@ -11,8 +11,8 @@ export const uuids = {
   },
   offers: {
     javaSemiSenior: UUID.generate(),
-    javaSemiSeniorExpired: UUID.generate(),
-    javaSemiSeniorApproved: UUID.generate(),
+    juliaSemiSeniorExpired: UUID.generate(),
+    cobolSemiSeniorApproved: UUID.generate(),
     pythonSemiSeniorExpiredForOne: UUID.generate(),
     javaSenior: UUID.generate(),
     javaJunior: UUID.generate(),
@@ -26,7 +26,8 @@ export const uuids = {
     user: UUID.generate()
   },
   graduadosAdmin: {
-    user: UUID.generate()
+    user: UUID.generate(),
+    applicant: UUID.generate()
   },
   sebastian: {
     applicant: UUID.generate(),

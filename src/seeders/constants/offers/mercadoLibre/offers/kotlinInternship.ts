@@ -8,7 +8,7 @@ export const kotlinInternship = {
   offer: {
     uuid: uuids.offers.kotlinInternship,
     companyUuid: uuids.companies.mercadoLibre.uuid,
-    title: "Pasantía: desarrollador Kotlin",
+    title: "Desarrollador Kotlin",
     targetApplicantType: ApplicantType.student,
     description,
     isInternship: true,

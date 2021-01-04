@@ -25,19 +25,25 @@ export class User {
     this.uuid = uuid;
   }
 
-  public setName(name: string) {
+  public setAttributes(attributes: IUserEditAttributes) {
+    if (attributes.name) this.setName(attributes.name);
+    if (attributes.surname) this.setSurname(attributes.surname);
+    if (attributes.email) this.setEmail(attributes.email);
+  }
+
+  private setName(name: string) {
     if (isNil(name)) throw new AttributeNotDefinedError("name");
     validateName(name);
     this.name = name;
   }
 
-  public setSurname(surname: string) {
+  private setSurname(surname: string) {
     if (isNil(surname)) throw new AttributeNotDefinedError("surname");
     validateName(surname);
     this.surname = surname;
   }
 
-  public setEmail(email: string) {
+  private setEmail(email: string) {
     const attributeName = "email";
     if (isNil(email)) throw new AttributeNotDefinedError(attributeName);
     validateEmail(email);
@@ -48,6 +54,12 @@ export class User {
     if (isNil(credentials)) throw new AttributeNotDefinedError("credentials");
     this.credentials = credentials;
   }
+}
+
+interface IUserEditAttributes {
+  name?: string;
+  surname?: string;
+  email?: string;
 }
 
 export interface IUserAttributes {
