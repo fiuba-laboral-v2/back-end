@@ -1,8 +1,7 @@
 import { Transaction } from "sequelize";
-import { IApplicantEditable } from "./index";
+import { IApplicantEditable, IFindLatest } from "./Interface";
 import { ApplicantNotFound } from "./Errors";
 import { Database } from "$config";
-import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedInput";
 import { ApplicantCareersRepository } from "./ApplicantCareer";
 import { ApplicantCapabilityRepository } from "../ApplicantCapability";
 import { ApplicantKnowledgeSectionRepository } from "./ApplicantKnowledgeSection";
@@ -14,7 +13,7 @@ import { PaginationQuery } from "../PaginationQuery";
 
 export const ApplicantRepository = {
   save: (applicant: Applicant, transaction?: Transaction) => applicant.save({ transaction }),
-  findLatest: (updatedBeforeThan?: IPaginatedInput) =>
+  findLatest: ({ updatedBeforeThan }: IFindLatest = {}) =>
     PaginationQuery.findLatest({ updatedBeforeThan, query: options => Applicant.findAll(options) }),
   findByUuid: async (uuid: string) => {
     const applicant = await Applicant.findByPk(uuid);

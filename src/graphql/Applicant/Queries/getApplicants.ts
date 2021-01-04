@@ -14,7 +14,7 @@ const getApplicants = {
     }
   },
   resolve: (_: undefined, { updatedBeforeThan }: { updatedBeforeThan?: IPaginatedInput }) =>
-    ApplicantRepository.findLatest(updatedBeforeThan)
+    ApplicantRepository.findLatest({ updatedBeforeThan })
 };
 
 export { getApplicants };

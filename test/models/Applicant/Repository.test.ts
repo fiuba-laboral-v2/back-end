@@ -140,7 +140,7 @@ describe("ApplicantRepository", () => {
             uuid: applicant7.uuid
           };
 
-          const applicants = await ApplicantRepository.findLatest(updatedBeforeThan);
+          const applicants = await ApplicantRepository.findLatest({ updatedBeforeThan });
           expect(applicants.results).toEqual([
             expect.objectContaining({
               uuid: applicant6.uuid,
