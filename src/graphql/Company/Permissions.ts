@@ -10,5 +10,9 @@ export const companyPermissions = {
   Mutation: {
     updateCurrentCompany: isCompanyUser,
     updateCompanyApprovalStatus: isAdmin
+  },
+  Company: {
+    approvalStatus: or(isCompanyUser, isAdmin),
+    users: or(isCompanyUser, isAdmin)
   }
 };
