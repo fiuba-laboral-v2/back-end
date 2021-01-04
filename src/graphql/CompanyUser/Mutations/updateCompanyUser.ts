@@ -19,9 +19,7 @@ export const updateCompanyUser = {
   ) => {
     const user = await UserRepository.findByUuid(uuid);
     const companyUser = await CompanyUserRepository.findByUserUuid(uuid);
-    user.setName(name);
-    user.setSurname(surname);
-    user.setEmail(email);
+    user.setAttributes({ name, surname, email });
     companyUser.set({ position });
 
     return Database.transaction(async transaction => {
