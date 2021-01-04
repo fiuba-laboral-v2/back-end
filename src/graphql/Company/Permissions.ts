@@ -13,7 +13,6 @@ export const companyPermissions = {
     updateCompanyApprovalStatus: isAdmin
   },
   Company: {
-    approvalStatus: or(isCompanyUser, isAdmin),
     users: or(isCompanyUser, isAdmin)
   }
 };
