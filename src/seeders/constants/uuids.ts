@@ -26,7 +26,8 @@ export const uuids = {
     user: UUID.generate()
   },
   graduadosAdmin: {
-    user: UUID.generate()
+    user: UUID.generate(),
+    applicant: UUID.generate()
   },
   sebastian: {
     applicant: UUID.generate(),

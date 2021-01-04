@@ -1,12 +1,13 @@
 import { QueryInterface } from "sequelize";
 import { dylan, manuel, sebastian } from "./constants/applicants";
+import { aldana } from "./constants/admins";
 
 export = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.sequelize.transaction(async transaction => {
       await queryInterface.bulkInsert(
         "Applicants",
-        [dylan.applicant, manuel.applicant, sebastian.applicant],
+        [dylan.applicant, manuel.applicant, sebastian.applicant, aldana.applicant],
         { transaction }
       );
       await queryInterface.bulkInsert(
@@ -21,7 +22,7 @@ export = {
       );
       await queryInterface.bulkInsert(
         "ApplicantCareers",
-        [...dylan.careers, ...manuel.careers, ...sebastian.careers],
+        [...dylan.careers, ...manuel.careers, ...sebastian.careers, ...aldana.careers],
         { transaction }
       );
       await queryInterface.bulkInsert(
