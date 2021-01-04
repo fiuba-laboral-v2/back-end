@@ -1,4 +1,4 @@
-import { isAdmin, isCompanyUser, isFromApprovedCompany } from "$graphql/Rules";
+import { isAdmin, isCompanyUser } from "$graphql/Rules";
 import { or } from "graphql-shield";
 export const companyUserPermissions = {
   Query: {
@@ -6,8 +6,8 @@ export const companyUserPermissions = {
     getMyCompanyUser: isCompanyUser
   },
   Mutation: {
-    saveCompanyUser: isFromApprovedCompany,
-    updatePassword: isFromApprovedCompany,
+    saveCompanyUser: isCompanyUser,
+    updatePassword: isCompanyUser,
     updateCompanyUser: isCompanyUser
   },
   CompanyUser: or(isCompanyUser, isAdmin)
