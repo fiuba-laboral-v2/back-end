@@ -6,7 +6,7 @@ import {
 } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { GraphQLPaginatedResults } from "$graphql/Pagination/Types/GraphQLPaginatedResults";
 
-const getApplicants = {
+export const getApplicants = {
   type: GraphQLPaginatedResults(GraphQLApplicant),
   args: {
     updatedBeforeThan: {
@@ -16,5 +16,3 @@ const getApplicants = {
   resolve: (_: undefined, { updatedBeforeThan }: { updatedBeforeThan?: IPaginatedInput }) =>
     ApplicantRepository.findLatest({ updatedBeforeThan })
 };
-
-export { getApplicants };

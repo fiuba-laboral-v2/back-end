@@ -1,4 +1,4 @@
-import { ValidationError, UniqueConstraintError } from "sequelize";
+import { UniqueConstraintError, ValidationError } from "sequelize";
 import { ApplicantNotFound, ApplicantWithNoCareersError } from "$models/Applicant/Errors";
 import {
   ForbiddenCurrentCareerYearError,
@@ -6,10 +6,14 @@ import {
 } from "$models/Applicant/ApplicantCareer/Errors";
 
 import { CareerRepository } from "$models/Career";
-import { ApplicantRepository, IApplicantEditable, ISection } from "$models/Applicant";
+import {
+  ApplicantRepository,
+  ApplicantType,
+  IApplicantEditable,
+  ISection
+} from "$models/Applicant";
 import { Applicant, ApplicantKnowledgeSection, Career } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { ApplicantType } from "$models/Applicant";
 import { ApplicantCareersRepository } from "$models/Applicant/ApplicantCareer";
 import { UserRepository } from "$models/User";
 import { CapabilityRepository } from "$models/Capability";
@@ -76,47 +80,159 @@ describe("ApplicantRepository", () => {
     });
 
     describe("findLatest", () => {
-      let applicant1: Applicant;
-      let applicant2: Applicant;
-      let applicant3: Applicant;
+      let student: Applicant;
+      let graduate: Applicant;
+      let studentAndGraduate: Applicant;
 
       const generateApplicants = async () => {
         return [
-          await ApplicantGenerator.instance.withMinimumData(),
-          await ApplicantGenerator.instance.withMinimumData(),
-          await ApplicantGenerator.instance.withMinimumData()
+          await ApplicantGenerator.instance.student({ career: firstCareer }),
+          await ApplicantGenerator.instance.graduate({ career: firstCareer }),
+          await ApplicantGenerator.instance.studentAndGraduate({
+            finishedCareer: firstCareer,
+            careerInProgress: secondCareer
+          })
         ];
       };
 
       beforeAll(async () => {
-        [applicant1, applicant2, applicant3] = await generateApplicants();
+        await ApplicantRepository.truncate();
+        [student, graduate, studentAndGraduate] = await generateApplicants();
       });
 
       it("returns the latest applicant first", async () => {
         const applicants = await ApplicantRepository.findLatest();
-        const firstApplicantInList = [
-          applicants.results[0],
-          applicants.results[1],
-          applicants.results[2]
-        ];
-
         expect(applicants.shouldFetchMore).toEqual(false);
-        expect(firstApplicantInList).toEqual([
+        expect(applicants.results).toEqual([
           expect.objectContaining({
-            uuid: applicant3.uuid,
-            padron: applicant3.padron,
-            approvalStatus: ApprovalStatus.pending
+            uuid: studentAndGraduate.uuid,
+            padron: studentAndGraduate.padron,
+            approvalStatus: ApprovalStatus.approved
           }),
           expect.objectContaining({
-            uuid: applicant2.uuid,
-            padron: applicant2.padron,
-            approvalStatus: ApprovalStatus.pending
+            uuid: graduate.uuid,
+            padron: graduate.padron,
+            approvalStatus: ApprovalStatus.approved
           }),
           expect.objectContaining({
-            uuid: applicant1.uuid,
-            padron: applicant1.padron,
-            approvalStatus: ApprovalStatus.pending
+            uuid: student.uuid,
+            padron: student.padron,
+            approvalStatus: ApprovalStatus.approved
           })
+        ]);
+      });
+
+      it("returns students", async () => {
+        const applicants = await ApplicantRepository.findLatest({
+          applicantType: ApplicantType.student
+        });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([
+          studentAndGraduate.uuid,
+          student.uuid
+        ]);
+      });
+
+      it("returns graduates", async () => {
+        const applicants = await ApplicantRepository.findLatest({
+          applicantType: ApplicantType.graduate
+        });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([
+          studentAndGraduate.uuid,
+          graduate.uuid
+        ]);
+      });
+
+      it("returns applicants that are students and graduates", async () => {
+        const applicants = await ApplicantRepository.findLatest({
+          applicantType: ApplicantType.both
+        });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([
+          studentAndGraduate.uuid,
+          graduate.uuid,
+          student.uuid
+        ]);
+      });
+
+      it("returns applicants that are in the first career", async () => {
+        const applicants = await ApplicantRepository.findLatest({
+          careerCodes: [firstCareer.code]
+        });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([
+          studentAndGraduate.uuid,
+          graduate.uuid,
+          student.uuid
+        ]);
+      });
+
+      it("returns applicants that are in the second career", async () => {
+        const applicants = await ApplicantRepository.findLatest({
+          careerCodes: [secondCareer.code]
+        });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
+      });
+
+      it("returns applicants where only the name matches", async () => {
+        const name = "STUDENT";
+        const studentUser = await UserRepository.findByUuid(student.userUuid);
+        studentUser.name = name;
+        await UserRepository.save(studentUser);
+        const applicants = await ApplicantRepository.findLatest({ name });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([student.uuid]);
+      });
+
+      it("returns applicants where only the surname matches", async () => {
+        const surname = "GRADUATE_SURNAME";
+        const graduateUser = await UserRepository.findByUuid(graduate.userUuid);
+        graduateUser.surname = surname;
+        await UserRepository.save(graduateUser);
+        const applicants = await ApplicantRepository.findLatest({ name: surname });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([graduate.uuid]);
+      });
+
+      it("returns applicants where the name or the surname have a part of the name", async () => {
+        const name = "eric";
+        const studentAndGraduateUser = await UserRepository.findByUuid(studentAndGraduate.userUuid);
+        studentAndGraduateUser.surname = "erica";
+        await UserRepository.save(studentAndGraduateUser);
+        const applicants = await ApplicantRepository.findLatest({ name });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
+      });
+
+      it("returns students in the first career", async () => {
+        const applicants = await ApplicantRepository.findLatest({
+          applicantType: ApplicantType.student,
+          careerCodes: [firstCareer.code]
+        });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([student.uuid]);
+      });
+
+      it("returns students in the second career", async () => {
+        const applicants = await ApplicantRepository.findLatest({
+          applicantType: ApplicantType.student,
+          careerCodes: [secondCareer.code]
+        });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
+      });
+
+      it("returns graduates in the first career", async () => {
+        const applicants = await ApplicantRepository.findLatest({
+          applicantType: ApplicantType.graduate,
+          careerCodes: [firstCareer.code]
+        });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([
+          studentAndGraduate.uuid,
+          graduate.uuid
         ]);
       });
 
@@ -145,17 +261,17 @@ describe("ApplicantRepository", () => {
             expect.objectContaining({
               uuid: applicant6.uuid,
               padron: applicant6.padron,
-              approvalStatus: ApprovalStatus.pending
+              approvalStatus: ApprovalStatus.approved
             }),
             expect.objectContaining({
               uuid: applicant5.uuid,
               padron: applicant5.padron,
-              approvalStatus: ApprovalStatus.pending
+              approvalStatus: ApprovalStatus.approved
             }),
             expect.objectContaining({
               uuid: applicant4.uuid,
               padron: applicant4.padron,
-              approvalStatus: ApprovalStatus.pending
+              approvalStatus: ApprovalStatus.approved
             })
           ]);
           expect(applicants.shouldFetchMore).toBe(true);

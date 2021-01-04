@@ -16,6 +16,9 @@ export interface IApplicantEditable {
 
 export interface IFindLatest {
   updatedBeforeThan?: IPaginatedInput;
+  name?: string;
+  careerCodes?: string[];
+  applicantType?: ApplicantType;
 }
 
 export interface ISection {

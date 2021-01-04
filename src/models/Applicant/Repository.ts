@@ -1,5 +1,5 @@
-import { Transaction } from "sequelize";
-import { IApplicantEditable, IFindLatest } from "./Interface";
+import { Op, Transaction } from "sequelize";
+import { ApplicantType, IApplicantEditable, IFindLatest } from "./Interface";
 import { ApplicantNotFound } from "./Errors";
 import { Database } from "$config";
 import { ApplicantCareersRepository } from "./ApplicantCareer";
@@ -8,13 +8,42 @@ import { ApplicantKnowledgeSectionRepository } from "./ApplicantKnowledgeSection
 import { ApplicantExperienceSectionRepository } from "./ApplicantExperienceSection";
 import { ApplicantLinkRepository } from "./Link";
 import { UserRepository } from "../User";
-import { Applicant } from "..";
+import { Applicant, ApplicantCareer, UserSequelizeModel } from "..";
 import { PaginationQuery } from "../PaginationQuery";
+import { Includeable } from "sequelize/types/lib/model";
 
 export const ApplicantRepository = {
   save: (applicant: Applicant, transaction?: Transaction) => applicant.save({ transaction }),
-  findLatest: ({ updatedBeforeThan }: IFindLatest = {}) =>
-    PaginationQuery.findLatest({ updatedBeforeThan, query: options => Applicant.findAll(options) }),
+  findLatest: ({ updatedBeforeThan, name, careerCodes, applicantType }: IFindLatest = {}) => {
+    const isStudent = applicantType === ApplicantType.student;
+    const isGraduate = applicantType === ApplicantType.graduate;
+    const include: Includeable[] = [];
+    if (name) {
+      include.push({
+        model: UserSequelizeModel,
+        where: {
+          [Op.or]: [{ name: { [Op.substring]: name } }, { surname: { [Op.substring]: name } }]
+        },
+        attributes: []
+      });
+    }
+    if (careerCodes || applicantType) {
+      include.push({
+        model: ApplicantCareer,
+        where: {
+          ...(careerCodes && { careerCode: { [Op.in]: careerCodes } }),
+          ...(isGraduate && { isGraduate: true }),
+          ...(isStudent && { isGraduate: false })
+        },
+        attributes: []
+      });
+    }
+    return PaginationQuery.findLatest({
+      updatedBeforeThan,
+      query: options => Applicant.findAll(options),
+      include
+    });
+  },
   findByUuid: async (uuid: string) => {
     const applicant = await Applicant.findByPk(uuid);
     if (!applicant) throw new ApplicantNotFound(uuid);
