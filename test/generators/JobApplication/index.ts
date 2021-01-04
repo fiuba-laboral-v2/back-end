@@ -4,6 +4,15 @@ import { OfferGenerator } from "$generators/Offer";
 import { JobApplicationRepository } from "$models/JobApplication";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Admin } from "$models";
+import { Secretary } from "$models/Admin";
+import { AdminGenerator } from "$generators/Admin";
+import { OfferRepository } from "$models/Offer";
+
+const getApplicantForSecretary = (secretary: Secretary) => {
+  const generator = ApplicantGenerator.instance;
+  if (secretary === Secretary.graduados) return generator.graduate(ApprovalStatus.approved);
+  return generator.student(ApprovalStatus.approved);
+};
 
 export const JobApplicationGenerator = {
   instance: {
@@ -11,7 +20,9 @@ export const JobApplicationGenerator = {
       const applicant = await ApplicantGenerator.instance.studentAndGraduate();
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const offer = await OfferGenerator.instance.forStudents({ companyUuid });
-      return JobApplicationRepository.apply(applicant, offer);
+      const jobApplication = applicant.applyTo(offer);
+      await JobApplicationRepository.save(jobApplication);
+      return jobApplication;
     },
     updatedWithStatus: async ({ status }: IUpdatedWithStatus) => {
       const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
@@ -21,7 +32,22 @@ export const JobApplicationGenerator = {
     toTheCompany: async (companyUuid: string) => {
       const applicant = await ApplicantGenerator.instance.studentAndGraduate();
       const offer = await OfferGenerator.instance.forStudents({ companyUuid });
-      return JobApplicationRepository.apply(applicant, offer);
+      const jobApplication = applicant.applyTo(offer);
+      await JobApplicationRepository.save(jobApplication);
+      return jobApplication;
+    },
+    toBeModeratedBy: async (secretary: Secretary) => {
+      const graduadosAdmin = await AdminGenerator.graduados();
+      const extensionAdmin = await AdminGenerator.extension();
+      const company = await CompanyGenerator.instance.updatedWithStatus(ApprovalStatus.approved);
+      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid: company.uuid });
+      offer.updateStatus(graduadosAdmin, ApprovalStatus.approved, 15);
+      offer.updateStatus(extensionAdmin, ApprovalStatus.approved, 15);
+      await OfferRepository.save(offer);
+      const applicant = await getApplicantForSecretary(secretary);
+      const jobApplication = applicant.applyTo(offer);
+      await JobApplicationRepository.save(jobApplication);
+      return jobApplication;
     }
   }
 };

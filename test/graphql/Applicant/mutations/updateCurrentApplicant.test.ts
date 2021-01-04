@@ -1,5 +1,5 @@
 import { gql } from "apollo-server";
-import { client } from "../../ApolloTestClient";
+import { client } from "$test/graphql/ApolloTestClient";
 
 import { CareerRepository } from "$models/Career";
 import { CompanyRepository } from "$models/Company";
@@ -11,7 +11,6 @@ import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 const UPDATE_CURRENT_APPLICANT = gql`
   mutation updateCurrentApplicant(
-    $padron: Int
     $user: UserUpdateInput
     $description: String
     $careers: [ApplicantCareerInput]
@@ -21,7 +20,6 @@ const UPDATE_CURRENT_APPLICANT = gql`
     $links: [LinkInput]
   ) {
     updateCurrentApplicant(
-      padron: $padron
       user: $user
       description: $description
       careers: $careers
@@ -77,7 +75,7 @@ describe("updateCurrentApplicant", () => {
   });
 
   it("updates all possible data deleting all previous values", async () => {
-    const { applicant, user, apolloClient } = await TestClientGenerator.applicant();
+    const { user, apolloClient } = await TestClientGenerator.applicant();
     const newCareer = await CareerGenerator.instance();
     const dataToUpdate = {
       user: {
@@ -85,7 +83,6 @@ describe("updateCurrentApplicant", () => {
         name: "newName",
         surname: "newSurname"
       },
-      padron: applicant.padron,
       description: "newDescription",
       capabilities: ["CSS", "clojure"],
       careers: [
@@ -131,7 +128,6 @@ describe("updateCurrentApplicant", () => {
     expect(errors).toBeUndefined();
     const updatedApplicantData = data!.updateCurrentApplicant;
     expect(updatedApplicantData).toBeObjectContaining({
-      padron: dataToUpdate.padron,
       user: {
         uuid: user.uuid,
         email: dataToUpdate.user.email,
@@ -185,7 +181,6 @@ describe("updateCurrentApplicant", () => {
           name: "newName",
           surname: "newSurname"
         },
-        padron: 1500,
         description: "newDescription",
         capabilities: ["CSS", "clojure"]
       };
@@ -207,7 +202,6 @@ describe("updateCurrentApplicant", () => {
           name: "newName",
           surname: "newSurname"
         },
-        padron: 1500,
         description: "newDescription",
         capabilities: ["CSS", "clojure"]
       };
@@ -222,11 +216,7 @@ describe("updateCurrentApplicant", () => {
 
     it("returns an error if current user is from a company", async () => {
       const { apolloClient } = await TestClientGenerator.company();
-      const { errors } = await apolloClient.mutate({
-        mutation: UPDATE_CURRENT_APPLICANT,
-        variables: { padron: 1500 }
-      });
-
+      const { errors } = await apolloClient.mutate({ mutation: UPDATE_CURRENT_APPLICANT });
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });
   });

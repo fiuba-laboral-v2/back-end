@@ -9,6 +9,7 @@ export const companyPermissions = {
   },
   Mutation: {
     updateCurrentCompany: isCompanyUser,
+    updateCuitAndBusinessName: isCompanyUser,
     updateCompanyApprovalStatus: isAdmin
   },
   Company: {

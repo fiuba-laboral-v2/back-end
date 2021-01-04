@@ -25,6 +25,12 @@ export class User {
     this.uuid = uuid;
   }
 
+  public setAttributes(attributes: IUserEditAttributes) {
+    if (attributes.name) this.setName(attributes.name);
+    if (attributes.surname) this.setSurname(attributes.surname);
+    if (attributes.email) this.setEmail(attributes.email);
+  }
+
   private setName(name: string) {
     if (isNil(name)) throw new AttributeNotDefinedError("name");
     validateName(name);
@@ -48,6 +54,12 @@ export class User {
     if (isNil(credentials)) throw new AttributeNotDefinedError("credentials");
     this.credentials = credentials;
   }
+}
+
+interface IUserEditAttributes {
+  name?: string;
+  surname?: string;
+  email?: string;
 }
 
 export interface IUserAttributes {

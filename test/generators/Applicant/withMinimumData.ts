@@ -1,6 +1,6 @@
-import { ISaveApplicant } from "$models/Applicant";
 import { IApplicantGeneratorAttributes } from "$generators/interfaces";
 import { DniGenerator } from "$generators/DNI";
+import { ISaveApplicant } from "$graphql/Applicant/Mutations/saveApplicant";
 
 export const withMinimumData = ({
   index,

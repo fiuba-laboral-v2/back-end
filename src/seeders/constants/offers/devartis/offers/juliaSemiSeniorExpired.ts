@@ -5,11 +5,11 @@ import { ApplicantType } from "../../../../../models/Applicant/Interface";
 import { ApprovalStatus } from "../../../../../models/ApprovalStatus";
 import { DateTimeManager } from "../../../../../libs/DateTimeManager";
 
-export const javaSemiSeniorExpired = {
+export const juliaSemiSeniorExpired = {
   offer: {
-    uuid: uuids.offers.javaSemiSeniorExpired,
+    uuid: uuids.offers.juliaSemiSeniorExpired,
     companyUuid: uuids.companies.devartis.uuid,
-    title: "Desarrollador Java semi senior",
+    title: "Desarrollador Julia semi senior",
     targetApplicantType: ApplicantType.both,
     description,
     isInternship: false,
@@ -23,5 +23,5 @@ export const javaSemiSeniorExpired = {
     createdAt: new Date(),
     updatedAt: new Date()
   },
-  offerSections: sections(uuids.offers.javaSemiSeniorExpired)
+  offerSections: sections(uuids.offers.juliaSemiSeniorExpired)
 };

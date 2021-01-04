@@ -1,10 +1,12 @@
 import { DATE, QueryInterface, UUID } from "sequelize";
 
+const TABLE_NAME = "JobApplications";
+
 export = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.sequelize.transaction(async transaction => {
       await queryInterface.createTable(
-        "JobApplications",
+        TABLE_NAME,
         {
           uuid: {
             allowNull: false,
@@ -39,12 +41,18 @@ export = {
         },
         { transaction }
       );
-      await queryInterface.addConstraint("JobApplications", ["applicantUuid", "offerUuid"], {
+      await queryInterface.addConstraint(TABLE_NAME, ["applicantUuid", "offerUuid"], {
         type: "unique",
         name: "JobApplications_applicantUuid_offerUuid_unique",
         transaction
       });
+      await queryInterface.addIndex(TABLE_NAME, ["approvalStatus", "updatedAt", "uuid"], {
+        transaction
+      });
+      await queryInterface.addIndex(TABLE_NAME, ["updatedAt", "uuid"], {
+        transaction
+      });
     });
   },
-  down: (queryInterface: QueryInterface) => queryInterface.dropTable("JobApplications")
+  down: (queryInterface: QueryInterface) => queryInterface.dropTable(TABLE_NAME)
 };

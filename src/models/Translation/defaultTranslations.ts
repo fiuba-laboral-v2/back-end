@@ -2,6 +2,10 @@ export const defaultTranslations = {
   titleBar: {
     title: "Bolsa de trabajo FIUBA"
   },
+  changeCurrentRoleButton: {
+    enterAsAdmin: "Ingresar como Admin",
+    enterAsApplicant: "Ingresar como Postulante"
+  },
   userEditFields: {
     name: "Nombre",
     surname: "Apellido"
@@ -53,8 +57,15 @@ export const defaultTranslations = {
     text: "No hay empresas para los filtros seleccionados",
     button: "Ver todas"
   },
-  applicantProfileDetail: {
+  companyProfileActions: {
     edit: "Editar",
+    editCuitAndBusinessName: "Cambiar CUIT/Razón Social"
+  },
+  applicantProfileActions: {
+    edit: "Editar",
+    editPadron: "Editar padrón"
+  },
+  applicantProfileDetail: {
     padron: "Padron",
     capabilities: "Aptitudes",
     experienceSectionsTitle: "Experiencia laboral",
@@ -127,7 +138,8 @@ export const defaultTranslations = {
     addAdminButtonLabel: "Agregar usuario"
   },
   companyUserActions: {
-    passwordTooltipMessage: "Cambiar contraseña"
+    passwordTooltipMessage: "Cambiar contraseña",
+    editUserTooltipMessage: "Editar usuario"
   },
   admins: {
     addAdminButtonLabel: "Agregar administrador"
@@ -167,9 +179,6 @@ export const defaultTranslations = {
     confirmDialogCancel: "Cancelar",
     confirmDialogConfirm: "Confirmar"
   },
-  editableCompanyProfile: {
-    edit: "Editar"
-  },
   editMyCompanyProfile: {
     title: "Editar empresa",
     submit: "Guardar"
@@ -202,6 +211,35 @@ export const defaultTranslations = {
     title: "Agregar usuario",
     submit: "Guardar"
   },
+  editCompanyUser: {
+    title: "Editar usuario",
+    submit: "Guardar"
+  },
+  editCuitAndBusinessName: {
+    title: "Editar cuit y razón social",
+    submit: "Guardar",
+    businessName: "Razón social",
+    cuit: "CUIT"
+  },
+  editCuitAndBusinessNameConfirmDialog: {
+    confirmDialogTitle: "¿Editar cuit y razón social?",
+    confirmDialogDescription:
+      "El perfil de tu empresa tendrá que ser nuevamente aprobado y deberá ser revisado por el personal de FIUBA para poder volver a utilizar el sitio",
+    confirmDialogCancel: "Cancelar",
+    confirmDialogConfirm: "Confirmar"
+  },
+  editPadron: {
+    title: "Editar padrón",
+    submit: "Guardar",
+    padron: "Padrón"
+  },
+  editPadronConfirmDialog: {
+    confirmDialogTitle: "¿Editar padrón?",
+    confirmDialogDescription:
+      "Tu perfil tendrá que ser nuevamente aprobado y deberá ser revisado por el personal de FIUBA para poder volver a utilizar el sitio",
+    confirmDialogCancel: "Cancelar",
+    confirmDialogConfirm: "Confirmar"
+  },
   editCompanyUserPassword: {
     title: "Cambiar contraseña",
     submit: "Guardar",
@@ -216,10 +254,18 @@ export const defaultTranslations = {
     newPassword: "Nueva contraseña",
     newPasswordConfirm: "Confirmar nueva contraseña"
   },
+  passwordRecoveryExplanation: {
+    title: "Solicitud de recuperación de contraseña",
+    explanation:
+      "Se envió un enlace a tu correo electrónico para crear una nueva contraseña." +
+      "\n\n" +
+      "Si no lo recibiste, comprobar el correo no deseado o reintentar en unos minutos.",
+    retry: "Volver a intentar"
+  },
   passwordRecovery: {
     title: "Solicitud de recuperación de contraseña",
     emailHelperText: "Se enviará un mail con un link para cambiar tu contraseña",
-    submit: "Guardar",
+    submit: "Enviar email",
     email: "Email"
   },
   companySignUp: {
@@ -686,6 +732,7 @@ export const defaultTranslations = {
     emailSignature: "Firma de los emails",
     emailSignatureHelper:
       "Se va a agregar al final de todos los emails que resulten de la acción de un admin de tu secretaría.\nPor ejemplo, la aprobación de una empresa.",
+    automaticJobApplicationApproval: "Aprobación automática de postulaciones",
     infoMessage:
       'El email de la secretaría se va a dar a los usuarios como vía de contacto, y se van a enviar los emails automáticos a su nombre. Cualquier dirección que termine con "@fi.uba.ar" es válida. Procurar que la dirección no corresponda a un individuo sino a la secretaría.',
     sharedSettingsTitle: "Textos de ayuda",

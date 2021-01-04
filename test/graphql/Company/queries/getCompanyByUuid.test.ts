@@ -1,7 +1,7 @@
 import { gql } from "apollo-server";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
-import { client } from "../../ApolloTestClient";
+import { client } from "$test/graphql/ApolloTestClient";
 import { TestClientGenerator } from "$generators/TestClient";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { CompanyGenerator } from "$generators/Company";

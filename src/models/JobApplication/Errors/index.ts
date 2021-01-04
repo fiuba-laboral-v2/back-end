@@ -1,2 +1,3 @@
-export { JobApplicationNotFoundError } from "./JobApplicationNotFoundError";
-export { OfferNotTargetedForApplicantError } from "./OfferNotTargetedForApplicantError";
+export * from "./JobApplicationNotFoundError";
+export * from "./OfferNotTargetedForApplicantError";
+export * from "./AdminCannotModerateJobApplicationError";

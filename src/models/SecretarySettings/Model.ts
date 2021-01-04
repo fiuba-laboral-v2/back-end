@@ -1,5 +1,5 @@
 import { Column, Is, Model, Table } from "sequelize-typescript";
-import { ENUM, INTEGER, STRING } from "sequelize";
+import { ENUM, INTEGER, STRING, BOOLEAN } from "sequelize";
 import { Secretary, SecretaryEnumValues } from "$models/Admin/Interface";
 import { isSecretary } from "../SequelizeModelValidators";
 import { validateIntegerInRange, validateEmail } from "validations-fiuba-laboral-v2";
@@ -24,4 +24,7 @@ export class SecretarySettings extends Model<SecretarySettings> {
 
   @Column({ type: STRING, allowNull: false })
   public emailSignature: string;
+
+  @Column({ type: BOOLEAN, allowNull: false })
+  public automaticJobApplicationApproval: boolean;
 }

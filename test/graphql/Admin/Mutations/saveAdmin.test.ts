@@ -1,5 +1,5 @@
 import { gql } from "apollo-server";
-import { client } from "../../ApolloTestClient";
+import { client } from "$test/graphql/ApolloTestClient";
 
 import { ISaveAdmin } from "$graphql/Admin/Mutations/saveAdmin";
 import { FiubaUsersService } from "$services";

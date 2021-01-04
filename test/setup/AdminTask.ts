@@ -23,7 +23,7 @@ export class AdminTaskTestSetup {
     await this.admins.execute();
 
     this.applicants = new ApplicantTestSetup();
-    this.companies = new CompanyTestSetup(this.admins);
+    this.companies = new CompanyTestSetup();
     this.offers = new OfferTestSetup(this.companies, this.admins);
     this.jobApplications = new JobApplicationTestSetup(this.applicants, this.offers);
 

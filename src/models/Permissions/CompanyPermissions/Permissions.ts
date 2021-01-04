@@ -1,4 +1,4 @@
-import { Offer } from "$models";
+import { JobApplication, Offer } from "$models";
 import { IPermissions } from "../Interfaces";
 
 export class CompanyPermissions implements IPermissions {
@@ -13,6 +13,10 @@ export class CompanyPermissions implements IPermissions {
   }
 
   public async canModerateOffer(_: Offer) {
+    return Promise.resolve(false);
+  }
+
+  public async canModerateJobApplication(_: JobApplication) {
     return Promise.resolve(false);
   }
 }

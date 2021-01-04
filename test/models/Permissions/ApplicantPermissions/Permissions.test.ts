@@ -2,14 +2,15 @@ import { ApplicantPermissions } from "$models/Permissions";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
+import { JobApplicationRepository } from "$models/JobApplication";
 
 import { IForAllTargetsAndStatuses, OfferGenerator } from "$generators/Offer";
 import { CompanyGenerator } from "$generators/Company";
 import { ApplicantGenerator } from "$generators/Applicant";
+import { JobApplicationGenerator } from "$generators/JobApplication";
 import { Applicant } from "$models";
 import { ApplicantType } from "$models/Applicant";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { JobApplicationRepository } from "$models/JobApplication";
 
 describe("ApplicantPermissions", () => {
   let offers: IForAllTargetsAndStatuses;
@@ -168,7 +169,7 @@ describe("ApplicantPermissions", () => {
     it("returns true if the offer has expired because the applicant has an approved application", async () => {
       const offer = offers[ApplicantType.graduate][ApprovalStatus.approved];
       const applicant = await ApplicantGenerator.instance.graduate();
-      const jobApplication = await JobApplicationRepository.apply(applicant, offer);
+      const jobApplication = applicant.applyTo(offer);
       jobApplication.set({ approvalStatus: ApprovalStatus.approved });
       await JobApplicationRepository.save(jobApplication);
       offer.expire();
@@ -179,7 +180,7 @@ describe("ApplicantPermissions", () => {
     it("returns true if the offer has expired because the applicant has a pending application", async () => {
       const offer = offers[ApplicantType.graduate][ApprovalStatus.approved];
       const applicant = await ApplicantGenerator.instance.graduate();
-      const jobApplication = await JobApplicationRepository.apply(applicant, offer);
+      const jobApplication = applicant.applyTo(offer);
       jobApplication.set({ approvalStatus: ApprovalStatus.pending });
       await JobApplicationRepository.save(jobApplication);
       offer.expire();
@@ -190,7 +191,7 @@ describe("ApplicantPermissions", () => {
     it("returns true if the offer is rejected because the applicant has an approved application", async () => {
       const offer = offers[ApplicantType.graduate][ApprovalStatus.rejected];
       const applicant = await ApplicantGenerator.instance.graduate();
-      const jobApplication = await JobApplicationRepository.apply(applicant, offer);
+      const jobApplication = applicant.applyTo(offer);
       jobApplication.set({ approvalStatus: ApprovalStatus.approved });
       await JobApplicationRepository.save(jobApplication);
       offer.expire();
@@ -201,7 +202,7 @@ describe("ApplicantPermissions", () => {
     it("returns true if the offer is pending because the applicant has an approved application", async () => {
       const offer = offers[ApplicantType.graduate][ApprovalStatus.pending];
       const applicant = await ApplicantGenerator.instance.graduate();
-      const jobApplication = await JobApplicationRepository.apply(applicant, offer);
+      const jobApplication = applicant.applyTo(offer);
       jobApplication.set({ approvalStatus: ApprovalStatus.approved });
       await JobApplicationRepository.save(jobApplication);
       offer.expire();
@@ -282,6 +283,36 @@ describe("ApplicantPermissions", () => {
       expect(
         await permissions.canModerateOffer(offers[ApplicantType.both][ApprovalStatus.approved])
       ).toBe(false);
+    });
+  });
+
+  describe("canModerateJobApplication", () => {
+    let student: Applicant;
+    let graduate: Applicant;
+    let studentAndGraduate: Applicant;
+
+    beforeAll(async () => {
+      student = await ApplicantGenerator.instance.student();
+      graduate = await ApplicantGenerator.instance.graduate();
+      studentAndGraduate = await ApplicantGenerator.instance.studentAndGraduate();
+    });
+
+    it("returns false for any jobApplication for a student", async () => {
+      const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      const permissions = new ApplicantPermissions(student.uuid);
+      expect(await permissions.canModerateJobApplication(jobApplication)).toBe(false);
+    });
+
+    it("returns false for any jobApplication for a graduate", async () => {
+      const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      const permissions = new ApplicantPermissions(graduate.uuid);
+      expect(await permissions.canModerateJobApplication(jobApplication)).toBe(false);
+    });
+
+    it("returns false for any jobApplication for a student and graduate", async () => {
+      const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      const permissions = new ApplicantPermissions(studentAndGraduate.uuid);
+      expect(await permissions.canModerateJobApplication(jobApplication)).toBe(false);
     });
   });
 });

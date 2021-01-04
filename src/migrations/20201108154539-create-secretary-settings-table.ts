@@ -1,4 +1,4 @@
-import { QueryInterface, INTEGER, STRING } from "sequelize";
+import { QueryInterface, INTEGER, STRING, BOOLEAN } from "sequelize";
 
 const TABLE_NAME = "SecretarySettings";
 
@@ -21,6 +21,10 @@ export = {
       emailSignature: {
         allowNull: false,
         type: STRING
+      },
+      automaticJobApplicationApproval: {
+        allowNull: false,
+        type: BOOLEAN
       }
     }),
   down: (queryInterface: QueryInterface) => queryInterface.dropTable(TABLE_NAME)

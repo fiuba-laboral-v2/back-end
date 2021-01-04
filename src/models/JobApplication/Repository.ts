@@ -44,8 +44,7 @@ export const JobApplicationRepository = {
       query: options => JobApplication.findAll(options),
       order: [
         ["updatedAt", "DESC"],
-        ["offerUuid", "DESC"],
-        ["applicantUuid", "DESC"]
+        ["uuid", "DESC"]
       ],
       include: [
         {

@@ -1,7 +1,9 @@
 import { CompanyPermissions } from "$models/Permissions";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
+import { CareerRepository } from "$models/Career";
 
+import { JobApplicationGenerator } from "$generators/JobApplication";
 import { OfferGenerator } from "$generators/Offer";
 import { CompanyGenerator } from "$generators/Company";
 import { Company } from "$models";
@@ -10,6 +12,7 @@ describe("CompanyPermissions", () => {
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
+    await CareerRepository.truncate();
   });
 
   describe("canSeeOffer", () => {
@@ -84,6 +87,15 @@ describe("CompanyPermissions", () => {
         companyUuid: anotherCompany.uuid
       });
       expect(await permissions.canModerateOffer(offerForStudentsAndGraduates)).toBe(false);
+    });
+  });
+
+  describe("canModerateJobApplication", () => {
+    it("returns false for any jobApplication", async () => {
+      const company = await CompanyGenerator.instance.withCompleteData();
+      const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      const permissions = new CompanyPermissions(company.uuid);
+      expect(await permissions.canModerateJobApplication(jobApplication)).toBe(false);
     });
   });
 });

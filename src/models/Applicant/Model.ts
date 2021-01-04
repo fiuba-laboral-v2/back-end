@@ -20,7 +20,8 @@ import {
   JobApplication,
   ApplicantKnowledgeSection,
   ApplicantExperienceSection,
-  UserSequelizeModel
+  UserSequelizeModel,
+  Offer
 } from "$models";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Applicant";
@@ -109,5 +110,9 @@ export class Applicant extends Model<Applicant> {
     if (isGraduate) return ApplicantType.graduate;
     if (isStudent) return ApplicantType.student;
     throw new ApplicantWithNoCareersError(this.uuid);
+  }
+
+  public applyTo(offer: Offer) {
+    return new JobApplication({ offerUuid: offer.uuid, applicantUuid: this.uuid });
   }
 }

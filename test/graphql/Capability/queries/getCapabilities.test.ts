@@ -1,7 +1,7 @@
 import { gql } from "apollo-server";
 import { CapabilityRepository } from "$models/Capability";
 import { UserRepository } from "$models/User";
-import { client } from "../../ApolloTestClient";
+import { client } from "$test/graphql/ApolloTestClient";
 
 import { TestClientGenerator } from "$generators/TestClient";
 

@@ -5,7 +5,6 @@ import {
 import { EmailService } from "$services/Email";
 import { ApprovedJobApplicationApplicantNotificationEmailSender } from "$services/EmailSender";
 import { UserRepository } from "$models/User";
-import { ApplicantRepository } from "$models/Applicant";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { OfferRepository } from "$models/Offer";
@@ -34,8 +33,8 @@ describe("ApprovedJobApplicationApplicantNotificationEmailSender", () => {
     const admin = await AdminGenerator.graduados();
     const adminUser = await UserRepository.findByUuid(admin.userUuid);
     const settings = await SecretarySettingsRepository.findBySecretary(admin.secretary);
-    const applicantAttributes = ApplicantGenerator.data.minimum();
-    const applicant = await ApplicantRepository.create(applicantAttributes);
+    const applicant = await ApplicantGenerator.instance.studentAndGraduate();
+    const applicantUser = await UserRepository.findByUuid(applicant.userUuid);
     const jobApplication = await JobApplicationGenerator.instance.toTheCompany(company.uuid);
     const offer = await OfferRepository.findByUuid(jobApplication.offerUuid);
     const notification = new ApprovedJobApplicationApplicantNotification({
@@ -50,7 +49,7 @@ describe("ApprovedJobApplicationApplicantNotificationEmailSender", () => {
     expect(emailSendMock.mock.calls).toEqual([
       [
         {
-          receiverEmails: [applicantAttributes.user.email],
+          receiverEmails: [applicantUser.email],
           sender: {
             name: `${adminUser.name} ${adminUser.surname}`,
             email: settings.email

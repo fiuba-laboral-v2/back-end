@@ -14,12 +14,15 @@ export class OfferTestSetup {
   public approvedForStudents: Offer;
   public approvedForGraduates: Offer;
   public approvedForBoth: Offer;
+  public anotherApprovedForBoth: Offer;
   public rejectedForStudents: Offer;
   public rejectedForGraduates: Offer;
   public rejectedForBoth: Offer;
   public pendingForStudents: Offer;
   public pendingForGraduates: Offer;
   public pendingForBoth: Offer;
+  public fromRejectedCompany: Offer;
+  public fromPendingCompany: Offer;
   public tasks: AdminTask[];
   public companies: CompanyTestSetup;
   public admins: AdminTestSetup;
@@ -37,6 +40,20 @@ export class OfferTestSetup {
     const {
       offerDurationInDays: graduadosOfferDurationInDays
     } = await SecretarySettingsRepository.findBySecretary(this.admins.graduados.secretary);
+
+    this.fromPendingCompany = await OfferGenerator.instance.updatedWithStatus({
+      admin: this.admins.extension,
+      companyUuid: this.companies.pending.uuid,
+      status: ApprovalStatus.approved,
+      targetApplicantType: ApplicantType.both
+    });
+
+    this.fromRejectedCompany = await OfferGenerator.instance.updatedWithStatus({
+      admin: this.admins.graduados,
+      companyUuid: this.companies.rejected.uuid,
+      status: ApprovalStatus.approved,
+      targetApplicantType: ApplicantType.both
+    });
 
     this.rejectedForStudents = await OfferGenerator.instance.updatedWithStatus({
       admin: this.admins.extension,
@@ -101,6 +118,20 @@ export class OfferTestSetup {
     );
     await OfferRepository.save(this.approvedForBoth);
 
+    this.anotherApprovedForBoth = await OfferGenerator.instance.updatedWithStatus({
+      admin: this.admins.graduados,
+      companyUuid: this.companies.approved.uuid,
+      status: ApprovalStatus.approved,
+      targetApplicantType: ApplicantType.both
+    });
+
+    this.anotherApprovedForBoth.updateStatus(
+      this.admins.extension,
+      ApprovalStatus.approved,
+      extensionOfferDurationInDays
+    );
+    await OfferRepository.save(this.anotherApprovedForBoth);
+
     this.pendingForStudents = await OfferGenerator.instance.updatedWithStatus({
       admin: this.admins.extension,
       companyUuid: this.companies.approved.uuid,
@@ -133,6 +164,7 @@ export class OfferTestSetup {
       this.approvedForStudents,
       this.approvedForGraduates,
       this.approvedForBoth,
+      this.anotherApprovedForBoth,
       this.rejectedForStudents,
       this.rejectedForGraduates,
       this.rejectedForBoth,
