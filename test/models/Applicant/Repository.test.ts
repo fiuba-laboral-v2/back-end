@@ -179,7 +179,7 @@ describe("ApplicantRepository", () => {
       it("returns applicants where only the name matches", async () => {
         const name = "STUDENT";
         const studentUser = await UserRepository.findByUuid(student.userUuid);
-        studentUser.name = name;
+        studentUser.setAttributes({ name });
         await UserRepository.save(studentUser);
         const applicants = await ApplicantRepository.findLatest({ name });
         expect(applicants.shouldFetchMore).toEqual(false);
@@ -189,19 +189,27 @@ describe("ApplicantRepository", () => {
       it("returns applicants where only the surname matches", async () => {
         const surname = "GRADUATE_SURNAME";
         const graduateUser = await UserRepository.findByUuid(graduate.userUuid);
-        graduateUser.surname = surname;
+        graduateUser.setAttributes({ surname });
         await UserRepository.save(graduateUser);
         const applicants = await ApplicantRepository.findLatest({ name: surname });
         expect(applicants.shouldFetchMore).toEqual(false);
         expect(applicants.results.map(({ uuid }) => uuid)).toEqual([graduate.uuid]);
       });
 
-      it("returns applicants where the name or the surname have a part of the name", async () => {
-        const name = "eric";
+      it("returns applicants by name and surname", async () => {
         const studentAndGraduateUser = await UserRepository.findByUuid(studentAndGraduate.userUuid);
-        studentAndGraduateUser.surname = "erica";
+        studentAndGraduateUser.setAttributes({ name: "Eric Patrick", surname: "Robinson Clapton" });
         await UserRepository.save(studentAndGraduateUser);
-        const applicants = await ApplicantRepository.findLatest({ name });
+        const applicants = await ApplicantRepository.findLatest({ name: "Eric Clapton" });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
+      });
+
+      it("returns applicants where the filter name has multiple spaces", async () => {
+        const studentAndGraduateUser = await UserRepository.findByUuid(studentAndGraduate.userUuid);
+        studentAndGraduateUser.setAttributes({ name: "Eric Patrick", surname: "Robinson Clapton" });
+        await UserRepository.save(studentAndGraduateUser);
+        const applicants = await ApplicantRepository.findLatest({ name: "Eric     Clapton" });
         expect(applicants.shouldFetchMore).toEqual(false);
         expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
       });

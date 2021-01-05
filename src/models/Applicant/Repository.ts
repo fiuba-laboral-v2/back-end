@@ -1,4 +1,4 @@
-import { Op, Transaction } from "sequelize";
+import { fn, where, col, or, Op, Transaction } from "sequelize";
 import { ApplicantType, IApplicantEditable, IFindLatest } from "./Interface";
 import { ApplicantNotFound } from "./Errors";
 import { Database } from "$config";
@@ -19,11 +19,13 @@ export const ApplicantRepository = {
     const isGraduate = applicantType === ApplicantType.graduate;
     const include: Includeable[] = [];
     if (name) {
+      const words = name.split(" ").filter(word => word !== "");
       include.push({
         model: UserSequelizeModel,
-        where: {
-          [Op.or]: [{ name: { [Op.substring]: name } }, { surname: { [Op.substring]: name } }]
-        },
+        where: or(
+          ...words.map(word => where(fn("lower", col("name")), { [Op.iLike]: `%${word}%` })),
+          ...words.map(word => where(fn("lower", col("surname")), { [Op.iLike]: `%${word}%` }))
+        ),
         attributes: []
       });
     }
