@@ -212,6 +212,12 @@ describe("ApplicantRepository", () => {
         expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
       });
 
+      it("returns applicants matching by name skiping newline character", async () => {
+        const applicants = await ApplicantRepository.findLatest({ name: "gustavo\ndylán" });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
+      });
+
       it("returns applicants matching by last surname with other capitalize letters and second name", async () => {
         const applicants = await ApplicantRepository.findLatest({ name: "AVAlos francOÍs" });
         expect(applicants.shouldFetchMore).toEqual(false);

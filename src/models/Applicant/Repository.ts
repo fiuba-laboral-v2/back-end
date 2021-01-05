@@ -20,7 +20,7 @@ export const ApplicantRepository = {
     const include: Includeable[] = [];
     if (name !== undefined) {
       const words = name
-        .replace("\n", "")
+        .replace("\n", " ")
         .split(" ")
         .filter(word => word !== "");
       if (words.length > 0) {
