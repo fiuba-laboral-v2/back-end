@@ -15,8 +15,6 @@ import { Includeable } from "sequelize/types/lib/model";
 export const ApplicantRepository = {
   save: (applicant: Applicant, transaction?: Transaction) => applicant.save({ transaction }),
   findLatest: ({ updatedBeforeThan, name, careerCodes, applicantType }: IFindLatest = {}) => {
-    const isStudent = applicantType === ApplicantType.student;
-    const isGraduate = applicantType === ApplicantType.graduate;
     const include: Includeable[] = [];
     if (name) {
       const words = name.split(" ").filter(word => word !== "");
@@ -36,8 +34,8 @@ export const ApplicantRepository = {
         model: ApplicantCareer,
         where: {
           ...(careerCodes && { careerCode: { [Op.in]: careerCodes } }),
-          ...(isGraduate && { isGraduate: true }),
-          ...(isStudent && { isGraduate: false })
+          ...(applicantType === ApplicantType.graduate && { isGraduate: true }),
+          ...(applicantType === ApplicantType.student && { isGraduate: false })
         },
         attributes: []
       });
