@@ -24,12 +24,7 @@ export const ApplicantNotificationRepository = {
       query: async options => {
         const notifications = await ApplicantNotificationSequelizeModel.findAll(options);
         return notifications.map(ApplicantNotificationMapper.toDomainModel);
-      },
-      order: [
-        ["isNew", "DESC"],
-        ["createdAt", "DESC"],
-        ["uuid", "DESC"]
-      ]
+      }
     }),
   markAsReadByUuids: (uuids: string[]) =>
     Database.transaction(async transaction => {

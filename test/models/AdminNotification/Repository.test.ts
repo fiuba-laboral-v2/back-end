@@ -186,25 +186,6 @@ describe("AdminNotificationRepository", () => {
       expect(results).toEqual(notifications.slice(itemsPerPage, notificationsLength + 1));
       expect(shouldFetchMore).toBe(false);
     });
-
-    it("finds the latest notifications order by inNew first", async () => {
-      const secretary = extensionAdmin.secretary;
-      let isNew = true;
-      notifications.forEach(notification => {
-        notification.isNew = !isNew;
-        isNew = !isNew;
-      });
-      await Promise.all(
-        notifications.map(notification => AdminNotificationRepository.save(notification))
-      );
-      const { shouldFetchMore, results } = await findLatestBySecretary({ secretary });
-
-      expect(results.map(result => result.isNew)).toEqual([
-        ...Array(notificationsLength / 2).fill(true),
-        ...Array(notificationsLength / 2).fill(false)
-      ]);
-      expect(shouldFetchMore).toBe(false);
-    });
   });
 
   describe("markAsReadByUuids", () => {

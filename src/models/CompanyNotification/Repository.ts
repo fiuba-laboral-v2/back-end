@@ -43,12 +43,7 @@ export const CompanyNotificationRepository = {
       query: async options => {
         const companyNotifications = await CompanyNotificationSequelizeModel.findAll(options);
         return companyNotifications.map(CompanyNotificationMapper.toDomainModel);
-      },
-      order: [
-        ["isNew", "DESC"],
-        ["createdAt", "DESC"],
-        ["uuid", "DESC"]
-      ]
+      }
     }),
   findByUuids: async (uuids: string[]) => {
     const companyNotifications = await CompanyNotificationSequelizeModel.findAll({
