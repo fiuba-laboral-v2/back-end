@@ -24,7 +24,9 @@ export const ApplicantRepository = {
         model: UserSequelizeModel,
         where: or(
           ...words.map(word => where(fn("lower", col("name")), { [Op.iLike]: `%${word}%` })),
-          ...words.map(word => where(fn("lower", col("surname")), { [Op.iLike]: `%${word}%` }))
+          ...words.map(word => where(fn("lower", col("surname")), { [Op.iLike]: `%${word}%` })),
+          ...words.map(word => where(fn("unaccent", col("name")), fn("unaccent", word))),
+          ...words.map(word => where(fn("unaccent", col("surname")), fn("unaccent", word)))
         ),
         attributes: []
       });

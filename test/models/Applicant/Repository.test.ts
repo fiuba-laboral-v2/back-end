@@ -186,6 +186,15 @@ describe("ApplicantRepository", () => {
         expect(applicants.results.map(({ uuid }) => uuid)).toEqual([student.uuid]);
       });
 
+      it("returns applicants where the name has an accent", async () => {
+        const studentUser = await UserRepository.findByUuid(student.userUuid);
+        studentUser.setAttributes({ name: "João" });
+        await UserRepository.save(studentUser);
+        const applicants = await ApplicantRepository.findLatest({ name: "Joao" });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([student.uuid]);
+      });
+
       it("returns applicants where only the surname matches", async () => {
         const surname = "GRADUATE_SURNAME";
         const graduateUser = await UserRepository.findByUuid(graduate.userUuid);
