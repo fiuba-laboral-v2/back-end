@@ -98,6 +98,12 @@ describe("ApplicantRepository", () => {
       beforeAll(async () => {
         await ApplicantRepository.truncate();
         [student, graduate, studentAndGraduate] = await generateApplicants();
+
+        const studentAndGraduateUser = await UserRepository.findByUuid(studentAndGraduate.userUuid);
+        const name = "DylaN FraNÇois GUStävo";
+        const surname = "Álvarez Avalos";
+        studentAndGraduateUser.setAttributes({ name, surname });
+        await UserRepository.save(studentAndGraduateUser);
       });
 
       it("returns the latest applicant first", async () => {
@@ -176,60 +182,154 @@ describe("ApplicantRepository", () => {
         expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
       });
 
-      it("returns applicants where only the name matches", async () => {
-        const name = "STUDENT";
-        const studentUser = await UserRepository.findByUuid(student.userUuid);
-        studentUser.setAttributes({ name });
-        await UserRepository.save(studentUser);
-        const applicants = await ApplicantRepository.findLatest({ name });
-        expect(applicants.shouldFetchMore).toEqual(false);
-        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([student.uuid]);
-      });
-
-      it("returns applicants where the name has an accent", async () => {
-        const studentUser = await UserRepository.findByUuid(student.userUuid);
-        studentUser.setAttributes({ name: "João" });
-        await UserRepository.save(studentUser);
-        const applicants = await ApplicantRepository.findLatest({ name: "Joao" });
-        expect(applicants.shouldFetchMore).toEqual(false);
-        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([student.uuid]);
-      });
-
-      it("returns applicants where only the surname matches", async () => {
-        const surname = "GRADUATE_SURNAME";
-        const graduateUser = await UserRepository.findByUuid(graduate.userUuid);
-        graduateUser.setAttributes({ surname });
-        await UserRepository.save(graduateUser);
-        const applicants = await ApplicantRepository.findLatest({ name: surname });
-        expect(applicants.shouldFetchMore).toEqual(false);
-        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([graduate.uuid]);
-      });
-
-      it("returns applicants by name and surname", async () => {
-        const studentAndGraduateUser = await UserRepository.findByUuid(studentAndGraduate.userUuid);
-        studentAndGraduateUser.setAttributes({ name: "Eric Patrick", surname: "Robinson Clapton" });
-        await UserRepository.save(studentAndGraduateUser);
-        const applicants = await ApplicantRepository.findLatest({ name: "Eric Clapton" });
+      it("returns applicants matching by lowercase name", async () => {
+        const applicants = await ApplicantRepository.findLatest({ name: "dylan" });
         expect(applicants.shouldFetchMore).toEqual(false);
         expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
       });
 
-      it("returns applicants by case insensitive name with accent", async () => {
-        const studentAndGraduateUser = await UserRepository.findByUuid(studentAndGraduate.userUuid);
-        studentAndGraduateUser.setAttributes({ name: "Eric Patrick", surname: "Robinson Clapton" });
-        await UserRepository.save(studentAndGraduateUser);
-        const applicants = await ApplicantRepository.findLatest({ name: "claPtón" });
+      it("returns applicants matching by lowercase middle name with spaces at the beginning", async () => {
+        const applicants = await ApplicantRepository.findLatest({ name: "  francois" });
         expect(applicants.shouldFetchMore).toEqual(false);
         expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
       });
 
-      it("returns applicants where the filter name has multiple spaces", async () => {
-        const studentAndGraduateUser = await UserRepository.findByUuid(studentAndGraduate.userUuid);
-        studentAndGraduateUser.setAttributes({ name: "Eric Patrick", surname: "Robinson Clapton" });
-        await UserRepository.save(studentAndGraduateUser);
-        const applicants = await ApplicantRepository.findLatest({ name: "Eric     Clapton" });
+      it("returns applicants matching by lowercase first surname with no accents", async () => {
+        const applicants = await ApplicantRepository.findLatest({ name: "alvarez" });
         expect(applicants.shouldFetchMore).toEqual(false);
         expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
+      });
+
+      it("returns applicants matching by lowercase last surname", async () => {
+        const applicants = await ApplicantRepository.findLatest({ name: "avalos" });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
+      });
+
+      it("returns applicants matching by lowercase names in different order with spaces", async () => {
+        const applicants = await ApplicantRepository.findLatest({ name: "gustavo \n  dylán" });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
+      });
+
+      it("returns applicants matching by last surname with other capitalize letters and second name", async () => {
+        const applicants = await ApplicantRepository.findLatest({ name: "AVAlos francOÍs" });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
+      });
+
+      it("returns applicants matching by full lowercase surname with no accents", async () => {
+        const applicants = await ApplicantRepository.findLatest({ name: "avalos alvarez" });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
+      });
+
+      it("returns applicants matching by second lowercase name and first lowercase name", async () => {
+        const applicants = await ApplicantRepository.findLatest({ name: "francois dylan" });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
+      });
+
+      it("returns applicants matching by first name with some capitalize letters", async () => {
+        const applicants = await ApplicantRepository.findLatest({ name: "DylaN" });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
+      });
+
+      it("returns applicants matching the exact second name", async () => {
+        const applicants = await ApplicantRepository.findLatest({ name: "FraNÇois" });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
+      });
+
+      it("returns applicants matching the exact third name", async () => {
+        const applicants = await ApplicantRepository.findLatest({ name: "GUStävo" });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
+      });
+
+      it("returns applicants matching by the exact full name", async () => {
+        const applicants = await ApplicantRepository.findLatest({ name: "DylaN FraNÇois GUStävo" });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
+      });
+
+      it("returns applicants matching by the exact first surname", async () => {
+        const applicants = await ApplicantRepository.findLatest({ name: "Álvarez" });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
+      });
+
+      it("returns applicants matching by the exact second surname", async () => {
+        const applicants = await ApplicantRepository.findLatest({ name: "Avalos" });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
+      });
+
+      it("returns applicants matching by the exact full surname", async () => {
+        const applicants = await ApplicantRepository.findLatest({ name: "Álvarez Avalos" });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
+      });
+
+      it("returns no applicants if the first name does not match completely", async () => {
+        const applicants = await ApplicantRepository.findLatest({ name: "dyl" });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([]);
+      });
+
+      it("returns no applicants if the second and third name does not match completely", async () => {
+        const applicants = await ApplicantRepository.findLatest({ name: "fra gus" });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([]);
+      });
+
+      it("returns no applicants if the name or surname does not match", async () => {
+        const applicants = await ApplicantRepository.findLatest({ name: "Sebastián Blanco" });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([]);
+      });
+
+      it("returns no applicants if the name or surname does not match with one of the filter name", async () => {
+        const applicants = await ApplicantRepository.findLatest({ name: "BoB DylaN" });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([]);
+      });
+
+      it("returns no applicants if given a surname does does not match", async () => {
+        const applicants = await ApplicantRepository.findLatest({ name: "Álvarez Avalos Dalila" });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([]);
+      });
+
+      it("returns all applicants if given an empty string", async () => {
+        const applicants = await ApplicantRepository.findLatest({ name: "" });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([
+          studentAndGraduate.uuid,
+          graduate.uuid,
+          student.uuid
+        ]);
+      });
+
+      it("returns all applicants if given a space", async () => {
+        const applicants = await ApplicantRepository.findLatest({ name: "  " });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([
+          studentAndGraduate.uuid,
+          graduate.uuid,
+          student.uuid
+        ]);
+      });
+
+      it("returns all applicants if given a newline character", async () => {
+        const applicants = await ApplicantRepository.findLatest({ name: "\n" });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([
+          studentAndGraduate.uuid,
+          graduate.uuid,
+          student.uuid
+        ]);
       });
 
       it("returns students in the first career", async () => {

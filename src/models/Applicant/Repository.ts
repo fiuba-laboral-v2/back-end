@@ -1,4 +1,4 @@
-import { fn, where, col, or, Op, Transaction } from "sequelize";
+import { fn, where, col, Op, Transaction } from "sequelize";
 import { ApplicantType, IApplicantEditable, IFindLatest } from "./Interface";
 import { ApplicantNotFound } from "./Errors";
 import { Database } from "$config";
@@ -16,22 +16,31 @@ export const ApplicantRepository = {
   save: (applicant: Applicant, transaction?: Transaction) => applicant.save({ transaction }),
   findLatest: ({ updatedBeforeThan, name, careerCodes, applicantType }: IFindLatest = {}) => {
     const removeAccent = word => word.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    const unAccent = word => removeAccent(word).toLowerCase();
+    const normalize = word => removeAccent(word).toLowerCase();
     const include: Includeable[] = [];
-    if (name) {
-      const words = name.split(" ").filter(word => word !== "");
-      include.push({
-        model: UserSequelizeModel,
-        where: or(
-          ...words.map(word =>
-            where(fn("unaccent", col("name")), { [Op.iLike]: `%${unAccent(word)}%` })
-          ),
-          ...words.map(word =>
-            where(fn("unaccent", col("surname")), { [Op.iLike]: `%${unAccent(word)}%` })
-          )
-        ),
-        attributes: []
-      });
+    if (name !== undefined) {
+      const words = name
+        .replace("\n", "")
+        .split(" ")
+        .filter(word => word !== "");
+      if (words.length > 0) {
+        include.push({
+          model: UserSequelizeModel,
+          where: {
+            [Op.and]: words.map(word => ({
+              [Op.or]: [
+                where(fn("unaccent", fn("lower", col("name"))), {
+                  [Op.regexp]: `(^|[[:space:]])${normalize(word)}([[:space:]]|$)`
+                }),
+                where(fn("unaccent", fn("lower", col("surname"))), {
+                  [Op.regexp]: `(^|[[:space:]])${normalize(word)}([[:space:]]|$)`
+                })
+              ]
+            }))
+          },
+          attributes: []
+        });
+      }
     }
     if (careerCodes || applicantType) {
       include.push({
