@@ -1,6 +1,7 @@
 import { TLink } from "./Link/Interface";
 import { IUserEditable } from "../User";
 import { IApplicantCareer } from "./ApplicantCareer";
+import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 
 export interface IApplicantEditable {
   uuid: string;
@@ -11,6 +12,13 @@ export interface IApplicantEditable {
   knowledgeSections?: ISection[];
   experienceSections?: ISection[];
   links?: TLink[];
+}
+
+export interface IFindLatest {
+  updatedBeforeThan?: IPaginatedInput;
+  name?: string;
+  careerCodes?: string[];
+  applicantType?: ApplicantType;
 }
 
 export interface ISection {
