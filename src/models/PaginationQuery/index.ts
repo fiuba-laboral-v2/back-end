@@ -15,7 +15,6 @@ export const PaginationQuery = {
     updatedBeforeThan,
     query,
     where,
-    order,
     uuidKey = "uuid",
     timestampKey = "updatedAt",
     ...findOptions
@@ -49,7 +48,7 @@ export const PaginationQuery = {
           [Op.and]: conditions
         }
       }),
-      order: order || [
+      order: [
         [timestampKey, "DESC"],
         [uuidKey, "DESC"]
       ],

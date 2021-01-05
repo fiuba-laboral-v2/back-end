@@ -22,12 +22,7 @@ export const AdminNotificationRepository = {
       query: async options => {
         const notifications = await AdminNotificationSequelizeModel.findAll(options);
         return notifications.map(AdminNotificationMapper.toDomainModel);
-      },
-      order: [
-        ["isNew", "DESC"],
-        ["createdAt", "DESC"],
-        ["uuid", "DESC"]
-      ]
+      }
     }),
   markAsReadByUuids: (uuids: string[]) =>
     Database.transaction(async transaction => {

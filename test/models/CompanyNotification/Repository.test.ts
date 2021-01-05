@@ -445,25 +445,6 @@ describe("CompanyNotificationRepository", () => {
       expect(results).toHaveLength(itemsPerPage);
       expect(shouldFetchMore).toBe(false);
     });
-
-    it("finds the latest notifications order by inNew first", async () => {
-      let isNew = true;
-      notifications.forEach(notification => {
-        notification.isNew = !isNew;
-        isNew = !isNew;
-      });
-      await Promise.all(
-        notifications.map(notification => CompanyNotificationRepository.save(notification))
-      );
-      const { shouldFetchMore, results } = await CompanyNotificationRepository.findLatestByCompany({
-        companyUuid: company.uuid
-      });
-      expect(results.map(result => result.isNew)).toEqual([
-        ...Array(notificationsLength / 2).fill(true),
-        ...Array(notificationsLength / 2).fill(false)
-      ]);
-      expect(shouldFetchMore).toBe(false);
-    });
   });
 
   describe("Delete Cascade", () => {
