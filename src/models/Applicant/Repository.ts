@@ -15,16 +15,20 @@ import { Includeable } from "sequelize/types/lib/model";
 export const ApplicantRepository = {
   save: (applicant: Applicant, transaction?: Transaction) => applicant.save({ transaction }),
   findLatest: ({ updatedBeforeThan, name, careerCodes, applicantType }: IFindLatest = {}) => {
+    const removeAccent = word => word.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const unAccent = word => removeAccent(word).toLowerCase();
     const include: Includeable[] = [];
     if (name) {
       const words = name.split(" ").filter(word => word !== "");
       include.push({
         model: UserSequelizeModel,
         where: or(
-          ...words.map(word => where(fn("lower", col("name")), { [Op.iLike]: `%${word}%` })),
-          ...words.map(word => where(fn("lower", col("surname")), { [Op.iLike]: `%${word}%` })),
-          ...words.map(word => where(fn("unaccent", col("name")), fn("unaccent", word))),
-          ...words.map(word => where(fn("unaccent", col("surname")), fn("unaccent", word)))
+          ...words.map(word =>
+            where(fn("unaccent", col("name")), { [Op.iLike]: `%${unAccent(word)}%` })
+          ),
+          ...words.map(word =>
+            where(fn("unaccent", col("surname")), { [Op.iLike]: `%${unAccent(word)}%` })
+          )
         ),
         attributes: []
       });

@@ -214,6 +214,15 @@ describe("ApplicantRepository", () => {
         expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
       });
 
+      it("returns applicants by case insensitive name with accent", async () => {
+        const studentAndGraduateUser = await UserRepository.findByUuid(studentAndGraduate.userUuid);
+        studentAndGraduateUser.setAttributes({ name: "Eric Patrick", surname: "Robinson Clapton" });
+        await UserRepository.save(studentAndGraduateUser);
+        const applicants = await ApplicantRepository.findLatest({ name: "claPtón" });
+        expect(applicants.shouldFetchMore).toEqual(false);
+        expect(applicants.results.map(({ uuid }) => uuid)).toEqual([studentAndGraduate.uuid]);
+      });
+
       it("returns applicants where the filter name has multiple spaces", async () => {
         const studentAndGraduateUser = await UserRepository.findByUuid(studentAndGraduate.userUuid);
         studentAndGraduateUser.setAttributes({ name: "Eric Patrick", surname: "Robinson Clapton" });
