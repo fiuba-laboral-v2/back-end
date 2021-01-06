@@ -102,6 +102,10 @@ export const defaultTranslations = {
     name: "Nombre",
     submit: "Aplicar"
   },
+  adminApplicants: {
+    cleanFilters: "Limpiar filtros",
+    filters: "Filtros"
+  },
   applicantOfferList: {
     title: "Ofertas de trabajo",
     addFilters: "Agregar filtros",
