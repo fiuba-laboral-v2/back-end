@@ -5,7 +5,6 @@ import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 
 import { ApplicantRepository, ApplicantType, IFindLatest } from "$models/Applicant";
-import { IApplicantCareer } from "$models/Applicant/ApplicantCareer";
 import { CareerRepository } from "$models/Career";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
@@ -41,7 +40,6 @@ const GET_APPLICANTS = gql`
 describe("getApplicants", () => {
   let firstCareer: Career;
   let secondCareer: Career;
-  let studentApplicantCareer: IApplicantCareer;
 
   beforeAll(async () => {
     await CareerRepository.truncate();
@@ -50,12 +48,6 @@ describe("getApplicants", () => {
 
     firstCareer = await CareerGenerator.instance();
     secondCareer = await CareerGenerator.instance();
-    studentApplicantCareer = {
-      careerCode: firstCareer.code,
-      approvedSubjectCount: 20,
-      currentCareerYear: 3,
-      isGraduate: false
-    };
   });
 
   const getApplicants = (apolloClient: TestClient, variables?: IFindLatest) =>
@@ -69,33 +61,13 @@ describe("getApplicants", () => {
     expect(data!.getApplicants.results).toEqual([]);
   });
 
-  it("fetches the existing applicant", async () => {
-    const { applicant, apolloClient } = await TestClientGenerator.applicant({
-      careers: [{ careerCode: firstCareer.code, isGraduate: true }],
-      status: ApprovalStatus.approved
-    });
-
+  it("returns all applicants", async () => {
+    const { apolloClient } = await TestClientGenerator.admin();
+    const applicant = await ApplicantGenerator.instance.student({ career: firstCareer });
     const { data, errors } = await getApplicants(apolloClient);
-
     expect(errors).toBeUndefined();
     expect(data!.getApplicants.shouldFetchMore).toEqual(false);
     expect(data!.getApplicants.results.map(({ uuid }) => uuid)).toEqual([applicant.uuid]);
-  });
-
-  it("allows an applicant user to fetch all applicants", async () => {
-    const { applicant: firstApplicant, apolloClient } = await TestClientGenerator.applicant({
-      careers: [studentApplicantCareer],
-      status: ApprovalStatus.approved
-    });
-    const secondApplicant = await ApplicantGenerator.instance.student({ career: firstCareer });
-    const applicants = [firstApplicant, secondApplicant];
-
-    const { data, errors } = await getApplicants(apolloClient);
-    expect(errors).toBeUndefined();
-    expect(data!.getApplicants.shouldFetchMore).toEqual(false);
-    expect(data!.getApplicants.results.map(({ uuid }) => uuid)).toEqual(
-      expect.arrayContaining(applicants.map(({ uuid }) => uuid))
-    );
   });
 
   it("returns applicants in the first and second career", async () => {
@@ -149,6 +121,14 @@ describe("getApplicants", () => {
 
       const { errors } = await getApplicants(apolloClient);
       expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
+    });
+
+    it("returns an error if current user is an approved applicant", async () => {
+      const { apolloClient } = await TestClientGenerator.applicant({
+        status: ApprovalStatus.approved
+      });
+      const { errors } = await getApplicants(apolloClient);
+      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });
 
     it("returns an error if current user is pending applicant", async () => {
