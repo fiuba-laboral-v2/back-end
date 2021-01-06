@@ -22,7 +22,6 @@ export interface IFind {
 
 export interface IFindLatest extends IFind {
   updatedBeforeThan?: IPaginatedInput;
-  noLimit?: boolean;
 }
 
 export interface ISection {

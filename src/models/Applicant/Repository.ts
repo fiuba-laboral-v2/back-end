@@ -62,20 +62,13 @@ export const ApplicantRepository = {
     if (applicantCareersFilter) include.push(applicantCareersFilter);
     return Applicant.findAll({ include });
   },
-  findLatest: ({
-    updatedBeforeThan,
-    name,
-    careerCodes,
-    applicantType,
-    noLimit
-  }: IFindLatest = {}) => {
+  findLatest: ({ updatedBeforeThan, name, careerCodes, applicantType }: IFindLatest = {}) => {
     const include: Includeable[] = [];
     const userFilter = userFilterBuilder(name);
     const applicantCareersFilter = applicantCareersFilterBuilder(careerCodes, applicantType);
     if (userFilter) include.push(userFilter);
     if (applicantCareersFilter) include.push(applicantCareersFilter);
     return PaginationQuery.findLatest({
-      noLimit,
       updatedBeforeThan,
       query: options => Applicant.findAll(options),
       include
