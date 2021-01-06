@@ -21,7 +21,7 @@ const GET_APPLICANT_EMAILS = gql`
   }
 `;
 
-describe("getApplicants", () => {
+describe("getApplicantEmails", () => {
   let firstCareer: Career;
   let secondCareer: Career;
 
