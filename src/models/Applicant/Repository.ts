@@ -1,5 +1,5 @@
 import { fn, where, col, Op, Transaction } from "sequelize";
-import { ApplicantType, IApplicantEditable, IFindLatest } from "./Interface";
+import { ApplicantType, IApplicantEditable, IFindLatest, IFind } from "./Interface";
 import { ApplicantNotFound } from "./Errors";
 import { Database } from "$config";
 import { ApplicantCareersRepository } from "./ApplicantCareer";
@@ -54,6 +54,14 @@ const userFilterBuilder = (name?: string) => {
 
 export const ApplicantRepository = {
   save: (applicant: Applicant, transaction?: Transaction) => applicant.save({ transaction }),
+  find: ({ name, applicantType, careerCodes }: IFind = {}) => {
+    const include: Includeable[] = [];
+    const userFilter = userFilterBuilder(name);
+    const applicantCareersFilter = applicantCareersFilterBuilder(careerCodes, applicantType);
+    if (userFilter) include.push(userFilter);
+    if (applicantCareersFilter) include.push(applicantCareersFilter);
+    return Applicant.findAll({ include });
+  },
   findLatest: ({
     updatedBeforeThan,
     name,
