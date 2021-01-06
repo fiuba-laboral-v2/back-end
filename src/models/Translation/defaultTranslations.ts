@@ -98,6 +98,14 @@ export const defaultTranslations = {
   careersSection: {
     careersTitle: "Carreras"
   },
+  applicantsFilter: {
+    name: "Nombre",
+    submit: "Aplicar"
+  },
+  adminApplicants: {
+    cleanFilters: "Remover filtros",
+    filters: "Filtrar"
+  },
   applicantOfferList: {
     title: "Ofertas de trabajo",
     addFilters: "Agregar filtros",
