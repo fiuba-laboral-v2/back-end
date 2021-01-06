@@ -2,7 +2,7 @@ import { UserSequelizeModel } from "$models";
 import { col, fn, Op, where } from "sequelize";
 import { Includeable } from "sequelize/types/lib/model";
 
-export const usersWhereClauseBuilder = {
+export const UsersWhereClauseBuilder = {
   build: ({ name }: IBuild): Includeable | undefined => {
     if (name === undefined) return;
     const removeAccent = word => word.normalize("NFD").replace(/[\u0300-\u036f]/g, "");

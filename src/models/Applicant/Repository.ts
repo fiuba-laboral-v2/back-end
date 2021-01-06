@@ -11,14 +11,14 @@ import { UserRepository } from "../User";
 import { Applicant } from "..";
 import { PaginationQuery } from "../PaginationQuery";
 import { ApplicantCareersWhereClauseBuilder } from "./ApplicantCareersWhereClauseBuilder";
-import { usersWhereClauseBuilder } from "./usersWhereClauseBuilder";
+import { UsersWhereClauseBuilder } from "./UsersWhereClauseBuilder";
 import { Includeable } from "sequelize/types/lib/model";
 
 export const ApplicantRepository = {
   save: (applicant: Applicant, transaction?: Transaction) => applicant.save({ transaction }),
   find: (filter: IFind = {}) => {
     const include: Includeable[] = [];
-    const userFilter = usersWhereClauseBuilder.build(filter);
+    const userFilter = UsersWhereClauseBuilder.build(filter);
     const applicantCareers = ApplicantCareersWhereClauseBuilder.build(filter);
     if (userFilter) include.push(userFilter);
     if (applicantCareers) include.push(applicantCareers);
@@ -26,7 +26,7 @@ export const ApplicantRepository = {
   },
   findLatest: ({ updatedBeforeThan, ...filter }: IFindLatest = {}) => {
     const include: Includeable[] = [];
-    const userFilter = usersWhereClauseBuilder.build(filter);
+    const userFilter = UsersWhereClauseBuilder.build(filter);
     const applicantCareersFilter = ApplicantCareersWhereClauseBuilder.build(filter);
     if (userFilter) include.push(userFilter);
     if (applicantCareersFilter) include.push(applicantCareersFilter);
