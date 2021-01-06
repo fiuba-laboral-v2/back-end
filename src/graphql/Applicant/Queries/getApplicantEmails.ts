@@ -17,9 +17,9 @@ export const getApplicantEmails = {
     }
   },
   resolve: async (_: undefined, filter: IFindLatest) => {
-    const { results } = await ApplicantRepository.findLatest({ ...filter, noLimit: true });
+    const applicants = await ApplicantRepository.find(filter);
     const users = await Promise.all(
-      results.map(applicant => UserRepository.findByUuid(applicant.userUuid))
+      applicants.map(applicant => UserRepository.findByUuid(applicant.userUuid))
     );
     return users.map(user => user.email);
   }

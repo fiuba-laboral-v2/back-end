@@ -59,7 +59,9 @@ describe("getApplicantEmails", () => {
       careerCodes: [firstCareer.code, secondCareer.code]
     });
     expect(errors).toBeUndefined();
-    expect(data!.getApplicantEmails).toEqual([graduateUser.email, studentUser.email]);
+    expect(data!.getApplicantEmails).toEqual(
+      expect.arrayContaining([graduateUser.email, studentUser.email])
+    );
   });
 
   it("returns emails from graduates", async () => {
@@ -80,11 +82,13 @@ describe("getApplicantEmails", () => {
       applicantType: ApplicantType.graduate
     });
     expect(errors).toBeUndefined();
-    expect(data!.getApplicantEmails).toEqual([
-      thirdGraduateUser.email,
-      secondGraduateUser.email,
-      firstGraduateUser.email
-    ]);
+    expect(data!.getApplicantEmails).toEqual(
+      expect.arrayContaining([
+        thirdGraduateUser.email,
+        secondGraduateUser.email,
+        firstGraduateUser.email
+      ])
+    );
   });
 
   it("returns an error if there is no current user", async () => {
