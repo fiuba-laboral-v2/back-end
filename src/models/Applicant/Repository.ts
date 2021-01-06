@@ -1,5 +1,5 @@
 import { fn, where, col, Op, Transaction } from "sequelize";
-import { ApplicantType, IApplicantEditable, IFindLatest, IFind } from "./Interface";
+import { IApplicantEditable, IFindLatest, IFind } from "./Interface";
 import { ApplicantNotFound } from "./Errors";
 import { Database } from "$config";
 import { ApplicantCareersRepository } from "./ApplicantCareer";
@@ -8,22 +8,10 @@ import { ApplicantKnowledgeSectionRepository } from "./ApplicantKnowledgeSection
 import { ApplicantExperienceSectionRepository } from "./ApplicantExperienceSection";
 import { ApplicantLinkRepository } from "./Link";
 import { UserRepository } from "../User";
-import { Applicant, ApplicantCareer, UserSequelizeModel } from "..";
+import { Applicant, UserSequelizeModel } from "..";
 import { PaginationQuery } from "../PaginationQuery";
+import { ApplicantCareersWhereClauseBuilder } from "./ApplicantCareersWhereClauseBuilder";
 import { Includeable } from "sequelize/types/lib/model";
-
-const applicantCareersFilterBuilder = (careerCodes?: string[], applicantType?: ApplicantType) => {
-  if (!careerCodes && !applicantType) return;
-  return {
-    model: ApplicantCareer,
-    where: {
-      ...(careerCodes && { careerCode: { [Op.in]: careerCodes } }),
-      ...(applicantType === ApplicantType.graduate && { isGraduate: true }),
-      ...(applicantType === ApplicantType.student && { isGraduate: false })
-    },
-    attributes: []
-  };
-};
 
 const userFilterBuilder = (name?: string) => {
   if (name === undefined) return;
@@ -54,18 +42,18 @@ const userFilterBuilder = (name?: string) => {
 
 export const ApplicantRepository = {
   save: (applicant: Applicant, transaction?: Transaction) => applicant.save({ transaction }),
-  find: ({ name, applicantType, careerCodes }: IFind = {}) => {
+  find: (filter: IFind = {}) => {
     const include: Includeable[] = [];
-    const userFilter = userFilterBuilder(name);
-    const applicantCareersFilter = applicantCareersFilterBuilder(careerCodes, applicantType);
+    const userFilter = userFilterBuilder(filter.name);
+    const applicantCareers = ApplicantCareersWhereClauseBuilder.build(filter);
     if (userFilter) include.push(userFilter);
-    if (applicantCareersFilter) include.push(applicantCareersFilter);
+    if (applicantCareers) include.push(applicantCareers);
     return Applicant.findAll({ include });
   },
-  findLatest: ({ updatedBeforeThan, name, careerCodes, applicantType }: IFindLatest = {}) => {
+  findLatest: ({ updatedBeforeThan, ...filter }: IFindLatest = {}) => {
     const include: Includeable[] = [];
-    const userFilter = userFilterBuilder(name);
-    const applicantCareersFilter = applicantCareersFilterBuilder(careerCodes, applicantType);
+    const userFilter = userFilterBuilder(filter.name);
+    const applicantCareersFilter = ApplicantCareersWhereClauseBuilder.build(filter);
     if (userFilter) include.push(userFilter);
     if (applicantCareersFilter) include.push(applicantCareersFilter);
     return PaginationQuery.findLatest({
