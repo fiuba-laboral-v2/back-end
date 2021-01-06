@@ -8,8 +8,9 @@ import { UserRepository } from "$models/User";
 import { OfferNotFoundError, OfferRepository } from "$models/Offer";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Applicant";
-import { Career, Company } from "$models";
+import { Admin, Career, Company } from "$models";
 
+import { AdminGenerator } from "$generators/Admin";
 import { OfferGenerator } from "$generators/Offer";
 import { CompanyGenerator } from "$generators/Company";
 import { CareerGenerator } from "$generators/Career";
@@ -72,6 +73,8 @@ const EDIT_OFFER = gql`
 describe("editOffer", () => {
   let firstCareer: Career;
   let secondCareer: Career;
+  let extensionAdmin: Admin;
+  let graduadosAdmin: Admin;
 
   beforeAll(async () => {
     await CompanyRepository.truncate();
@@ -79,6 +82,8 @@ describe("editOffer", () => {
     await CareerRepository.truncate();
     firstCareer = await CareerGenerator.instance();
     secondCareer = await CareerGenerator.instance();
+    extensionAdmin = await AdminGenerator.extension();
+    graduadosAdmin = await AdminGenerator.graduados();
   });
 
   const createCompanyTestClient = async (approvalStatus: ApprovalStatus) =>
@@ -114,13 +119,16 @@ describe("editOffer", () => {
       companyUuid: company.uuid,
       careers: [{ careerCode: firstCareer.code }]
     });
-    const { uuid } = await OfferRepository.create(initialAttributes);
+    const offer = await OfferRepository.create(initialAttributes);
+    offer.updateStatus(extensionAdmin, ApprovalStatus.approved, 15);
+    offer.updateStatus(graduadosAdmin, ApprovalStatus.approved, 15);
+    await OfferRepository.save(offer);
     const { errors } = await apolloClient.mutate({
       mutation: EDIT_OFFER,
-      variables: { uuid, ...initialAttributes }
+      variables: { uuid: offer.uuid, ...initialAttributes }
     });
     expect(errors).toBeUndefined();
-    const updatedOffer = await OfferRepository.findByUuid(uuid);
+    const updatedOffer = await OfferRepository.findByUuid(offer.uuid);
     expect(updatedOffer.graduadosApprovalStatus).toEqual(ApprovalStatus.pending);
     expect(updatedOffer.extensionApprovalStatus).toEqual(ApprovalStatus.pending);
   });

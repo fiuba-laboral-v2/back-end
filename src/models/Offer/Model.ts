@@ -198,6 +198,13 @@ export class Offer extends Model<Offer> {
     }
   }
 
+  public moveToPending() {
+    this.extensionApprovalStatus = ApprovalStatus.pending;
+    this.studentsExpirationDateTime = null;
+    this.graduadosApprovalStatus = ApprovalStatus.pending;
+    this.graduatesExpirationDateTime = null;
+  }
+
   private expireForStudents = () => {
     if (this.extensionApprovalStatus !== ApprovalStatus.approved) return;
     this.studentsExpirationDateTime = DateTimeManager.yesterday();
