@@ -108,7 +108,8 @@ export const defaultTranslations = {
   },
   exportApplicantEmails: {
     confirmDialogTitle: "Exportación de emails",
-    confirmDialogDescription: "Se van a buscar todos los emails correspondientes al filtro aplicado",
+    confirmDialogDescription:
+      "Se van a buscar todos los emails correspondientes al filtro aplicado",
     confirmDialogCancel: "Cancelar",
     confirmDialogConfirm: "Confirmar"
   },
