@@ -505,6 +505,7 @@ export const defaultTranslations = {
   },
   adminApplicantListHeader: {
     names: "Nombre y Apellido",
+    email: "Email",
     padron: "Padrón",
     dni: "DNI",
     studies: "Estudios",
