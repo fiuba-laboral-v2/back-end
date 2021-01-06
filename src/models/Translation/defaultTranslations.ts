@@ -116,8 +116,7 @@ export const defaultTranslations = {
   exportedApplicantEmails: {
     confirmDialogTitle: "Exportación de emails exitosa",
     confirmDialogDescription: "Los siguientes emails se pueden copiar a su correo electrónico",
-    confirmDialogCancel: "Cancelar",
-    confirmDialogConfirm: "Aceptar"
+    confirmDialogCancel: "Cerrar"
   },
   applicantOfferList: {
     title: "Ofertas de trabajo",
