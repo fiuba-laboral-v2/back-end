@@ -1,4 +1,4 @@
-import { fn, where, col, Op, Transaction } from "sequelize";
+import { Transaction } from "sequelize";
 import { IApplicantEditable, IFindLatest, IFind } from "./Interface";
 import { ApplicantNotFound } from "./Errors";
 import { Database } from "$config";
@@ -8,43 +8,17 @@ import { ApplicantKnowledgeSectionRepository } from "./ApplicantKnowledgeSection
 import { ApplicantExperienceSectionRepository } from "./ApplicantExperienceSection";
 import { ApplicantLinkRepository } from "./Link";
 import { UserRepository } from "../User";
-import { Applicant, UserSequelizeModel } from "..";
+import { Applicant } from "..";
 import { PaginationQuery } from "../PaginationQuery";
 import { ApplicantCareersWhereClauseBuilder } from "./ApplicantCareersWhereClauseBuilder";
+import { usersWhereClauseBuilder } from "./usersWhereClauseBuilder";
 import { Includeable } from "sequelize/types/lib/model";
-
-const userFilterBuilder = (name?: string) => {
-  if (name === undefined) return;
-  const removeAccent = word => word.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  const normalize = word => removeAccent(word).toLowerCase();
-  const words = name
-    .replace("\n", " ")
-    .split(" ")
-    .filter(word => word !== "");
-  if (words.length === 0) return;
-  return {
-    model: UserSequelizeModel,
-    where: {
-      [Op.and]: words.map(word => ({
-        [Op.or]: [
-          where(fn("unaccent", fn("lower", col("name"))), {
-            [Op.regexp]: `(^|[[:space:]])${normalize(word)}([[:space:]]|$)`
-          }),
-          where(fn("unaccent", fn("lower", col("surname"))), {
-            [Op.regexp]: `(^|[[:space:]])${normalize(word)}([[:space:]]|$)`
-          })
-        ]
-      }))
-    },
-    attributes: []
-  };
-};
 
 export const ApplicantRepository = {
   save: (applicant: Applicant, transaction?: Transaction) => applicant.save({ transaction }),
   find: (filter: IFind = {}) => {
     const include: Includeable[] = [];
-    const userFilter = userFilterBuilder(filter.name);
+    const userFilter = usersWhereClauseBuilder.build(filter);
     const applicantCareers = ApplicantCareersWhereClauseBuilder.build(filter);
     if (userFilter) include.push(userFilter);
     if (applicantCareers) include.push(applicantCareers);
@@ -52,7 +26,7 @@ export const ApplicantRepository = {
   },
   findLatest: ({ updatedBeforeThan, ...filter }: IFindLatest = {}) => {
     const include: Includeable[] = [];
-    const userFilter = userFilterBuilder(filter.name);
+    const userFilter = usersWhereClauseBuilder.build(filter);
     const applicantCareersFilter = ApplicantCareersWhereClauseBuilder.build(filter);
     if (userFilter) include.push(userFilter);
     if (applicantCareersFilter) include.push(applicantCareersFilter);
