@@ -14,7 +14,13 @@ import { Includeable } from "sequelize/types/lib/model";
 
 export const ApplicantRepository = {
   save: (applicant: Applicant, transaction?: Transaction) => applicant.save({ transaction }),
-  findLatest: ({ updatedBeforeThan, name, careerCodes, applicantType }: IFindLatest = {}) => {
+  findLatest: ({
+    updatedBeforeThan,
+    name,
+    careerCodes,
+    applicantType,
+    noLimit
+  }: IFindLatest = {}) => {
     const removeAccent = word => word.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     const normalize = word => removeAccent(word).toLowerCase();
     const include: Includeable[] = [];
@@ -54,6 +60,7 @@ export const ApplicantRepository = {
       });
     }
     return PaginationQuery.findLatest({
+      noLimit,
       updatedBeforeThan,
       query: options => Applicant.findAll(options),
       include

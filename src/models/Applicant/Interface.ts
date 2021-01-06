@@ -19,6 +19,7 @@ export interface IFindLatest {
   name?: string;
   careerCodes?: string[];
   applicantType?: ApplicantType;
+  noLimit?: boolean;
 }
 
 export interface ISection {

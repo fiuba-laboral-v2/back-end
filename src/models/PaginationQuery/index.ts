@@ -8,10 +8,12 @@ interface IFindLatest<Model> extends FindOptions {
   where?: WhereAttributeHash;
   uuidKey?: "uuid" | "userUuid";
   timestampKey?: "createdAt" | "updatedAt";
+  noLimit?: boolean;
 }
 
 export const PaginationQuery = {
   findLatest: async <Model>({
+    noLimit,
     updatedBeforeThan,
     query,
     where,
@@ -52,12 +54,12 @@ export const PaginationQuery = {
         [timestampKey, "DESC"],
         [uuidKey, "DESC"]
       ],
-      limit
+      ...(!noLimit && { limit })
     });
 
     return {
-      shouldFetchMore: result.length === limit,
-      results: result.slice(0, limit - 1)
+      shouldFetchMore: noLimit ? false : result.length === limit,
+      results: noLimit ? result : result.slice(0, limit - 1)
     };
   }
 };

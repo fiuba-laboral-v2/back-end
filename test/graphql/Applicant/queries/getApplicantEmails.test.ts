@@ -14,6 +14,7 @@ import { Career } from "$models";
 import { CareerGenerator } from "$generators/Career";
 import { TestClientGenerator } from "$generators/TestClient";
 import { ApplicantGenerator } from "$generators/Applicant";
+import { mockItemsPerPage } from "$test/mocks/config/PaginationConfig";
 
 const GET_APPLICANT_EMAILS = gql`
   query GetApplicantEmails($careerCodes: [String], $applicantType: ApplicantType, $name: String) {
@@ -33,6 +34,8 @@ describe("getApplicantEmails", () => {
     firstCareer = await CareerGenerator.instance();
     secondCareer = await CareerGenerator.instance();
   });
+
+  beforeEach(() => mockItemsPerPage(1));
 
   const getApplicantEmails = (apolloClient: TestClient, variables?: IFindLatest) =>
     apolloClient.query({ query: GET_APPLICANT_EMAILS, variables });
@@ -63,14 +66,25 @@ describe("getApplicantEmails", () => {
     ApplicantRepository.truncate();
     const { apolloClient } = await TestClientGenerator.admin();
     await ApplicantGenerator.instance.student({ career: firstCareer });
-    const graduate = await ApplicantGenerator.instance.graduate({ career: secondCareer });
-    const graduateUser = await UserRepository.findByUuid(graduate.userUuid);
+    const firstGraduate = await ApplicantGenerator.instance.graduate({ career: secondCareer });
+    const firstGraduateUser = await UserRepository.findByUuid(firstGraduate.userUuid);
+    const secondGraduate = await ApplicantGenerator.instance.graduate({ career: secondCareer });
+    const secondGraduateUser = await UserRepository.findByUuid(secondGraduate.userUuid);
+    const thirdGraduate = await ApplicantGenerator.instance.graduate({ career: secondCareer });
+    const thirdGraduateUser = await UserRepository.findByUuid(thirdGraduate.userUuid);
+    await ApplicantGenerator.instance.student({ career: secondCareer });
+    await ApplicantGenerator.instance.student({ career: firstCareer });
+    await ApplicantGenerator.instance.student({ career: firstCareer });
 
     const { data, errors } = await getApplicantEmails(apolloClient, {
       applicantType: ApplicantType.graduate
     });
     expect(errors).toBeUndefined();
-    expect(data!.getApplicantEmails).toEqual([graduateUser.email]);
+    expect(data!.getApplicantEmails).toEqual([
+      thirdGraduateUser.email,
+      secondGraduateUser.email,
+      firstGraduateUser.email
+    ]);
   });
 
   it("returns an error if there is no current user", async () => {
