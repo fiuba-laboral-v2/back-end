@@ -106,6 +106,12 @@ export const defaultTranslations = {
     cleanFilters: "Remover filtros",
     filters: "Filtrar"
   },
+  exportApplicantEmails: {
+    confirmDialogTitle: "Exportación de emails",
+    confirmDialogDescription: "Se van a buscar todos los mails correspondientes al filtro aplicado",
+    confirmDialogCancel: "Cancelar",
+    confirmDialogConfirm: "Aceptar"
+  },
   applicantOfferList: {
     title: "Ofertas de trabajo",
     addFilters: "Agregar filtros",
