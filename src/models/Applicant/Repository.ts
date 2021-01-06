@@ -12,6 +12,46 @@ import { Applicant, ApplicantCareer, UserSequelizeModel } from "..";
 import { PaginationQuery } from "../PaginationQuery";
 import { Includeable } from "sequelize/types/lib/model";
 
+const applicantCareersFilterBuilder = (careerCodes?: string[], applicantType?: ApplicantType) => {
+  if (!careerCodes && !applicantType) return;
+  return {
+    model: ApplicantCareer,
+    where: {
+      ...(careerCodes && { careerCode: { [Op.in]: careerCodes } }),
+      ...(applicantType === ApplicantType.graduate && { isGraduate: true }),
+      ...(applicantType === ApplicantType.student && { isGraduate: false })
+    },
+    attributes: []
+  };
+};
+
+const userFilterBuilder = (name?: string) => {
+  if (name === undefined) return;
+  const removeAccent = word => word.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const normalize = word => removeAccent(word).toLowerCase();
+  const words = name
+    .replace("\n", " ")
+    .split(" ")
+    .filter(word => word !== "");
+  if (words.length === 0) return;
+  return {
+    model: UserSequelizeModel,
+    where: {
+      [Op.and]: words.map(word => ({
+        [Op.or]: [
+          where(fn("unaccent", fn("lower", col("name"))), {
+            [Op.regexp]: `(^|[[:space:]])${normalize(word)}([[:space:]]|$)`
+          }),
+          where(fn("unaccent", fn("lower", col("surname"))), {
+            [Op.regexp]: `(^|[[:space:]])${normalize(word)}([[:space:]]|$)`
+          })
+        ]
+      }))
+    },
+    attributes: []
+  };
+};
+
 export const ApplicantRepository = {
   save: (applicant: Applicant, transaction?: Transaction) => applicant.save({ transaction }),
   findLatest: ({
@@ -21,44 +61,11 @@ export const ApplicantRepository = {
     applicantType,
     noLimit
   }: IFindLatest = {}) => {
-    const removeAccent = word => word.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    const normalize = word => removeAccent(word).toLowerCase();
     const include: Includeable[] = [];
-    if (name !== undefined) {
-      const words = name
-        .replace("\n", " ")
-        .split(" ")
-        .filter(word => word !== "");
-      if (words.length > 0) {
-        include.push({
-          model: UserSequelizeModel,
-          where: {
-            [Op.and]: words.map(word => ({
-              [Op.or]: [
-                where(fn("unaccent", fn("lower", col("name"))), {
-                  [Op.regexp]: `(^|[[:space:]])${normalize(word)}([[:space:]]|$)`
-                }),
-                where(fn("unaccent", fn("lower", col("surname"))), {
-                  [Op.regexp]: `(^|[[:space:]])${normalize(word)}([[:space:]]|$)`
-                })
-              ]
-            }))
-          },
-          attributes: []
-        });
-      }
-    }
-    if (careerCodes || applicantType) {
-      include.push({
-        model: ApplicantCareer,
-        where: {
-          ...(careerCodes && { careerCode: { [Op.in]: careerCodes } }),
-          ...(applicantType === ApplicantType.graduate && { isGraduate: true }),
-          ...(applicantType === ApplicantType.student && { isGraduate: false })
-        },
-        attributes: []
-      });
-    }
+    const userFilter = userFilterBuilder(name);
+    const applicantCareersFilter = applicantCareersFilterBuilder(careerCodes, applicantType);
+    if (userFilter) include.push(userFilter);
+    if (applicantCareersFilter) include.push(applicantCareersFilter);
     return PaginationQuery.findLatest({
       noLimit,
       updatedBeforeThan,
