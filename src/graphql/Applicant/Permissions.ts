@@ -5,7 +5,8 @@ import { isApprovedApplicant } from "$graphql/Rules/isApprovedApplicant";
 export const applicantPermissions = {
   Query: {
     getApplicant: isUser,
-    getApplicants: or(isApprovedApplicant, isAdmin)
+    getApplicants: or(isApprovedApplicant, isAdmin),
+    getApplicantEmails: isAdmin
   },
   Mutation: {
     updateCurrentApplicant: isApplicant,
