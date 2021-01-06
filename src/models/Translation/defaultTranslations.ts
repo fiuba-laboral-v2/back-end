@@ -110,6 +110,12 @@ export const defaultTranslations = {
     confirmDialogTitle: "Exportación de emails",
     confirmDialogDescription: "Se van a buscar todos los mails correspondientes al filtro aplicado",
     confirmDialogCancel: "Cancelar",
+    confirmDialogConfirm: "Confirmar"
+  },
+  exportedApplicantEmails: {
+    confirmDialogTitle: "Exportación de emails exitosa",
+    confirmDialogDescription: "Los siguientes emails se pueden copiar a su correo electrónico",
+    confirmDialogCancel: "Cancelar",
     confirmDialogConfirm: "Aceptar"
   },
   applicantOfferList: {
