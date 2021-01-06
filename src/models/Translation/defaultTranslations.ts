@@ -102,7 +102,7 @@ export const defaultTranslations = {
     name: "Nombre",
     submit: "Aplicar"
   },
-  adminApplicants: {
+  adminApplicantsActions: {
     cleanFilters: "Remover filtros",
     filters: "Filtrar"
   },
