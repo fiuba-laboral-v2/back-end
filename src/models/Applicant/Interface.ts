@@ -14,11 +14,14 @@ export interface IApplicantEditable {
   links?: TLink[];
 }
 
-export interface IFindLatest {
-  updatedBeforeThan?: IPaginatedInput;
+export interface IFind {
   name?: string;
   careerCodes?: string[];
   applicantType?: ApplicantType;
+}
+
+export interface IFindLatest extends IFind {
+  updatedBeforeThan?: IPaginatedInput;
 }
 
 export interface ISection {

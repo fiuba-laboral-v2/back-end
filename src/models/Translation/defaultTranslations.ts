@@ -102,9 +102,21 @@ export const defaultTranslations = {
     name: "Nombre",
     submit: "Aplicar"
   },
-  adminApplicants: {
+  adminApplicantsActions: {
     cleanFilters: "Remover filtros",
     filters: "Filtrar"
+  },
+  exportApplicantEmails: {
+    confirmDialogTitle: "Exportación de emails",
+    confirmDialogDescription:
+      "Se van a buscar todos los emails correspondientes al filtro aplicado",
+    confirmDialogCancel: "Cancelar",
+    confirmDialogConfirm: "Confirmar"
+  },
+  exportedApplicantEmails: {
+    confirmDialogTitle: "Exportación de emails exitosa",
+    confirmDialogDescription: "Los siguientes emails se pueden copiar a su correo electrónico",
+    confirmDialogCancel: "Cerrar"
   },
   applicantOfferList: {
     title: "Ofertas de trabajo",
