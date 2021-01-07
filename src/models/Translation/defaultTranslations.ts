@@ -520,7 +520,7 @@ export const defaultTranslations = {
   },
   adminAdminListHeader: {
     name: "Nombre",
-    surname: "Apellido",
+    dni: "DNI",
     email: "Email",
     secretary: "Secretaría",
     createdAt: "Fecha de registro"
