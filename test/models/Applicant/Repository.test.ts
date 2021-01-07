@@ -191,6 +191,12 @@ describe("ApplicantRepository", () => {
           expect(applicantUuids).toEqual([studentAndGraduate.uuid]);
         });
 
+        it("returns applicants matching by name skipping multiples newline character", async () => {
+          const applicants = await ApplicantRepository.find({ name: "gustavo\n\n\n\n\n\ndylán" });
+          const applicantUuids = applicants.map(({ uuid }) => uuid);
+          expect(applicantUuids).toEqual([studentAndGraduate.uuid]);
+        });
+
         it("returns applicants matching by last surname with other capitalize letters and second name", async () => {
           const applicants = await ApplicantRepository.find({ name: "AVAlos francOÍs" });
           const applicantUuids = applicants.map(({ uuid }) => uuid);

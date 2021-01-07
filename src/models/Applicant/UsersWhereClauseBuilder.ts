@@ -8,7 +8,7 @@ export const UsersWhereClauseBuilder = {
     const removeAccent = word => word.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     const normalize = word => removeAccent(word).toLowerCase();
     const words = name
-      .replace("\n", " ")
+      .replace(/\n/g, " ")
       .split(" ")
       .filter(word => word !== "");
     if (words.length === 0) return;

@@ -23,6 +23,11 @@ describe("UsersWhereClauseBuilder", () => {
     expect(clause).toBeUndefined();
   });
 
+  it("returns undefined if the name is multiple new lines", () => {
+    const clause = UsersWhereClauseBuilder.build({ name: "\n\n\n\n\n\n\n\n\n\n" });
+    expect(clause).toBeUndefined();
+  });
+
   it("returns a clause for a name with capitalize letters", () => {
     const name = "Buddy Guy";
     const clause = UsersWhereClauseBuilder.build({ name });
