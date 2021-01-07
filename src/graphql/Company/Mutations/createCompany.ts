@@ -22,6 +22,9 @@ export const createCompany = {
     businessName: {
       type: nonNull(String)
     },
+    businessSector: {
+      type: nonNull(String)
+    },
     slogan: {
       type: String
     },
@@ -75,6 +78,7 @@ export interface ICreateCompany {
   cuit: string;
   companyName: string;
   businessName: string;
+  businessSector: string;
   slogan?: string;
   description?: string;
   logo?: string;

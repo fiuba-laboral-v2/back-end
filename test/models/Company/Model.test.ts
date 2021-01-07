@@ -16,7 +16,8 @@ describe("Company", () => {
   const mandatoryAttributes = {
     cuit: CuitGenerator.generate(),
     companyName: "companyName",
-    businessName: "businessName"
+    businessName: "businessName",
+    businessSector: "businessSector"
   };
 
   it("creates a valid company", async () => {
@@ -53,6 +54,14 @@ describe("Company", () => {
     );
   });
 
+  it("throws an error if businessSector is null", async () => {
+    const company: Company = new Company({ ...mandatoryAttributes, businessSector: null });
+    await expect(company.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      "notNull Violation: Company.businessSector cannot be null"
+    );
+  });
+
   it("throws an error if businessName is null", async () => {
     const company: Company = new Company({ ...mandatoryAttributes, businessName: null });
     await expect(company.validate()).rejects.toThrowErrorWithMessage(
@@ -61,13 +70,19 @@ describe("Company", () => {
     );
   });
 
-  it("throws an error if companyName, cuit and businessName are null", async () => {
-    const company: Company = new Company({ cuit: null, companyName: null, businessName: null });
+  it("throws an error if companyName, cuit, businessName and businessSector are null", async () => {
+    const company: Company = new Company({
+      cuit: null,
+      companyName: null,
+      businessName: null,
+      businessSector: null
+    });
     await expect(company.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       "notNull Violation: Company.cuit cannot be null,\n" +
         "notNull Violation: Company.companyName cannot be null,\n" +
-        "notNull Violation: Company.businessName cannot be null"
+        "notNull Violation: Company.businessName cannot be null,\n" +
+        "notNull Violation: Company.businessSector cannot be null"
     );
   });
 
@@ -113,6 +128,14 @@ describe("Company", () => {
     await expect(company.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       "Validation error: Validation notEmpty on businessName failed"
+    );
+  });
+
+  it("throws an error if businessSector is empty", async () => {
+    const company = new Company({ ...mandatoryAttributes, businessSector: "" });
+    await expect(company.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      "Validation error: Validation notEmpty on businessSector failed"
     );
   });
 

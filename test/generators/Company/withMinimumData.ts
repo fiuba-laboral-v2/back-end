@@ -6,6 +6,7 @@ export const withMinimumData = ({ index, user }: IWithMinimumData) => ({
   cuit: CuitGenerator.generate(),
   companyName: "companyName",
   businessName: BusinessNameGenerator.generate(),
+  businessSector: "businessSector",
   user: {
     email: `company${index}@mail.com`,
     password: user?.password || "ASDqfdsfsdfwe234",

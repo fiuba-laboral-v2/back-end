@@ -36,6 +36,9 @@ export class Company extends Model<Company> {
   @Column({ allowNull: false, type: STRING, ...isNotEmptyString })
   public businessName: string;
 
+  @Column({ allowNull: false, type: STRING, ...isNotEmptyString })
+  public businessSector: string;
+
   @Column(STRING)
   public slogan: string;
 
