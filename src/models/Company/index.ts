@@ -1,2 +1,1 @@
-export { CompanyRepository } from "./Repository";
-export * from "./Interface";
+export * from "./Repository";
