@@ -225,6 +225,7 @@ export const defaultTranslations = {
     slogan: "Slogan",
     description: "Descripción",
     businessName: "Razón social",
+    businessSector: "Rubro",
     cuit: "CUIT"
   },
   addCompanyUser: {
