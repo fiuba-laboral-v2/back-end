@@ -59,7 +59,7 @@ export const defaultTranslations = {
   },
   companyProfileActions: {
     edit: "Editar",
-    editCuitAndBusinessName: "Cambiar CUIT/Razón Social"
+    editCriticalAttributes: "Cambiar CUIT/Razón Social/Convenio de pasantía"
   },
   applicantProfileActions: {
     edit: "Editar",
