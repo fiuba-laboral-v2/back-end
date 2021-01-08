@@ -237,7 +237,7 @@ export const defaultTranslations = {
     title: "Editar usuario",
     submit: "Guardar"
   },
-  editCuitAndBusinessName: {
+  editCompanyCriticalAttributes: {
     title: "Editar cuit y razón social",
     submit: "Guardar",
     businessName: "Razón social",
