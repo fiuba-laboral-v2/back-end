@@ -376,7 +376,12 @@ export const defaultTranslations = {
   offerDetail: {
     apply: "Postularme",
     applySuccess: "Postulación exitosa!",
-    alreadyApplied: "Ya te postulaste"
+    alreadyApplied: "Ya te postulaste",
+    confirmDialogTitle: "Postularme",
+    confirmDialogDescription:
+      "La postulación será revisada por el personal de la FIUBA. La misma puede ser rechazada si tu perfil no es adecuado para esta oferta.",
+    confirmDialogCancel: "Cancelar",
+    confirmDialogConfirm: "Confirmar"
   },
   offerDetailRepublishActions: {
     buttonText: "Volver a publicar",
