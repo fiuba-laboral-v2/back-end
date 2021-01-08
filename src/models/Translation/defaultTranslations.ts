@@ -499,7 +499,9 @@ export const defaultTranslations = {
     cuit: "CUIT de la empresa:"
   },
   adminCompanyDetails: {
-    cuit: "CUIT:"
+    cuit: "CUIT:",
+    hasAnInternshipAgreement: "Tiene convenio de pasantía",
+    businessSector: "Rubro"
   },
   adminApplicantDetails: {
     padron: "Padrón:",
