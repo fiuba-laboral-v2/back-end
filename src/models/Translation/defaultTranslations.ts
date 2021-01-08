@@ -531,6 +531,7 @@ export const defaultTranslations = {
   adminCompanyListHeader: {
     companyName: "Nombre",
     businessName: "Razón social",
+    businessSector: "Rubro",
     cuit: "CUIT",
     state: "Estado",
     updatedAt: "Última actualización"
