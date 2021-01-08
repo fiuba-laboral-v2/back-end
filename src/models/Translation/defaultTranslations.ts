@@ -534,7 +534,12 @@ export const defaultTranslations = {
     businessSector: "Rubro",
     cuit: "CUIT",
     state: "Estado",
-    updatedAt: "Última actualización"
+    updatedAt: "Última actualización",
+    hasAnInternshipAgreement: "Tiene convenio de pasantía"
+  },
+  adminCompaniesContent: {
+    yes: "Si",
+    no: "No"
   },
   adminAdminListHeader: {
     name: "Nombre",
