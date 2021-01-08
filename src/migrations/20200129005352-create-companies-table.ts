@@ -25,6 +25,10 @@ export = {
             allowNull: false,
             type: STRING
           },
+          businessSector: {
+            allowNull: false,
+            type: STRING
+          },
           slogan: {
             type: STRING
           },

@@ -21,6 +21,9 @@ export const GraphQLCompany = new GraphQLObjectType<Company>({
     businessName: {
       type: nonNull(String)
     },
+    businessSector: {
+      type: nonNull(String)
+    },
     slogan: {
       type: String
     },

@@ -12,6 +12,7 @@ const SAVE_COMPANY = gql`
     $cuit: String!
     $companyName: String!
     $businessName: String!
+    $businessSector: String!
     $slogan: String
     $description: String
     $logo: String
@@ -25,6 +26,7 @@ const SAVE_COMPANY = gql`
       cuit: $cuit
       companyName: $companyName
       businessName: $businessName
+      businessSector: $businessSector
       slogan: $slogan
       description: $description
       logo: $logo
@@ -36,6 +38,7 @@ const SAVE_COMPANY = gql`
       cuit
       companyName
       businessName
+      businessSector
       slogan
       description
       logo

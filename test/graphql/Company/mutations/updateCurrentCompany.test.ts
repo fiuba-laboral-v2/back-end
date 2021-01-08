@@ -1,19 +1,24 @@
 import { gql } from "apollo-server";
 import { client } from "$test/graphql/ApolloTestClient";
 import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist/createTestClient";
+
+import { IUpdateCurrentCompany } from "$graphql/Company/Mutations/updateCurrentCompany";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
+
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
 import { EmailService } from "$services/Email";
 import { CompanyRepository } from "$models/Company";
 import { AdminNotificationRepository } from "$models/AdminNotification";
 import { UserRepository } from "$models/User";
+
 import { TestClientGenerator } from "$generators/TestClient";
 import { UUID_REGEX } from "$test/models";
 
 const UPDATE_CURRENT_COMPANY = gql`
   mutation(
-    $companyName: String
+    $companyName: String!
+    $businessSector: String!
     $slogan: String
     $description: String
     $logo: String
@@ -24,6 +29,7 @@ const UPDATE_CURRENT_COMPANY = gql`
   ) {
     updateCurrentCompany(
       companyName: $companyName
+      businessSector: $businessSector
       slogan: $slogan
       description: $description
       logo: $logo
@@ -33,6 +39,7 @@ const UPDATE_CURRENT_COMPANY = gql`
       photos: $photos
     ) {
       companyName
+      businessSector
       slogan
       description
       logo
@@ -52,7 +59,12 @@ describe("updateCurrentCompany", () => {
     jest.spyOn(EmailService, "send").mockImplementation(jest.fn());
   });
 
-  const performQuery = (apolloClient: TestClient, variables?: object) =>
+  const mandatoryVariables = {
+    companyName: "Devartis SA",
+    businessSector: "newBusinessSector"
+  };
+
+  const performQuery = (apolloClient: TestClient, variables?: IUpdateCurrentCompany) =>
     apolloClient.mutate({
       mutation: UPDATE_CURRENT_COMPANY,
       variables: variables || {}
@@ -67,7 +79,7 @@ describe("updateCurrentCompany", () => {
   it("update all company attributes", async () => {
     const { apolloClient } = await createCompanyTestClient(ApprovalStatus.pending);
     const dataToUpdate = {
-      companyName: "Devartis SA",
+      ...mandatoryVariables,
       slogan: "new slogan",
       description: "new description",
       logo: "",
@@ -84,19 +96,19 @@ describe("updateCurrentCompany", () => {
 
   it("allows a pending company to update", async () => {
     const { apolloClient } = await createCompanyTestClient(ApprovalStatus.pending);
-    const { errors } = await performQuery(apolloClient, { companyName: "Devartis SA" });
+    const { errors } = await performQuery(apolloClient, mandatoryVariables);
     expect(errors).toBeUndefined();
   });
 
   it("allows a rejected company to update", async () => {
     const { apolloClient } = await createCompanyTestClient(ApprovalStatus.rejected);
-    const { errors } = await performQuery(apolloClient, { companyName: "Devartis SA" });
+    const { errors } = await performQuery(apolloClient, mandatoryVariables);
     expect(errors).toBeUndefined();
   });
 
   it("allows an approved company to update", async () => {
     const { apolloClient } = await createCompanyTestClient(ApprovalStatus.approved);
-    const { errors } = await performQuery(apolloClient, { companyName: "Devartis SA" });
+    const { errors } = await performQuery(apolloClient, mandatoryVariables);
     expect(errors).toBeUndefined();
   });
 
@@ -105,7 +117,7 @@ describe("updateCurrentCompany", () => {
 
     it("creates one notifications for graduados and another one for extension", async () => {
       const { apolloClient } = await createCompanyTestClient(ApprovalStatus.approved);
-      await performQuery(apolloClient, { companyName: "Devartis SA" });
+      await performQuery(apolloClient, mandatoryVariables);
       const extensionNotifications = await AdminNotificationRepository.findLatestBySecretary({
         secretary: Secretary.extension
       });
@@ -122,7 +134,7 @@ describe("updateCurrentCompany", () => {
 
     it("creates the  notifications with the correct attributes", async () => {
       const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
-      await performQuery(apolloClient, { companyName: "Devartis SA" });
+      await performQuery(apolloClient, mandatoryVariables);
       const extensionNotifications = await AdminNotificationRepository.findLatestBySecretary({
         secretary: Secretary.extension
       });
@@ -156,7 +168,7 @@ describe("updateCurrentCompany", () => {
     jest.spyOn(AdminNotificationRepository, "save").mockImplementation(() => {
       throw new Error();
     });
-    const { errors } = await performQuery(apolloClient, { companyName: "NEW_NAME" });
+    const { errors } = await performQuery(apolloClient, mandatoryVariables);
     expect(errors).toEqualGraphQLErrorType(Error.name);
     const persistedCompany = await CompanyRepository.findByUuid(company.uuid);
     expect(persistedCompany.companyName).toEqual(oldCompanyName);
@@ -164,10 +176,9 @@ describe("updateCurrentCompany", () => {
 
   it("throws an error if there is no current user", async () => {
     const apolloClient = client.loggedOut();
-    const dataToUpdate = { companyName: "new company name" };
     const { errors } = await apolloClient.mutate({
       mutation: UPDATE_CURRENT_COMPANY,
-      variables: dataToUpdate
+      variables: mandatoryVariables
     });
 
     expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
@@ -177,46 +188,46 @@ describe("updateCurrentCompany", () => {
     const { apolloClient } = await TestClientGenerator.user();
     const { errors } = await apolloClient.mutate({
       mutation: UPDATE_CURRENT_COMPANY,
-      variables: {}
+      variables: mandatoryVariables
     });
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("returns an error if there is no current user", async () => {
     const apolloClient = client.loggedOut();
-    const { errors } = await performQuery(apolloClient);
+    const { errors } = await performQuery(apolloClient, mandatoryVariables);
     expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
   });
 
   it("returns an error if the current user is a approved applicant", async () => {
     const { apolloClient } = await createApplicantTestClient(ApprovalStatus.approved);
-    const { errors } = await performQuery(apolloClient);
+    const { errors } = await performQuery(apolloClient, mandatoryVariables);
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("returns an error if the current user is a rejected applicant", async () => {
     const { apolloClient } = await createApplicantTestClient(ApprovalStatus.rejected);
-    const { errors } = await performQuery(apolloClient);
+    const { errors } = await performQuery(apolloClient, mandatoryVariables);
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("returns an error if the current user is a pending applicant", async () => {
     const { apolloClient } = await createApplicantTestClient(ApprovalStatus.pending);
-    const { errors } = await performQuery(apolloClient);
+    const { errors } = await performQuery(apolloClient, mandatoryVariables);
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("returns an error if the current user is an extension admin", async () => {
     const secretary = Secretary.extension;
     const { apolloClient } = await TestClientGenerator.admin({ secretary });
-    const { errors } = await performQuery(apolloClient);
+    const { errors } = await performQuery(apolloClient, mandatoryVariables);
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("returns an error if the current user is a graduados admin", async () => {
     const secretary = Secretary.graduados;
     const { apolloClient } = await TestClientGenerator.admin({ secretary });
-    const { errors } = await performQuery(apolloClient);
+    const { errors } = await performQuery(apolloClient, mandatoryVariables);
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 });

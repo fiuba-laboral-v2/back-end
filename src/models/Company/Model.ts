@@ -1,5 +1,4 @@
 import {
-  AllowNull,
   BelongsToMany,
   Column,
   CreatedAt,
@@ -23,27 +22,22 @@ import { isNotEmptyString } from "../SequelizeModelValidators";
 
 @Table({ tableName: "Companies", timestamps: true })
 export class Company extends Model<Company> {
-  @Column({
-    allowNull: false,
-    primaryKey: true,
-    type: UUID,
-    defaultValue: UUIDV4
-  })
+  @Column({ allowNull: false, primaryKey: true, type: UUID, defaultValue: UUIDV4 })
   public uuid: string;
 
-  @AllowNull(false)
   @Is("cuit", validateCuit)
-  @Column(STRING)
+  @Column({ allowNull: false, type: STRING })
   public cuit: string;
 
-  @AllowNull(false)
   @Is("name", validateName)
-  @Column(STRING)
+  @Column({ allowNull: false, type: STRING })
   public companyName: string;
 
-  @AllowNull(false)
-  @Column({ type: STRING, ...isNotEmptyString })
+  @Column({ allowNull: false, type: STRING, ...isNotEmptyString })
   public businessName: string;
+
+  @Column({ allowNull: false, type: STRING, ...isNotEmptyString })
+  public businessSector: string;
 
   @Column(STRING)
   public slogan: string;

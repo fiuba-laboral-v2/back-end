@@ -1,9 +1,8 @@
-import { List, String } from "$graphql/fieldTypes";
+import { nonNull, List, String } from "$graphql/fieldTypes";
 import { GraphQLCompany } from "../Types/GraphQLCompany";
 import { IApolloServerContext } from "$graphql/Context";
 
 import { Database } from "$config";
-import { IUpdateCompany } from "$models/Company/Interface";
 import { CompanyRepository } from "$models/Company";
 import { EmailSenderFactory } from "$models/EmailSenderFactory";
 import {
@@ -15,7 +14,10 @@ export const updateCurrentCompany = {
   type: GraphQLCompany,
   args: {
     companyName: {
-      type: String
+      type: nonNull(String)
+    },
+    businessSector: {
+      type: nonNull(String)
     },
     slogan: {
       type: String
@@ -41,7 +43,7 @@ export const updateCurrentCompany = {
   },
   resolve: async (
     _: undefined,
-    { phoneNumbers, photos, ...attributes }: IUpdateCompany,
+    { phoneNumbers, photos, ...attributes }: IUpdateCurrentCompany,
     { currentUser }: IApolloServerContext
   ) => {
     const company = await CompanyRepository.findByUuid(currentUser.getCompanyRole().companyUuid);
@@ -64,3 +66,15 @@ export const updateCurrentCompany = {
     return company;
   }
 };
+
+export interface IUpdateCurrentCompany {
+  companyName: string;
+  businessSector: string;
+  slogan?: string;
+  description?: string;
+  logo?: string;
+  website?: string;
+  email?: string;
+  phoneNumbers?: string[];
+  photos?: string[];
+}
