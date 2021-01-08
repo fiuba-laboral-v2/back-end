@@ -241,6 +241,7 @@ export const defaultTranslations = {
     title: "Editar cuit y razón social",
     submit: "Guardar",
     businessName: "Razón social",
+    hasAnInternshipAgreement: "Tiene convenio de pasantía",
     cuit: "CUIT"
   },
   editCuitAndBusinessNameConfirmDialog: {
