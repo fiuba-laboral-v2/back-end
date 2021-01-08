@@ -501,7 +501,7 @@ export const defaultTranslations = {
   adminCompanyDetails: {
     cuit: "CUIT:",
     hasAnInternshipAgreement: "Tiene convenio de pasantía",
-    businessSector: "Rubro"
+    businessSector: "Rubro:"
   },
   adminApplicantDetails: {
     padron: "Padrón:",
