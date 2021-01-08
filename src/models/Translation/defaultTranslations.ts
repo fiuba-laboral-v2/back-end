@@ -554,6 +554,7 @@ export const defaultTranslations = {
   },
   adminJobApplicationsListHeader: {
     companyName: "Empresa",
+    offerTitle: "Nombre de la oferta",
     applicantName: "Postulante",
     approvalStatus: "Estado",
     updatedAt: "Última actualización"
