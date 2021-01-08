@@ -14,5 +14,5 @@ export const getJobApplications = {
     }
   },
   resolve: (_: undefined, { updatedBeforeThan }: { updatedBeforeThan?: IPaginatedInput }) =>
-    JobApplicationRepository.findLatest(updatedBeforeThan)
+    JobApplicationRepository.findLatest({ updatedBeforeThan })
 };

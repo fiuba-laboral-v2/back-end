@@ -1,9 +1,8 @@
 import { Transaction } from "sequelize";
 import { Applicant, JobApplication, Offer } from "$models";
-import { IFindLatestByCompanyUuid } from "./Interfaces";
+import { IFindLatestByCompanyUuid, IFindLatest } from "./Interfaces";
 import { JobApplicationNotFoundError } from "./Errors";
 import { PaginationQuery } from "../PaginationQuery";
-import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedInput";
 
 export const JobApplicationRepository = {
   save: (jobApplication: JobApplication, transaction?: Transaction) =>
@@ -55,7 +54,7 @@ export const JobApplicationRepository = {
       ]
     });
   },
-  findLatest: (updatedBeforeThan?: IPaginatedInput) =>
+  findLatest: ({ updatedBeforeThan }: IFindLatest = {}) =>
     PaginationQuery.findLatest({
       updatedBeforeThan,
       query: options => JobApplication.findAll(options)
