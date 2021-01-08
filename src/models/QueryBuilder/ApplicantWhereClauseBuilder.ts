@@ -1,5 +1,5 @@
 import { UserSequelizeModel, Applicant } from "$models";
-import { NameWhereClause } from "$models/QueryBuilder";
+import { NameWhereClause } from "$models/QueryBuilder/index";
 import { Includeable } from "sequelize/types/lib/model";
 
 export const ApplicantWhereClauseBuilder = {
