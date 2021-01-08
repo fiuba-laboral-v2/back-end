@@ -1,4 +1,4 @@
-import { nonNull, String } from "$graphql/fieldTypes";
+import { nonNull, Boolean, String } from "$graphql/fieldTypes";
 import { GraphQLCompany } from "../Types/GraphQLCompany";
 import { IApolloServerContext } from "$graphql/Context";
 import { CompanyRepository } from "$models/Company";
@@ -12,6 +12,9 @@ export const updateCompanyCriticalAttributes = {
     },
     businessName: {
       type: nonNull(String)
+    },
+    hasAnInternshipAgreement: {
+      type: nonNull(Boolean)
     }
   },
   resolve: async (
@@ -29,4 +32,5 @@ export const updateCompanyCriticalAttributes = {
 export interface IUpdateCompanyCriticalAttributes {
   cuit: string;
   businessName: string;
+  hasAnInternshipAgreement: boolean;
 }

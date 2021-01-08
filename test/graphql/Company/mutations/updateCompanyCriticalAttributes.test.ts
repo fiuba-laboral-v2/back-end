@@ -16,11 +16,20 @@ import { BusinessNameGenerator } from "$generators/BusinessName";
 import { CompanyGenerator } from "$generators/Company";
 
 const UPDATE_COMPANY_CRITICAL_ATTRIBUTES = gql`
-  mutation UpdateCompanyCriticalAttributes($cuit: String!, $businessName: String!) {
-    updateCompanyCriticalAttributes(cuit: $cuit, businessName: $businessName) {
+  mutation UpdateCompanyCriticalAttributes(
+    $cuit: String!
+    $businessName: String!
+    $hasAnInternshipAgreement: Boolean!
+  ) {
+    updateCompanyCriticalAttributes(
+      cuit: $cuit
+      businessName: $businessName
+      hasAnInternshipAgreement: $hasAnInternshipAgreement
+    ) {
       uuid
       cuit
       businessName
+      hasAnInternshipAgreement
     }
   }
 `;
@@ -34,7 +43,8 @@ describe("updateCompanyCriticalAttributes", () => {
 
   const generateVariables = () => ({
     cuit: CuitGenerator.generate(),
-    businessName: BusinessNameGenerator.generate()
+    businessName: BusinessNameGenerator.generate(),
+    hasAnInternshipAgreement: true
   });
 
   const updateCompanyCriticalAttributes = (
@@ -94,7 +104,8 @@ describe("updateCompanyCriticalAttributes", () => {
     const anotherCompany = await CompanyGenerator.instance.withMinimumData();
     const variables = {
       cuit: CuitGenerator.generate(),
-      businessName: anotherCompany.businessName
+      businessName: anotherCompany.businessName,
+      hasAnInternshipAgreement: false
     };
     const { errors } = await updateCompanyCriticalAttributes(apolloClient, variables);
     expect(errors).toEqualGraphQLErrorType("BusinessNameAlreadyExistsError");
@@ -105,7 +116,8 @@ describe("updateCompanyCriticalAttributes", () => {
     const anotherCompany = await CompanyGenerator.instance.withMinimumData();
     const variables = {
       cuit: anotherCompany.cuit,
-      businessName: BusinessNameGenerator.generate()
+      businessName: BusinessNameGenerator.generate(),
+      hasAnInternshipAgreement: false
     };
     const { errors } = await updateCompanyCriticalAttributes(apolloClient, variables);
     expect(errors).toEqualGraphQLErrorType("CompanyCuitAlreadyExistsError");
