@@ -13,6 +13,7 @@ const SAVE_COMPANY = gql`
     $companyName: String!
     $businessName: String!
     $businessSector: String!
+    $hasAnInternshipAgreement: Boolean!
     $slogan: String
     $description: String
     $logo: String
@@ -27,6 +28,7 @@ const SAVE_COMPANY = gql`
       companyName: $companyName
       businessName: $businessName
       businessSector: $businessSector
+      hasAnInternshipAgreement: $hasAnInternshipAgreement
       slogan: $slogan
       description: $description
       logo: $logo
@@ -39,6 +41,7 @@ const SAVE_COMPANY = gql`
       companyName
       businessName
       businessSector
+      hasAnInternshipAgreement
       slogan
       description
       logo

@@ -18,7 +18,8 @@ describe("CompanyRepository", () => {
     cuit: CuitGenerator.generate(),
     companyName: CompanyGenerator.data.completeData().companyName,
     businessName: CompanyGenerator.data.completeData().businessName,
-    businessSector: CompanyGenerator.data.completeData().businessSector
+    businessSector: CompanyGenerator.data.completeData().businessSector,
+    hasAnInternshipAgreement: CompanyGenerator.data.completeData().hasAnInternshipAgreement
   });
 
   beforeAll(async () => {

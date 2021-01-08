@@ -7,6 +7,7 @@ export const withMinimumData = ({ index, user }: IWithMinimumData) => ({
   companyName: "companyName",
   businessName: BusinessNameGenerator.generate(),
   businessSector: "businessSector",
+  hasAnInternshipAgreement: true,
   user: {
     email: `company${index}@mail.com`,
     password: user?.password || "ASDqfdsfsdfwe234",
