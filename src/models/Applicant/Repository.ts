@@ -10,8 +10,7 @@ import { ApplicantLinkRepository } from "./Link";
 import { UserRepository } from "../User";
 import { Applicant } from "..";
 import { PaginationQuery } from "../PaginationQuery";
-import { ApplicantCareersWhereClauseBuilder } from "./ApplicantCareersWhereClauseBuilder";
-import { UsersWhereClauseBuilder } from "$models/QueryBuilder";
+import { UsersWhereClauseBuilder, ApplicantCareersWhereClauseBuilder } from "$models/QueryBuilder";
 import { Includeable } from "sequelize/types/lib/model";
 
 export const ApplicantRepository = {

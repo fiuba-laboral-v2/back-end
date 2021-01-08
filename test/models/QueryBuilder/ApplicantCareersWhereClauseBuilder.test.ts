@@ -1,4 +1,4 @@
-import { ApplicantCareersWhereClauseBuilder } from "$models/Applicant/ApplicantCareersWhereClauseBuilder";
+import { ApplicantCareersWhereClauseBuilder } from "$models/QueryBuilder";
 import { ApplicantType } from "$models/Applicant";
 import { ApplicantCareer } from "$models";
 import { Op } from "sequelize";
