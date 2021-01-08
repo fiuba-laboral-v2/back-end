@@ -226,6 +226,7 @@ export const defaultTranslations = {
     description: "Descripción",
     businessName: "Razón social",
     businessSector: "Rubro",
+    hasAnInternshipAgreement: "Tiene convenio de pasantía",
     cuit: "CUIT"
   },
   addCompanyUser: {
