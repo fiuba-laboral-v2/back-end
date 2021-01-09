@@ -1,4 +1,5 @@
 import { col, fn, Op, where } from "sequelize";
+import { WhereOptions } from "sequelize/types/lib/model";
 
 const removeAccent = word => word.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 const normalize = word => removeAccent(word).toLowerCase();
@@ -9,7 +10,7 @@ const splitName = name =>
     .filter(word => word !== "");
 
 export const NameWhereClause = {
-  build: ({ name, columnNames }: IBuild) => {
+  build: ({ name, columnNames }: IBuild): WhereOptions | undefined => {
     if (columnNames.length === 0) return;
     const words = splitName(name);
     if (words.length === 0) return;

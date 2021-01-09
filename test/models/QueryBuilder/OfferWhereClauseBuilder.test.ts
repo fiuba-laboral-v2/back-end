@@ -138,10 +138,14 @@ describe("OfferWhereClauseBuilder", () => {
           where: {
             [Op.and]: [
               {
-                [Op.or]: [
-                  where(fn("unaccent", fn("lower", col("companyName"))), {
-                    [Op.regexp]: `(^|[[:space:]])devartis([[:space:]]|$)`
-                  })
+                [Op.and]: [
+                  {
+                    [Op.or]: [
+                      where(fn("unaccent", fn("lower", col("companyName"))), {
+                        [Op.regexp]: `(^|[[:space:]])devartis([[:space:]]|$)`
+                      })
+                    ]
+                  }
                 ]
               }
             ]
@@ -165,17 +169,21 @@ describe("OfferWhereClauseBuilder", () => {
           where: {
             [Op.and]: [
               {
-                [Op.or]: [
-                  where(fn("unaccent", fn("lower", col("companyName"))), {
-                    [Op.regexp]: `(^|[[:space:]])mercado([[:space:]]|$)`
-                  })
-                ]
-              },
-              {
-                [Op.or]: [
-                  where(fn("unaccent", fn("lower", col("companyName"))), {
-                    [Op.regexp]: `(^|[[:space:]])libre([[:space:]]|$)`
-                  })
+                [Op.and]: [
+                  {
+                    [Op.or]: [
+                      where(fn("unaccent", fn("lower", col("companyName"))), {
+                        [Op.regexp]: `(^|[[:space:]])mercado([[:space:]]|$)`
+                      })
+                    ]
+                  },
+                  {
+                    [Op.or]: [
+                      where(fn("unaccent", fn("lower", col("companyName"))), {
+                        [Op.regexp]: `(^|[[:space:]])libre([[:space:]]|$)`
+                      })
+                    ]
+                  }
                 ]
               }
             ]
