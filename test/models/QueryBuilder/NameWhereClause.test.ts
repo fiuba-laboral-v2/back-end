@@ -5,17 +5,22 @@ describe("NameWhereClause", () => {
   const columnNames = ["name", "surname"];
 
   it("returns undefined if the name is a newline character", () => {
+    const clause = NameWhereClause.build({ name: "\n", columnNames });
+    expect(clause).toBeUndefined();
+  });
+
+  it("returns undefined if columnNames is an empty array and name is an empty string", () => {
+    const clause = NameWhereClause.build({ name: "", columnNames: [] });
+    expect(clause).toBeUndefined();
+  });
+
+  it("returns undefined if the name is an empty string", () => {
     const clause = NameWhereClause.build({ name: "", columnNames });
     expect(clause).toBeUndefined();
   });
 
   it("returns undefined if columnNames is an empty array", () => {
-    const clause = NameWhereClause.build({ name: "", columnNames: [] });
-    expect(clause).toBeUndefined();
-  });
-
-  it("returns undefined if the name is en empty array", () => {
-    const clause = NameWhereClause.build({ name: "", columnNames });
+    const clause = NameWhereClause.build({ name: "name", columnNames: [] });
     expect(clause).toBeUndefined();
   });
 
