@@ -8,27 +8,27 @@ describe("CompanyWhereClauseBuilder", () => {
     expect(clause).toBeUndefined();
   });
 
-  it("returns undefined if the name is a newline character", () => {
+  it("returns undefined if the companyName is a newline character", () => {
+    const clause = CompanyWhereClauseBuilder.build({ companyName: "\n" });
+    expect(clause).toBeUndefined();
+  });
+
+  it("returns undefined if the companyName is en empty string", () => {
     const clause = CompanyWhereClauseBuilder.build({ companyName: "" });
     expect(clause).toBeUndefined();
   });
 
-  it("returns undefined if the name is en empty array", () => {
-    const clause = CompanyWhereClauseBuilder.build({ companyName: "" });
-    expect(clause).toBeUndefined();
-  });
-
-  it("returns undefined if the name is only spaces", () => {
+  it("returns undefined if the companyName is only spaces", () => {
     const clause = CompanyWhereClauseBuilder.build({ companyName: "     " });
     expect(clause).toBeUndefined();
   });
 
-  it("returns undefined if the name is multiple new lines", () => {
+  it("returns undefined if the companyName is multiple new lines", () => {
     const clause = CompanyWhereClauseBuilder.build({ companyName: "\n\n\n\n\n\n\n\n\n\n" });
     expect(clause).toBeUndefined();
   });
 
-  it("returns a clause for a name with capitalize letters", () => {
+  it("returns a clause for a companyName with capitalize letters", () => {
     const companyName = "Buddy Guy";
     const clause = CompanyWhereClauseBuilder.build({ companyName });
     expect(clause).toEqual({
@@ -55,7 +55,7 @@ describe("CompanyWhereClauseBuilder", () => {
     });
   });
 
-  it("returns a clause for a name with accents", () => {
+  it("returns a clause for a companyName with accents", () => {
     const companyName = "námé with áccent";
     const clause = CompanyWhereClauseBuilder.build({ companyName });
     expect(clause).toEqual({
