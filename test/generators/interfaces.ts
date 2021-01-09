@@ -10,6 +10,8 @@ export interface IAdminGeneratorAttributes extends IUserGeneratorAttributes {
 export interface ICompanyGeneratorAttributes {
   user?: { password?: string; position?: string };
   photos?: string[];
+  companyName?: string;
+  businessSector?: string;
 }
 
 export interface IApplicantGeneratorAttributes {

@@ -1,10 +1,10 @@
 import { Company } from "$models";
 import { Op } from "sequelize";
 import { NameWhereClause } from "$models/QueryBuilder";
-import { Includeable, WhereOptions } from "sequelize/types/lib/model";
+import { WhereOptions } from "sequelize/types/lib/model";
 
 export const CompanyWhereClauseBuilder = {
-  build: ({ companyName, businessSector }: IBuild): Includeable | undefined => {
+  build: ({ companyName, businessSector }: IBuild) => {
     const companyNameClause =
       companyName && NameWhereClause.build({ name: companyName, columnNames: ["companyName"] });
     const businessSectorClause =

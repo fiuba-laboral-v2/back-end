@@ -3,7 +3,7 @@ import { NameWhereClause, CompanyWhereClauseBuilder } from "$models/QueryBuilder
 import { Includeable } from "sequelize/types/lib/model";
 
 export const OfferWhereClauseBuilder = {
-  build: ({ title, companyName }: IBuild): Includeable | undefined => {
+  build: ({ title, companyName }: IBuild) => {
     if (title === undefined && companyName === undefined) return;
     const nameClause = title && NameWhereClause.build({ name: title, columnNames: ["title"] });
     const companyClause = CompanyWhereClauseBuilder.build({ companyName });

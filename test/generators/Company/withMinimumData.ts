@@ -2,11 +2,16 @@ import { ICompanyGeneratorAttributes } from "$generators/interfaces";
 import { CuitGenerator } from "$generators/Cuit";
 import { BusinessNameGenerator } from "$generators/BusinessName";
 
-export const withMinimumData = ({ index, user }: IWithMinimumData) => ({
+export const withMinimumData = ({
+  index,
+  user,
+  companyName,
+  businessSector
+}: IWithMinimumData) => ({
   cuit: CuitGenerator.generate(),
-  companyName: "companyName",
+  companyName: companyName || "companyName",
   businessName: BusinessNameGenerator.generate(),
-  businessSector: "businessSector",
+  businessSector: businessSector || "businessSector",
   hasAnInternshipAgreement: true,
   user: {
     email: `company${index}@mail.com`,
