@@ -59,7 +59,7 @@ export const defaultTranslations = {
   },
   companyProfileActions: {
     edit: "Editar",
-    editCuitAndBusinessName: "Cambiar CUIT/Razón Social"
+    editCriticalAttributes: "Editar campos sensibles"
   },
   applicantProfileActions: {
     edit: "Editar",
@@ -226,6 +226,7 @@ export const defaultTranslations = {
     description: "Descripción",
     businessName: "Razón social",
     businessSector: "Rubro",
+    hasAnInternshipAgreement: "Tiene convenio de pasantía",
     cuit: "CUIT"
   },
   addCompanyUser: {
@@ -236,10 +237,11 @@ export const defaultTranslations = {
     title: "Editar usuario",
     submit: "Guardar"
   },
-  editCuitAndBusinessName: {
+  editCompanyCriticalAttributes: {
     title: "Editar cuit y razón social",
     submit: "Guardar",
     businessName: "Razón social",
+    hasAnInternshipAgreement: "Tiene convenio de pasantía",
     cuit: "CUIT"
   },
   editCuitAndBusinessNameConfirmDialog: {
@@ -502,7 +504,9 @@ export const defaultTranslations = {
     cuit: "CUIT de la empresa:"
   },
   adminCompanyDetails: {
-    cuit: "CUIT:"
+    cuit: "CUIT:",
+    hasAnInternshipAgreement: "Tiene convenio de pasantía",
+    businessSector: "Rubro:"
   },
   adminApplicantDetails: {
     padron: "Padrón:",
@@ -532,9 +536,15 @@ export const defaultTranslations = {
   adminCompanyListHeader: {
     companyName: "Nombre",
     businessName: "Razón social",
+    businessSector: "Rubro",
     cuit: "CUIT",
     state: "Estado",
-    updatedAt: "Última actualización"
+    updatedAt: "Última actualización",
+    hasAnInternshipAgreement: "Tiene convenio de pasantía"
+  },
+  adminCompaniesContent: {
+    yes: "Si",
+    no: "No"
   },
   adminAdminListHeader: {
     name: "Nombre",
@@ -554,9 +564,8 @@ export const defaultTranslations = {
   },
   adminJobApplicationsListHeader: {
     companyName: "Empresa",
-    cuit: "CUIT de empresa",
+    offerTitle: "Nombre de la oferta",
     applicantName: "Postulante",
-    padron: "Padrón",
     approvalStatus: "Estado",
     updatedAt: "Última actualización"
   },

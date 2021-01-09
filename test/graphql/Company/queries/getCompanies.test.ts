@@ -1,13 +1,14 @@
 import { gql } from "apollo-server";
 import { client } from "$test/graphql/ApolloTestClient";
-import { CompanyRepository } from "$models/Company";
-import { UserRepository } from "$models/User";
-import { TestClientGenerator } from "$generators/TestClient";
-import { CompanyGenerator } from "$generators/Company";
-
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
+import { Company } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
+import { CompanyRepository } from "$models/Company";
+import { UserRepository } from "$models/User";
+
+import { TestClientGenerator } from "$generators/TestClient";
+import { CompanyGenerator } from "$generators/Company";
 import { mockItemsPerPage } from "$test/mocks/config/PaginationConfig";
 
 const GET_COMPANIES = gql`
@@ -19,13 +20,15 @@ const GET_COMPANIES = gql`
         cuit
         companyName
         businessName
+        businessSector
+        hasAnInternshipAgreement
       }
     }
   }
 `;
 
 describe("getCompanies", () => {
-  let companies;
+  let companies: Company[];
   beforeAll(async () => {
     await UserRepository.truncate();
     await CompanyRepository.truncate();
@@ -44,12 +47,23 @@ describe("getCompanies", () => {
     expect(response.data).not.toBeUndefined();
     expect(response.data!.getCompanies.results).toEqual(
       expect.arrayContaining(
-        companies.map(({ uuid, companyName, cuit, businessName }) => ({
-          uuid,
-          companyName,
-          cuit,
-          businessName
-        }))
+        companies.map(
+          ({
+            uuid,
+            companyName,
+            cuit,
+            businessName,
+            businessSector,
+            hasAnInternshipAgreement
+          }) => ({
+            uuid,
+            companyName,
+            cuit,
+            businessName,
+            businessSector,
+            hasAnInternshipAgreement
+          })
+        )
       )
     );
     expect(response.data!.getCompanies.shouldFetchMore).toEqual(false);
@@ -63,12 +77,23 @@ describe("getCompanies", () => {
     expect(response.data).not.toBeUndefined();
     expect(response.data!.getCompanies.results).toEqual(
       expect.arrayContaining(
-        companies.map(({ uuid, companyName, cuit, businessName }) => ({
-          uuid,
-          companyName,
-          cuit,
-          businessName
-        }))
+        companies.map(
+          ({
+            uuid,
+            companyName,
+            cuit,
+            businessName,
+            businessSector,
+            hasAnInternshipAgreement
+          }) => ({
+            uuid,
+            companyName,
+            cuit,
+            businessName,
+            businessSector,
+            hasAnInternshipAgreement
+          })
+        )
       )
     );
     expect(response.data!.getCompanies.shouldFetchMore).toEqual(false);
@@ -82,12 +107,23 @@ describe("getCompanies", () => {
     expect(response.data).not.toBeUndefined();
     expect(response.data!.getCompanies.results).toEqual(
       expect.arrayContaining(
-        companies.map(({ uuid, companyName, cuit, businessName }) => ({
-          uuid,
-          companyName,
-          cuit,
-          businessName
-        }))
+        companies.map(
+          ({
+            uuid,
+            companyName,
+            cuit,
+            businessName,
+            businessSector,
+            hasAnInternshipAgreement
+          }) => ({
+            uuid,
+            companyName,
+            cuit,
+            businessName,
+            businessSector,
+            hasAnInternshipAgreement
+          })
+        )
       )
     );
     expect(response.data!.getCompanies.shouldFetchMore).toEqual(false);

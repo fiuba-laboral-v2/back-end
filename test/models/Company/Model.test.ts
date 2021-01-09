@@ -17,7 +17,8 @@ describe("Company", () => {
     cuit: CuitGenerator.generate(),
     companyName: "companyName",
     businessName: "businessName",
-    businessSector: "businessSector"
+    businessSector: "businessSector",
+    hasAnInternshipAgreement: true
   };
 
   it("creates a valid company", async () => {
@@ -67,6 +68,17 @@ describe("Company", () => {
     await expect(company.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       "notNull Violation: Company.businessName cannot be null"
+    );
+  });
+
+  it("throws an error if hasAnInternshipAgreement is null", async () => {
+    const company: Company = new Company({
+      ...mandatoryAttributes,
+      hasAnInternshipAgreement: null
+    });
+    await expect(company.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      "notNull Violation: Company.hasAnInternshipAgreement cannot be null"
     );
   });
 

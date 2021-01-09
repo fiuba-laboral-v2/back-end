@@ -1,6 +1,6 @@
 import { GraphQLObjectType } from "graphql";
 import { GraphQLDateTime } from "graphql-iso-date";
-import { ID, List, nonNull, String } from "$graphql/fieldTypes";
+import { ID, List, nonNull, String, Boolean } from "$graphql/fieldTypes";
 import { Company } from "$models";
 import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
 import { GraphQLUser } from "$graphql/User/Types/GraphQLUser";
@@ -23,6 +23,9 @@ export const GraphQLCompany = new GraphQLObjectType<Company>({
     },
     businessSector: {
       type: nonNull(String)
+    },
+    hasAnInternshipAgreement: {
+      type: nonNull(Boolean)
     },
     slogan: {
       type: String

@@ -15,6 +15,7 @@ const query = gql`
       companyName
       businessName
       businessSector
+      hasAnInternshipAgreement
       slogan
       description
       logo
@@ -56,6 +57,7 @@ describe("getCompanyByUuid", () => {
         companyName: company.companyName,
         businessName: company.businessName,
         businessSector: company.businessSector,
+        hasAnInternshipAgreement: company.hasAnInternshipAgreement,
         slogan: company.slogan,
         description: company.description,
         logo: company.logo,

@@ -8,7 +8,7 @@ import {
   Table,
   UpdatedAt
 } from "sequelize-typescript";
-import { ENUM, HasManyGetAssociationsMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
+import { ENUM, HasManyGetAssociationsMixin, STRING, TEXT, UUID, UUIDV4, BOOLEAN } from "sequelize";
 import { CompanyPhoneNumber, CompanyPhoto, CompanyUser, Offer, UserSequelizeModel } from "..";
 import { CompanyApprovalEvent } from "./CompanyApprovalEvent/Model";
 import { ApprovalStatus, approvalStatuses } from "../ApprovalStatus";
@@ -38,6 +38,9 @@ export class Company extends Model<Company> {
 
   @Column({ allowNull: false, type: STRING, ...isNotEmptyString })
   public businessSector: string;
+
+  @Column({ allowNull: false, type: BOOLEAN })
+  public hasAnInternshipAgreement: boolean;
 
   @Column(STRING)
   public slogan: string;
