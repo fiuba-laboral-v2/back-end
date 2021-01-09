@@ -29,7 +29,7 @@ describe("CompanyWhereClauseBuilder", () => {
   });
 
   it("returns a clause for a companyName with capitalize letters", () => {
-    const companyName = "Buddy Guy";
+    const companyName = "Mercado Libre";
     const clause = CompanyWhereClauseBuilder.build({ companyName });
     expect(clause).toEqual({
       model: Company,
@@ -38,14 +38,14 @@ describe("CompanyWhereClauseBuilder", () => {
           {
             [Op.or]: [
               where(fn("unaccent", fn("lower", col("companyName"))), {
-                [Op.regexp]: `(^|[[:space:]])buddy([[:space:]]|$)`
+                [Op.regexp]: `(^|[[:space:]])mercado([[:space:]]|$)`
               })
             ]
           },
           {
             [Op.or]: [
               where(fn("unaccent", fn("lower", col("companyName"))), {
-                [Op.regexp]: `(^|[[:space:]])guy([[:space:]]|$)`
+                [Op.regexp]: `(^|[[:space:]])libre([[:space:]]|$)`
               })
             ]
           }
