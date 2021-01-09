@@ -63,6 +63,7 @@ describe("ApplicantWhereClauseBuilder", () => {
           attributes: []
         }
       ],
+      required: true,
       attributes: []
     });
   });
@@ -112,6 +113,7 @@ describe("ApplicantWhereClauseBuilder", () => {
           attributes: []
         }
       ],
+      required: true,
       attributes: []
     });
   });
