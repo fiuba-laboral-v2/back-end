@@ -35,7 +35,14 @@ export const saveJobApplication = {
     if (!canSeeOffer) throw new OfferNotTargetedForApplicantError();
 
     const applicant = await ApplicantRepository.findByUuid(applicantUuid);
-    const jobApplication = applicant.applyTo(offer);
+    const hasApplied = await JobApplicationRepository.hasApplied(applicant, offer);
+    let jobApplication;
+    if (hasApplied) {
+      jobApplication = await JobApplicationRepository.findByApplicantAndOffer(applicant, offer);
+      jobApplication.set({ approvalStatus: ApprovalStatus.pending });
+    } else {
+      jobApplication = applicant.applyTo(offer);
+    }
     const type = await applicant.getType();
     let secretary = Secretary.graduados;
     if (type === ApplicantType.both) secretary = Secretary.graduados;
