@@ -1,2 +1,3 @@
-export { JobApplicationRepository } from "./Repository";
+export * from "./Repository";
+export * from "./Interfaces";
 export * from "./Errors";

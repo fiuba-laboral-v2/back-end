@@ -1,4 +1,4 @@
-import { UsersWhereClauseBuilder } from "$models/Applicant/UsersWhereClauseBuilder";
+import { UsersWhereClauseBuilder } from "$models/QueryBuilder";
 import { UserSequelizeModel } from "$models";
 import { col, fn, Op, where } from "sequelize";
 

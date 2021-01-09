@@ -6,7 +6,7 @@ import { ApplicantType } from "$models/Applicant";
 import { JobApplicationNotFoundError, JobApplicationRepository } from "$models/JobApplication";
 import { Applicant, Company, JobApplication, Offer } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { UserRepository } from "$models/User";
+import { User, UserRepository } from "$models/User";
 import { isApprovalStatus } from "$models/SequelizeModelValidators";
 import { JobApplicationGenerator } from "$generators/JobApplication";
 import { CompanyGenerator } from "$generators/Company";
@@ -342,35 +342,137 @@ describe("JobApplicationRepository", () => {
   });
 
   describe("findLatest", () => {
-    it("returns the latest job applications first", async () => {
-      const itemsPerPage = 2;
-      mockItemsPerPage(itemsPerPage);
+    let company: Company;
+    let anotherCompany: Company;
+    let applicant: Applicant;
+    let offer1: Offer;
+    let offer2: Offer;
+    let offer3: Offer;
+    let firstJobApplication: JobApplication;
+    let secondJobApplication: JobApplication;
+    let thirdJobApplication: JobApplication;
+    let user: User;
 
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const anotherCompany = await CompanyGenerator.instance.withMinimumData();
-      const Offer1 = await OfferGenerator.instance.forStudents({ companyUuid });
-      const Offer2 = await OfferGenerator.instance.forGraduates({ companyUuid });
-      const Offer3 = await OfferGenerator.instance.forStudentsAndGraduates({
+    beforeAll(async () => {
+      await JobApplicationRepository.truncate();
+
+      applicant = studentAndGraduate;
+      company = await CompanyGenerator.instance.withMinimumData();
+      anotherCompany = await CompanyGenerator.instance.withMinimumData();
+      anotherCompany.set({ companyName: "Despegar" });
+      await CompanyRepository.save(anotherCompany);
+
+      offer1 = await OfferGenerator.instance.forStudents({ companyUuid: company.uuid });
+      offer2 = await OfferGenerator.instance.forGraduates({ companyUuid: company.uuid });
+      offer3 = await OfferGenerator.instance.forStudentsAndGraduates({
         companyUuid: anotherCompany.uuid
       });
 
-      await JobApplicationRepository.save(studentAndGraduate.applyTo(Offer1));
-      await JobApplicationRepository.save(studentAndGraduate.applyTo(Offer2));
-      await JobApplicationRepository.save(studentAndGraduate.applyTo(Offer3));
+      firstJobApplication = applicant.applyTo(offer1);
+      secondJobApplication = applicant.applyTo(offer2);
+      thirdJobApplication = applicant.applyTo(offer3);
+
+      await JobApplicationRepository.save(firstJobApplication);
+      await JobApplicationRepository.save(secondJobApplication);
+      await JobApplicationRepository.save(thirdJobApplication);
+
+      user = await UserRepository.findByUuid(applicant.userUuid);
+    });
+
+    it("returns the latest job applications first", async () => {
+      const itemsPerPage = 2;
+      mockItemsPerPage(itemsPerPage);
       const jobApplications = await JobApplicationRepository.findLatest();
       expect(jobApplications.shouldFetchMore).toEqual(true);
       expect(jobApplications.results).toEqual([
         expect.objectContaining({
-          offerUuid: Offer3.uuid,
-          applicantUuid: studentAndGraduate.uuid,
+          offerUuid: offer3.uuid,
+          applicantUuid: applicant.uuid,
           approvalStatus: ApprovalStatus.pending
         }),
         expect.objectContaining({
-          offerUuid: Offer2.uuid,
-          applicantUuid: studentAndGraduate.uuid,
+          offerUuid: offer2.uuid,
+          applicantUuid: applicant.uuid,
           approvalStatus: ApprovalStatus.pending
         })
       ]);
+    });
+
+    it("returns the job applications by applicantName, companyName and offerTitle", async () => {
+      const { results, shouldFetchMore } = await JobApplicationRepository.findLatest({
+        applicantName: `${user.name} ${user.surname}`,
+        companyName: company.companyName,
+        offerTitle: offer1.title
+      });
+      expect(shouldFetchMore).toEqual(false);
+      expect(results.map(({ uuid }) => uuid)).toEqual([firstJobApplication.uuid]);
+    });
+
+    it("returns the job applications by companyName", async () => {
+      const { results, shouldFetchMore } = await JobApplicationRepository.findLatest({
+        companyName: company.companyName
+      });
+      expect(shouldFetchMore).toEqual(false);
+      expect(results.map(({ uuid }) => uuid)).toEqual([
+        secondJobApplication.uuid,
+        firstJobApplication.uuid
+      ]);
+    });
+
+    it("returns the job applications by the other companyName", async () => {
+      const { results, shouldFetchMore } = await JobApplicationRepository.findLatest({
+        companyName: anotherCompany.companyName
+      });
+      expect(shouldFetchMore).toEqual(false);
+      expect(results.map(({ uuid }) => uuid)).toEqual([thirdJobApplication.uuid]);
+    });
+
+    it("returns the job applications by applicant name", async () => {
+      const { results, shouldFetchMore } = await JobApplicationRepository.findLatest({
+        applicantName: user.name
+      });
+      expect(shouldFetchMore).toEqual(false);
+      expect(results.map(({ uuid }) => uuid)).toEqual([
+        thirdJobApplication.uuid,
+        secondJobApplication.uuid,
+        firstJobApplication.uuid
+      ]);
+    });
+
+    it("returns the job applications by applicant surname", async () => {
+      const { results, shouldFetchMore } = await JobApplicationRepository.findLatest({
+        applicantName: user.surname
+      });
+      expect(shouldFetchMore).toEqual(false);
+      expect(results.map(({ uuid }) => uuid)).toEqual([
+        thirdJobApplication.uuid,
+        secondJobApplication.uuid,
+        firstJobApplication.uuid
+      ]);
+    });
+
+    it("returns no job applications by concatenating both company names", async () => {
+      const { results, shouldFetchMore } = await JobApplicationRepository.findLatest({
+        companyName: `${company.companyName} \n\n ${anotherCompany.companyName}`
+      });
+      expect(shouldFetchMore).toEqual(false);
+      expect(results).toEqual([]);
+    });
+
+    it("returns no job applications by given an unknown applicantName", async () => {
+      const { results, shouldFetchMore } = await JobApplicationRepository.findLatest({
+        applicantName: "RUBY"
+      });
+      expect(shouldFetchMore).toEqual(false);
+      expect(results).toEqual([]);
+    });
+
+    it("returns no job applications by given the name and surname concatenated with no spaces", async () => {
+      const { results, shouldFetchMore } = await JobApplicationRepository.findLatest({
+        applicantName: `${user.name}${user.surname}`
+      });
+      expect(shouldFetchMore).toEqual(false);
+      expect(results).toEqual([]);
     });
   });
 

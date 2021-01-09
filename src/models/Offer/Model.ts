@@ -70,7 +70,7 @@ export class Offer extends Model<Offer> {
   @Column({ allowNull: false, type: UUID })
   public companyUuid: string;
 
-  @BelongsTo(() => Company)
+  @BelongsTo(() => Company, "companyUuid")
   public company: Company;
 
   @Column({ allowNull: false, type: TEXT })

@@ -6,3 +6,10 @@ export interface IFindLatestByCompanyUuid {
   updatedBeforeThan?: IPaginatedInput;
   approvalStatus?: ApprovalStatus;
 }
+
+export interface IFindLatest {
+  updatedBeforeThan?: IPaginatedInput;
+  companyName?: string;
+  applicantName?: string;
+  offerTitle?: string;
+}

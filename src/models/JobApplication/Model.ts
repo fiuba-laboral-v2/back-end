@@ -12,34 +12,15 @@ import { isApprovalStatus, isUuid } from "$models/SequelizeModelValidators";
 
 @Table({ tableName: "JobApplications" })
 export class JobApplication extends Model<JobApplication> {
-  @Column({
-    allowNull: false,
-    primaryKey: true,
-    type: UUID,
-    defaultValue: UUIDV4,
-    ...isUuid
-  })
+  @Column({ allowNull: false, primaryKey: true, type: UUID, defaultValue: UUIDV4, ...isUuid })
   public uuid: string;
 
   @ForeignKey(() => Offer)
-  @Column({
-    allowNull: false,
-    primaryKey: true,
-    type: UUID,
-    ...isUuid
-  })
+  @Column({ allowNull: false, primaryKey: true, type: UUID, ...isUuid })
   public offerUuid: string;
 
-  @BelongsTo(() => Offer, "offerUuid")
-  public offer: Offer;
-
   @ForeignKey(() => Applicant)
-  @Column({
-    allowNull: false,
-    primaryKey: true,
-    type: UUID,
-    ...isUuid
-  })
+  @Column({ allowNull: false, primaryKey: true, type: UUID, ...isUuid })
   public applicantUuid: string;
 
   @Column({
@@ -52,6 +33,9 @@ export class JobApplication extends Model<JobApplication> {
 
   @BelongsTo(() => Applicant, "applicantUuid")
   public applicant: Applicant;
+
+  @BelongsTo(() => Offer, "offerUuid")
+  public offer: Offer;
 
   @HasMany(() => JobApplicationApprovalEvent)
   public approvalEvents: JobApplicationApprovalEvent;

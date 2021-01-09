@@ -1,9 +1,10 @@
 import { Transaction } from "sequelize";
 import { Applicant, JobApplication, Offer } from "$models";
-import { IFindLatestByCompanyUuid } from "./Interfaces";
+import { IFindLatestByCompanyUuid, IFindLatest } from "./Interfaces";
 import { JobApplicationNotFoundError } from "./Errors";
 import { PaginationQuery } from "../PaginationQuery";
-import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedInput";
+import { ApplicantWhereClauseBuilder, OfferWhereClauseBuilder } from "$models/QueryBuilder";
+import { Includeable } from "sequelize/types/lib/model";
 
 export const JobApplicationRepository = {
   save: (jobApplication: JobApplication, transaction?: Transaction) =>
@@ -55,10 +56,17 @@ export const JobApplicationRepository = {
       ]
     });
   },
-  findLatest: (updatedBeforeThan?: IPaginatedInput) =>
-    PaginationQuery.findLatest({
+  findLatest: ({ updatedBeforeThan, applicantName, companyName, offerTitle }: IFindLatest = {}) => {
+    const include: Includeable[] = [];
+    const applicantClause = ApplicantWhereClauseBuilder.build({ applicantName });
+    const offerClause = OfferWhereClauseBuilder.build({ title: offerTitle, companyName });
+    if (applicantClause) include.push(applicantClause);
+    if (offerClause) include.push(offerClause);
+    return PaginationQuery.findLatest({
       updatedBeforeThan,
-      query: options => JobApplication.findAll(options)
-    }),
+      query: options => JobApplication.findAll(options),
+      include
+    });
+  },
   truncate: () => JobApplication.truncate({ cascade: true })
 };
