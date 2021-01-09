@@ -59,4 +59,11 @@ export class JobApplication extends Model<JobApplication> {
   public getOffer: HasOneGetAssociationMixin<Offer>;
   public getApplicant: HasOneGetAssociationMixin<Applicant>;
   public getApprovalEvents: HasManyGetAssociationsMixin<JobApplicationApprovalEvent>;
+
+  public isNotRejected() {
+    return (
+      this.approvalStatus === ApprovalStatus.pending ||
+      this.approvalStatus === ApprovalStatus.approved
+    );
+  }
 }

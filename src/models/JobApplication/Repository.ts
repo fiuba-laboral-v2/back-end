@@ -19,8 +19,11 @@ export const JobApplicationRepository = {
   },
   hasApplied: async (applicant: Applicant, offer: Offer) => {
     try {
-      await JobApplicationRepository.findByApplicantAndOffer(applicant, offer);
-      return true;
+      const jobApplication = await JobApplicationRepository.findByApplicantAndOffer(
+        applicant,
+        offer
+      );
+      return jobApplication.isNotRejected();
     } catch (error) {
       if (error instanceof JobApplicationNotFoundError) return false;
       throw error;
