@@ -1,8 +1,8 @@
+import { Transaction } from "sequelize";
+import { IFindLatest } from "./Interfaces";
 import { CompanyNotFoundError } from "./Errors";
 import { Company, UserSequelizeModel } from "$models";
-import { IPaginatedInput } from "$src/graphql/Pagination/Types/GraphQLPaginatedInput";
 import { PaginationQuery } from "../PaginationQuery";
-import { Transaction } from "sequelize";
 
 export const CompanyRepository = {
   save: (company: Company, transaction?: Transaction) => company.save({ transaction }),
@@ -15,7 +15,7 @@ export const CompanyRepository = {
   findByUserUuidIfExists: async (userUuid: string) =>
     Company.findOne({ include: [{ model: UserSequelizeModel, where: { uuid: userUuid } }] }),
   findAll: () => Company.findAll(),
-  findLatest: (updatedBeforeThan?: IPaginatedInput) =>
+  findLatest: ({ updatedBeforeThan }: IFindLatest = {}) =>
     PaginationQuery.findLatest({
       updatedBeforeThan,
       query: options => Company.findAll(options)

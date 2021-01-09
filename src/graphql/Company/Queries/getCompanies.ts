@@ -14,5 +14,5 @@ export const getCompanies = {
     }
   },
   resolve: (_: undefined, { updatedBeforeThan }: { updatedBeforeThan?: IPaginatedInput }) =>
-    CompanyRepository.findLatest(updatedBeforeThan)
+    CompanyRepository.findLatest({ updatedBeforeThan })
 };

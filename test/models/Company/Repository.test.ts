@@ -180,7 +180,7 @@ describe("CompanyRepository", () => {
           uuid: company7.uuid
         };
 
-        const companies = await CompanyRepository.findLatest(updatedBeforeThan);
+        const companies = await CompanyRepository.findLatest({ updatedBeforeThan });
         expect(companies.results).toEqual([
           expect.objectContaining({
             uuid: company6.uuid,
