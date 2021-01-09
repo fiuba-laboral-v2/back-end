@@ -35,7 +35,7 @@ export const CompanyGenerator = {
   instance: {
     withMinimumData: async (variables?: ICompanyGeneratorAttributes) => createCompany(variables),
     withCompleteData: async (variables?: ICompanyGeneratorAttributes) => {
-      const company = await createCompany({ user: variables?.user });
+      const company = await createCompany(variables);
       await CompanyPhotoRepository.bulkCreate(variables?.photos, company);
       return company;
     },
