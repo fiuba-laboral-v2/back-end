@@ -1,16 +1,22 @@
 import { Offer } from "$models";
-import { NameWhereClause } from "$models/QueryBuilder";
+import { NameWhereClause, CompanyWhereClauseBuilder } from "$models/QueryBuilder";
 import { Includeable } from "sequelize/types/lib/model";
 
 export const OfferWhereClauseBuilder = {
-  build: ({ title }: IBuild): Includeable | undefined => {
-    if (title === undefined) return;
-    const whereClause = NameWhereClause.build({ name: title, columnNames: ["title"] });
-    if (!whereClause) return;
-    return { model: Offer, where: whereClause, attributes: [] };
+  build: ({ title, companyName }: IBuild): Includeable | undefined => {
+    if (title === undefined && companyName === undefined) return;
+    const nameClause = title && NameWhereClause.build({ name: title, columnNames: ["title"] });
+    const companyClause = CompanyWhereClauseBuilder.build({ companyName });
+    if (!nameClause && !companyClause) return;
+
+    let clause: Includeable = { model: Offer, attributes: [] };
+    if (nameClause) clause = { ...clause, where: nameClause };
+    if (companyClause) clause = { ...clause, required: true, include: [companyClause] };
+    return clause;
   }
 };
 
 interface IBuild {
   title?: string;
+  companyName?: string;
 }

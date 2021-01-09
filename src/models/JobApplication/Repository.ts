@@ -3,11 +3,7 @@ import { Applicant, JobApplication, Offer } from "$models";
 import { IFindLatestByCompanyUuid, IFindLatest } from "./Interfaces";
 import { JobApplicationNotFoundError } from "./Errors";
 import { PaginationQuery } from "../PaginationQuery";
-import {
-  ApplicantWhereClauseBuilder,
-  CompanyWhereClauseBuilder,
-  OfferWhereClauseBuilder
-} from "$models/QueryBuilder";
+import { ApplicantWhereClauseBuilder, OfferWhereClauseBuilder } from "$models/QueryBuilder";
 import { Includeable } from "sequelize/types/lib/model";
 
 export const JobApplicationRepository = {
@@ -63,12 +59,8 @@ export const JobApplicationRepository = {
   findLatest: ({ updatedBeforeThan, applicantName, companyName, offerTitle }: IFindLatest = {}) => {
     const include: Includeable[] = [];
     const applicantClause = ApplicantWhereClauseBuilder.build({ applicantName });
-    const companyClause = CompanyWhereClauseBuilder.build({ companyName });
-    const offerClause = OfferWhereClauseBuilder.build({ title: offerTitle });
+    const offerClause = OfferWhereClauseBuilder.build({ title: offerTitle, companyName });
     if (applicantClause) include.push(applicantClause);
-    if (companyClause) {
-      include.push({ model: Offer, include: [companyClause], attributes: [], required: true });
-    }
     if (offerClause) include.push(offerClause);
     return PaginationQuery.findLatest({
       updatedBeforeThan,
