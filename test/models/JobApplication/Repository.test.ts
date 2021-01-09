@@ -458,6 +458,22 @@ describe("JobApplicationRepository", () => {
       expect(shouldFetchMore).toEqual(false);
       expect(results).toEqual([]);
     });
+
+    it("returns no job applications by given an unknown applicantName", async () => {
+      const { results, shouldFetchMore } = await JobApplicationRepository.findLatest({
+        applicantName: "RUBY"
+      });
+      expect(shouldFetchMore).toEqual(false);
+      expect(results).toEqual([]);
+    });
+
+    it("returns no job applications by given the name and surname concatenated with no spaces", async () => {
+      const { results, shouldFetchMore } = await JobApplicationRepository.findLatest({
+        applicantName: `${user.name}${user.surname}`
+      });
+      expect(shouldFetchMore).toEqual(false);
+      expect(results).toEqual([]);
+    });
   });
 
   describe("findByUuid", () => {

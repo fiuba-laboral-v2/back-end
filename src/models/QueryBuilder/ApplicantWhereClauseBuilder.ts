@@ -6,7 +6,7 @@ export const ApplicantWhereClauseBuilder = {
   build: ({ applicantName }: IBuild): Includeable | undefined => {
     const userClause = UsersWhereClauseBuilder.build({ name: applicantName });
     if (!userClause) return;
-    return { model: Applicant, include: [userClause], attributes: [] };
+    return { model: Applicant, include: [userClause], attributes: [], required: true };
   }
 };
 
