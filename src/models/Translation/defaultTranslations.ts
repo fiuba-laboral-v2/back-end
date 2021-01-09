@@ -99,10 +99,17 @@ export const defaultTranslations = {
     careersTitle: "Carreras"
   },
   applicantsFilter: {
-    name: "Nombre",
+    name: "Nombre"
+  },
+  jobApplicationsFilter: {
+    companyName: "Nombre de la empresa",
+    applicantName: "Nombre del postulante",
+    offerTitle: "Nombre del puesto"
+  },
+  filter: {
     submit: "Aplicar"
   },
-  adminApplicantsActions: {
+  filtersButton: {
     cleanFilters: "Remover filtros",
     filters: "Filtrar"
   },
