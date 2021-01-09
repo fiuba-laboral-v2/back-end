@@ -1,5 +1,5 @@
-import { fn, where, col, Op, Transaction } from "sequelize";
-import { ApplicantType, IApplicantEditable, IFindLatest } from "./Interface";
+import { Transaction } from "sequelize";
+import { IApplicantEditable, IFindLatest, IFind } from "./Interface";
 import { ApplicantNotFound } from "./Errors";
 import { Database } from "$config";
 import { ApplicantCareersRepository } from "./ApplicantCareer";
@@ -8,51 +8,27 @@ import { ApplicantKnowledgeSectionRepository } from "./ApplicantKnowledgeSection
 import { ApplicantExperienceSectionRepository } from "./ApplicantExperienceSection";
 import { ApplicantLinkRepository } from "./Link";
 import { UserRepository } from "../User";
-import { Applicant, ApplicantCareer, UserSequelizeModel } from "..";
+import { Applicant } from "..";
 import { PaginationQuery } from "../PaginationQuery";
+import { UsersWhereClauseBuilder, ApplicantCareersWhereClauseBuilder } from "$models/QueryBuilder";
 import { Includeable } from "sequelize/types/lib/model";
 
 export const ApplicantRepository = {
   save: (applicant: Applicant, transaction?: Transaction) => applicant.save({ transaction }),
-  findLatest: ({ updatedBeforeThan, name, careerCodes, applicantType }: IFindLatest = {}) => {
-    const removeAccent = word => word.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    const normalize = word => removeAccent(word).toLowerCase();
+  find: (filter: IFind = {}) => {
     const include: Includeable[] = [];
-    if (name !== undefined) {
-      const words = name
-        .replace("\n", " ")
-        .split(" ")
-        .filter(word => word !== "");
-      if (words.length > 0) {
-        include.push({
-          model: UserSequelizeModel,
-          where: {
-            [Op.and]: words.map(word => ({
-              [Op.or]: [
-                where(fn("unaccent", fn("lower", col("name"))), {
-                  [Op.regexp]: `(^|[[:space:]])${normalize(word)}([[:space:]]|$)`
-                }),
-                where(fn("unaccent", fn("lower", col("surname"))), {
-                  [Op.regexp]: `(^|[[:space:]])${normalize(word)}([[:space:]]|$)`
-                })
-              ]
-            }))
-          },
-          attributes: []
-        });
-      }
-    }
-    if (careerCodes || applicantType) {
-      include.push({
-        model: ApplicantCareer,
-        where: {
-          ...(careerCodes && { careerCode: { [Op.in]: careerCodes } }),
-          ...(applicantType === ApplicantType.graduate && { isGraduate: true }),
-          ...(applicantType === ApplicantType.student && { isGraduate: false })
-        },
-        attributes: []
-      });
-    }
+    const userFilter = UsersWhereClauseBuilder.build(filter);
+    const applicantCareers = ApplicantCareersWhereClauseBuilder.build(filter);
+    if (userFilter) include.push(userFilter);
+    if (applicantCareers) include.push(applicantCareers);
+    return Applicant.findAll({ include });
+  },
+  findLatest: ({ updatedBeforeThan, ...filter }: IFindLatest = {}) => {
+    const include: Includeable[] = [];
+    const userFilter = UsersWhereClauseBuilder.build(filter);
+    const applicantCareersFilter = ApplicantCareersWhereClauseBuilder.build(filter);
+    if (userFilter) include.push(userFilter);
+    if (applicantCareersFilter) include.push(applicantCareersFilter);
     return PaginationQuery.findLatest({
       updatedBeforeThan,
       query: options => Applicant.findAll(options),

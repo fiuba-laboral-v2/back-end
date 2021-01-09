@@ -1,9 +1,9 @@
 import { getApplicant } from "./getApplicant";
 import { getApplicants } from "./getApplicants";
+import { getApplicantEmails } from "./getApplicantEmails";
 
-const applicantQueries = {
+export const applicantQueries = {
   getApplicant,
-  getApplicants
+  getApplicants,
+  getApplicantEmails
 };
-
-export { applicantQueries };

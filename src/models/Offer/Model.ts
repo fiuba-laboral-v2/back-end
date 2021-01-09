@@ -70,7 +70,7 @@ export class Offer extends Model<Offer> {
   @Column({ allowNull: false, type: UUID })
   public companyUuid: string;
 
-  @BelongsTo(() => Company)
+  @BelongsTo(() => Company, "companyUuid")
   public company: Company;
 
   @Column({ allowNull: false, type: TEXT })
@@ -196,6 +196,13 @@ export class Offer extends Model<Offer> {
     if (admin.isFromGraduadosSecretary()) {
       return this.updateGraduadosApprovalStatus(newStatus, expirationDate);
     }
+  }
+
+  public moveToPending() {
+    this.extensionApprovalStatus = ApprovalStatus.pending;
+    this.studentsExpirationDateTime = null;
+    this.graduadosApprovalStatus = ApprovalStatus.pending;
+    this.graduatesExpirationDateTime = null;
   }
 
   private expireForStudents = () => {

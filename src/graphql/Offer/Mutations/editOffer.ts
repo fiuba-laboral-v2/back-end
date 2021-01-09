@@ -6,7 +6,6 @@ import { OfferRepository } from "$models/Offer";
 import { Boolean, ID, Int, List, nonNull, String } from "$graphql/fieldTypes";
 import { IUpdateOffer } from "$models/Offer/Interface";
 import { IApolloServerContext } from "$graphql/Context";
-import { ApprovalStatus } from "$models/ApprovalStatus";
 import { OfferNotVisibleByCurrentUserError } from "$graphql/Offer/Queries/Errors";
 import { OfferWithNoCareersError } from "$graphql/Offer/Errors";
 
@@ -55,12 +54,8 @@ export const editOffer = {
     const canEdit = await currentUser.getCompanyRole().getPermissions().canSeeOffer(offer);
     if (!canEdit) throw new OfferNotVisibleByCurrentUserError();
 
-    offer.set({
-      maximumSalary: undefined,
-      ...offerAttributes,
-      extensionApprovalStatus: ApprovalStatus.pending,
-      graduadosApprovalStatus: ApprovalStatus.pending
-    });
+    offer.set({ maximumSalary: undefined, ...offerAttributes });
+    offer.moveToPending();
     return OfferRepository.update({ sections, careers, offer });
   }
 };

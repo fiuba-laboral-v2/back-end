@@ -17,7 +17,9 @@ describe("CompanyRepository", () => {
   const companyAttributes = () => ({
     cuit: CuitGenerator.generate(),
     companyName: CompanyGenerator.data.completeData().companyName,
-    businessName: CompanyGenerator.data.completeData().businessName
+    businessName: CompanyGenerator.data.completeData().businessName,
+    businessSector: CompanyGenerator.data.completeData().businessSector,
+    hasAnInternshipAgreement: CompanyGenerator.data.completeData().hasAnInternshipAgreement
   });
 
   beforeAll(async () => {
@@ -27,11 +29,7 @@ describe("CompanyRepository", () => {
 
   describe("Save", () => {
     const expectToUpdateAttribute = async (attributeName: string, value: string | number) => {
-      const attributes = {
-        cuit: CuitGenerator.generate(),
-        companyName: CompanyGenerator.data.completeData().companyName,
-        businessName: CompanyGenerator.data.completeData().businessName
-      };
+      const attributes = companyAttributes();
       const company = new Company(attributes);
       await CompanyRepository.save(company);
       company.set({ [attributeName]: value });

@@ -1,5 +1,4 @@
 import {
-  AllowNull,
   BelongsToMany,
   Column,
   CreatedAt,
@@ -9,7 +8,7 @@ import {
   Table,
   UpdatedAt
 } from "sequelize-typescript";
-import { ENUM, HasManyGetAssociationsMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
+import { ENUM, HasManyGetAssociationsMixin, STRING, TEXT, UUID, UUIDV4, BOOLEAN } from "sequelize";
 import { CompanyPhoneNumber, CompanyPhoto, CompanyUser, Offer, UserSequelizeModel } from "..";
 import { CompanyApprovalEvent } from "./CompanyApprovalEvent/Model";
 import { ApprovalStatus, approvalStatuses } from "../ApprovalStatus";
@@ -23,27 +22,25 @@ import { isNotEmptyString } from "../SequelizeModelValidators";
 
 @Table({ tableName: "Companies", timestamps: true })
 export class Company extends Model<Company> {
-  @Column({
-    allowNull: false,
-    primaryKey: true,
-    type: UUID,
-    defaultValue: UUIDV4
-  })
+  @Column({ allowNull: false, primaryKey: true, type: UUID, defaultValue: UUIDV4 })
   public uuid: string;
 
-  @AllowNull(false)
   @Is("cuit", validateCuit)
-  @Column(STRING)
+  @Column({ allowNull: false, type: STRING })
   public cuit: string;
 
-  @AllowNull(false)
   @Is("name", validateName)
-  @Column(STRING)
+  @Column({ allowNull: false, type: STRING })
   public companyName: string;
 
-  @AllowNull(false)
-  @Column({ type: STRING, ...isNotEmptyString })
+  @Column({ allowNull: false, type: STRING, ...isNotEmptyString })
   public businessName: string;
+
+  @Column({ allowNull: false, type: STRING, ...isNotEmptyString })
+  public businessSector: string;
+
+  @Column({ allowNull: false, type: BOOLEAN })
+  public hasAnInternshipAgreement: boolean;
 
   @Column(STRING)
   public slogan: string;

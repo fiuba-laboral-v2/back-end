@@ -1,9 +1,7 @@
+import { String } from "$graphql/fieldTypes";
 import { GraphQLJobApplication } from "../Types/GraphQLJobApplication";
-import { JobApplicationRepository } from "$src/models/JobApplication";
-import {
-  GraphQLPaginatedInput,
-  IPaginatedInput
-} from "$graphql/Pagination/Types/GraphQLPaginatedInput";
+import { JobApplicationRepository, IFindLatest } from "$src/models/JobApplication";
+import { GraphQLPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { GraphQLPaginatedResults } from "$graphql/Pagination/Types/GraphQLPaginatedResults";
 
 export const getJobApplications = {
@@ -11,8 +9,16 @@ export const getJobApplications = {
   args: {
     updatedBeforeThan: {
       type: GraphQLPaginatedInput
+    },
+    companyName: {
+      type: String
+    },
+    applicantName: {
+      type: String
+    },
+    offerTitle: {
+      type: String
     }
   },
-  resolve: (_: undefined, { updatedBeforeThan }: { updatedBeforeThan?: IPaginatedInput }) =>
-    JobApplicationRepository.findLatest(updatedBeforeThan)
+  resolve: (_: undefined, filter: IFindLatest) => JobApplicationRepository.findLatest(filter)
 };

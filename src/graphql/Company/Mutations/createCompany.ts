@@ -1,5 +1,5 @@
 import { GraphQLCompanyUserCreateInput } from "$graphql/User/Types/GraphQLCompanyUserCreateInput";
-import { List, nonNull, String } from "$graphql/fieldTypes";
+import { List, nonNull, String, Boolean } from "$graphql/fieldTypes";
 import { GraphQLCompany } from "../Types/GraphQLCompany";
 
 import { Database } from "$config";
@@ -21,6 +21,12 @@ export const createCompany = {
     },
     businessName: {
       type: nonNull(String)
+    },
+    businessSector: {
+      type: nonNull(String)
+    },
+    hasAnInternshipAgreement: {
+      type: nonNull(Boolean)
     },
     slogan: {
       type: String
@@ -75,6 +81,8 @@ export interface ICreateCompany {
   cuit: string;
   companyName: string;
   businessName: string;
+  businessSector: string;
+  hasAnInternshipAgreement: boolean;
   slogan?: string;
   description?: string;
   logo?: string;

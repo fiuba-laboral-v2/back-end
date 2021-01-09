@@ -1,10 +1,10 @@
-import { nonNull, String } from "$graphql/fieldTypes";
+import { nonNull, Boolean, String } from "$graphql/fieldTypes";
 import { GraphQLCompany } from "../Types/GraphQLCompany";
 import { IApolloServerContext } from "$graphql/Context";
 import { CompanyRepository } from "$models/Company";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
-export const updateCuitAndBusinessName = {
+export const updateCompanyCriticalAttributes = {
   type: GraphQLCompany,
   args: {
     cuit: {
@@ -12,11 +12,14 @@ export const updateCuitAndBusinessName = {
     },
     businessName: {
       type: nonNull(String)
+    },
+    hasAnInternshipAgreement: {
+      type: nonNull(Boolean)
     }
   },
   resolve: async (
     _: undefined,
-    attributes: IUpdateCuitAndBusinessName,
+    attributes: IUpdateCompanyCriticalAttributes,
     { currentUser }: IApolloServerContext
   ) => {
     const company = await CompanyRepository.findByUuid(currentUser.getCompanyRole().companyUuid);
@@ -26,7 +29,8 @@ export const updateCuitAndBusinessName = {
   }
 };
 
-export interface IUpdateCuitAndBusinessName {
+export interface IUpdateCompanyCriticalAttributes {
   cuit: string;
   businessName: string;
+  hasAnInternshipAgreement: boolean;
 }

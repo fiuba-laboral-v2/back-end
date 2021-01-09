@@ -17,7 +17,9 @@ describe("CompanyUserRepository", () => {
   const companyAttributes = {
     cuit: "30711819017",
     companyName: "Mercado Libre",
-    businessName: "businessName"
+    businessName: "businessName",
+    businessSector: "businessSector",
+    hasAnInternshipAgreement: true
   };
 
   beforeAll(() => Promise.all([CompanyRepository.truncate(), UserRepository.truncate()]));
@@ -141,7 +143,9 @@ describe("CompanyUserRepository", () => {
       const company = new Company({
         cuit: CuitGenerator.generate(),
         companyName: "devartis",
-        businessName: "el zorro"
+        businessName: "el zorro",
+        businessSector: "businessSector",
+        hasAnInternshipAgreement: true
       });
       await CompanyRepository.save(company);
       companyUuid = company.uuid;

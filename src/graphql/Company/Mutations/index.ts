@@ -1,11 +1,11 @@
 import { createCompany } from "./createCompany";
 import { updateCurrentCompany } from "./updateCurrentCompany";
 import { updateCompanyApprovalStatus } from "./updateCompanyApprovalStatus";
-import { updateCuitAndBusinessName } from "./updateCuitAndBusinessName";
+import { updateCompanyCriticalAttributes } from "./updateCompanyCriticalAttributes";
 
 export const companyMutations = {
   createCompany,
   updateCurrentCompany,
   updateCompanyApprovalStatus,
-  updateCuitAndBusinessName
+  updateCompanyCriticalAttributes
 };
