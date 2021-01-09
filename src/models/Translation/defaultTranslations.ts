@@ -99,7 +99,9 @@ export const defaultTranslations = {
     careersTitle: "Carreras"
   },
   applicantsFilter: {
-    name: "Nombre",
+    name: "Nombre"
+  },
+  filter: {
     submit: "Aplicar"
   },
   filtersButton: {
