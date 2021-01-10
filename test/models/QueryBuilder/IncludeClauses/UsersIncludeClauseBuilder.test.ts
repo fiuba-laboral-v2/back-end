@@ -1,36 +1,36 @@
-import { UsersWhereClauseBuilder } from "$models/QueryBuilder";
+import { UsersIncludeClauseBuilder } from "$models/QueryBuilder";
 import { UserSequelizeModel } from "$models";
 import { col, fn, Op, where } from "sequelize";
 
-describe("UsersWhereClauseBuilder", () => {
+describe("UsersIncludeClauseBuilder", () => {
   it("returns undefined if no name is provided", () => {
-    const clause = UsersWhereClauseBuilder.build({});
+    const clause = UsersIncludeClauseBuilder.build({});
     expect(clause).toBeUndefined();
   });
 
   it("returns undefined if the name is a newline character", () => {
-    const clause = UsersWhereClauseBuilder.build({ name: "" });
+    const clause = UsersIncludeClauseBuilder.build({ name: "" });
     expect(clause).toBeUndefined();
   });
 
   it("returns undefined if the name is en empty array", () => {
-    const clause = UsersWhereClauseBuilder.build({ name: "" });
+    const clause = UsersIncludeClauseBuilder.build({ name: "" });
     expect(clause).toBeUndefined();
   });
 
   it("returns undefined if the name is only spaces", () => {
-    const clause = UsersWhereClauseBuilder.build({ name: "     " });
+    const clause = UsersIncludeClauseBuilder.build({ name: "     " });
     expect(clause).toBeUndefined();
   });
 
   it("returns undefined if the name is multiple new lines", () => {
-    const clause = UsersWhereClauseBuilder.build({ name: "\n\n\n\n\n\n\n\n\n\n" });
+    const clause = UsersIncludeClauseBuilder.build({ name: "\n\n\n\n\n\n\n\n\n\n" });
     expect(clause).toBeUndefined();
   });
 
   it("returns a clause for a name with capitalize letters", () => {
     const name = "Buddy Guy";
-    const clause = UsersWhereClauseBuilder.build({ name });
+    const clause = UsersIncludeClauseBuilder.build({ name });
     expect(clause).toEqual({
       model: UserSequelizeModel,
       where: {
@@ -63,7 +63,7 @@ describe("UsersWhereClauseBuilder", () => {
 
   it("returns a clause for a name with accents", () => {
     const name = "námé with áccent";
-    const clause = UsersWhereClauseBuilder.build({ name });
+    const clause = UsersIncludeClauseBuilder.build({ name });
     expect(clause).toEqual({
       model: UserSequelizeModel,
       where: {

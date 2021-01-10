@@ -110,6 +110,12 @@ export const defaultTranslations = {
     companyName: "Nombre de la empresa",
     businessSector: "Rubro"
   },
+  offersFilter: {
+    companyName: "Nombre de la empresa",
+    businessSector: "Rubro de la empresa",
+    title: "Nombre del puesto",
+    approvalStatus: "Estado de aprobación"
+  },
   filter: {
     submit: "Aplicar"
   },
@@ -161,6 +167,14 @@ export const defaultTranslations = {
     graduate: "Graduados",
     student: "Alumnos",
     both: "Alumnos y graduados"
+  },
+  offerStatusSelector: {
+    studentsTitle: "Estado de la oferta de alumnos/as",
+    graduatesTitle: "Estado de la oferta de graduados/as",
+    approved: "Aprobado",
+    rejected: "Rechazado",
+    pending: "Pendiente de aprobación",
+    expired: "Expirada"
   },
   secretarySelector: {
     title: "Secretaría"
@@ -566,6 +580,7 @@ export const defaultTranslations = {
   },
   adminOfferListHeader: {
     companyName: "Empresa",
+    businessSector: "Rubro de la empresa",
     title: "Puesto",
     hoursPerDay: "Horas",
     salary: "Salario",

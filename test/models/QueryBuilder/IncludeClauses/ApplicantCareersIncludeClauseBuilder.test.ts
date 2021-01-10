@@ -1,13 +1,13 @@
-import { ApplicantCareersWhereClauseBuilder } from "$models/QueryBuilder";
+import { ApplicantCareersIncludeClauseBuilder } from "$models/QueryBuilder";
 import { ApplicantType } from "$models/Applicant";
 import { ApplicantCareer } from "$models";
 import { Op } from "sequelize";
 
-describe("ApplicantCareersWhereClauseBuilder", () => {
+describe("ApplicantCareersIncludeClauseBuilder", () => {
   it("returns a clause for students and the given career codes", () => {
     const applicantType = ApplicantType.student;
     const careerCodes = ["1", "2"];
-    const clause = ApplicantCareersWhereClauseBuilder.build({ careerCodes, applicantType });
+    const clause = ApplicantCareersIncludeClauseBuilder.build({ careerCodes, applicantType });
     expect(clause).toEqual({
       model: ApplicantCareer,
       where: {
@@ -21,7 +21,7 @@ describe("ApplicantCareersWhereClauseBuilder", () => {
   it("returns a clause for graduates and the given career codes", () => {
     const applicantType = ApplicantType.graduate;
     const careerCodes = ["1", "2"];
-    const clause = ApplicantCareersWhereClauseBuilder.build({ careerCodes, applicantType });
+    const clause = ApplicantCareersIncludeClauseBuilder.build({ careerCodes, applicantType });
     expect(clause).toEqual({
       model: ApplicantCareer,
       where: {
@@ -35,7 +35,7 @@ describe("ApplicantCareersWhereClauseBuilder", () => {
   it("returns a clause for both students and graduates and the given career codes", () => {
     const applicantType = ApplicantType.both;
     const careerCodes = ["1", "2"];
-    const clause = ApplicantCareersWhereClauseBuilder.build({ careerCodes, applicantType });
+    const clause = ApplicantCareersIncludeClauseBuilder.build({ careerCodes, applicantType });
     expect(clause).toEqual({
       model: ApplicantCareer,
       where: {
@@ -47,7 +47,7 @@ describe("ApplicantCareersWhereClauseBuilder", () => {
 
   it("returns a clause for the given career codes", () => {
     const careerCodes = ["1", "2"];
-    const clause = ApplicantCareersWhereClauseBuilder.build({ careerCodes });
+    const clause = ApplicantCareersIncludeClauseBuilder.build({ careerCodes });
     expect(clause).toEqual({
       model: ApplicantCareer,
       where: {
@@ -58,7 +58,7 @@ describe("ApplicantCareersWhereClauseBuilder", () => {
   });
 
   it("returns undefined if no careerCodes or applicantType are provided", () => {
-    const clause = ApplicantCareersWhereClauseBuilder.build({});
+    const clause = ApplicantCareersIncludeClauseBuilder.build({});
     expect(clause).toBeUndefined();
   });
 });

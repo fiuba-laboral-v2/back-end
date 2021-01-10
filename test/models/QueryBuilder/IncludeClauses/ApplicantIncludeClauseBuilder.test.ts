@@ -1,36 +1,36 @@
-import { ApplicantWhereClauseBuilder } from "$models/QueryBuilder";
+import { ApplicantIncludeClauseBuilder } from "$models/QueryBuilder";
 import { Applicant, UserSequelizeModel } from "$models";
 import { col, fn, Op, where } from "sequelize";
 
 describe("ApplicantWhereClauseBuilder", () => {
   it("returns undefined if no name is provided", () => {
-    const clause = ApplicantWhereClauseBuilder.build({});
+    const clause = ApplicantIncludeClauseBuilder.build({});
     expect(clause).toBeUndefined();
   });
 
   it("returns undefined if the name is a newline character", () => {
-    const clause = ApplicantWhereClauseBuilder.build({ applicantName: "" });
+    const clause = ApplicantIncludeClauseBuilder.build({ applicantName: "" });
     expect(clause).toBeUndefined();
   });
 
   it("returns undefined if the name is en empty array", () => {
-    const clause = ApplicantWhereClauseBuilder.build({ applicantName: "" });
+    const clause = ApplicantIncludeClauseBuilder.build({ applicantName: "" });
     expect(clause).toBeUndefined();
   });
 
   it("returns undefined if the name is only spaces", () => {
-    const clause = ApplicantWhereClauseBuilder.build({ applicantName: "     " });
+    const clause = ApplicantIncludeClauseBuilder.build({ applicantName: "     " });
     expect(clause).toBeUndefined();
   });
 
   it("returns undefined if the name is multiple new lines", () => {
-    const clause = ApplicantWhereClauseBuilder.build({ applicantName: "\n\n\n\n\n\n\n\n\n\n" });
+    const clause = ApplicantIncludeClauseBuilder.build({ applicantName: "\n\n\n\n\n\n\n\n\n\n" });
     expect(clause).toBeUndefined();
   });
 
   it("returns a clause for a name with capitalize letters", () => {
     const applicantName = "Buddy Guy";
-    const clause = ApplicantWhereClauseBuilder.build({ applicantName });
+    const clause = ApplicantIncludeClauseBuilder.build({ applicantName });
     expect(clause).toEqual({
       model: Applicant,
       include: [
@@ -70,7 +70,7 @@ describe("ApplicantWhereClauseBuilder", () => {
 
   it("returns a clause for a name with accents", () => {
     const applicantName = "námé with áccent";
-    const clause = ApplicantWhereClauseBuilder.build({ applicantName });
+    const clause = ApplicantIncludeClauseBuilder.build({ applicantName });
     expect(clause).toEqual({
       model: Applicant,
       include: [

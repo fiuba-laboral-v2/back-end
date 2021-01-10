@@ -1,4 +1,4 @@
-import { NameWhereClause } from "$models/QueryBuilder/NameWhereClause";
+import { NameWhereClause } from "$models/QueryBuilder";
 import { col, fn, Op, where } from "sequelize";
 
 describe("NameWhereClause", () => {

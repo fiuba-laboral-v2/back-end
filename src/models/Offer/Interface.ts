@@ -33,5 +33,17 @@ export interface IFindAll {
   updatedBeforeThan?: IPaginatedInput;
   companyUuid?: string;
   applicantType?: ApplicantType;
+  companyName?: string;
+  businessSector?: string;
+  title?: string;
+  studentsStatus?: OfferStatus;
+  graduatesStatus?: OfferStatus;
   careerCodes?: string[];
+}
+
+export enum OfferStatus {
+  expired = "expired",
+  pending = "pending",
+  approved = "approved",
+  rejected = "rejected"
 }

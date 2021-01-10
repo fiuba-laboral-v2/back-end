@@ -1,20 +1,44 @@
-import { OfferRepository } from "$models/Offer";
+import { String } from "$graphql/fieldTypes";
+import { OfferRepository, OfferStatus } from "$models/Offer";
 import { GraphQLPaginatedResults } from "$graphql/Pagination/Types/GraphQLPaginatedResults";
 import { GraphQLOffer } from "$graphql/Offer/Types/GraphQLOffer";
+import { GraphQLOfferStatus } from "$graphql/Offer/Types/GraphQLOfferStatus";
 import {
   GraphQLPaginatedInput,
   IPaginatedInput
 } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 
-const getOffers = {
+export const getOffers = {
   type: GraphQLPaginatedResults(GraphQLOffer),
   args: {
     updatedBeforeThan: {
       type: GraphQLPaginatedInput
+    },
+    companyName: {
+      type: String
+    },
+    businessSector: {
+      type: String
+    },
+    studentsStatus: {
+      type: GraphQLOfferStatus
+    },
+    graduatesStatus: {
+      type: GraphQLOfferStatus
+    },
+    title: {
+      type: String
     }
   },
-  resolve: (_: undefined, { updatedBeforeThan }: { updatedBeforeThan?: IPaginatedInput }) =>
-    OfferRepository.findAll({ updatedBeforeThan })
+  resolve: (_: undefined, filter: IGetOffers) => OfferRepository.findAll(filter)
 };
 
-export { getOffers };
+export interface IGetOffers {
+  updatedBeforeThan?: IPaginatedInput;
+  companyName?: string;
+  businessSector?: string;
+  title?: string;
+  studentsStatus?: OfferStatus;
+  graduatesStatus?: OfferStatus;
+  careerCodes?: string[];
+}
