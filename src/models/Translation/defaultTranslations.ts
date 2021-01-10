@@ -578,6 +578,7 @@ export const defaultTranslations = {
   },
   adminOfferListHeader: {
     companyName: "Empresa",
+    businessSector: "Rubro de la empresa",
     title: "Puesto",
     hoursPerDay: "Horas",
     salary: "Salario",
