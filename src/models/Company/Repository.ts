@@ -17,9 +17,9 @@ export const CompanyRepository = {
     Company.findOne({ include: [{ model: UserSequelizeModel, where: { uuid: userUuid } }] }),
   findAll: () => Company.findAll(),
   findLatest: ({ updatedBeforeThan, companyName, businessSector }: IFindLatest = {}) => {
-    const clause = CompanyWhereClauseBuilder.build({ companyName, businessSector });
+    const where = CompanyWhereClauseBuilder.build({ companyName, businessSector });
     return PaginationQuery.findLatest({
-      ...(clause && { where: clause.where }),
+      ...(where && { where: where }),
       updatedBeforeThan,
       query: options => Company.findAll(options)
     });

@@ -1,4 +1,3 @@
-import { Company } from "$models";
 import { Op } from "sequelize";
 import { NameWhereClause } from "$models/QueryBuilder";
 import { WhereOptions } from "sequelize/types/lib/model";
@@ -14,7 +13,7 @@ export const CompanyWhereClauseBuilder = {
     const clause: { [Op.and]: WhereOptions[] } = { [Op.and]: [] };
     if (businessSectorClause) clause[Op.and].push(businessSectorClause);
     if (companyNameClause) clause[Op.and].push(companyNameClause);
-    return { model: Company, where: clause, attributes: [] };
+    return clause;
   }
 };
 

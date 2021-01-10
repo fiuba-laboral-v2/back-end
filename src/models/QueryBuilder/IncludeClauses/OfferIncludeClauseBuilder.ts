@@ -1,11 +1,11 @@
 import { Offer } from "$models";
-import { OfferWhereClauseBuilder, CompanyWhereClauseBuilder } from "$models/QueryBuilder";
+import { OfferWhereClauseBuilder, CompanyIncludeClauseBuilder } from "$models/QueryBuilder";
 import { Includeable } from "sequelize/types/lib/model";
 
 export const OfferIncludeClauseBuilder = {
   build: ({ title, companyName }: IBuild) => {
     const where = OfferWhereClauseBuilder.build({ title });
-    const companyClause = CompanyWhereClauseBuilder.build({ companyName });
+    const companyClause = CompanyIncludeClauseBuilder.build({ companyName });
     if (!where && !companyClause) return;
 
     let clause: Includeable = { model: Offer, attributes: [] };
