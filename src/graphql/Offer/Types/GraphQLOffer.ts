@@ -8,7 +8,7 @@ import { GraphQLCompany } from "$graphql/Company/Types/GraphQLCompany";
 import { Offer } from "$models";
 import { UserRepository } from "$models/User";
 import { ApplicantRepository } from "$models/Applicant";
-import { JobApplicationRepository } from "$models/JobApplication";
+import { JobApplicationNotFoundError, JobApplicationRepository } from "$models/JobApplication";
 import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
 import { GraphQLApplicantType } from "../../Applicant/Types/GraphQLApplicantType";
 
@@ -74,7 +74,16 @@ export const GraphQLOffer = new GraphQLObjectType<Offer, IApolloServerContext>({
       resolve: async (offer, _, { currentUser }) => {
         const user = await UserRepository.findByEmail(currentUser.email);
         const applicant = await ApplicantRepository.findByUserUuid(user.uuid!);
-        return JobApplicationRepository.hasApplied(applicant, offer);
+        try {
+          const jobApplication = await JobApplicationRepository.findByApplicantAndOffer(
+            applicant,
+            offer
+          );
+          return !jobApplication.isRejected();
+        } catch (error) {
+          if (error instanceof JobApplicationNotFoundError) return false;
+          throw error;
+        }
       }
     }
   })

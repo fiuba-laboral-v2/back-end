@@ -321,6 +321,21 @@ describe("getOfferByUuid", () => {
       expect(data!.getOfferByUuid.hasApplied).toBe(false);
     });
 
+    it("hasApplied will be false if the JobApplication was Rejected", async () => {
+      const { apolloClient, applicant } = await approvedApplicantTestClient(ApplicantType.both);
+      const offer = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
+      const jobApplication = applicant.applyTo(offer);
+      jobApplication.set({ approvalStatus: ApprovalStatus.rejected });
+      await JobApplicationRepository.save(jobApplication);
+      const { data, errors } = await apolloClient.query({
+        query: GET_OFFER_BY_UUID_WITH_APPLIED_INFORMATION,
+        variables: { uuid: offer.uuid }
+      });
+
+      expect(errors).toBeUndefined();
+      expect(data!.getOfferByUuid.hasApplied).toBe(false);
+    });
+
     it("returns an error if a company request the hasApplied field", async () => {
       const { company, apolloClient } = await companyTestClient(ApprovalStatus.approved);
       const offer = await OfferGenerator.instance.forStudents({ companyUuid: company.uuid });

@@ -49,6 +49,35 @@ describe("JobApplication", () => {
     expect(jobApplication.approvalStatus).toEqual(ApprovalStatus.approved);
   });
 
+  describe("isRejected", () => {
+    it("returns true is the approvalStatus is approved", async () => {
+      const jobApplication = new JobApplication({
+        offerUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
+        applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
+        approvalStatus: ApprovalStatus.approved
+      });
+      expect(jobApplication.isRejected()).toBe(false);
+    });
+
+    it("returns true is the approvalStatus is pending", async () => {
+      const jobApplication = new JobApplication({
+        offerUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
+        applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
+        approvalStatus: ApprovalStatus.pending
+      });
+      expect(jobApplication.isRejected()).toBe(false);
+    });
+
+    it("returns false is the approvalStatus is rejected", async () => {
+      const jobApplication = new JobApplication({
+        offerUuid: "70aa38ee-f144-4880-94e0-3502f364bc7f",
+        applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468",
+        approvalStatus: ApprovalStatus.rejected
+      });
+      expect(jobApplication.isRejected()).toBe(true);
+    });
+  });
+
   it("throws an error if no offerUuid is provided", async () => {
     const jobApplication = new JobApplication({
       applicantUuid: "73f5ac38-6c5e-407c-b95e-f7a65d0dc468"
