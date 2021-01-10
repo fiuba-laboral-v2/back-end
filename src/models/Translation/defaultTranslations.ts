@@ -168,7 +168,7 @@ export const defaultTranslations = {
     graduate: "Graduados",
     student: "Alumnos",
     both: "Alumnos y graduados",
-    indeterminate: "Indeterminado"
+    indeterminate: "Todos"
   },
   offerStatusSelector: {
     studentsTitle: "Estado de la oferta de alumnos/as",
