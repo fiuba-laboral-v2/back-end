@@ -1,6 +1,7 @@
 import { nonNull, String } from "$graphql/fieldTypes";
 import { GraphQLJobApplication } from "../Types/GraphQLJobApplication";
 import {
+  JobApplicationNotFoundError,
   JobApplicationRepository,
   OfferNotTargetedForApplicantError
 } from "$models/JobApplication";
@@ -35,16 +36,19 @@ export const saveJobApplication = {
     if (!canSeeOffer) throw new OfferNotTargetedForApplicantError();
 
     const applicant = await ApplicantRepository.findByUuid(applicantUuid);
-    const hasApplied = await JobApplicationRepository.hasApplied(applicant, offer);
+
     let jobApplication = applicant.applyTo(offer);
-    if (hasApplied) {
+    try {
       jobApplication = await JobApplicationRepository.findByApplicantAndOffer(applicant, offer);
-      if (jobApplication.approvalStatus === ApprovalStatus.rejected) {
+      if (jobApplication.isRejected()) {
         jobApplication.set({ approvalStatus: ApprovalStatus.pending });
       } else {
         jobApplication = applicant.applyTo(offer);
       }
+    } catch (error) {
+      if (!(error instanceof JobApplicationNotFoundError)) throw error;
     }
+
     const type = await applicant.getType();
     let secretary = Secretary.graduados;
     if (type === ApplicantType.both) secretary = Secretary.graduados;

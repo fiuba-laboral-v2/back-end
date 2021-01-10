@@ -542,7 +542,7 @@ describe("saveJobApplication", () => {
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });
 
-    it("returns an error if the application already exist", async () => {
+    it("returns an error if the application already exist and it's pending", async () => {
       const { apolloClient } = await TestClientGenerator.applicant({
         status: ApprovalStatus.approved,
         careers: [
@@ -562,6 +562,42 @@ describe("saveJobApplication", () => {
         mutation: SAVE_JOB_APPLICATION,
         variables: { offerUuid: offer.uuid }
       });
+      const { errors } = await apolloClient.mutate({
+        mutation: SAVE_JOB_APPLICATION,
+        variables: { offerUuid: offer.uuid }
+      });
+
+      expect(errors).toEqualGraphQLErrorType("JobApplicationAlreadyExistsError");
+    });
+
+    it("returns an error if the application already exist and it's approved", async () => {
+      const { apolloClient, applicant } = await TestClientGenerator.applicant({
+        status: ApprovalStatus.approved,
+        careers: [
+          {
+            careerCode: secondCareer.code,
+            isGraduate: false,
+            currentCareerYear: 4,
+            approvedSubjectCount: 33
+          }
+        ]
+      });
+      const offer = await OfferGenerator.instance.forStudents({
+        companyUuid: company.uuid,
+        status: ApprovalStatus.approved
+      });
+      await apolloClient.mutate({
+        mutation: SAVE_JOB_APPLICATION,
+        variables: { offerUuid: offer.uuid }
+      });
+
+      const jobApplication = await JobApplicationRepository.findByApplicantAndOffer(
+        applicant,
+        offer
+      );
+      jobApplication.set({ approvalStatus: ApprovalStatus.approved });
+      await JobApplicationRepository.save(jobApplication);
+
       const { errors } = await apolloClient.mutate({
         mutation: SAVE_JOB_APPLICATION,
         variables: { offerUuid: offer.uuid }
