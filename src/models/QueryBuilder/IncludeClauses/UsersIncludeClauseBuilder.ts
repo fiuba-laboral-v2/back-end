@@ -1,7 +1,7 @@
 import { UserSequelizeModel } from "$models";
 import { NameWhereClause } from "$models/QueryBuilder";
 
-export const UsersWhereClauseBuilder = {
+export const UsersIncludeClauseBuilder = {
   build: ({ name }: IBuild) => {
     if (name === undefined) return;
     const whereClause = NameWhereClause.build({ name, columnNames: ["name", "surname"] });
