@@ -9,7 +9,14 @@ export const OfferWhereClauseBuilder = {
     if (!nameClause && !approvalStatus) return;
     const clause: { [Op.and]: WhereOptions[] } = { [Op.and]: [] };
     if (nameClause) clause[Op.and].push(nameClause);
-    if (approvalStatus) clause[Op.and].push({ approvalStatus });
+    if (approvalStatus) {
+      clause[Op.and].push({
+        [Op.or]: [
+          { extensionApprovalStatus: approvalStatus },
+          { graduadosApprovalStatus: approvalStatus }
+        ]
+      });
+    }
     return clause;
   }
 };

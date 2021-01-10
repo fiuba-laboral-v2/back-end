@@ -1,4 +1,4 @@
-import { UniqueConstraintError, ValidationError, ForeignKeyConstraintError } from "sequelize";
+import { ForeignKeyConstraintError, UniqueConstraintError, ValidationError } from "sequelize";
 import { CareerRepository } from "$models/Career";
 import { OfferRepository } from "$models/Offer";
 import { ApplicantType } from "$models/Applicant";
@@ -8,9 +8,8 @@ import { ApprovalStatus } from "$models/ApprovalStatus";
 import { OfferNotFoundError } from "$models/Offer/Errors";
 import { Career, Company, Offer, OfferCareer, OfferSection } from "$models";
 import { CompanyGenerator } from "$generators/Company";
-import { OfferGenerator } from "$generators/Offer";
+import { IForAllTargetsAndStatuses, OfferGenerator } from "$generators/Offer";
 import { CareerGenerator } from "$generators/Career";
-import { AdminGenerator } from "$generators/Admin";
 import { omit, range } from "lodash";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import MockDate from "mockdate";
@@ -20,6 +19,7 @@ describe("OfferRepository", () => {
   let firstCareer: Career;
   let secondCareer: Career;
   let thirdCareer: Career;
+  let fourthCareer: Career;
 
   beforeAll(async () => {
     await CareerRepository.truncate();
@@ -30,6 +30,7 @@ describe("OfferRepository", () => {
     firstCareer = await CareerGenerator.instance();
     secondCareer = await CareerGenerator.instance();
     thirdCareer = await CareerGenerator.instance();
+    fourthCareer = await CareerGenerator.instance();
   });
 
   const sectionData = {
@@ -319,7 +320,7 @@ describe("OfferRepository", () => {
     });
   });
 
-  describe("Get", () => {
+  describe("findByUuid", () => {
     it("finds the only offer by uuid", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
       const offerProps = OfferGenerator.data.withObligatoryData({ companyUuid });
@@ -329,109 +330,189 @@ describe("OfferRepository", () => {
       expect(offer).toBeObjectContaining(offerAttributes);
     });
 
-    it("finds the only offer by companyUuid", async () => {
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const offerProps = OfferGenerator.data.withObligatoryData({ companyUuid });
-      await OfferRepository.create(offerProps);
-      const {
-        results: [offer]
-      } = await OfferRepository.findAll({ companyUuid });
-      const { careers, sections, ...offerAttributes } = offerProps;
-      expect(offer).toBeObjectContaining(offerAttributes);
-    });
-
-    it("finds only the approved offers targeted for graduates", async () => {
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      await OfferGenerator.instance.updatedWithStatus({
-        companyUuid,
-        status: ApprovalStatus.approved,
-        admin: await AdminGenerator.graduados(),
-        targetApplicantType: ApplicantType.graduate
-      });
-      await OfferGenerator.instance.updatedWithStatus({
-        companyUuid,
-        status: ApprovalStatus.approved,
-        admin: await AdminGenerator.extension(),
-        targetApplicantType: ApplicantType.student
-      });
-      await OfferGenerator.instance.updatedWithStatus({
-        companyUuid,
-        status: ApprovalStatus.rejected,
-        admin: await AdminGenerator.extension(),
-        targetApplicantType: ApplicantType.student
-      });
-      const { results } = await OfferRepository.findAll({
-        companyUuid,
-        applicantType: ApplicantType.graduate
-      });
-      expect(results).toHaveLength(1);
-    });
-
-    it("finds offers specific to a career", async () => {
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { code: code1 } = firstCareer;
-      const { code: code2 } = secondCareer;
-      const { uuid: offerUuid } = await OfferGenerator.instance.withObligatoryData({
-        careers: [{ careerCode: code1 }],
-        companyUuid
-      });
-      await OfferGenerator.instance.withObligatoryData({
-        careers: [{ careerCode: code2 }],
-        companyUuid
-      });
-      const { results } = await OfferRepository.findAll({
-        companyUuid,
-        careerCodes: [code1]
-      });
-      expect(results.map(result => result.uuid)).toEqual([offerUuid]);
-    });
-
-    it("returns nothing when careerCodes is empty", async () => {
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { code: code1 } = firstCareer;
-      const { code: code2 } = secondCareer;
-      await OfferGenerator.instance.withObligatoryData({
-        careers: [{ careerCode: code1 }],
-        companyUuid
-      });
-      await OfferGenerator.instance.withObligatoryData({
-        careers: [{ careerCode: code2 }],
-        companyUuid
-      });
-      const { results } = await OfferRepository.findAll({
-        companyUuid,
-        careerCodes: []
-      });
-      expect(results).toEqual([]);
-    });
-
-    it("fetches offers that match at least one career", async () => {
-      const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
-      const { code: code1 } = firstCareer;
-      const { code: code2 } = secondCareer;
-      const { code: code3 } = thirdCareer;
-      const { uuid: offerUuid1 } = await OfferGenerator.instance.withObligatoryData({
-        careers: [{ careerCode: code1 }],
-        companyUuid
-      });
-      const { uuid: offerUuid2 } = await OfferGenerator.instance.withObligatoryData({
-        careers: [{ careerCode: code2 }, { careerCode: code3 }],
-        companyUuid
-      });
-      await OfferGenerator.instance.withObligatoryData({
-        companyUuid
-      });
-      const { results } = await OfferRepository.findAll({
-        companyUuid,
-        careerCodes: [code1, code2]
-      });
-      expect(results.map(result => result.uuid)).toEqual([offerUuid2, offerUuid1]);
-    });
-
     it("throws an error if offer does not exist", async () => {
       await expect(
         OfferRepository.findByUuid("4c925fdc-8fd4-47ed-9a24-fa81ed5cc9da")
       ).rejects.toThrow(OfferNotFoundError);
+    });
+  });
+
+  describe("findAll", () => {
+    let company: Company;
+    let companyUuid: string;
+    let offers: IForAllTargetsAndStatuses;
+    let allOffers: Offer[];
+
+    beforeAll(async () => {
+      await OfferRepository.truncate();
+
+      company = await CompanyGenerator.instance.withMinimumData();
+      companyUuid = company.uuid;
+      offers = await OfferGenerator.instance.forAllTargetsAndStatuses({ companyUuid });
+      allOffers = [
+        offers[ApplicantType.student][ApprovalStatus.pending],
+        offers[ApplicantType.student][ApprovalStatus.approved],
+        offers[ApplicantType.student][ApprovalStatus.rejected],
+        offers[ApplicantType.graduate][ApprovalStatus.pending],
+        offers[ApplicantType.graduate][ApprovalStatus.approved],
+        offers[ApplicantType.graduate][ApprovalStatus.rejected],
+        offers[ApplicantType.both][ApprovalStatus.pending],
+        offers[ApplicantType.both][ApprovalStatus.approved],
+        offers[ApplicantType.both][ApprovalStatus.rejected]
+      ];
+      allOffers = allOffers.sort(offer => -offer.updatedAt);
+    });
+
+    it("finds offers by companyUuid", async () => {
+      const { results, shouldFetchMore } = await OfferRepository.findAll({ companyUuid });
+      const uuids = results.map(({ uuid }) => uuid);
+      expect(shouldFetchMore).toBe(false);
+      expect(uuids).toEqual(allOffers.map(({ uuid }) => uuid));
+    });
+
+    it("finds offers by title", async () => {
+      const offer = offers[ApplicantType.both][ApprovalStatus.pending];
+      const { results, shouldFetchMore } = await OfferRepository.findAll({ title: offer.title });
+      const uuids = results.map(({ uuid }) => uuid);
+      expect(shouldFetchMore).toBe(false);
+      expect(uuids).toEqual([offer.uuid]);
+    });
+
+    it("returns no offer if the given title does not belong to any offer", async () => {
+      const { results, shouldFetchMore } = await OfferRepository.findAll({
+        companyUuid,
+        title: "UNKNOWN TITLE"
+      });
+      expect(shouldFetchMore).toBe(false);
+      expect(results).toEqual([]);
+    });
+
+    it("finds only the approved offers targeted for graduates", async () => {
+      const { results, shouldFetchMore } = await OfferRepository.findAll({
+        companyUuid,
+        applicantType: ApplicantType.graduate
+      });
+      const uuids = results.map(({ uuid }) => uuid);
+      const offerForGraduate = offers[ApplicantType.graduate][ApprovalStatus.approved];
+      const offerForBoth = offers[ApplicantType.both][ApprovalStatus.approved];
+
+      expect(shouldFetchMore).toBe(false);
+      expect(uuids).toEqual(expect.arrayContaining([offerForGraduate.uuid, offerForBoth.uuid]));
+    });
+
+    it("finds only the approved offers for any target", async () => {
+      const { results, shouldFetchMore } = await OfferRepository.findAll({
+        companyUuid,
+        approvalStatus: ApprovalStatus.approved
+      });
+      const uuids = results.map(({ uuid }) => uuid);
+      const offerForGraduate = offers[ApplicantType.graduate][ApprovalStatus.approved];
+      const offerForBoth = offers[ApplicantType.both][ApprovalStatus.approved];
+      const offerForStudents = offers[ApplicantType.student][ApprovalStatus.approved];
+
+      expect(shouldFetchMore).toBe(false);
+      expect(uuids).toEqual(
+        expect.arrayContaining([offerForStudents.uuid, offerForGraduate.uuid, offerForBoth.uuid])
+      );
+    });
+
+    it("finds only the rejected offers for any target", async () => {
+      const { results, shouldFetchMore } = await OfferRepository.findAll({
+        companyUuid,
+        approvalStatus: ApprovalStatus.rejected
+      });
+      const uuids = results.map(({ uuid }) => uuid);
+      const offerForGraduate = offers[ApplicantType.graduate][ApprovalStatus.rejected];
+      const offerForBoth = offers[ApplicantType.both][ApprovalStatus.rejected];
+      const offerForStudents = offers[ApplicantType.student][ApprovalStatus.rejected];
+
+      expect(shouldFetchMore).toBe(false);
+      expect(uuids).toEqual(
+        expect.arrayContaining([offerForStudents.uuid, offerForGraduate.uuid, offerForBoth.uuid])
+      );
+    });
+
+    it("finds only the pending offers for any target", async () => {
+      const { results, shouldFetchMore } = await OfferRepository.findAll({
+        companyUuid,
+        approvalStatus: ApprovalStatus.pending
+      });
+      const uuids = results.map(({ uuid }) => uuid);
+      const offerForGraduate = offers[ApplicantType.graduate][ApprovalStatus.pending];
+      const offerForBoth = offers[ApplicantType.both][ApprovalStatus.pending];
+      const offerForStudents = offers[ApplicantType.student][ApprovalStatus.pending];
+
+      expect(shouldFetchMore).toBe(false);
+      expect(uuids).toEqual(
+        expect.arrayContaining([offerForStudents.uuid, offerForGraduate.uuid, offerForBoth.uuid])
+      );
+    });
+
+    it("finds only the offers by the company business sector", async () => {
+      const { results, shouldFetchMore } = await OfferRepository.findAll({
+        companyUuid,
+        businessSector: company.businessSector
+      });
+      const uuids = results.map(({ uuid }) => uuid);
+      expect(shouldFetchMore).toBe(false);
+      expect(uuids).toEqual(expect.arrayContaining(allOffers.map(({ uuid }) => uuid)));
+    });
+
+    it("returns no offer if the given businessSector does not belong to any company", async () => {
+      const { results, shouldFetchMore } = await OfferRepository.findAll({
+        companyUuid,
+        businessSector: "UNKNOWN BUSINESS NAME"
+      });
+      expect(shouldFetchMore).toBe(false);
+      expect(results).toEqual([]);
+    });
+
+    it("finds offers specific to a career", async () => {
+      const generator = OfferGenerator.instance.withObligatoryData;
+      const offer = await generator({ careers: [{ careerCode: firstCareer.code }], companyUuid });
+      await generator({ careers: [{ careerCode: secondCareer.code }], companyUuid });
+      const { shouldFetchMore, results } = await OfferRepository.findAll({
+        companyUuid,
+        careerCodes: [firstCareer.code]
+      });
+      const uuids = results.map(({ uuid }) => uuid);
+
+      expect(shouldFetchMore).toBe(false);
+      expect(uuids).toEqual([offer.uuid]);
+    });
+
+    it("returns nothing when careerCodes is empty", async () => {
+      const generator = OfferGenerator.instance.withObligatoryData;
+      await generator({ careers: [{ careerCode: firstCareer.code }], companyUuid });
+      await generator({ careers: [{ careerCode: secondCareer.code }], companyUuid });
+      const { shouldFetchMore, results } = await OfferRepository.findAll({
+        companyUuid,
+        careerCodes: []
+      });
+      const uuids = results.map(({ uuid }) => uuid);
+
+      expect(shouldFetchMore).toBe(false);
+      expect(uuids).toEqual([]);
+    });
+
+    it("fetches offers that match at least one career", async () => {
+      const generator = OfferGenerator.instance.withObligatoryData;
+      const firstOffer = await generator({
+        careers: [{ careerCode: thirdCareer.code }],
+        companyUuid
+      });
+      const secondOffer = await generator({
+        careers: [{ careerCode: thirdCareer.code }, { careerCode: fourthCareer.code }],
+        companyUuid
+      });
+      await generator({ companyUuid });
+      const { results } = await OfferRepository.findAll({
+        companyUuid,
+        careerCodes: [thirdCareer.code, fourthCareer.code]
+      });
+      const uuids = results.map(({ uuid }) => uuid);
+
+      expect(uuids).toEqual([secondOffer.uuid, firstOffer.uuid]);
     });
   });
 

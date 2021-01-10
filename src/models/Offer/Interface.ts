@@ -2,6 +2,7 @@ import { IOfferSection } from "./OfferSection/Interface";
 import { IOfferCareer } from "./OfferCareer/Interface";
 import { ApplicantType } from "$models/Applicant";
 import { IPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export interface ICreateOffer extends IOfferAssociations {
   title: string;
@@ -33,5 +34,9 @@ export interface IFindAll {
   updatedBeforeThan?: IPaginatedInput;
   companyUuid?: string;
   applicantType?: ApplicantType;
+  companyName?: string;
+  businessSector?: string;
+  title?: string;
+  approvalStatus?: ApprovalStatus;
   careerCodes?: string[];
 }

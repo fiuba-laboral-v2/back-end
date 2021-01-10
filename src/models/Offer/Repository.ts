@@ -10,10 +10,15 @@ import { ApplicantType } from "$models/Applicant";
 import { ICreateOffer } from "$models/Offer/Interface";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { PaginationQuery } from "$models/PaginationQuery";
-import { Offer, OfferCareer } from "$models";
-
+import { Offer } from "$models";
+import {
+  OfferCareersIncludeClauseBuilder,
+  OfferWhereClauseBuilder,
+  CompanyIncludeClauseBuilder
+} from "$models/QueryBuilder";
 import { OfferNotFoundError } from "./Errors";
 import moment from "moment";
+import { Includeable, WhereOptions } from "sequelize/types/lib/model";
 
 export const OfferRepository = {
   save: (offer: Offer, transaction?: Transaction) => offer.save({ transaction }),
@@ -37,7 +42,16 @@ export const OfferRepository = {
 
     return offer;
   },
-  findAll: ({ updatedBeforeThan, companyUuid, applicantType, careerCodes }: IFindAll) => {
+  findAll: ({
+    updatedBeforeThan,
+    companyUuid,
+    applicantType,
+    careerCodes,
+    title,
+    approvalStatus,
+    companyName,
+    businessSector
+  }: IFindAll) => {
     const targetsBoth = applicantType === ApplicantType.both;
     const targetsStudents = targetsBoth || applicantType === ApplicantType.student;
     const targetsGraduates = targetsBoth || applicantType === ApplicantType.graduate;
@@ -68,23 +82,23 @@ export const OfferRepository = {
         }
       ]
     };
+    const include: Includeable[] = [];
+    const careersClause = OfferCareersIncludeClauseBuilder.build({ careerCodes });
+    const companyClause = CompanyIncludeClauseBuilder.build({ companyName, businessSector });
+    if (careersClause) include.push(careersClause);
+    if (companyClause) include.push(companyClause);
+
+    const where: { [Op.and]: WhereOptions[] } = { [Op.and]: [] };
+    const whereClause = OfferWhereClauseBuilder.build({ approvalStatus, title });
+    if (whereClause) where[Op.and].push(whereClause);
+    if (companyUuid) where[Op.and].push({ companyUuid });
+    if (approvalStatusWhereClause) where[Op.and].push(approvalStatusWhereClause);
 
     return PaginationQuery.findLatest({
       updatedBeforeThan,
       query: options => Offer.findAll(options),
-      where: {
-        ...(companyUuid && { companyUuid }),
-        ...approvalStatusWhereClause
-      },
-      ...(careerCodes && {
-        include: [
-          {
-            model: OfferCareer,
-            where: { careerCode: { [Op.in]: careerCodes } },
-            attributes: []
-          }
-        ]
-      })
+      where,
+      include
     });
   },
   truncate: () => Offer.truncate({ cascade: true })

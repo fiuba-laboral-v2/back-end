@@ -113,7 +113,12 @@ describe("OfferWhereClauseBuilder", () => {
             }
           ]
         },
-        { approvalStatus }
+        {
+          [Op.or]: [
+            { extensionApprovalStatus: approvalStatus },
+            { graduadosApprovalStatus: approvalStatus }
+          ]
+        }
       ]
     });
   });
@@ -121,6 +126,15 @@ describe("OfferWhereClauseBuilder", () => {
   it("returns a clause for approvalStatus", () => {
     const approvalStatus = ApprovalStatus.rejected;
     const clause = OfferWhereClauseBuilder.build({ approvalStatus });
-    expect(clause).toEqual({ [Op.and]: [{ approvalStatus }] });
+    expect(clause).toEqual({
+      [Op.and]: [
+        {
+          [Op.or]: [
+            { extensionApprovalStatus: approvalStatus },
+            { graduadosApprovalStatus: approvalStatus }
+          ]
+        }
+      ]
+    });
   });
 });
