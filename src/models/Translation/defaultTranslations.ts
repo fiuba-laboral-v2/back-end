@@ -110,6 +110,12 @@ export const defaultTranslations = {
     companyName: "Nombre de la empresa",
     businessSector: "Rubro"
   },
+  offersFilter: {
+    companyName: "Nombre de la empresa",
+    businessSector: "Rubro",
+    title: "Nombre del puesto",
+    approvalStatus: "Estado de aprobación"
+  },
   filter: {
     submit: "Aplicar"
   },
