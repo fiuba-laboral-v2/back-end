@@ -40,3 +40,10 @@ export interface IFindAll {
   approvalStatus?: ApprovalStatus;
   careerCodes?: string[];
 }
+
+export enum OfferStatus {
+  expired = "expired",
+  pending = "pending",
+  approved = "approved",
+  rejected = "rejected"
+}
