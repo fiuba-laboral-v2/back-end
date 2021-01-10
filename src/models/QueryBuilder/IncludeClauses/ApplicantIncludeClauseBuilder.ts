@@ -1,7 +1,7 @@
 import { Applicant } from "$models";
 import { UsersIncludeClauseBuilder } from "$models/QueryBuilder";
 
-export const ApplicantWhereClauseBuilder = {
+export const ApplicantIncludeClauseBuilder = {
   build: ({ applicantName }: IBuild) => {
     const userClause = UsersIncludeClauseBuilder.build({ name: applicantName });
     if (!userClause) return;
