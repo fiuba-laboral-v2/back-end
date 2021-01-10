@@ -13,7 +13,8 @@ import {
   OfferCareersIncludeClauseBuilder,
   OfferTitleWhereClauseBuilder,
   CompanyIncludeClauseBuilder,
-  ApprovedOfferTargetWhereClause
+  ApprovedOfferTargetWhereClause,
+  OfferStatusWhereClause
 } from "$models/QueryBuilder";
 import { OfferNotFoundError } from "./Errors";
 import { Includeable, WhereOptions } from "sequelize/types/lib/model";
@@ -46,7 +47,8 @@ export const OfferRepository = {
     applicantType,
     careerCodes,
     title,
-    approvalStatus,
+    studentsStatus,
+    graduatesStatus,
     companyName,
     businessSector
   }: IFindAll) => {
@@ -57,9 +59,11 @@ export const OfferRepository = {
     if (companyClause) include.push(companyClause);
 
     const where: { [Op.and]: WhereOptions[] } = { [Op.and]: [] };
-    const whereClause = OfferTitleWhereClauseBuilder.build({ approvalStatus, title });
+    const statusClause = OfferStatusWhereClause.build({ graduatesStatus, studentsStatus });
+    const titleClause = OfferTitleWhereClauseBuilder.build({ title });
     const targetClause = ApprovedOfferTargetWhereClause.build({ applicantType });
-    if (whereClause) where[Op.and].push(whereClause);
+    if (statusClause) where[Op.and].push(statusClause);
+    if (titleClause) where[Op.and].push(titleClause);
     if (companyUuid) where[Op.and].push({ companyUuid });
     if (targetClause) where[Op.and].push(targetClause);
 

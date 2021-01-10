@@ -2,9 +2,15 @@ import { gql } from "apollo-server";
 import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist/createTestClient";
 import { IGetOffers } from "$graphql/Offer/Queries/getOffers";
 
+import { UnauthorizedError } from "$graphql/Errors";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { Secretary } from "$models/Admin";
+import { ApplicantType } from "$models/Applicant";
+import { Admin, Company, Offer } from "$models";
+
 import { CareerRepository } from "$models/Career";
 import { CompanyRepository } from "$models/Company";
-import { OfferRepository } from "$models/Offer";
+import { OfferRepository, OfferStatus } from "$models/Offer";
 import { UserRepository } from "$models/User";
 
 import { AdminGenerator } from "$generators/Admin";
@@ -12,26 +18,24 @@ import { CareerGenerator } from "$generators/Career";
 import { CompanyGenerator } from "$generators/Company";
 import { OfferGenerator } from "$generators/Offer";
 import { TestClientGenerator } from "$generators/TestClient";
-import { UnauthorizedError } from "$graphql/Errors";
-import { ApprovalStatus } from "$models/ApprovalStatus";
 import { range } from "lodash";
-import { Admin, Company, Offer } from "$models";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
-import { Secretary } from "$models/Admin";
 
 const GET_OFFERS = gql`
   query(
     $updatedBeforeThan: PaginatedInput
     $companyName: String
     $businessSector: String
-    $approvalStatus: ApprovalStatus
+    $studentsStatus: OfferStatus
+    $graduatesStatus: OfferStatus
     $title: String
   ) {
     getOffers(
       updatedBeforeThan: $updatedBeforeThan
       companyName: $companyName
       businessSector: $businessSector
-      approvalStatus: $approvalStatus
+      studentsStatus: $studentsStatus
+      graduatesStatus: $graduatesStatus
       title: $title
     ) {
       results {
@@ -53,8 +57,8 @@ describe("getOffers", () => {
     apolloClient.query({ query: GET_OFFERS, variables });
 
   describe("when offers exists", () => {
-    let javaJunior: Offer;
-    let rubyJunior: Offer;
+    let rejectedForStudents: Offer;
+    let approvedForGraduates: Offer;
     let company: Company;
     let apolloClient: TestClient;
     let extensionAdmin: Admin;
@@ -70,23 +74,25 @@ describe("getOffers", () => {
       const career1 = await CareerGenerator.instance();
       const career2 = await CareerGenerator.instance();
 
-      javaJunior = await OfferRepository.create({
+      rejectedForStudents = await OfferRepository.create({
         ...OfferGenerator.data.withObligatoryData({ companyUuid }),
         title: "Java junior",
+        targetApplicantType: ApplicantType.student,
         careers: [{ careerCode: career1.code }]
       });
-      javaJunior.updateStatus(extensionAdmin, ApprovalStatus.rejected, 15);
-      javaJunior.updateStatus(graduadosAdmin, ApprovalStatus.rejected, 15);
-      OfferRepository.save(javaJunior);
+      rejectedForStudents.updateStatus(extensionAdmin, ApprovalStatus.rejected, 15);
+      rejectedForStudents.updateStatus(graduadosAdmin, ApprovalStatus.rejected, 15);
+      OfferRepository.save(rejectedForStudents);
 
-      rubyJunior = await OfferRepository.create({
+      approvedForGraduates = await OfferRepository.create({
         ...OfferGenerator.data.withObligatoryData({ companyUuid }),
         title: "Ruby junior",
+        targetApplicantType: ApplicantType.graduate,
         careers: [{ careerCode: career2.code }]
       });
-      rubyJunior.updateStatus(extensionAdmin, ApprovalStatus.approved, 15);
-      rubyJunior.updateStatus(graduadosAdmin, ApprovalStatus.approved, 15);
-      OfferRepository.save(rubyJunior);
+      approvedForGraduates.updateStatus(extensionAdmin, ApprovalStatus.approved, 15);
+      approvedForGraduates.updateStatus(graduadosAdmin, ApprovalStatus.approved, 15);
+      OfferRepository.save(approvedForGraduates);
 
       const adminClient = await TestClientGenerator.admin({ secretary: Secretary.graduados });
       apolloClient = adminClient.apolloClient;
@@ -103,7 +109,7 @@ describe("getOffers", () => {
       const { data } = await getOffers(apolloClient, { title: "ruby junior" });
       const { results, shouldFetchMore } = data!.getOffers;
       const uuids = results.map(({ uuid }) => uuid);
-      expect(uuids).toEqual([rubyJunior.uuid]);
+      expect(uuids).toEqual([approvedForGraduates.uuid]);
       expect(shouldFetchMore).toBe(false);
     });
 
@@ -113,7 +119,7 @@ describe("getOffers", () => {
 
       const { results, shouldFetchMore } = data!.getOffers;
       const uuids = results.map(({ uuid }) => uuid);
-      expect(uuids).toEqual([rubyJunior.uuid, javaJunior.uuid]);
+      expect(uuids).toEqual([approvedForGraduates.uuid, rejectedForStudents.uuid]);
       expect(shouldFetchMore).toBe(false);
     });
 
@@ -131,36 +137,27 @@ describe("getOffers", () => {
       expect(errors).toBeUndefined();
       const { results, shouldFetchMore } = data!.getOffers;
       const uuids = results.map(({ uuid }) => uuid);
-      expect(uuids).toEqual([rubyJunior.uuid, javaJunior.uuid]);
+      expect(uuids).toEqual([approvedForGraduates.uuid, rejectedForStudents.uuid]);
       expect(shouldFetchMore).toBe(false);
     });
 
-    it("returns approved offers for any target", async () => {
-      const approvalStatus = ApprovalStatus.approved;
-      const { errors, data } = await getOffers(apolloClient, { approvalStatus });
+    it("returns rejected offers for students", async () => {
+      const studentsStatus = OfferStatus.rejected;
+      const { errors, data } = await getOffers(apolloClient, { studentsStatus });
       expect(errors).toBeUndefined();
       const { results, shouldFetchMore } = data!.getOffers;
       const uuids = results.map(({ uuid }) => uuid);
-      expect(uuids).toEqual([rubyJunior.uuid]);
+      expect(uuids).toEqual([rejectedForStudents.uuid]);
       expect(shouldFetchMore).toBe(false);
     });
 
-    it("returns rejected offers for any target", async () => {
-      const approvalStatus = ApprovalStatus.rejected;
-      const { errors, data } = await getOffers(apolloClient, { approvalStatus });
+    it("returns approved offers for graduates", async () => {
+      const graduatesStatus = OfferStatus.approved;
+      const { errors, data } = await getOffers(apolloClient, { graduatesStatus });
       expect(errors).toBeUndefined();
       const { results, shouldFetchMore } = data!.getOffers;
       const uuids = results.map(({ uuid }) => uuid);
-      expect(uuids).toEqual([javaJunior.uuid]);
-      expect(shouldFetchMore).toBe(false);
-    });
-
-    it("returns no offers if no offer is in pending status", async () => {
-      const approvalStatus = ApprovalStatus.pending;
-      const { errors, data } = await getOffers(apolloClient, { approvalStatus });
-      expect(errors).toBeUndefined();
-      const { results, shouldFetchMore } = data!.getOffers;
-      expect(results).toEqual([]);
+      expect(uuids).toEqual([approvedForGraduates.uuid]);
       expect(shouldFetchMore).toBe(false);
     });
 
@@ -170,14 +167,17 @@ describe("getOffers", () => {
       expect(errors).toBeUndefined();
       const { results, shouldFetchMore } = data!.getOffers;
       const uuids = results.map(({ uuid }) => uuid);
-      expect(uuids).toEqual([rubyJunior.uuid, javaJunior.uuid]);
+      expect(uuids).toEqual([approvedForGraduates.uuid, rejectedForStudents.uuid]);
       expect(shouldFetchMore).toBe(false);
     });
 
     it("returns two offers sorted by updatedAt", async () => {
       const { data } = await getOffers(apolloClient);
       const { results, shouldFetchMore } = data!.getOffers;
-      expect(results).toEqual([{ uuid: rubyJunior.uuid }, { uuid: javaJunior.uuid }]);
+      expect(results).toEqual([
+        { uuid: approvedForGraduates.uuid },
+        { uuid: rejectedForStudents.uuid }
+      ]);
       expect(shouldFetchMore).toEqual(false);
     });
 
@@ -186,30 +186,30 @@ describe("getOffers", () => {
         query: GET_OFFERS,
         variables: {
           updatedBeforeThan: {
-            dateTime: rubyJunior.updatedAt.toISOString(),
-            uuid: rubyJunior.uuid
+            dateTime: approvedForGraduates.updatedAt.toISOString(),
+            uuid: approvedForGraduates.uuid
           }
         }
       });
       const { results, shouldFetchMore } = data!.getOffers;
-      expect(results).toEqual([{ uuid: javaJunior.uuid }]);
+      expect(results).toEqual([{ uuid: rejectedForStudents.uuid }]);
       expect(shouldFetchMore).toEqual(false);
     });
 
     it("filters by updatedAt even when it does not coincide with createdAt", async () => {
-      javaJunior.title = "something";
-      await OfferRepository.save(javaJunior);
+      rejectedForStudents.title = "something";
+      await OfferRepository.save(rejectedForStudents);
       const { data } = await apolloClient.query({
         query: GET_OFFERS,
         variables: {
           updatedBeforeThan: {
-            dateTime: javaJunior.updatedAt.toISOString(),
-            uuid: javaJunior.uuid
+            dateTime: rejectedForStudents.updatedAt.toISOString(),
+            uuid: rejectedForStudents.uuid
           }
         }
       });
       const { results, shouldFetchMore } = data!.getOffers;
-      expect(results).toEqual([{ uuid: rubyJunior.uuid }]);
+      expect(results).toEqual([{ uuid: approvedForGraduates.uuid }]);
       expect(shouldFetchMore).toEqual(false);
     });
 
@@ -221,7 +221,7 @@ describe("getOffers", () => {
           newOffersByDescUpdatedAt.push(
             await OfferRepository.create(
               OfferGenerator.data.withObligatoryData({
-                companyUuid: javaJunior.companyUuid
+                companyUuid: rejectedForStudents.companyUuid
               })
             )
           );
@@ -230,8 +230,8 @@ describe("getOffers", () => {
       });
 
       it("gets the latest 10 offers", async () => {
-        javaJunior.title = "something different";
-        await OfferRepository.save(javaJunior);
+        rejectedForStudents.title = "something different";
+        await OfferRepository.save(rejectedForStudents);
 
         const itemsPerPage = 10;
         mockItemsPerPage(itemsPerPage);
@@ -239,14 +239,14 @@ describe("getOffers", () => {
         const { results, shouldFetchMore } = data!.getOffers;
 
         expect(results.map(offer => offer.uuid)).toEqual([
-          javaJunior.uuid,
+          rejectedForStudents.uuid,
           ...newOffersByDescUpdatedAt.slice(0, itemsPerPage - 1).map(offer => offer.uuid)
         ]);
         expect(shouldFetchMore).toEqual(true);
       });
 
       it("gets the next 3 offers", async () => {
-        const offersByDescUpdatedAt = [javaJunior, ...newOffersByDescUpdatedAt].sort(
+        const offersByDescUpdatedAt = [rejectedForStudents, ...newOffersByDescUpdatedAt].sort(
           offer => offer.updatedAt
         );
 

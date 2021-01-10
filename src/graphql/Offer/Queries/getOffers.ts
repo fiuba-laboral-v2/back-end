@@ -1,13 +1,12 @@
 import { String } from "$graphql/fieldTypes";
-import { OfferRepository } from "$models/Offer";
+import { OfferRepository, OfferStatus } from "$models/Offer";
 import { GraphQLPaginatedResults } from "$graphql/Pagination/Types/GraphQLPaginatedResults";
-import { GraphQLApprovalStatus } from "$graphql/ApprovalStatus/Types/GraphQLApprovalStatus";
 import { GraphQLOffer } from "$graphql/Offer/Types/GraphQLOffer";
+import { GraphQLOfferStatus } from "$graphql/Offer/Types/GraphQLOfferStatus";
 import {
   GraphQLPaginatedInput,
   IPaginatedInput
 } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
-import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export const getOffers = {
   type: GraphQLPaginatedResults(GraphQLOffer),
@@ -21,8 +20,11 @@ export const getOffers = {
     businessSector: {
       type: String
     },
-    approvalStatus: {
-      type: GraphQLApprovalStatus
+    studentsStatus: {
+      type: GraphQLOfferStatus
+    },
+    graduatesStatus: {
+      type: GraphQLOfferStatus
     },
     title: {
       type: String
@@ -36,6 +38,7 @@ export interface IGetOffers {
   companyName?: string;
   businessSector?: string;
   title?: string;
-  approvalStatus?: ApprovalStatus;
+  studentsStatus?: OfferStatus;
+  graduatesStatus?: OfferStatus;
   careerCodes?: string[];
 }

@@ -1,7 +1,6 @@
 import { NameWhereClause } from "$models/QueryBuilder";
 import { Op } from "sequelize";
 import { WhereOptions } from "sequelize/types/lib/model";
-import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export const OfferTitleWhereClauseBuilder = {
   build: ({ title }: IBuild): WhereOptions | undefined => {
@@ -15,5 +14,4 @@ export const OfferTitleWhereClauseBuilder = {
 
 interface IBuild {
   title?: string;
-  approvalStatus?: ApprovalStatus;
 }
