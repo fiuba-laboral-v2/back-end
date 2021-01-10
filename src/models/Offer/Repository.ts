@@ -6,18 +6,16 @@ import { IFindAll, IOfferAssociations } from "./Interface";
 import { OfferSectionRepository } from "./OfferSection";
 import { OfferCareerRepository } from "./OfferCareer";
 
-import { ApplicantType } from "$models/Applicant";
 import { ICreateOffer } from "$models/Offer/Interface";
-import { ApprovalStatus } from "$models/ApprovalStatus";
 import { PaginationQuery } from "$models/PaginationQuery";
 import { Offer } from "$models";
 import {
   OfferCareersIncludeClauseBuilder,
   OfferWhereClauseBuilder,
-  CompanyIncludeClauseBuilder
+  CompanyIncludeClauseBuilder,
+  ApprovedOfferTargetWhereClause
 } from "$models/QueryBuilder";
 import { OfferNotFoundError } from "./Errors";
-import moment from "moment";
 import { Includeable, WhereOptions } from "sequelize/types/lib/model";
 
 export const OfferRepository = {
@@ -52,36 +50,6 @@ export const OfferRepository = {
     companyName,
     businessSector
   }: IFindAll) => {
-    const targetsBoth = applicantType === ApplicantType.both;
-    const targetsStudents = targetsBoth || applicantType === ApplicantType.student;
-    const targetsGraduates = targetsBoth || applicantType === ApplicantType.graduate;
-
-    const approvalStatusWhereClause = applicantType && {
-      [Op.or]: [
-        targetsStudents && {
-          [Op.and]: [
-            { extensionApprovalStatus: ApprovalStatus.approved },
-            {
-              targetApplicantType: {
-                [Op.in]: [ApplicantType.both, ApplicantType.student]
-              }
-            },
-            { studentsExpirationDateTime: { [Op.gte]: moment() } }
-          ]
-        },
-        targetsGraduates && {
-          [Op.and]: [
-            { graduadosApprovalStatus: ApprovalStatus.approved },
-            {
-              targetApplicantType: {
-                [Op.in]: [ApplicantType.both, ApplicantType.graduate]
-              }
-            },
-            { graduatesExpirationDateTime: { [Op.gte]: moment() } }
-          ]
-        }
-      ]
-    };
     const include: Includeable[] = [];
     const careersClause = OfferCareersIncludeClauseBuilder.build({ careerCodes });
     const companyClause = CompanyIncludeClauseBuilder.build({ companyName, businessSector });
@@ -90,9 +58,10 @@ export const OfferRepository = {
 
     const where: { [Op.and]: WhereOptions[] } = { [Op.and]: [] };
     const whereClause = OfferWhereClauseBuilder.build({ approvalStatus, title });
+    const targetClause = ApprovedOfferTargetWhereClause.build({ applicantType });
     if (whereClause) where[Op.and].push(whereClause);
     if (companyUuid) where[Op.and].push({ companyUuid });
-    if (approvalStatusWhereClause) where[Op.and].push(approvalStatusWhereClause);
+    if (targetClause) where[Op.and].push(targetClause);
 
     return PaginationQuery.findLatest({
       updatedBeforeThan,
