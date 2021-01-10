@@ -18,7 +18,10 @@ import { EmailService } from "$services";
 
 import { OfferNotFoundError } from "$models/Offer/Errors";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
-import { OfferNotTargetedForApplicantError } from "$models/JobApplication";
+import {
+  JobApplicationRepository,
+  OfferNotTargetedForApplicantError
+} from "$models/JobApplication";
 import { Applicant, Career, Company, Offer } from "$models";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { IApplicantCareer } from "$models/Applicant/ApplicantCareer";
@@ -130,6 +133,26 @@ describe("saveJobApplication", () => {
     });
   };
 
+  const expectToReApply = async (
+    apolloClient: ApolloClient,
+    offer: Offer,
+    applicant: Applicant
+  ) => {
+    const { errors: firstErrors } = await performMutation(apolloClient, offer);
+    expect(firstErrors).toBeUndefined();
+    const jobApplication = await JobApplicationRepository.findByApplicantAndOffer(applicant, offer);
+    jobApplication.set({ approvalStatus: ApprovalStatus.rejected });
+    await JobApplicationRepository.save(jobApplication);
+
+    const { data, errors } = await performMutation(apolloClient, offer);
+    expect(errors).toBeUndefined();
+    expect(data!.saveJobApplication).toEqual({
+      uuid: expect.stringMatching(UUID_REGEX),
+      offerUuid: offer.uuid,
+      applicantUuid: applicant.uuid
+    });
+  };
+
   const expectToReturnError = async (apolloClient: ApolloClient, offer: Offer) => {
     const { errors } = await performMutation(apolloClient, offer);
     expect(errors).toEqualGraphQLErrorType(OfferNotTargetedForApplicantError.name);
@@ -138,6 +161,18 @@ describe("saveJobApplication", () => {
   it("allows student to apply to an approved offer for students", async () => {
     const { applicant, apolloClient } = studentClient;
     await expectToApply(
+      apolloClient,
+      offers[ApplicantType.student][ApprovalStatus.approved],
+      applicant
+    );
+  });
+
+  it("allows student to reapply to an approved offer for students if the application was rejected", async () => {
+    const { applicant, apolloClient } = await TestClientGenerator.applicant({
+      status: ApprovalStatus.approved,
+      careers: studentCareers
+    });
+    await expectToReApply(
       apolloClient,
       offers[ApplicantType.student][ApprovalStatus.approved],
       applicant
@@ -153,9 +188,33 @@ describe("saveJobApplication", () => {
     );
   });
 
+  it("allows student to reapply to an an approved offer for students and graduates if the application was rejected", async () => {
+    const { applicant, apolloClient } = await TestClientGenerator.applicant({
+      status: ApprovalStatus.approved,
+      careers: studentCareers
+    });
+    await expectToReApply(
+      apolloClient,
+      offers[ApplicantType.both][ApprovalStatus.approved],
+      applicant
+    );
+  });
+
   it("allows graduate to apply to an an approved offer for graduates", async () => {
     const { applicant, apolloClient } = graduateClient;
     await expectToApply(
+      apolloClient,
+      offers[ApplicantType.graduate][ApprovalStatus.approved],
+      applicant
+    );
+  });
+
+  it("allows graduate to reapply to an an approved offer for graduates if the application was rejected", async () => {
+    const { applicant, apolloClient } = await TestClientGenerator.applicant({
+      status: ApprovalStatus.approved,
+      careers: graduateCareers
+    });
+    await expectToReApply(
       apolloClient,
       offers[ApplicantType.graduate][ApprovalStatus.approved],
       applicant
@@ -171,9 +230,33 @@ describe("saveJobApplication", () => {
     );
   });
 
+  it("allows graduate to reapply to an an approved offer for graduates and students if the application was rejected", async () => {
+    const { applicant, apolloClient } = await TestClientGenerator.applicant({
+      status: ApprovalStatus.approved,
+      careers: graduateCareers
+    });
+    await expectToReApply(
+      apolloClient,
+      offers[ApplicantType.both][ApprovalStatus.approved],
+      applicant
+    );
+  });
+
   it("allows student and graduate to apply to an approved offer for graduates", async () => {
     const { applicant, apolloClient } = studentAndGraduateClient;
     await expectToApply(
+      apolloClient,
+      offers[ApplicantType.graduate][ApprovalStatus.approved],
+      applicant
+    );
+  });
+
+  it("allows student and graduate to apply to an approved offer for graduates if the application was rejected", async () => {
+    const { applicant, apolloClient } = await TestClientGenerator.applicant({
+      status: ApprovalStatus.approved,
+      careers: studentAndGraduateCareers
+    });
+    await expectToReApply(
       apolloClient,
       offers[ApplicantType.graduate][ApprovalStatus.approved],
       applicant
@@ -189,9 +272,33 @@ describe("saveJobApplication", () => {
     );
   });
 
+  it("allows student and graduate to reapply to an approved offer for students if the application was rejected", async () => {
+    const { applicant, apolloClient } = await TestClientGenerator.applicant({
+      status: ApprovalStatus.approved,
+      careers: studentAndGraduateCareers
+    });
+    await expectToReApply(
+      apolloClient,
+      offers[ApplicantType.student][ApprovalStatus.approved],
+      applicant
+    );
+  });
+
   it("allows student and graduate to apply to an approved offer for students and graduates", async () => {
     const { applicant, apolloClient } = studentAndGraduateClient;
     await expectToApply(
+      apolloClient,
+      offers[ApplicantType.both][ApprovalStatus.approved],
+      applicant
+    );
+  });
+
+  it("allows student and graduate to reapply to an approved offer for students and graduates if the application was rejected", async () => {
+    const { applicant, apolloClient } = await TestClientGenerator.applicant({
+      status: ApprovalStatus.approved,
+      careers: studentAndGraduateCareers
+    });
+    await expectToReApply(
       apolloClient,
       offers[ApplicantType.both][ApprovalStatus.approved],
       applicant

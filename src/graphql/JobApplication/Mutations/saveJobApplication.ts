@@ -36,12 +36,14 @@ export const saveJobApplication = {
 
     const applicant = await ApplicantRepository.findByUuid(applicantUuid);
     const hasApplied = await JobApplicationRepository.hasApplied(applicant, offer);
-    let jobApplication;
+    let jobApplication = applicant.applyTo(offer);
     if (hasApplied) {
       jobApplication = await JobApplicationRepository.findByApplicantAndOffer(applicant, offer);
-      jobApplication.set({ approvalStatus: ApprovalStatus.pending });
-    } else {
-      jobApplication = applicant.applyTo(offer);
+      if (jobApplication.approvalStatus === ApprovalStatus.rejected) {
+        jobApplication.set({ approvalStatus: ApprovalStatus.pending });
+      } else {
+        jobApplication = applicant.applyTo(offer);
+      }
     }
     const type = await applicant.getType();
     let secretary = Secretary.graduados;
