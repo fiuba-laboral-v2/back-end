@@ -163,11 +163,12 @@ export const defaultTranslations = {
     fourthYear: "Cuarto año",
     fifthYear: "Quinto año"
   },
-  targetApplicantTypeSelector: {
+  applicantTypeSelector: {
     title: "Destinatarios",
     graduate: "Graduados",
     student: "Alumnos",
-    both: "Alumnos y graduados"
+    both: "Alumnos y graduados",
+    indeterminate: "Indeterminado"
   },
   offerStatusSelector: {
     studentsTitle: "Estado de la oferta de alumnos/as",
