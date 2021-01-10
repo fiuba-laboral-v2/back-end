@@ -123,7 +123,7 @@ describe("getOffers", () => {
       expect(shouldFetchMore).toBe(false);
     });
 
-    it("returns all offers if the title is unknown", async () => {
+    it("returns no offers if the title is unknown", async () => {
       const { errors, data } = await getOffers(apolloClient, { title: " UNKnOWN" });
       expect(errors).toBeUndefined();
       const { results, shouldFetchMore } = data!.getOffers;
