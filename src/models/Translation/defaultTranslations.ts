@@ -106,6 +106,10 @@ export const defaultTranslations = {
     applicantName: "Nombre del postulante",
     offerTitle: "Nombre del puesto"
   },
+  companiesFilter: {
+    companyName: "Nombre de la empresa",
+    businessSector: "Rubro"
+  },
   filter: {
     submit: "Aplicar"
   },

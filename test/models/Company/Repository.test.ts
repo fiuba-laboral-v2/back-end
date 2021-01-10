@@ -1,6 +1,5 @@
 import { UniqueConstraintError, ValidationError } from "sequelize";
 import { InvalidCuitError } from "validations-fiuba-laboral-v2";
-import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Company } from "$models";
 import { CompanyNotFoundError } from "$models/Company/Errors";
 import { UserRepository, User, FiubaCredentials } from "$models/User";
@@ -120,44 +119,95 @@ describe("CompanyRepository", () => {
   });
 
   describe("findLatest", () => {
-    let company1;
-    let company2;
-    let company3;
+    let devartis;
+    let mercadoLibre;
+    let despegar;
 
     const generateCompanies = async () => {
+      const generator = CompanyGenerator.instance.withMinimumData;
       return [
-        await CompanyGenerator.instance.withMinimumData(),
-        await CompanyGenerator.instance.withMinimumData(),
-        await CompanyGenerator.instance.withMinimumData()
+        await generator({ companyName: "Devartis", businessSector: "Servicios" }),
+        await generator({ companyName: "Mercado Libre", businessSector: "Ventas" }),
+        await generator({ companyName: "Despegar", businessSector: "Viajes" })
       ];
     };
 
     beforeAll(async () => {
-      [company1, company2, company3] = await generateCompanies();
+      [devartis, mercadoLibre, despegar] = await generateCompanies();
     });
 
     it("returns the latest company first", async () => {
-      const companies = await CompanyRepository.findLatest();
-      const firstCompanyInList = [companies.results[0], companies.results[1], companies.results[2]];
+      const { shouldFetchMore, results } = await CompanyRepository.findLatest();
+      const companies = [results[0], results[1], results[2]];
+      const companyUuids = companies.map(({ uuid }) => uuid);
+      expect(shouldFetchMore).toEqual(false);
+      expect(companyUuids).toEqual([despegar.uuid, mercadoLibre.uuid, devartis.uuid]);
+    });
 
-      expect(companies.shouldFetchMore).toEqual(false);
-      expect(firstCompanyInList).toEqual([
-        expect.objectContaining({
-          uuid: company3.uuid,
-          businessName: company3.businessName,
-          approvalStatus: ApprovalStatus.pending
-        }),
-        expect.objectContaining({
-          uuid: company2.uuid,
-          businessName: company2.businessName,
-          approvalStatus: ApprovalStatus.pending
-        }),
-        expect.objectContaining({
-          uuid: company1.uuid,
-          businessName: company1.businessName,
-          approvalStatus: ApprovalStatus.pending
-        })
-      ]);
+    it("returns companies by name", async () => {
+      const { shouldFetchMore, results } = await CompanyRepository.findLatest({
+        companyName: "Devartis"
+      });
+      const companyUuids = results.map(({ uuid }) => uuid);
+      expect(shouldFetchMore).toEqual(false);
+      expect(companyUuids).toEqual([devartis.uuid]);
+    });
+
+    it("returns companies by name with newline characters, spaces and capital letters", async () => {
+      const { shouldFetchMore, results } = await CompanyRepository.findLatest({
+        companyName: "         MERCADÓ\n\n\n   LÍBRÉ                "
+      });
+      const companyUuids = results.map(({ uuid }) => uuid);
+      expect(shouldFetchMore).toEqual(false);
+      expect(companyUuids).toEqual([mercadoLibre.uuid]);
+    });
+
+    it("returns companies by businessSector", async () => {
+      const { shouldFetchMore, results } = await CompanyRepository.findLatest({
+        businessSector: "viajes"
+      });
+      const companyUuids = results.map(({ uuid }) => uuid);
+      expect(shouldFetchMore).toEqual(false);
+      expect(companyUuids).toEqual([despegar.uuid]);
+    });
+
+    it("returns companies by businessSector with newline characters, spaces and capital letters", async () => {
+      const { shouldFetchMore, results } = await CompanyRepository.findLatest({
+        businessSector: "         SerViCioS\n\n\n     "
+      });
+      const companyUuids = results.map(({ uuid }) => uuid);
+      expect(shouldFetchMore).toEqual(false);
+      expect(companyUuids).toEqual([devartis.uuid]);
+    });
+
+    it("returns companies by businessSector and name with newline characters, spaces and capital letters", async () => {
+      const { shouldFetchMore, results } = await CompanyRepository.findLatest({
+        businessSector: "         vENtÁs\n\n\n     ",
+        companyName: "         MERCADÓ\n\n\n   LÍBRÉ                "
+      });
+      const companyUuids = results.map(({ uuid }) => uuid);
+      expect(shouldFetchMore).toEqual(false);
+      expect(companyUuids).toEqual([mercadoLibre.uuid]);
+    });
+
+    it("returns no companies if the given companyName does not hve the given businessSector", async () => {
+      const { shouldFetchMore, results } = await CompanyRepository.findLatest({
+        businessSector: "viajes",
+        companyName: "devartis"
+      });
+      const companyUuids = results.map(({ uuid }) => uuid);
+      expect(shouldFetchMore).toEqual(false);
+      expect(companyUuids).toEqual([]);
+    });
+
+    it("returns all companies if companyName and businessSector are empty strings", async () => {
+      const { shouldFetchMore, results } = await CompanyRepository.findLatest({
+        businessSector: "",
+        companyName: ""
+      });
+      const allCompanies = await CompanyRepository.findAll();
+      expect(shouldFetchMore).toEqual(false);
+      expect(results).toHaveLength(allCompanies.length);
     });
 
     describe("fetchMore", () => {
@@ -174,29 +224,12 @@ describe("CompanyRepository", () => {
       it("gets the next 3 companies", async () => {
         const itemsPerPage = 3;
         mockItemsPerPage(itemsPerPage);
-
-        const updatedBeforeThan = {
-          dateTime: company7.updatedAt,
-          uuid: company7.uuid
-        };
-
-        const companies = await CompanyRepository.findLatest(updatedBeforeThan);
-        expect(companies.results).toEqual([
-          expect.objectContaining({
-            uuid: company6.uuid,
-            businessName: company6.businessName,
-            approvalStatus: ApprovalStatus.pending
-          }),
-          expect.objectContaining({
-            uuid: company5.uuid,
-            businessName: company5.businessName,
-            approvalStatus: ApprovalStatus.pending
-          }),
-          expect.objectContaining({
-            uuid: company4.uuid,
-            businessName: company4.businessName,
-            approvalStatus: ApprovalStatus.pending
-          })
+        const updatedBeforeThan = { dateTime: company7.updatedAt, uuid: company7.uuid };
+        const companies = await CompanyRepository.findLatest({ updatedBeforeThan });
+        expect(companies.results.map(({ uuid }) => uuid)).toEqual([
+          company6.uuid,
+          company5.uuid,
+          company4.uuid
         ]);
         expect(companies.shouldFetchMore).toBe(true);
       });
