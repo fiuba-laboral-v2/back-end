@@ -3,7 +3,7 @@ import { ApplicantCareer } from "$models";
 import { Op } from "sequelize";
 import { Includeable } from "sequelize/types/lib/model";
 
-export const ApplicantCareersWhereClauseBuilder = {
+export const ApplicantCareersIncludeClauseBuilder = {
   build: ({ applicantType, careerCodes }: IBuild): Includeable | undefined => {
     if (!careerCodes && !applicantType) return;
     return {

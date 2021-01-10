@@ -12,7 +12,7 @@ import { Applicant } from "..";
 import { PaginationQuery } from "../PaginationQuery";
 import {
   UsersIncludeClauseBuilder,
-  ApplicantCareersWhereClauseBuilder
+  ApplicantCareersIncludeClauseBuilder
 } from "$models/QueryBuilder";
 import { Includeable } from "sequelize/types/lib/model";
 
@@ -21,7 +21,7 @@ export const ApplicantRepository = {
   find: (filter: IFind = {}) => {
     const include: Includeable[] = [];
     const userFilter = UsersIncludeClauseBuilder.build(filter);
-    const applicantCareers = ApplicantCareersWhereClauseBuilder.build(filter);
+    const applicantCareers = ApplicantCareersIncludeClauseBuilder.build(filter);
     if (userFilter) include.push(userFilter);
     if (applicantCareers) include.push(applicantCareers);
     return Applicant.findAll({ include });
@@ -29,7 +29,7 @@ export const ApplicantRepository = {
   findLatest: ({ updatedBeforeThan, ...filter }: IFindLatest = {}) => {
     const include: Includeable[] = [];
     const userFilter = UsersIncludeClauseBuilder.build(filter);
-    const applicantCareersFilter = ApplicantCareersWhereClauseBuilder.build(filter);
+    const applicantCareersFilter = ApplicantCareersIncludeClauseBuilder.build(filter);
     if (userFilter) include.push(userFilter);
     if (applicantCareersFilter) include.push(applicantCareersFilter);
     return PaginationQuery.findLatest({
