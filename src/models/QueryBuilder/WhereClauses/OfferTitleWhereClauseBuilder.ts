@@ -3,20 +3,12 @@ import { Op } from "sequelize";
 import { WhereOptions } from "sequelize/types/lib/model";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 
-export const OfferWhereClauseBuilder = {
-  build: ({ title, approvalStatus }: IBuild): WhereOptions | undefined => {
+export const OfferTitleWhereClauseBuilder = {
+  build: ({ title }: IBuild): WhereOptions | undefined => {
     const nameClause = title && NameWhereClause.build({ name: title, columnNames: ["title"] });
-    if (!nameClause && !approvalStatus) return;
+    if (!nameClause) return;
     const clause: { [Op.and]: WhereOptions[] } = { [Op.and]: [] };
     if (nameClause) clause[Op.and].push(nameClause);
-    if (approvalStatus) {
-      clause[Op.and].push({
-        [Op.or]: [
-          { extensionApprovalStatus: approvalStatus },
-          { graduadosApprovalStatus: approvalStatus }
-        ]
-      });
-    }
     return clause;
   }
 };

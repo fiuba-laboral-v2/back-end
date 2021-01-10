@@ -11,7 +11,7 @@ import { PaginationQuery } from "$models/PaginationQuery";
 import { Offer } from "$models";
 import {
   OfferCareersIncludeClauseBuilder,
-  OfferWhereClauseBuilder,
+  OfferTitleWhereClauseBuilder,
   CompanyIncludeClauseBuilder,
   ApprovedOfferTargetWhereClause
 } from "$models/QueryBuilder";
@@ -57,7 +57,7 @@ export const OfferRepository = {
     if (companyClause) include.push(companyClause);
 
     const where: { [Op.and]: WhereOptions[] } = { [Op.and]: [] };
-    const whereClause = OfferWhereClauseBuilder.build({ approvalStatus, title });
+    const whereClause = OfferTitleWhereClauseBuilder.build({ approvalStatus, title });
     const targetClause = ApprovedOfferTargetWhereClause.build({ applicantType });
     if (whereClause) where[Op.and].push(whereClause);
     if (companyUuid) where[Op.and].push({ companyUuid });
