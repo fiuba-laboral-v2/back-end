@@ -55,17 +55,21 @@ describe("OfferIncludeClauseBuilder", () => {
       where: {
         [Op.and]: [
           {
-            [Op.or]: [
-              where(fn("unaccent", fn("lower", col("title"))), {
-                [Op.regexp]: `(^|[[:space:]])buddy([[:space:]]|$)`
-              })
-            ]
-          },
-          {
-            [Op.or]: [
-              where(fn("unaccent", fn("lower", col("title"))), {
-                [Op.regexp]: `(^|[[:space:]])guy([[:space:]]|$)`
-              })
+            [Op.and]: [
+              {
+                [Op.or]: [
+                  where(fn("unaccent", fn("lower", col("title"))), {
+                    [Op.regexp]: `(^|[[:space:]])buddy([[:space:]]|$)`
+                  })
+                ]
+              },
+              {
+                [Op.or]: [
+                  where(fn("unaccent", fn("lower", col("title"))), {
+                    [Op.regexp]: `(^|[[:space:]])guy([[:space:]]|$)`
+                  })
+                ]
+              }
             ]
           }
         ]
@@ -82,24 +86,28 @@ describe("OfferIncludeClauseBuilder", () => {
       where: {
         [Op.and]: [
           {
-            [Op.or]: [
-              where(fn("unaccent", fn("lower", col("title"))), {
-                [Op.regexp]: `(^|[[:space:]])name([[:space:]]|$)`
-              })
-            ]
-          },
-          {
-            [Op.or]: [
-              where(fn("unaccent", fn("lower", col("title"))), {
-                [Op.regexp]: `(^|[[:space:]])with([[:space:]]|$)`
-              })
-            ]
-          },
-          {
-            [Op.or]: [
-              where(fn("unaccent", fn("lower", col("title"))), {
-                [Op.regexp]: `(^|[[:space:]])accent([[:space:]]|$)`
-              })
+            [Op.and]: [
+              {
+                [Op.or]: [
+                  where(fn("unaccent", fn("lower", col("title"))), {
+                    [Op.regexp]: `(^|[[:space:]])name([[:space:]]|$)`
+                  })
+                ]
+              },
+              {
+                [Op.or]: [
+                  where(fn("unaccent", fn("lower", col("title"))), {
+                    [Op.regexp]: `(^|[[:space:]])with([[:space:]]|$)`
+                  })
+                ]
+              },
+              {
+                [Op.or]: [
+                  where(fn("unaccent", fn("lower", col("title"))), {
+                    [Op.regexp]: `(^|[[:space:]])accent([[:space:]]|$)`
+                  })
+                ]
+              }
             ]
           }
         ]
@@ -117,17 +125,21 @@ describe("OfferIncludeClauseBuilder", () => {
       where: {
         [Op.and]: [
           {
-            [Op.or]: [
-              where(fn("unaccent", fn("lower", col("title"))), {
-                [Op.regexp]: `(^|[[:space:]])desarrollador([[:space:]]|$)`
-              })
-            ]
-          },
-          {
-            [Op.or]: [
-              where(fn("unaccent", fn("lower", col("title"))), {
-                [Op.regexp]: `(^|[[:space:]])java([[:space:]]|$)`
-              })
+            [Op.and]: [
+              {
+                [Op.or]: [
+                  where(fn("unaccent", fn("lower", col("title"))), {
+                    [Op.regexp]: `(^|[[:space:]])desarrollador([[:space:]]|$)`
+                  })
+                ]
+              },
+              {
+                [Op.or]: [
+                  where(fn("unaccent", fn("lower", col("title"))), {
+                    [Op.regexp]: `(^|[[:space:]])java([[:space:]]|$)`
+                  })
+                ]
+              }
             ]
           }
         ]
