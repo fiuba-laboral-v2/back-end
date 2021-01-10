@@ -172,7 +172,8 @@ export const defaultTranslations = {
     title: "Estado de aprobación",
     approved: "Aprobado",
     rejected: "Rechazado",
-    pending: "Pendiente de aprobación"
+    pending: "Pendiente de aprobación",
+    expired: "Expirada"
   },
   secretarySelector: {
     title: "Secretaría"
