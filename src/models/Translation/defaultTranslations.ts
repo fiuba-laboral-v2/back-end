@@ -234,7 +234,7 @@ export const defaultTranslations = {
     title: "Datos del usuario",
     email: "Email",
     position: "Posición en la empresa",
-    emailClarification: "Para notificaciones y login",
+    emailClarification: "Email de usuario para recibir notificaciones y loguearse a la plataforma",
     name: "Nombre",
     surname: "Apellido",
     password: "Contraseña",
