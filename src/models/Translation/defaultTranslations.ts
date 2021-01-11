@@ -695,7 +695,7 @@ export const defaultTranslations = {
     isNew: "Nueva"
   },
   appliedTag: {
-    isNew: "Aplicaste"
+    label: "Aplicaste"
   },
   newJobApplicationCompanyNotificationEmail: {
     subject: "Nueva postulación a tu oferta laboral",
