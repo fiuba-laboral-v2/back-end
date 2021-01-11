@@ -244,6 +244,7 @@ export const defaultTranslations = {
     title: "Datos de contacto",
     subtitle: "Para alumnos y graduados",
     email: "Email",
+    emailHelperText: "Este email se va a mostrar a alumnos/as y graduados/as",
     website: "Sitio web"
   },
   companyDataFormSection: {
