@@ -529,9 +529,9 @@ describe("ApplicantNotificationRepository", () => {
     });
   });
 
-  describe("findLastRejectedProfileByUuid", () => {
+  describe("findLastRejectedProfileNotification", () => {
     const generator = ApplicantNotificationGenerator.instance;
-    const { findLastRejectedProfileByUuid } = ApplicantNotificationRepository;
+    const { findLastRejectedProfileNotification } = ApplicantNotificationRepository;
 
     it("returns the newest rejectedProfile notification by notifiedApplicantUuid", async () => {
       await generator.rejectedJobApplication({});
@@ -544,7 +544,7 @@ describe("ApplicantNotificationRepository", () => {
       expect(thirdNotification.createdAt!.getTime()).toBeLessThan(
         fourthNotification.createdAt!.getTime()
       );
-      const notification = await findLastRejectedProfileByUuid(applicant.uuid);
+      const notification = await findLastRejectedProfileNotification(applicant.uuid);
       expect(notification.uuid).toEqual(fourthNotification.uuid);
     });
 
@@ -552,12 +552,14 @@ describe("ApplicantNotificationRepository", () => {
       await generator.rejectedJobApplication({});
       await generator.rejectedProfile({ applicant });
       await generator.rejectedProfile({ applicant });
-      const notification = await findLastRejectedProfileByUuid(applicant.uuid);
+      const notification = await findLastRejectedProfileNotification(applicant.uuid);
       expect(notification).toBeInstanceOf(RejectedProfileApplicantNotification);
     });
 
     it("throws an error if the notifiedApplicantUuid does not belong to a persisted notification", async () => {
-      await expect(findLastRejectedProfileByUuid(UUID.generate())).rejects.toThrowErrorWithMessage(
+      await expect(
+        findLastRejectedProfileNotification(UUID.generate())
+      ).rejects.toThrowErrorWithMessage(
         ApplicantNotificationNotFoundError,
         ApplicantNotificationNotFoundError.buildMessage()
       );

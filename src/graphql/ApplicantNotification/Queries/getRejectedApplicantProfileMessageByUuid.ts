@@ -9,7 +9,7 @@ export const getRejectedApplicantProfileMessageByUuid = {
     }
   },
   resolve: async (_: undefined, { notifiedApplicantUuid }: IArguments) => {
-    const notification = await ApplicantNotificationRepository.findLastRejectedProfileByUuid(
+    const notification = await ApplicantNotificationRepository.findLastRejectedProfileNotification(
       notifiedApplicantUuid
     );
     return notification.moderatorMessage;

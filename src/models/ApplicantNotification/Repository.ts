@@ -45,7 +45,7 @@ export const ApplicantNotificationRepository = {
     const notification = ApplicantNotificationMapper.toDomainModel(notifications[0]);
     return notification as RejectedJobApplicationApplicantNotification;
   },
-  findLastRejectedProfileByUuid: async (notifiedApplicantUuid: string) => {
+  findLastRejectedProfileNotification: async (notifiedApplicantUuid: string) => {
     const notifications = await ApplicantNotificationSequelizeModel.findAll({
       where: {
         notifiedApplicantUuid,
