@@ -1,8 +1,9 @@
-import { isApprovedApplicant } from "$graphql/Rules";
+import { isApprovedApplicant, isAdmin } from "$graphql/Rules";
 
 export const applicantNotificationPermissions = {
   Query: {
     getApplicantNotifications: isApprovedApplicant,
-    hasUnreadApplicantNotifications: isApprovedApplicant
+    hasUnreadApplicantNotifications: isApprovedApplicant,
+    getRejectedJobApplicationMessageByUuid: isAdmin
   }
 };
