@@ -9,6 +9,7 @@ import {
   UpdatedCompanyProfileNotificationFactory,
   NotificationRepositoryFactory
 } from "$models/Notification";
+import { CompanyPhotoRepository } from "$models/CompanyPhoto";
 
 export const updateCurrentCompany = {
   type: GraphQLCompany,
@@ -52,6 +53,7 @@ export const updateCurrentCompany = {
 
     await Database.transaction(async transaction => {
       await CompanyRepository.save(company, transaction);
+      await CompanyPhotoRepository.update(photos, company, transaction);
       for (const notification of notifications) {
         const repository = NotificationRepositoryFactory.getRepositoryFor(notification);
         await repository.save(notification, transaction);

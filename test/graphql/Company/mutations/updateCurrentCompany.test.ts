@@ -45,6 +45,7 @@ const UPDATE_CURRENT_COMPANY = gql`
       logo
       website
       email
+      photos
     }
   }
 `;
@@ -84,7 +85,12 @@ describe("updateCurrentCompany", () => {
       description: "new description",
       logo: "",
       website: "http://www.new-site.com",
-      email: "old@devartis.com"
+      email: "old@devartis.com",
+      photos: [
+        "https://i.scdn.co/image/ab67616d0000b2730f688fa11af022f0210e21cb",
+        "https://i.scdn.co/image/ab67616d0000b273cac78df6ec3c73e118a308e0",
+        "https://i.scdn.co/image/ab67616d0000b2735084c69ed3f70e8fb139e1ea"
+      ]
     };
     const { data, errors } = await apolloClient.mutate({
       mutation: UPDATE_CURRENT_COMPANY,

@@ -351,6 +351,14 @@ export const defaultTranslations = {
     link: "Link",
     linkTitle: "Título"
   },
+  photosFormSection: {
+    sectionTitle: "Fotos",
+    sectionSubtitle: "Cualquier link público a una imagen es válido",
+    upload: "Subir imagen",
+    thenCopy: ', luego copiar "Direct link"',
+    addPhoto: "Agregar foto",
+    urlFieldTitle: "Link a imagen"
+  },
   workExperienceFormSection: {
     title: "Experiencia Laboral",
     sectionTitle: "Empresa",
