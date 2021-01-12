@@ -363,7 +363,10 @@ export const defaultTranslations = {
     title: "Ingresar",
     password: "Contraseña",
     logIn: "Iniciar sesión",
-    badCredentialsMessage: "Credenciales inválidas"
+    badCredentialsMessage: "Credenciales inválidas",
+    creditsTitle: "Este sitio es un Trabajo Profesional de Ing. Informática.",
+    seeCredits: "Ver créditos",
+    questionsTitle: "Consultas o problemas en el sitio:"
   },
   applicantLogin: {
     title: "Ingresá tus credenciales de FIUBA",
@@ -396,7 +399,8 @@ export const defaultTranslations = {
     settings: "Configuración",
     myOffers: "Mis Ofertas",
     pendingProfile: "Su perfil esta pendiente de aprobación",
-    rejectedProfile: "Su perfil ha sido rechazado"
+    rejectedProfile: "Su perfil ha sido rechazado",
+    credits: "Ver créditos"
   },
   offerCareer: {
     careersTitle: "Carreras"
