@@ -70,7 +70,7 @@ export const createCompany = {
         position
       });
       await CompanyUserRepository.save(companyUser, transaction);
-      await CompanyPhotoRepository.bulkCreate(photos, company, transaction);
+      await CompanyPhotoRepository.update(photos, company, transaction);
       await CompanyPhoneNumberRepository.bulkCreate(phoneNumbers, company, transaction);
       return company;
     });
