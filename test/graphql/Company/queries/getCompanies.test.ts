@@ -40,8 +40,6 @@ const GET_COMPANIES = gql`
 describe("getCompanies", () => {
   let devartis: Company;
   let despegar: Company;
-  let companies: Company[];
-  let companyUuids: string[];
 
   beforeAll(async () => {
     await UserRepository.truncate();
@@ -51,23 +49,10 @@ describe("getCompanies", () => {
     const generator = CompanyGenerator.instance.withCompleteData;
     devartis = await generator({ companyName: "Devartis", businessSector: "Servicios" });
     despegar = await generator({ companyName: "Despegar", businessSector: "Viajes" });
-    companies = [devartis, despegar];
-    companyUuids = companies.map(({ uuid }) => uuid);
   });
 
   const getCompanies = (apolloClient: TestClient, variables?: IFindLatest) =>
     apolloClient.query({ query: GET_COMPANIES, variables });
-
-  it("returns all companies if an Applicant makes the request", async () => {
-    const status = ApprovalStatus.approved;
-    const { apolloClient } = await TestClientGenerator.applicant({ status });
-    const { errors, data } = await getCompanies(apolloClient);
-
-    expect(errors).toBeUndefined();
-    const { results, shouldFetchMore } = data!.getCompanies;
-    expect(results.map(({ uuid }) => uuid)).toEqual(expect.arrayContaining(companyUuids));
-    expect(shouldFetchMore).toEqual(false);
-  });
 
   it("returns companies filtered by name and businessSector", async () => {
     const { apolloClient } = await TestClientGenerator.admin({ secretary: Secretary.extension });
@@ -140,6 +125,13 @@ describe("getCompanies", () => {
       const { apolloClient } = await TestClientGenerator.company({
         status: ApprovalStatus.approved
       });
+      const { errors } = await getCompanies(apolloClient);
+      expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
+    });
+
+    it("returns an error if the user is an approved applicant", async () => {
+      const status = ApprovalStatus.approved;
+      const { apolloClient } = await TestClientGenerator.applicant({ status });
       const { errors } = await getCompanies(apolloClient);
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
     });
