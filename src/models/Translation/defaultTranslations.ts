@@ -567,7 +567,12 @@ export const defaultTranslations = {
   adminActions: {
     approve: "Aprobar",
     reject: "Rechazar",
-    confirmDialogDescription: "Se va a notificar por email a quien(es) corresponda.",
+    confirmDialogDescriptionForCompanies:
+      "Se enviará una notificación y un email a todos los usuarios de la empresa.",
+    confirmDialogDescriptionForApplicants:
+      "Se enviará una notificación y un email al alumno/graduado.",
+    confirmDialogDescriptionForBoth:
+      "Se enviará una notificación y un email al alumno/graduado y a todos los usuarios de la empresa.",
     confirmDialogCancel: "Seguir revisando",
     rejectReasonLabel: "Motivo de rechazo"
   },
