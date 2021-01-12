@@ -232,9 +232,9 @@ export const defaultTranslations = {
   },
   companyUserDataFormSection: {
     title: "Datos del usuario",
-    email: "Email",
+    email: "Email de usuario",
     position: "Posición en la empresa",
-    emailClarification: "Para notificaciones y login",
+    emailClarification: "Usado en el login y para recibir notificaciones",
     name: "Nombre",
     surname: "Apellido",
     password: "Contraseña",
@@ -243,7 +243,8 @@ export const defaultTranslations = {
   contactInformationFormSection: {
     title: "Datos de contacto",
     subtitle: "Para alumnos y graduados",
-    email: "Email",
+    email: "Email de la empresa",
+    emailHelperText: "Se muestra a alumnos/as y graduados/as",
     website: "Sitio web"
   },
   companyDataFormSection: {
@@ -693,6 +694,9 @@ export const defaultTranslations = {
   },
   isNewLabel: {
     isNew: "Nueva"
+  },
+  appliedTag: {
+    label: "Ya te postulaste"
   },
   newJobApplicationCompanyNotificationEmail: {
     subject: "Nueva postulación a tu oferta laboral",
