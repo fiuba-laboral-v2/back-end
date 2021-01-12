@@ -495,9 +495,9 @@ describe("ApplicantNotificationRepository", () => {
     });
   });
 
-  describe("findLastRejectedJobApplicationByUuid", () => {
+  describe("findLastRejectedJobApplicationNotification", () => {
     const generator = ApplicantNotificationGenerator.instance;
-    const { findLastRejectedJobApplicationByUuid } = ApplicantNotificationRepository;
+    const { findLastRejectedJobApplicationNotification } = ApplicantNotificationRepository;
 
     it("returns the newest rejectedJobApplication notification by JobApplicationUuid", async () => {
       const firstNotification = await generator.rejectedJobApplication({ jobApplication });
@@ -507,7 +507,7 @@ describe("ApplicantNotificationRepository", () => {
       expect(firstNotification.createdAt!.getTime()).toBeLessThan(
         secondNotification.createdAt!.getTime()
       );
-      const notification = await findLastRejectedJobApplicationByUuid(jobApplication.uuid);
+      const notification = await findLastRejectedJobApplicationNotification(jobApplication.uuid);
       expect(notification.uuid).toEqual(secondNotification.uuid);
     });
 
@@ -515,13 +515,13 @@ describe("ApplicantNotificationRepository", () => {
       await generator.rejectedJobApplication({ jobApplication });
       await generator.rejectedJobApplication({ jobApplication });
       await generator.approvedJobApplication({ jobApplication });
-      const notification = await findLastRejectedJobApplicationByUuid(jobApplication.uuid);
+      const notification = await findLastRejectedJobApplicationNotification(jobApplication.uuid);
       expect(notification).toBeInstanceOf(RejectedJobApplicationApplicantNotification);
     });
 
     it("throws an error if the jobApplicationUuid does not belong to a persisted notification", async () => {
       await expect(
-        findLastRejectedJobApplicationByUuid(UUID.generate())
+        findLastRejectedJobApplicationNotification(UUID.generate())
       ).rejects.toThrowErrorWithMessage(
         ApplicantNotificationNotFoundError,
         ApplicantNotificationNotFoundError.buildMessage()
