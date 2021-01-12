@@ -3,7 +3,8 @@ import {
   CompanyNotification,
   CompanyNotificationMapper,
   CompanyNotificationType,
-  RejectedOfferCompanyNotification
+  RejectedOfferCompanyNotification,
+  RejectedProfileCompanyNotification
 } from "$models/CompanyNotification";
 import { CompanyNotificationSequelizeModel } from "$models";
 import { CompanyNotificationNotFoundError, CompanyNotificationsNotUpdatedError } from "./Errors";
@@ -44,6 +45,19 @@ export const CompanyNotificationRepository = {
 
     const notification = CompanyNotificationMapper.toDomainModel(notifications[0]);
     return notification as RejectedOfferCompanyNotification;
+  },
+  findLastRejectedProfileNotification: async (notifiedCompanyUuid: string) => {
+    const notifications = await CompanyNotificationSequelizeModel.findAll({
+      where: {
+        notifiedCompanyUuid,
+        type: CompanyNotificationType.rejectedProfile
+      },
+      order: [["createdAt", "DESC"]]
+    });
+    if (notifications.length === 0) throw new CompanyNotificationNotFoundError();
+
+    const notification = CompanyNotificationMapper.toDomainModel(notifications[0]);
+    return notification as RejectedProfileCompanyNotification;
   },
   markAsReadByUuids: (uuids: string[]) =>
     Database.transaction(async transaction => {
