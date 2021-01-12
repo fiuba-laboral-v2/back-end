@@ -4,7 +4,7 @@ import { or } from "graphql-shield";
 
 export const companyPermissions = {
   Query: {
-    getCompanies: or(isApprovedApplicant, isAdmin),
+    getCompanies: isAdmin,
     getCompanyByUuid: or(isApprovedApplicant, isAdmin)
   },
   Mutation: {
