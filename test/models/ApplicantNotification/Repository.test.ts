@@ -529,6 +529,41 @@ describe("ApplicantNotificationRepository", () => {
     });
   });
 
+  describe("findLastRejectedProfileByUuid", () => {
+    const generator = ApplicantNotificationGenerator.instance;
+    const { findLastRejectedProfileByUuid } = ApplicantNotificationRepository;
+
+    it("returns the newest rejectedProfile notification by notifiedApplicantUuid", async () => {
+      await generator.rejectedJobApplication({});
+      await generator.rejectedJobApplication({});
+      const thirdNotification = await generator.rejectedProfile({ applicant });
+      const fourthNotification = await generator.rejectedProfile({ applicant });
+      await generator.rejectedProfile({});
+      await generator.approvedJobApplication({ jobApplication });
+
+      expect(thirdNotification.createdAt!.getTime()).toBeLessThan(
+        fourthNotification.createdAt!.getTime()
+      );
+      const notification = await findLastRejectedProfileByUuid(applicant.uuid);
+      expect(notification.uuid).toEqual(fourthNotification.uuid);
+    });
+
+    it("returns an instance of RejectedProfileApplicantNotification", async () => {
+      await generator.rejectedJobApplication({});
+      await generator.rejectedProfile({ applicant });
+      await generator.rejectedProfile({ applicant });
+      const notification = await findLastRejectedProfileByUuid(applicant.uuid);
+      expect(notification).toBeInstanceOf(RejectedProfileApplicantNotification);
+    });
+
+    it("throws an error if the notifiedApplicantUuid does not belong to a persisted notification", async () => {
+      await expect(findLastRejectedProfileByUuid(UUID.generate())).rejects.toThrowErrorWithMessage(
+        ApplicantNotificationNotFoundError,
+        ApplicantNotificationNotFoundError.buildMessage()
+      );
+    });
+  });
+
   describe("DELETE CASCADE", () => {
     const approvedJobApplicationAttributes = () => ({
       moderatorUuid: extensionAdmin.userUuid,

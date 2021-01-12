@@ -6,7 +6,8 @@ import {
   ApplicantNotification,
   ApplicantNotificationMapper,
   ApplicantNotificationType,
-  RejectedJobApplicationApplicantNotification
+  RejectedJobApplicationApplicantNotification,
+  RejectedProfileApplicantNotification
 } from "$models/ApplicantNotification";
 import { IFindLatestByApplicant, IHasUnreadNotifications } from "./Interfaces";
 import { Transaction } from "sequelize";
@@ -43,6 +44,19 @@ export const ApplicantNotificationRepository = {
 
     const notification = ApplicantNotificationMapper.toDomainModel(notifications[0]);
     return notification as RejectedJobApplicationApplicantNotification;
+  },
+  findLastRejectedProfileByUuid: async (notifiedApplicantUuid: string) => {
+    const notifications = await ApplicantNotificationSequelizeModel.findAll({
+      where: {
+        notifiedApplicantUuid,
+        type: ApplicantNotificationType.rejectedProfile
+      },
+      order: [["createdAt", "DESC"]]
+    });
+    if (notifications.length === 0) throw new ApplicantNotificationNotFoundError();
+
+    const notification = ApplicantNotificationMapper.toDomainModel(notifications[0]);
+    return notification as RejectedProfileApplicantNotification;
   },
   markAsReadByUuids: (uuids: string[]) =>
     Database.transaction(async transaction => {
