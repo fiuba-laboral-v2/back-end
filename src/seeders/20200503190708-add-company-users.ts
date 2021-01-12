@@ -1,11 +1,14 @@
 import { QueryInterface } from "sequelize";
 import { claudio, marcos } from "./constants/companyUsers";
+import { Environment } from "../config/Environment";
 
 export = {
-  up: (queryInterface: QueryInterface) => {
+  up: async (queryInterface: QueryInterface) => {
+    if (Environment.NODE_ENV() === Environment.PRODUCTION) return;
     return queryInterface.bulkInsert("CompanyUsers", [claudio.companyUser, marcos.companyUser]);
   },
-  down: (queryInterface: QueryInterface) => {
+  down: async (queryInterface: QueryInterface) => {
+    if (Environment.NODE_ENV() === Environment.PRODUCTION) return;
     return queryInterface.bulkDelete("CompanyUsers", {});
   }
 };

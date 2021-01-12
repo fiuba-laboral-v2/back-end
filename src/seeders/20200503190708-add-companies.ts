@@ -1,8 +1,10 @@
 import { QueryInterface } from "sequelize";
 import { devartis, mercadoLibre } from "./constants/companies";
+import { Environment } from "../config/Environment";
 
 export = {
-  up: (queryInterface: QueryInterface) => {
+  up: async (queryInterface: QueryInterface) => {
+    if (Environment.NODE_ENV() === Environment.PRODUCTION) return;
     return queryInterface.sequelize.transaction(async transaction => {
       await queryInterface.bulkInsert("Companies", [devartis.company, mercadoLibre.company], {
         transaction
@@ -19,7 +21,8 @@ export = {
       );
     });
   },
-  down: (queryInterface: QueryInterface) => {
+  down: async (queryInterface: QueryInterface) => {
+    if (Environment.NODE_ENV() === Environment.PRODUCTION) return;
     return queryInterface.sequelize.transaction(async transaction => {
       await queryInterface.bulkDelete("CompanyPhotos", {}, { transaction });
       await queryInterface.bulkDelete("CompanyPhoneNumbers", {}, { transaction });
