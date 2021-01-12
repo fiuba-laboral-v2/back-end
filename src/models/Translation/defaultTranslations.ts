@@ -232,9 +232,9 @@ export const defaultTranslations = {
   },
   companyUserDataFormSection: {
     title: "Datos del usuario",
-    email: "Email",
+    email: "Email de usuario",
     position: "Posición en la empresa",
-    emailClarification: "Email de usuario para recibir notificaciones y loguearse a la plataforma",
+    emailClarification: "Usado en el login y para recibir notificaciones",
     name: "Nombre",
     surname: "Apellido",
     password: "Contraseña",
@@ -243,8 +243,8 @@ export const defaultTranslations = {
   contactInformationFormSection: {
     title: "Datos de contacto",
     subtitle: "Para alumnos y graduados",
-    email: "Email",
-    emailHelperText: "Este email se va a mostrar a alumnos/as y graduados/as",
+    email: "Email de la empresa",
+    emailHelperText: "Se muestra a alumnos/as y graduados/as",
     website: "Sitio web"
   },
   companyDataFormSection: {
