@@ -447,6 +447,40 @@ describe("CompanyNotificationRepository", () => {
     });
   });
 
+  describe("findLastRejectedOfferNotification", () => {
+    const generators = CompanyNotificationGenerator.instance;
+    const { findLastRejectedOfferNotification } = CompanyNotificationRepository;
+
+    it("returns the newest rejectedOffer notification by offerUuid", async () => {
+      const firstNotification = await generators.rejectedOffer({ offer });
+      const secondNotification = await generators.rejectedOffer({ offer });
+      await generators.approvedOffer({ offer });
+
+      expect(firstNotification.createdAt!.getTime()).toBeLessThan(
+        secondNotification.createdAt!.getTime()
+      );
+      const notification = await findLastRejectedOfferNotification(offer.uuid);
+      expect(notification.uuid).toEqual(secondNotification.uuid);
+    });
+
+    it("returns an instance of RejectedOfferCompanyNotification", async () => {
+      await generators.rejectedOffer({ offer });
+      await generators.rejectedOffer({ offer });
+      await generators.approvedOffer({ offer });
+      const notification = await findLastRejectedOfferNotification(offer.uuid);
+      expect(notification).toBeInstanceOf(RejectedOfferCompanyNotification);
+    });
+
+    it("throws an error if the offerUuid does not belong to a persisted notification", async () => {
+      await expect(
+        findLastRejectedOfferNotification(UUID.generate())
+      ).rejects.toThrowErrorWithMessage(
+        CompanyNotificationNotFoundError,
+        CompanyNotificationNotFoundError.buildMessage()
+      );
+    });
+  });
+
   describe("Delete Cascade", () => {
     const newJobApplicationProps = () => ({
       moderatorUuid: extensionAdmin.userUuid,

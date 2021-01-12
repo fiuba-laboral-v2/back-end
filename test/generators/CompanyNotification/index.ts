@@ -11,7 +11,7 @@ import { AdminGenerator } from "$generators/Admin";
 import { CompanyGenerator } from "$generators/Company";
 import { JobApplicationGenerator } from "$generators/JobApplication";
 import { OfferGenerator } from "$generators/Offer";
-import { Admin, Company } from "$models";
+import { Admin, Company, Offer } from "$models";
 import { range, sample } from "lodash";
 import MockDate from "mockdate";
 
@@ -31,28 +31,30 @@ export const CompanyNotificationGenerator = {
       await CompanyNotificationRepository.save(notification);
       return notification;
     },
-    approvedOffer: async ({ company, admin }: IGeneratorAttributes) => {
+    approvedOffer: async ({ company, admin, offer }: IOfferProps) => {
       const { userUuid: moderatorUuid } = admin || (await AdminGenerator.extension());
       const { uuid: companyUuid } = company || (await CompanyGenerator.instance.withMinimumData());
-      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid });
+      const { uuid: offerUuid } =
+        offer || (await OfferGenerator.instance.withObligatoryData({ companyUuid }));
       const attributes = {
         moderatorUuid,
         notifiedCompanyUuid: companyUuid,
-        offerUuid: offer.uuid,
+        offerUuid,
         isNew: true
       };
       const notification = new ApprovedOfferCompanyNotification(attributes);
       await CompanyNotificationRepository.save(notification);
       return notification;
     },
-    rejectedOffer: async ({ company, admin }: IGeneratorAttributes) => {
+    rejectedOffer: async ({ company, admin, offer }: IOfferProps) => {
       const { userUuid: moderatorUuid } = admin || (await AdminGenerator.extension());
       const { uuid: companyUuid } = company || (await CompanyGenerator.instance.withMinimumData());
-      const offer = await OfferGenerator.instance.withObligatoryData({ companyUuid });
+      const { uuid: offerUuid } =
+        offer || (await OfferGenerator.instance.withObligatoryData({ companyUuid }));
       const attributes = {
         moderatorUuid,
         notifiedCompanyUuid: companyUuid,
-        offerUuid: offer.uuid,
+        offerUuid,
         moderatorMessage: "message",
         isNew: true
       };
@@ -106,4 +108,8 @@ type Generator = (attributes: IGeneratorAttributes) => Promise<CompanyNotificati
 interface IGeneratorAttributes {
   company?: Company;
   admin?: Admin;
+}
+
+interface IOfferProps extends IGeneratorAttributes {
+  offer?: Offer;
 }
