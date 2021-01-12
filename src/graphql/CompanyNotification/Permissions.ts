@@ -4,6 +4,7 @@ export const companyNotificationPermissions = {
   Query: {
     getCompanyNotifications: isFromApprovedCompany,
     hasUnreadCompanyNotifications: isFromApprovedCompany,
-    getRejectedCompanyProfileMessageByUuid: isAdmin
+    getRejectedCompanyProfileMessageByUuid: isAdmin,
+    getRejectedOfferMessageByUuid: isAdmin
   }
 };
