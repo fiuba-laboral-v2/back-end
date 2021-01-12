@@ -2,7 +2,13 @@ import {
   ApplicantNotificationNotFoundError,
   ApplicantNotificationsNotUpdatedError
 } from "./Errors";
-import { ApplicantNotification, ApplicantNotificationMapper } from "$models/ApplicantNotification";
+import {
+  ApplicantNotification,
+  ApplicantNotificationMapper,
+  ApplicantNotificationType,
+  RejectedJobApplicationApplicantNotification,
+  RejectedProfileApplicantNotification
+} from "$models/ApplicantNotification";
 import { IFindLatestByApplicant, IHasUnreadNotifications } from "./Interfaces";
 import { Transaction } from "sequelize";
 import { ApplicantNotificationSequelizeModel } from "$models";
@@ -26,6 +32,32 @@ export const ApplicantNotificationRepository = {
         return notifications.map(ApplicantNotificationMapper.toDomainModel);
       }
     }),
+  findLastRejectedJobApplicationNotification: async (jobApplicationUuid: string) => {
+    const notifications = await ApplicantNotificationSequelizeModel.findAll({
+      where: {
+        jobApplicationUuid,
+        type: ApplicantNotificationType.rejectedJobApplication
+      },
+      order: [["createdAt", "DESC"]]
+    });
+    if (notifications.length === 0) throw new ApplicantNotificationNotFoundError();
+
+    const notification = ApplicantNotificationMapper.toDomainModel(notifications[0]);
+    return notification as RejectedJobApplicationApplicantNotification;
+  },
+  findLastRejectedProfileNotification: async (notifiedApplicantUuid: string) => {
+    const notifications = await ApplicantNotificationSequelizeModel.findAll({
+      where: {
+        notifiedApplicantUuid,
+        type: ApplicantNotificationType.rejectedProfile
+      },
+      order: [["createdAt", "DESC"]]
+    });
+    if (notifications.length === 0) throw new ApplicantNotificationNotFoundError();
+
+    const notification = ApplicantNotificationMapper.toDomainModel(notifications[0]);
+    return notification as RejectedProfileApplicantNotification;
+  },
   markAsReadByUuids: (uuids: string[]) =>
     Database.transaction(async transaction => {
       const [updatedCount] = await ApplicantNotificationSequelizeModel.update(

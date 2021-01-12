@@ -10,48 +10,51 @@ import {
 import { AdminGenerator } from "$generators/Admin";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { JobApplicationGenerator } from "$generators/JobApplication";
-import { Admin, Applicant } from "$models";
+import { Admin, Applicant, JobApplication } from "$models";
 import { range, sample } from "lodash";
 import MockDate from "mockdate";
 
 export const ApplicantNotificationGenerator = {
   instance: {
-    pendingJobApplication: async ({ applicant, admin }: IGeneratorAttributes) => {
+    pendingJobApplication: async ({ applicant, admin, jobApplication }: IJobApplicationProps) => {
       const { userUuid: moderatorUuid } = admin || (await AdminGenerator.extension());
       const { uuid } = applicant || (await ApplicantGenerator.instance.withMinimumData());
-      const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      const { uuid: jobApplicationUuid } =
+        jobApplication || (await JobApplicationGenerator.instance.withMinimumData());
       const attributes = {
         moderatorUuid,
         notifiedApplicantUuid: uuid,
-        jobApplicationUuid: jobApplication.uuid,
+        jobApplicationUuid,
         isNew: true
       };
       const notification = new PendingJobApplicationApplicantNotification(attributes);
       await ApplicantNotificationRepository.save(notification);
       return notification;
     },
-    approvedJobApplication: async ({ applicant, admin }: IGeneratorAttributes) => {
+    approvedJobApplication: async ({ applicant, admin, jobApplication }: IJobApplicationProps) => {
       const { userUuid: moderatorUuid } = admin || (await AdminGenerator.extension());
       const { uuid } = applicant || (await ApplicantGenerator.instance.withMinimumData());
-      const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      const { uuid: jobApplicationUuid } =
+        jobApplication || (await JobApplicationGenerator.instance.withMinimumData());
       const attributes = {
         moderatorUuid,
         notifiedApplicantUuid: uuid,
-        jobApplicationUuid: jobApplication.uuid,
+        jobApplicationUuid,
         isNew: true
       };
       const notification = new ApprovedJobApplicationApplicantNotification(attributes);
       await ApplicantNotificationRepository.save(notification);
       return notification;
     },
-    rejectedJobApplication: async ({ applicant, admin }: IGeneratorAttributes) => {
+    rejectedJobApplication: async ({ applicant, admin, jobApplication }: IJobApplicationProps) => {
       const { userUuid: moderatorUuid } = admin || (await AdminGenerator.extension());
       const { uuid } = applicant || (await ApplicantGenerator.instance.withMinimumData());
-      const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
+      const { uuid: jobApplicationUuid } =
+        jobApplication || (await JobApplicationGenerator.instance.withMinimumData());
       const attributes = {
         moderatorUuid,
         notifiedApplicantUuid: uuid,
-        jobApplicationUuid: jobApplication.uuid,
+        jobApplicationUuid,
         moderatorMessage: "message",
         isNew: true
       };
@@ -105,4 +108,8 @@ type Generator = (attributes: IGeneratorAttributes) => Promise<ApplicantNotifica
 interface IGeneratorAttributes {
   applicant?: Applicant;
   admin?: Admin;
+}
+
+interface IJobApplicationProps extends IGeneratorAttributes {
+  jobApplication?: JobApplication;
 }
