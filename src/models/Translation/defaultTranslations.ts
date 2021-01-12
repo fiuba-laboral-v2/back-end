@@ -124,6 +124,9 @@ export const defaultTranslations = {
     cleanFilters: "Remover filtros",
     filters: "Filtrar"
   },
+  rejectionMessageButton: {
+    label: "Ver mensaje de rechazo"
+  },
   exportApplicantEmails: {
     confirmDialogTitle: "Exportación de emails",
     confirmDialogDescription:
