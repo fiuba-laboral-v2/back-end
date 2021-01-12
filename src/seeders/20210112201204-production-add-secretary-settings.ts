@@ -6,7 +6,7 @@ const TABLE_NAME = "SecretarySettings";
 
 export = {
   up: async (queryInterface: QueryInterface) => {
-    if (Environment.NODE_ENV() === Environment.PRODUCTION) return;
+    if (Environment.NODE_ENV() !== Environment.PRODUCTION) return;
     return queryInterface.bulkInsert(TABLE_NAME, [
       {
         secretary: Secretary.graduados,
@@ -25,7 +25,7 @@ export = {
     ]);
   },
   down: async (queryInterface: QueryInterface) => {
-    if (Environment.NODE_ENV() === Environment.PRODUCTION) return;
+    if (Environment.NODE_ENV() !== Environment.PRODUCTION) return;
     queryInterface.bulkDelete(TABLE_NAME, {});
   }
 };
