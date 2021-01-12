@@ -564,11 +564,11 @@ export const defaultTranslations = {
     approve: "Aprobar",
     reject: "Rechazar",
     confirmDialogDescriptionForCompanies:
-      "Con esta acción enviará una notificación y un email a todos los usuarios de la empresa.",
+      "Con esta acción se enviará una notificación y un email a todos los usuarios de la empresa.",
     confirmDialogDescriptionForApplicants:
-      "Con esta acción enviará una notificación y un email al alumno/graduado.",
+      "Con esta acción se enviará una notificación y un email al alumno/graduado.",
     confirmDialogDescriptionForBoth:
-      "Con esta acción enviará una notificación y un email al alumno/graduado y a todos los usuarios de la empresa.",
+      "Con esta acción se enviará una notificación y un email al alumno/graduado y a todos los usuarios de la empresa.",
     confirmDialogCancel: "Seguir revisando",
     rejectReasonLabel: "Motivo de rechazo"
   },
