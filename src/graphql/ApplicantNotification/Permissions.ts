@@ -4,6 +4,7 @@ export const applicantNotificationPermissions = {
   Query: {
     getApplicantNotifications: isApprovedApplicant,
     hasUnreadApplicantNotifications: isApprovedApplicant,
-    getRejectedJobApplicationMessageByUuid: isAdmin
+    getRejectedJobApplicationMessageByUuid: isAdmin,
+    getRejectedApplicantProfileMessageByUuid: isAdmin
   }
 };
