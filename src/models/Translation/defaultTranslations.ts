@@ -128,7 +128,7 @@ export const defaultTranslations = {
     label: "Ver mensaje de rechazo",
     confirmDialogTitle: "Mensaje de rechazo",
     confirmDialogDescription: "Este es el ultimo mensaje de rechazo escrito por el administrador",
-    confirmDialogConfirm: "Cerrar"
+    confirmDialogCancel: "Cerrar"
   },
   exportApplicantEmails: {
     confirmDialogTitle: "Exportación de emails",
