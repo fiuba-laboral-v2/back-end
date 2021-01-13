@@ -457,7 +457,8 @@ export const defaultTranslations = {
     forGraduates: "Graduados: expirada"
   },
   MyOffers: {
-    title: "Mis Ofertas"
+    title: "Mis Ofertas",
+    hideRejectedAndExpiredOffers: "Ocultar rechazadas y expiradas"
   },
   jobSpecs: {
     timeDescription: "horas por día"
