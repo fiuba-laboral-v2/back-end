@@ -1,11 +1,8 @@
 import { Database } from "$config";
 import { Op, Transaction } from "sequelize";
-
-import { IFindAll, IOfferAssociations } from "./Interface";
-
+import { IFindLatestByCompany, IFindAll, IOfferAssociations } from "./Interface";
 import { OfferSectionRepository } from "./OfferSection";
 import { OfferCareerRepository } from "./OfferCareer";
-
 import { ICreateOffer } from "$models/Offer/Interface";
 import { PaginationQuery } from "$models/PaginationQuery";
 import { Offer } from "$models";
@@ -40,6 +37,35 @@ export const OfferRepository = {
     if (!offer) throw new OfferNotFoundError(uuid);
 
     return offer;
+  },
+  findLatestByCompany: ({
+    updatedBeforeThan,
+    companyUuid,
+    careerCodes,
+    statuses
+  }: IFindLatestByCompany) => {
+    const include: Includeable[] = [];
+    const careersClause = OfferCareersIncludeClauseBuilder.build({ careerCodes });
+    if (careersClause) include.push(careersClause);
+
+    const where: { [Op.and]: WhereOptions[] } = { [Op.and]: [] };
+    const statusClauses: { [Op.or]: WhereOptions[] } = { [Op.or]: [] };
+    statuses.map(status => {
+      const studentsStatus = OfferStatusWhereClause.build({ studentsStatus: status });
+      const graduatesStatus = OfferStatusWhereClause.build({ graduatesStatus: status });
+      if (studentsStatus) statusClauses[Op.or].push(studentsStatus);
+      if (graduatesStatus) statusClauses[Op.or].push(graduatesStatus);
+    });
+
+    if (statuses.length > 0) where[Op.and].push(statusClauses);
+    where[Op.and].push({ companyUuid });
+
+    return PaginationQuery.findLatest({
+      updatedBeforeThan,
+      query: options => Offer.findAll(options),
+      where,
+      include
+    });
   },
   findAll: ({
     updatedBeforeThan,

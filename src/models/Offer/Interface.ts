@@ -41,6 +41,13 @@ export interface IFindAll {
   careerCodes?: string[];
 }
 
+export interface IFindLatestByCompany {
+  updatedBeforeThan?: IPaginatedInput;
+  companyUuid: string;
+  careerCodes?: string[];
+  statuses: OfferStatus[];
+}
+
 export enum OfferStatus {
   expired = "expired",
   pending = "pending",
