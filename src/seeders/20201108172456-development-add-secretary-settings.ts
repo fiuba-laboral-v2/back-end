@@ -1,8 +1,10 @@
 import { Secretary } from "../models/Admin/Interface";
 import { QueryInterface } from "sequelize";
+import { Environment } from "../config/Environment";
 
 export = {
-  up: (queryInterface: QueryInterface) => {
+  up: async (queryInterface: QueryInterface) => {
+    if (Environment.NODE_ENV() === Environment.PRODUCTION) return;
     return queryInterface.bulkInsert("SecretarySettings", [
       {
         secretary: Secretary.graduados,
@@ -20,5 +22,8 @@ export = {
       }
     ]);
   },
-  down: (queryInterface: QueryInterface) => queryInterface.bulkDelete("SecretarySettings", {})
+  down: async (queryInterface: QueryInterface) => {
+    if (Environment.NODE_ENV() === Environment.PRODUCTION) return;
+    queryInterface.bulkDelete("SecretarySettings", {});
+  }
 };

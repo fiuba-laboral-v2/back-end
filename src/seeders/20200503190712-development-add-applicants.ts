@@ -1,9 +1,11 @@
 import { QueryInterface } from "sequelize";
 import { dylan, manuel, sebastian } from "./constants/applicants";
 import { aldana } from "./constants/admins";
+import { Environment } from "../config/Environment";
 
 export = {
-  up: (queryInterface: QueryInterface) => {
+  up: async (queryInterface: QueryInterface) => {
+    if (Environment.NODE_ENV() === Environment.PRODUCTION) return;
     return queryInterface.sequelize.transaction(async transaction => {
       await queryInterface.bulkInsert(
         "Applicants",
@@ -32,7 +34,8 @@ export = {
       );
     });
   },
-  down: (queryInterface: QueryInterface) => {
+  down: async (queryInterface: QueryInterface) => {
+    if (Environment.NODE_ENV() === Environment.PRODUCTION) return;
     return queryInterface.sequelize.transaction(async transaction => {
       await queryInterface.bulkDelete("ApplicantKnowledgeSections", {}, { transaction });
       await queryInterface.bulkDelete("ApplicantsCapabilities", {}, { transaction });

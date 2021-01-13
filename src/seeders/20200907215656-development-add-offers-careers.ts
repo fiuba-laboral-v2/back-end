@@ -1,6 +1,7 @@
 import { QueryInterface } from "sequelize";
 import { careerCodes } from "./constants/careerCodes";
 import { uuids } from "./constants/uuids";
+import { Environment } from "../config/Environment";
 
 const createRecord = (careerCode: string, offerUuid: string) => ({
   careerCode: careerCode,
@@ -10,7 +11,8 @@ const createRecord = (careerCode: string, offerUuid: string) => ({
 });
 
 export = {
-  up: (queryInterface: QueryInterface) => {
+  up: async (queryInterface: QueryInterface) => {
+    if (Environment.NODE_ENV() === Environment.PRODUCTION) return;
     return queryInterface.bulkInsert("OffersCareers", [
       createRecord(careerCodes.IngenieriaCivil, uuids.offers.javaSemiSenior),
       createRecord(careerCodes.IngenieriaAgrimensura, uuids.offers.javaSemiSenior),
@@ -34,7 +36,8 @@ export = {
       createRecord(careerCodes.IngenieriaIndustrial, uuids.offers.kotlinInternship)
     ]);
   },
-  down: (queryInterface: QueryInterface) => {
+  down: async (queryInterface: QueryInterface) => {
+    if (Environment.NODE_ENV() === Environment.PRODUCTION) return;
     return queryInterface.bulkDelete("OffersCareers", {});
   }
 };

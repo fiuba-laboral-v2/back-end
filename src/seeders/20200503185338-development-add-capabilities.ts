@@ -1,8 +1,10 @@
 import { QueryInterface } from "sequelize";
 import { uuids } from "./constants/uuids";
+import { Environment } from "../config/Environment";
 
 export = {
-  up: (queryInterface: QueryInterface) => {
+  up: async (queryInterface: QueryInterface) => {
+    if (Environment.NODE_ENV() === Environment.PRODUCTION) return;
     return queryInterface.bulkInsert("Capabilities", [
       {
         uuid: uuids.capabilities.node,
@@ -84,7 +86,8 @@ export = {
       }
     ]);
   },
-  down: (queryInterface: QueryInterface) => {
+  down: async (queryInterface: QueryInterface) => {
+    if (Environment.NODE_ENV() === Environment.PRODUCTION) return;
     return queryInterface.bulkDelete("Capabilities", {});
   }
 };
