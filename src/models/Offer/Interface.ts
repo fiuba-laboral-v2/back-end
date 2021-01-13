@@ -44,7 +44,6 @@ export interface IFindAll {
 export interface IFindLatestByCompany {
   updatedBeforeThan?: IPaginatedInput;
   companyUuid: string;
-  careerCodes?: string[];
   statuses: OfferStatus[];
 }
 

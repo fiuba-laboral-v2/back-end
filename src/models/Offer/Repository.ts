@@ -38,16 +38,7 @@ export const OfferRepository = {
 
     return offer;
   },
-  findLatestByCompany: ({
-    updatedBeforeThan,
-    companyUuid,
-    careerCodes,
-    statuses
-  }: IFindLatestByCompany) => {
-    const include: Includeable[] = [];
-    const careersClause = OfferCareersIncludeClauseBuilder.build({ careerCodes });
-    if (careersClause) include.push(careersClause);
-
+  findLatestByCompany: ({ updatedBeforeThan, companyUuid, statuses }: IFindLatestByCompany) => {
     const where: { [Op.and]: WhereOptions[] } = { [Op.and]: [] };
     const statusClauses: { [Op.or]: WhereOptions[] } = { [Op.or]: [] };
     statuses.map(status => {
@@ -63,8 +54,7 @@ export const OfferRepository = {
     return PaginationQuery.findLatest({
       updatedBeforeThan,
       query: options => Offer.findAll(options),
-      where,
-      include
+      where
     });
   },
   findAll: ({

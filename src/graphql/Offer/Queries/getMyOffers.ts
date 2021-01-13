@@ -1,13 +1,10 @@
 import { GraphQLOffer } from "../Types/GraphQLOffer";
-import { OfferRepository } from "$models/Offer";
-import {
-  GraphQLPaginatedInput,
-  IPaginatedInput
-} from "$graphql/Pagination/Types/GraphQLPaginatedInput";
+import { OfferRepository, IFindLatestByCompany } from "$models/Offer";
+import { GraphQLPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { GraphQLPaginatedResults } from "$graphql/Pagination/Types/GraphQLPaginatedResults";
 import { IApolloServerContext } from "$graphql/Context";
 
-const getMyOffers = {
+export const getMyOffers = {
   type: GraphQLPaginatedResults(GraphQLOffer),
   args: {
     updatedBeforeThan: {
@@ -16,13 +13,12 @@ const getMyOffers = {
   },
   resolve: (
     _: undefined,
-    { updatedBeforeThan }: { updatedBeforeThan?: IPaginatedInput },
+    { updatedBeforeThan }: IFindLatestByCompany,
     { currentUser }: IApolloServerContext
   ) =>
-    OfferRepository.findAll({
+    OfferRepository.findLatestByCompany({
       companyUuid: currentUser.getCompanyRole().companyUuid,
-      updatedBeforeThan
+      updatedBeforeThan,
+      statuses: []
     })
 };
-
-export { getMyOffers };

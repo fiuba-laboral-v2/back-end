@@ -709,57 +709,6 @@ describe("OfferRepository", () => {
         ])
       );
     });
-
-    it("finds offers specific to a career", async () => {
-      const generator = OfferGenerator.instance.withObligatoryData;
-      const offer = await generator({ careers: [{ careerCode: firstCareer.code }], companyUuid });
-      await generator({ careers: [{ careerCode: secondCareer.code }], companyUuid });
-      const { shouldFetchMore, results } = await OfferRepository.findLatestByCompany({
-        companyUuid,
-        careerCodes: [firstCareer.code],
-        statuses: []
-      });
-      const uuids = results.map(({ uuid }) => uuid);
-
-      expect(shouldFetchMore).toBe(false);
-      expect(uuids).toEqual([offer.uuid]);
-    });
-
-    it("returns nothing when careerCodes is empty", async () => {
-      const generator = OfferGenerator.instance.withObligatoryData;
-      await generator({ careers: [{ careerCode: firstCareer.code }], companyUuid });
-      await generator({ careers: [{ careerCode: secondCareer.code }], companyUuid });
-      const { shouldFetchMore, results } = await OfferRepository.findLatestByCompany({
-        companyUuid,
-        careerCodes: [],
-        statuses: []
-      });
-      const uuids = results.map(({ uuid }) => uuid);
-
-      expect(shouldFetchMore).toBe(false);
-      expect(uuids).toEqual([]);
-    });
-
-    it("fetches offers that match at least one career", async () => {
-      const generator = OfferGenerator.instance.withObligatoryData;
-      const firstOffer = await generator({
-        careers: [{ careerCode: thirdCareer.code }],
-        companyUuid
-      });
-      const secondOffer = await generator({
-        careers: [{ careerCode: thirdCareer.code }, { careerCode: fourthCareer.code }],
-        companyUuid
-      });
-      await generator({ companyUuid });
-      const { results } = await OfferRepository.findLatestByCompany({
-        companyUuid,
-        careerCodes: [thirdCareer.code, fourthCareer.code],
-        statuses: []
-      });
-      const uuids = results.map(({ uuid }) => uuid);
-
-      expect(uuids).toEqual([secondOffer.uuid, firstOffer.uuid]);
-    });
   });
 
   describe("Delete", () => {
