@@ -1,6 +1,10 @@
+import { nonNull, Boolean } from "../../fieldTypes";
 import { GraphQLOffer } from "../Types/GraphQLOffer";
-import { OfferRepository, IFindLatestByCompany } from "$models/Offer";
-import { GraphQLPaginatedInput } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
+import { OfferRepository, OfferStatus } from "$models/Offer";
+import {
+  GraphQLPaginatedInput,
+  IPaginatedInput
+} from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { GraphQLPaginatedResults } from "$graphql/Pagination/Types/GraphQLPaginatedResults";
 import { IApolloServerContext } from "$graphql/Context";
 
@@ -9,16 +13,28 @@ export const getMyOffers = {
   args: {
     updatedBeforeThan: {
       type: GraphQLPaginatedInput
+    },
+    hideRejectedAndExpiredOffers: {
+      type: nonNull(Boolean)
     }
   },
   resolve: (
     _: undefined,
-    { updatedBeforeThan }: IFindLatestByCompany,
+    { updatedBeforeThan, hideRejectedAndExpiredOffers }: IGetMyOffers,
     { currentUser }: IApolloServerContext
-  ) =>
-    OfferRepository.findLatestByCompany({
+  ) => {
+    const statuses: OfferStatus[] = [];
+    if (hideRejectedAndExpiredOffers) statuses.push(OfferStatus.approved, OfferStatus.pending);
+
+    return OfferRepository.findLatestByCompany({
       companyUuid: currentUser.getCompanyRole().companyUuid,
       updatedBeforeThan,
-      statuses: []
-    })
+      statuses
+    });
+  }
 };
+
+export interface IGetMyOffers {
+  updatedBeforeThan?: IPaginatedInput;
+  hideRejectedAndExpiredOffers: boolean;
+}
