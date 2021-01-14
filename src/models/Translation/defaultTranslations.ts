@@ -624,6 +624,7 @@ export const defaultTranslations = {
     dni: "DNI",
     email: "Email",
     secretary: "Secretaría",
+    status: "Estado",
     createdAt: "Fecha de registro"
   },
   adminOfferListHeader: {
