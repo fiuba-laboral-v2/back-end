@@ -219,6 +219,11 @@ export const defaultTranslations = {
       "El administrador no podrá ingresar a la aplicación hasta que se reactive la cuenta",
     submit: "Guardar"
   },
+  activateAdminAccount: {
+    title: "Activar la cuenta del administrador:",
+    description: "El administrador podrá volver ingresar a la aplicación",
+    submit: "Guardar"
+  },
   mainInformationFormSection: {
     offerTitle: "Título",
     description: "Resumen",
