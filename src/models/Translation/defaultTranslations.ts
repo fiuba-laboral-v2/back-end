@@ -215,7 +215,8 @@ export const defaultTranslations = {
   },
   deactivateAdminAccount: {
     title: "Desactivar la cuenta del administrador:",
-    description: "Si realiza esta acción, elimina al administrador de la vista pública",
+    description:
+      "El administrador no podrá ingresar a la aplicación hasta que se reactive la cuenta",
     submit: "Guardar"
   },
   mainInformationFormSection: {
