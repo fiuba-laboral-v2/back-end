@@ -195,7 +195,8 @@ export const defaultTranslations = {
     editUserTooltipMessage: "Editar usuario"
   },
   adminsActions: {
-    editAdminTooltipMessage: "Editar administrador"
+    editAdminTooltipMessage: "Editar administrador",
+    deactivateAccountLinkTooltipMessage: "Desactivar cuenta"
   },
   admins: {
     addAdminButtonLabel: "Agregar administrador"
