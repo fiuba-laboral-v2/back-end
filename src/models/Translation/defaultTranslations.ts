@@ -535,6 +535,10 @@ export const defaultTranslations = {
     graduados: "Graduados",
     extension: "Extensión"
   },
+  adminStatus: {
+    active: "Activa",
+    deactivated: "Desactivada"
+  },
   adminCompanyMainTitle: {
     title: "Empresa"
   },
