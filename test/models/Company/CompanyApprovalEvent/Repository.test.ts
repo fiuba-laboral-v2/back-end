@@ -116,13 +116,14 @@ describe("CompanyApprovalEventRepository", () => {
       expect(await CompanyApprovalEventRepository.findAll()).toHaveLength(0);
     });
 
-    it("deletes all events if admins tables is truncated", async () => {
+    it("does not delete all events if admins tables is truncated", async () => {
       await createCompanyApprovalEvent();
       await createCompanyApprovalEvent();
       await createCompanyApprovalEvent();
-      expect((await CompanyApprovalEventRepository.findAll()).length).toBeGreaterThan(0);
+      const allEvents = await CompanyApprovalEventRepository.findAll();
+      expect(allEvents.length).toBeGreaterThan(0);
       await AdminRepository.truncate();
-      expect(await CompanyApprovalEventRepository.findAll()).toHaveLength(0);
+      expect(await CompanyApprovalEventRepository.findAll()).toHaveLength(allEvents.length);
     });
   });
 });

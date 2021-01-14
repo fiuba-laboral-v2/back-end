@@ -155,13 +155,13 @@ describe("JobApplicationApprovalEventRepository", () => {
       expect(await JobApplicationApprovalEventRepository.findAll()).toHaveLength(0);
     });
 
-    it("deletes all events by deleting admins table", async () => {
+    it("does not delete all events by deleting admins table", async () => {
       await JobApplicationApprovalEventRepository.truncate();
       await createJobApplicationApprovalEvent();
       await createJobApplicationApprovalEvent();
       expect(await JobApplicationApprovalEventRepository.findAll()).toHaveLength(2);
       await AdminRepository.truncate();
-      expect(await JobApplicationApprovalEventRepository.findAll()).toHaveLength(0);
+      expect(await JobApplicationApprovalEventRepository.findAll()).toHaveLength(2);
     });
   });
 });
