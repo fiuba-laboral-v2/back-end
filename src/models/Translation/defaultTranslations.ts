@@ -204,6 +204,11 @@ export const defaultTranslations = {
     title: "Agregar administrador",
     submit: "Guardar"
   },
+  editAdmin: {
+    userEmailAlreadyExistsError: "Un usuario con ese email ya existe",
+    title: "Editar administrador",
+    submit: "Guardar"
+  },
   mainInformationFormSection: {
     offerTitle: "Título",
     description: "Resumen",
