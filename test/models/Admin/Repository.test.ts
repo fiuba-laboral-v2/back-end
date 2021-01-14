@@ -213,6 +213,34 @@ describe("AdminRepository", () => {
     });
   });
 
+  describe("findDeletedByUserUuid", () => {
+    it("returns a deleted admin by userUuid", async () => {
+      const extensionAdmin = await AdminGenerator.extension();
+      await AdminRepository.delete(extensionAdmin);
+      const admin = await AdminRepository.findDeletedByUserUuid(extensionAdmin.userUuid);
+      expect(admin.userUuid).toEqual(extensionAdmin.userUuid);
+      expect(admin.secretary).toEqual(Secretary.extension);
+    });
+
+    it("throws an error if the admin was not deleted", async () => {
+      const extensionAdmin = await AdminGenerator.extension();
+      await expect(
+        AdminRepository.findDeletedByUserUuid(extensionAdmin.userUuid)
+      ).rejects.toThrowErrorWithMessage(
+        AdminNotFoundError,
+        AdminNotFoundError.buildMessage(extensionAdmin.userUuid)
+      );
+    });
+
+    it("throws an error if the given uuid does not belong to any persisted admin", async () => {
+      const userUuid = UUID.generate();
+      await expect(AdminRepository.findDeletedByUserUuid(userUuid)).rejects.toThrowErrorWithMessage(
+        AdminNotFoundError,
+        AdminNotFoundError.buildMessage(userUuid)
+      );
+    });
+  });
+
   describe("findByUserUuid", () => {
     it("returns an admin of extension by userUuid", async () => {
       const extensionAdmin = await AdminGenerator.extension();
