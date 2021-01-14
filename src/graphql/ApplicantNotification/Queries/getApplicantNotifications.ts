@@ -6,9 +6,15 @@ import {
   IPaginatedInput
 } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { IApolloServerContext } from "$graphql/Context";
+import { nonNull } from "$graphql/fieldTypes";
+import { GraphQLHasUnreadApplicantNotifications } from "../Types/GraphQLHasUnreadApplicantNotifications";
 
 export const getApplicantNotifications = {
-  type: GraphQLPaginatedResults(GraphQLApplicantNotification),
+  type: GraphQLPaginatedResults(GraphQLApplicantNotification, {
+    hasUnreadNotifications: {
+      type: nonNull(GraphQLHasUnreadApplicantNotifications)
+    }
+  }),
   args: {
     updatedBeforeThan: {
       type: GraphQLPaginatedInput
@@ -19,12 +25,20 @@ export const getApplicantNotifications = {
     { updatedBeforeThan }: { updatedBeforeThan?: IPaginatedInput },
     { currentUser }: IApolloServerContext
   ) => {
+    const applicantUuid = currentUser.getApplicantRole().applicantUuid;
     const notifications = await ApplicantNotificationRepository.findLatestByApplicant({
       updatedBeforeThan,
-      applicantUuid: currentUser.getApplicantRole().applicantUuid
+      applicantUuid
     });
     const notificationUuids = notifications.results.map(({ uuid }) => uuid!);
     await ApplicantNotificationRepository.markAsReadByUuids(notificationUuids);
-    return notifications;
+    return {
+      ...notifications,
+      hasUnreadNotifications: {
+        hasUnreadNotifications: await ApplicantNotificationRepository.hasUnreadNotifications({
+          applicantUuid
+        })
+      }
+    };
   }
 };

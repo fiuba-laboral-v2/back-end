@@ -4,6 +4,7 @@ import { GraphQLApprovedJobApplicationApplicantNotification } from "./GraphQLApp
 import { GraphQLRejectedJobApplicationApplicantNotification } from "./GraphQLRejectedJobApplicationApplicantNotification";
 import { GraphQLApprovedProfileApplicantNotification } from "./GraphQLApprovedProfileApplicantNotification";
 import { GraphQLRejectedProfileApplicantNotification } from "./GraphQLRejectedProfileApplicantNotification";
+import { GraphQLHasUnreadApplicantNotifications } from "./GraphQLHasUnreadApplicantNotifications";
 
 export const applicantNotificationTypes = [
   GraphQLApplicantNotification,
@@ -11,5 +12,6 @@ export const applicantNotificationTypes = [
   GraphQLApprovedJobApplicationApplicantNotification,
   GraphQLRejectedJobApplicationApplicantNotification,
   GraphQLApprovedProfileApplicantNotification,
-  GraphQLRejectedProfileApplicantNotification
+  GraphQLRejectedProfileApplicantNotification,
+  GraphQLHasUnreadApplicantNotifications
 ];
