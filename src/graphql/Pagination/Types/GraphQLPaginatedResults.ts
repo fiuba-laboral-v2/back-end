@@ -1,9 +1,12 @@
-import { GraphQLObjectType, GraphQLUnionType } from "graphql";
+import { GraphQLObjectType, GraphQLUnionType, GraphQLFieldConfigMap } from "graphql";
 import { Boolean, List, nonNull } from "$graphql/fieldTypes";
 
 const types = {};
 
-export const GraphQLPaginatedResults = (resultType: GraphQLObjectType | GraphQLUnionType) => {
+export const GraphQLPaginatedResults = (
+  resultType: GraphQLObjectType | GraphQLUnionType,
+  extraFields?: GraphQLFieldConfigMap<any, any>
+) => {
   const resultTypeName = resultType.name;
   if (!types[resultTypeName]) {
     types[resultTypeName] = new GraphQLObjectType({
@@ -14,7 +17,8 @@ export const GraphQLPaginatedResults = (resultType: GraphQLObjectType | GraphQLU
         },
         results: {
           type: nonNull(List(nonNull(resultType)))
-        }
+        },
+        ...extraFields
       })
     });
   }

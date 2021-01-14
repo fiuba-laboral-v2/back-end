@@ -4,6 +4,7 @@ import { GraphQLApprovedOfferCompanyNotification } from "./GraphQLApprovedOfferC
 import { GraphQLRejectedOfferCompanyNotification } from "./GraphQLRejectedOfferCompanyNotification";
 import { GraphQLApprovedProfileCompanyNotification } from "./GraphQLApprovedProfileCompanyNotification";
 import { GraphQLRejectedProfileCompanyNotification } from "./GraphQLRejectedProfileCompanyNotification";
+import { GraphQLHasUnreadCompanyNotifications } from "./GraphQLHasUnreadCompanyNotifications";
 
 export const companyNotificationTypes = [
   GraphQLCompanyNotification,
@@ -11,5 +12,6 @@ export const companyNotificationTypes = [
   GraphQLApprovedOfferCompanyNotification,
   GraphQLRejectedOfferCompanyNotification,
   GraphQLApprovedProfileCompanyNotification,
-  GraphQLRejectedProfileCompanyNotification
+  GraphQLRejectedProfileCompanyNotification,
+  GraphQLHasUnreadCompanyNotifications
 ];
