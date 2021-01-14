@@ -194,6 +194,9 @@ export const defaultTranslations = {
     passwordTooltipMessage: "Cambiar contraseña",
     editUserTooltipMessage: "Editar usuario"
   },
+  adminsActions: {
+    editAdminTooltipMessage: "Editar administrador"
+  },
   admins: {
     addAdminButtonLabel: "Agregar administrador"
   },
