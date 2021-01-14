@@ -8,10 +8,11 @@ import {
   UpdatedAt,
   DeletedAt
 } from "sequelize-typescript";
-import { ENUM, UUID } from "sequelize";
+import { ENUM, UUID, DATE } from "sequelize";
 import { UserSequelizeModel } from "..";
-import { Secretary, SecretaryEnumValues } from "./Interface";
+import { Secretary, SecretaryEnumValues, AdminStatus } from "./Interface";
 import { isSecretary } from "../SequelizeModelValidators";
+import { Nullable } from "../SequelizeModel";
 
 @Table({ tableName: "Admins", timestamps: true, paranoid: true })
 export class Admin extends Model<Admin> {
@@ -35,8 +36,8 @@ export class Admin extends Model<Admin> {
   public updatedAt: Date;
 
   @DeletedAt
-  @Column
-  public deletedAt: Date;
+  @Column({ type: DATE, allowNull: true })
+  public deletedAt: Nullable<Date>;
 
   @BelongsTo(() => UserSequelizeModel, "userUuid")
   public user: UserSequelizeModel;
@@ -47,5 +48,10 @@ export class Admin extends Model<Admin> {
 
   public isFromGraduadosSecretary() {
     return this.secretary === Secretary.graduados;
+  }
+
+  public getStatus() {
+    if (!this.deletedAt) return AdminStatus.active;
+    return AdminStatus.deactivated;
   }
 }
