@@ -73,6 +73,34 @@ describe("AdminRepository", () => {
     });
   });
 
+  describe("delete", () => {
+    it("deletes an admin by setting a date in the deletedAt property", async () => {
+      const user = await UserGenerator.instance();
+      const attributes = { userUuid: user.uuid!, secretary: Secretary.extension };
+      const admin = new Admin(attributes);
+      await AdminRepository.save(admin);
+      const persistedAdmin = await AdminRepository.findByUserUuid(admin.userUuid);
+      expect(persistedAdmin.userUuid).toEqual(admin.userUuid);
+      await AdminRepository.delete(admin);
+      await expect(AdminRepository.findByUserUuid(admin.userUuid)).rejects.toThrowErrorWithMessage(
+        AdminNotFoundError,
+        AdminNotFoundError.buildMessage(admin.userUuid)
+      );
+    });
+
+    it("throws error if admin already exists even if it was deleted", async () => {
+      const user = await UserGenerator.instance();
+      const admin = new Admin({ userUuid: user.uuid!, secretary: Secretary.graduados });
+      const anotherAdmin = new Admin({ userUuid: user.uuid!, secretary: Secretary.graduados });
+      await AdminRepository.save(admin);
+      await AdminRepository.delete(admin);
+      await expect(AdminRepository.save(anotherAdmin)).rejects.toThrowErrorWithMessage(
+        UniqueConstraintError,
+        "Validation error"
+      );
+    });
+  });
+
   describe("findLatest", () => {
     let admin1;
     let admin2;

@@ -7,6 +7,7 @@ import { Secretary } from "$models/Admin/Interface";
 
 export const AdminRepository = {
   save: (admin: Admin, transaction?: Transaction) => admin.save({ transaction }),
+  delete: (admin: Admin) => admin.destroy(),
   findByUserUuidIfExists: async (userUuid: string) => Admin.findByPk(userUuid),
   findByUserUuid: async (userUuid: string) => {
     const admin = await Admin.findByPk(userUuid);

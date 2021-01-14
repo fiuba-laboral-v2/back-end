@@ -11,7 +11,7 @@ export const deactivateAdminAccount = {
   },
   resolve: async (_: undefined, { uuid }: IDeactivateAdminAccount) => {
     const admin = await AdminRepository.findByUserUuid(uuid);
-    await admin.destroy();
+    await AdminRepository.delete(admin);
     return admin;
   }
 };
