@@ -48,7 +48,7 @@ export const OfferRepository = {
       if (graduatesStatus) statusClauses[Op.or].push(graduatesStatus);
     });
 
-    if (statuses && statuses.length > 0) where[Op.and].push(statusClauses);
+    if (statuses) where[Op.and].push(statusClauses);
     where[Op.and].push({ companyUuid });
 
     return PaginationQuery.findLatest({

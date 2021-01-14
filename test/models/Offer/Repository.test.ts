@@ -633,13 +633,22 @@ describe("OfferRepository", () => {
       allOffers = allOffers.sort(offer => -offer.updatedAt);
     });
 
-    it("finds all offers from my company", async () => {
+    it("returns all offers from my company", async () => {
       const { results, shouldFetchMore } = await OfferRepository.findLatestByCompany({
         companyUuid
       });
       const uuids = results.map(({ uuid }) => uuid);
       expect(shouldFetchMore).toBe(false);
       expect(uuids).toEqual(allOffers.map(({ uuid }) => uuid));
+    });
+
+    it("returns no offers from my company if statuses is an empty array", async () => {
+      const { results, shouldFetchMore } = await OfferRepository.findLatestByCompany({
+        companyUuid,
+        statuses: []
+      });
+      expect(shouldFetchMore).toBe(false);
+      expect(results).toEqual([]);
     });
 
     it("returns offers that have OfferStatus approved for students or graduates", async () => {
