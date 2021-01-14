@@ -105,7 +105,7 @@ describe("ApplicantApprovalEventRepository", () => {
       expect(await ApplicantApprovalEventRepository.findAll()).toHaveLength(0);
     });
 
-    it("deletes all events if admins table is truncated", async () => {
+    it("does not delete all events if admins table is truncated", async () => {
       await ApplicantApprovalEventRepository.truncate();
       await createApplicantApprovalEvent();
       await createApplicantApprovalEvent();
@@ -113,7 +113,7 @@ describe("ApplicantApprovalEventRepository", () => {
       await createApplicantApprovalEvent();
       expect(await ApplicantApprovalEventRepository.findAll()).toHaveLength(4);
       await AdminRepository.truncate();
-      expect(await ApplicantApprovalEventRepository.findAll()).toHaveLength(0);
+      expect(await ApplicantApprovalEventRepository.findAll()).toHaveLength(4);
     });
   });
 });

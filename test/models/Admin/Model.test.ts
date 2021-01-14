@@ -12,11 +12,20 @@ describe("Admin", () => {
     expect(admin).toBeObjectContaining(attributes);
   });
 
-  it("creates a a graduados admin", async () => {
+  it("creates a graduados admin", async () => {
     const attributes = { userUuid: UUID.generate(), secretary: Secretary.graduados };
     const admin = new Admin(attributes);
     await expect(admin.validate()).resolves.not.toThrow();
     expect(admin).toBeObjectContaining(attributes);
+  });
+
+  it("creates an admin with no timestamps", async () => {
+    const attributes = { userUuid: UUID.generate(), secretary: Secretary.graduados };
+    const admin = new Admin(attributes);
+    await expect(admin.validate()).resolves.not.toThrow();
+    expect(admin.createdAt).toBeUndefined();
+    expect(admin.updatedAt).toBeUndefined();
+    expect(admin.createdAt).toBeUndefined();
   });
 
   it("returns true if the admin is from extension secretary", async () => {

@@ -1,10 +1,12 @@
 import { DATE, UUID, QueryInterface } from "sequelize";
 
+const TABLE_NAME = "Admins";
+
 export = {
   up: (queryInterface: QueryInterface) =>
     queryInterface.sequelize.transaction(async transaction => {
       await queryInterface.createTable(
-        "Admins",
+        TABLE_NAME,
         {
           userUuid: {
             allowNull: false,
@@ -23,15 +25,19 @@ export = {
           updatedAt: {
             allowNull: false,
             type: DATE
+          },
+          deletedAt: {
+            allowNull: true,
+            type: DATE
           }
         },
         { transaction }
       );
-      await queryInterface.addConstraint("Admins", ["userUuid"], {
+      await queryInterface.addConstraint(TABLE_NAME, ["userUuid"], {
         type: "primary key",
         name: "Admins_userUuid_key",
         transaction
       });
     }),
-  down: (queryInterface: QueryInterface) => queryInterface.dropTable("Admins")
+  down: (queryInterface: QueryInterface) => queryInterface.dropTable(TABLE_NAME)
 };

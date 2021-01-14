@@ -209,5 +209,14 @@ describe("AdminRepository", () => {
       await UserRepository.truncate();
       expect((await AdminRepository.findLatest()).results).toHaveLength(0);
     });
+
+    it("deletes all admins if admins tables is truncated", async () => {
+      await AdminGenerator.extension();
+      await AdminGenerator.graduados();
+      await AdminGenerator.extension();
+      expect((await AdminRepository.findLatest()).results.length).toBeGreaterThan(0);
+      await AdminRepository.truncate();
+      expect((await AdminRepository.findLatest()).results).toHaveLength(0);
+    });
   });
 });
