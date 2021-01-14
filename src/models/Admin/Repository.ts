@@ -25,7 +25,7 @@ export const AdminRepository = {
   findLatest: (updatedBeforeThan?: IPaginatedInput) =>
     PaginationQuery.findLatest({
       updatedBeforeThan,
-      query: options => Admin.findAll(options),
+      query: options => Admin.findAll({ ...options, paranoid: false }),
       uuidKey: "userUuid",
       order: [
         ["updatedAt", "DESC"],
