@@ -8,6 +8,7 @@ export const adminPermissions = {
   },
   Mutation: {
     saveAdmin: isAdmin,
-    updateAdmin: isAdmin
+    updateAdmin: isAdmin,
+    deactivateAdminAccount: isAdmin
   }
 };
