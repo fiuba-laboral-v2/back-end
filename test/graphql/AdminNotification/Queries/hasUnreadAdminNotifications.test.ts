@@ -1,12 +1,9 @@
 import { gql } from "apollo-server";
 import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist/createTestClient";
-
 import { Admin } from "$models";
-
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { AdminNotificationRepository } from "$models/AdminNotification";
-
 import { AdminGenerator } from "$generators/Admin";
 import { AdminNotificationGenerator } from "$generators/AdminNotification";
 import { ApprovalStatus } from "$models/ApprovalStatus";
@@ -17,7 +14,9 @@ import { Secretary } from "$models/Admin";
 
 const HAS_UNREAD_ADMIN_NOTIFICATIONS = gql`
   query HasUnreadAdminNotifications {
-    hasUnreadAdminNotifications
+    hasUnreadAdminNotifications {
+      hasUnreadNotifications
+    }
   }
 `;
 
@@ -55,7 +54,7 @@ describe("hasUnreadAdminNotifications", () => {
     }
     const { data, errors } = await performQuery(apolloClient);
     expect(errors).toBeUndefined();
-    expect(data!.hasUnreadAdminNotifications).toBe(true);
+    expect(data!.hasUnreadAdminNotifications.hasUnreadNotifications).toBe(true);
   });
 
   it("returns false if there is no notifications for graduados admin", async () => {
@@ -63,7 +62,7 @@ describe("hasUnreadAdminNotifications", () => {
     const { apolloClient } = await TestClientGenerator.admin({ secretary });
     const { data, errors } = await performQuery(apolloClient);
     expect(errors).toBeUndefined();
-    expect(data!.hasUnreadAdminNotifications).toBe(false);
+    expect(data!.hasUnreadAdminNotifications.hasUnreadNotifications).toBe(false);
   });
 
   it("returns false if there is no notifications for extension admin", async () => {
@@ -72,7 +71,7 @@ describe("hasUnreadAdminNotifications", () => {
     const { apolloClient } = await TestClientGenerator.admin({ secretary });
     const { data, errors } = await performQuery(apolloClient);
     expect(errors).toBeUndefined();
-    expect(data!.hasUnreadAdminNotifications).toBe(false);
+    expect(data!.hasUnreadAdminNotifications.hasUnreadNotifications).toBe(false);
   });
 
   it("returns an error if there is no current user", async () => {

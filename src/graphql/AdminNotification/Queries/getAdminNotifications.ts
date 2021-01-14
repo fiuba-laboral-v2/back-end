@@ -5,12 +5,17 @@ import {
   IPaginatedInput
 } from "$graphql/Pagination/Types/GraphQLPaginatedInput";
 import { IApolloServerContext } from "$graphql/Context";
-
 import { AdminNotificationRepository } from "$models/AdminNotification";
 import { AdminRepository } from "$models/Admin";
+import { nonNull } from "$graphql/fieldTypes";
+import { GraphQLHasUnreadAdminNotifications } from "$graphql/AdminNotification/Types/GraphQLHasUnreadAdminNotifications";
 
 export const getAdminNotifications = {
-  type: GraphQLPaginatedResults(GraphQLAdminNotification),
+  type: GraphQLPaginatedResults(GraphQLAdminNotification, {
+    hasUnreadNotifications: {
+      type: nonNull(GraphQLHasUnreadAdminNotifications)
+    }
+  }),
   args: {
     updatedBeforeThan: {
       type: GraphQLPaginatedInput
@@ -28,6 +33,13 @@ export const getAdminNotifications = {
     });
     const notificationUuids = notifications.results.map(({ uuid }) => uuid!);
     await AdminNotificationRepository.markAsReadByUuids(notificationUuids);
-    return notifications;
+    return {
+      ...notifications,
+      hasUnreadNotifications: {
+        hasUnreadNotifications: await AdminNotificationRepository.hasUnreadNotifications({
+          secretary: admin.secretary
+        })
+      }
+    };
   }
 };
