@@ -10,7 +10,7 @@ import {
 } from "sequelize-typescript";
 import { ENUM, UUID } from "sequelize";
 import { UserSequelizeModel } from "..";
-import { Secretary, SecretaryEnumValues } from "./Interface";
+import { Secretary, SecretaryEnumValues, AdminStatus } from "./Interface";
 import { isSecretary } from "../SequelizeModelValidators";
 
 @Table({ tableName: "Admins", timestamps: true, paranoid: true })
@@ -47,5 +47,10 @@ export class Admin extends Model<Admin> {
 
   public isFromGraduadosSecretary() {
     return this.secretary === Secretary.graduados;
+  }
+
+  public getStatus() {
+    if (!this.deletedAt) return AdminStatus.active;
+    return AdminStatus.deactivated;
   }
 }
