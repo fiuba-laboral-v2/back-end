@@ -57,8 +57,8 @@ describe("updateAdmin", () => {
     secretary: extensionAdmin.secretary
   });
 
-  const performQuery = (apolloClient: TestClient, variables: IUpdateAdmin) =>
-    apolloClient.query({ query: UPDATE_ADMIN, variables });
+  const performMutation = (apolloClient: TestClient, variables: IUpdateAdmin) =>
+    apolloClient.mutate({ mutation: UPDATE_ADMIN, variables });
 
   const expectToUpdateAttribute = async (
     path: string,
@@ -76,7 +76,7 @@ describe("updateAdmin", () => {
       secretary: admin.secretary
     };
     set(attributes, path, value);
-    const { data, errors } = await performQuery(apolloClient, attributes);
+    const { data, errors } = await performMutation(apolloClient, attributes);
     expect(errors).toBeUndefined();
     const updatedUser = await UserRepository.findByUuid(admin.userUuid);
     const updatedAdmin = await AdminRepository.findByUserUuid(admin.userUuid);
@@ -106,7 +106,7 @@ describe("updateAdmin", () => {
         },
         secretary: Secretary.graduados
       };
-      const { data, errors } = await performQuery(apolloClient, attributes);
+      const { data, errors } = await performMutation(apolloClient, attributes);
       expect(errors).toBeUndefined();
       expect(data!.updateAdmin).toEqual(attributes);
     });
@@ -138,7 +138,7 @@ describe("updateAdmin", () => {
         },
         secretary: admin.secretary
       };
-      const { errors } = await performQuery(apolloClient, attributes);
+      const { errors } = await performMutation(apolloClient, attributes);
       expect(errors).toEqualGraphQLErrorType("UserEmailAlreadyExistsError");
     });
   });
@@ -157,7 +157,7 @@ describe("updateAdmin", () => {
         },
         secretary: Secretary.extension
       };
-      const { data, errors } = await performQuery(apolloClient, attributes);
+      const { data, errors } = await performMutation(apolloClient, attributes);
       expect(errors).toBeUndefined();
       expect(data!.updateAdmin).toEqual(attributes);
     });
@@ -189,32 +189,32 @@ describe("updateAdmin", () => {
         },
         secretary: Secretary.extension
       };
-      const { errors } = await performQuery(apolloClient, attributes);
+      const { errors } = await performMutation(apolloClient, attributes);
       expect(errors).toEqualGraphQLErrorType("UserEmailAlreadyExistsError");
     });
   });
 
   it("returns an error if there is no current user", async () => {
     const apolloClient = client.loggedOut();
-    const { errors } = await performQuery(apolloClient, defaultExtensionAdminVariables());
+    const { errors } = await performMutation(apolloClient, defaultExtensionAdminVariables());
     expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
   });
 
   it("returns an error if the current user is from a pending company", async () => {
     const { apolloClient } = await TestClientGenerator.company({ status: ApprovalStatus.pending });
-    const { errors } = await performQuery(apolloClient, defaultExtensionAdminVariables());
+    const { errors } = await performMutation(apolloClient, defaultExtensionAdminVariables());
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("returns an error if the current user is from an approved company", async () => {
     const { apolloClient } = await TestClientGenerator.company({ status: ApprovalStatus.approved });
-    const { errors } = await performQuery(apolloClient, defaultExtensionAdminVariables());
+    const { errors } = await performMutation(apolloClient, defaultExtensionAdminVariables());
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("returns an error if the current user is from a rejected company", async () => {
     const { apolloClient } = await TestClientGenerator.company({ status: ApprovalStatus.rejected });
-    const { errors } = await performQuery(apolloClient, defaultExtensionAdminVariables());
+    const { errors } = await performMutation(apolloClient, defaultExtensionAdminVariables());
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
@@ -222,7 +222,7 @@ describe("updateAdmin", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: ApprovalStatus.approved
     });
-    const { errors } = await performQuery(apolloClient, defaultExtensionAdminVariables());
+    const { errors } = await performMutation(apolloClient, defaultExtensionAdminVariables());
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
@@ -230,7 +230,7 @@ describe("updateAdmin", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: ApprovalStatus.rejected
     });
-    const { errors } = await performQuery(apolloClient, defaultExtensionAdminVariables());
+    const { errors } = await performMutation(apolloClient, defaultExtensionAdminVariables());
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
@@ -238,7 +238,7 @@ describe("updateAdmin", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: ApprovalStatus.pending
     });
-    const { errors } = await performQuery(apolloClient, defaultExtensionAdminVariables());
+    const { errors } = await performMutation(apolloClient, defaultExtensionAdminVariables());
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 });

@@ -50,13 +50,13 @@ describe("saveAdmin", () => {
     secretary
   });
 
-  const performQuery = (apolloClient: TestClient, variables: ISaveAdmin) =>
-    apolloClient.query({ query: SAVE_ADMIN, variables });
+  const performMutation = (apolloClient: TestClient, variables: ISaveAdmin) =>
+    apolloClient.mutate({ mutation: SAVE_ADMIN, variables });
 
   const expectToCreateAnAdmin = async (secretary: Secretary, variables?: ISaveAdmin) => {
     const { apolloClient } = await TestClientGenerator.admin({ secretary });
     const adminVariables = variables || generateVariables(secretary);
-    const { data, errors } = await performQuery(apolloClient, adminVariables);
+    const { data, errors } = await performMutation(apolloClient, adminVariables);
     expect(errors).toBeUndefined();
     expect(data!.saveAdmin).toEqual({
       uuid: expect.stringMatching(UUID_REGEX),
@@ -98,7 +98,7 @@ describe("saveAdmin", () => {
     jest.spyOn(AdminRepository, "save").mockImplementation(() => {
       throw new Error();
     });
-    const { errors } = await performQuery(apolloClient, adminVariables);
+    const { errors } = await performMutation(apolloClient, adminVariables);
     expect(errors).not.toBeUndefined();
     await expect(
       UserRepository.findFiubaUserByDni(adminVariables.user.dni)
@@ -112,7 +112,7 @@ describe("saveAdmin", () => {
     const secretary = Secretary.graduados;
     const { apolloClient, admin } = await TestClientGenerator.admin({ secretary });
     const user = await UserRepository.findByUuid(admin.userUuid);
-    const { errors } = await performQuery(apolloClient, {
+    const { errors } = await performMutation(apolloClient, {
       secretary: admin.secretary,
       user: {
         name: user.name,
@@ -129,31 +129,31 @@ describe("saveAdmin", () => {
     jest.spyOn(FiubaUsersService, "authenticate").mockImplementation(async () => false);
     const secretary = Secretary.graduados;
     const { apolloClient } = await TestClientGenerator.admin({ secretary });
-    const { errors } = await performQuery(apolloClient, generateVariables(secretary));
+    const { errors } = await performMutation(apolloClient, generateVariables(secretary));
     expect(errors).toEqualGraphQLErrorType(BadCredentialsError.name);
   });
 
   it("returns an error if there is no current user", async () => {
     const apolloClient = client.loggedOut();
-    const { errors } = await performQuery(apolloClient, generateVariables(Secretary.extension));
+    const { errors } = await performMutation(apolloClient, generateVariables(Secretary.extension));
     expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
   });
 
   it("returns an error if the current user is from a pending company", async () => {
     const { apolloClient } = await TestClientGenerator.company({ status: ApprovalStatus.pending });
-    const { errors } = await performQuery(apolloClient, generateVariables(Secretary.extension));
+    const { errors } = await performMutation(apolloClient, generateVariables(Secretary.extension));
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("returns an error if the current user is from an approved company", async () => {
     const { apolloClient } = await TestClientGenerator.company({ status: ApprovalStatus.approved });
-    const { errors } = await performQuery(apolloClient, generateVariables(Secretary.extension));
+    const { errors } = await performMutation(apolloClient, generateVariables(Secretary.extension));
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("returns an error if the current user is from a rejected company", async () => {
     const { apolloClient } = await TestClientGenerator.company({ status: ApprovalStatus.rejected });
-    const { errors } = await performQuery(apolloClient, generateVariables(Secretary.extension));
+    const { errors } = await performMutation(apolloClient, generateVariables(Secretary.extension));
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
@@ -161,7 +161,7 @@ describe("saveAdmin", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: ApprovalStatus.approved
     });
-    const { errors } = await performQuery(apolloClient, generateVariables(Secretary.extension));
+    const { errors } = await performMutation(apolloClient, generateVariables(Secretary.extension));
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
@@ -169,7 +169,7 @@ describe("saveAdmin", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: ApprovalStatus.rejected
     });
-    const { errors } = await performQuery(apolloClient, generateVariables(Secretary.extension));
+    const { errors } = await performMutation(apolloClient, generateVariables(Secretary.extension));
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
@@ -177,7 +177,7 @@ describe("saveAdmin", () => {
     const { apolloClient } = await TestClientGenerator.applicant({
       status: ApprovalStatus.pending
     });
-    const { errors } = await performQuery(apolloClient, generateVariables(Secretary.extension));
+    const { errors } = await performMutation(apolloClient, generateVariables(Secretary.extension));
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 });
