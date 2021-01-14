@@ -38,6 +38,21 @@ describe("AdminRepository", () => {
       expect(admin.updatedAt).toEqual(expect.any(Date));
     });
 
+    it("persists an Admin with deletedAt in null", async () => {
+      const user = await UserGenerator.instance();
+      const admin = new Admin({ userUuid: user.uuid!, secretary: Secretary.graduados });
+      await AdminRepository.save(admin);
+      expect(admin.deletedAt).toBeNull();
+    });
+
+    it("persist a date in deletedAt", async () => {
+      const deletedAt = new Date();
+      const user = await UserGenerator.instance();
+      const admin = new Admin({ userUuid: user.uuid!, secretary: Secretary.graduados, deletedAt });
+      await AdminRepository.save(admin);
+      expect(admin.deletedAt).toEqual(deletedAt);
+    });
+
     it("throws error if userUuid does not belong to a persisted user", async () => {
       const admin = new Admin({ userUuid: UUID.generate(), secretary: Secretary.graduados });
       await expect(AdminRepository.save(admin)).rejects.toThrowErrorWithMessage(
@@ -196,6 +211,17 @@ describe("AdminRepository", () => {
       ).rejects.toThrowErrorWithMessage(
         AdminNotFoundError,
         AdminNotFoundError.buildMessage(nonExistentUserUuid)
+      );
+    });
+
+    it("throws error if userUuid belongs to a persisted user with a deletedAt date", async () => {
+      const deletedAt = new Date();
+      const user = await UserGenerator.instance();
+      const admin = new Admin({ userUuid: user.uuid!, secretary: Secretary.graduados, deletedAt });
+      await AdminRepository.save(admin);
+      await expect(AdminRepository.findByUserUuid(admin.userUuid)).rejects.toThrowErrorWithMessage(
+        AdminNotFoundError,
+        AdminNotFoundError.buildMessage(admin.userUuid)
       );
     });
   });
