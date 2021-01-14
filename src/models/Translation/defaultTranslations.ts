@@ -213,7 +213,7 @@ export const defaultTranslations = {
     submit: "Guardar"
   },
   deactivateAdminAccount: {
-    title: "Desactivar la cuenta del administrador: ",
+    title: "Desactivar la cuenta del administrador:",
     description: "Si realiza esta acción, elimina al administrador de la vista pública",
     submit: "Guardar"
   },
