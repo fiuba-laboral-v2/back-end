@@ -13,7 +13,9 @@ import { Secretary } from "$models/Admin";
 
 const HAS_UNREAD_APPLICANT_NOTIFICATIONS = gql`
   query HasUnreadApplicantNotifications {
-    hasUnreadApplicantNotifications
+    hasUnreadApplicantNotifications {
+      hasUnreadNotifications
+    }
   }
 `;
 
@@ -45,14 +47,14 @@ describe("hasUnreadApplicantNotifications", () => {
     }
     const { data, errors } = await performQuery(apolloClient);
     expect(errors).toBeUndefined();
-    expect(data!.hasUnreadApplicantNotifications).toBe(true);
+    expect(data!.hasUnreadApplicantNotifications.hasUnreadNotifications).toBe(true);
   });
 
   it("returns false if there is no notifications", async () => {
     const { apolloClient } = await createApplicantTestClient(ApprovalStatus.approved);
     const { data, errors } = await performQuery(apolloClient);
     expect(errors).toBeUndefined();
-    expect(data!.hasUnreadApplicantNotifications).toBe(false);
+    expect(data!.hasUnreadApplicantNotifications.hasUnreadNotifications).toBe(false);
   });
 
   it("returns an error if there is no current user", async () => {

@@ -13,7 +13,9 @@ import { CompanyNotificationGenerator } from "$generators/CompanyNotification";
 
 const HAS_UNREAD_COMPANY_NOTIFICATIONS = gql`
   query hasUnreadCompanyNotifications {
-    hasUnreadCompanyNotifications
+    hasUnreadCompanyNotifications {
+      hasUnreadNotifications
+    }
   }
 `;
 
@@ -45,14 +47,14 @@ describe("hasUnreadCompanyNotifications", () => {
     }
     const { data, errors } = await performQuery(apolloClient);
     expect(errors).toBeUndefined();
-    expect(data!.hasUnreadCompanyNotifications).toBe(true);
+    expect(data!.hasUnreadCompanyNotifications.hasUnreadNotifications).toBe(true);
   });
 
   it("returns false if there is no notifications", async () => {
     const { apolloClient } = await createCompanyTestClient(ApprovalStatus.approved);
     const { data, errors } = await performQuery(apolloClient);
     expect(errors).toBeUndefined();
-    expect(data!.hasUnreadCompanyNotifications).toBe(false);
+    expect(data!.hasUnreadCompanyNotifications.hasUnreadNotifications).toBe(false);
   });
 
   it("returns an error if there is no current user", async () => {
