@@ -592,6 +592,133 @@ describe("OfferRepository", () => {
     });
   });
 
+  describe("findLatestByCompany", () => {
+    let company: Company;
+    let companyUuid: string;
+    let offers: IForAllTargetsAndStatuses;
+    let allOffers: Offer[];
+    let expiredOfferForGraduates: Offer;
+    let expiredOfferForStudents: Offer;
+    let expiredOfferForBoth: Offer;
+
+    beforeAll(async () => {
+      await OfferRepository.truncate();
+
+      company = await CompanyGenerator.instance.withMinimumData();
+      companyUuid = company.uuid;
+      offers = await OfferGenerator.instance.forAllTargetsAndStatuses({ companyUuid });
+      expiredOfferForGraduates = await OfferGenerator.instance.forGraduates({ companyUuid });
+      expiredOfferForStudents = await OfferGenerator.instance.forStudents({ companyUuid });
+      expiredOfferForBoth = await OfferGenerator.instance.forStudentsAndGraduates({ companyUuid });
+      expiredOfferForGraduates.expire();
+      expiredOfferForStudents.expire();
+      expiredOfferForBoth.expire();
+      await OfferRepository.save(expiredOfferForGraduates);
+      await OfferRepository.save(expiredOfferForStudents);
+      await OfferRepository.save(expiredOfferForBoth);
+      allOffers = [
+        offers[ApplicantType.student][ApprovalStatus.pending],
+        offers[ApplicantType.student][ApprovalStatus.approved],
+        offers[ApplicantType.student][ApprovalStatus.rejected],
+        offers[ApplicantType.graduate][ApprovalStatus.pending],
+        offers[ApplicantType.graduate][ApprovalStatus.approved],
+        offers[ApplicantType.graduate][ApprovalStatus.rejected],
+        offers[ApplicantType.both][ApprovalStatus.pending],
+        offers[ApplicantType.both][ApprovalStatus.approved],
+        offers[ApplicantType.both][ApprovalStatus.rejected],
+        expiredOfferForGraduates,
+        expiredOfferForStudents,
+        expiredOfferForBoth
+      ];
+      allOffers = allOffers.sort(offer => -offer.updatedAt);
+    });
+
+    it("returns all offers from my company", async () => {
+      const { results, shouldFetchMore } = await OfferRepository.findLatestByCompany({
+        companyUuid
+      });
+      const uuids = results.map(({ uuid }) => uuid);
+      expect(shouldFetchMore).toBe(false);
+      expect(uuids).toEqual(allOffers.map(({ uuid }) => uuid));
+    });
+
+    it("returns no offers from my company if statuses is an empty array", async () => {
+      const { results, shouldFetchMore } = await OfferRepository.findLatestByCompany({
+        companyUuid,
+        statuses: []
+      });
+      expect(shouldFetchMore).toBe(false);
+      expect(results).toEqual([]);
+    });
+
+    it("returns offers that have OfferStatus approved for students or graduates", async () => {
+      const { results, shouldFetchMore } = await OfferRepository.findLatestByCompany({
+        companyUuid,
+        statuses: [OfferStatus.approved]
+      });
+      const uuids = results.map(({ uuid }) => uuid);
+      const offerForGraduate = offers[ApplicantType.graduate][ApprovalStatus.approved];
+      const offerForBoth = offers[ApplicantType.both][ApprovalStatus.approved];
+      const offerForStudents = offers[ApplicantType.student][ApprovalStatus.approved];
+
+      expect(shouldFetchMore).toBe(false);
+      expect(uuids).toEqual(
+        expect.arrayContaining([offerForStudents.uuid, offerForGraduate.uuid, offerForBoth.uuid])
+      );
+    });
+
+    it("returns offers that have OfferStatus pending for students or graduates", async () => {
+      const { results, shouldFetchMore } = await OfferRepository.findLatestByCompany({
+        companyUuid,
+        statuses: [OfferStatus.pending]
+      });
+      const uuids = results.map(({ uuid }) => uuid);
+      const offerForGraduate = offers[ApplicantType.graduate][ApprovalStatus.pending];
+      const offerForBoth = offers[ApplicantType.both][ApprovalStatus.pending];
+      const offerForStudents = offers[ApplicantType.student][ApprovalStatus.pending];
+
+      expect(shouldFetchMore).toBe(false);
+      expect(uuids).toEqual(
+        expect.arrayContaining([offerForStudents.uuid, offerForGraduate.uuid, offerForBoth.uuid])
+      );
+    });
+
+    it("returns offers that have OfferStatus approved or pending for students or graduates", async () => {
+      const { results, shouldFetchMore } = await OfferRepository.findLatestByCompany({
+        companyUuid,
+        statuses: [OfferStatus.approved, OfferStatus.pending]
+      });
+      const uuids = results.map(({ uuid }) => uuid);
+      expect(shouldFetchMore).toBe(false);
+      expect(uuids).toEqual(
+        expect.arrayContaining([
+          offers[ApplicantType.graduate][ApprovalStatus.pending].uuid,
+          offers[ApplicantType.both][ApprovalStatus.pending].uuid,
+          offers[ApplicantType.student][ApprovalStatus.pending].uuid,
+          offers[ApplicantType.graduate][ApprovalStatus.approved].uuid,
+          offers[ApplicantType.both][ApprovalStatus.approved].uuid,
+          offers[ApplicantType.student][ApprovalStatus.approved].uuid
+        ])
+      );
+    });
+
+    it("returns offers that have OfferStatus expired for students or graduates", async () => {
+      const { results, shouldFetchMore } = await OfferRepository.findLatestByCompany({
+        companyUuid,
+        statuses: [OfferStatus.expired]
+      });
+      const uuids = results.map(({ uuid }) => uuid);
+      expect(shouldFetchMore).toBe(false);
+      expect(uuids).toEqual(
+        expect.arrayContaining([
+          expiredOfferForStudents.uuid,
+          expiredOfferForGraduates.uuid,
+          expiredOfferForBoth.uuid
+        ])
+      );
+    });
+  });
+
   describe("Delete", () => {
     it("deletes all offers if all companies are deleted", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
