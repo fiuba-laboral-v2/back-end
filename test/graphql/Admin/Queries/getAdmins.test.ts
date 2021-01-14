@@ -23,6 +23,7 @@ const GET_ADMINS = gql`
         updatedAt
         createdAt
         secretary
+        status
         user {
           email
           name
@@ -60,29 +61,43 @@ describe("getAdmins", () => {
 
   describe("successful cases", () => {
     let adminExtraExtension: Admin;
+    let deletedAdminExtraExtension: Admin;
     let adminExtraGraduados: Admin;
+    let deletedAdminExtraGraduados: Admin;
     let allSortedAdmins;
 
     beforeAll(async () => {
       adminExtraExtension = await AdminGenerator.extension();
       adminExtraGraduados = await AdminGenerator.graduados();
+      deletedAdminExtraExtension = await AdminGenerator.extension();
+      await AdminRepository.delete(deletedAdminExtraExtension);
+      deletedAdminExtraGraduados = await AdminGenerator.graduados();
+      await AdminRepository.delete(deletedAdminExtraGraduados);
+      allSortedAdmins = [
+        deletedAdminExtraGraduados,
+        deletedAdminExtraExtension,
+        adminExtraGraduados,
+        adminExtraExtension,
+        adminExtension,
+        adminGraduados
+      ];
+
       allSortedAdmins = await Promise.all(
-        [adminExtraGraduados, adminExtraExtension, adminExtension, adminGraduados].map(
-          async admin => {
-            const user = await UserRepository.findByUuid(admin.userUuid);
-            return {
-              user: {
-                email: user.email,
-                name: user.name,
-                surname: user.surname
-              },
-              uuid: admin.userUuid,
-              updatedAt: admin.updatedAt.toISOString(),
-              createdAt: admin.createdAt.toISOString(),
-              secretary: admin.secretary
-            };
-          }
-        )
+        allSortedAdmins.map(async admin => {
+          const user = await UserRepository.findByUuid(admin.userUuid);
+          return {
+            user: {
+              email: user.email,
+              name: user.name,
+              surname: user.surname
+            },
+            uuid: admin.userUuid,
+            updatedAt: admin.updatedAt.toISOString(),
+            createdAt: admin.createdAt.toISOString(),
+            secretary: admin.secretary,
+            status: admin.getStatus()
+          };
+        })
       );
     });
 
