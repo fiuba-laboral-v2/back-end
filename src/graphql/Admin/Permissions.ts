@@ -6,6 +6,7 @@ export const adminPermissions = {
     getCompanyUsersByCompany: isAdmin
   },
   Mutation: {
-    saveAdmin: isAdmin
+    saveAdmin: isAdmin,
+    updateAdmin: isAdmin
   }
 };
