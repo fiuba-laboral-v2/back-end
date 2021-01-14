@@ -643,7 +643,7 @@ describe("OfferRepository", () => {
       expect(uuids).toEqual(allOffers.map(({ uuid }) => uuid));
     });
 
-    it("returns offers that are approved for students or graduates", async () => {
+    it("returns offers that have OfferStatus approved for students or graduates", async () => {
       const { results, shouldFetchMore } = await OfferRepository.findLatestByCompany({
         companyUuid,
         statuses: [OfferStatus.approved]
@@ -659,7 +659,7 @@ describe("OfferRepository", () => {
       );
     });
 
-    it("returns offers that are pending for students or graduates", async () => {
+    it("returns offers that have OfferStatus pending for students or graduates", async () => {
       const { results, shouldFetchMore } = await OfferRepository.findLatestByCompany({
         companyUuid,
         statuses: [OfferStatus.pending]
@@ -675,7 +675,7 @@ describe("OfferRepository", () => {
       );
     });
 
-    it("returns offers that are approved or pending for students or graduates", async () => {
+    it("returns offers that have OfferStatus approved or pending for students or graduates", async () => {
       const { results, shouldFetchMore } = await OfferRepository.findLatestByCompany({
         companyUuid,
         statuses: [OfferStatus.approved, OfferStatus.pending]
@@ -694,7 +694,7 @@ describe("OfferRepository", () => {
       );
     });
 
-    it("returns offers that are expired students or graduates", async () => {
+    it("returns offers that have OfferStatus expired for students or graduates", async () => {
       const { results, shouldFetchMore } = await OfferRepository.findLatestByCompany({
         companyUuid,
         statuses: [OfferStatus.expired]

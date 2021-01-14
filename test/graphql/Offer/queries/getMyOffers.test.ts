@@ -92,7 +92,7 @@ describe("getMyOffers", () => {
     expect(resultUuids).toEqual(expect.arrayContaining(allOfferUuids));
   });
 
-  it("returns the offers that are approved or pending for graduates or students", async () => {
+  it("returns the offers that have OfferStatus approved or pending for graduates or students", async () => {
     const { data, errors } = await getMyOffers({ hideRejectedAndExpiredOffers: true });
     expect(errors).toBeUndefined();
     const { shouldFetchMore, results } = data!.getMyOffers;
@@ -145,7 +145,7 @@ describe("getMyOffers", () => {
     });
   });
 
-  it("returns no offers if the current company does not have ny", async () => {
+  it("returns no offers if the current company does not have any", async () => {
     const { apolloClient } = await TestClientGenerator.company({
       status: ApprovalStatus.approved
     });
