@@ -5,14 +5,15 @@ import {
   ForeignKey,
   Model,
   Table,
-  UpdatedAt
+  UpdatedAt,
+  DeletedAt
 } from "sequelize-typescript";
 import { ENUM, UUID } from "sequelize";
 import { UserSequelizeModel } from "..";
 import { Secretary, SecretaryEnumValues } from "./Interface";
 import { isSecretary } from "../SequelizeModelValidators";
 
-@Table({ tableName: "Admins", timestamps: true })
+@Table({ tableName: "Admins", timestamps: true, paranoid: true })
 export class Admin extends Model<Admin> {
   @ForeignKey(() => UserSequelizeModel)
   @Column({ primaryKey: true, allowNull: false, type: UUID })
@@ -32,6 +33,10 @@ export class Admin extends Model<Admin> {
   @UpdatedAt
   @Column
   public updatedAt: Date;
+
+  @DeletedAt
+  @Column
+  public deletedAt: Date;
 
   @BelongsTo(() => UserSequelizeModel, "userUuid")
   public user: UserSequelizeModel;

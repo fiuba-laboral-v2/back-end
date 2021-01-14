@@ -195,7 +195,8 @@ export const defaultTranslations = {
     editUserTooltipMessage: "Editar usuario"
   },
   adminsActions: {
-    editAdminTooltipMessage: "Editar administrador"
+    editAdminTooltipMessage: "Editar administrador",
+    deactivateAccountLinkTooltipMessage: "Desactivar cuenta"
   },
   admins: {
     addAdminButtonLabel: "Agregar administrador"
@@ -210,6 +211,12 @@ export const defaultTranslations = {
   editAdmin: {
     userEmailAlreadyExistsError: "Un usuario con ese email ya existe",
     title: "Editar administrador",
+    submit: "Guardar"
+  },
+  deactivateAdminAccount: {
+    title: "Desactivar la cuenta del administrador:",
+    description:
+      "El administrador no podrá ingresar a la aplicación hasta que se reactive la cuenta",
     submit: "Guardar"
   },
   mainInformationFormSection: {

@@ -1,19 +1,18 @@
 import { gql } from "apollo-server";
 import { client } from "$test/graphql/ApolloTestClient";
-import { UserRepository } from "$models/User";
+import { UserRepository, FiubaCredentials } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { Secretary } from "$models/Admin";
 import { CurrentUserBuilder } from "$models/CurrentUser";
+import { FiubaUsersService } from "$services";
 
 import { UserNotFoundError, BadCredentialsError } from "$models/User/Errors";
 
+import { UserGenerator } from "$generators/User";
 import { ApplicantGenerator } from "$generators/Applicant";
 import { AdminGenerator } from "$generators/Admin";
-import { CompanyGenerator } from "$generators/Company";
 import { DniGenerator } from "$generators/DNI";
-import { FiubaUsersService } from "$services";
 import { userTokenAssertions } from "../userTokenAssertions";
-import { FiubaCredentials } from "$models/User/Credentials";
 
 const FIUBA_LOGIN = gql`
   mutation($dni: String!, $password: String!) {
@@ -75,16 +74,14 @@ describe("fiubaLogin", () => {
     expect(errors).toEqualGraphQLErrorType(BadCredentialsError.name);
   });
 
-  it("returns an error if the user is from a company", async () => {
+  it("returns an error if dni is not persisted", async () => {
     const password = "AValidPassword2";
-    const company = await CompanyGenerator.instance.withMinimumData({ user: { password } });
-    const [user] = await company.getUsers();
     const apolloClient = client.loggedOut();
     const { errors } = await apolloClient.mutate({
       mutation: FIUBA_LOGIN,
-      variables: { dni: user.dni, password }
+      variables: { dni: DniGenerator.generate(), password }
     });
-    expect(errors).not.toBeUndefined();
+    expect(errors).toEqualGraphQLErrorType(UserNotFoundError.name);
   });
 
   it("returns error if user does not exist", async () => {
@@ -93,5 +90,15 @@ describe("fiubaLogin", () => {
       variables: { dni: DniGenerator.generate(), password: "AValidPassword000" }
     });
     expect(errors).toEqualGraphQLErrorType(UserNotFoundError.name);
+  });
+
+  it("returns error if user is not an admin or an applicant", async () => {
+    const user = await UserGenerator.fiubaUser();
+    const dni = (user.credentials as FiubaCredentials).dni;
+    const { errors } = await client.loggedOut().mutate({
+      mutation: FIUBA_LOGIN,
+      variables: { dni, password: "AValidPassword000" }
+    });
+    expect(errors).toEqualGraphQLErrorType(BadCredentialsError.name);
   });
 });

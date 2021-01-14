@@ -38,6 +38,21 @@ describe("AdminRepository", () => {
       expect(admin.updatedAt).toEqual(expect.any(Date));
     });
 
+    it("persists an Admin with deletedAt in null", async () => {
+      const user = await UserGenerator.instance();
+      const admin = new Admin({ userUuid: user.uuid!, secretary: Secretary.graduados });
+      await AdminRepository.save(admin);
+      expect(admin.deletedAt).toBeNull();
+    });
+
+    it("persist a date in deletedAt", async () => {
+      const deletedAt = new Date();
+      const user = await UserGenerator.instance();
+      const admin = new Admin({ userUuid: user.uuid!, secretary: Secretary.graduados, deletedAt });
+      await AdminRepository.save(admin);
+      expect(admin.deletedAt).toEqual(deletedAt);
+    });
+
     it("throws error if userUuid does not belong to a persisted user", async () => {
       const admin = new Admin({ userUuid: UUID.generate(), secretary: Secretary.graduados });
       await expect(AdminRepository.save(admin)).rejects.toThrowErrorWithMessage(
@@ -51,6 +66,34 @@ describe("AdminRepository", () => {
       const admin = new Admin({ userUuid: user.uuid!, secretary: Secretary.graduados });
       const anotherAdmin = new Admin({ userUuid: user.uuid!, secretary: Secretary.graduados });
       await AdminRepository.save(admin);
+      await expect(AdminRepository.save(anotherAdmin)).rejects.toThrowErrorWithMessage(
+        UniqueConstraintError,
+        "Validation error"
+      );
+    });
+  });
+
+  describe("delete", () => {
+    it("deletes an admin by setting a date in the deletedAt property", async () => {
+      const user = await UserGenerator.instance();
+      const attributes = { userUuid: user.uuid!, secretary: Secretary.extension };
+      const admin = new Admin(attributes);
+      await AdminRepository.save(admin);
+      const persistedAdmin = await AdminRepository.findByUserUuid(admin.userUuid);
+      expect(persistedAdmin.userUuid).toEqual(admin.userUuid);
+      await AdminRepository.delete(admin);
+      await expect(AdminRepository.findByUserUuid(admin.userUuid)).rejects.toThrowErrorWithMessage(
+        AdminNotFoundError,
+        AdminNotFoundError.buildMessage(admin.userUuid)
+      );
+    });
+
+    it("throws error if admin already exists even if it was deleted", async () => {
+      const user = await UserGenerator.instance();
+      const admin = new Admin({ userUuid: user.uuid!, secretary: Secretary.graduados });
+      const anotherAdmin = new Admin({ userUuid: user.uuid!, secretary: Secretary.graduados });
+      await AdminRepository.save(admin);
+      await AdminRepository.delete(admin);
       await expect(AdminRepository.save(anotherAdmin)).rejects.toThrowErrorWithMessage(
         UniqueConstraintError,
         "Validation error"
@@ -198,6 +241,17 @@ describe("AdminRepository", () => {
         AdminNotFoundError.buildMessage(nonExistentUserUuid)
       );
     });
+
+    it("throws error if userUuid belongs to a persisted user with a deletedAt date", async () => {
+      const deletedAt = new Date();
+      const user = await UserGenerator.instance();
+      const admin = new Admin({ userUuid: user.uuid!, secretary: Secretary.graduados, deletedAt });
+      await AdminRepository.save(admin);
+      await expect(AdminRepository.findByUserUuid(admin.userUuid)).rejects.toThrowErrorWithMessage(
+        AdminNotFoundError,
+        AdminNotFoundError.buildMessage(admin.userUuid)
+      );
+    });
   });
 
   describe("cascade", () => {
@@ -207,6 +261,15 @@ describe("AdminRepository", () => {
       await AdminGenerator.extension();
       expect((await AdminRepository.findLatest()).results.length).toBeGreaterThan(0);
       await UserRepository.truncate();
+      expect((await AdminRepository.findLatest()).results).toHaveLength(0);
+    });
+
+    it("deletes all admins if admins tables is truncated", async () => {
+      await AdminGenerator.extension();
+      await AdminGenerator.graduados();
+      await AdminGenerator.extension();
+      expect((await AdminRepository.findLatest()).results.length).toBeGreaterThan(0);
+      await AdminRepository.truncate();
       expect((await AdminRepository.findLatest()).results).toHaveLength(0);
     });
   });
