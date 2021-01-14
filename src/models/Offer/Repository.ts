@@ -41,14 +41,14 @@ export const OfferRepository = {
   findLatestByCompany: ({ updatedBeforeThan, companyUuid, statuses }: IFindLatestByCompany) => {
     const where: { [Op.and]: WhereOptions[] } = { [Op.and]: [] };
     const statusClauses: { [Op.or]: WhereOptions[] } = { [Op.or]: [] };
-    statuses.map(status => {
+    (statuses || []).map(status => {
       const studentsStatus = OfferStatusWhereClause.build({ studentsStatus: status });
       const graduatesStatus = OfferStatusWhereClause.build({ graduatesStatus: status });
       if (studentsStatus) statusClauses[Op.or].push(studentsStatus);
       if (graduatesStatus) statusClauses[Op.or].push(graduatesStatus);
     });
 
-    if (statuses.length > 0) where[Op.and].push(statusClauses);
+    if (statuses && statuses.length > 0) where[Op.and].push(statusClauses);
     where[Op.and].push({ companyUuid });
 
     return PaginationQuery.findLatest({

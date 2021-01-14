@@ -635,8 +635,7 @@ describe("OfferRepository", () => {
 
     it("finds all offers from my company", async () => {
       const { results, shouldFetchMore } = await OfferRepository.findLatestByCompany({
-        companyUuid,
-        statuses: []
+        companyUuid
       });
       const uuids = results.map(({ uuid }) => uuid);
       expect(shouldFetchMore).toBe(false);

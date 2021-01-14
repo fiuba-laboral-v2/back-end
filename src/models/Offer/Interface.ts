@@ -44,7 +44,7 @@ export interface IFindAll {
 export interface IFindLatestByCompany {
   updatedBeforeThan?: IPaginatedInput;
   companyUuid: string;
-  statuses: OfferStatus[];
+  statuses?: OfferStatus[];
 }
 
 export enum OfferStatus {

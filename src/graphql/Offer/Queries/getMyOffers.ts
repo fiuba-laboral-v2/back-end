@@ -23,8 +23,8 @@ export const getMyOffers = {
     { updatedBeforeThan, hideRejectedAndExpiredOffers }: IGetMyOffers,
     { currentUser }: IApolloServerContext
   ) => {
-    const statuses: OfferStatus[] = [];
-    if (hideRejectedAndExpiredOffers) statuses.push(OfferStatus.approved, OfferStatus.pending);
+    let statuses: OfferStatus[] | undefined;
+    if (hideRejectedAndExpiredOffers) statuses = [OfferStatus.approved, OfferStatus.pending];
 
     return OfferRepository.findLatestByCompany({
       companyUuid: currentUser.getCompanyRole().companyUuid,
