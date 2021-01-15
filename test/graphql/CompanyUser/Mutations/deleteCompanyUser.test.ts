@@ -10,7 +10,7 @@ import { CompanyRepository } from "$models/Company";
 import {
   CompanyUserNotFoundError,
   CompanyUserRepository,
-  DeleteOnlyCompanyUserError
+  DeleteLastCompanyUserError
 } from "$models/CompanyUser";
 import { CareerRepository } from "$models/Career";
 import { UUID } from "$models/UUID";
@@ -55,7 +55,7 @@ describe("deleteCompanyUser", () => {
     const { apolloClient, user } = await TestClientGenerator.company({ status });
     const companyUser = await CompanyUserRepository.findByUserUuid(user.uuid!);
     const { errors } = await performMutation(apolloClient, companyUser.uuid!);
-    expect(errors).toEqualGraphQLErrorType(DeleteOnlyCompanyUserError.name);
+    expect(errors).toEqualGraphQLErrorType(DeleteLastCompanyUserError.name);
   });
 
   it("returns an error if the user is from another company", async () => {

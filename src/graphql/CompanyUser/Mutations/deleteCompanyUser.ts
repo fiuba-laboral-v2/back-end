@@ -1,7 +1,7 @@
 import { nonNull, ID, Int } from "$graphql/fieldTypes";
 import { IApolloServerContext } from "$graphql/Context";
 import { UserRepository } from "$models/User";
-import { CompanyUserRepository, DeleteOnlyCompanyUserError } from "$models/CompanyUser";
+import { CompanyUserRepository, DeleteLastCompanyUserError } from "$models/CompanyUser";
 import { UnauthorizedError } from "$graphql/Errors";
 
 export const deleteCompanyUser = {
@@ -18,7 +18,7 @@ export const deleteCompanyUser = {
   ) => {
     const { companyUuid } = currentUser.getCompanyRole();
     const companyUsers = await CompanyUserRepository.findByCompanyUuid(companyUuid);
-    if (companyUsers.length === 1) throw new DeleteOnlyCompanyUserError(companyUuid);
+    if (companyUsers.length === 1) throw new DeleteLastCompanyUserError(companyUuid);
 
     const companyUser = await CompanyUserRepository.findByUuid(uuid);
     if (companyUser.companyUuid !== companyUuid) throw new UnauthorizedError();
