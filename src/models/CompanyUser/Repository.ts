@@ -20,10 +20,7 @@ export const CompanyUserRepository = {
       where: { companyUuid },
       query: options => CompanyUser.findAll(options),
       uuidKey: "uuid",
-      order: [
-        ["updatedAt", "DESC"],
-        ["userUuid", "DESC"]
-      ]
+      timestampKey: "createdAt"
     }),
   truncate: () => CompanyUser.destroy({ truncate: true })
 };

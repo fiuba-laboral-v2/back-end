@@ -36,10 +36,7 @@ export const AdminRepository = {
       updatedBeforeThan,
       query: options => Admin.findAll({ ...options, paranoid: false }),
       uuidKey: "userUuid",
-      order: [
-        ["updatedAt", "DESC"],
-        ["userUuid", "DESC"]
-      ]
+      timestampKey: "createdAt"
     }),
   truncate: () => Admin.truncate({ cascade: true })
 };
