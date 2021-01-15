@@ -2,8 +2,8 @@ import { UpdatedCompanyProfileAdminNotification } from "$models/AdminNotificatio
 import {
   ApprovedJobApplicationApplicantNotification,
   ApprovedProfileApplicantNotification,
-  RejectedJobApplicationApplicantNotification,
   PendingJobApplicationApplicantNotification,
+  RejectedJobApplicationApplicantNotification,
   RejectedProfileApplicantNotification
 } from "$models/ApplicantNotification";
 import {
@@ -20,8 +20,8 @@ import {
   ApprovedProfileApplicantNotificationEmailSender,
   ApprovedProfileCompanyNotificationEmailSender,
   NewJobApplicationCompanyNotificationEmailSender,
-  RejectedJobApplicationApplicantNotificationEmailSender,
   PendingJobApplicationApplicantNotificationEmailSender,
+  RejectedJobApplicationApplicantNotificationEmailSender,
   RejectedOfferCompanyNotificationEmailSender,
   RejectedProfileApplicantNotificationEmailSender,
   RejectedProfileCompanyNotificationEmailSender,
@@ -45,7 +45,8 @@ describe("EmailSenderFactory", () => {
     const notification = new ApprovedOfferCompanyNotification({
       moderatorUuid: UUID.generate(),
       notifiedCompanyUuid: UUID.generate(),
-      offerUuid: UUID.generate()
+      offerUuid: UUID.generate(),
+      secretary: Secretary.extension
     });
     const emailSender = EmailSenderFactory.create(notification);
     expect(emailSender).toBe(ApprovedOfferCompanyNotificationEmailSender);

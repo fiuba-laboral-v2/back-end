@@ -46,7 +46,8 @@ describe("NotificationRepositoryFactory", () => {
     const notification = new ApprovedOfferCompanyNotification({
       moderatorUuid: UUID.generate(),
       notifiedCompanyUuid: UUID.generate(),
-      offerUuid: UUID.generate()
+      offerUuid: UUID.generate(),
+      secretary: Secretary.graduados
     });
     const repository = NotificationRepositoryFactory.getRepositoryFor(notification);
     expect(repository).toEqual(CompanyNotificationRepository);
