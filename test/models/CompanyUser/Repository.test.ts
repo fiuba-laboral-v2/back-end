@@ -12,6 +12,7 @@ import { UserGenerator } from "$generators/User";
 import { CuitGenerator } from "$generators/Cuit";
 import { UUID_REGEX } from "$test/models";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
+import { Nullable } from "$models/SequelizeModel";
 
 describe("CompanyUserRepository", () => {
   const companyAttributes = {
@@ -157,6 +158,7 @@ describe("CompanyUserRepository", () => {
     const { findLatestByCompany } = CompanyUserRepository;
     const size = 20;
     let companyUsers: CompanyUser[] = [];
+    let companyUserUuids: Array<Nullable<string>>;
     let companyUuid: string;
 
     beforeAll(async () => {
@@ -172,11 +174,23 @@ describe("CompanyUserRepository", () => {
       await CompanyRepository.save(company);
       companyUuid = company.uuid;
       companyUsers = await CompanyUserGenerator.range({ company, size });
+      companyUsers = companyUsers.sort(companyUser => companyUser.createdAt.getDate());
+      companyUserUuids = companyUsers.map(({ uuid }) => uuid);
     });
 
     it("finds all companyUsers", async () => {
       const result = await CompanyUserRepository.findLatestByCompany({ companyUuid });
       expect(result.results).toHaveLength(size);
+      expect(result.shouldFetchMore).toBe(false);
+    });
+
+    it("finds all companyUsers ordered by createdAt", async () => {
+      const result = await CompanyUserRepository.findLatestByCompany({ companyUuid });
+      const companyUser = await companyUsers[size / 2];
+      companyUser.set({ position: "POSITION" });
+      await CompanyUserRepository.save(companyUser);
+      const resultUuids = result.results.map(({ uuid }) => uuid);
+      expect(resultUuids).toEqual(companyUserUuids);
       expect(result.shouldFetchMore).toBe(false);
     });
 

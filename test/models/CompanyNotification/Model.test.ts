@@ -1,6 +1,6 @@
 import { CompanyNotificationSequelizeModel } from "$models";
 import { CompanyNotificationType } from "$models/CompanyNotification";
-import { isCompanyNotificationType, isUuid } from "$models/SequelizeModelValidators";
+import { isCompanyNotificationType, isUuid, isSecretary } from "$models/SequelizeModelValidators";
 import { SequelizeModelAssertions } from "../Notification/SequelizeModelAssertions";
 import { UUID } from "$models/UUID";
 
@@ -66,6 +66,12 @@ describe("CompanyNotificationSequelizeModel", () => {
     const companyNotification = new CompanyNotificationSequelizeModel(mandatoryAttributes);
     await expect(companyNotification.validate()).resolves.not.toThrowError();
     expect(companyNotification.offerUuid).toBeUndefined();
+  });
+
+  it("is valid without a secretary", async () => {
+    const companyNotification = new CompanyNotificationSequelizeModel(mandatoryAttributes);
+    await expect(companyNotification.validate()).resolves.not.toThrowError();
+    expect(companyNotification.secretary).toBeUndefined();
   });
 
   it("is created with isNew set to true", async () => {
@@ -139,6 +145,15 @@ describe("CompanyNotificationSequelizeModel", () => {
       attributes: newJobApplicationAttributes,
       attributeName: "offerUuid",
       message: isUuid.validate.isUUID.msg,
+      sequelizeModelClass: CompanyNotificationSequelizeModel
+    });
+  });
+
+  it("throws an error if secretary has an invalid value", async () => {
+    await expectToThrowErrorInInvalidFormat({
+      attributes: newJobApplicationAttributes,
+      attributeName: "secretary",
+      message: isSecretary.validate.isIn.msg,
       sequelizeModelClass: CompanyNotificationSequelizeModel
     });
   });

@@ -2,13 +2,15 @@ import { UUID } from "$models/UUID";
 import { ApprovedOfferCompanyNotification } from "$models/CompanyNotification";
 import { AttributeNotDefinedError, InvalidAttributeFormatError } from "$models/Errors";
 import { omit } from "lodash";
+import { Secretary } from "$models/Admin";
 
 describe("ApprovedOfferCompanyNotification", () => {
   const mandatoryAttributes = {
     moderatorUuid: UUID.generate(),
     notifiedCompanyUuid: UUID.generate(),
     offerUuid: UUID.generate(),
-    isNew: false
+    isNew: false,
+    secretary: Secretary.extension
   };
 
   const expectToThrowErrorOnMissingAttribute = (attributeName: string) => {
@@ -80,6 +82,10 @@ describe("ApprovedOfferCompanyNotification", () => {
     );
   });
 
+  it("throws an error if no secretary is provided", async () => {
+    expectToThrowErrorOnMissingAttribute("secretary");
+  });
+
   it("throws an error if no moderatorUuid is provided", async () => {
     expectToThrowErrorOnMissingAttribute("moderatorUuid");
   });
@@ -106,5 +112,9 @@ describe("ApprovedOfferCompanyNotification", () => {
 
   it("throws an error if offerUuid has invalid format", async () => {
     expectToThrowErrorOnUuidInvalidFormat("offerUuid");
+  });
+
+  it("throws an error if secretary has invalid format", async () => {
+    expectToThrowErrorOnUuidInvalidFormat("secretary");
   });
 });

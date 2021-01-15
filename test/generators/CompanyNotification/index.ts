@@ -32,7 +32,7 @@ export const CompanyNotificationGenerator = {
       return notification;
     },
     approvedOffer: async ({ company, admin, offer }: IOfferProps) => {
-      const { userUuid: moderatorUuid } = admin || (await AdminGenerator.extension());
+      const { userUuid: moderatorUuid, secretary } = admin || (await AdminGenerator.extension());
       const { uuid: companyUuid } = company || (await CompanyGenerator.instance.withMinimumData());
       const { uuid: offerUuid } =
         offer || (await OfferGenerator.instance.withObligatoryData({ companyUuid }));
@@ -40,14 +40,15 @@ export const CompanyNotificationGenerator = {
         moderatorUuid,
         notifiedCompanyUuid: companyUuid,
         offerUuid,
-        isNew: true
+        isNew: true,
+        secretary
       };
       const notification = new ApprovedOfferCompanyNotification(attributes);
       await CompanyNotificationRepository.save(notification);
       return notification;
     },
     rejectedOffer: async ({ company, admin, offer }: IOfferProps) => {
-      const { userUuid: moderatorUuid } = admin || (await AdminGenerator.extension());
+      const { userUuid: moderatorUuid, secretary } = admin || (await AdminGenerator.extension());
       const { uuid: companyUuid } = company || (await CompanyGenerator.instance.withMinimumData());
       const { uuid: offerUuid } =
         offer || (await OfferGenerator.instance.withObligatoryData({ companyUuid }));
@@ -56,7 +57,8 @@ export const CompanyNotificationGenerator = {
         notifiedCompanyUuid: companyUuid,
         offerUuid,
         moderatorMessage: "message",
-        isNew: true
+        isNew: true,
+        secretary
       };
       const notification = new RejectedOfferCompanyNotification(attributes);
       await CompanyNotificationRepository.save(notification);
