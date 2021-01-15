@@ -123,7 +123,23 @@ describe("AdminRepository", () => {
 
     it("returns the latest admin first included the deleted ones", async () => {
       const { results, shouldFetchMore } = await AdminRepository.findLatest();
-      const firstAdminInList = [results[0], results[1], results[2], deletedAdmin];
+      const firstAdminInList = [results[0], results[1], results[2], results[3]];
+      const firstAdminInListUuids = firstAdminInList.map(({ userUuid }) => userUuid);
+
+      expect(shouldFetchMore).toEqual(false);
+      expect(firstAdminInListUuids).toEqual([
+        admin3.userUuid,
+        admin2.userUuid,
+        admin1.userUuid,
+        deletedAdmin.userUuid
+      ]);
+    });
+
+    it("returns the admins ordered by createdAt", async () => {
+      deletedAdmin.set({ secretary: Secretary.graduados });
+      await AdminRepository.save(deletedAdmin);
+      const { results, shouldFetchMore } = await AdminRepository.findLatest();
+      const firstAdminInList = [results[0], results[1], results[2], results[3]];
       const firstAdminInListUuids = firstAdminInList.map(({ userUuid }) => userUuid);
 
       expect(shouldFetchMore).toEqual(false);
@@ -151,7 +167,7 @@ describe("AdminRepository", () => {
         mockItemsPerPage(itemsPerPage);
 
         const updatedBeforeThan = {
-          dateTime: admin7.updatedAt,
+          dateTime: admin7.createdAt,
           uuid: admin7.userUuid
         };
 
