@@ -192,7 +192,8 @@ export const defaultTranslations = {
   },
   companyUserActions: {
     passwordTooltipMessage: "Cambiar contraseña",
-    editUserTooltipMessage: "Editar usuario"
+    editUserTooltipMessage: "Editar usuario",
+    deleteUserTooltipMessage: "Eliminar usuario"
   },
   adminsActions: {
     editAdminTooltipMessage: "Editar administrador",
