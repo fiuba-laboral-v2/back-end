@@ -1,11 +1,9 @@
-import { CompanyUser } from "$models";
-
 export class DeleteOnlyCompanyUserError extends Error {
-  public static buildMessage(companyUser: CompanyUser) {
-    return `Cannot delete the last company user from the company: ${companyUser.companyUuid}`;
+  public static buildMessage(companyUuid: string) {
+    return `Cannot delete the last company user from the company: ${companyUuid}`;
   }
 
-  constructor(companyUser: CompanyUser) {
-    super(DeleteOnlyCompanyUserError.buildMessage(companyUser));
+  constructor(companyUuid: string) {
+    super(DeleteOnlyCompanyUserError.buildMessage(companyUuid));
   }
 }
