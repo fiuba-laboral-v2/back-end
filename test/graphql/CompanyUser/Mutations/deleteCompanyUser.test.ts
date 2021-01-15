@@ -50,7 +50,7 @@ describe("deleteCompanyUser", () => {
     );
   });
 
-  it("returns an error if its the last user from the company", async () => {
+  it("returns an error if it's the last user from the company", async () => {
     const status = ApprovalStatus.approved;
     const { apolloClient, user } = await TestClientGenerator.company({ status });
     const companyUser = await CompanyUserRepository.findByUserUuid(user.uuid!);
