@@ -3,6 +3,8 @@ import {
   CompanyUserRawCredentials,
   CompanyUserHashedCredentials
 } from "$models/User/Credentials";
+import { CompanyRepository } from "$models/Company";
+import { CompanyUserNotFoundError, CompanyUserRepository } from "$models/CompanyUser";
 import { UserRepository } from "$models/User";
 import { ICredentials, User, UserNotFoundError } from "$models/User";
 import { UniqueConstraintError } from "sequelize";
@@ -10,11 +12,15 @@ import { UUID } from "$models/UUID";
 
 import { EmailGenerator } from "$generators/Email";
 import { DniGenerator } from "$generators/DNI";
+import { CompanyGenerator } from "$generators/Company";
+import { CompanyUserGenerator } from "$generators/CompanyUser";
 import { UUID_REGEX } from "$test/models";
-import arrayContaining = jasmine.arrayContaining;
 
 describe("UserRepository", () => {
-  beforeAll(() => UserRepository.truncate());
+  beforeAll(async () => {
+    await UserRepository.truncate();
+    await CompanyRepository.truncate();
+  });
 
   const userAttributes = () => ({
     name: "name",
@@ -144,6 +150,55 @@ describe("UserRepository", () => {
           "Validation error"
         );
       });
+    });
+  });
+
+  describe("delete", () => {
+    it("deletes a user with FiubaCredentials", async () => {
+      const credentials = new FiubaCredentials(DniGenerator.generate());
+      const user = new User({ ...userAttributes(), credentials });
+      await UserRepository.save(user);
+      await UserRepository.delete(user);
+      await expect(UserRepository.findByUuid(user.uuid!)).rejects.toThrowErrorWithMessage(
+        UserNotFoundError,
+        UserNotFoundError.buildMessage({ uuid: user.uuid! })
+      );
+    });
+
+    it("deletes a user with CompanyUserRawCredentials", async () => {
+      const credentials = new CompanyUserRawCredentials({ password: "fdmgkfHGH4353" });
+      const user = new User({ ...userAttributes(), credentials });
+      await UserRepository.save(user);
+      await UserRepository.delete(user);
+      await expect(UserRepository.findByUuid(user.uuid!)).rejects.toThrowErrorWithMessage(
+        UserNotFoundError,
+        UserNotFoundError.buildMessage({ uuid: user.uuid! })
+      );
+    });
+
+    it("deletes a user with CompanyUserHashedCredentials", async () => {
+      const hashedPassword = "$2b$10$KrYD1NqSyMabjPoZu2UZS.ZI5/5CN5cjQ/5FQhGCbsyhuUClkdU/q";
+      const credentials = new CompanyUserHashedCredentials({ password: hashedPassword });
+      const user = new User({ ...userAttributes(), credentials });
+      await UserRepository.save(user);
+      await UserRepository.delete(user);
+      await expect(UserRepository.findByUuid(user.uuid!)).rejects.toThrowErrorWithMessage(
+        UserNotFoundError,
+        UserNotFoundError.buildMessage({ uuid: user.uuid! })
+      );
+    });
+
+    it("deletes a company user by cascade", async () => {
+      const company = await CompanyGenerator.instance.withMinimumData();
+      const companyUser = await CompanyUserGenerator.instance({ company });
+      const user = await UserRepository.findByUuid(companyUser.userUuid);
+      await UserRepository.delete(user);
+      await expect(
+        CompanyUserRepository.findByUserUuid(companyUser.userUuid)
+      ).rejects.toThrowErrorWithMessage(
+        CompanyUserNotFoundError,
+        CompanyUserNotFoundError.buildMessage()
+      );
     });
   });
 
@@ -303,7 +358,7 @@ describe("UserRepository", () => {
       await UserRepository.save(companyUser);
       const uuids = [fiubaUser.uuid!, companyUser.uuid!];
       const users = await UserRepository.findByUuids(uuids);
-      expect(users).toEqual(arrayContaining([fiubaUser, companyUser]));
+      expect(users).toEqual(expect.arrayContaining([fiubaUser, companyUser]));
     });
 
     it("returns an empty array if the given uuids are not persisted", async () => {
