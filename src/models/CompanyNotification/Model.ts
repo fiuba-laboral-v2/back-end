@@ -2,8 +2,9 @@ import { Table, Column, ForeignKey, CreatedAt } from "sequelize-typescript";
 import { BOOLEAN, TEXT, UUID, ENUM } from "sequelize";
 import { Admin, JobApplication, Company, Offer } from "$models";
 import { CompanyNotificationType, companyNotificationTypeEnumValues } from "./Interfaces";
-import { isUuid, isCompanyNotificationType } from "$models/SequelizeModelValidators";
+import { isUuid, isCompanyNotificationType, isSecretary } from "$models/SequelizeModelValidators";
 import { SequelizeModel, Nullable } from "$models/SequelizeModel";
+import { Secretary, SecretaryEnumValues } from "$models/Admin";
 
 @Table({ tableName: "CompanyNotifications", timestamps: true, updatedAt: false })
 export class CompanyNotificationSequelizeModel extends SequelizeModel<
@@ -37,6 +38,13 @@ export class CompanyNotificationSequelizeModel extends SequelizeModel<
   @ForeignKey(() => Offer)
   @Column({ allowNull: true, type: UUID, ...isUuid })
   public offerUuid: Nullable<string>;
+
+  @Column({
+    allowNull: true,
+    type: ENUM<string>({ values: SecretaryEnumValues }),
+    ...isSecretary
+  })
+  public secretary: Nullable<Secretary>;
 
   @CreatedAt
   @Column

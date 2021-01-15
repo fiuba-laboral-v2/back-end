@@ -12,6 +12,7 @@ import { UnknownNotificationError } from "$models/Notification";
 import { UUID } from "$models/UUID";
 import { CompanyNotificationSequelizeModel } from "$models";
 import { NotificationMapperAssertions } from "$test/models/Notification/NotificationMapperAssertions";
+import { Secretary } from "$models/Admin";
 
 describe("CompanyNotificationMapper", () => {
   const mapper = CompanyNotificationMapper;
@@ -59,7 +60,11 @@ describe("CompanyNotificationMapper", () => {
     });
 
     describe("ApprovedOfferCompanyNotification", () => {
-      const attributes = { ...commonAttributes, offerUuid: UUID.generate() };
+      const attributes = {
+        ...commonAttributes,
+        offerUuid: UUID.generate(),
+        secretary: Secretary.extension
+      };
       const notification = new ApprovedOfferCompanyNotification(attributes);
 
       it("returns an instance of CompanyNotificationSequelizeModel", async () => {
@@ -92,7 +97,8 @@ describe("CompanyNotificationMapper", () => {
       const attributes = {
         ...commonAttributes,
         offerUuid: UUID.generate(),
-        moderatorMessage: "message"
+        moderatorMessage: "message",
+        secretary: Secretary.extension
       };
       const notification = new RejectedOfferCompanyNotification(attributes);
 
@@ -218,7 +224,8 @@ describe("CompanyNotificationMapper", () => {
       const attributes = {
         ...commonAttributes,
         offerUuid: UUID.generate(),
-        type: CompanyNotificationType.approvedOffer
+        type: CompanyNotificationType.approvedOffer,
+        secretary: Secretary.graduados
       };
       const sequelizeModel = new CompanyNotificationSequelizeModel(attributes);
       expectToMapPersistenceModelToTheGivenNotification({
@@ -234,7 +241,8 @@ describe("CompanyNotificationMapper", () => {
         ...commonAttributes,
         offerUuid: UUID.generate(),
         type: CompanyNotificationType.rejectedOffer,
-        moderatorMessage: "message"
+        moderatorMessage: "message",
+        secretary: Secretary.graduados
       };
       const sequelizeModel = new CompanyNotificationSequelizeModel(attributes);
       expectToMapPersistenceModelToTheGivenNotification({

@@ -4,6 +4,7 @@ import { GraphQLOffer } from "$graphql/Offer/Types/GraphQLOffer";
 import { GraphQLGenericCompanyNotificationFields } from "./GraphQLGenericCompanyNotificationFields";
 import { RejectedOfferCompanyNotification } from "$models/CompanyNotification";
 import { OfferRepository } from "$models/Offer";
+import { GraphQLSecretary } from "$graphql/Admin/Types/GraphQLSecretary";
 
 export const GraphQLRejectedOfferCompanyNotification = new GraphQLObjectType<
   RejectedOfferCompanyNotification
@@ -13,6 +14,9 @@ export const GraphQLRejectedOfferCompanyNotification = new GraphQLObjectType<
     ...GraphQLGenericCompanyNotificationFields,
     moderatorMessage: {
       type: nonNull(String)
+    },
+    secretary: {
+      type: nonNull(GraphQLSecretary)
     },
     offer: {
       type: nonNull(GraphQLOffer),

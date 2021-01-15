@@ -13,7 +13,8 @@ export const OfferNotificationFactory = {
         new ApprovedOfferCompanyNotification({
           moderatorUuid: admin.userUuid,
           notifiedCompanyUuid: offer.companyUuid,
-          offerUuid: offer.uuid
+          offerUuid: offer.uuid,
+          secretary: admin.secretary
         })
       ];
     } else if (offer.getStatus(admin.secretary) === ApprovalStatus.rejected) {
@@ -23,7 +24,8 @@ export const OfferNotificationFactory = {
           moderatorUuid: admin.userUuid,
           notifiedCompanyUuid: offer.companyUuid,
           offerUuid: offer.uuid,
-          moderatorMessage
+          moderatorMessage,
+          secretary: admin.secretary
         })
       ];
     }

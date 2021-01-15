@@ -1,17 +1,17 @@
-import { UniqueConstraintError, ForeignKeyConstraintError } from "sequelize";
+import { ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
 import {
   ApprovedOfferCompanyNotification,
-  INewJobApplicationNotificationAttributes,
-  RejectedOfferCompanyNotification,
-  IRejectedOfferNotificationAttributes,
-  NewJobApplicationCompanyNotification,
-  IApprovedOfferNotificationAttributes,
   ApprovedProfileCompanyNotification,
-  IApprovedProfileNotificationAttributes,
-  RejectedProfileCompanyNotification,
-  IRejectedProfileNotificationAttributes,
   CompanyNotification,
-  CompanyNotificationRepository
+  CompanyNotificationRepository,
+  IApprovedOfferNotificationAttributes,
+  IApprovedProfileNotificationAttributes,
+  INewJobApplicationNotificationAttributes,
+  IRejectedOfferNotificationAttributes,
+  IRejectedProfileNotificationAttributes,
+  NewJobApplicationCompanyNotification,
+  RejectedOfferCompanyNotification,
+  RejectedProfileCompanyNotification
 } from "$models/CompanyNotification";
 import { IAttributes } from "$models/CompanyNotification/CompanyNotification";
 import { UUID } from "$models/UUID";
@@ -32,6 +32,7 @@ import { CompanyNotificationGenerator } from "$generators/CompanyNotification";
 import { OfferGenerator } from "$generators/Offer";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import { UUID_REGEX } from "$test/models";
+import { Secretary } from "$models/Admin";
 
 describe("CompanyNotificationRepository", () => {
   let extensionAdmin: Admin;
@@ -157,7 +158,7 @@ describe("CompanyNotificationRepository", () => {
       let attributes: IApprovedOfferNotificationAttributes;
 
       beforeAll(() => {
-        attributes = { ...commonAttributes, offerUuid: offer.uuid };
+        attributes = { ...commonAttributes, offerUuid: offer.uuid, secretary: Secretary.extension };
       });
 
       it("saves the notification in the database", async () => {
@@ -200,7 +201,12 @@ describe("CompanyNotificationRepository", () => {
       let attributes: IRejectedOfferNotificationAttributes;
 
       beforeAll(() => {
-        attributes = { ...commonAttributes, offerUuid: offer.uuid, moderatorMessage: "message" };
+        attributes = {
+          ...commonAttributes,
+          offerUuid: offer.uuid,
+          moderatorMessage: "message",
+          secretary: Secretary.graduados
+        };
       });
 
       it("saves the notification in the database", async () => {
@@ -528,7 +534,8 @@ describe("CompanyNotificationRepository", () => {
       moderatorUuid: extensionAdmin.userUuid,
       notifiedCompanyUuid: company.uuid,
       offerUuid: offer.uuid,
-      isNew: true
+      isNew: true,
+      secretary: extensionAdmin.secretary
     });
 
     it("deletes all notifications if JobApplications table is truncated", async () => {

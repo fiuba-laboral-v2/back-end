@@ -1,13 +1,15 @@
 import { RejectedOfferCompanyNotification } from "$models/CompanyNotification";
 import { AttributeNotDefinedError, InvalidAttributeFormatError } from "$models/Errors";
 import { UUID } from "$models/UUID";
+import { Secretary } from "$models/Admin";
 
 describe("RejectedOfferCompanyNotification", () => {
   const mandatoryAttributes = {
     moderatorUuid: UUID.generate(),
     notifiedCompanyUuid: UUID.generate(),
     offerUuid: UUID.generate(),
-    moderatorMessage: "message"
+    moderatorMessage: "message",
+    secretary: Secretary.extension
   };
 
   const expectToThrowErrorOnMissingAttribute = (attributeName: string) => {
@@ -97,6 +99,10 @@ describe("RejectedOfferCompanyNotification", () => {
     await expectToThrowErrorOnMissingAttribute("moderatorMessage");
   });
 
+  it("throws an error if no secretary is provided", async () => {
+    await expectToThrowErrorOnMissingAttribute("secretary");
+  });
+
   it("throws an error if uuid has invalid format", async () => {
     expectToThrowErrorOnUuidInvalidFormat("uuid");
   });
@@ -111,5 +117,9 @@ describe("RejectedOfferCompanyNotification", () => {
 
   it("throws an error if offerUuid has invalid format", async () => {
     expectToThrowErrorOnUuidInvalidFormat("offerUuid");
+  });
+
+  it("throws an error if secretary has invalid format", async () => {
+    expectToThrowErrorOnUuidInvalidFormat("secretary");
   });
 });
