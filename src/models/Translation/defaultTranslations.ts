@@ -214,6 +214,11 @@ export const defaultTranslations = {
     title: "Editar administrador",
     submit: "Guardar"
   },
+  deleteCompanyUser: {
+    title: "Eliminar la cuenta del usuario:",
+    description: "El usuario será eliminado de forma permanente",
+    submit: "Guardar"
+  },
   deactivateAdminAccount: {
     title: "Desactivar la cuenta del administrador:",
     description:
