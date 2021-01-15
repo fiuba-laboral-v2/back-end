@@ -102,9 +102,10 @@ describe("AdminRepository", () => {
   });
 
   describe("findLatest", () => {
-    let admin1;
-    let admin2;
-    let admin3;
+    let admin1: Admin;
+    let admin2: Admin;
+    let admin3: Admin;
+    let deletedAdmin: Admin;
 
     const generateAdmins = async () => {
       return [
@@ -115,27 +116,22 @@ describe("AdminRepository", () => {
     };
 
     beforeAll(async () => {
+      deletedAdmin = await AdminGenerator.extension();
+      await AdminRepository.delete(deletedAdmin);
       [admin1, admin2, admin3] = await generateAdmins();
     });
 
-    it("returns the latest admin first", async () => {
-      const admins = await AdminRepository.findLatest();
-      const firstAdminInList = [admins.results[0], admins.results[1], admins.results[2]];
+    it("returns the latest admin first included the deleted ones", async () => {
+      const { results, shouldFetchMore } = await AdminRepository.findLatest();
+      const firstAdminInList = [results[0], results[1], results[2], deletedAdmin];
+      const firstAdminInListUuids = firstAdminInList.map(({ userUuid }) => userUuid);
 
-      expect(admins.shouldFetchMore).toEqual(false);
-      expect(firstAdminInList).toEqual([
-        expect.objectContaining({
-          userUuid: admin3.userUuid,
-          secretary: admin3.secretary
-        }),
-        expect.objectContaining({
-          userUuid: admin2.userUuid,
-          secretary: admin2.secretary
-        }),
-        expect.objectContaining({
-          userUuid: admin1.userUuid,
-          secretary: admin1.secretary
-        })
+      expect(shouldFetchMore).toEqual(false);
+      expect(firstAdminInListUuids).toEqual([
+        admin3.userUuid,
+        admin2.userUuid,
+        admin1.userUuid,
+        deletedAdmin.userUuid
       ]);
     });
 
@@ -217,6 +213,34 @@ describe("AdminRepository", () => {
     });
   });
 
+  describe("findDeletedByUserUuid", () => {
+    it("returns a deleted admin by userUuid", async () => {
+      const extensionAdmin = await AdminGenerator.extension();
+      await AdminRepository.delete(extensionAdmin);
+      const admin = await AdminRepository.findDeletedByUserUuid(extensionAdmin.userUuid);
+      expect(admin.userUuid).toEqual(extensionAdmin.userUuid);
+      expect(admin.secretary).toEqual(Secretary.extension);
+    });
+
+    it("throws an error if the admin was not deleted", async () => {
+      const extensionAdmin = await AdminGenerator.extension();
+      await expect(
+        AdminRepository.findDeletedByUserUuid(extensionAdmin.userUuid)
+      ).rejects.toThrowErrorWithMessage(
+        AdminNotFoundError,
+        AdminNotFoundError.buildMessage(extensionAdmin.userUuid)
+      );
+    });
+
+    it("throws an error if the given uuid does not belong to any persisted admin", async () => {
+      const userUuid = UUID.generate();
+      await expect(AdminRepository.findDeletedByUserUuid(userUuid)).rejects.toThrowErrorWithMessage(
+        AdminNotFoundError,
+        AdminNotFoundError.buildMessage(userUuid)
+      );
+    });
+  });
+
   describe("findByUserUuid", () => {
     it("returns an admin of extension by userUuid", async () => {
       const extensionAdmin = await AdminGenerator.extension();
@@ -259,18 +283,18 @@ describe("AdminRepository", () => {
       await AdminGenerator.extension();
       await AdminGenerator.graduados();
       await AdminGenerator.extension();
-      expect((await AdminRepository.findLatest()).results.length).toBeGreaterThan(0);
+      expect((await AdminRepository.findAll()).length).toBeGreaterThan(0);
       await UserRepository.truncate();
-      expect((await AdminRepository.findLatest()).results).toHaveLength(0);
+      expect(await AdminRepository.findAll()).toHaveLength(0);
     });
 
     it("deletes all admins if admins tables is truncated", async () => {
       await AdminGenerator.extension();
       await AdminGenerator.graduados();
       await AdminGenerator.extension();
-      expect((await AdminRepository.findLatest()).results.length).toBeGreaterThan(0);
+      expect((await AdminRepository.findAll()).length).toBeGreaterThan(0);
       await AdminRepository.truncate();
-      expect((await AdminRepository.findLatest()).results).toHaveLength(0);
+      expect(await AdminRepository.findAll()).toHaveLength(0);
     });
   });
 });

@@ -196,7 +196,8 @@ export const defaultTranslations = {
   },
   adminsActions: {
     editAdminTooltipMessage: "Editar administrador",
-    deactivateAccountLinkTooltipMessage: "Desactivar cuenta"
+    deactivateAccountLinkTooltipMessage: "Desactivar cuenta",
+    activateAccountLinkTooltipMessage: "Activar cuenta"
   },
   admins: {
     addAdminButtonLabel: "Agregar administrador"
@@ -217,6 +218,11 @@ export const defaultTranslations = {
     title: "Desactivar la cuenta del administrador:",
     description:
       "El administrador no podrá ingresar a la aplicación hasta que se reactive la cuenta",
+    submit: "Guardar"
+  },
+  activateAdminAccount: {
+    title: "Activar la cuenta del administrador:",
+    description: "El administrador podrá volver ingresar a la aplicación",
     submit: "Guardar"
   },
   mainInformationFormSection: {
@@ -529,6 +535,10 @@ export const defaultTranslations = {
     graduados: "Graduados",
     extension: "Extensión"
   },
+  adminStatus: {
+    active: "Activa",
+    deactivated: "Desactivada"
+  },
   adminCompanyMainTitle: {
     title: "Empresa"
   },
@@ -618,6 +628,7 @@ export const defaultTranslations = {
     dni: "DNI",
     email: "Email",
     secretary: "Secretaría",
+    status: "Estado",
     createdAt: "Fecha de registro"
   },
   adminOfferListHeader: {

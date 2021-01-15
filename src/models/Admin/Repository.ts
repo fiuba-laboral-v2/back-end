@@ -1,4 +1,4 @@
-import { Transaction } from "sequelize";
+import { Transaction, Op } from "sequelize";
 import { AdminNotFoundError } from "./Errors";
 import { Admin } from "..";
 import { PaginationQuery } from "../PaginationQuery";
@@ -15,6 +15,15 @@ export const AdminRepository = {
 
     return admin;
   },
+  findDeletedByUserUuid: async (userUuid: string) => {
+    const admin = await Admin.findOne({
+      where: { userUuid, deletedAt: { [Op.not]: null } },
+      paranoid: false
+    });
+    if (!admin) throw new AdminNotFoundError(userUuid);
+
+    return admin;
+  },
   findAll: () => Admin.findAll(),
   findFirstBySecretary: async (secretary: Secretary) => {
     const admin = await Admin.findOne({ where: { secretary } });
@@ -25,7 +34,7 @@ export const AdminRepository = {
   findLatest: (updatedBeforeThan?: IPaginatedInput) =>
     PaginationQuery.findLatest({
       updatedBeforeThan,
-      query: options => Admin.findAll(options),
+      query: options => Admin.findAll({ ...options, paranoid: false }),
       uuidKey: "userUuid",
       order: [
         ["updatedAt", "DESC"],
