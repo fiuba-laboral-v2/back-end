@@ -49,6 +49,7 @@ const GET_COMPANY_NOTIFICATIONS = gql`
           isNew
           createdAt
           moderatorSecretary
+          secretary
           offer {
             __typename
             uuid
@@ -140,6 +141,7 @@ describe("getCompanyNotifications", () => {
         const approvedOfferNotification = notification as ApprovedOfferCompanyNotification;
         return {
           __typename: "ApprovedOfferCompanyNotification",
+          secretary: approvedOfferNotification.secretary,
           offer: {
             __typename: GraphQLOffer.name,
             uuid: approvedOfferNotification.offerUuid
