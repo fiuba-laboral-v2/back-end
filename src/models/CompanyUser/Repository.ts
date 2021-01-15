@@ -20,8 +20,9 @@ export const CompanyUserRepository = {
       where: { companyUuid },
       query: options => CompanyUser.findAll(options),
       uuidKey: "uuid",
+      timestampKey: "createdAt",
       order: [
-        ["updatedAt", "DESC"],
+        ["createdAt", "DESC"],
         ["userUuid", "DESC"]
       ]
     }),
