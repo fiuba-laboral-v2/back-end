@@ -192,7 +192,8 @@ export const defaultTranslations = {
   },
   companyUserActions: {
     passwordTooltipMessage: "Cambiar contraseña",
-    editUserTooltipMessage: "Editar usuario"
+    editUserTooltipMessage: "Editar usuario",
+    deleteUserTooltipMessage: "Eliminar usuario"
   },
   adminsActions: {
     editAdminTooltipMessage: "Editar administrador",
@@ -212,6 +213,12 @@ export const defaultTranslations = {
   editAdmin: {
     userEmailAlreadyExistsError: "Un usuario con ese email ya existe",
     title: "Editar administrador",
+    submit: "Guardar"
+  },
+  deleteCompanyUser: {
+    title: "Eliminar la cuenta del usuario:",
+    description: "El usuario será eliminado de forma permanente",
+    deleteOnlyCompanyUserError: "No puede borrar este usuario, es el único de su empresa",
     submit: "Guardar"
   },
   deactivateAdminAccount: {
