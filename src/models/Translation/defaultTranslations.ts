@@ -218,6 +218,7 @@ export const defaultTranslations = {
   deleteCompanyUser: {
     title: "Eliminar la cuenta del usuario:",
     description: "El usuario será eliminado de forma permanente",
+    deleteOnlyCompanyUserError: "No puede borrar este usuario, es el único de su empresa",
     submit: "Guardar"
   },
   deactivateAdminAccount: {
