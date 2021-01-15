@@ -36,7 +36,6 @@ const GET_COMPANY_NOTIFICATIONS = gql`
           adminEmail
           isNew
           createdAt
-          moderatorSecretary
           jobApplication {
             __typename
             uuid
@@ -48,7 +47,6 @@ const GET_COMPANY_NOTIFICATIONS = gql`
           adminEmail
           isNew
           createdAt
-          moderatorSecretary
           secretary
           offer {
             __typename
@@ -62,7 +60,7 @@ const GET_COMPANY_NOTIFICATIONS = gql`
           moderatorMessage
           isNew
           createdAt
-          moderatorSecretary
+          secretary
           offer {
             __typename
             uuid
@@ -74,7 +72,6 @@ const GET_COMPANY_NOTIFICATIONS = gql`
           adminEmail
           isNew
           createdAt
-          moderatorSecretary
         }
         ... on ApprovedProfileCompanyNotification {
           __typename
@@ -82,7 +79,6 @@ const GET_COMPANY_NOTIFICATIONS = gql`
           adminEmail
           isNew
           createdAt
-          moderatorSecretary
         }
         ... on RejectedProfileCompanyNotification {
           __typename
@@ -91,7 +87,6 @@ const GET_COMPANY_NOTIFICATIONS = gql`
           moderatorMessage
           isNew
           createdAt
-          moderatorSecretary
         }
       }
       shouldFetchMore
@@ -152,6 +147,7 @@ describe("getCompanyNotifications", () => {
         return {
           __typename: "RejectedOfferCompanyNotification",
           moderatorMessage: rejectedOfferNotification.moderatorMessage,
+          secretary: rejectedOfferNotification.secretary,
           offer: {
             __typename: GraphQLOffer.name,
             uuid: rejectedOfferNotification.offerUuid
@@ -188,7 +184,6 @@ describe("getCompanyNotifications", () => {
           const settings = await SecretarySettingsRepository.findBySecretary(secretary);
           return {
             uuid: notification.uuid,
-            moderatorSecretary: secretary,
             adminEmail: settings.email,
             isNew: notification.isNew,
             createdAt: notification.createdAt?.toISOString(),

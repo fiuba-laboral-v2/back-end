@@ -75,6 +75,7 @@ describe("OfferNotificationFactory", () => {
           {
             uuid: undefined,
             moderatorUuid: admin.userUuid,
+            secretary: admin.secretary,
             notifiedCompanyUuid: company.uuid,
             offerUuid: offer.uuid,
             moderatorMessage,
@@ -142,6 +143,7 @@ describe("OfferNotificationFactory", () => {
           {
             uuid: undefined,
             moderatorUuid: admin.userUuid,
+            secretary: admin.secretary,
             notifiedCompanyUuid: company.uuid,
             offerUuid: offer.uuid,
             moderatorMessage,

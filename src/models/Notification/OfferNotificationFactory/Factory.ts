@@ -24,7 +24,8 @@ export const OfferNotificationFactory = {
           moderatorUuid: admin.userUuid,
           notifiedCompanyUuid: offer.companyUuid,
           offerUuid: offer.uuid,
-          moderatorMessage
+          moderatorMessage,
+          secretary: admin.secretary
         })
       ];
     }

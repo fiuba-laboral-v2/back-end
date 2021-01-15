@@ -82,6 +82,10 @@ describe("ApprovedOfferCompanyNotification", () => {
     );
   });
 
+  it("throws an error if no secretary is provided", async () => {
+    expectToThrowErrorOnMissingAttribute("secretary");
+  });
+
   it("throws an error if no moderatorUuid is provided", async () => {
     expectToThrowErrorOnMissingAttribute("moderatorUuid");
   });

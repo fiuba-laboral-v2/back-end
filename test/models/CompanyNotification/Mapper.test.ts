@@ -97,7 +97,8 @@ describe("CompanyNotificationMapper", () => {
       const attributes = {
         ...commonAttributes,
         offerUuid: UUID.generate(),
-        moderatorMessage: "message"
+        moderatorMessage: "message",
+        secretary: Secretary.extension
       };
       const notification = new RejectedOfferCompanyNotification(attributes);
 
@@ -240,7 +241,8 @@ describe("CompanyNotificationMapper", () => {
         ...commonAttributes,
         offerUuid: UUID.generate(),
         type: CompanyNotificationType.rejectedOffer,
-        moderatorMessage: "message"
+        moderatorMessage: "message",
+        secretary: Secretary.graduados
       };
       const sequelizeModel = new CompanyNotificationSequelizeModel(attributes);
       expectToMapPersistenceModelToTheGivenNotification({

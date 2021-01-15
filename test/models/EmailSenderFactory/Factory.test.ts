@@ -88,7 +88,8 @@ describe("EmailSenderFactory", () => {
       moderatorUuid: UUID.generate(),
       notifiedCompanyUuid: UUID.generate(),
       offerUuid: UUID.generate(),
-      moderatorMessage: "message"
+      moderatorMessage: "message",
+      secretary: Secretary.graduados
     });
     const emailSender = EmailSenderFactory.create(notification);
     expect(emailSender).toBe(RejectedOfferCompanyNotificationEmailSender);

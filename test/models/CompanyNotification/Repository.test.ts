@@ -1,17 +1,17 @@
-import { UniqueConstraintError, ForeignKeyConstraintError } from "sequelize";
+import { ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
 import {
   ApprovedOfferCompanyNotification,
-  INewJobApplicationNotificationAttributes,
-  RejectedOfferCompanyNotification,
-  IRejectedOfferNotificationAttributes,
-  NewJobApplicationCompanyNotification,
-  IApprovedOfferNotificationAttributes,
   ApprovedProfileCompanyNotification,
-  IApprovedProfileNotificationAttributes,
-  RejectedProfileCompanyNotification,
-  IRejectedProfileNotificationAttributes,
   CompanyNotification,
-  CompanyNotificationRepository
+  CompanyNotificationRepository,
+  IApprovedOfferNotificationAttributes,
+  IApprovedProfileNotificationAttributes,
+  INewJobApplicationNotificationAttributes,
+  IRejectedOfferNotificationAttributes,
+  IRejectedProfileNotificationAttributes,
+  NewJobApplicationCompanyNotification,
+  RejectedOfferCompanyNotification,
+  RejectedProfileCompanyNotification
 } from "$models/CompanyNotification";
 import { IAttributes } from "$models/CompanyNotification/CompanyNotification";
 import { UUID } from "$models/UUID";
@@ -201,7 +201,12 @@ describe("CompanyNotificationRepository", () => {
       let attributes: IRejectedOfferNotificationAttributes;
 
       beforeAll(() => {
-        attributes = { ...commonAttributes, offerUuid: offer.uuid, moderatorMessage: "message" };
+        attributes = {
+          ...commonAttributes,
+          offerUuid: offer.uuid,
+          moderatorMessage: "message",
+          secretary: Secretary.graduados
+        };
       });
 
       it("saves the notification in the database", async () => {

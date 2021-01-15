@@ -267,6 +267,7 @@ describe("updateOfferApprovalStatus", () => {
         {
           uuid: expect.stringMatching(UUID_REGEX),
           moderatorUuid: admin.userUuid,
+          secretary: admin.secretary,
           notifiedCompanyUuid: offer.companyUuid,
           isNew: true,
           moderatorMessage,
