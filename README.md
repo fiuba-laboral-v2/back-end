@@ -1,4 +1,4 @@
-# Back-end Bolsa de Trabajo de la FIUBA v2
+# Backend Bolsa de Trabajo FIUBA
 
 Trabajo Práctico Profesional, FIUBA, 2020
 
