@@ -1,4 +1,4 @@
-import { String } from "$graphql/fieldTypes";
+import { List, String } from "$graphql/fieldTypes";
 import { OfferRepository, OfferStatus } from "$models/Offer";
 import { GraphQLPaginatedResults } from "$graphql/Pagination/Types/GraphQLPaginatedResults";
 import { GraphQLOffer } from "$graphql/Offer/Types/GraphQLOffer";
@@ -28,6 +28,9 @@ export const getOffers = {
     },
     title: {
       type: String
+    },
+    careerCodes: {
+      type: List(String)
     }
   },
   resolve: (_: undefined, filter: IGetOffers) => OfferRepository.findAll(filter)
