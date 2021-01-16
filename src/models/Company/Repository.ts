@@ -4,6 +4,7 @@ import { CompanyNotFoundError } from "./Errors";
 import { Company, UserSequelizeModel } from "$models";
 import { PaginationQuery } from "$models/PaginationQuery";
 import { CompanyWhereClauseBuilder } from "$models/QueryBuilder";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export const CompanyRepository = {
   save: (company: Company, transaction?: Transaction) => company.save({ transaction }),
@@ -24,5 +25,6 @@ export const CompanyRepository = {
       query: options => Company.findAll(options)
     });
   },
+  countCompanies: () => Company.count({ where: { approvalStatus: ApprovalStatus.approved } }),
   truncate: () => Company.truncate({ cascade: true })
 };

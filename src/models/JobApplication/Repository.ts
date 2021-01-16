@@ -5,6 +5,7 @@ import { JobApplicationNotFoundError } from "./Errors";
 import { PaginationQuery } from "../PaginationQuery";
 import { ApplicantIncludeClauseBuilder, OfferIncludeClauseBuilder } from "$models/QueryBuilder";
 import { Includeable } from "sequelize/types/lib/model";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export const JobApplicationRepository = {
   save: (jobApplication: JobApplication, transaction?: Transaction) =>
@@ -68,5 +69,7 @@ export const JobApplicationRepository = {
       include
     });
   },
+  countJobApplications: () =>
+    JobApplication.count({ where: { approvalStatus: ApprovalStatus.approved } }),
   truncate: () => JobApplication.truncate({ cascade: true })
 };

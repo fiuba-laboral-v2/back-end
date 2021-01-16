@@ -495,6 +495,38 @@ describe("JobApplicationRepository", () => {
     });
   });
 
+  describe("countJobApplications", () => {
+    beforeAll(async () => {
+      await JobApplicationRepository.truncate();
+
+      const company = await CompanyGenerator.instance.withMinimumData();
+      const anotherCompany = await CompanyGenerator.instance.withMinimumData();
+      anotherCompany.set({ companyName: "Despegar" });
+      await CompanyRepository.save(anotherCompany);
+
+      const offer1 = await OfferGenerator.instance.forStudents({ companyUuid: company.uuid });
+      const offer2 = await OfferGenerator.instance.forGraduates({ companyUuid: company.uuid });
+      const offer3 = await OfferGenerator.instance.forStudentsAndGraduates({
+        companyUuid: anotherCompany.uuid
+      });
+
+      const firstJobApplication = studentAndGraduate.applyTo(offer1);
+      const secondJobApplication = graduate.applyTo(offer2);
+      const thirdJobApplication = student.applyTo(offer3);
+      firstJobApplication.setAttributes({ approvalStatus: ApprovalStatus.approved });
+      secondJobApplication.setAttributes({ approvalStatus: ApprovalStatus.approved });
+      await JobApplicationRepository.save(firstJobApplication);
+      await JobApplicationRepository.save(secondJobApplication);
+      await JobApplicationRepository.save(thirdJobApplication);
+    });
+
+    it("returns the amount of approved jobApplications", async () => {
+      const amountOfJobApplications = await JobApplicationRepository.countJobApplications();
+
+      expect(amountOfJobApplications).toEqual(2);
+    });
+  });
+
   describe("Delete", () => {
     it("deletes all jobApplications", async () => {
       await JobApplicationRepository.truncate();

@@ -719,6 +719,30 @@ describe("OfferRepository", () => {
     });
   });
 
+  describe("countCurrentOffers", () => {
+    it("returns the amount of Offers with OfferStatus approved", async () => {
+      await OfferRepository.truncate();
+
+      const company = await CompanyGenerator.instance.withMinimumData();
+      const companyUuid = company.uuid;
+      await OfferGenerator.instance.forAllTargetsAndStatuses({ companyUuid });
+      const expiredOfferForGraduates = await OfferGenerator.instance.forGraduates({ companyUuid });
+      const expiredOfferForStudents = await OfferGenerator.instance.forStudents({ companyUuid });
+      const expiredOfferForBoth = await OfferGenerator.instance.forStudentsAndGraduates({
+        companyUuid
+      });
+      expiredOfferForGraduates.expire();
+      expiredOfferForStudents.expire();
+      expiredOfferForBoth.expire();
+      await OfferRepository.save(expiredOfferForGraduates);
+      await OfferRepository.save(expiredOfferForStudents);
+      await OfferRepository.save(expiredOfferForBoth);
+
+      const amountOfOffers = await OfferRepository.countCurrentOffers();
+      expect(amountOfOffers).toEqual(3);
+    });
+  });
+
   describe("Delete", () => {
     it("deletes all offers if all companies are deleted", async () => {
       const { uuid: companyUuid } = await CompanyGenerator.instance.withMinimumData();
