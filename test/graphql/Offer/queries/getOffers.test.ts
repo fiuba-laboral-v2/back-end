@@ -6,7 +6,7 @@ import { UnauthorizedError } from "$graphql/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { Secretary } from "$models/Admin";
 import { ApplicantType } from "$models/Applicant";
-import { Admin, Company, Offer } from "$models";
+import { Admin, Career, Company, Offer } from "$models";
 
 import { CareerRepository } from "$models/Career";
 import { CompanyRepository } from "$models/Company";
@@ -28,6 +28,7 @@ const GET_OFFERS = gql`
     $businessSector: String
     $studentsStatus: OfferStatus
     $graduatesStatus: OfferStatus
+    $careerCodes: [String]
     $title: String
   ) {
     getOffers(
@@ -36,6 +37,7 @@ const GET_OFFERS = gql`
       businessSector: $businessSector
       studentsStatus: $studentsStatus
       graduatesStatus: $graduatesStatus
+      careerCodes: $careerCodes
       title: $title
     ) {
       results {
@@ -57,6 +59,8 @@ describe("getOffers", () => {
     apolloClient.query({ query: GET_OFFERS, variables });
 
   describe("when offers exists", () => {
+    let firstCareer: Career;
+    let secondCareer: Career;
     let rejectedForStudents: Offer;
     let approvedForGraduates: Offer;
     let company: Company;
@@ -71,14 +75,14 @@ describe("getOffers", () => {
       company = await CompanyGenerator.instance.withMinimumData();
       const companyUuid = company.uuid;
 
-      const career1 = await CareerGenerator.instance();
-      const career2 = await CareerGenerator.instance();
+      firstCareer = await CareerGenerator.instance();
+      secondCareer = await CareerGenerator.instance();
 
       rejectedForStudents = await OfferRepository.create({
         ...OfferGenerator.data.withObligatoryData({ companyUuid }),
         title: "Java junior",
         targetApplicantType: ApplicantType.student,
-        careers: [{ careerCode: career1.code }]
+        careers: [{ careerCode: firstCareer.code }]
       });
       rejectedForStudents.updateStatus(extensionAdmin, ApprovalStatus.rejected, 15);
       rejectedForStudents.updateStatus(graduadosAdmin, ApprovalStatus.rejected, 15);
@@ -88,7 +92,7 @@ describe("getOffers", () => {
         ...OfferGenerator.data.withObligatoryData({ companyUuid }),
         title: "Ruby junior",
         targetApplicantType: ApplicantType.graduate,
-        careers: [{ careerCode: career2.code }]
+        careers: [{ careerCode: secondCareer.code }]
       });
       approvedForGraduates.updateStatus(extensionAdmin, ApprovalStatus.approved, 15);
       approvedForGraduates.updateStatus(graduadosAdmin, ApprovalStatus.approved, 15);
@@ -134,6 +138,35 @@ describe("getOffers", () => {
     it("returns offers by the companyName", async () => {
       const companyName = company.companyName;
       const { errors, data } = await getOffers(apolloClient, { companyName });
+      expect(errors).toBeUndefined();
+      const { results, shouldFetchMore } = data!.getOffers;
+      const uuids = results.map(({ uuid }) => uuid);
+      expect(uuids).toEqual([approvedForGraduates.uuid, rejectedForStudents.uuid]);
+      expect(shouldFetchMore).toBe(false);
+    });
+
+    it("returns offers from the first career", async () => {
+      const { errors, data } = await getOffers(apolloClient, { careerCodes: [firstCareer.code] });
+      expect(errors).toBeUndefined();
+      const { results, shouldFetchMore } = data!.getOffers;
+      const uuids = results.map(({ uuid }) => uuid);
+      expect(uuids).toEqual([rejectedForStudents.uuid]);
+      expect(shouldFetchMore).toBe(false);
+    });
+
+    it("returns offers from the second career", async () => {
+      const { errors, data } = await getOffers(apolloClient, { careerCodes: [secondCareer.code] });
+      expect(errors).toBeUndefined();
+      const { results, shouldFetchMore } = data!.getOffers;
+      const uuids = results.map(({ uuid }) => uuid);
+      expect(uuids).toEqual([approvedForGraduates.uuid]);
+      expect(shouldFetchMore).toBe(false);
+    });
+
+    it("returns offers from the first and second career", async () => {
+      const { errors, data } = await getOffers(apolloClient, {
+        careerCodes: [firstCareer.code, secondCareer.code]
+      });
       expect(errors).toBeUndefined();
       const { results, shouldFetchMore } = data!.getOffers;
       const uuids = results.map(({ uuid }) => uuid);
