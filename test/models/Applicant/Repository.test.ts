@@ -1141,60 +1141,31 @@ describe("ApplicantRepository", () => {
     });
   });
 
+  const generateSomeApplicants = async () => {
+    await ApplicantGenerator.instance.student({ career: firstCareer });
+    await ApplicantGenerator.instance.graduate({ career: firstCareer });
+    await ApplicantGenerator.instance.studentAndGraduate({
+      finishedCareer: firstCareer,
+      careerInProgress: secondCareer
+    });
+  };
+
   describe("countStudents", () => {
-    let studentAndGraduate: Applicant;
-
-    const generateApplicants = async () => {
-      return [
-        await ApplicantGenerator.instance.student({ career: firstCareer }),
-        await ApplicantGenerator.instance.graduate({ career: firstCareer }),
-        await ApplicantGenerator.instance.studentAndGraduate({
-          finishedCareer: firstCareer,
-          careerInProgress: secondCareer
-        })
-      ];
-    };
-
     beforeAll(async () => {
       await ApplicantRepository.truncate();
-      [studentAndGraduate] = await generateApplicants();
-
-      const studentAndGraduateUser = await UserRepository.findByUuid(studentAndGraduate.userUuid);
-      const name = "DylaN FraNÇois GUStävo";
-      const surname = "Álvarez Avalos";
-      studentAndGraduateUser.setAttributes({ name, surname });
-      await UserRepository.save(studentAndGraduateUser);
+      await generateSomeApplicants();
     });
 
-    it("returns the amount of Applicants that are students of both", async () => {
+    it("returns the amount of Applicants that are students or both", async () => {
       const count = await ApplicantRepository.countStudents();
       expect(count).toBe(2);
     });
   });
 
   describe("countGraduates", () => {
-    let studentAndGraduate: Applicant;
-
-    const generateApplicants = async () => {
-      return [
-        await ApplicantGenerator.instance.student({ career: firstCareer }),
-        await ApplicantGenerator.instance.graduate({ career: firstCareer }),
-        await ApplicantGenerator.instance.studentAndGraduate({
-          finishedCareer: firstCareer,
-          careerInProgress: secondCareer
-        })
-      ];
-    };
-
     beforeAll(async () => {
       await ApplicantRepository.truncate();
-      [studentAndGraduate] = await generateApplicants();
-
-      const studentAndGraduateUser = await UserRepository.findByUuid(studentAndGraduate.userUuid);
-      const name = "DylaN FraNÇois GUStävo";
-      const surname = "Álvarez Avalos";
-      studentAndGraduateUser.setAttributes({ name, surname });
-      await UserRepository.save(studentAndGraduateUser);
+      await generateSomeApplicants();
     });
 
     it("returns the amount of Applicants that are graduates of both", async () => {
