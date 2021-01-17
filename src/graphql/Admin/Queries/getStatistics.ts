@@ -7,10 +7,10 @@ import { GraphQLStatistics } from "../Types/GraphQLStatistics";
 export const getStatistics = {
   type: GraphQLStatistics,
   resolve: async () => ({
-    amountOfStudents: await ApplicantRepository.countStudents(),
-    amountOfGraduates: await ApplicantRepository.countGraduates(),
-    amountOfCompanies: await CompanyRepository.countCompanies(),
-    amountOfJobApplications: await JobApplicationRepository.countJobApplications(),
-    amountOfOffers: await OfferRepository.countCurrentOffers()
+    approvedStudentsCount: await ApplicantRepository.countStudents(),
+    approvedGraduatesCount: await ApplicantRepository.countGraduates(),
+    approvedCompaniesCount: await CompanyRepository.countCompanies(),
+    approvedJobApplicationsCount: await JobApplicationRepository.countJobApplications(),
+    approvedOffersCount: await OfferRepository.countCurrentOffers()
   })
 };

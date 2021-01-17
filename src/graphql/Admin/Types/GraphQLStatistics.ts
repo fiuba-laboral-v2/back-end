@@ -5,19 +5,19 @@ import { GraphQLInt } from "graphql/type/scalars";
 export const GraphQLStatistics = new GraphQLObjectType({
   name: "Statistics",
   fields: () => ({
-    amountOfStudents: {
+    approvedStudentsCount: {
       type: nonNull(GraphQLInt)
     },
-    amountOfGraduates: {
+    approvedGraduatesCount: {
       type: nonNull(GraphQLInt)
     },
-    amountOfCompanies: {
+    approvedCompaniesCount: {
       type: nonNull(GraphQLInt)
     },
-    amountOfJobApplications: {
+    approvedJobApplicationsCount: {
       type: nonNull(GraphQLInt)
     },
-    amountOfOffers: {
+    approvedOffersCount: {
       type: nonNull(GraphQLInt)
     }
   })

@@ -442,7 +442,16 @@ export const defaultTranslations = {
     myOffers: "Mis Ofertas",
     pendingProfile: "Su perfil esta pendiente de aprobación",
     rejectedProfile: "Su perfil ha sido rechazado",
-    credits: "Ver créditos"
+    credits: "Ver créditos",
+    statistics: "Estadísticas"
+  },
+  statistics: {
+    title: "Estadísticas",
+    approvedStudents: "Estudiantes aprobados",
+    approvedGraduates: "Graduados aprobados",
+    approvedCompanies: "Empresas aprobadas",
+    approvedJobApplications: "Postulaciones aprobadas",
+    approvedOffers: "Ofertas aprobadas"
   },
   offerCareer: {
     careersTitle: "Carreras"

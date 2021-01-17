@@ -18,11 +18,11 @@ import { JobApplicationRepository } from "$models/JobApplication";
 const GET_STATISTICS = gql`
   query getStatistics {
     getStatistics {
-      amountOfStudents
-      amountOfGraduates
-      amountOfCompanies
-      amountOfJobApplications
-      amountOfOffers
+      approvedStudentsCount
+      approvedGraduatesCount
+      approvedCompaniesCount
+      approvedJobApplicationsCount
+      approvedOffersCount
     }
   }
 `;
@@ -41,11 +41,11 @@ describe("getStatistics", () => {
     const { data, errors } = await performQuery(apolloClient);
     expect(errors).toBeUndefined();
     expect(data!.getStatistics).toEqual({
-      amountOfStudents: 0,
-      amountOfGraduates: 0,
-      amountOfCompanies: 0,
-      amountOfJobApplications: 0,
-      amountOfOffers: 0
+      approvedStudentsCount: 0,
+      approvedGraduatesCount: 0,
+      approvedCompaniesCount: 0,
+      approvedJobApplicationsCount: 0,
+      approvedOffersCount: 0
     });
   });
 
@@ -83,11 +83,11 @@ describe("getStatistics", () => {
     const { data, errors } = await performQuery(apolloClient);
     expect(errors).toBeUndefined();
     expect(data!.getStatistics).toEqual({
-      amountOfStudents: 2,
-      amountOfGraduates: 2,
-      amountOfCompanies: 1,
-      amountOfJobApplications: 2,
-      amountOfOffers: 3
+      approvedStudentsCount: 2,
+      approvedGraduatesCount: 2,
+      approvedCompaniesCount: 1,
+      approvedJobApplicationsCount: 2,
+      approvedOffersCount: 3
     });
   });
 
