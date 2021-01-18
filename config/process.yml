@@ -6,11 +6,3 @@ apps:
     exec_mode: cluster
     watch: true
     max_memory_restart: 250M
-    env:
-      NODE_ENV: development
-    env_production:
-      NODE_ENV: production
-    env_staging:
-      NODE_ENV: staging
-    env_test:
-      NODE_ENV: test
