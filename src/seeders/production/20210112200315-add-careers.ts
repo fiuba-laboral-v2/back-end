@@ -1,86 +1,87 @@
 import { QueryInterface } from "sequelize";
-import { careerCodes } from "./constants/careerCodes";
-import { Environment } from "../config/Environment";
+import { Environment } from "../../config/Environment";
+
+const TABLE_NAME = "Careers";
 
 export = {
   up: async (queryInterface: QueryInterface) => {
-    if (Environment.NODE_ENV() === Environment.PRODUCTION) return;
+    if (Environment.NODE_ENV() !== Environment.PRODUCTION) return;
 
-    return queryInterface.bulkInsert("Careers", [
+    return queryInterface.bulkInsert(TABLE_NAME, [
       {
-        code: careerCodes.IngenieriaCivil,
+        code: "1",
         description: "Ingeniería Civil",
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        code: careerCodes.IngenieriaIndustrial,
+        code: "2",
         description: "Ingeniería Industrial",
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        code: careerCodes.IngenieriaNavalYMecanica,
+        code: "3",
         description: "Ingeniería Naval y Mecánica",
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        code: careerCodes.Agrimensura,
+        code: "4",
         description: "Agrimensura",
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        code: careerCodes.IngenieriaMecanica,
+        code: "5",
         description: "Ingeniería Mecánica",
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        code: careerCodes.IngenieriaElectricista,
+        code: "6",
         description: "Ingeniería Electricista",
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        code: careerCodes.IngenieriaElectronica,
+        code: "7",
         description: "Ingeniería Electrónica",
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        code: careerCodes.IngenieriaQuimica,
+        code: "8",
         description: "Ingeniería Química",
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        code: careerCodes.LicenciaturaEnAnalisisDeSistemas,
+        code: "9",
         description: "Licenciatura en Análisis de Sistemas",
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        code: careerCodes.IngenieriaInformatica,
+        code: "10",
         description: "Ingeniería Informática",
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        code: careerCodes.IngenieriaAlimentos,
+        code: "11",
         description: "Ingeniería Alimentos",
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        code: careerCodes.IngenieriaAgrimensura,
+        code: "12",
         description: "Ingeniería Agrimensura",
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        code: careerCodes.IngenieriaEnPetroleo,
+        code: "13",
         description: "Ingeniería en Petróleo",
         createdAt: new Date(),
         updatedAt: new Date()
@@ -88,7 +89,7 @@ export = {
     ]);
   },
   down: async (queryInterface: QueryInterface) => {
-    if (Environment.NODE_ENV() === Environment.PRODUCTION) return;
-    return queryInterface.bulkDelete("Careers", {}, {});
+    if (Environment.NODE_ENV() !== Environment.PRODUCTION) return;
+    return queryInterface.bulkDelete(TABLE_NAME, {}, {});
   }
 };

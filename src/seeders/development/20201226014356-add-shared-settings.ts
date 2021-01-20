@@ -1,12 +1,10 @@
 import { QueryInterface } from "sequelize";
-import { Environment } from "../config/Environment";
-
-const TABLE_NAME = "SharedSettings";
+import { Environment } from "../../config/Environment";
 
 export = {
   up: async (queryInterface: QueryInterface) => {
-    if (Environment.NODE_ENV() !== Environment.PRODUCTION) return;
-    return queryInterface.bulkInsert(TABLE_NAME, [
+    if (Environment.NODE_ENV() === Environment.PRODUCTION) return;
+    return queryInterface.bulkInsert("SharedSettings", [
       {
         uuid: "6b228e77-9e8e-4438-872e-f3714a5846dd",
         companySignUpAcceptanceCriteria:
@@ -19,7 +17,7 @@ export = {
     ]);
   },
   down: async (queryInterface: QueryInterface) => {
-    if (Environment.NODE_ENV() !== Environment.PRODUCTION) return;
-    return queryInterface.bulkDelete(TABLE_NAME, {});
+    if (Environment.NODE_ENV() === Environment.PRODUCTION) return;
+    return queryInterface.bulkDelete("SharedSettings", {});
   }
 };

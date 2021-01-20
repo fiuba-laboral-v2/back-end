@@ -1,6 +1,6 @@
 import { QueryInterface } from "sequelize";
-import { devartis, mercadoLibre } from "./constants/companies";
-import { Environment } from "../config/Environment";
+import { devartis, mercadoLibre } from "../constants/companies";
+import { Environment } from "../../config/Environment";
 
 export = {
   up: async (queryInterface: QueryInterface) => {
