@@ -91,16 +91,14 @@ export const OfferRepository = {
     });
   },
   countCurrentOffers: () => {
-    const where: { [Op.and]: WhereOptions[] } = { [Op.and]: [] };
-    const statusClauses: { [Op.or]: WhereOptions[] } = { [Op.or]: [] };
     const studentsStatus = OfferStatusWhereClause.build({ studentsStatus: OfferStatus.approved });
     const graduatesStatus = OfferStatusWhereClause.build({ graduatesStatus: OfferStatus.approved });
-    if (studentsStatus) statusClauses[Op.or].push(studentsStatus);
-    if (graduatesStatus) statusClauses[Op.or].push(graduatesStatus);
 
-    where[Op.and].push(statusClauses);
-
-    return Offer.count({ where });
+    return Offer.count({
+      where: {
+        [Op.and]: [{ [Op.or]: [{ ...studentsStatus }, { ...graduatesStatus }] }]
+      }
+    });
   },
   truncate: () => Offer.truncate({ cascade: true })
 };
