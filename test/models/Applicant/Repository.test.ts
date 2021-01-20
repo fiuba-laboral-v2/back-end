@@ -1140,4 +1140,37 @@ describe("ApplicantRepository", () => {
       });
     });
   });
+
+  const generateSomeApplicants = async () => {
+    await ApplicantGenerator.instance.student({ career: firstCareer });
+    await ApplicantGenerator.instance.graduate({ career: firstCareer });
+    await ApplicantGenerator.instance.studentAndGraduate({
+      finishedCareer: firstCareer,
+      careerInProgress: secondCareer
+    });
+  };
+
+  describe("countStudents", () => {
+    beforeAll(async () => {
+      await ApplicantRepository.truncate();
+      await generateSomeApplicants();
+    });
+
+    it("returns the amount of Applicants that are students or both", async () => {
+      const count = await ApplicantRepository.countStudents();
+      expect(count).toBe(2);
+    });
+  });
+
+  describe("countGraduates", () => {
+    beforeAll(async () => {
+      await ApplicantRepository.truncate();
+      await generateSomeApplicants();
+    });
+
+    it("returns the amount of Applicants that are graduates of both", async () => {
+      const count = await ApplicantRepository.countGraduates();
+      expect(count).toBe(2);
+    });
+  });
 });

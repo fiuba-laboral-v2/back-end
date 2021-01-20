@@ -5,7 +5,8 @@ export const adminPermissions = {
     getAdmins: isAdmin,
     getCompanyUsersByCompany: isAdmin,
     getAdminByUuid: isAdmin,
-    getDeletedAdminByUuid: isAdmin
+    getDeletedAdminByUuid: isAdmin,
+    getStatistics: isAdmin
   },
   Mutation: {
     saveAdmin: isAdmin,
