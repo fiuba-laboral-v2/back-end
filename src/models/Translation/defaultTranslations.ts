@@ -447,11 +447,11 @@ export const defaultTranslations = {
   },
   statistics: {
     title: "Estadísticas",
-    approvedStudents: "Estudiantes aprobados",
-    approvedGraduates: "Graduados aprobados",
-    approvedCompanies: "Empresas aprobadas",
-    approvedJobApplications: "Postulaciones aprobadas",
-    approvedOffers: "Ofertas aprobadas"
+    approvedStudentsCount: "Estudiantes aprobados",
+    approvedGraduatesCount: "Graduados aprobados",
+    approvedCompaniesCount: "Empresas aprobadas",
+    approvedJobApplicationsCount: "Postulaciones aprobadas",
+    approvedOffersCount: "Ofertas aprobadas"
   },
   offerCareer: {
     careersTitle: "Carreras"
