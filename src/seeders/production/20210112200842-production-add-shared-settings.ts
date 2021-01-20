@@ -1,5 +1,5 @@
 import { QueryInterface } from "sequelize";
-import { Environment } from "../config/Environment";
+import { Environment } from "../../config/Environment";
 
 const TABLE_NAME = "SharedSettings";
 
