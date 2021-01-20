@@ -1,6 +1,6 @@
-import { Secretary } from "../models/Admin/Interface";
+import { Secretary } from "../../models/Admin/Interface";
 import { QueryInterface } from "sequelize";
-import { Environment } from "../config/Environment";
+import { Environment } from "../../config/Environment";
 
 export = {
   up: async (queryInterface: QueryInterface) => {

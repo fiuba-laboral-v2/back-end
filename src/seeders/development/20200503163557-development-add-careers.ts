@@ -1,6 +1,6 @@
 import { QueryInterface } from "sequelize";
-import { careerCodes } from "./constants/careerCodes";
-import { Environment } from "../config/Environment";
+import { careerCodes } from "../constants/careerCodes";
+import { Environment } from "../../config/Environment";
 
 export = {
   up: async (queryInterface: QueryInterface) => {
