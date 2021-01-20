@@ -1,4 +1,4 @@
-import { Secretary } from "$models/Admin/Interface";
+import { Secretary } from "../../models/Admin/Interface";
 import { QueryInterface } from "sequelize";
 import { Environment } from "../../config/Environment";
 
