@@ -113,6 +113,8 @@
     "db:migrate:down": "yarn build-migrations && sequelize db:migrate:undo",
     "db:migrate:down:all": "yarn build-migrations && sequelize db:migrate:undo:all",
     "db:drop": "node_modules/.bin/sequelize db:drop",
+    "db:seed": "yarn build-seeders && sequelize db:seed --seed ",
+    "db:seed:undo": "yarn build-seeders && sequelize db:seed:undo --seed ",
     "db:seed:all": "yarn build-seeders && sequelize db:seed:undo:all && sequelize db:seed:all",
     "db:seed:down:all": "yarn build-seeders && sequelize db:seed:undo:all",
     "db:test:create": "NODE_ENV=test sequelize db:create",
