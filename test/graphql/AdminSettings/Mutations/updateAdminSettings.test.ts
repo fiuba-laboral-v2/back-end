@@ -78,7 +78,7 @@ describe("updateAdminSettings", () => {
       const secretary = Secretary.graduados;
       const variables = {
         offerDurationInDays: 2,
-        email: "bla@ble.bli",
+        email: "bla@fi.uba.ar",
         emailSignature: "new signature",
         automaticJobApplicationApproval: false,
         companySignUpAcceptanceCriteria: "new sign up",
@@ -102,7 +102,7 @@ describe("updateAdminSettings", () => {
       const sharedSettings = await SharedSettingsRepository.fetch();
       const { errors } = await updateGraduadosSettings({
         offerDurationInDays: 2,
-        email: "foo@bar.baz",
+        email: "foo@fi.uba.ar",
         emailSignature: "new signature",
         automaticJobApplicationApproval: true,
         companySignUpAcceptanceCriteria: "sign sign",
@@ -124,7 +124,7 @@ describe("updateAdminSettings", () => {
       const secretary = Secretary.extension;
       const variables = {
         offerDurationInDays: 2,
-        email: "bla@ble.bli",
+        email: "bla@fi.uba.ar",
         emailSignature: "sign a signature",
         automaticJobApplicationApproval: true,
         companySignUpAcceptanceCriteria: "newww sign up",
@@ -147,7 +147,7 @@ describe("updateAdminSettings", () => {
 
       const { errors } = await updateExtensionSettings({
         offerDurationInDays: 2,
-        email: "foo@bar.baz",
+        email: "foo@fi.uba.ar",
         emailSignature: "signysign",
         automaticJobApplicationApproval: true,
         companySignUpAcceptanceCriteria: "criiiteria",
