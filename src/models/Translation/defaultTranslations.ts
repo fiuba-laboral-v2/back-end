@@ -103,7 +103,7 @@ export const defaultTranslations = {
     applicantType: "Tipo de postulante"
   },
   jobApplicationsFilter: {
-    companyName: "Nombre de la empresa",
+    companyName: "Empresa",
     applicantName: "Nombre del postulante",
     offerTitle: "Nombre del puesto"
   },
