@@ -20,8 +20,8 @@ const endpoints = {
 
 export const FrontendConfig: IFrontendConfig = {
   production: {
-    baseUrl: "http://laboral.fi.uba.ar",
-    subDomain: "laboral/#",
+    baseUrl: "bolsadetrabajo.fi.uba.ar",
+    subDomain: "#",
     endpoints
   },
   staging: {
