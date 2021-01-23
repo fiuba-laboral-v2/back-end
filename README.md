@@ -8,10 +8,6 @@ Trabajo Práctico Profesional, FIUBA, 2020
 - **Coverage:** [![Coverage Status](https://coveralls.io/repos/github/fiuba-laboral-v2/back-end/badge.svg)](https://coveralls.io/github/fiuba-laboral-v2/back-end)
 - **URL:** http://antiguos.fi.uba.ar/graphql/
 
-## Set up
-
-- Ver [wiki](https://github.com/fiuba-laboral-v2/back-end/wiki/Set-up)
-
 ## Comandos de yarn
 
 En este repositorio se usa `yarn` como gestor de dependencias
