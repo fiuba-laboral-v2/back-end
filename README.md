@@ -12,9 +12,7 @@ Trabajo Práctico Profesional, FIUBA, 2020
 
 - Ver [wiki](https://github.com/fiuba-laboral-v2/back-end/wiki/Set-up)
 
-## Get started
-
-### Comandos del repositorio de back-end
+## Comandos de yarn
 
 En este repositorio se usa `yarn` como gestor de dependencias
 
