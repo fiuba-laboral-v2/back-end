@@ -1,7 +1,7 @@
 import { QueryInterface } from "sequelize";
 import { flatten } from "lodash";
-import { offers } from "./constants/offers";
-import { Environment } from "../config/Environment";
+import { offers } from "../constants/offers";
+import { Environment } from "../../config/Environment";
 
 export = {
   up: async (queryInterface: QueryInterface) => {

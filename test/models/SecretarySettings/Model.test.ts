@@ -1,5 +1,5 @@
 import { ValidationError } from "sequelize";
-import { InvalidEmailError } from "validations-fiuba-laboral-v2";
+import { InvalidEmailError, InvalidFiubaEmailError } from "validations-fiuba-laboral-v2";
 
 import { SecretarySettings } from "$models";
 import { Secretary } from "$models/Admin";
@@ -151,6 +151,19 @@ describe("SecretarySettings", () => {
     await expect(secretarySettings.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       InvalidEmailError.buildMessage(email)
+    );
+  });
+
+  it("throws an error if the email does not have a fiuba domain", async () => {
+    const email = "extension@gmail.com";
+    const secretarySettings = new SecretarySettings({
+      offerDurationInDays: 15,
+      secretary: "something",
+      email
+    });
+    await expect(secretarySettings.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      InvalidFiubaEmailError.buildMessage()
     );
   });
 });

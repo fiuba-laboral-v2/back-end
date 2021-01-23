@@ -1,6 +1,6 @@
 import { Database } from "$config";
 import { Op, Transaction } from "sequelize";
-import { IFindLatestByCompany, IFindAll, IOfferAssociations } from "./Interface";
+import { IFindLatestByCompany, IFindAll, IOfferAssociations, OfferStatus } from "./Interface";
 import { OfferSectionRepository } from "./OfferSection";
 import { OfferCareerRepository } from "./OfferCareer";
 import { ICreateOffer } from "$models/Offer/Interface";
@@ -88,6 +88,16 @@ export const OfferRepository = {
       query: options => Offer.findAll(options),
       where,
       include
+    });
+  },
+  countCurrentOffers: () => {
+    const studentsStatus = OfferStatusWhereClause.build({ studentsStatus: OfferStatus.approved });
+    const graduatesStatus = OfferStatusWhereClause.build({ graduatesStatus: OfferStatus.approved });
+
+    return Offer.count({
+      where: {
+        [Op.and]: [{ [Op.or]: [{ ...studentsStatus }, { ...graduatesStatus }] }]
+      }
     });
   },
   truncate: () => Offer.truncate({ cascade: true })

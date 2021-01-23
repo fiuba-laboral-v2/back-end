@@ -1,8 +1,8 @@
 import { QueryInterface } from "sequelize";
-import { dylan, manuel, sebastian } from "./constants/applicants";
-import { claudio, marcos } from "./constants/companyUsers";
-import { federico, aldana } from "./constants/admins";
-import { Environment } from "../config/Environment";
+import { dylan, manuel, sebastian } from "../constants/applicants";
+import { claudio, marcos } from "../constants/companyUsers";
+import { federico, aldana } from "../constants/admins";
+import { Environment } from "../../config/Environment";
 
 export = {
   up: async (queryInterface: QueryInterface) => {

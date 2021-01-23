@@ -1,6 +1,6 @@
 import { QueryInterface } from "sequelize";
-import { Environment } from "../config/Environment";
-import { UUID } from "../models/UUID";
+import { Environment } from "../../config/Environment";
+import { UUID } from "../../models/UUID";
 
 export = {
   up: async (queryInterface: QueryInterface) => {

@@ -1,5 +1,5 @@
 import { Transaction } from "sequelize";
-import { IApplicantEditable, IFindLatest, IFind } from "./Interface";
+import { IApplicantEditable, IFindLatest, IFind, ApplicantType } from "./Interface";
 import { ApplicantNotFound } from "./Errors";
 import { Database } from "$config";
 import { ApplicantCareersRepository } from "./ApplicantCareer";
@@ -15,6 +15,7 @@ import {
   ApplicantCareersIncludeClauseBuilder
 } from "$models/QueryBuilder";
 import { Includeable } from "sequelize/types/lib/model";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export const ApplicantRepository = {
   save: (applicant: Applicant, transaction?: Transaction) => applicant.save({ transaction }),
@@ -91,5 +92,27 @@ export const ApplicantRepository = {
       await applicant.save({ transaction });
       return applicant;
     }),
+  countStudents: () => {
+    const applicantCareersFilter = ApplicantCareersIncludeClauseBuilder.build({
+      applicantType: ApplicantType.student
+    });
+    return Applicant.count({
+      where: {
+        approvalStatus: ApprovalStatus.approved
+      },
+      include: [applicantCareersFilter!]
+    });
+  },
+  countGraduates: () => {
+    const applicantCareersFilter = ApplicantCareersIncludeClauseBuilder.build({
+      applicantType: ApplicantType.graduate
+    });
+    return Applicant.count({
+      where: {
+        approvalStatus: ApprovalStatus.approved
+      },
+      include: [applicantCareersFilter!]
+    });
+  },
   truncate: () => Applicant.truncate({ cascade: true })
 };

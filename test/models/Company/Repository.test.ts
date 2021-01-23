@@ -11,6 +11,7 @@ import { CuitGenerator } from "$generators/Cuit";
 import { DniGenerator } from "$generators/DNI";
 import { mockItemsPerPage } from "$test/mocks/config/PaginationConfig";
 import { CompanyUserRepository } from "$models/CompanyUser";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
 describe("CompanyRepository", () => {
   const companyAttributes = () => ({
@@ -93,6 +94,21 @@ describe("CompanyRepository", () => {
       CompanyNotFoundError,
       CompanyNotFoundError.buildMessage(uuid)
     );
+  });
+
+  describe("countCompanies", () => {
+    beforeAll(async () => {
+      await CompanyGenerator.instance.updatedWithStatus(ApprovalStatus.approved);
+      await CompanyGenerator.instance.updatedWithStatus(ApprovalStatus.approved);
+      await CompanyGenerator.instance.updatedWithStatus(ApprovalStatus.pending);
+      await CompanyGenerator.instance.updatedWithStatus(ApprovalStatus.rejected);
+    });
+
+    it("returns the amount of approved companies", async () => {
+      const amountOfCompanies = await CompanyRepository.countCompanies();
+
+      expect(amountOfCompanies).toEqual(2);
+    });
   });
 
   describe("findByUserUuidIfExists", () => {

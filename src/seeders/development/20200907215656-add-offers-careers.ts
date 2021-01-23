@@ -1,7 +1,7 @@
 import { QueryInterface } from "sequelize";
-import { careerCodes } from "./constants/careerCodes";
-import { uuids } from "./constants/uuids";
-import { Environment } from "../config/Environment";
+import { careerCodes } from "../constants/careerCodes";
+import { uuids } from "../constants/uuids";
+import { Environment } from "../../config/Environment";
 
 const createRecord = (careerCode: string, offerUuid: string) => ({
   careerCode: careerCode,
