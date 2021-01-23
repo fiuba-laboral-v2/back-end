@@ -79,15 +79,15 @@ En este repositorio se usa `yarn` como gestor de dependencias
   base de datos y ejecuta los seeders de nuevo. Si el ambiente no es productivo,
   estos seeders no se ejecutan.
 
-- `yarn db:seed:up:production`: Este comando recibe el nombre de un 
-archivo de un seeder de producción con extensión en `js` y ejecuta el método 
-`up` del mismo.
-ej: `yarn db:seed:up:production 20210112200842-add-shared-settings.ts`
+- `yarn db:seed:up:production`: Este comando recibe el nombre de un
+  archivo de un seeder de producción con extensión en `js` y ejecuta el método
+  `up` del mismo.
+  ej: `yarn db:seed:up:production 20210112200842-add-shared-settings.ts`
 
-- `yarn db:seed:down:production`: Este comando recibe el nombre de un 
-archivo de un seeder de producción con extensión en `js` y ejecuta el 
-método `down` del mismo. 
-ej: `yarn db:seed:down:production 20210112200842-add-shared-settings.ts`
+- `yarn db:seed:down:production`: Este comando recibe el nombre de un
+  archivo de un seeder de producción con extensión en `js` y ejecuta el
+  método `down` del mismo.
+  ej: `yarn db:seed:down:production 20210112200842-add-shared-settings.ts`
 
 - `yarn stash`: Este comando utiliza el stash de git para ocultar los archivos
   que no están agregados para el commit. Se usa al momento de querer realizar un commit cuando
