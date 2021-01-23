@@ -1,6 +1,7 @@
 version: "3.4"
 services:
   fiuba-laboral-v2-backend:
+    network_mode: host
     build: .
     command: yarn pm2:start
     image: fiuba-laboral-v2-backend-img
