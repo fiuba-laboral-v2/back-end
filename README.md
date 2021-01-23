@@ -42,8 +42,9 @@ En este repositorio se usa `yarn` como gestor de dependencias
 - `yarn build-migrations`: Este comando compila las migraciones de Typescript
   a Javascript en la carpeta `dist_migrations`.
 
-- `yarn build-seeders`: Este comando compila los seeders de Typescript a
-  Javascript en la carpeta `dist_seeders`.
+- `yarn build-seeders`: Este comando compila los seeders (con datos de prueba
+  para desarrollo y datos mínimos iniciales para producción) de
+  Typescript a Javascript en la carpeta `dist_seeders`.
 
 - `yarn test`: Este comando ejecuta los tests.
 
