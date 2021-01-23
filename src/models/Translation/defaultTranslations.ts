@@ -178,7 +178,7 @@ export const defaultTranslations = {
   },
   offerStatusSelector: {
     studentsTitle: "Estado de la oferta para alumnos/as",
-    graduatesTitle: "Estado de la oferta de graduados/as",
+    graduatesTitle: "Estado de la oferta para graduados/as",
     approved: "Aprobado",
     rejected: "Rechazado",
     pending: "Pendiente de aprobación",
