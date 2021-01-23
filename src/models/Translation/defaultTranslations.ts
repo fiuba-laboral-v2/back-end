@@ -452,7 +452,7 @@ export const defaultTranslations = {
     approvedGraduatesCount: "Graduados aprobados",
     approvedCompaniesCount: "Empresas aprobadas",
     approvedJobApplicationsCount: "Postulaciones aprobadas",
-    approvedOffersCount: "Ofertas aprobadas"
+    approvedOffersCount: "Ofertas aprobadas en curso"
   },
   offerCareer: {
     careersTitle: "Carreras"
