@@ -99,22 +99,22 @@ export const defaultTranslations = {
     careersTitle: "Carreras"
   },
   applicantsFilter: {
-    name: "Nombre",
+    name: "Nombre y Apellido",
     applicantType: "Tipo de postulante"
   },
   jobApplicationsFilter: {
-    companyName: "Nombre de la empresa",
-    applicantName: "Nombre del postulante",
+    companyName: "Empresa",
+    applicantName: "Postulante",
     offerTitle: "Nombre del puesto"
   },
   companiesFilter: {
-    companyName: "Nombre de la empresa",
+    companyName: "Nombre",
     businessSector: "Rubro"
   },
   offersFilter: {
-    companyName: "Nombre de la empresa",
+    companyName: "Empresa",
     businessSector: "Rubro de la empresa",
-    title: "Nombre del puesto",
+    title: "Puesto",
     approvalStatus: "Estado de aprobación"
   },
   filter: {
@@ -177,8 +177,8 @@ export const defaultTranslations = {
     indeterminate: "Todos"
   },
   offerStatusSelector: {
-    studentsTitle: "Estado de la oferta de alumnos/as",
-    graduatesTitle: "Estado de la oferta de graduados/as",
+    studentsTitle: "Estado de la oferta para alumnos/as",
+    graduatesTitle: "Estado de la oferta para graduados/as",
     approved: "Aprobado",
     rejected: "Rechazado",
     pending: "Pendiente de aprobación",
@@ -660,7 +660,7 @@ export const defaultTranslations = {
   },
   adminJobApplicationsListHeader: {
     companyName: "Empresa",
-    offerTitle: "Nombre de la oferta",
+    offerTitle: "Nombre del puesto",
     applicantName: "Postulante",
     approvalStatus: "Estado",
     updatedAt: "Última actualización"
