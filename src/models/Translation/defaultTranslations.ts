@@ -350,7 +350,7 @@ export const defaultTranslations = {
   },
   passwordRecovery: {
     title: "Solicitud de recuperación de contraseña",
-    emailHelperText: "Se enviará un mail con un link para cambiar tu contraseña",
+    emailHelperText: "Se enviará un email con un link para cambiar tu contraseña",
     submit: "Enviar email",
     email: "Email"
   },
