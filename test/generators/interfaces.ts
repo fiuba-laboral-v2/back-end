@@ -12,6 +12,7 @@ export interface ICompanyGeneratorAttributes {
   photos?: string[];
   companyName?: string;
   businessSector?: string;
+  hasAnInternshipAgreement?: boolean;
 }
 
 export interface IApplicantGeneratorAttributes {

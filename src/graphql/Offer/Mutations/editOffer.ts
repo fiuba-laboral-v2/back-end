@@ -48,10 +48,12 @@ export const editOffer = {
     { careers, sections, uuid, ...offerAttributes }: IUpdateOffer,
     { currentUser }: IApolloServerContext
   ) => {
+    const permissions = currentUser.getCompanyRole().getPermissions();
     if (careers.length === 0) throw new OfferWithNoCareersError();
+    if (offerAttributes.isInternship) await permissions.canPublishInternship();
 
     const offer = await OfferRepository.findByUuid(uuid);
-    const canEdit = await currentUser.getCompanyRole().getPermissions().canSeeOffer(offer);
+    const canEdit = await permissions.canSeeOffer(offer);
     if (!canEdit) throw new OfferNotVisibleByCurrentUserError();
 
     offer.set({ maximumSalary: undefined, ...offerAttributes });
