@@ -13,7 +13,7 @@ import { CareerRepository } from "$models/Career";
 import { CompanyRepository } from "$models/Company";
 import { UserRepository } from "$models/User";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { IOfferAttributes } from "$models/Offer";
+import { CompanyWithNoInternshipAgreementError, IOfferAttributes } from "$models/Offer";
 import { Career, Company } from "$models";
 
 import { OfferWithNoCareersError } from "$graphql/Offer/Errors";
@@ -207,6 +207,24 @@ describe("createOffer", () => {
         variables: { ...createOfferAttributes, maximumSalary: null }
       });
       expect(errors).toEqualGraphQLErrorType("ValidationError");
+    });
+
+    it("throws an error when an internship is created by a company with no internship agreement", async () => {
+      const { apolloClient, company } = await TestClientGenerator.company({
+        status: ApprovalStatus.approved,
+        hasAnInternshipAgreement: false
+      });
+
+      const { companyUuid, ...createOfferAttributes } = OfferGenerator.data.internship({
+        companyUuid: company.uuid,
+        targetApplicantType: ApplicantType.student,
+        careers: [{ careerCode: firstCareer.code }]
+      });
+      const { errors } = await apolloClient.mutate({
+        mutation: CREATE_OFFER,
+        variables: { ...createOfferAttributes, maximumSalary: null }
+      });
+      expect(errors).toEqualGraphQLErrorType(CompanyWithNoInternshipAgreementError.name);
     });
 
     it("creates a new offer with one section and one career", async () => {

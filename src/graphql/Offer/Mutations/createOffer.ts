@@ -39,12 +39,18 @@ export const createOffer = {
       type: nonNull(List(nonNull(GraphQLOfferCareerInput)))
     }
   },
-  resolve: (_: undefined, attributes: ICreateOffer, { currentUser }: IApolloServerContext) => {
+  resolve: async (
+    _: undefined,
+    attributes: ICreateOffer,
+    { currentUser }: IApolloServerContext
+  ) => {
+    const companyRole = currentUser.getCompanyRole();
     if (attributes.careers.length === 0) throw new OfferWithNoCareersError();
+    if (attributes.isInternship) await companyRole.getPermissions().canPublishInternship();
 
     return OfferRepository.create({
       ...attributes,
-      companyUuid: currentUser.getCompanyRole().companyUuid
+      companyUuid: companyRole.companyUuid
     });
   }
 };
