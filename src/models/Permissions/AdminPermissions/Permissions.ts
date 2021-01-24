@@ -19,6 +19,10 @@ export class AdminPermissions implements IPermissions {
     return Promise.resolve(true);
   }
 
+  public canPublishInternship() {
+    return Promise.resolve(false);
+  }
+
   public async canModerateOffer(offer: Offer) {
     const admin = await AdminRepository.findByUserUuid(this.adminUserUuid);
     const company = await CompanyRepository.findByUuid(offer.companyUuid);
