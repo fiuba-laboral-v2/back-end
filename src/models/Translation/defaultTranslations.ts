@@ -285,6 +285,7 @@ export const defaultTranslations = {
   companyDataFormSection: {
     title: "Datos de la empresa",
     companyName: "Nombre de la empresa",
+    companyLogoInputTooltipMessage: "Logo de la empresa (cuadrado)",
     slogan: "Slogan",
     description: "Descripción",
     businessName: "Razón social",
