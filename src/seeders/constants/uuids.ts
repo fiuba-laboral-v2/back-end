@@ -67,10 +67,12 @@ export const uuids = {
     }
   },
   claudio: {
-    user: UUID.generate()
+    user: UUID.generate(),
+    companyUser: UUID.generate()
   },
   marcos: {
-    user: UUID.generate()
+    user: UUID.generate(),
+    companyUser: UUID.generate()
   },
   capabilities: {
     node: UUID.generate(),
