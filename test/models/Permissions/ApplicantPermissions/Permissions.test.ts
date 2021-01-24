@@ -315,4 +315,31 @@ describe("ApplicantPermissions", () => {
       expect(await permissions.canModerateJobApplication(jobApplication)).toBe(false);
     });
   });
+
+  describe("canPublishInternship", () => {
+    let student: Applicant;
+    let graduate: Applicant;
+    let studentAndGraduate: Applicant;
+
+    beforeAll(async () => {
+      student = await ApplicantGenerator.instance.student();
+      graduate = await ApplicantGenerator.instance.graduate();
+      studentAndGraduate = await ApplicantGenerator.instance.studentAndGraduate();
+    });
+
+    it("returns false for any student", async () => {
+      const permissions = new ApplicantPermissions(student.uuid);
+      expect(await permissions.canPublishInternship()).toBe(false);
+    });
+
+    it("returns false for any graduate", async () => {
+      const permissions = new ApplicantPermissions(graduate.uuid);
+      expect(await permissions.canPublishInternship()).toBe(false);
+    });
+
+    it("returns false for any student and graduate", async () => {
+      const permissions = new ApplicantPermissions(studentAndGraduate.uuid);
+      expect(await permissions.canPublishInternship()).toBe(false);
+    });
+  });
 });

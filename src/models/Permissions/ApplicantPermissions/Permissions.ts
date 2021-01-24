@@ -34,4 +34,8 @@ export class ApplicantPermissions implements IPermissions {
   public async canModerateJobApplication(_: JobApplication) {
     return Promise.resolve(false);
   }
+
+  public canPublishInternship() {
+    return Promise.resolve(false);
+  }
 }
