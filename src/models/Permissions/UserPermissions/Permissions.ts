@@ -14,6 +14,10 @@ export class UserPermissions implements IPermissions {
     return this.hasPermission(permission => permission.canSeeOffer(offer));
   }
 
+  public canPublishInternship() {
+    return this.hasPermission(permission => permission.canPublishInternship());
+  }
+
   public canModerateOffer(offer: Offer) {
     return this.hasPermission(permission => permission.canModerateOffer(offer));
   }

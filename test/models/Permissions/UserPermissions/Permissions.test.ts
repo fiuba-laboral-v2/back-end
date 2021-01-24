@@ -68,28 +68,28 @@ describe("UserPermissions", () => {
         const permissions = new UserPermissions(currentUser);
         expect(await permissions.canSeeOffer(offer)).toBe(false);
       });
+    });
 
-      describe("canModerateOffer", () => {
-        it("returns true if admin roles permissions succeeds and applicant's fails", async () => {
-          mockPermissions(adminPermissions, "canModerateOffer", true);
-          mockPermissions(applicantPermissions, "canModerateOffer", false);
-          const permissions = new UserPermissions(currentUser);
-          expect(await permissions.canModerateOffer(offer)).toBe(true);
-        });
+    describe("canModerateOffer", () => {
+      it("returns true if admin roles permissions succeeds and applicant's fails", async () => {
+        mockPermissions(adminPermissions, "canModerateOffer", true);
+        mockPermissions(applicantPermissions, "canModerateOffer", false);
+        const permissions = new UserPermissions(currentUser);
+        expect(await permissions.canModerateOffer(offer)).toBe(true);
+      });
 
-        it("returns true if admin roles permissions fails and applicant's succeeds", async () => {
-          mockPermissions(adminPermissions, "canModerateOffer", false);
-          mockPermissions(applicantPermissions, "canModerateOffer", true);
-          const permissions = new UserPermissions(currentUser);
-          expect(await permissions.canModerateOffer(offer)).toBe(true);
-        });
+      it("returns true if admin roles permissions fails and applicant's succeeds", async () => {
+        mockPermissions(adminPermissions, "canModerateOffer", false);
+        mockPermissions(applicantPermissions, "canModerateOffer", true);
+        const permissions = new UserPermissions(currentUser);
+        expect(await permissions.canModerateOffer(offer)).toBe(true);
+      });
 
-        it("returns false if both roles permissions fail", async () => {
-          mockPermissions(adminPermissions, "canModerateOffer", false);
-          mockPermissions(applicantPermissions, "canModerateOffer", false);
-          const permissions = new UserPermissions(currentUser);
-          expect(await permissions.canModerateOffer(offer)).toBe(false);
-        });
+      it("returns false if both roles permissions fail", async () => {
+        mockPermissions(adminPermissions, "canModerateOffer", false);
+        mockPermissions(applicantPermissions, "canModerateOffer", false);
+        const permissions = new UserPermissions(currentUser);
+        expect(await permissions.canModerateOffer(offer)).toBe(false);
       });
     });
   });
