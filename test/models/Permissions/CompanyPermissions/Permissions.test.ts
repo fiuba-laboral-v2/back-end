@@ -1,12 +1,13 @@
 import { CompanyPermissions } from "$models/Permissions";
+import { CompanyWithNoInternshipAgreementError } from "$models/Offer";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
+import { Company } from "$models";
 
 import { JobApplicationGenerator } from "$generators/JobApplication";
 import { OfferGenerator } from "$generators/Offer";
 import { CompanyGenerator } from "$generators/Company";
-import { Company } from "$models";
 
 describe("CompanyPermissions", () => {
   beforeAll(async () => {
@@ -96,6 +97,40 @@ describe("CompanyPermissions", () => {
       const jobApplication = await JobApplicationGenerator.instance.withMinimumData();
       const permissions = new CompanyPermissions(company.uuid);
       expect(await permissions.canModerateJobApplication(jobApplication)).toBe(false);
+    });
+  });
+
+  describe("canPublishInternship", () => {
+    let companyWithInternshipAgreement: Company;
+    let companyWithNoInternshipAgreement: Company;
+
+    const mockRepository = (company: Company) =>
+      jest.spyOn(CompanyRepository, "findByUuid").mockImplementation(async () => company);
+
+    beforeAll(async () => {
+      companyWithInternshipAgreement = new Company({
+        ...CompanyGenerator.data.completeData(),
+        hasAnInternshipAgreement: true
+      });
+      companyWithNoInternshipAgreement = new Company({
+        ...CompanyGenerator.data.completeData(),
+        hasAnInternshipAgreement: false
+      });
+    });
+
+    it("throws an error if the company does not have an internship agreement", async () => {
+      mockRepository(companyWithNoInternshipAgreement);
+      const permissions = new CompanyPermissions(companyWithNoInternshipAgreement.uuid);
+      await expect(permissions.canPublishInternship()).rejects.toThrowErrorWithMessage(
+        CompanyWithNoInternshipAgreementError,
+        CompanyWithNoInternshipAgreementError.buildMessage()
+      );
+    });
+
+    it("returns true if the company does has an internship agreement", async () => {
+      mockRepository(companyWithInternshipAgreement);
+      const permissions = new CompanyPermissions(companyWithInternshipAgreement.uuid);
+      expect(await permissions.canPublishInternship()).toBe(true);
     });
   });
 });
