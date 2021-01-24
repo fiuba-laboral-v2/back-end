@@ -45,6 +45,18 @@ describe("AdminPermissions", () => {
     });
   });
 
+  describe("canPublishInternship", () => {
+    it("always returns false for extension admin", async () => {
+      const permissions = new AdminPermissions(extensionAdmin.userUuid);
+      expect(await permissions.canPublishInternship()).toBe(false);
+    });
+
+    it("always returns false for graduados admin", async () => {
+      const permissions = new AdminPermissions(graduadosAdmin.userUuid);
+      expect(await permissions.canPublishInternship()).toBe(false);
+    });
+  });
+
   describe("canModerateOffer", () => {
     let companyUuid: string;
 

@@ -1,4 +1,6 @@
 import { JobApplication, Offer } from "$models";
+import { CompanyRepository } from "$models/Company";
+import { CompanyWithNoInternshipAgreementError } from "$models/Offer";
 import { IPermissions } from "../Interfaces";
 
 export class CompanyPermissions implements IPermissions {
@@ -10,6 +12,12 @@ export class CompanyPermissions implements IPermissions {
 
   public canSeeOffer(offer: Offer) {
     return Promise.resolve(offer.companyUuid === this.companyUuid);
+  }
+
+  public async canPublishInternship() {
+    const company = await CompanyRepository.findByUuid(this.companyUuid);
+    if (company.hasAnInternshipAgreement) return true;
+    throw new CompanyWithNoInternshipAgreementError();
   }
 
   public async canModerateOffer(_: Offer) {

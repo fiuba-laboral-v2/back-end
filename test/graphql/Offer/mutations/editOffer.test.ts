@@ -5,7 +5,11 @@ import { client } from "$test/graphql/ApolloTestClient";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { UserRepository } from "$models/User";
-import { OfferNotFoundError, OfferRepository } from "$models/Offer";
+import {
+  CompanyWithNoInternshipAgreementError,
+  OfferNotFoundError,
+  OfferRepository
+} from "$models/Offer";
 import { ApprovalStatus } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Applicant";
 import { Admin, Career, Company } from "$models";
@@ -191,6 +195,29 @@ describe("editOffer", () => {
       }
     });
     expect(errors).toEqualGraphQLErrorType("ValidationError");
+  });
+
+  it("throws an error if turning offer into internship with a company with no internship agreement", async () => {
+    const { apolloClient, company } = await TestClientGenerator.company({
+      status: ApprovalStatus.approved,
+      hasAnInternshipAgreement: false
+    });
+    const initialAttributes = OfferGenerator.data.withObligatoryData({
+      companyUuid: company.uuid,
+      careers: [{ careerCode: firstCareer.code }]
+    });
+    const { uuid } = await OfferRepository.create(initialAttributes);
+    const { errors } = await apolloClient.mutate({
+      mutation: EDIT_OFFER,
+      variables: {
+        uuid,
+        ...initialAttributes,
+        isInternship: true,
+        maximumSalary: null,
+        targetApplicantType: ApplicantType.student
+      }
+    });
+    expect(errors).toEqualGraphQLErrorType(CompanyWithNoInternshipAgreementError.name);
   });
 
   it("edits an offer title", async () => {

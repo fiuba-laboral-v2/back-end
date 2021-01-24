@@ -8,11 +8,13 @@ export const companyTestClient = async ({
   status,
   photos,
   expressContext,
+  hasAnInternshipAgreement,
   user: userAttributes
 }: ICompanyTestClientAttributes) => {
   const company = await CompanyGenerator.instance.withMinimumData({
     photos,
-    user: userAttributes
+    user: userAttributes,
+    hasAnInternshipAgreement
   });
   const [user] = await UserRepository.findByCompanyUuid(company.uuid);
   const companyContext = { company: { uuid: company.uuid } };
