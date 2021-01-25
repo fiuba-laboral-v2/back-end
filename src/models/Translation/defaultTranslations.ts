@@ -3,7 +3,7 @@ export const defaultTranslations = {
     title: "Bolsa de trabajo FIUBA"
   },
   changeCurrentRoleButton: {
-    enterAsAdmin: "Ingresar como Admin",
+    enterAsAdmin: "Navegar como Admin",
     enterAsApplicant: "Ingresar como Postulante"
   },
   userEditFields: {
