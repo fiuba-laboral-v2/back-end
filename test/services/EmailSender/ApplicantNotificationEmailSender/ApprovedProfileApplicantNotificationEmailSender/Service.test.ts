@@ -53,7 +53,9 @@ describe("ApprovedProfileApplicantNotificationEmailSender", () => {
               "Tu perfil ha sido aprobado: (baseUrl/subDomain/postulante/perfil)." +
               "\n\n" +
               "Graduados email signature"
-          }
+          },
+          onError: expect.any(Function),
+          onSuccess: expect.any(Function)
         }
       ]
     ]);
