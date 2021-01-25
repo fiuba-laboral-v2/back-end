@@ -12,7 +12,6 @@ export class NotificationEmailSender {
   constructor(notification: Notification, notificationTableName: string, emailParams: ISendEmail) {
     this.notification = notification;
     this.notificationTableName = notificationTableName;
-    this.notificationTableName = notificationTableName;
     this.emailParams = emailParams;
   }
 
