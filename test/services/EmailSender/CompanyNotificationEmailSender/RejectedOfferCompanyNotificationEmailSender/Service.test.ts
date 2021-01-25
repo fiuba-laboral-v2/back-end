@@ -47,7 +47,9 @@ describe("RejectedOfferCompanyNotificationEmailSender", () => {
               `Motivo de rechazo: "${notification.moderatorMessage}"` +
               "\n\n" +
               "Extensión email signature"
-          }
+          },
+          onError: expect.any(Function),
+          onSuccess: expect.any(Function)
         }
       ]
     ]);

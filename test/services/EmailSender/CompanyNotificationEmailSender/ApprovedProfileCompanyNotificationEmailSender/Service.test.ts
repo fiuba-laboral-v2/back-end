@@ -50,7 +50,9 @@ describe("ApprovedProfileCompanyNotificationEmailSender", () => {
               "Tu perfil ha sido aprobado: (baseUrl/subDomain/empresa/perfil)." +
               "\n\n" +
               "Graduados email signature"
-          }
+          },
+          onError: expect.any(Function),
+          onSuccess: expect.any(Function)
         }
       ]
     ]);

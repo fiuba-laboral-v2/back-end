@@ -46,7 +46,9 @@ describe("ApprovedOfferCompanyNotificationEmailSender", () => {
               `Tu oferta laboral ha sido aprobada: ${offer.title} (baseUrl/subDomain/empresa/ofertas/${offer.uuid}).` +
               "\n\n" +
               "Extensión email signature"
-          }
+          },
+          onError: expect.any(Function),
+          onSuccess: expect.any(Function)
         }
       ]
     ]);

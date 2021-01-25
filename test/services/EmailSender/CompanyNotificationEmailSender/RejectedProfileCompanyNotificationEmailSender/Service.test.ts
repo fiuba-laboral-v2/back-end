@@ -53,7 +53,9 @@ describe("RejectedProfileCompanyNotificationEmailSender", () => {
               `Motivo de rechazo: "${notification.moderatorMessage}"` +
               "\n\n" +
               "Graduados email signature"
-          }
+          },
+          onError: expect.any(Function),
+          onSuccess: expect.any(Function)
         }
       ]
     ]);

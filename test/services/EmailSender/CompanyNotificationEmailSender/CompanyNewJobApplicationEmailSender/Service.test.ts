@@ -52,7 +52,9 @@ describe("NewJobApplicationCompanyNotificationEmailSender", () => {
               `Postulante: applicantName applicantSurname (baseUrl/subDomain/empresa/postulantes/${applicantUuid}).` +
               "\n\n" +
               "Graduados email signature"
-          }
+          },
+          onError: expect.any(Function),
+          onSuccess: expect.any(Function)
         }
       ]
     ]);
