@@ -30,4 +30,6 @@ export const EmailService = {
 interface ISend {
   params: ISendEmail;
   retryIntervalsInSeconds?: number[];
+  onSuccess?: (message: string) => Promise<void>;
+  onError?: (message: string) => Promise<void>;
 }
