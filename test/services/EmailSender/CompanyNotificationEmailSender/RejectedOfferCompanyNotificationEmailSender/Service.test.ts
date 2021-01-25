@@ -34,18 +34,20 @@ describe("RejectedOfferCompanyNotificationEmailSender", () => {
     expect(emailSendMock.mock.calls).toEqual([
       [
         {
-          receiverEmails: [companyUser.email],
-          sender: {
-            name: `${adminUser.name} ${adminUser.surname}`,
-            email: settings.email
-          },
-          subject: "Oferta laboral rechazada",
-          body:
-            `Tu oferta laboral ha sido rechazada: ${offer.title} (baseUrl/subDomain/empresa/ofertas/${offer.uuid}).` +
-            "\n" +
-            `Motivo de rechazo: "${notification.moderatorMessage}"` +
-            "\n\n" +
-            "Extensión email signature"
+          params: {
+            receiverEmails: [companyUser.email],
+            sender: {
+              name: `${adminUser.name} ${adminUser.surname}`,
+              email: settings.email
+            },
+            subject: "Oferta laboral rechazada",
+            body:
+              `Tu oferta laboral ha sido rechazada: ${offer.title} (baseUrl/subDomain/empresa/ofertas/${offer.uuid}).` +
+              "\n" +
+              `Motivo de rechazo: "${notification.moderatorMessage}"` +
+              "\n\n" +
+              "Extensión email signature"
+          }
         }
       ]
     ]);

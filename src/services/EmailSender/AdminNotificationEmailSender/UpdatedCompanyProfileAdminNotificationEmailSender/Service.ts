@@ -16,13 +16,15 @@ export const UpdatedCompanyProfileAdminNotificationEmailSender = {
     );
 
     return EmailService.send({
-      receiverEmails: [settings.email],
-      sender: Sender.noReply(),
-      subject,
-      body: template(body)({
-        companyName: company.companyName,
-        companyLink: FrontEndLinksBuilder.admin.company.profileLink(notification.companyUuid)
-      })
+      params: {
+        receiverEmails: [settings.email],
+        sender: Sender.noReply(),
+        subject,
+        body: template(body)({
+          companyName: company.companyName,
+          companyLink: FrontEndLinksBuilder.admin.company.profileLink(notification.companyUuid)
+        })
+      }
     });
   }
 };

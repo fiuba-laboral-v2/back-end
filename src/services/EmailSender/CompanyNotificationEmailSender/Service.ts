@@ -25,10 +25,12 @@ export const CompanyNotificationEmailSender = {
     const sender = await Sender.findByAdmin(notification.moderatorUuid);
 
     return EmailService.send({
-      receiverEmails,
-      sender,
-      subject,
-      body: template(body)(bodyTemplate(settings.emailSignature))
+      params: {
+        receiverEmails,
+        sender,
+        subject,
+        body: template(body)(bodyTemplate(settings.emailSignature))
+      }
     });
   }
 };

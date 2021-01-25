@@ -49,16 +49,18 @@ describe("ApprovedJobApplicationApplicantNotificationEmailSender", () => {
     expect(emailSendMock.mock.calls).toEqual([
       [
         {
-          receiverEmails: [applicantUser.email],
-          sender: {
-            name: `${adminUser.name} ${adminUser.surname}`,
-            email: settings.email
-          },
-          subject: "Postulación a oferta de trabajo aprobada",
-          body:
-            `Tu postulación a la oferta de trabajo: ${offer.title} (baseUrl/subDomain/postulante/ofertas/${offer.uuid}) ha sido aprobada. Se envió una notificación a la empresa.` +
-            "\n\n" +
-            `Graduados email signature`
+          params: {
+            receiverEmails: [applicantUser.email],
+            sender: {
+              name: `${adminUser.name} ${adminUser.surname}`,
+              email: settings.email
+            },
+            subject: "Postulación a oferta de trabajo aprobada",
+            body:
+              `Tu postulación a la oferta de trabajo: ${offer.title} (baseUrl/subDomain/postulante/ofertas/${offer.uuid}) ha sido aprobada. Se envió una notificación a la empresa.` +
+              "\n\n" +
+              `Graduados email signature`
+          }
         }
       ]
     ]);

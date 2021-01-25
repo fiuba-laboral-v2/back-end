@@ -39,16 +39,18 @@ describe("ApprovedProfileCompanyNotificationEmailSender", () => {
     expect(emailSendMock.mock.calls).toEqual([
       [
         {
-          receiverEmails: [companyUser.email],
-          sender: {
-            name: `${adminUser.name} ${adminUser.surname}`,
-            email: settings.email
-          },
-          subject: "Perfil aprobado",
-          body:
-            "Tu perfil ha sido aprobado: (baseUrl/subDomain/empresa/perfil)." +
-            "\n\n" +
-            "Graduados email signature"
+          params: {
+            receiverEmails: [companyUser.email],
+            sender: {
+              name: `${adminUser.name} ${adminUser.surname}`,
+              email: settings.email
+            },
+            subject: "Perfil aprobado",
+            body:
+              "Tu perfil ha sido aprobado: (baseUrl/subDomain/empresa/perfil)." +
+              "\n\n" +
+              "Graduados email signature"
+          }
         }
       ]
     ]);

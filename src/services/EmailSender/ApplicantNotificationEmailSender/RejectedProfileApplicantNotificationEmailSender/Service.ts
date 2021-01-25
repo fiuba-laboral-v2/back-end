@@ -18,14 +18,16 @@ export const RejectedProfileApplicantNotificationEmailSender = {
     );
 
     return EmailService.send({
-      receiverEmails: [applicantUser.email],
-      sender: await Sender.findByAdmin(notification.moderatorUuid),
-      subject,
-      body: template(body)({
-        profileLink: FrontEndLinksBuilder.applicant.profileLink(),
-        rejectionReason: notification.moderatorMessage,
-        signature: settings.emailSignature
-      })
+      params: {
+        receiverEmails: [applicantUser.email],
+        sender: await Sender.findByAdmin(notification.moderatorUuid),
+        subject,
+        body: template(body)({
+          profileLink: FrontEndLinksBuilder.applicant.profileLink(),
+          rejectionReason: notification.moderatorMessage,
+          signature: settings.emailSignature
+        })
+      }
     });
   }
 };

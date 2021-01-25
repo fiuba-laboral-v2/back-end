@@ -50,20 +50,22 @@ describe("RejectedJobApplicationApplicantNotificationEmailSender", () => {
     expect(emailSendMock.mock.calls).toEqual([
       [
         {
-          receiverEmails: [applicantUser.email],
-          sender: {
-            name: `${adminUser.name} ${adminUser.surname}`,
-            email: settings.email
-          },
-          subject: "Postulación a oferta de trabajo rechazada",
-          body:
-            `Tu postulación a la oferta de trabajo: ${offer.title} (baseUrl/subDomain/postulante/ofertas/${offer.uuid}) ha sido rechazada.` +
-            "\n" +
-            `Motivo de rechazo: "${notification.moderatorMessage}"` +
-            "\n" +
-            "Para mas detalles se puede responder a este email." +
-            "\n\n" +
-            "Graduados email signature"
+          params: {
+            receiverEmails: [applicantUser.email],
+            sender: {
+              name: `${adminUser.name} ${adminUser.surname}`,
+              email: settings.email
+            },
+            subject: "Postulación a oferta de trabajo rechazada",
+            body:
+              `Tu postulación a la oferta de trabajo: ${offer.title} (baseUrl/subDomain/postulante/ofertas/${offer.uuid}) ha sido rechazada.` +
+              "\n" +
+              `Motivo de rechazo: "${notification.moderatorMessage}"` +
+              "\n" +
+              "Para mas detalles se puede responder a este email." +
+              "\n\n" +
+              "Graduados email signature"
+          }
         }
       ]
     ]);

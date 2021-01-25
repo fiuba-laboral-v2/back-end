@@ -43,20 +43,22 @@ describe("RejectedProfileApplicantNotificationEmailSender", () => {
     expect(emailSendMock.mock.calls).toEqual([
       [
         {
-          receiverEmails: [applicantUser.email],
-          sender: {
-            name: `${adminUser.name} ${adminUser.surname}`,
-            email: settings.email
-          },
-          subject: "Perfil rechazado",
-          body:
-            "Tu perfil ha sido rechazado: (baseUrl/subDomain/postulante/perfil)." +
-            "\n" +
-            `Motivo de rechazo: "${notification.moderatorMessage}"` +
-            "\n" +
-            "Para mas detalles se puede responder a este email." +
-            "\n\n" +
-            "Graduados email signature"
+          params: {
+            receiverEmails: [applicantUser.email],
+            sender: {
+              name: `${adminUser.name} ${adminUser.surname}`,
+              email: settings.email
+            },
+            subject: "Perfil rechazado",
+            body:
+              "Tu perfil ha sido rechazado: (baseUrl/subDomain/postulante/perfil)." +
+              "\n" +
+              `Motivo de rechazo: "${notification.moderatorMessage}"` +
+              "\n" +
+              "Para mas detalles se puede responder a este email." +
+              "\n\n" +
+              "Graduados email signature"
+          }
         }
       ]
     ]);

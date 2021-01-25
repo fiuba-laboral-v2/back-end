@@ -37,7 +37,7 @@ describe("EmailService", () => {
         attemptCount += 1;
         if (shouldThrowError(attemptCount)) throw new Error();
       });
-      const sendEmailJestMatcher = expect(EmailService.send(sendEmailParams));
+      const sendEmailJestMatcher = expect(EmailService.send({ params: sendEmailParams }));
       if (expected.errorWasThrown) {
         await sendEmailJestMatcher.rejects.toThrow();
       } else {

@@ -39,18 +39,20 @@ describe("NewJobApplicationCompanyNotificationEmailSender", () => {
     expect(emailSendMock.mock.calls).toEqual([
       [
         {
-          receiverEmails: [companyUser.email],
-          sender: {
-            name: `${adminUser.name} ${adminUser.surname}`,
-            email: settings.email
-          },
-          subject: "Nueva postulación a tu oferta laboral",
-          body:
-            `Nueva postulación a tu oferta laboral: ${offer.title} (baseUrl/subDomain/empresa/ofertas/${offerUuid}).` +
-            "\n" +
-            `Postulante: applicantName applicantSurname (baseUrl/subDomain/empresa/postulantes/${applicantUuid}).` +
-            "\n\n" +
-            "Graduados email signature"
+          params: {
+            receiverEmails: [companyUser.email],
+            sender: {
+              name: `${adminUser.name} ${adminUser.surname}`,
+              email: settings.email
+            },
+            subject: "Nueva postulación a tu oferta laboral",
+            body:
+              `Nueva postulación a tu oferta laboral: ${offer.title} (baseUrl/subDomain/empresa/ofertas/${offerUuid}).` +
+              "\n" +
+              `Postulante: applicantName applicantSurname (baseUrl/subDomain/empresa/postulantes/${applicantUuid}).` +
+              "\n\n" +
+              "Graduados email signature"
+          }
         }
       ]
     ]);

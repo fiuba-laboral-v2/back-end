@@ -37,15 +37,17 @@ export const JobApplicationApplicantNotificationEmailSender = {
     const sender = await Sender.findByAdmin(notification.moderatorUuid);
 
     return EmailService.send({
-      receiverEmails: [applicantUser.email],
-      sender,
-      subject,
-      body: template(body)({
-        offerTitle: offer.title,
-        offerLink: FrontEndLinksBuilder.applicant.offerLink(offer.uuid),
-        ...getRejectionReason(notification),
-        signature: settings.emailSignature
-      })
+      params: {
+        receiverEmails: [applicantUser.email],
+        sender,
+        subject,
+        body: template(body)({
+          offerTitle: offer.title,
+          offerLink: FrontEndLinksBuilder.applicant.offerLink(offer.uuid),
+          ...getRejectionReason(notification),
+          signature: settings.emailSignature
+        })
+      }
     });
   }
 };

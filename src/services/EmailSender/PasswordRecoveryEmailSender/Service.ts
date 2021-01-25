@@ -12,12 +12,14 @@ export const PasswordRecoveryEmailSender = {
     const token = await JWT.createToken(user, "recoverPassword");
 
     await EmailService.send({
-      receiverEmails: [user.email],
-      sender: Sender.noReply(),
-      subject,
-      body: template(body)({
-        passwordRecoveryLink: FrontEndLinksBuilder.company.editMyForgottenPassword(token)
-      })
+      params: {
+        receiverEmails: [user.email],
+        sender: Sender.noReply(),
+        subject,
+        body: template(body)({
+          passwordRecoveryLink: FrontEndLinksBuilder.company.editMyForgottenPassword(token)
+        })
+      }
     });
   }
 };
