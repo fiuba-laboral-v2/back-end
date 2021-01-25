@@ -1,12 +1,13 @@
 import { RejectedProfileApplicantNotification } from "$models/ApplicantNotification";
 import { Sender } from "$services/EmailSender/Sender";
 import { FrontEndLinksBuilder } from "$services/EmailSender/FrontEndLinksBuilder";
-import { EmailService } from "$services/Email";
 import { ApplicantRepository } from "$models/Applicant";
 import { UserRepository } from "$models/User";
 import { TranslationRepository } from "$models/Translation";
 import { template } from "lodash";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
+import { NotificationEmailSender } from "$services/EmailSender/NotificationEmailSender";
+import { ApplicantNotificationSequelizeModel } from "$models";
 
 export const RejectedProfileApplicantNotificationEmailSender = {
   send: async (notification: RejectedProfileApplicantNotification) => {
@@ -16,18 +17,22 @@ export const RejectedProfileApplicantNotificationEmailSender = {
     const { subject, body } = TranslationRepository.translate(
       "rejectedProfileApplicantNotificationEmail"
     );
+    const emailParams = {
+      receiverEmails: [applicantUser.email],
+      sender: await Sender.findByAdmin(notification.moderatorUuid),
+      subject,
+      body: template(body)({
+        profileLink: FrontEndLinksBuilder.applicant.profileLink(),
+        rejectionReason: notification.moderatorMessage,
+        signature: settings.emailSignature
+      })
+    };
 
-    return EmailService.send({
-      params: {
-        receiverEmails: [applicantUser.email],
-        sender: await Sender.findByAdmin(notification.moderatorUuid),
-        subject,
-        body: template(body)({
-          profileLink: FrontEndLinksBuilder.applicant.profileLink(),
-          rejectionReason: notification.moderatorMessage,
-          signature: settings.emailSignature
-        })
-      }
-    });
+    const emailSender = new NotificationEmailSender(
+      notification,
+      ApplicantNotificationSequelizeModel.tableName,
+      emailParams
+    );
+    return emailSender.send();
   }
 };
