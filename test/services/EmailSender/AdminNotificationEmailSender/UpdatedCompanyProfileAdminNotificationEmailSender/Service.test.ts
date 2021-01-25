@@ -52,7 +52,9 @@ describe("UpdatedCompanyProfileAdminNotificationEmailSender", () => {
             },
             subject: "Perfil de empresa actualizado",
             body: `El perfil de la empresa '${company.companyName}' (baseUrl/subDomain/admin/empresas/${company.uuid}) ha sido actualizado.`
-          }
+          },
+          onError: expect.any(Function),
+          onSuccess: expect.any(Function)
         }
       ]
     ]);

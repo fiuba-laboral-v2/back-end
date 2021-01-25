@@ -2,10 +2,11 @@ import { UpdatedCompanyProfileAdminNotification } from "$models/AdminNotificatio
 import { TranslationRepository } from "$models/Translation";
 import { CompanyRepository } from "$models/Company";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
-import { EmailService } from "$services/Email";
+import { AdminNotificationSequelizeModel } from "$models";
 import { Sender } from "$services/EmailSender/Sender";
 import { template } from "lodash";
 import { FrontEndLinksBuilder } from "$services/EmailSender/FrontEndLinksBuilder";
+import { NotificationEmailSender } from "$services/EmailSender/NotificationEmailSender";
 
 export const UpdatedCompanyProfileAdminNotificationEmailSender = {
   send: async (notification: UpdatedCompanyProfileAdminNotification) => {
@@ -15,16 +16,20 @@ export const UpdatedCompanyProfileAdminNotificationEmailSender = {
       "updatedCompanyProfileAdminNotificationEmail"
     );
 
-    return EmailService.send({
-      params: {
-        receiverEmails: [settings.email],
-        sender: Sender.noReply(),
-        subject,
-        body: template(body)({
-          companyName: company.companyName,
-          companyLink: FrontEndLinksBuilder.admin.company.profileLink(notification.companyUuid)
-        })
-      }
-    });
+    const emailParams = {
+      receiverEmails: [settings.email],
+      sender: Sender.noReply(),
+      subject,
+      body: template(body)({
+        companyName: company.companyName,
+        companyLink: FrontEndLinksBuilder.admin.company.profileLink(notification.companyUuid)
+      })
+    };
+    const emailSender = new NotificationEmailSender(
+      notification,
+      AdminNotificationSequelizeModel.tableName,
+      emailParams
+    );
+    return emailSender.send();
   }
 };

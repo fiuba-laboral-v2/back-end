@@ -24,7 +24,7 @@ export class NotificationEmailSender {
     });
   }
 
-  public async createLog(success: boolean, message: string) {
+  private async createLog(success: boolean, message: string) {
     const notificationEmailLog = new NotificationEmailLog({
       notificationUuid: this.notification.uuid,
       notificationTable: this.notificationTableName,
