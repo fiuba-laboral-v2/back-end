@@ -22,7 +22,9 @@ export const EmailService = {
       await new Promise(resolve => setTimeout(resolve, seconds * 1000));
       return EmailService.send({
         params,
-        retryIntervalsInSeconds: retryIntervalsInSeconds.splice(1)
+        retryIntervalsInSeconds: retryIntervalsInSeconds.splice(1),
+        onSuccess,
+        onError
       });
     }
   }
