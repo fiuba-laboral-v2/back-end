@@ -1,21 +1,22 @@
 import { EmailApi } from "$services/Email/EmailApi";
 import { EmailServiceConfig } from "$config";
 import { ISendEmail } from "$services/Email/interface";
-import { Logger } from "$libs/Logger";
 
 export const EmailService = {
   send: async ({
     params,
-    retryIntervalsInSeconds = EmailServiceConfig.retryIntervalsInSeconds()
+    retryIntervalsInSeconds = EmailServiceConfig.retryIntervalsInSeconds(),
+    onSuccess,
+    onError
   }: ISend) => {
     try {
       await EmailApi.send(params);
-      Logger.info("email sent");
+      if (onSuccess) await onSuccess("The Email has been sent");
     } catch (error) {
       const seconds = retryIntervalsInSeconds[0];
       const thereAreNoMoreRetries = seconds === undefined;
       if (thereAreNoMoreRetries) {
-        Logger.error(`Could not send an email: ${error.message}`, error);
+        if (onError) await onError(`Could not send an email: ${error.message}`);
         throw error;
       }
       await new Promise(resolve => setTimeout(resolve, seconds * 1000));
