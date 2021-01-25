@@ -1,6 +1,7 @@
 import { NotificationEmailLog } from "$models";
 import { ValidationError } from "sequelize";
 import { UUID } from "$models/UUID";
+import { isUuid } from "$models/SequelizeModelValidators";
 import { omit } from "lodash";
 
 describe("NotificationEmailLog", () => {
@@ -64,6 +65,15 @@ describe("NotificationEmailLog", () => {
     await expect(notificationEmailLog.validate()).rejects.toThrowErrorWithMessage(
       ValidationError,
       "notNull Violation: NotificationEmailLog.message cannot be null"
+    );
+  });
+
+  it("throws an error if no notificationUuid has invalid format", async () => {
+    const attributes = { ...mandatoryAttributes, notificationUuid: "InvalidFormat" };
+    const notificationEmailLog = new NotificationEmailLog(attributes);
+    await expect(notificationEmailLog.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      isUuid.validate.isUUID.msg
     );
   });
 });
