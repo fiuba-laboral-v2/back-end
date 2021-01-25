@@ -60,7 +60,9 @@ describe("ApprovedJobApplicationApplicantNotificationEmailSender", () => {
               `Tu postulación a la oferta de trabajo: ${offer.title} (baseUrl/subDomain/postulante/ofertas/${offer.uuid}) ha sido aprobada. Se envió una notificación a la empresa.` +
               "\n\n" +
               `Graduados email signature`
-          }
+          },
+          onError: expect.any(Function),
+          onSuccess: expect.any(Function)
         }
       ]
     ]);

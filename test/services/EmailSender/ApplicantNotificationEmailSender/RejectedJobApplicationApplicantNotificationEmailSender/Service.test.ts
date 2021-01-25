@@ -65,7 +65,9 @@ describe("RejectedJobApplicationApplicantNotificationEmailSender", () => {
               "Para mas detalles se puede responder a este email." +
               "\n\n" +
               "Graduados email signature"
-          }
+          },
+          onError: expect.any(Function),
+          onSuccess: expect.any(Function)
         }
       ]
     ]);
