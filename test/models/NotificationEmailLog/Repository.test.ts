@@ -59,6 +59,20 @@ describe("NotificationEmailLogRepository", () => {
         "Validation error"
       );
     });
+
+    it("does not persist the log if the cleanup fails", async () => {
+      const errorMessage = "something happened";
+      jest.spyOn(Math, "random").mockImplementation(() => 0.01);
+      jest.spyOn(NotificationEmailLogRepository, "cleanupOldEntries").mockImplementation(() => {
+        throw new Error(errorMessage);
+      });
+      const log = new NotificationEmailLog(mandatoryAttributes);
+      await expect(NotificationEmailLogRepository.save(log)).rejects.toThrowErrorWithMessage(
+        Error,
+        errorMessage
+      );
+      expect(log.uuid).toBeNull();
+    });
   });
 
   it("throws an error it tries to find a log with an uuid does does not belong to a persisted one", async () => {
