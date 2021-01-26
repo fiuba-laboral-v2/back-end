@@ -8,7 +8,8 @@ import {
   InvalidEmailError,
   InvalidURLError,
   NameWithDigitsError,
-  WrongLengthCuitError
+  WrongLengthCuitError,
+  NameIsTooLargeError
 } from "validations-fiuba-laboral-v2";
 import { CuitGenerator } from "$generators/Cuit";
 
@@ -121,6 +122,11 @@ describe("Company", () => {
   it("throws an error if companyName has digits", async () => {
     const company = new Company({ ...mandatoryAttributes, companyName: "Google34" });
     await expect(company.validate()).rejects.toThrow(NameWithDigitsError.buildMessage());
+  });
+
+  it("throws an error if companyName has more than a hundred digits", async () => {
+    const company = new Company({ ...mandatoryAttributes, companyName: "Google".repeat(101) });
+    await expect(company.validate()).rejects.toThrow(NameIsTooLargeError.buildMessage(100));
   });
 
   it("throws an error if companyName has digits and cuit has more than eleven digits", async () => {
