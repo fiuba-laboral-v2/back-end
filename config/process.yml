@@ -5,4 +5,4 @@ apps:
     instances: max
     exec_mode: cluster
     watch: true
-    max_memory_restart: 250M
+    max_memory_restart: 2000M
