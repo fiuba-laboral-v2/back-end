@@ -26,6 +26,10 @@ describe("hasUnreadApplicantNotifications", () => {
     await CareerRepository.truncate();
   });
 
+  beforeEach(async () => {
+    jest.spyOn(Math, "random").mockImplementation(() => 0.5);
+  });
+
   const createCompanyTestClient = (approvalStatus: ApprovalStatus) =>
     TestClientGenerator.company({ status: approvalStatus });
 
