@@ -13,12 +13,10 @@ export const EmailService = {
       await EmailApi.send(params);
       if (onSuccess) await onSuccess("The Email has been sent");
     } catch (error) {
+      if (onError) await onError(`Could not send an email: ${error.message}`);
       const seconds = retryIntervalsInSeconds[0];
       const thereAreNoMoreRetries = seconds === undefined;
-      if (thereAreNoMoreRetries) {
-        if (onError) await onError(`Could not send an email: ${error.message}`);
-        throw error;
-      }
+      if (thereAreNoMoreRetries) throw error;
       await new Promise(resolve => setTimeout(resolve, seconds * 1000));
       return EmailService.send({
         params,
