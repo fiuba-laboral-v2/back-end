@@ -8,12 +8,14 @@ const variablesKeys = {
   EMAIL_API_URL: "EMAIL_API_URL"
 };
 
+export type Env = "production" | "staging" | "development" | "test";
+
 export const Environment = {
-  PRODUCTION: "production",
-  STAGING: "staging",
-  DEVELOPMENT: "development",
-  TEST: "test",
-  NODE_ENV: () => process.env[variablesKeys.NODE_ENV] || "development",
+  PRODUCTION: "production" as Env,
+  STAGING: "staging" as Env,
+  DEVELOPMENT: "development" as Env,
+  TEST: "test" as Env,
+  NODE_ENV: () => (process.env[variablesKeys.NODE_ENV] || "development") as Env,
   databaseURL: () => process.env[variablesKeys.DATABASE_URL],
   JWTSecret: () => process.env[variablesKeys.JWT_SECRET],
   FiubaUsersApi: {

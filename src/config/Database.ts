@@ -1,4 +1,4 @@
-import { Sequelize } from "sequelize-typescript";
+import { Sequelize, SequelizeOptions } from "sequelize-typescript";
 import { Environment } from "./Environment";
 import databaseJSON from "../../config/database.json";
 import { QueryOptions, Transaction } from "sequelize";
@@ -95,9 +95,14 @@ export class Database {
     if (config.use_env_variable) {
       const url = Environment.databaseURL();
       if (!url) throw new Error("DATABASE_URL not set");
-      this.sequelize = new Sequelize(url, config);
+      this.sequelize = new Sequelize(url, config as SequelizeOptions);
     } else {
-      this.sequelize = new Sequelize(config.database, config.username, config.password, config);
+      this.sequelize = new Sequelize(
+        config.database as string,
+        config.username as string,
+        config.password,
+        config as SequelizeOptions
+      );
     }
     this.sequelize.addModels(models);
   }
