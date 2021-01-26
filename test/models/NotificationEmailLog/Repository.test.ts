@@ -23,36 +23,42 @@ describe("NotificationEmailLogRepository", () => {
     await NotificationEmailLogRepository.truncate();
   });
 
-  it("persists a new NotificationEmailLogRepository in the database", async () => {
-    const log = new NotificationEmailLog(mandatoryAttributes);
-    await NotificationEmailLogRepository.save(log);
-    const persistedLog = await NotificationEmailLogRepository.findByUuid(log.uuid!);
-    expect(persistedLog.uuid).toEqual(log.uuid);
-  });
+  describe("save", () => {
+    beforeEach(async () => {
+      jest.spyOn(Math, "random").mockImplementation(() => 0.5);
+    });
 
-  it("sets an uuid for the log", async () => {
-    const log = new NotificationEmailLog(mandatoryAttributes);
-    await NotificationEmailLogRepository.save(log);
-    expect(log.uuid).toEqual(expect.stringMatching(UUID_REGEX));
-  });
+    it("persists a new NotificationEmailLogRepository in the database", async () => {
+      const log = new NotificationEmailLog(mandatoryAttributes);
+      await NotificationEmailLogRepository.save(log);
+      const persistedLog = await NotificationEmailLogRepository.findByUuid(log.uuid!);
+      expect(persistedLog.uuid).toEqual(log.uuid);
+    });
 
-  it("sets an createdAt timestamp for the log", async () => {
-    const log = new NotificationEmailLog(mandatoryAttributes);
-    await NotificationEmailLogRepository.save(log);
-    expect(log.createdAt).toEqual(expect.any(Date));
-  });
+    it("sets an uuid for the log", async () => {
+      const log = new NotificationEmailLog(mandatoryAttributes);
+      await NotificationEmailLogRepository.save(log);
+      expect(log.uuid).toEqual(expect.stringMatching(UUID_REGEX));
+    });
 
-  it("throws an error if a log with the same uuid already exists", async () => {
-    const uuid = UUID.generate();
-    jest.spyOn(UUID, "generate").mockImplementation(() => uuid);
-    const log = new NotificationEmailLog(mandatoryAttributes);
-    await NotificationEmailLogRepository.save(log);
-    expect(log.uuid).toEqual(uuid);
-    const anotherLog = new NotificationEmailLog(mandatoryAttributes);
-    await expect(NotificationEmailLogRepository.save(anotherLog)).rejects.toThrowErrorWithMessage(
-      UniqueConstraintError,
-      "Validation error"
-    );
+    it("sets an createdAt timestamp for the log", async () => {
+      const log = new NotificationEmailLog(mandatoryAttributes);
+      await NotificationEmailLogRepository.save(log);
+      expect(log.createdAt).toEqual(expect.any(Date));
+    });
+
+    it("throws an error if a log with the same uuid already exists", async () => {
+      const uuid = UUID.generate();
+      jest.spyOn(UUID, "generate").mockImplementation(() => uuid);
+      const log = new NotificationEmailLog(mandatoryAttributes);
+      await NotificationEmailLogRepository.save(log);
+      expect(log.uuid).toEqual(uuid);
+      const anotherLog = new NotificationEmailLog(mandatoryAttributes);
+      await expect(NotificationEmailLogRepository.save(anotherLog)).rejects.toThrowErrorWithMessage(
+        UniqueConstraintError,
+        "Validation error"
+      );
+    });
   });
 
   it("throws an error it tries to find a log with an uuid does does not belong to a persisted one", async () => {
