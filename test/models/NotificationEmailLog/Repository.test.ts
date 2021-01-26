@@ -6,6 +6,10 @@ import {
 import { NotificationEmailLog } from "$models";
 import { UUID } from "$models/UUID";
 import { UUID_REGEX } from "$test/models";
+import MockDate from "mockdate";
+import { DateTimeManager } from "$libs/DateTimeManager";
+import { NotificationEmailLogConfig } from "$config";
+import { range } from "lodash";
 
 describe("NotificationEmailLogRepository", () => {
   const mandatoryAttributes = {
@@ -57,6 +61,28 @@ describe("NotificationEmailLogRepository", () => {
       NotificationEmailLogNotFoundError,
       NotificationEmailLogNotFoundError.buildMessage(uuid)
     );
+  });
+
+  it("deletes all logs that are older than the months by config ago", async () => {
+    await NotificationEmailLogRepository.truncate();
+    const { cleanupTimeThresholdInMonths } = NotificationEmailLogConfig;
+    const createdAt = DateTimeManager.monthsAgo(cleanupTimeThresholdInMonths() * 2);
+    const size = 10;
+    for (const _ of range(size)) {
+      MockDate.set(createdAt);
+      await NotificationEmailLogRepository.save(new NotificationEmailLog(mandatoryAttributes));
+      MockDate.reset();
+    }
+    const firstLog = new NotificationEmailLog(mandatoryAttributes);
+    const secondLog = new NotificationEmailLog(mandatoryAttributes);
+    await NotificationEmailLogRepository.save(firstLog);
+    await NotificationEmailLogRepository.save(secondLog);
+    await NotificationEmailLogRepository.cleanupOldEntries();
+    const logs = await NotificationEmailLogRepository.findAll();
+    const logUuids = logs.map(({ uuid }) => uuid!);
+
+    expect(logs).toHaveLength(2);
+    expect(logUuids).toEqual(expect.arrayContaining([firstLog.uuid, secondLog.uuid]));
   });
 
   it("deletes all logs when truncating the table", async () => {
