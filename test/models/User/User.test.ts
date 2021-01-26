@@ -9,7 +9,8 @@ import { UUID } from "$models/UUID";
 import {
   NameWithDigitsError,
   EmptyNameError,
-  InvalidEmailError
+  InvalidEmailError,
+  NameIsTooLargeError
 } from "validations-fiuba-laboral-v2";
 import { DniGenerator } from "$generators/DNI";
 
@@ -142,6 +143,14 @@ describe("User", () => {
     );
   });
 
+  it("throws an error the name has more than a hundred characters", async () => {
+    const attributes = { ...mandatoryAttributes, name: "name".repeat(101) };
+    expect(() => new User(attributes)).toThrowErrorWithMessage(
+      NameIsTooLargeError,
+      NameIsTooLargeError.buildMessage(100)
+    );
+  });
+
   it("throws an error the name is empty", async () => {
     const attributes = { ...mandatoryAttributes, name: "" };
     expect(() => new User(attributes)).toThrowErrorWithMessage(
@@ -155,6 +164,14 @@ describe("User", () => {
     expect(() => new User(attributes)).toThrowErrorWithMessage(
       NameWithDigitsError,
       NameWithDigitsError.buildMessage()
+    );
+  });
+
+  it("throws an error the surname has more than a hundred characters", async () => {
+    const attributes = { ...mandatoryAttributes, surname: "surname".repeat(101) };
+    expect(() => new User(attributes)).toThrowErrorWithMessage(
+      NameIsTooLargeError,
+      NameIsTooLargeError.buildMessage(100)
     );
   });
 
