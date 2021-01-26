@@ -1,5 +1,5 @@
 import { Op, Transaction } from "sequelize";
-import { NotificationEmailLogConfig, Database } from "$config";
+import { CleanupConfig, Database } from "$config";
 import { DateTimeManager } from "$libs/DateTimeManager";
 import { NotificationEmailLog } from "$models";
 import { NotificationEmailLogNotFoundError } from "./Errors";
@@ -19,8 +19,7 @@ export const NotificationEmailLogRepository = {
     return notificationEmailLog;
   },
   cleanupOldEntries: async (transaction?: Transaction) => {
-    const { cleanupTimeThresholdInMonths } = NotificationEmailLogConfig;
-    const ThresholdDate = DateTimeManager.monthsAgo(cleanupTimeThresholdInMonths());
+    const ThresholdDate = DateTimeManager.monthsAgo(CleanupConfig.thresholdInMonths());
     await NotificationEmailLog.destroy({
       where: { createdAt: { [Op.lte]: ThresholdDate } },
       transaction

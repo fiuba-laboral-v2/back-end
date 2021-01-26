@@ -8,7 +8,7 @@ import { UUID } from "$models/UUID";
 import { UUID_REGEX } from "$test/models";
 import MockDate from "mockdate";
 import { DateTimeManager } from "$libs/DateTimeManager";
-import { NotificationEmailLogConfig } from "$config";
+import { CleanupConfig } from "$config";
 import { range } from "lodash";
 
 describe("NotificationEmailLogRepository", () => {
@@ -85,8 +85,7 @@ describe("NotificationEmailLogRepository", () => {
 
   it("deletes all logs that are older than the months by config ago", async () => {
     await NotificationEmailLogRepository.truncate();
-    const { cleanupTimeThresholdInMonths } = NotificationEmailLogConfig;
-    const createdAt = DateTimeManager.monthsAgo(cleanupTimeThresholdInMonths() * 2);
+    const createdAt = DateTimeManager.monthsAgo(CleanupConfig.thresholdInMonths() * 2);
     const size = 10;
     for (const _ of range(size)) {
       MockDate.set(createdAt);
