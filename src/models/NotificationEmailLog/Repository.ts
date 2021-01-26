@@ -19,9 +19,9 @@ export const NotificationEmailLogRepository = {
     return notificationEmailLog;
   },
   cleanupOldEntries: async (transaction?: Transaction) => {
-    const ThresholdDate = DateTimeManager.monthsAgo(CleanupConfig.thresholdInMonths());
+    const thresholdDate = DateTimeManager.monthsAgo(CleanupConfig.thresholdInMonths());
     await NotificationEmailLog.destroy({
-      where: { createdAt: { [Op.lte]: ThresholdDate } },
+      where: { createdAt: { [Op.lte]: thresholdDate } },
       transaction
     });
   },
