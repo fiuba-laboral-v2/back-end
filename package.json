@@ -63,7 +63,7 @@
     "sequelize-typescript": "1.1.0",
     "typescript-logging": "0.6.4",
     "uuid": "8.3.1",
-    "validations-fiuba-laboral-v2": "github::fiuba-laboral-v2/validations#8e1778b888169f51e16395906b067aca8d8e231b"
+    "validations-fiuba-laboral-v2": "1.0.33"
   },
   "devDependencies": {
     "@babel/core": "7.0.0",
