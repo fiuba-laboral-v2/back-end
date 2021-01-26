@@ -30,7 +30,10 @@ describe("hasUnreadAdminNotifications", () => {
     graduadosAdmin = await AdminGenerator.graduados();
   });
 
-  beforeEach(() => AdminNotificationRepository.truncate());
+  beforeEach(async () => {
+    await AdminNotificationRepository.truncate();
+    jest.spyOn(Math, "random").mockImplementation(() => 0.5);
+  });
 
   const createCompanyTestClient = (approvalStatus: ApprovalStatus) =>
     TestClientGenerator.company({ status: approvalStatus });

@@ -18,25 +18,25 @@ export const JWTConfig: IJWTConfig = {
   production: {
     expirationTime,
     credentialsRequired: false,
-    algorithms: ["RS256"],
+    algorithms: ["RS256"] as Algorithm[],
     secret: Environment.JWTSecret() || "Environment.JWT_SECRET"
   },
   staging: {
     expirationTime,
     credentialsRequired: false,
-    algorithms: ["RS256"],
+    algorithms: ["RS256"] as Algorithm[],
     secret: Environment.JWTSecret() || "Environment.JWT_SECRET"
   },
   development: {
     expirationTime,
     credentialsRequired: false,
-    algorithms: ["RS256"],
+    algorithms: ["RS256"] as Algorithm[],
     secret: Environment.JWTSecret() || "Environment.JWT_SECRET"
   },
   test: {
     expirationTime,
     credentialsRequired: false,
-    algorithms: ["RS256"],
+    algorithms: ["RS256"] as Algorithm[],
     secret: Environment.JWTSecret() || "Environment.JWT_SECRET"
   }
 }[Environment.NODE_ENV()];

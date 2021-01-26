@@ -84,7 +84,7 @@ export const CompanyNotificationGenerator = {
       await CompanyNotificationRepository.save(notification);
       return notification;
     },
-    range: async ({ company, size }: { size: number; company: Company }) => {
+    range: async ({ company, size, mockDate }: IRange) => {
       const admin = await AdminGenerator.extension();
       const values: CompanyNotification[] = [];
       const generators = [
@@ -95,7 +95,7 @@ export const CompanyNotificationGenerator = {
         CompanyNotificationGenerator.instance.rejectedProfile
       ];
       for (const milliseconds of range(size)) {
-        MockDate.set(milliseconds);
+        MockDate.set(mockDate || milliseconds);
         const generator = sample<Generator>(generators);
         values.push(await generator!({ company, admin }));
         MockDate.reset();
@@ -114,4 +114,10 @@ interface IGeneratorAttributes {
 
 interface IOfferProps extends IGeneratorAttributes {
   offer?: Offer;
+}
+
+interface IRange {
+  size: number;
+  company: Company;
+  mockDate?: Date;
 }

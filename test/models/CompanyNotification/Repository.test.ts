@@ -33,6 +33,8 @@ import { OfferGenerator } from "$generators/Offer";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
 import { UUID_REGEX } from "$test/models";
 import { Secretary } from "$models/Admin";
+import { DateTimeManager } from "$libs/DateTimeManager";
+import { CleanupConfig } from "$config";
 
 describe("CompanyNotificationRepository", () => {
   let extensionAdmin: Admin;
@@ -54,6 +56,10 @@ describe("CompanyNotificationRepository", () => {
       notifiedCompanyUuid: company.uuid,
       isNew: true
     };
+  });
+
+  beforeEach(() => {
+    jest.spyOn(Math, "random").mockImplementation(() => 0.5);
   });
 
   describe("save", () => {
@@ -110,6 +116,42 @@ describe("CompanyNotificationRepository", () => {
         CompanyNotificationRepository.save(anotherNotification)
       ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
     };
+
+    describe("cleanupOldEntries", () => {
+      let firstNotification: NewJobApplicationCompanyNotification;
+      let secondNotification: ApprovedOfferCompanyNotification;
+
+      beforeAll(() => {
+        firstNotification = new NewJobApplicationCompanyNotification({
+          ...commonAttributes,
+          jobApplicationUuid: jobApplication.uuid
+        });
+
+        secondNotification = new ApprovedOfferCompanyNotification({
+          ...commonAttributes,
+          offerUuid: offer.uuid,
+          secretary: Secretary.extension
+        });
+      });
+
+      it("deletes all notifications that are older than the months by config ago", async () => {
+        await CompanyNotificationRepository.truncate();
+        const generator = CompanyNotificationGenerator.instance;
+        const createdAt = DateTimeManager.monthsAgo(CleanupConfig.thresholdInMonths() * 2);
+        await generator.range({ company, size: 10, mockDate: createdAt });
+
+        await CompanyNotificationRepository.save(firstNotification);
+        jest.spyOn(Math, "random").mockImplementation(() => 0.01);
+        await CompanyNotificationRepository.save(secondNotification);
+        const notifications = await CompanyNotificationRepository.findAll();
+        const notificationUuids = notifications.map(({ uuid }) => uuid!);
+
+        expect(notifications).toHaveLength(2);
+        expect(notificationUuids).toEqual(
+          expect.arrayContaining([firstNotification.uuid, secondNotification.uuid])
+        );
+      });
+    });
 
     describe("NewJobApplicationCompanyNotification", () => {
       let attributes: INewJobApplicationNotificationAttributes;

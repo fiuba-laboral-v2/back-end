@@ -10,17 +10,30 @@ import {
   RejectedProfileApplicantNotification
 } from "$models/ApplicantNotification";
 import { IFindLatestByApplicant, IHasUnreadNotifications } from "./Interfaces";
-import { Transaction } from "sequelize";
+import { Op, Transaction } from "sequelize";
 import { ApplicantNotificationSequelizeModel } from "$models";
 import { PaginationQuery } from "$models/PaginationQuery";
-import { Database } from "$config";
+import { CleanupConfig, Database } from "$config";
+import { DateTimeManager } from "$libs/DateTimeManager";
 
 export const ApplicantNotificationRepository = {
   save: async (notification: ApplicantNotification, transaction?: Transaction) => {
+    const random = Math.random();
     const sequelizeModel = ApplicantNotificationMapper.toPersistenceModel(notification);
-    await sequelizeModel.save({ transaction });
+    await Database.transaction(async internalTransaction => {
+      const finalTransaction = transaction || internalTransaction;
+      if (random < 0.1) await ApplicantNotificationRepository.cleanupOldEntries(finalTransaction);
+      await sequelizeModel.save({ transaction: finalTransaction });
+    });
     notification.setUuid(sequelizeModel.uuid);
     notification.setCreatedAt(sequelizeModel.createdAt);
+  },
+  cleanupOldEntries: async (transaction?: Transaction) => {
+    const thresholdDate = DateTimeManager.monthsAgo(CleanupConfig.thresholdInMonths());
+    await ApplicantNotificationSequelizeModel.destroy({
+      where: { createdAt: { [Op.lte]: thresholdDate } },
+      transaction
+    });
   },
   findLatestByApplicant: ({ applicantUuid, updatedBeforeThan }: IFindLatestByApplicant) =>
     PaginationQuery.findLatest({
