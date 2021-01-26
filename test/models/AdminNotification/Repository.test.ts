@@ -89,6 +89,35 @@ describe("AdminNotificationRepository", () => {
       );
     };
 
+    describe("cleanupOldEntries", () => {
+      let firstNotification: UpdatedCompanyProfileAdminNotification;
+      let secondNotification: UpdatedCompanyProfileAdminNotification;
+
+      beforeAll(() => {
+        const attributes = { ...commonAttributes, companyUuid: company.uuid };
+        firstNotification = new UpdatedCompanyProfileAdminNotification(attributes);
+        secondNotification = new UpdatedCompanyProfileAdminNotification(attributes);
+      });
+
+      it("deletes all notifications that are older than the months by config ago", async () => {
+        await AdminNotificationRepository.truncate();
+        const generator = AdminNotificationGenerator.instance;
+        const createdAt = DateTimeManager.monthsAgo(CleanupConfig.thresholdInMonths() * 2);
+        await generator.range({ admin: extensionAdmin, size: 10, mockDate: createdAt });
+
+        await AdminNotificationRepository.save(firstNotification);
+        jest.spyOn(Math, "random").mockImplementation(() => 0.01);
+        await AdminNotificationRepository.save(secondNotification);
+        const notifications = await AdminNotificationRepository.findAll();
+        const notificationUuids = notifications.map(({ uuid }) => uuid!);
+
+        expect(notifications).toHaveLength(2);
+        expect(notificationUuids).toEqual(
+          expect.arrayContaining([firstNotification.uuid, secondNotification.uuid])
+        );
+      });
+    });
+
     describe("UpdatedCompanyProfileAdminNotification", () => {
       let attributes: IUpdatedCompanyProfileNotification;
 
@@ -118,26 +147,6 @@ describe("AdminNotificationRepository", () => {
         notification.isNew = false;
         await AdminNotificationRepository.save(notification);
         expect(notification.isNew).toBe(false);
-      });
-
-      it("deletes all notifications that are older than the months by config ago", async () => {
-        await AdminNotificationRepository.truncate();
-        const generator = AdminNotificationGenerator.instance;
-        const createdAt = DateTimeManager.monthsAgo(CleanupConfig.thresholdInMonths() * 2);
-        await generator.range({ admin: extensionAdmin, size: 10, mockDate: createdAt });
-
-        const firstNotification = new UpdatedCompanyProfileAdminNotification(attributes);
-        const secondNotification = new UpdatedCompanyProfileAdminNotification(attributes);
-        await AdminNotificationRepository.save(firstNotification);
-        jest.spyOn(Math, "random").mockImplementation(() => 0.01);
-        await AdminNotificationRepository.save(secondNotification);
-        const notifications = await AdminNotificationRepository.findAll();
-        const notificationUuids = notifications.map(({ uuid }) => uuid!);
-
-        expect(notifications).toHaveLength(2);
-        expect(notificationUuids).toEqual(
-          expect.arrayContaining([firstNotification.uuid, secondNotification.uuid])
-        );
       });
 
       it("throws an error if the notification already exist", async () => {

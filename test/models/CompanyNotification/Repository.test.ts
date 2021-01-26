@@ -117,7 +117,7 @@ describe("CompanyNotificationRepository", () => {
       ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
     };
 
-    describe("", () => {
+    describe("cleanupOldEntries", () => {
       let firstNotification: NewJobApplicationCompanyNotification;
       let secondNotification: ApprovedOfferCompanyNotification;
 

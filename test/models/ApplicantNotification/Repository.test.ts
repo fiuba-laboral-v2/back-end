@@ -111,7 +111,7 @@ describe("ApplicantNotificationRepository", () => {
       );
     };
 
-    describe("", () => {
+    describe("cleanupOldEntries", () => {
       let firstNotification: PendingJobApplicationApplicantNotification;
       let secondNotification: ApprovedProfileApplicantNotification;
 
