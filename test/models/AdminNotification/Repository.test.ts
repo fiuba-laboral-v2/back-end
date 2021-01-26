@@ -21,6 +21,8 @@ import { AdminNotificationGenerator } from "$generators/AdminNotification";
 
 import { UUID_REGEX } from "$test/models";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
+import { DateTimeManager } from "$libs/DateTimeManager";
+import { CleanupConfig } from "$config";
 
 describe("AdminNotificationRepository", () => {
   let extensionAdmin: Admin;
@@ -35,6 +37,10 @@ describe("AdminNotificationRepository", () => {
     extensionAdmin = await AdminGenerator.extension();
     company = await CompanyGenerator.instance.withMinimumData();
     commonAttributes = { secretary: extensionAdmin.secretary, isNew: true };
+  });
+
+  beforeEach(() => {
+    jest.spyOn(Math, "random").mockImplementation(() => 0.5);
   });
 
   describe("save", () => {
@@ -112,6 +118,26 @@ describe("AdminNotificationRepository", () => {
         notification.isNew = false;
         await AdminNotificationRepository.save(notification);
         expect(notification.isNew).toBe(false);
+      });
+
+      it("deletes all notifications that are older than the months by config ago", async () => {
+        await AdminNotificationRepository.truncate();
+        const generator = AdminNotificationGenerator.instance;
+        const createdAt = DateTimeManager.monthsAgo(CleanupConfig.thresholdInMonths() * 2);
+        await generator.range({ admin: extensionAdmin, size: 10, mockDate: createdAt });
+
+        const firstNotification = new UpdatedCompanyProfileAdminNotification(attributes);
+        const secondNotification = new UpdatedCompanyProfileAdminNotification(attributes);
+        await AdminNotificationRepository.save(firstNotification);
+        jest.spyOn(Math, "random").mockImplementation(() => 0.01);
+        await AdminNotificationRepository.save(secondNotification);
+        const notifications = await AdminNotificationRepository.findAll();
+        const notificationUuids = notifications.map(({ uuid }) => uuid!);
+
+        expect(notifications).toHaveLength(2);
+        expect(notificationUuids).toEqual(
+          expect.arrayContaining([firstNotification.uuid, secondNotification.uuid])
+        );
       });
 
       it("throws an error if the notification already exist", async () => {
