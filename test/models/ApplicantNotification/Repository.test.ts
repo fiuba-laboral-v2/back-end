@@ -32,6 +32,8 @@ import { ApplicantNotificationGenerator } from "$generators/ApplicantNotificatio
 import { UUID_REGEX } from "$test/models";
 import { UUID } from "$models/UUID";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
+import { DateTimeManager } from "$libs/DateTimeManager";
+import { CleanupConfig } from "$config";
 
 describe("ApplicantNotificationRepository", () => {
   let extensionAdmin: Admin;
@@ -55,6 +57,10 @@ describe("ApplicantNotificationRepository", () => {
       notifiedApplicantUuid: applicant.uuid,
       isNew: true
     };
+  });
+
+  beforeEach(() => {
+    jest.spyOn(Math, "random").mockImplementation(() => 0.5);
   });
 
   describe("save", () => {
@@ -104,6 +110,37 @@ describe("ApplicantNotificationRepository", () => {
           `constraint "ApplicantNotifications_${attributeName}_fkey"`
       );
     };
+
+    describe("", () => {
+      let firstNotification: PendingJobApplicationApplicantNotification;
+      let secondNotification: ApprovedProfileApplicantNotification;
+
+      beforeAll(async () => {
+        firstNotification = new PendingJobApplicationApplicantNotification({
+          ...commonAttributes,
+          jobApplicationUuid: jobApplication.uuid
+        });
+        secondNotification = new ApprovedProfileApplicantNotification(commonAttributes);
+      });
+
+      it("deletes all notifications that are older than the months by config ago", async () => {
+        await ApplicantNotificationRepository.truncate();
+        const generator = ApplicantNotificationGenerator.instance;
+        const createdAt = DateTimeManager.monthsAgo(CleanupConfig.thresholdInMonths() * 2);
+        await generator.range({ applicant, size: 10, mockDate: createdAt });
+
+        await ApplicantNotificationRepository.save(firstNotification);
+        jest.spyOn(Math, "random").mockImplementation(() => 0.01);
+        await ApplicantNotificationRepository.save(secondNotification);
+        const notifications = await ApplicantNotificationRepository.findAll();
+        const notificationUuids = notifications.map(({ uuid }) => uuid!);
+
+        expect(notifications).toHaveLength(2);
+        expect(notificationUuids).toEqual(
+          expect.arrayContaining([firstNotification.uuid, secondNotification.uuid])
+        );
+      });
+    });
 
     describe("PendingJobApplicationApplicantNotification", () => {
       let attributes: IPendingJobApplicationAttributes;
