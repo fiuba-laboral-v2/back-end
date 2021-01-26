@@ -82,7 +82,7 @@ export const ApplicantNotificationGenerator = {
       await ApplicantNotificationRepository.save(notification);
       return notification;
     },
-    range: async ({ applicant, size }: { size: number; applicant: Applicant }) => {
+    range: async ({ applicant, size, mockDate }: IRange) => {
       const admin = await AdminGenerator.extension();
       const values: ApplicantNotification[] = [];
       const generators = [
@@ -93,7 +93,7 @@ export const ApplicantNotificationGenerator = {
         ApplicantNotificationGenerator.instance.rejectedProfile
       ];
       for (const milliseconds of range(size)) {
-        MockDate.set(milliseconds);
+        MockDate.set(mockDate || milliseconds);
         const generator = sample<Generator>(generators);
         values.push(await generator!({ applicant, admin }));
         MockDate.reset();
@@ -112,4 +112,10 @@ interface IGeneratorAttributes {
 
 interface IJobApplicationProps extends IGeneratorAttributes {
   jobApplication?: JobApplication;
+}
+
+interface IRange {
+  size: number;
+  applicant: Applicant;
+  mockDate?: Date;
 }

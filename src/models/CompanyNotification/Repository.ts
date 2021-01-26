@@ -8,16 +8,30 @@ import {
 } from "$models/CompanyNotification";
 import { CompanyNotificationSequelizeModel } from "$models";
 import { CompanyNotificationNotFoundError, CompanyNotificationsNotUpdatedError } from "./Errors";
-import { Transaction } from "sequelize";
+import { Op, Transaction } from "sequelize";
 import { IFindLatestByCompany, IHasUnreadNotifications } from "./Interfaces";
 import { PaginationQuery } from "$models/PaginationQuery";
+import { DateTimeManager } from "$libs/DateTimeManager";
+import { CleanupConfig } from "$config";
 
 export const CompanyNotificationRepository = {
   save: async (notification: CompanyNotification, transaction?: Transaction) => {
+    const random = Math.random();
     const companyNotification = CompanyNotificationMapper.toPersistenceModel(notification);
-    await companyNotification.save({ transaction });
+    await Database.transaction(async internalTransaction => {
+      const finalTransaction = transaction || internalTransaction;
+      if (random < 0.1) await CompanyNotificationRepository.cleanupOldEntries(finalTransaction);
+      await companyNotification.save({ transaction: finalTransaction });
+    });
     notification.setUuid(companyNotification.uuid);
     notification.setCreatedAt(companyNotification.createdAt);
+  },
+  cleanupOldEntries: async (transaction?: Transaction) => {
+    const thresholdDate = DateTimeManager.monthsAgo(CleanupConfig.thresholdInMonths());
+    await CompanyNotificationSequelizeModel.destroy({
+      where: { createdAt: { [Op.lte]: thresholdDate } },
+      transaction
+    });
   },
   hasUnreadNotifications: async ({ companyUuid }: IHasUnreadNotifications) => {
     const [{ exists }] = await Database.query<Array<{ exists: boolean }>>(

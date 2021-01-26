@@ -4,11 +4,11 @@ import {
   InvalidEmptyPasswordError,
   InvalidEmptyUsernameError
 } from "$services/FiubaUsers";
-import { Environment } from "$config/Environment";
+import { Env, Environment } from "$config/Environment";
 import { DniGenerator } from "$generators/DNI";
 
 describe("FiubaUsersService", () => {
-  const expectToReturnTrueForEnvironment = async (environment: string) => {
+  const expectToReturnTrueForEnvironment = async (environment: Env) => {
     jest.spyOn(Environment, "NODE_ENV").mockImplementation(() => environment);
     expect(
       await FiubaUsersService.authenticate({
