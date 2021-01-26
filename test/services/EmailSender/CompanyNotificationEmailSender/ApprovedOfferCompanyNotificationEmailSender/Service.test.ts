@@ -35,16 +35,20 @@ describe("ApprovedOfferCompanyNotificationEmailSender", () => {
     expect(emailSendMock.mock.calls).toEqual([
       [
         {
-          receiverEmails: [companyUser.email],
-          sender: {
-            name: `${adminUser.name} ${adminUser.surname}`,
-            email: settings.email
+          params: {
+            receiverEmails: [companyUser.email],
+            sender: {
+              name: `${adminUser.name} ${adminUser.surname}`,
+              email: settings.email
+            },
+            subject: "Oferta laboral aprobada",
+            body:
+              `Tu oferta laboral ha sido aprobada: ${offer.title} (baseUrl/subDomain/empresa/ofertas/${offer.uuid}).` +
+              "\n\n" +
+              "Extensión email signature"
           },
-          subject: "Oferta laboral aprobada",
-          body:
-            `Tu oferta laboral ha sido aprobada: ${offer.title} (baseUrl/subDomain/empresa/ofertas/${offer.uuid}).` +
-            "\n\n" +
-            "Extensión email signature"
+          onError: expect.any(Function),
+          onSuccess: expect.any(Function)
         }
       ]
     ]);

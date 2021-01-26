@@ -3,7 +3,6 @@ import {
   ApprovedJobApplicationApplicantNotification,
   PendingJobApplicationApplicantNotification
 } from "$models/ApplicantNotification";
-import { EmailService } from "$services/Email";
 import { Sender } from "$services/EmailSender/Sender";
 import { FrontEndLinksBuilder } from "$services/EmailSender/FrontEndLinksBuilder";
 import { ApplicantRepository } from "$models/Applicant";
@@ -13,6 +12,8 @@ import { UserRepository } from "$models/User";
 import { TranslationRepository } from "$models/Translation";
 import { template } from "lodash";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
+import { NotificationEmailSender } from "$services/EmailSender/NotificationEmailSender";
+import { ApplicantNotificationSequelizeModel } from "$models";
 
 type JobApplicationApplicantNotification =
   | RejectedJobApplicationApplicantNotification
@@ -36,7 +37,7 @@ export const JobApplicationApplicantNotificationEmailSender = {
     const settings = await SecretarySettingsRepository.findByAdminUuid(notification.moderatorUuid);
     const sender = await Sender.findByAdmin(notification.moderatorUuid);
 
-    return EmailService.send({
+    const emailParams = {
       receiverEmails: [applicantUser.email],
       sender,
       subject,
@@ -46,7 +47,13 @@ export const JobApplicationApplicantNotificationEmailSender = {
         ...getRejectionReason(notification),
         signature: settings.emailSignature
       })
-    });
+    };
+    const emailSender = new NotificationEmailSender(
+      notification,
+      ApplicantNotificationSequelizeModel.tableName,
+      emailParams
+    );
+    return emailSender.send();
   }
 };
 

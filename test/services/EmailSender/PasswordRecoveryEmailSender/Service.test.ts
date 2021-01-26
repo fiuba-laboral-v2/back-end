@@ -30,18 +30,20 @@ describe("PasswordRecoveryEmailSender", () => {
     expect(emailSendMock.mock.calls).toEqual([
       [
         {
-          receiverEmails: [companyUser.email],
-          sender: {
-            email: "no-reply@fi.uba.ar",
-            name: "[No responder] Bolsa de Trabajo FIUBA"
-          },
-          subject: "Recuperación de contraseña",
-          body:
-            "Usted ha solicitado la recuperación de su contraseña." +
-            "\n" +
-            "Haga click en el siguiente link para realizar el cambio." +
-            "\n" +
-            `baseUrl/subDomain/empresa/contrasena/recuperar/?token=${token}`
+          params: {
+            receiverEmails: [companyUser.email],
+            sender: {
+              email: "no-reply@fi.uba.ar",
+              name: "[No responder] Bolsa de Trabajo FIUBA"
+            },
+            subject: "Recuperación de contraseña",
+            body:
+              "Usted ha solicitado la recuperación de su contraseña." +
+              "\n" +
+              "Haga click en el siguiente link para realizar el cambio." +
+              "\n" +
+              `baseUrl/subDomain/empresa/contrasena/recuperar/?token=${token}`
+          }
         }
       ]
     ]);

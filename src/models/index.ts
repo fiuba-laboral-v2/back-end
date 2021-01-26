@@ -25,3 +25,4 @@ export { CompanyUser } from "./CompanyUser/Model";
 export { CompanyNotificationSequelizeModel } from "./CompanyNotification/Model";
 export { SecretarySettings } from "./SecretarySettings/Model";
 export { SharedSettings } from "./SharedSettings/Model";
+export { NotificationEmailLog } from "./NotificationEmailLog/Model";

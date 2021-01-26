@@ -49,16 +49,20 @@ describe("PendingJobApplicationApplicantNotificationEmailSender", () => {
     expect(emailSendMock.mock.calls).toEqual([
       [
         {
-          receiverEmails: [applicantUser.email],
-          sender: {
-            name: `${adminUser.name} ${adminUser.surname}`,
-            email: settings.email
+          params: {
+            receiverEmails: [applicantUser.email],
+            sender: {
+              name: `${adminUser.name} ${adminUser.surname}`,
+              email: settings.email
+            },
+            subject: "Postulación a oferta de trabajo pendiente de aprobación",
+            body:
+              `Tu postulación a la oferta de trabajo: ${offer.title} (baseUrl/subDomain/postulante/ofertas/${offer.uuid}) será revisada por el personal de la FIUBA.` +
+              "\n\n" +
+              `Graduados email signature`
           },
-          subject: "Postulación a oferta de trabajo pendiente de aprobación",
-          body:
-            `Tu postulación a la oferta de trabajo: ${offer.title} (baseUrl/subDomain/postulante/ofertas/${offer.uuid}) será revisada por el personal de la FIUBA.` +
-            "\n\n" +
-            `Graduados email signature`
+          onError: expect.any(Function),
+          onSuccess: expect.any(Function)
         }
       ]
     ]);

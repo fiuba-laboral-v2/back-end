@@ -40,18 +40,22 @@ describe("RejectedProfileCompanyNotificationEmailSender", () => {
     expect(emailSendMock.mock.calls).toEqual([
       [
         {
-          receiverEmails: [companyUser.email],
-          sender: {
-            name: `${adminUser.name} ${adminUser.surname}`,
-            email: settings.email
+          params: {
+            receiverEmails: [companyUser.email],
+            sender: {
+              name: `${adminUser.name} ${adminUser.surname}`,
+              email: settings.email
+            },
+            subject: "Perfil rechazado",
+            body:
+              "El perfil de tu empresa ha sido rechazado: (baseUrl/subDomain/empresa/perfil)." +
+              "\n" +
+              `Motivo de rechazo: "${notification.moderatorMessage}"` +
+              "\n\n" +
+              "Graduados email signature"
           },
-          subject: "Perfil rechazado",
-          body:
-            "El perfil de tu empresa ha sido rechazado: (baseUrl/subDomain/empresa/perfil)." +
-            "\n" +
-            `Motivo de rechazo: "${notification.moderatorMessage}"` +
-            "\n\n" +
-            "Graduados email signature"
+          onError: expect.any(Function),
+          onSuccess: expect.any(Function)
         }
       ]
     ]);
