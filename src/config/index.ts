@@ -5,3 +5,4 @@ export * from "./FrontendConfig";
 export * from "./Cookie";
 export * from "./Cors";
 export * from "./JWT";
+export * from "./NotificationEmailLogConfig";
