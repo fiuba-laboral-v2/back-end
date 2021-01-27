@@ -9,7 +9,7 @@ import {
   NumberIsTooLargeError,
   NumberIsTooSmallError,
   SalaryRangeError,
-  NameIsTooLargeError
+  StringIsTooLargeError
 } from "validations-fiuba-laboral-v2";
 import { ValidationError } from "sequelize";
 
@@ -165,7 +165,7 @@ describe("Offer", () => {
 
   it("throws an error if the title has more than a hundred character", async () => {
     const offer = new Offer({ ...mandatoryAttributes, title: "title".repeat(200) });
-    await expect(offer.validate()).rejects.toThrow(NameIsTooLargeError.buildMessage(100));
+    await expect(offer.validate()).rejects.toThrow(StringIsTooLargeError.buildMessage(100));
   });
 
   it("throws an error if it's an internship that targets graduates", async () => {
