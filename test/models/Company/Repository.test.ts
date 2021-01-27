@@ -81,6 +81,13 @@ describe("CompanyRepository", () => {
       await expect(CompanyRepository.save(company)).resolves.not.toThrowError();
     });
 
+    it("allows to persist a large website", async () => {
+      const website = `https://www.google.com/search?id=${"1".repeat(300)}`;
+      const company = new Company({ ...companyAttributes(), website });
+      await CompanyRepository.save(company);
+      await expect(CompanyRepository.save(company)).resolves.not.toThrowError();
+    });
+
     it("allows to persist a logo with more than 255 caracteres", async () => {
       const logo = `data:image/jpeg;base64,/9j/${"4AAQSkZBAAD/4gKgUNDX1BS".repeat(200)}AgICAgIA==`;
       const company = new Company({ ...companyAttributes(), logo });

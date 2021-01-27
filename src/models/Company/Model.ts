@@ -52,7 +52,7 @@ export class Company extends Model<Company> {
   public logo: string;
 
   @Is(validateURL)
-  @Column(STRING)
+  @Column(TEXT)
   public website: string;
 
   @Is(validateEmail)
