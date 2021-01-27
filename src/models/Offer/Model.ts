@@ -22,7 +22,11 @@ import {
 import { Admin, Career, Company, OfferApprovalEvent, OfferCareer, OfferSection } from "$models";
 import { Nullable } from "$models/SequelizeModel";
 import { Secretary } from "$models/Admin";
-import { validateIntegerInRange, validateSalaryRange } from "validations-fiuba-laboral-v2";
+import {
+  validateIntegerInRange,
+  validateSalaryRange,
+  validateStringLength
+} from "validations-fiuba-laboral-v2";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
 import { isApprovalStatus, isTargetApplicantType } from "$models/SequelizeModelValidators";
 import { ApplicantType, targetApplicantTypeEnumValues } from "$models/Applicant";
@@ -73,6 +77,7 @@ export class Offer extends Model<Offer> {
   @BelongsTo(() => Company, "companyUuid")
   public company: Company;
 
+  @Is("title", validateStringLength)
   @Column({ allowNull: false, type: TEXT })
   public title: string;
 

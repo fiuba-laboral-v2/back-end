@@ -10,7 +10,7 @@ import {
   NameWithDigitsError,
   EmptyNameError,
   InvalidEmailError,
-  NameIsTooLargeError
+  StringIsTooLargeError
 } from "validations-fiuba-laboral-v2";
 import { DniGenerator } from "$generators/DNI";
 
@@ -146,8 +146,8 @@ describe("User", () => {
   it("throws an error the name has more than a hundred characters", async () => {
     const attributes = { ...mandatoryAttributes, name: "name".repeat(101) };
     expect(() => new User(attributes)).toThrowErrorWithMessage(
-      NameIsTooLargeError,
-      NameIsTooLargeError.buildMessage(100)
+      StringIsTooLargeError,
+      StringIsTooLargeError.buildMessage(100)
     );
   });
 
@@ -170,8 +170,8 @@ describe("User", () => {
   it("throws an error the surname has more than a hundred characters", async () => {
     const attributes = { ...mandatoryAttributes, surname: "surname".repeat(101) };
     expect(() => new User(attributes)).toThrowErrorWithMessage(
-      NameIsTooLargeError,
-      NameIsTooLargeError.buildMessage(100)
+      StringIsTooLargeError,
+      StringIsTooLargeError.buildMessage(100)
     );
   });
 
