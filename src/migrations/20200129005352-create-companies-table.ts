@@ -43,7 +43,7 @@ export = {
             type: TEXT
           },
           website: {
-            type: STRING
+            type: TEXT
           },
           email: {
             type: STRING
