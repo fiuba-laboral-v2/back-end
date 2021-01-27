@@ -14,14 +14,14 @@ import {
   ApplicantApprovalEvent,
   ApplicantCapability,
   ApplicantCareer,
+  ApplicantExperienceSection,
+  ApplicantKnowledgeSection,
   ApplicantLink,
   Capability,
   Career,
   JobApplication,
-  ApplicantKnowledgeSection,
-  ApplicantExperienceSection,
-  UserSequelizeModel,
-  Offer
+  Offer,
+  UserSequelizeModel
 } from "$models";
 import { ApprovalStatus, approvalStatuses } from "$models/ApprovalStatus";
 import { ApplicantType } from "$models/Applicant";
@@ -114,5 +114,9 @@ export class Applicant extends Model<Applicant> {
 
   public applyTo(offer: Offer) {
     return new JobApplication({ offerUuid: offer.uuid, applicantUuid: this.uuid });
+  }
+
+  public isRejected() {
+    return this.approvalStatus === ApprovalStatus.rejected;
   }
 }

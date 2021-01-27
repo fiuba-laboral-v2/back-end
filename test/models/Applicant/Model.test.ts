@@ -112,4 +112,24 @@ describe("Applicant", () => {
       "notNull Violation: Applicant.padron cannot be null"
     );
   });
+
+  describe("isRejected", () => {
+    it("returns true if the applicant is rejected", () => {
+      const approvalStatus = ApprovalStatus.rejected;
+      const applicant = new Applicant({ userUuid: UUID.generate(), padron: 99999, approvalStatus });
+      expect(applicant.isRejected()).toBe(true);
+    });
+
+    it("returns false if the applicant is approved", () => {
+      const approvalStatus = ApprovalStatus.approved;
+      const applicant = new Applicant({ userUuid: UUID.generate(), padron: 99999, approvalStatus });
+      expect(applicant.isRejected()).toBe(false);
+    });
+
+    it("returns false if the applicant is pending", () => {
+      const approvalStatus = ApprovalStatus.pending;
+      const applicant = new Applicant({ userUuid: UUID.generate(), padron: 99999, approvalStatus });
+      expect(applicant.isRejected()).toBe(false);
+    });
+  });
 });
