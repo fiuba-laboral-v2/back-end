@@ -19,6 +19,7 @@ import { UserRepository } from "$models/User";
 import { CapabilityRepository } from "$models/Capability";
 
 import { ApplicantGenerator } from "$generators/Applicant";
+import { UserGenerator } from "$generators/User";
 import { CareerGenerator } from "$generators/Career";
 import { get, set } from "lodash";
 import { mockItemsPerPage } from "$mocks/config/PaginationConfig";
@@ -34,6 +35,19 @@ describe("ApplicantRepository", () => {
 
     firstCareer = await CareerGenerator.instance();
     secondCareer = await CareerGenerator.instance();
+  });
+
+  describe("save", () => {
+    it("throws an error if the applicant user already exists", async () => {
+      const user = await UserGenerator.fiubaUser();
+      const applicant = new Applicant({ padron: 1234, userUuid: user.uuid });
+      const anotherApplicant = new Applicant({ padron: 1234, userUuid: user.uuid });
+      await ApplicantRepository.save(applicant);
+      await expect(ApplicantRepository.save(anotherApplicant)).rejects.toThrowErrorWithMessage(
+        UniqueConstraintError,
+        "Validation error"
+      );
+    });
   });
 
   describe("getType", () => {

@@ -175,6 +175,15 @@ describe("saveApplicant", () => {
     expect(errors).not.toBeUndefined();
   });
 
+  it("returns an error if if the user already exists as an applicant", async () => {
+    const applicant = await ApplicantGenerator.instance.studentAndGraduate();
+    const user = await UserRepository.findByUuid(applicant.userUuid);
+    const variables = ApplicantGenerator.data.minimum();
+    variables.user.dni = (user.credentials as FiubaCredentials).dni;
+    const { errors } = await saveApplicant(variables);
+    expect(errors).toEqualGraphQLErrorType("ApplicantAlreadyExistsError");
+  });
+
   it("returns an error if the user email exists", async () => {
     const applicantData = ApplicantGenerator.data.minimum();
     const fiubaCredentials = new FiubaCredentials(DniGenerator.generate());
