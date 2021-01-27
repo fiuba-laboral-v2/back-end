@@ -8,7 +8,8 @@ import {
 import {
   NumberIsTooLargeError,
   NumberIsTooSmallError,
-  SalaryRangeError
+  SalaryRangeError,
+  NameIsTooLargeError
 } from "validations-fiuba-laboral-v2";
 import { ValidationError } from "sequelize";
 
@@ -106,6 +107,123 @@ describe("Offer", () => {
     const offer = new Offer(mandatoryAttributes);
     expect(offer.studentsExpirationDateTime).toBeUndefined();
     expect(offer.graduatesExpirationDateTime).toBeUndefined();
+  });
+
+  it("throws an error if offer does not belong to any company", async () => {
+    const offer = new Offer(offerWithoutProperty("companyUuid"));
+    await expect(offer.validate()).rejects.toThrow();
+  });
+
+  it("throws an error if offer does not has a title", async () => {
+    const offer = new Offer(offerWithoutProperty("title"));
+    await expect(offer.validate()).rejects.toThrow();
+  });
+
+  it("throws an error if offer does not has a description", async () => {
+    const offer = new Offer(offerWithoutProperty("description"));
+    await expect(offer.validate()).rejects.toThrow();
+  });
+
+  it("throws an error if offer does not has a hoursPerDay", async () => {
+    const offer = new Offer(offerWithoutProperty("hoursPerDay"));
+    await expect(offer.validate()).rejects.toThrow();
+  });
+
+  it("throws an error if offer has negative hoursPerDay", async () => {
+    const offer = new Offer({ ...mandatoryAttributes, hoursPerDay: -23 });
+    await expect(offer.validate()).rejects.toThrow(NumberIsTooSmallError.buildMessage(0, false));
+  });
+
+  it("throws an error if offer has hoursPerDay bigger than 24", async () => {
+    const offer = new Offer({ ...mandatoryAttributes, hoursPerDay: 25 });
+    await expect(offer.validate()).rejects.toThrow(NumberIsTooLargeError.buildMessage(24, true));
+  });
+
+  it("throws an error if offer does not has a minimumSalary", async () => {
+    const offer = new Offer(offerWithoutProperty("minimumSalary"));
+    await expect(offer.validate()).rejects.toThrow();
+  });
+
+  it("throws an error if offer has negative minimumSalary", async () => {
+    const offer = new Offer({ ...mandatoryAttributes, minimumSalary: -23 });
+    await expect(offer.validate()).rejects.toThrow(NumberIsTooSmallError.buildMessage(0, false));
+  });
+
+  it("throws an error if offer has negative maximumSalary", async () => {
+    const offer = new Offer({ ...mandatoryAttributes, maximumSalary: -23 });
+    await expect(offer.validate()).rejects.toThrow(NumberIsTooSmallError.buildMessage(0, false));
+  });
+
+  it("throws an error if minimumSalary if bigger than maximumSalary", async () => {
+    const offer = new Offer({
+      ...mandatoryAttributes,
+      minimumSalary: 100,
+      maximumSalary: 50
+    });
+    await expect(offer.validate()).rejects.toThrow(SalaryRangeError.buildMessage());
+  });
+
+  it("throws an error if the title has more than a hundred character", async () => {
+    const offer = new Offer({ ...mandatoryAttributes, title: "title".repeat(200) });
+    await expect(offer.validate()).rejects.toThrow(NameIsTooLargeError.buildMessage(100));
+  });
+
+  it("throws an error if it's an internship that targets graduates", async () => {
+    const offer = new Offer({
+      ...mandatoryAttributes,
+      isInternship: true,
+      maximumSalary: null,
+      targetApplicantType: ApplicantType.graduate
+    });
+    await expect(offer.validate()).rejects.toThrow(
+      InternshipsMustTargetStudentsError.buildMessage()
+    );
+  });
+
+  it("throws an error if it's an internship that targets both", async () => {
+    const offer = new Offer({
+      ...mandatoryAttributes,
+      isInternship: true,
+      maximumSalary: null,
+      targetApplicantType: ApplicantType.both
+    });
+    await expect(offer.validate()).rejects.toThrow(
+      InternshipsMustTargetStudentsError.buildMessage()
+    );
+  });
+
+  it("throws an error if it's an internship with a maximum salary", async () => {
+    const offer = new Offer({
+      ...mandatoryAttributes,
+      isInternship: true,
+      maximumSalary: 123,
+      targetApplicantType: ApplicantType.student
+    });
+    await expect(offer.validate()).rejects.toThrow(
+      InternshipsCannotHaveMaximumSalaryError.buildMessage()
+    );
+  });
+
+  it("throws an error if graduadosApprovalStatus isn't a ApprovalStatus enum value", async () => {
+    const offer = new Offer({
+      ...mandatoryAttributes,
+      graduadosApprovalStatus: "pepito"
+    });
+    await expect(offer.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      isApprovalStatus.validate.isIn.msg
+    );
+  });
+
+  it("throws an error if targetApplicantType isn not a ApplicantType enum value", async () => {
+    const offer = new Offer({
+      ...mandatoryAttributes,
+      targetApplicantType: "undefinedTargetApplicantType"
+    });
+    await expect(offer.validate()).rejects.toThrowErrorWithMessage(
+      ValidationError,
+      isTargetApplicantType.validate.isIn.msg
+    );
   });
 
   describe("isExpiredFor", () => {
@@ -942,117 +1060,5 @@ describe("Offer", () => {
         RejectedOfferWithExpirationTimeError.buildMessage()
       );
     });
-  });
-
-  it("throws an error if offer does not belong to any company", async () => {
-    const offer = new Offer(offerWithoutProperty("companyUuid"));
-    await expect(offer.validate()).rejects.toThrow();
-  });
-
-  it("throws an error if offer does not has a title", async () => {
-    const offer = new Offer(offerWithoutProperty("title"));
-    await expect(offer.validate()).rejects.toThrow();
-  });
-
-  it("throws an error if offer does not has a description", async () => {
-    const offer = new Offer(offerWithoutProperty("description"));
-    await expect(offer.validate()).rejects.toThrow();
-  });
-
-  it("throws an error if offer does not has a hoursPerDay", async () => {
-    const offer = new Offer(offerWithoutProperty("hoursPerDay"));
-    await expect(offer.validate()).rejects.toThrow();
-  });
-
-  it("throws an error if offer has negative hoursPerDay", async () => {
-    const offer = new Offer({ ...mandatoryAttributes, hoursPerDay: -23 });
-    await expect(offer.validate()).rejects.toThrow(NumberIsTooSmallError.buildMessage(0, false));
-  });
-
-  it("throws an error if offer has hoursPerDay bigger than 24", async () => {
-    const offer = new Offer({ ...mandatoryAttributes, hoursPerDay: 25 });
-    await expect(offer.validate()).rejects.toThrow(NumberIsTooLargeError.buildMessage(24, true));
-  });
-
-  it("throws an error if offer does not has a minimumSalary", async () => {
-    const offer = new Offer(offerWithoutProperty("minimumSalary"));
-    await expect(offer.validate()).rejects.toThrow();
-  });
-
-  it("throws an error if offer has negative minimumSalary", async () => {
-    const offer = new Offer({ ...mandatoryAttributes, minimumSalary: -23 });
-    await expect(offer.validate()).rejects.toThrow(NumberIsTooSmallError.buildMessage(0, false));
-  });
-
-  it("throws an error if offer has negative maximumSalary", async () => {
-    const offer = new Offer({ ...mandatoryAttributes, maximumSalary: -23 });
-    await expect(offer.validate()).rejects.toThrow(NumberIsTooSmallError.buildMessage(0, false));
-  });
-
-  it("throws an error if minimumSalary if bigger than maximumSalary", async () => {
-    const offer = new Offer({
-      ...mandatoryAttributes,
-      minimumSalary: 100,
-      maximumSalary: 50
-    });
-    await expect(offer.validate()).rejects.toThrow(SalaryRangeError.buildMessage());
-  });
-
-  it("throws an error if it's an internship that targets graduates", async () => {
-    const offer = new Offer({
-      ...mandatoryAttributes,
-      isInternship: true,
-      maximumSalary: null,
-      targetApplicantType: ApplicantType.graduate
-    });
-    await expect(offer.validate()).rejects.toThrow(
-      InternshipsMustTargetStudentsError.buildMessage()
-    );
-  });
-
-  it("throws an error if it's an internship that targets both", async () => {
-    const offer = new Offer({
-      ...mandatoryAttributes,
-      isInternship: true,
-      maximumSalary: null,
-      targetApplicantType: ApplicantType.both
-    });
-    await expect(offer.validate()).rejects.toThrow(
-      InternshipsMustTargetStudentsError.buildMessage()
-    );
-  });
-
-  it("throws an error if it's an internship with a maximum salary", async () => {
-    const offer = new Offer({
-      ...mandatoryAttributes,
-      isInternship: true,
-      maximumSalary: 123,
-      targetApplicantType: ApplicantType.student
-    });
-    await expect(offer.validate()).rejects.toThrow(
-      InternshipsCannotHaveMaximumSalaryError.buildMessage()
-    );
-  });
-
-  it("throws an error if graduadosApprovalStatus isn't a ApprovalStatus enum value", async () => {
-    const offer = new Offer({
-      ...mandatoryAttributes,
-      graduadosApprovalStatus: "pepito"
-    });
-    await expect(offer.validate()).rejects.toThrowErrorWithMessage(
-      ValidationError,
-      isApprovalStatus.validate.isIn.msg
-    );
-  });
-
-  it("throws an error if targetApplicantType isn not a ApplicantType enum value", async () => {
-    const offer = new Offer({
-      ...mandatoryAttributes,
-      targetApplicantType: "undefinedTargetApplicantType"
-    });
-    await expect(offer.validate()).rejects.toThrowErrorWithMessage(
-      ValidationError,
-      isTargetApplicantType.validate.isIn.msg
-    );
   });
 });
