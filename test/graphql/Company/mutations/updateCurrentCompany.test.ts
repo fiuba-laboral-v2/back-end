@@ -118,6 +118,32 @@ describe("updateCurrentCompany", () => {
     expect(errors).toBeUndefined();
   });
 
+  it("moves back to pending if the company was rejected", async () => {
+    const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.rejected);
+    const { errors } = await performQuery(apolloClient, mandatoryVariables);
+    expect(errors).toBeUndefined();
+    const updatedCompany = await CompanyRepository.findByUuid(company.uuid);
+    expect(updatedCompany.approvalStatus).toEqual(ApprovalStatus.pending);
+  });
+
+  it("does not update the approval status if the company was approved", async () => {
+    const status = ApprovalStatus.approved;
+    const { apolloClient, company } = await createCompanyTestClient(status);
+    const { errors } = await performQuery(apolloClient, mandatoryVariables);
+    expect(errors).toBeUndefined();
+    const updatedCompany = await CompanyRepository.findByUuid(company.uuid);
+    expect(updatedCompany.approvalStatus).toEqual(status);
+  });
+
+  it("does not update the approval status if the company was pending", async () => {
+    const status = ApprovalStatus.pending;
+    const { apolloClient, company } = await createCompanyTestClient(status);
+    const { errors } = await performQuery(apolloClient, mandatoryVariables);
+    expect(errors).toBeUndefined();
+    const updatedCompany = await CompanyRepository.findByUuid(company.uuid);
+    expect(updatedCompany.approvalStatus).toEqual(status);
+  });
+
   describe("Notifications", () => {
     beforeEach(() => AdminNotificationRepository.truncate());
 
