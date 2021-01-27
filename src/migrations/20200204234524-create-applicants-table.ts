@@ -43,12 +43,17 @@ export = {
         },
         { transaction }
       );
+
       await queryInterface.addIndex(TABLE_NAME, ["approvalStatus", "updatedAt", "uuid"], {
+        transaction
+      });
+
+      await queryInterface.addConstraint(TABLE_NAME, ["userUuid"], {
+        type: "unique",
+        name: "Applicants_userUuid_unique",
         transaction
       });
     });
   },
-  down: (queryInterface: QueryInterface) => {
-    return queryInterface.dropTable(TABLE_NAME);
-  }
+  down: (queryInterface: QueryInterface) => queryInterface.dropTable(TABLE_NAME)
 };
