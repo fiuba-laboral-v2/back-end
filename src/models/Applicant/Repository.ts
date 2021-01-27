@@ -71,6 +71,7 @@ export const ApplicantRepository = {
     Database.transaction(async transaction => {
       const applicant = await ApplicantRepository.findByUuid(uuid);
       await applicant.set({ description });
+      if (applicant.isRejected()) await applicant.set({ approvalStatus: ApprovalStatus.pending });
       const user = await UserRepository.findByUuid(applicant.userUuid);
       if (name) user.name = name;
       if (surname) user.surname = surname;

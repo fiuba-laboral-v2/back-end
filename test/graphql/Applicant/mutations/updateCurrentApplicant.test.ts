@@ -8,6 +8,8 @@ import { TestClientGenerator } from "$generators/TestClient";
 
 import { UserRepository } from "$models/User/Repository";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
+import { ApprovalStatus } from "$models/ApprovalStatus";
+import { ApplicantRepository } from "$models/Applicant";
 
 const UPDATE_CURRENT_APPLICANT = gql`
   mutation updateCurrentApplicant(
@@ -77,7 +79,7 @@ describe("updateCurrentApplicant", () => {
   it("updates all possible data deleting all previous values", async () => {
     const { user, apolloClient } = await TestClientGenerator.applicant();
     const newCareer = await CareerGenerator.instance();
-    const dataToUpdate = {
+    const variables = {
       user: {
         email: "newEmail@gmail.com",
         name: "newName",
@@ -122,7 +124,7 @@ describe("updateCurrentApplicant", () => {
 
     const { data, errors } = await apolloClient.mutate({
       mutation: UPDATE_CURRENT_APPLICANT,
-      variables: dataToUpdate
+      variables
     });
 
     expect(errors).toBeUndefined();
@@ -130,13 +132,13 @@ describe("updateCurrentApplicant", () => {
     expect(updatedApplicantData).toBeObjectContaining({
       user: {
         uuid: user.uuid,
-        email: dataToUpdate.user.email,
-        name: dataToUpdate.user.name,
-        surname: dataToUpdate.user.surname
+        email: variables.user.email,
+        name: variables.user.name,
+        surname: variables.user.surname
       },
-      description: dataToUpdate.description,
+      description: variables.description,
       capabilities: expect.arrayContaining(
-        dataToUpdate.capabilities.map(description => ({ description }))
+        variables.capabilities.map(description => ({ description }))
       ),
       careers: [
         {
@@ -144,13 +146,49 @@ describe("updateCurrentApplicant", () => {
             code: newCareer.code,
             description: newCareer.description
           },
-          ...dataToUpdate.careers[0]
+          ...variables.careers[0]
         }
       ],
-      knowledgeSections: dataToUpdate.knowledgeSections,
-      experienceSections: dataToUpdate.experienceSections,
-      links: dataToUpdate.links
+      knowledgeSections: variables.knowledgeSections,
+      experienceSections: variables.experienceSections,
+      links: variables.links
     });
+  });
+
+  it("moves the applicant back to pending if it was rejected", async () => {
+    const status = ApprovalStatus.rejected;
+    const { apolloClient, applicant } = await TestClientGenerator.applicant({ status });
+    const { errors } = await apolloClient.mutate({
+      mutation: UPDATE_CURRENT_APPLICANT,
+      variables: { description: "newDescription" }
+    });
+    expect(errors).toBeUndefined();
+    const updatedApplicant = await ApplicantRepository.findByUuid(applicant.uuid);
+    expect(updatedApplicant.approvalStatus).toEqual(ApprovalStatus.pending);
+  });
+
+  it("does not update the approvalStatus if it was pending", async () => {
+    const status = ApprovalStatus.pending;
+    const { apolloClient, applicant } = await TestClientGenerator.applicant({ status });
+    const { errors } = await apolloClient.mutate({
+      mutation: UPDATE_CURRENT_APPLICANT,
+      variables: { description: "newDescription" }
+    });
+    expect(errors).toBeUndefined();
+    const updatedApplicant = await ApplicantRepository.findByUuid(applicant.uuid);
+    expect(updatedApplicant.approvalStatus).toEqual(status);
+  });
+
+  it("does not update the approvalStatus if it was approved", async () => {
+    const status = ApprovalStatus.approved;
+    const { apolloClient, applicant } = await TestClientGenerator.applicant({ status });
+    const { errors } = await apolloClient.mutate({
+      mutation: UPDATE_CURRENT_APPLICANT,
+      variables: { description: "newDescription" }
+    });
+    expect(errors).toBeUndefined();
+    const updatedApplicant = await ApplicantRepository.findByUuid(applicant.uuid);
+    expect(updatedApplicant.approvalStatus).toEqual(status);
   });
 
   describe("Errors", () => {
@@ -175,7 +213,7 @@ describe("updateCurrentApplicant", () => {
     it("returns an error if there is no current user", async () => {
       const apolloClient = client.loggedOut();
 
-      const dataToUpdate = {
+      const variables = {
         user: {
           email: "newEmail@gmail.com",
           name: "newName",
@@ -187,7 +225,7 @@ describe("updateCurrentApplicant", () => {
 
       const { errors } = await apolloClient.mutate({
         mutation: UPDATE_CURRENT_APPLICANT,
-        variables: dataToUpdate
+        variables: variables
       });
 
       expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
@@ -196,7 +234,7 @@ describe("updateCurrentApplicant", () => {
     it("returns an error if current user is not an applicant", async () => {
       const { apolloClient } = await TestClientGenerator.user();
 
-      const dataToUpdate = {
+      const variables = {
         user: {
           email: "newEmail@gmail.com",
           name: "newName",
@@ -208,7 +246,7 @@ describe("updateCurrentApplicant", () => {
 
       const { errors } = await apolloClient.mutate({
         mutation: UPDATE_CURRENT_APPLICANT,
-        variables: dataToUpdate
+        variables: variables
       });
 
       expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
