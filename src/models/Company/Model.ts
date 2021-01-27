@@ -8,7 +8,7 @@ import {
   Table,
   UpdatedAt
 } from "sequelize-typescript";
-import { ENUM, HasManyGetAssociationsMixin, STRING, TEXT, UUID, UUIDV4, BOOLEAN } from "sequelize";
+import { BOOLEAN, ENUM, HasManyGetAssociationsMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
 import { CompanyPhoneNumber, CompanyPhoto, CompanyUser, Offer, UserSequelizeModel } from "..";
 import { CompanyApprovalEvent } from "./CompanyApprovalEvent/Model";
 import { ApprovalStatus, approvalStatuses } from "../ApprovalStatus";
@@ -93,4 +93,8 @@ export class Company extends Model<Company> {
   public getPhotos: HasManyGetAssociationsMixin<CompanyPhoto>;
   public getOffers: HasManyGetAssociationsMixin<Offer>;
   public getUsers: HasManyGetAssociationsMixin<UserSequelizeModel>;
+
+  public isRejected() {
+    return this.approvalStatus === ApprovalStatus.rejected;
+  }
 }
