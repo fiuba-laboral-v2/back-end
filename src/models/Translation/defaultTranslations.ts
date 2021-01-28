@@ -742,7 +742,8 @@ export const defaultTranslations = {
     title: "Postulación pendiente de aprobación"
   },
   approvedJobApplicationApplicantNotification: {
-    title: "Postulación aprobada"
+    title: "Postulación aprobada",
+    explanation: "Se envió tu perfil a la empresa para que entre en contacto con vos vía email"
   },
   approvedProfileApplicantNotification: {
     title: "Perfil aprobado"
