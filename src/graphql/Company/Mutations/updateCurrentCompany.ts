@@ -1,4 +1,4 @@
-import { nonNull, List, String } from "$graphql/fieldTypes";
+import { List, nonNull, String } from "$graphql/fieldTypes";
 import { GraphQLCompany } from "../Types/GraphQLCompany";
 import { IApolloServerContext } from "$graphql/Context";
 
@@ -6,10 +6,11 @@ import { Database } from "$config";
 import { CompanyRepository } from "$models/Company";
 import { EmailSenderFactory } from "$models/EmailSenderFactory";
 import {
-  UpdatedCompanyProfileNotificationFactory,
-  NotificationRepositoryFactory
+  NotificationRepositoryFactory,
+  UpdatedCompanyProfileNotificationFactory
 } from "$models/Notification";
 import { CompanyPhotoRepository } from "$models/CompanyPhoto";
+import { ApprovalStatus } from "$models/ApprovalStatus";
 
 export const updateCurrentCompany = {
   type: GraphQLCompany,
@@ -49,6 +50,7 @@ export const updateCurrentCompany = {
   ) => {
     const company = await CompanyRepository.findByUuid(currentUser.getCompanyRole().companyUuid);
     company.set(attributes);
+    if (company.isRejected()) company.set({ approvalStatus: ApprovalStatus.pending });
     const notifications = UpdatedCompanyProfileNotificationFactory.create(company);
 
     await Database.transaction(async transaction => {

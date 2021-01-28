@@ -173,4 +173,24 @@ describe("Company", () => {
       InvalidEmailError.buildMessage(badEmail)
     );
   });
+
+  describe("isRejected", () => {
+    it("returns true if the company is rejected", async () => {
+      const companyData = { ...mandatoryAttributes, approvalStatus: ApprovalStatus.rejected };
+      const company = new Company(companyData);
+      expect(company.isRejected()).toBe(true);
+    });
+
+    it("returns false if the company is approved", async () => {
+      const companyData = { ...mandatoryAttributes, approvalStatus: ApprovalStatus.approved };
+      const company = new Company(companyData);
+      expect(company.isRejected()).toBe(false);
+    });
+
+    it("returns false if the company is pending", async () => {
+      const companyData = { ...mandatoryAttributes, approvalStatus: ApprovalStatus.pending };
+      const company = new Company(companyData);
+      expect(company.isRejected()).toBe(false);
+    });
+  });
 });
