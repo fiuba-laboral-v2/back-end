@@ -237,8 +237,8 @@ export const defaultTranslations = {
     offerTitle: "Título",
     description: "Resumen",
     hoursPerDay: "Horas por día",
-    minimumSalary: "Salario mínimo",
-    maximumSalary: "Salario máximo",
+    minimumSalary: "Salario mínimo (en pesos)",
+    maximumSalary: "Salario máximo (en pesos)",
     isInternship: "Pasantía"
   },
   descriptionFormSection: {
