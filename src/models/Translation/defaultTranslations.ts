@@ -263,7 +263,11 @@ export const defaultTranslations = {
   },
   editMyCompanyProfile: {
     title: "Editar empresa",
-    submit: "Guardar"
+    submit: "Guardar",
+    confirmDialogTitle: "¿Editar perfil de empresa?",
+    confirmDialogDescription: "Se enviará una notificación a un administrador sobre el cambio",
+    confirmDialogCancel: "Cancelar",
+    confirmDialogConfirm: "Confirmar"
   },
   companyUserDataFormSection: {
     title: "Datos del usuario",
