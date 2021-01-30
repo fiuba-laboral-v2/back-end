@@ -39,9 +39,24 @@ describe("hasUnreadCompanyNotifications", () => {
   const performQuery = (apolloClient: TestClient) =>
     apolloClient.query({ query: HAS_UNREAD_COMPANY_NOTIFICATIONS });
 
-  it("returns true if there are unread notifications", async () => {
+  it("returns true if there are unread notifications for an approved company", async () => {
     const size = 10;
     const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
+    const notifications = await CompanyNotificationGenerator.instance.range({ company, size });
+    let isNew = true;
+    for (const notification of notifications) {
+      notification.isNew = !isNew;
+      isNew = !isNew;
+      await CompanyNotificationRepository.save(notification);
+    }
+    const { data, errors } = await performQuery(apolloClient);
+    expect(errors).toBeUndefined();
+    expect(data!.hasUnreadCompanyNotifications.hasUnreadNotifications).toBe(true);
+  });
+
+  it("returns true if there are unread notifications for a rejected company", async () => {
+    const size = 10;
+    const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.rejected);
     const notifications = await CompanyNotificationGenerator.instance.range({ company, size });
     let isNew = true;
     for (const notification of notifications) {
@@ -65,12 +80,6 @@ describe("hasUnreadCompanyNotifications", () => {
     const apolloClient = client.loggedOut();
     const { errors } = await performQuery(apolloClient);
     expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
-  });
-
-  it("returns an error if the current user is from a rejected company", async () => {
-    const { apolloClient } = await createCompanyTestClient(ApprovalStatus.rejected);
-    const { errors } = await performQuery(apolloClient);
-    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("returns an error if the current user is from a pending company", async () => {

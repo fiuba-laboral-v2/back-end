@@ -39,9 +39,24 @@ describe("hasUnreadApplicantNotifications", () => {
   const performQuery = (apolloClient: TestClient) =>
     apolloClient.query({ query: HAS_UNREAD_APPLICANT_NOTIFICATIONS });
 
-  it("returns true if there are unread notifications", async () => {
+  it("returns true if there are unread notifications for an approved applicant", async () => {
     const size = 10;
     const { apolloClient, applicant } = await createApplicantTestClient(ApprovalStatus.approved);
+    const notifications = await ApplicantNotificationGenerator.instance.range({ applicant, size });
+    let isNew = true;
+    for (const notification of notifications) {
+      notification.isNew = !isNew;
+      isNew = !isNew;
+      await ApplicantNotificationRepository.save(notification);
+    }
+    const { data, errors } = await performQuery(apolloClient);
+    expect(errors).toBeUndefined();
+    expect(data!.hasUnreadApplicantNotifications.hasUnreadNotifications).toBe(true);
+  });
+
+  it("returns true if there are unread notifications for an rejected applicant", async () => {
+    const size = 10;
+    const { apolloClient, applicant } = await createApplicantTestClient(ApprovalStatus.rejected);
     const notifications = await ApplicantNotificationGenerator.instance.range({ applicant, size });
     let isNew = true;
     for (const notification of notifications) {
@@ -81,12 +96,6 @@ describe("hasUnreadApplicantNotifications", () => {
 
   it("returns an error if the current user is from an approved company", async () => {
     const { apolloClient } = await createCompanyTestClient(ApprovalStatus.approved);
-    const { errors } = await performQuery(apolloClient);
-    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
-  });
-
-  it("returns an error if the current user is from a rejected applicant", async () => {
-    const { apolloClient } = await createApplicantTestClient(ApprovalStatus.rejected);
     const { errors } = await performQuery(apolloClient);
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
