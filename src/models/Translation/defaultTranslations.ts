@@ -350,7 +350,7 @@ export const defaultTranslations = {
     explanation:
       "Se envió un enlace a tu correo electrónico para crear una nueva contraseña." +
       "\n\n" +
-      "Si no lo recibiste, comprobar el correo no deseado o reintentar en unos minutos.",
+      "Si no lo recibiste, comprobar el correo no deseado. Reintentar en unos minutos o consultar a ayuda@fi.uba.ar.",
     retry: "Volver a intentar"
   },
   passwordRecovery: {
