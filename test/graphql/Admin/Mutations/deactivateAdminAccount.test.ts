@@ -3,7 +3,7 @@ import { client } from "$test/graphql/ApolloTestClient";
 import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist/createTestClient";
 
 import { UserRepository } from "$models/User";
-import { AdminRepository, DeleteLastCompanyUserError } from "$models/Admin";
+import { AdminRepository, DeleteLastAdminError } from "$models/Admin";
 import { CareerRepository } from "$models/Career";
 import { CompanyRepository } from "$models/Company";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
@@ -70,7 +70,7 @@ describe("deactivateAdminAccount", () => {
     await AdminRepository.truncate();
     const { apolloClient, admin } = await TestClientGenerator.admin();
     const { errors } = await performMutation(apolloClient, admin.userUuid);
-    expect(errors).toEqualGraphQLErrorType(DeleteLastCompanyUserError.name);
+    expect(errors).toEqualGraphQLErrorType(DeleteLastAdminError.name);
   });
 
   it("returns an error if there is no current user", async () => {

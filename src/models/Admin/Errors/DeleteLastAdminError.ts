@@ -1,9 +1,9 @@
-export class DeleteLastCompanyUserError extends Error {
+export class DeleteLastAdminError extends Error {
   public static buildMessage(userUuid: string) {
     return `Cannot delete the last admin: ${userUuid}`;
   }
 
   constructor(userUuid: string) {
-    super(DeleteLastCompanyUserError.buildMessage(userUuid));
+    super(DeleteLastAdminError.buildMessage(userUuid));
   }
 }
