@@ -721,6 +721,7 @@ describe("ApplicantRepository", () => {
       const newProps: IApplicantEditable = {
         uuid,
         user: {
+          email: "newEmail@gmail.com",
           name: "newName",
           surname: "newSurname"
         },
