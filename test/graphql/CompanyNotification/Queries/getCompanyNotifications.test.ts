@@ -6,20 +6,19 @@ import { GraphQLJobApplication } from "$graphql/JobApplication/Types/GraphQLJobA
 import { GraphQLOffer } from "$graphql/Offer/Types/GraphQLOffer";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { UserRepository } from "$models/User";
-import { AdminRepository } from "$models/Admin";
+import { AdminRepository, Secretary } from "$models/Admin";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { Secretary } from "$models/Admin";
 import { UnknownNotificationError } from "$models/Notification";
 import {
-  NewJobApplicationCompanyNotification,
   ApprovedOfferCompanyNotification,
-  RejectedOfferCompanyNotification,
   ApprovedProfileCompanyNotification,
-  RejectedProfileCompanyNotification,
+  CompanyNotification,
   CompanyNotificationRepository,
-  CompanyNotification
+  NewJobApplicationCompanyNotification,
+  RejectedOfferCompanyNotification,
+  RejectedProfileCompanyNotification
 } from "$models/CompanyNotification";
 import { SecretarySettingsRepository } from "$models/SecretarySettings";
 import { TestClientGenerator } from "$generators/TestClient";
@@ -170,8 +169,8 @@ describe("getCompanyNotifications", () => {
     `);
   };
 
-  it("returns all notifications", async () => {
-    const { apolloClient, company } = await createCompanyTestClient(ApprovalStatus.approved);
+  const expectToGetAllNotifications = async (status: ApprovalStatus) => {
+    const { apolloClient, company } = await createCompanyTestClient(status);
     const size = 5;
     const notifications = await CompanyNotificationGenerator.instance.range({ company, size });
     const { data, errors } = await performQuery(apolloClient);
@@ -192,6 +191,14 @@ describe("getCompanyNotifications", () => {
         })
       )
     );
+  };
+
+  it("returns all notifications for a current user from an approved company", async () => {
+    await expectToGetAllNotifications(ApprovalStatus.approved);
+  });
+
+  it("returns all notifications for a current user from an rejected company", async () => {
+    await expectToGetAllNotifications(ApprovalStatus.rejected);
   });
 
   it("returns the next three notifications", async () => {
@@ -233,12 +240,6 @@ describe("getCompanyNotifications", () => {
     const apolloClient = client.loggedOut();
     const { errors } = await performQuery(apolloClient);
     expect(errors).toEqualGraphQLErrorType(AuthenticationError.name);
-  });
-
-  it("returns an error if the current user is from a rejected company", async () => {
-    const { apolloClient } = await createCompanyTestClient(ApprovalStatus.rejected);
-    const { errors } = await performQuery(apolloClient);
-    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
 
   it("returns an error if the current user is from a pending company", async () => {

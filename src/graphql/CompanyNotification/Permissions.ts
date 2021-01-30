@@ -1,8 +1,8 @@
-import { isFromApprovedCompany, isAdmin } from "$graphql/Rules";
+import { isFromApprovedCompany, isAdmin, isFromApprovedOrRejectedCompany } from "$graphql/Rules";
 
 export const companyNotificationPermissions = {
   Query: {
-    getCompanyNotifications: isFromApprovedCompany,
+    getCompanyNotifications: isFromApprovedOrRejectedCompany,
     hasUnreadCompanyNotifications: isFromApprovedCompany,
     getRejectedCompanyProfileMessageByUuid: isAdmin,
     getRejectedOfferMessageByUuid: isAdmin
