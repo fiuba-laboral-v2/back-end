@@ -12,10 +12,10 @@ import {
   ApplicantNotification,
   ApplicantNotificationRepository,
   ApprovedJobApplicationApplicantNotification,
-  RejectedJobApplicationApplicantNotification,
   ApprovedProfileApplicantNotification,
-  RejectedProfileApplicantNotification,
-  PendingJobApplicationApplicantNotification
+  PendingJobApplicationApplicantNotification,
+  RejectedJobApplicationApplicantNotification,
+  RejectedProfileApplicantNotification
 } from "$models/ApplicantNotification";
 import { UserRepository } from "$models/User";
 import { CompanyRepository } from "$models/Company";
@@ -155,8 +155,8 @@ describe("getApplicantNotifications", () => {
     `);
   };
 
-  it("returns all notifications", async () => {
-    const { apolloClient, applicant } = await createApplicantTestClient(ApprovalStatus.approved);
+  const expectToGetAllNotifications = async (status: ApprovalStatus) => {
+    const { apolloClient, applicant } = await createApplicantTestClient(status);
     const size = 5;
     const notifications = await ApplicantNotificationGenerator.instance.range({ applicant, size });
     const { data, errors } = await performQuery(apolloClient);
@@ -176,6 +176,14 @@ describe("getApplicantNotifications", () => {
         })
       )
     );
+  };
+
+  it("returns all notifications to an approved applicant", async () => {
+    await expectToGetAllNotifications(ApprovalStatus.approved);
+  });
+
+  it("returns all notifications to a rejected applicant", async () => {
+    await expectToGetAllNotifications(ApprovalStatus.rejected);
   });
 
   it("returns the next three notifications", async () => {
@@ -254,12 +262,6 @@ describe("getApplicantNotifications", () => {
 
   it("returns an error if the current user is from a rejected company", async () => {
     const { apolloClient } = await createCompanyTestClient(ApprovalStatus.rejected);
-    const { errors } = await performQuery(apolloClient);
-    expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
-  });
-
-  it("returns an error if the current user is a rejected applicant", async () => {
-    const { apolloClient } = await createApplicantTestClient(ApprovalStatus.rejected);
     const { errors } = await performQuery(apolloClient);
     expect(errors).toEqualGraphQLErrorType(UnauthorizedError.name);
   });
