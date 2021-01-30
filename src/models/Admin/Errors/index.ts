@@ -1,1 +1,2 @@
-export { AdminNotFoundError } from "./AdminNotFoundError";
+export * from "./AdminNotFoundError";
+export * from "./DeleteLastAdminError";

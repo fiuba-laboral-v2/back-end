@@ -3,7 +3,7 @@ import { client } from "$test/graphql/ApolloTestClient";
 import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist/createTestClient";
 
 import { UserRepository } from "$models/User";
-import { AdminRepository } from "$models/Admin";
+import { AdminRepository, DeleteLastAdminError, Secretary } from "$models/Admin";
 import { CareerRepository } from "$models/Career";
 import { CompanyRepository } from "$models/Company";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
@@ -40,7 +40,7 @@ describe("deactivateAdminAccount", () => {
 
   it("deletes an extension admin", async () => {
     const extensionAdmin = await AdminGenerator.extension();
-    const { apolloClient } = await TestClientGenerator.admin();
+    const { apolloClient } = await TestClientGenerator.admin({ secretary: Secretary.extension });
     const { data, errors } = await performMutation(apolloClient, extensionAdmin.userUuid);
     expect(errors).toBeUndefined();
     expect(data!.deactivateAdminAccount.uuid).toEqual(extensionAdmin.userUuid);
@@ -64,6 +64,13 @@ describe("deactivateAdminAccount", () => {
       AdminNotFoundError,
       AdminNotFoundError.buildMessage(graduadosAdmin.userUuid)
     );
+  });
+
+  it("returns an error if its the last admin of the secretary", async () => {
+    await AdminRepository.truncate();
+    const { apolloClient, admin } = await TestClientGenerator.admin();
+    const { errors } = await performMutation(apolloClient, admin.userUuid);
+    expect(errors).toEqualGraphQLErrorType(DeleteLastAdminError.name);
   });
 
   it("returns an error if there is no current user", async () => {

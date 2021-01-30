@@ -25,6 +25,7 @@ export const AdminRepository = {
     return admin;
   },
   findAll: () => Admin.findAll(),
+  findAllBySecretary: (secretary: Secretary) => Admin.findAll({ where: { secretary } }),
   findFirstBySecretary: async (secretary: Secretary) => {
     const admin = await Admin.findOne({ where: { secretary } });
     if (!admin) throw new AdminNotFoundError();
