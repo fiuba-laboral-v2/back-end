@@ -227,7 +227,8 @@ export const defaultTranslations = {
     description:
       "El administrador no podrá ingresar a la aplicación hasta que se reactive la cuenta",
     submit: "Guardar",
-    deleteLastAdminError: "No puede borrar este administrador, es el único que existe de esa secretaría"
+    deleteLastAdminError:
+      "No puede borrar este administrador, es el único que existe de esa secretaría"
   },
   activateAdminAccount: {
     title: "Activar la cuenta del administrador:",
