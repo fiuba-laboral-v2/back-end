@@ -141,7 +141,7 @@ describe("CompanyNotificationRepository", () => {
         await generator.range({ company, size: 10, mockDate: createdAt });
 
         await CompanyNotificationRepository.save(firstNotification);
-        jest.spyOn(Math, "random").mockImplementation(() => 0.01);
+        jest.spyOn(Math, "random").mockImplementation(() => 0.0001);
         await CompanyNotificationRepository.save(secondNotification);
         const notifications = await CompanyNotificationRepository.findAll();
         const notificationUuids = notifications.map(({ uuid }) => uuid!);

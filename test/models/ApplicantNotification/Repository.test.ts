@@ -130,7 +130,7 @@ describe("ApplicantNotificationRepository", () => {
         await generator.range({ applicant, size: 10, mockDate: createdAt });
 
         await ApplicantNotificationRepository.save(firstNotification);
-        jest.spyOn(Math, "random").mockImplementation(() => 0.01);
+        jest.spyOn(Math, "random").mockImplementation(() => 0.0001);
         await ApplicantNotificationRepository.save(secondNotification);
         const notifications = await ApplicantNotificationRepository.findAll();
         const notificationUuids = notifications.map(({ uuid }) => uuid!);

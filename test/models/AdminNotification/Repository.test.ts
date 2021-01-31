@@ -106,7 +106,7 @@ describe("AdminNotificationRepository", () => {
         await generator.range({ admin: extensionAdmin, size: 10, mockDate: createdAt });
 
         await AdminNotificationRepository.save(firstNotification);
-        jest.spyOn(Math, "random").mockImplementation(() => 0.01);
+        jest.spyOn(Math, "random").mockImplementation(() => 0.0001);
         await AdminNotificationRepository.save(secondNotification);
         const notifications = await AdminNotificationRepository.findAll();
         const notificationUuids = notifications.map(({ uuid }) => uuid!);
