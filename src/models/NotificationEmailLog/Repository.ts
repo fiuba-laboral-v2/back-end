@@ -8,7 +8,7 @@ export const NotificationEmailLogRepository = {
   save: async (notificationEmailLog: NotificationEmailLog) => {
     const random = Math.random();
     await Database.transaction(async transaction => {
-      if (random < 0.1) await NotificationEmailLogRepository.cleanupOldEntries(transaction);
+      if (random < 0.001) await NotificationEmailLogRepository.cleanupOldEntries(transaction);
       await notificationEmailLog.save({ transaction });
     });
   },

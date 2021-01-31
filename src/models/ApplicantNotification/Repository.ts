@@ -22,7 +22,7 @@ export const ApplicantNotificationRepository = {
     const sequelizeModel = ApplicantNotificationMapper.toPersistenceModel(notification);
     await Database.transaction(async internalTransaction => {
       const finalTransaction = transaction || internalTransaction;
-      if (random < 0.1) await ApplicantNotificationRepository.cleanupOldEntries(finalTransaction);
+      if (random < 0.001) await ApplicantNotificationRepository.cleanupOldEntries(finalTransaction);
       await sequelizeModel.save({ transaction: finalTransaction });
     });
     notification.setUuid(sequelizeModel.uuid);
