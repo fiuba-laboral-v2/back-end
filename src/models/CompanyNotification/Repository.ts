@@ -20,7 +20,7 @@ export const CompanyNotificationRepository = {
     const companyNotification = CompanyNotificationMapper.toPersistenceModel(notification);
     await Database.transaction(async internalTransaction => {
       const finalTransaction = transaction || internalTransaction;
-      if (random < 0.1) await CompanyNotificationRepository.cleanupOldEntries(finalTransaction);
+      if (random < 0.001) await CompanyNotificationRepository.cleanupOldEntries(finalTransaction);
       await companyNotification.save({ transaction: finalTransaction });
     });
     notification.setUuid(companyNotification.uuid);

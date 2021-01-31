@@ -14,7 +14,7 @@ export const AdminNotificationRepository = {
     const sequelizeModel = AdminNotificationMapper.toPersistenceModel(notification);
     await Database.transaction(async internalTransaction => {
       const finalTransaction = transaction || internalTransaction;
-      if (random < 0.1) await AdminNotificationRepository.cleanupOldEntries(finalTransaction);
+      if (random < 0.001) await AdminNotificationRepository.cleanupOldEntries(finalTransaction);
       await sequelizeModel.save({ transaction: finalTransaction });
     });
     notification.setUuid(sequelizeModel.uuid);
