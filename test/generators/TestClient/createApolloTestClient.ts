@@ -11,7 +11,6 @@ export const createApolloTestClient = (
   client.loggedIn({
     currentUser: CurrentUserBuilder.build({
       uuid: user.uuid!,
-      email: user.email,
       ...entityContext
     }),
     expressContext

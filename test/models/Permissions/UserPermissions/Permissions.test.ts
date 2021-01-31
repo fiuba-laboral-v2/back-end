@@ -42,7 +42,6 @@ describe("UserPermissions", () => {
     beforeAll(() => {
       currentUser = new CurrentUser({
         uuid: UUID.generate(),
-        email: "email@email.com",
         roles: [adminRole, applicantRole]
       });
     });

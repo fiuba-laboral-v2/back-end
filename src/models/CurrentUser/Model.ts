@@ -3,12 +3,10 @@ import { UserPermissions } from "$models/Permissions";
 
 export class CurrentUser {
   public uuid: string;
-  public email: string;
   public roles: IRole[];
 
-  constructor({ uuid, email, roles }: ICurrentUser) {
+  constructor({ uuid, roles }: ICurrentUser) {
     this.uuid = uuid;
-    this.email = email;
     this.roles = roles;
   }
 
@@ -31,6 +29,5 @@ export class CurrentUser {
 
 interface ICurrentUser {
   uuid: string;
-  email: string;
   roles: IRole[];
 }
