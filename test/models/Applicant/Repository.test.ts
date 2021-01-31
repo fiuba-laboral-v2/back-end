@@ -721,6 +721,7 @@ describe("ApplicantRepository", () => {
       const newProps: IApplicantEditable = {
         uuid,
         user: {
+          email: "newEmail@gmail.com",
           name: "newName",
           surname: "newSurname"
         },
@@ -794,7 +795,7 @@ describe("ApplicantRepository", () => {
     });
 
     it("updates email", async () => {
-      await expectToUpdateProperty("user.email", "newEmail@gmail.com");
+      await expectToUpdateProperty("user.email", "aNewEmail@gmail.com");
     });
 
     it("updates description", async () => {
