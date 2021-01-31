@@ -62,7 +62,7 @@ describe("NotificationEmailLogRepository", () => {
 
     it("does not persist the log if the cleanup fails", async () => {
       const errorMessage = "something happened";
-      jest.spyOn(Math, "random").mockImplementation(() => 0.01);
+      jest.spyOn(Math, "random").mockImplementation(() => 0.0001);
       jest.spyOn(NotificationEmailLogRepository, "cleanupOldEntries").mockImplementation(() => {
         throw new Error(errorMessage);
       });
