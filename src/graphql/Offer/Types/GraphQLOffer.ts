@@ -72,7 +72,7 @@ export const GraphQLOffer = new GraphQLObjectType<Offer, IApolloServerContext>({
     hasApplied: {
       type: nonNull(Boolean),
       resolve: async (offer, _, { currentUser }) => {
-        const user = await UserRepository.findByEmail(currentUser.email);
+        const user = await UserRepository.findByUuid(currentUser.uuid);
         const applicant = await ApplicantRepository.findByUserUuid(user.uuid!);
         try {
           const jobApplication = await JobApplicationRepository.findByApplicantAndOffer(

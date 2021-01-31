@@ -32,10 +32,7 @@ describe("companyLogin", () => {
         documentNode: COMPANY_LOGIN,
         variables: { email: user.email, password }
       },
-      jwtTokenContents: CurrentUserBuilder.build({
-        uuid: user.uuid!,
-        email: user.email
-      })
+      jwtTokenContents: CurrentUserBuilder.build({ uuid: user.uuid! })
     });
   });
 
@@ -52,7 +49,6 @@ describe("companyLogin", () => {
       },
       jwtTokenContents: CurrentUserBuilder.build({
         uuid: user.uuid!,
-        email: user.email,
         company: {
           uuid: company.uuid
         }

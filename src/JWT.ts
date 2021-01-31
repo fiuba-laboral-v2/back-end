@@ -16,7 +16,6 @@ export const JWT = {
     const companyUser = await CompanyUserRepository.findByUserUuidIfExists(user.uuid!);
     const payload = {
       uuid: user.uuid,
-      email: user.email,
       ...(admin?.userUuid && { admin: { userUuid: admin.userUuid } }),
       ...(applicant?.uuid && { applicant: { uuid: applicant.uuid } }),
       ...(companyUser?.companyUuid && {
