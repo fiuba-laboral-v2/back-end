@@ -76,7 +76,7 @@ export const updateCurrentApplicant = {
       await ApplicantLinkRepository.update(links, applicant, transaction);
       await ApplicantCareersRepository.update(careers, applicant, transaction);
       await ApplicantCapabilityRepository.update(newCapabilities, applicant, transaction);
-      await applicant.save({ transaction });
+      await ApplicantRepository.save(applicant, transaction);
       return applicant;
     });
   }
