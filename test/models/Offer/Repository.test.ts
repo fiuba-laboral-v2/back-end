@@ -289,7 +289,7 @@ describe("OfferRepository", () => {
       const attributes = OfferGenerator.data.withObligatoryData({ companyUuid: company.uuid });
       const offer = await OfferRepository.create(attributes);
       await expect(
-        OfferRepository.update({ sections: [], careers: [{ careerCode: "unknownCode" }], offer })
+        OfferRepository.update({ sections: [], careers: [{ careerCode: "100" }], offer })
       ).rejects.toThrowErrorWithMessage(
         ForeignKeyConstraintError,
         'insert or update on table "OffersCareers" violates foreign key ' +

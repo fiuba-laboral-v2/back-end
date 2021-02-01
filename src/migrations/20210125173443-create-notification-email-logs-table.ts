@@ -16,7 +16,7 @@ export = {
       },
       notificationTable: {
         allowNull: true,
-        type: STRING
+        type: STRING(22)
       },
       success: {
         allowNull: true,

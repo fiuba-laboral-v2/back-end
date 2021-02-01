@@ -12,7 +12,7 @@ export = {
             allowNull: false,
             references: { model: "Careers", key: "code" },
             onDelete: "CASCADE",
-            type: STRING
+            type: STRING(3)
           },
           offerUuid: {
             allowNull: false,

@@ -8,7 +8,7 @@ export = {
         {
           code: {
             allowNull: false,
-            type: STRING
+            type: STRING(3)
           },
           description: {
             allowNull: false,

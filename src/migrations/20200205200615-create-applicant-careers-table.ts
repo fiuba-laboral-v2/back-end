@@ -10,7 +10,7 @@ export = {
         {
           careerCode: {
             allowNull: false,
-            type: STRING,
+            type: STRING(3),
             references: { model: "Careers", key: "code" },
             onDelete: "CASCADE"
           },

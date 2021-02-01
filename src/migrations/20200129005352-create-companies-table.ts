@@ -15,11 +15,11 @@ export = {
           },
           cuit: {
             allowNull: false,
-            type: STRING
+            type: STRING(11)
           },
           companyName: {
             allowNull: false,
-            type: STRING
+            type: STRING(100)
           },
           businessName: {
             allowNull: false,
