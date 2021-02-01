@@ -3,12 +3,8 @@ import { client } from "$test/graphql/ApolloTestClient";
 
 import { ISaveAdmin } from "$graphql/Admin/Mutations/saveAdmin";
 import { FiubaUsersService } from "$services";
-import {
-  BadCredentialsError,
-  FiubaCredentials,
-  UserNotFoundError,
-  UserRepository
-} from "$models/User";
+import { BadCredentialsError, UserNotFoundError, UserRepository } from "$models/User";
+import { FiubaCredentials } from "$models/User/Credentials";
 import { CareerRepository } from "$models/Career";
 import { AdminRepository, Secretary } from "$models/Admin";
 import { CompanyRepository } from "$models/Company";

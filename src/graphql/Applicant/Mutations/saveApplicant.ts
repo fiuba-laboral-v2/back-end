@@ -2,13 +2,8 @@ import { Int, List, nonNull, String } from "$graphql/fieldTypes";
 import { GraphQLApplicant } from "../Types/GraphQLApplicant";
 import { GraphQLApplicantCareerInput } from "../Types/GraphQLApplicantCareerInput";
 
-import {
-  FiubaCredentials,
-  ICreateFiubaUser,
-  User,
-  UserNotFoundError,
-  UserRepository
-} from "$models/User";
+import { ICreateFiubaUser, User, UserNotFoundError, UserRepository } from "$models/User";
+import { FiubaCredentials } from "$models/User/Credentials";
 import { ApplicantRepository } from "$models/Applicant";
 import { GraphQLUserCreateInput } from "$graphql/User/Types/GraphQLUserCreateInput";
 import { ApplicantCareersRepository, IApplicantCareer } from "$models/Applicant/ApplicantCareer";

@@ -3,6 +3,7 @@ import { ISendEmail } from "$services/Email/interface";
 import { NotificationEmailLog } from "$models";
 import { EmailService } from "$services";
 import { NotificationEmailLogRepository } from "$models/NotificationEmailLog";
+import { Environment } from "$config";
 
 export class NotificationEmailSender {
   private readonly notification: Notification;
@@ -24,6 +25,8 @@ export class NotificationEmailSender {
   }
 
   private async createLog(success: boolean, message: string) {
+    if (Environment.NODE_ENV() === Environment.TEST) return;
+
     const notificationEmailLog = new NotificationEmailLog({
       notificationUuid: this.notification.uuid,
       notificationTable: this.notificationTableName,

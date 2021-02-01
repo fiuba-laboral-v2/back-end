@@ -4,7 +4,8 @@ import { GraphQLCompany } from "../Types/GraphQLCompany";
 
 import { Database } from "$config";
 import { CompanyRepository } from "$models/Company";
-import { CompanyUserRawCredentials, ICreateCompanyUser, User, UserRepository } from "$models/User";
+import { ICreateCompanyUser, User, UserRepository } from "$models/User";
+import { CompanyUserRawCredentials } from "$models/User/Credentials";
 import { Company, CompanyUser } from "$models";
 import { CompanyUserRepository } from "$models/CompanyUser";
 import { CompanyPhotoRepository } from "$models/CompanyPhoto";

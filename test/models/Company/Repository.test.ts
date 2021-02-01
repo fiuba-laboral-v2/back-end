@@ -2,7 +2,8 @@ import { UniqueConstraintError, ValidationError } from "sequelize";
 import { InvalidCuitError } from "validations-fiuba-laboral-v2";
 import { Company } from "$models";
 import { CompanyNotFoundError } from "$models/Company/Errors";
-import { UserRepository, User, FiubaCredentials } from "$models/User";
+import { UserRepository, User } from "$models/User";
+import { FiubaCredentials } from "$models/User/Credentials";
 import { UUID } from "$models/UUID";
 import { CompanyRepository } from "$models/Company";
 

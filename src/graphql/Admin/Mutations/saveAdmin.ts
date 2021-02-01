@@ -4,13 +4,8 @@ import { GraphQLAdmin } from "../Types/GraphQLAdmin";
 import { GraphQLSecretary } from "../Types/GraphQLSecretary";
 
 import { Database } from "$config";
-import {
-  UserRepository,
-  FiubaCredentials,
-  User,
-  ICreateFiubaUser,
-  UserNotFoundError
-} from "$models/User";
+import { UserRepository, User, ICreateFiubaUser, UserNotFoundError } from "$models/User";
+import { FiubaCredentials } from "$models/User/Credentials";
 import { Secretary, AdminRepository } from "$models/Admin";
 import { Admin } from "$models";
 
