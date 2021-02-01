@@ -12,15 +12,15 @@ export = {
       },
       companySignUpAcceptanceCriteria: {
         allowNull: false,
-        type: STRING
+        type: STRING(1500)
       },
       companyEditableAcceptanceCriteria: {
         allowNull: false,
-        type: STRING
+        type: STRING(1500)
       },
       editOfferAcceptanceCriteria: {
         allowNull: false,
-        type: STRING
+        type: STRING(1500)
       }
     }),
   down: (queryInterface: QueryInterface) => queryInterface.dropTable(TABLE_NAME)
