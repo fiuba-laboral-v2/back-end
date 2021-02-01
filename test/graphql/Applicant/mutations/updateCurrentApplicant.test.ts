@@ -1,5 +1,6 @@
 import { gql } from "apollo-server";
 import { client } from "$test/graphql/ApolloTestClient";
+import { ApolloServerTestClient as TestClient } from "apollo-server-testing/dist/createTestClient";
 
 import { CareerRepository } from "$models/Career";
 import { CompanyRepository } from "$models/Company";
@@ -9,7 +10,11 @@ import { TestClientGenerator } from "$generators/TestClient";
 import { UserRepository } from "$models/User/Repository";
 import { AuthenticationError, UnauthorizedError } from "$graphql/Errors";
 import { ApprovalStatus } from "$models/ApprovalStatus";
-import { ApplicantRepository } from "$models/Applicant";
+import { ApplicantRepository, IApplicantEditable } from "$models/Applicant";
+import { get, set } from "lodash";
+import { ApplicantGenerator } from "$generators/Applicant";
+import { CurrentUserBuilder } from "$models/CurrentUser";
+import { Applicant, Career } from "$models";
 
 const UPDATE_CURRENT_APPLICANT = gql`
   mutation updateCurrentApplicant(
@@ -70,14 +75,44 @@ const UPDATE_CURRENT_APPLICANT = gql`
 `;
 
 describe("updateCurrentApplicant", () => {
+  let firstCareer: Career;
+  let secondCareer: Career;
+  let thirdCareer: Career;
+
   beforeAll(async () => {
     await CareerRepository.truncate();
     await UserRepository.truncate();
     await CompanyRepository.truncate();
+
+    firstCareer = await CareerGenerator.instance();
+    secondCareer = await CareerGenerator.instance();
+    thirdCareer = await CareerGenerator.instance();
   });
 
-  it("updates all possible data deleting all previous values", async () => {
+  const login = (applicant: Applicant) =>
+    client.loggedIn({
+      currentUser: CurrentUserBuilder.build({
+        uuid: applicant.userUuid,
+        applicant: { uuid: applicant.uuid }
+      })
+    });
+
+  const updateCurrentApplicant = async (
+    apolloClient: TestClient,
+    variables: Omit<IApplicantEditable, "uuid">
+  ) => apolloClient.mutate({ mutation: UPDATE_CURRENT_APPLICANT, variables });
+
+  const expectToUpdateAttribute = async (attributeName: string, value: string) => {
     const { user, apolloClient } = await TestClientGenerator.applicant();
+    let variables = { user: { name: user.name, surname: user.surname, email: user.email } };
+    variables = set(variables, attributeName, value);
+    const { errors, data } = await updateCurrentApplicant(apolloClient, variables);
+    expect(errors).toBeUndefined();
+    expect(get(data!.updateCurrentApplicant, attributeName)).toEqual(value);
+  };
+
+  it("updates all possible data deleting all previous values", async () => {
+    const { applicant, apolloClient } = await TestClientGenerator.applicant();
     const newCareer = await CareerGenerator.instance();
     const variables = {
       user: {
@@ -122,16 +157,12 @@ describe("updateCurrentApplicant", () => {
       ]
     };
 
-    const { data, errors } = await apolloClient.mutate({
-      mutation: UPDATE_CURRENT_APPLICANT,
-      variables
-    });
-
+    const { data, errors } = await updateCurrentApplicant(apolloClient, variables);
     expect(errors).toBeUndefined();
     const updatedApplicantData = data!.updateCurrentApplicant;
     expect(updatedApplicantData).toBeObjectContaining({
       user: {
-        uuid: user.uuid,
+        uuid: applicant.userUuid,
         email: variables.user.email,
         name: variables.user.name,
         surname: variables.user.surname
@@ -153,6 +184,67 @@ describe("updateCurrentApplicant", () => {
       experienceSections: variables.experienceSections,
       links: variables.links
     });
+  });
+
+  it("updates name", async () => {
+    await expectToUpdateAttribute("user.name", "newName");
+  });
+
+  it("updates surname", async () => {
+    await expectToUpdateAttribute("user.surname", "newSurname");
+  });
+
+  it("updates email", async () => {
+    await expectToUpdateAttribute("user.email", "aNewEmail@gmail.com");
+  });
+
+  it("updates description", async () => {
+    await expectToUpdateAttribute("description", "newDescription");
+  });
+
+  it("updates by adding new capabilities", async () => {
+    const capabilities = ["CSS", "clojure"];
+    const { apolloClient } = await TestClientGenerator.applicant({ capabilities });
+    const variables = { capabilities: ["Python", "clojure"] };
+    const { data, errors } = await updateCurrentApplicant(apolloClient, variables);
+    expect(errors).toBeUndefined();
+    expect(data!.updateCurrentApplicant.capabilities.map(({ description }) => description)).toEqual(
+      expect.arrayContaining(variables.capabilities.map(description => description.toLowerCase()))
+    );
+  });
+
+  it("updates by deleting all capabilities if none is provided", async () => {
+    const capabilities = ["CSS", "clojure"];
+    const { apolloClient } = await TestClientGenerator.applicant({ capabilities });
+    const { data, errors } = await updateCurrentApplicant(apolloClient, {});
+    expect(errors).toBeUndefined();
+    expect(data!.updateCurrentApplicant.capabilities).toEqual([]);
+  });
+
+  it("updates by keeping only the new careers", async () => {
+    const applicant = await ApplicantGenerator.instance.studentAndGraduate({
+      careerInProgress: firstCareer,
+      finishedCareer: secondCareer
+    });
+    const apolloClient = login(applicant);
+    const careerCodes = (await applicant.getCareers()).map(({ code }) => code);
+    expect(careerCodes).toEqual(expect.arrayContaining([firstCareer.code, secondCareer.code]));
+    const variables = {
+      careers: [
+        {
+          careerCode: thirdCareer.code,
+          isGraduate: true
+        },
+        {
+          careerCode: secondCareer.code,
+          isGraduate: true
+        }
+      ]
+    };
+    const { data, errors } = await updateCurrentApplicant(apolloClient, variables);
+    expect(errors).toBeUndefined();
+    const newCareerCodes = data!.updateCurrentApplicant.careers.map(({ careerCode }) => careerCode);
+    expect(newCareerCodes).toEqual(expect.arrayContaining([secondCareer.code, thirdCareer.code]));
   });
 
   it("moves the applicant back to pending if it was rejected", async () => {
