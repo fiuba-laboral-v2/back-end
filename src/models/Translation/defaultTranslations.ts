@@ -397,13 +397,13 @@ export const defaultTranslations = {
   },
   workExperienceFormSection: {
     title: "Experiencia Laboral",
-    sectionTitle: "Empresa",
-    sectionContent: "Contenido"
+    sectionTitle: "Cargo y Empresa",
+    sectionContent: "Descripción"
   },
   additionalKnowledgeFormSection: {
     title: "Otros conocimientos",
     sectionTitle: "Título",
-    sectionContent: "Contenido"
+    sectionContent: "Descripción"
   },
   editableDetail: {
     title: "Editar tu perfil",
