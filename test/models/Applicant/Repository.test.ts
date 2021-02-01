@@ -82,7 +82,7 @@ describe("ApplicantRepository", () => {
       await expect(ApplicantRepository.findByPadron(padron)).rejects.toThrow(ApplicantNotFound);
     });
 
-    describe("", () => {
+    describe("find queries", () => {
       let student: Applicant;
       let graduate: Applicant;
       let studentAndGraduate: Applicant;
