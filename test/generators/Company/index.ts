@@ -1,6 +1,7 @@
 import { withMinimumData } from "./withMinimumData";
 import { completeData } from "./completeData";
-import { UserRepository, User, CompanyUserRawCredentials } from "$models/User";
+import { UserRepository, User } from "$models/User";
+import { CompanyUserRawCredentials } from "$models/User/Credentials";
 import { CompanyRepository } from "$models/Company";
 import { CompanyUserRepository } from "$models/CompanyUser";
 import { Company, CompanyUser } from "$models";

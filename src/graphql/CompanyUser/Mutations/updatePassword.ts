@@ -1,7 +1,8 @@
 import { nonNull, String } from "$graphql/fieldTypes";
 import { GraphQLCompanyUser } from "../Types/GraphQLCompanyUser";
 import { IApolloServerContext } from "$graphql/Context";
-import { CompanyUserRawCredentials, UserRepository } from "$models/User";
+import { UserRepository } from "$models/User";
+import { CompanyUserRawCredentials } from "$models/User/Credentials";
 import { CompanyUserRepository } from "$models/CompanyUser";
 
 export const updatePassword = {

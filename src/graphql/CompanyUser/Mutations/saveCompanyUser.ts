@@ -4,7 +4,8 @@ import { GraphQLCompanyUser } from "../Types/GraphQLCompanyUser";
 import { IApolloServerContext } from "$graphql/Context";
 
 import { Database } from "$config";
-import { UserRepository, CompanyUserRawCredentials, User, ICreateCompanyUser } from "$models/User";
+import { UserRepository, User, ICreateCompanyUser } from "$models/User";
+import { CompanyUserRawCredentials } from "$models/User/Credentials";
 import { CompanyUserRepository } from "$models/CompanyUser";
 import { CompanyUser } from "$models";
 

@@ -209,7 +209,7 @@ describe("updateCurrentApplicant", () => {
     const { data, errors } = await updateCurrentApplicant(apolloClient, variables);
     expect(errors).toBeUndefined();
     expect(data!.updateCurrentApplicant.capabilities.map(({ description }) => description)).toEqual(
-      expect.arrayContaining(variables.capabilities.map(description => description.toLowerCase()))
+      expect.arrayContaining(variables.capabilities)
     );
   });
 

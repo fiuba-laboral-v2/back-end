@@ -1,13 +1,6 @@
 import { Transaction } from "sequelize";
-import { IApplicantEditable, IFindLatest, IFind, ApplicantType } from "./Interface";
+import { IFindLatest, IFind, ApplicantType } from "./Interface";
 import { ApplicantNotFound } from "./Errors";
-import { Database } from "$config";
-import { ApplicantCareersRepository } from "./ApplicantCareer";
-import { ApplicantCapabilityRepository } from "../ApplicantCapability";
-import { ApplicantKnowledgeSectionRepository } from "./ApplicantKnowledgeSection";
-import { ApplicantExperienceSectionRepository } from "./ApplicantExperienceSection";
-import { ApplicantLinkRepository } from "./Link";
-import { UserRepository } from "../User";
 import { Applicant } from "..";
 import { PaginationQuery } from "../PaginationQuery";
 import {
@@ -58,39 +51,6 @@ export const ApplicantRepository = {
 
     return applicant;
   },
-  update: ({
-    user: userAttributes = {},
-    description,
-    uuid,
-    knowledgeSections = [],
-    experienceSections = [],
-    links = [],
-    capabilities: newCapabilities = [],
-    careers = []
-  }: IApplicantEditable) =>
-    Database.transaction(async transaction => {
-      const applicant = await ApplicantRepository.findByUuid(uuid);
-      await applicant.set({ description });
-      if (applicant.isRejected()) await applicant.set({ approvalStatus: ApprovalStatus.pending });
-      const user = await UserRepository.findByUuid(applicant.userUuid);
-      user.setAttributes(userAttributes);
-      await UserRepository.save(user, transaction);
-      await new ApplicantKnowledgeSectionRepository().update({
-        sections: knowledgeSections,
-        applicant,
-        transaction
-      });
-      await new ApplicantExperienceSectionRepository().update({
-        sections: experienceSections,
-        applicant,
-        transaction
-      });
-      await ApplicantLinkRepository.update(links, applicant, transaction);
-      await ApplicantCareersRepository.update(careers, applicant, transaction);
-      await ApplicantCapabilityRepository.update(newCapabilities, applicant, transaction);
-      await applicant.save({ transaction });
-      return applicant;
-    }),
   countStudents: () => {
     const applicantCareersFilter = ApplicantCareersIncludeClauseBuilder.build({
       applicantType: ApplicantType.student

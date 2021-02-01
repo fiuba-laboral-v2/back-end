@@ -1,5 +1,6 @@
 import { nonNull, String, Int } from "$graphql/fieldTypes";
-import { CompanyUserRawCredentials, UserRepository } from "$models/User";
+import { UserRepository } from "$models/User";
+import { CompanyUserRawCredentials } from "$models/User/Credentials";
 import { CompanyUserRepository } from "$models/CompanyUser";
 import { JWT } from "$src/JWT";
 import { UnauthorizedError } from "$graphql/Errors";

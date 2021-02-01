@@ -9,7 +9,8 @@ import { IUpdateMyForgottenPassword } from "$graphql/CompanyUser/Mutations/updat
 import { Secretary } from "$models/Admin";
 import { JWTConfig } from "$config";
 import { JWT } from "$src/JWT";
-import { FiubaCredentials, User, UserRepository } from "$models/User";
+import { User, UserRepository } from "$models/User";
+import { FiubaCredentials } from "$models/User/Credentials";
 import { CompanyRepository } from "$models/Company";
 import { CareerRepository } from "$models/Career";
 
