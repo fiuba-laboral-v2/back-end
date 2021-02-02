@@ -35,5 +35,6 @@ const permissions = merge(
 );
 
 export const permissionShield = shield(permissions, {
-  debug: Environment.NODE_ENV() !== Environment.PRODUCTION
+  debug: Environment.NODE_ENV() !== Environment.PRODUCTION,
+  allowExternalErrors: true
 });
