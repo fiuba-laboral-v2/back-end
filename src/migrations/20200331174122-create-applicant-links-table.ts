@@ -1,4 +1,4 @@
-import { DATE, UUID, QueryInterface, STRING } from "sequelize";
+import { DATE, UUID, QueryInterface, TEXT } from "sequelize";
 
 export = {
   up: (queryInterface: QueryInterface) => {
@@ -14,11 +14,11 @@ export = {
           },
           name: {
             allowNull: false,
-            type: STRING
+            type: TEXT
           },
           url: {
             allowNull: false,
-            type: STRING
+            type: TEXT
           },
           createdAt: {
             allowNull: false,

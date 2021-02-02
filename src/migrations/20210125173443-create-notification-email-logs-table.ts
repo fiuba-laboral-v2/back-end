@@ -1,4 +1,4 @@
-import { DATE, UUID, TEXT, BOOLEAN, STRING, QueryInterface } from "sequelize";
+import { DATE, UUID, TEXT, BOOLEAN, QueryInterface } from "sequelize";
 
 const TABLE_NAME = "NotificationEmailLogs";
 
@@ -16,7 +16,7 @@ export = {
       },
       notificationTable: {
         allowNull: true,
-        type: STRING(22)
+        type: TEXT
       },
       success: {
         allowNull: true,

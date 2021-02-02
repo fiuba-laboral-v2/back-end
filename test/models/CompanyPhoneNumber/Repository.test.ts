@@ -1,5 +1,5 @@
-import { DatabaseError, ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
-import { Company, CompanyPhoneNumber } from "$models";
+import { ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
+import { Company } from "$models";
 import { CompanyRepository } from "$models/Company";
 import { CompanyPhoneNumberRepository } from "$models/CompanyPhoneNumber";
 import { UserRepository } from "$models/User";
@@ -31,18 +31,6 @@ describe("CompanyPhoneNumberRepository", () => {
     await expect(
       CompanyPhoneNumberRepository.create(phoneNumber, company)
     ).rejects.toThrowErrorWithMessage(UniqueConstraintError, "Validation error");
-  });
-
-  it("throws a database constraint error if phoneNumber is very large", async () => {
-    const company = await CompanyGenerator.instance.withCompleteData();
-    const phoneNumber = new CompanyPhoneNumber({
-      companyUuid: company.uuid,
-      phoneNumber: "0".repeat(300)
-    });
-    await expect(phoneNumber.save({ validate: false })).rejects.toThrowErrorWithMessage(
-      DatabaseError,
-      "value too long for type character varying(255)"
-    );
   });
 
   it("throws an error if company does not exist", async () => {

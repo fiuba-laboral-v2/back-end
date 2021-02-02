@@ -1,5 +1,5 @@
 import { Column, Is, Model, Table } from "sequelize-typescript";
-import { ENUM, INTEGER, STRING, BOOLEAN } from "sequelize";
+import { ENUM, INTEGER, TEXT, BOOLEAN } from "sequelize";
 import { Secretary, SecretaryEnumValues } from "$models/Admin/Interface";
 import { isSecretary } from "../SequelizeModelValidators";
 import { validateIntegerInRange, validateFiubaEmail } from "validations-fiuba-laboral-v2";
@@ -19,10 +19,10 @@ export class SecretarySettings extends Model<SecretarySettings> {
   public offerDurationInDays: number;
 
   @Is("email", validateFiubaEmail)
-  @Column({ type: STRING, allowNull: false })
+  @Column({ type: TEXT, allowNull: false })
   public email: string;
 
-  @Column({ type: STRING, allowNull: false })
+  @Column({ type: TEXT, allowNull: false })
   public emailSignature: string;
 
   @Column({ type: BOOLEAN, allowNull: false })

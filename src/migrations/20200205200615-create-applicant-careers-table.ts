@@ -1,4 +1,4 @@
-import { QueryInterface, DATE, INTEGER, STRING, UUID, BOOLEAN } from "sequelize";
+import { QueryInterface, DATE, INTEGER, TEXT, UUID, BOOLEAN } from "sequelize";
 
 const TABLE_NAME = "ApplicantCareers";
 
@@ -10,7 +10,7 @@ export = {
         {
           careerCode: {
             allowNull: false,
-            type: STRING(3),
+            type: TEXT,
             references: { model: "Careers", key: "code" },
             onDelete: "CASCADE"
           },

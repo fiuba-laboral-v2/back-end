@@ -1,4 +1,4 @@
-import { DATE, QueryInterface, STRING, TEXT } from "sequelize";
+import { DATE, QueryInterface, TEXT } from "sequelize";
 
 export = {
   up: (queryInterface: QueryInterface) => {
@@ -8,7 +8,7 @@ export = {
         {
           code: {
             allowNull: false,
-            type: STRING(3)
+            type: TEXT
           },
           description: {
             allowNull: false,

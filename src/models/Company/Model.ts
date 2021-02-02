@@ -8,7 +8,7 @@ import {
   Table,
   UpdatedAt
 } from "sequelize-typescript";
-import { BOOLEAN, ENUM, HasManyGetAssociationsMixin, STRING, TEXT, UUID, UUIDV4 } from "sequelize";
+import { BOOLEAN, ENUM, HasManyGetAssociationsMixin, TEXT, UUID, UUIDV4 } from "sequelize";
 import { CompanyPhoneNumber, CompanyPhoto, CompanyUser, Offer, UserSequelizeModel } from "..";
 import { CompanyApprovalEvent } from "./CompanyApprovalEvent/Model";
 import { ApprovalStatus, approvalStatuses } from "../ApprovalStatus";
@@ -26,23 +26,23 @@ export class Company extends Model<Company> {
   public uuid: string;
 
   @Is("cuit", validateCuit)
-  @Column({ allowNull: false, type: STRING })
+  @Column({ allowNull: false, type: TEXT })
   public cuit: string;
 
   @Is("name", validateName)
-  @Column({ allowNull: false, type: STRING })
+  @Column({ allowNull: false, type: TEXT })
   public companyName: string;
 
-  @Column({ allowNull: false, type: STRING, ...isNotEmptyString })
+  @Column({ allowNull: false, type: TEXT, ...isNotEmptyString })
   public businessName: string;
 
-  @Column({ allowNull: false, type: STRING, ...isNotEmptyString })
+  @Column({ allowNull: false, type: TEXT, ...isNotEmptyString })
   public businessSector: string;
 
   @Column({ allowNull: false, type: BOOLEAN })
   public hasAnInternshipAgreement: boolean;
 
-  @Column(STRING)
+  @Column(TEXT)
   public slogan: string;
 
   @Column(TEXT)
@@ -56,7 +56,7 @@ export class Company extends Model<Company> {
   public website: string;
 
   @Is(validateEmail)
-  @Column(STRING)
+  @Column(TEXT)
   public email: string;
 
   @CreatedAt

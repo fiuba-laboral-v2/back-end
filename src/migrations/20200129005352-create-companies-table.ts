@@ -1,4 +1,4 @@
-import { BOOLEAN, UUID, DATE, STRING, TEXT, QueryInterface } from "sequelize";
+import { BOOLEAN, UUID, DATE, TEXT, QueryInterface } from "sequelize";
 
 const TABLE_NAME = "Companies";
 
@@ -15,26 +15,26 @@ export = {
           },
           cuit: {
             allowNull: false,
-            type: STRING(11)
+            type: TEXT
           },
           companyName: {
             allowNull: false,
-            type: STRING(100)
+            type: TEXT
           },
           businessName: {
             allowNull: false,
-            type: STRING
+            type: TEXT
           },
           businessSector: {
             allowNull: false,
-            type: STRING
+            type: TEXT
           },
           hasAnInternshipAgreement: {
             allowNull: false,
             type: BOOLEAN
           },
           slogan: {
-            type: STRING
+            type: TEXT
           },
           description: {
             type: TEXT
@@ -46,7 +46,7 @@ export = {
             type: TEXT
           },
           email: {
-            type: STRING
+            type: TEXT
           },
           approvalStatus: {
             allowNull: false,

@@ -1,5 +1,5 @@
 import { Column, CreatedAt, Table } from "sequelize-typescript";
-import { BOOLEAN, TEXT, UUID, STRING } from "sequelize";
+import { BOOLEAN, TEXT, UUID } from "sequelize";
 import { SequelizeModel } from "$models/SequelizeModel";
 import { isUuid } from "$models/SequelizeModelValidators";
 
@@ -8,7 +8,7 @@ export class NotificationEmailLog extends SequelizeModel<NotificationEmailLog> {
   @Column({ allowNull: false, type: UUID, ...isUuid })
   public notificationUuid: string;
 
-  @Column({ allowNull: false, type: STRING })
+  @Column({ allowNull: false, type: TEXT })
   public notificationTable: string;
 
   @Column({ allowNull: false, type: BOOLEAN })
