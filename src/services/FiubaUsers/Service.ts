@@ -9,7 +9,6 @@ export const FiubaUsersService = {
     if (dni.length === 0) throw new InvalidEmptyUsernameError();
 
     if (Environment.isLocal()) return true;
-    if (Environment.isStaging()) return true;
     return FiubaUsersApi.authenticate({ dni, password });
   }
 };
