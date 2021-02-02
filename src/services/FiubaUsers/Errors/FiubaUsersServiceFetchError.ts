@@ -1,9 +1,11 @@
+import { FetchError } from "node-fetch";
+
 export class FiubaUsersServiceFetchError extends Error {
-  public static buildMessage() {
-    return "Connection with FIUBA service was lost";
+  public static buildMessage(error: FetchError) {
+    return `Connection with FIUBA service was lost: ${error.message}`;
   }
 
-  constructor() {
-    super(FiubaUsersServiceFetchError.buildMessage());
+  constructor(error: FetchError) {
+    super(FiubaUsersServiceFetchError.buildMessage(error));
   }
 }

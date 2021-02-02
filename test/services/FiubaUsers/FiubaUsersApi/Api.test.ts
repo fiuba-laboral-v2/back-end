@@ -105,10 +105,11 @@ describe("FiubaUsersApi", () => {
   });
 
   it("throws an error if the service has a connection error", async () => {
-    stubRequest({ throws: new FetchError("message", "type") });
+    const error = new FetchError("message", "type");
+    stubRequest({ throws: error });
     await expect(FiubaUsersApi.authenticate(validCredentials)).rejects.toThrowErrorWithMessage(
       FiubaUsersServiceFetchError,
-      FiubaUsersServiceFetchError.buildMessage()
+      FiubaUsersServiceFetchError.buildMessage(error)
     );
   });
 });

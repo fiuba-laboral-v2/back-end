@@ -30,7 +30,7 @@ export const FiubaUsersApi = {
       }
       throw new AuthenticateUnknownError(parse(await httpResponse.text()));
     } catch (error) {
-      if (error instanceof FetchError) throw new FiubaUsersServiceFetchError();
+      if (error instanceof FetchError) throw new FiubaUsersServiceFetchError(error);
       throw error;
     }
   }
