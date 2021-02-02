@@ -1,4 +1,4 @@
-import { QueryInterface, DATE, UUID, STRING } from "sequelize";
+import { QueryInterface, DATE, UUID, TEXT } from "sequelize";
 
 const TABLE_NAME = "CompanyUsers";
 
@@ -27,7 +27,7 @@ export = {
           },
           position: {
             allowNull: false,
-            type: STRING
+            type: TEXT
           },
           createdAt: {
             allowNull: false,

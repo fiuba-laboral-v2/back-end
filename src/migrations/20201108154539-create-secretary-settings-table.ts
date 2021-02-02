@@ -1,4 +1,4 @@
-import { QueryInterface, INTEGER, STRING, BOOLEAN } from "sequelize";
+import { QueryInterface, INTEGER, TEXT, BOOLEAN } from "sequelize";
 
 const TABLE_NAME = "SecretarySettings";
 
@@ -16,11 +16,11 @@ export = {
       },
       email: {
         allowNull: false,
-        type: STRING
+        type: TEXT
       },
       emailSignature: {
         allowNull: false,
-        type: STRING
+        type: TEXT
       },
       automaticJobApplicationApproval: {
         allowNull: false,

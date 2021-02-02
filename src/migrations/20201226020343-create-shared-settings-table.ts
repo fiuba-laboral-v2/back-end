@@ -1,4 +1,4 @@
-import { QueryInterface, STRING, UUID } from "sequelize";
+import { QueryInterface, TEXT, UUID } from "sequelize";
 
 const TABLE_NAME = "SharedSettings";
 
@@ -12,15 +12,15 @@ export = {
       },
       companySignUpAcceptanceCriteria: {
         allowNull: false,
-        type: STRING(1500)
+        type: TEXT
       },
       companyEditableAcceptanceCriteria: {
         allowNull: false,
-        type: STRING(1500)
+        type: TEXT
       },
       editOfferAcceptanceCriteria: {
         allowNull: false,
-        type: STRING(1500)
+        type: TEXT
       }
     }),
   down: (queryInterface: QueryInterface) => queryInterface.dropTable(TABLE_NAME)

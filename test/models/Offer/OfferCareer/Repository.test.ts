@@ -40,7 +40,7 @@ describe("OfferCareerRepository", () => {
 
     it("throws an error if the careerCodes do not belong to any career", async () => {
       const offer = await createOffer();
-      const careersData = [{ careerCode: "unknown1" }, { careerCode: "unknown2" }];
+      const careersData = [{ careerCode: "AAA" }, { careerCode: "BBB" }];
       await expect(
         OfferCareerRepository.bulkCreate({ careers: careersData, offer })
       ).rejects.toThrowErrorWithMessage(
@@ -104,7 +104,7 @@ describe("OfferCareerRepository", () => {
       const offer = await createOffer();
       await expect(
         OfferCareerRepository.update({
-          careers: [{ careerCode: "unknownCode" }, { careerCode: firstCareer.code }],
+          careers: [{ careerCode: "100" }, { careerCode: firstCareer.code }],
           offer
         })
       ).rejects.toThrowErrorWithMessage(
@@ -118,7 +118,7 @@ describe("OfferCareerRepository", () => {
       const offer = await new Offer();
       await expect(
         OfferCareerRepository.update({
-          careers: [{ careerCode: "unknownCode" }, { careerCode: firstCareer.code }],
+          careers: [{ careerCode: "100" }, { careerCode: firstCareer.code }],
           offer
         })
       ).rejects.toThrowErrorWithMessage(

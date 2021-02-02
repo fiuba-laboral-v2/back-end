@@ -8,20 +8,20 @@ import {
   UpdatedAt
 } from "sequelize-typescript";
 import { Applicant, ApplicantCareer } from "$models";
-import { STRING } from "sequelize";
+import { TEXT } from "sequelize";
 
 @Table({ tableName: "Careers", timestamps: true })
 export class Career extends Model<Career> {
   @Column({
     allowNull: false,
     primaryKey: true,
-    type: STRING
+    type: TEXT
   })
   public code: string;
 
   @Column({
     allowNull: false,
-    type: STRING
+    type: TEXT
   })
   public description: string;
 
