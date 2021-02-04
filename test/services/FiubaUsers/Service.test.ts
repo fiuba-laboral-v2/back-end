@@ -50,6 +50,10 @@ describe("FiubaUsersService", () => {
     await expectToReturnTrueForEnvironment(Environment.DEVELOPMENT);
   });
 
+  it("always returns true in the development environment", async () => {
+    await expectToReturnTrueForEnvironment(Environment.STAGING);
+  });
+
   it("calls the fiuba users api in the production environment", async () => {
     const authenticate = jest.fn();
     const parameters = { dni: DniGenerator.generate(), password: "password" };
