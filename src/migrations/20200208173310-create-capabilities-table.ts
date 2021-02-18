@@ -3,7 +3,7 @@ import { CITEXT, DATE, QueryInterface, UUID } from "sequelize";
 export = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.sequelize.transaction(async transaction => {
-      await queryInterface.sequelize.query("CREATE EXTENSION citext", {
+      await queryInterface.sequelize.query("CREATE EXTENSION IF NOT EXISTS citext", {
         transaction
       });
       await queryInterface.createTable(
