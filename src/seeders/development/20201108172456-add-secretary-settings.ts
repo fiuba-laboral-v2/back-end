@@ -9,7 +9,7 @@ export = {
       {
         secretary: Secretary.graduados,
         offerDurationInDays: 15,
-        email: "seblanco@fi.uba.ar",
+        email: "test@fi.uba.ar",
         emailSignature: "Bolsa de Trabajo FIUBA",
         automaticJobApplicationApproval: true
       },
